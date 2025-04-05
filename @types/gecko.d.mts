@@ -102,21 +102,21 @@ declare namespace GlobalBrowser {
 // TODO(glide-types)
 declare type BrowserTab = any;
 
-declare var GlideBrowser: typeof import("../browser/base/content/browser.mts").GlideBrowser;
+declare var GlideBrowser: typeof import("../src/glide/browser/base/content/browser.mts").GlideBrowser;
 
 declare var Ci: nsIXPCComponents_Interfaces;
 declare var Cc: nsXPCComponents_Classes;
 declare var Cu: nsXPCComponents_Utils & nsIXPCComponents_Utils;
 declare var Services: JSServices;
-declare var PlacesUtils: typeof import("../../toolkit/components/places/PlacesUtils.sys.mjs").PlacesUtils;
+declare var PlacesUtils: typeof import("../engine/toolkit/components/places/PlacesUtils.sys.mjs").PlacesUtils;
 
 declare type _BroadcastConduit =
-  import("../../toolkit/components/extensions/ConduitsParent.sys.mjs").BroadcastConduit;
+  import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs").BroadcastConduit;
 declare type _ExtensionCommon =
-  typeof import("../../toolkit/components/extensions/ExtensionCommon.sys.mjs").ExtensionCommon;
+  typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs").ExtensionCommon;
 
 declare type GlideHintIPC =
-  import("../browser/base/content/hinting.mts").GlideHintIPC;
+  import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
 
 /**
  * Namespace anything that has its types mocked out here. These definitions are
@@ -130,28 +130,28 @@ declare namespace MockedExports {
    * This interface teaches ChromeUtils.import how to find modules.
    */
   interface KnownModules {
-    "chrome://glide/content/utils/dom.mjs": typeof import("../browser/base/content/utils/dom.mts");
-    "chrome://glide/content/utils/ipc.mjs": typeof import("../browser/base/content/utils/ipc.mts");
-    "chrome://glide/content/utils/html.mjs": typeof import("../browser/base/content/utils/html.mts");
-    "chrome://glide/content/utils/keys.mjs": typeof import("../browser/base/content/utils/keys.mts");
-    "chrome://glide/content/utils/args.mjs": typeof import("../browser/base/content/utils/args.mts");
-    "chrome://glide/content/utils/arrays.mjs": typeof import("../browser/base/content/utils/arrays.mts");
-    "chrome://glide/content/utils/guards.mjs": typeof import("../browser/base/content/utils/guards.mts");
-    "chrome://glide/content/utils/dedent.mjs": typeof import("../browser/base/content/utils/dedent.mts");
-    "chrome://glide/content/utils/objects.mjs": typeof import("../browser/base/content/utils/objects.mts");
-    "chrome://glide/content/utils/strings.mjs": typeof import("../browser/base/content/utils/strings.mts");
-    "chrome://glide/content/browser.mjs": typeof import("../browser/base/content/browser.mts");
-    "chrome://glide/content/motions.mjs": typeof import("../browser/base/content/motions.mts");
-    "chrome://glide/content/sandbox.mjs": typeof import("../browser/base/content/sandbox.mts");
-    "chrome://glide/content/extensions.mjs": typeof import("../browser/base/content/extensions.mts");
-    "chrome://glide/content/browser-mode.mjs": typeof import("../browser/base/content/browser-mode.mts");
-    "chrome://glide/content/browser-excmds.mjs": typeof import("../browser/base/content/browser-excmds.mts");
-    "chrome://glide/content/browser-commands.mjs": typeof import("../browser/base/content/browser-commands.mts");
-    "chrome://glide/content/browser-dev.mjs": typeof import("../browser/base/content/browser-dev.mts");
-    "chrome://glide/content/text-objects.mjs": typeof import("../browser/base/content/text-objects.mts");
-    "chrome://glide/content/hinting.mjs": typeof import("../browser/base/content/hinting.mts");
+    "chrome://glide/content/utils/dom.mjs": typeof import("../src/glide/browser/base/content/utils/dom.mts");
+    "chrome://glide/content/utils/ipc.mjs": typeof import("../src/glide/browser/base/content/utils/ipc.mts");
+    "chrome://glide/content/utils/html.mjs": typeof import("../src/glide/browser/base/content/utils/html.mts");
+    "chrome://glide/content/utils/keys.mjs": typeof import("../src/glide/browser/base/content/utils/keys.mts");
+    "chrome://glide/content/utils/args.mjs": typeof import("../src/glide/browser/base/content/utils/args.mts");
+    "chrome://glide/content/utils/arrays.mjs": typeof import("../src/glide/browser/base/content/utils/arrays.mts");
+    "chrome://glide/content/utils/guards.mjs": typeof import("../src/glide/browser/base/content/utils/guards.mts");
+    "chrome://glide/content/utils/dedent.mjs": typeof import("../src/glide/browser/base/content/utils/dedent.mts");
+    "chrome://glide/content/utils/objects.mjs": typeof import("../src/glide/browser/base/content/utils/objects.mts");
+    "chrome://glide/content/utils/strings.mjs": typeof import("../src/glide/browser/base/content/utils/strings.mts");
+    "chrome://glide/content/browser.mjs": typeof import("../src/glide/browser/base/content/browser.mts");
+    "chrome://glide/content/motions.mjs": typeof import("../src/glide/browser/base/content/motions.mts");
+    "chrome://glide/content/sandbox.mjs": typeof import("../src/glide/browser/base/content/sandbox.mts");
+    "chrome://glide/content/extensions.mjs": typeof import("../src/glide/browser/base/content/extensions.mts");
+    "chrome://glide/content/browser-mode.mjs": typeof import("../src/glide/browser/base/content/browser-mode.mts");
+    "chrome://glide/content/browser-excmds.mjs": typeof import("../src/glide/browser/base/content/browser-excmds.mts");
+    "chrome://glide/content/browser-commands.mjs": typeof import("../src/glide/browser/base/content/browser-commands.mts");
+    "chrome://glide/content/browser-dev.mjs": typeof import("../src/glide/browser/base/content/browser-dev.mts");
+    "chrome://glide/content/text-objects.mjs": typeof import("../src/glide/browser/base/content/text-objects.mts");
+    "chrome://glide/content/hinting.mjs": typeof import("../src/glide/browser/base/content/hinting.mts");
 
-    "chrome://glide/content/docs.mjs": typeof import("../browser/base/content/docs.mts");
+    "chrome://glide/content/docs.mjs": typeof import("../src/glide/browser/base/content/docs.mts");
 
     // venodred / bundled
     "chrome://glide/content/bundled/shiki.mjs": typeof import("shiki");
@@ -162,25 +162,24 @@ declare namespace MockedExports {
       default: typeof import("ts-blank-space").default;
     };
     "chrome://glide/content/bundled/prettier.mjs": typeof import("prettier");
-    "chrome://glide/content/bundled/prettier-html.mjs": typeof import("prettier/plugins/html.mjs");
+    "chrome://glide/content/bundled/prettier-html.mjs": typeof import("prettier/plugins/html.d.ts");
 
-    "resource://testing-common/DOMFullscreenTestUtils.sys.mjs": typeof import("../../browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
-    "resource://testing-common/GlideTestUtils.sys.mjs": typeof import("../browser/base/content/GlideTestUtils.sys.mts");
+    "resource://testing-common/DOMFullscreenTestUtils.sys.mjs": typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
+    "resource://testing-common/GlideTestUtils.sys.mjs": typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
 
-    "resource://gre/modules/ExtensionCommon.sys.mjs": typeof import("../../toolkit/components/extensions/ExtensionCommon.sys.mjs");
-    "resource://gre/modules/ExtensionParent.sys.mjs": typeof import("../../toolkit/components/extensions/ExtensionParent.sys.mjs") & {
+    "resource://gre/modules/Extension.sys.mjs": typeof import("../engine/toolkit/components/extensions/Extension.sys.mjs");
+    "resource://gre/modules/ExtensionCommon.sys.mjs": typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs");
+    "resource://gre/modules/ExtensionParent.sys.mjs": typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs") & {
       ExtensionParent: {
         ParentAPIManager: {
           conduit: BroadcastConduit;
         };
       };
     };
-    "resource://gre/modules/ConduitsParent.sys.mjs": typeof import("../../toolkit/components/extensions/ConduitsParent.sys.mjs");
+    "resource://gre/modules/ConduitsParent.sys.mjs": typeof import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs");
 
-    "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../../toolkit/modules/LayoutUtils.sys.mjs");
-    "resource://gre/modules/Timer.jsm": { setTimeout: typeof setTimeout };
-    "resource://gre/modules/ExtensionParent.sys.mjs": typeof import("../../toolkit/components/extensions/ExtensionParent.sys.mjs");
-    "resource://gre/modules/Extension.sys.mjs": typeof import("../../toolkit/components/extensions/Extension.sys.mjs");
+    "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
+    "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
   }
 
   interface ChromeUtils {
@@ -193,7 +192,6 @@ declare namespace MockedExports {
      *
      * Then add the file path to the KnownModules above.
      */
-    import: <S extends keyof KnownModules>(module: S) => KnownModules[S];
     importESModule: <S extends keyof KnownModules>(
       module: S,
       aOptions?: ImportESModuleOptionsDictionary
@@ -205,9 +203,9 @@ declare namespace MockedExports {
 
 interface Window {
   gBrowser: GlobalBrowser.GlobalBrowser;
-  GlideBrowser: typeof import("../browser/base/content/browser.mts").GlideBrowser;
-  GlideCommands: typeof import("../browser/base/content/browser-commands.mts").GlideCommands;
-  GlideExcmds: typeof import("../browser/base/content/browser-excmds.mts").GlideExcmds;
+  GlideBrowser: typeof import("../src/glide/browser/base/content/browser.mts").GlideBrowser;
+  GlideCommands: typeof import("../src/glide/browser/base/content/browser-commands.mts").GlideCommands;
+  GlideExcmds: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GlideExcmds;
 }
 
 interface BroadcastConduit extends _BroadcastConduit {
@@ -232,7 +230,7 @@ interface WebExtension {
   id: string;
   apiManager: InstanceType<_ExtensionCommon["LazyAPIManager"]>;
   backgroundContext: InstanceType<
-    typeof import("../../toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
+    typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
   > &
     InstanceType<_ExtensionCommon["BaseContext"]>;
 }

@@ -1,0 +1,19 @@
+# bundled versions of deps
+src/glide/bundled/*
+
+# auto-generated docs
+src/glide/docs/dist/
+
+# auto-generated things
+src/glide/generated/
+
+# built JS files
+src/glide/browser/actors/dist/
+src/glide/browser/base/content/dist/
+src/glide/browser/base/content/utils/dist/
+src/glide/toolkit/content/widgets/dist/
+src/glide/browser/base/content/test/*/dist/
+
+# misc
+pnpm-lock.yaml
+src/glide/browser/base/content/glide-scripts.inc

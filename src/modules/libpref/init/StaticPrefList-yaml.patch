@@ -1,0 +1,38 @@
+diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
+index 85974462e5ce2b7dbf85bd5c79f09b3db5c25915..cd49d0e1d7a8dd7cd0b63a9bca3be3e5ccb32156 100644
+--- a/modules/libpref/init/StaticPrefList.yaml
++++ b/modules/libpref/init/StaticPrefList.yaml
+@@ -7737,6 +7737,33 @@
+   value: 0
+   mirror: always
+ 
++# glide-injection-start
++#---------------------------------------------------------------------------
++# Glide prefs
++#---------------------------------------------------------------------------
++
++# Used for internal mode state as a cheap / dirty way of getting IPC
++# across JS/C++ code.
++#
++# Note that this technically could be modified by users but its their fault if
++# anything goes wrong ¯\_(ツ)_/¯
++- name: glide.mode
++  # value corresponds to the `GlideMode` enum in `glide/cpp/Glide.h`
++  type: RelaxedAtomicInt32
++  value: 0
++  mirror: always
++
++- name: glide.vimcaret
++  type: bool
++  value: true
++  mirror: always
++
++- name: glide.dev.reload_docs_files
++  type: bool
++  value: false
++  mirror: always
++
++# glide-injection-end
+ #---------------------------------------------------------------------------
+ # Prefs starting with "html5."
+ #---------------------------------------------------------------------------

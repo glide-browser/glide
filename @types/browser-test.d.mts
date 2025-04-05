@@ -24,14 +24,14 @@ declare global {
   function add_task(fn: (() => void) | (() => Promise<void>)): BoundTestTask;
   function add_setup(fn: (() => void) | (() => Promise<void>)): void;
 
-  async function sleep_frames(count: number);
-  async function sleep_forever();
+  function sleep_frames(count: number): Promise<void>;
+  function sleep_forever(): Promise<void>;
 
-  declare var GlideTestUtils: typeof import("../browser/base/content/GlideTestUtils.sys.mts").GlideTestUtils;
+  var GlideTestUtils: typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts").GlideTestUtils;
 
-  declare var Assert: import("../../testing/modules/Assert.sys.mjs").Assert;
-  declare var SpecialPowers: import("../../testing/specialpowers/content/SpecialPowersChild.sys.mjs").SpecialPowersChild;
-  declare var BrowserTestUtils: typeof import("../../testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs").BrowserTestUtils;
+  var Assert: import("../engine/testing/modules/Assert.sys.mjs").Assert;
+  var SpecialPowers: import("../engine/testing/specialpowers/content/SpecialPowersChild.sys.mjs").SpecialPowersChild;
+  var BrowserTestUtils: typeof import("../engine/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs").BrowserTestUtils;
 }
 
 export {};

@@ -1,0 +1,91 @@
+diff --git a/toolkit/components/extensions/ExtensionChild.sys.mjs b/toolkit/components/extensions/ExtensionChild.sys.mjs
+index ffee2aa789644e3eb88f752f4b45efa31ee1c4d8..b8bf31878e3d1fc196424e2ab499f320421fe5a3 100644
+--- a/toolkit/components/extensions/ExtensionChild.sys.mjs
++++ b/toolkit/components/extensions/ExtensionChild.sys.mjs
+@@ -33,6 +33,17 @@ ChromeUtils.defineESModuleGetters(lazy, {
+   NativeApp: "resource://gre/modules/NativeMessaging.sys.mjs",
+ });
+ 
++// glide-injection-start
++/** @type {typeof import("../../../glide/browser/base/content/utils/ipc.mts")} **/
++const { deserialise_args } = ChromeUtils.importESModule(
++  "chrome://glide/content/utils/ipc.mjs"
++);
++/** @type {typeof import("../../../glide/browser/base/content/sandbox.mts")} **/
++const { create_sandbox } = ChromeUtils.importESModule(
++  "chrome://glide/content/sandbox.mjs"
++);
++// glide-injection-end
++
+ import { ExtensionCommon } from "resource://gre/modules/ExtensionCommon.sys.mjs";
+ import { ExtensionUtils } from "resource://gre/modules/ExtensionUtils.sys.mjs";
+ 
+@@ -887,6 +898,68 @@ export class ChildAPIManager {
+         return result;
+       });
+     }
++
++    // glide-injection-start
++    //
++    // Adds a handler for a custom path so that the parent actor can invoke arbitrary
++    // methods on the `browser` variable from within the correct extension context.
++    //
++    // This is used to power the `browser` variable inside the glide config file.
++    //
++    // Note that this code path is *not* hit when adding event listeners, e.g.
++    // `browser.tabs.onMoved.addListener(() => ...)`, instead we just use the
++    // `browserObj` from the parent context directly as we'd have to serialize
++    // the given function and the Web Extensions API does not provide a way to
++    // pass arguments through in this case as it's not needed under a typical
++    // setup.
++    //
++    // TODO(glide): just register this inside the extension instead of
++    //              hard-coding it here.
++    if (data.path && data.path === "glide.invoke_browser") {
++      const args = data.args.deserialize(this.context.cloneScope);
++      const method_args = args.slice(1);
++
++      const method_path = args[0];
++      if (!method_path) {
++        throw new Error(
++          "Expected `glide.invoke_browser` message to define a method name argument, e.g. `['tabs.create']`"
++        );
++      }
++
++      let method = this.context.browserObj;
++      for (const prop of method_path.split(".")) {
++        method = method[prop];
++        if (method == null) {
++          throw new Error(
++            `Could not resolve \`browser\` property at path \`${method_path}\` - \`${prop}\` was not defined`
++          );
++        }
++      }
++
++      const sandbox = create_sandbox({
++        document: this.context.contentWindow.document,
++        window: this.context.contentWindow,
++        browser: this.context.browserObj,
++        console,
++        glide: null,
++      });
++
++      const args_deser = deserialise_args(sandbox, method_args);
++
++      return Promise.resolve(method(...args_deser)).then(result => {
++        if (result !== undefined) {
++          return new StructuredCloneHolder(
++            `ChildAPIManager/${this.context.extension.id}/${data.path}`,
++            null,
++            result,
++            this.context.cloneScope
++          );
++        }
++        return result;
++      });
++    }
++    // glide-injection-end
++
+     if (!map.removedIds.has(data.listenerId)) {
+       Services.console.logStringMessage(
+         `Unknown listener at childId=${data.childId} path=${data.path} listenerId=${data.listenerId}\n`

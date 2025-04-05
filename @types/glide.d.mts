@@ -1,9 +1,9 @@
-declare var GlideCommands: typeof import("../browser/base/content/browser-commands.mts").GlideCommands;
-declare var GlideExcmds: typeof import("../browser/base/content/browser-excmds.mts").GlideExcmds;
-declare var GLIDE_EXCOMMANDS: typeof import("../browser/base/content/browser-excmds.mts").GLIDE_EXCOMMANDS;
+declare var GlideCommands: typeof import("../src/glide/browser/base/content/browser-commands.mts").GlideCommands;
+declare var GlideExcmds: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GlideExcmds;
+declare var GLIDE_EXCOMMANDS: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GLIDE_EXCOMMANDS;
 
 declare type GlideCommandlineGroup =
-  import("../toolkit/content/widgets/glide-commandline.ts").GlideCommandlineGroup;
+  import("../src/glide/toolkit/content/widgets/glide-commandline.ts").GlideCommandlineGroup;
 
 interface GlideCommandlineCompletionOption {
   name: string;
@@ -17,7 +17,7 @@ interface GlideCommandlineCompletionOption {
 declare interface GlideCommandLineInterface {
   prefill: string;
 
-  show({ prefill }: { prefill?: string } = {}): void;
+  show({ prefill }?: { prefill?: string }): void;
   toggle(): void;
   refresh_data(): void;
 

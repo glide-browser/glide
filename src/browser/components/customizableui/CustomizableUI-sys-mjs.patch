@@ -1,0 +1,12 @@
+diff --git a/browser/components/customizableui/CustomizableUI.sys.mjs b/browser/components/customizableui/CustomizableUI.sys.mjs
+index 9392b42a1de7310719a6cc8aaf11bd857e8fa69a..bbbc425b07af638accebad49c1b5901609668cc3 100644
+--- a/browser/components/customizableui/CustomizableUI.sys.mjs
++++ b/browser/components/customizableui/CustomizableUI.sys.mjs
+@@ -310,6 +310,7 @@ var CustomizableUIInternal = {
+       "back-button",
+       "forward-button",
+       "stop-reload-button",
++      "glide-toolbar-mode-button",
+       Services.policies.isAllowed("removeHomeButtonByDefault")
+         ? null
+         : "home-button",

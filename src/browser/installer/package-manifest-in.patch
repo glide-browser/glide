@@ -1,0 +1,16 @@
+diff --git a/browser/installer/package-manifest.in b/browser/installer/package-manifest.in
+index 89cff6b562a82bd3a9a5d268abd4373199b31fac..6b51c6af8282dfb32bbc638a3eb084a1d73af2c6 100644
+--- a/browser/installer/package-manifest.in
++++ b/browser/installer/package-manifest.in
+@@ -246,6 +246,11 @@
+ @RESPATH@/chrome/pdfjs/*
+ @RESPATH@/defaults/pref/PdfJsDefaultPrefs.js
+ 
++; glide-injection-start
++@RESPATH@/chrome/glide.manifest
++@RESPATH@/chrome/glide@JAREXT@
++; glide-injection-end
++
+ ; shell icons
+ #ifdef XP_UNIX
+ #ifndef XP_MACOSX

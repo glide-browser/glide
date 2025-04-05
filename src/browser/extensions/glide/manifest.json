@@ -1,0 +1,73 @@
+{
+  "manifest_version": 2,
+  "name": "Glide Internal",
+  "description": "Used as a proxy for providing the `browser` API in the Glide config",
+  "version": "134.3.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "glide-internal@mozilla.org",
+      "strict_min_version": "102.0"
+    }
+  },
+
+  "permissions": [
+    "mozillaAddons",
+    "scripting",
+    "tabs",
+    "webNavigation",
+    "webRequestBlocking",
+    "<all_urls>",
+    "activeTab",
+    "alarms",
+    "bookmarks",
+    "browserSettings",
+    "browsingData",
+    "captivePortal",
+    "clipboardRead",
+    "clipboardWrite",
+    "contextMenus",
+    "contextualIdentities",
+    "cookies",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "declarativeNetRequestWithHostAccess",
+    "devtools",
+    "dns",
+    "downloads",
+    "downloads.open",
+    "find",
+    "geolocation",
+    "history",
+    "identity",
+    "idle",
+    "management",
+    "menus",
+    "menus.overrideContext",
+    "nativeMessaging",
+    "notifications",
+    "pkcs11",
+    "privacy",
+    "proxy",
+    "scripting",
+    "search",
+    "sessions",
+    "storage",
+    "tabHide",
+    "tabs",
+    "theme",
+    "topSites",
+    "unlimitedStorage",
+    "webNavigation",
+    "webRequest",
+    "webRequestAuthProvider",
+    "webRequestBlocking",
+    "webRequestFilterResponse",
+    "webRequestFilterResponse.serviceWorkerScript"
+  ],
+
+  "background": {
+    "scripts": [
+      "run.js"
+    ]
+  }
+}

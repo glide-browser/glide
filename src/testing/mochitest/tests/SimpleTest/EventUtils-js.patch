@@ -1,0 +1,36 @@
+diff --git a/testing/mochitest/tests/SimpleTest/EventUtils.js b/testing/mochitest/tests/SimpleTest/EventUtils.js
+index f67ab9fe9cb9ec5431d328220c192d63d71683f5..786638790bd126bd1810700b453de0c3a6ecfad7 100644
+--- a/testing/mochitest/tests/SimpleTest/EventUtils.js
++++ b/testing/mochitest/tests/SimpleTest/EventUtils.js
+@@ -1623,22 +1623,26 @@ function synthesizeAndWaitNativeMouseMove(
+  * @param {Number} [aEvent.repeat]
+  *        If you emulate auto-repeat, you should set the count of repeat.
+  *        This method will automatically synthesize keydown (and keypress).
+- * @param {*} aEvent.location
++ * @param {boolean} [aEvent.ctrlKey]
++ *        Customise the `ctrlKey` modifier.
++ * @param {boolean} [aEvent.shiftKey]
++ *        Customise the `shiftKey` modifier.
++ * @param {*} [aEvent.location]
+  *        If you want to specify this, you can specify this explicitly.
+  *        However, if you don't specify this value, it will be computed
+  *        from code value.
+- * @param {String} aEvent.type
++ * @param {String} [aEvent.type]
+  *        Basically, you shouldn't specify this.  Then, this function will
+  *        synthesize keydown (, keypress) and keyup.
+  *        If keydown is specified, this only fires keydown (and keypress if
+  *        it should be fired).
+  *        If keyup is specified, this only fires keyup.
+- * @param {Number} aEvent.keyCode
++ * @param {Number} [aEvent.keyCode]
+  *        Must be 0 - 255 (0xFF). If this is specified explicitly,
+  *        .keyCode value is initialized with this value.
+- * @param {Window} aWindow
++ * @param {Window} [aWindow]
+  *        Is optional and defaults to the current window object.
+- * @param {Function} aCallback
++ * @param {Function} [aCallback]
+  *        Is optional and can be used to receive notifications from TIP.
+  *
+  * @description

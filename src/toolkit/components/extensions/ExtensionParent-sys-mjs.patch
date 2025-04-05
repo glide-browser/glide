@@ -1,0 +1,18 @@
+diff --git a/toolkit/components/extensions/ExtensionParent.sys.mjs b/toolkit/components/extensions/ExtensionParent.sys.mjs
+index 2aa583e72f279757f1087bacbb19c57b5a6b915d..3ad0b17de63376cfe1f25de053b1f77a1c7d74d6 100644
+--- a/toolkit/components/extensions/ExtensionParent.sys.mjs
++++ b/toolkit/components/extensions/ExtensionParent.sys.mjs
+@@ -754,7 +754,12 @@ class ContentScriptContextParent extends ProxyContextParent {}
+  * background script, a tab page, or a popup, running in
+  * ExtensionChild.sys.mjs.
+  */
+-class ExtensionPageContextParent extends ProxyContextParent {
++// glide-override-start
++// note: this is only exported for use in type definitions
++export class ExtensionPageContextParent extends ProxyContextParent {
++  // glide-original
++  // class ExtensionPageContextParent extends ProxyContextParent {
++  // glide-override-end
+   constructor(envType, extension, params, browsingContext) {
+     super(envType, extension, params, browsingContext, extension.principal);
+ 

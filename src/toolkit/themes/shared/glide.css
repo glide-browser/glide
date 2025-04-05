@@ -1,0 +1,137 @@
+:root {
+  /* Generic */
+  --glide-font-family: monospace;
+  --glide-font-family-sans: sans-serif;
+  --glide-font-size: 12pt;
+  --glide-small-font-size: calc(var(--glide-font-size) * 0.75);
+  --glide-bg: white;
+  --glide-fg: black;
+  --glide-scrollbar-color: auto;
+
+  /* Mode indicator */
+  --glide-status-font-family: var(--glide-font-family);
+  --glide-status-font-size: var(--glide-small-font-size);
+  --glide-status-bg: var(--glide-bg);
+  --glide-status-fg: var(--glide-fg);
+  --glide-status-border: 1px lightgray solid;
+  --glide-status-border-radius: 2px;
+
+  /* Search highlight */
+  --glide-search-highlight-color: yellow;
+
+  /* Hinting */
+
+  /* Hint character tags */
+  --glide-hintspan-font-family: var(--glide-font-family-sans);
+  --glide-hintspan-font-size: var(--glide-small-font-size);
+  --glide-hintspan-font-weight: bold;
+  --glide-hintspan-fg: white;
+  --glide-hintspan-bg: red;
+  --glide-hintspan-border-color: ButtonShadow;
+  --glide-hintspan-border-width: 0px;
+  --glide-hintspan-border-style: solid;
+  --glide-hintspan-js-background: hsla(0, 0%, 65%);
+
+  /* Element highlights */
+  --glide-hint-active-fg: var(--glide-fg);
+  --glide-hint-active-bg: #88ff00;
+  --glide-hint-active-outline: 1px solid #cc0000;
+
+  --glide-hint-bg: rgba(255, 255, 0, 0.25);
+  --glide-hint-outline: 1px solid #8f5902;
+
+  /* :viewsource */
+  --glide-vs-bg: var(--glide-bg);
+  --glide-vs-fg: var(--glide-fg);
+  --glide-vs-font-family: var(--glide-font-family);
+
+  /*commandline*/
+
+  --glide-cmdl-bg: var(--glide-bg);
+  --glide-cmdl-fg: var(--glide-fg);
+  --glide-cmdl-line-height: 1.5;
+  --glide-cmdl-font-family: "Berkeley Mono", monospace;
+  --glide-cmdl-font-size: calc(var(--glide-font-size) * 0.75);
+
+  /*completions*/
+
+  --glide-cmplt-option-height: 1.4em;
+  --glide-cmplt-fg: var(--glide-fg);
+  --glide-cmplt-bg: var(--glide-bg);
+  --glide-cmplt-font-size: calc(var(--glide-font-size) * 10/12);
+  --glide-cmplt-font-family: monospace;
+  --glide-cmplt-border-top: 1px solid grey;
+
+  /*sectionHeader*/
+
+  --glide-header-first-bg: LightGray;
+  --glide-header-second-bg: #ddd;
+  --glide-header-third-bg: LightGray;
+  --glide-header-font-size: inherit;
+  --glide-header-font-weight: bold;
+  --glide-header-border-bottom: 1px solid bottom;
+
+  /*url style*/
+
+  --glide-url-text-decoration: none;
+  --glide-url-fg: #1f9947;
+  --glide-url-bg: var(--glide-bg);
+  --glide-url-cursor: pointer;
+
+  /*option focused*/
+
+  --glide-of-fg: var(--glide-fg);
+  --glide-of-bg: #ffec8b;
+
+  /*new tab spoiler box*/
+  --glide-highlight-box-bg: rgba(0, 0, 0, 0.07);
+  --glide-highlight-box-fg: var(--glide-fg);
+
+  --glide-private-window-icon-url: url("chrome://global/skin/icons/indicator-private-browsing.svg");
+
+  --glide-container-fingerprint-url: url("resource://usercontext-content/fingerprint.svg");
+  --glide-container-briefcase-url: url("resource://usercontext-content/briefcase.svg");
+  --glide-container-dollar-url: url("resource://usercontext-content/dollar.svg");
+  --glide-container-cart-url: url("resource://usercontext-content/cart.svg");
+  --glide-container-circle-url: url("resource://usercontext-content/circle.svg");
+  --glide-container-gift-url: url("resource://usercontext-content/gift.svg");
+  --glide-container-vacation-url: url("resource://usercontext-content/vacation.svg");
+  --glide-container-food-url: url("resource://usercontext-content/food.svg");
+  --glide-container-fruit-url: url("resource://usercontext-content/fruit.svg");
+  --glide-container-pet-url: url("resource://usercontext-content/pet.svg");
+  --glide-container-tree-url: url("resource://usercontext-content/tree.svg");
+  --glide-container-chill-url: url("resource://usercontext-content/chill.svg");
+
+  --glide-container-color-blue: #37adff;
+  --glide-container-color-turquoise: #00c79a;
+  --glide-container-color-green: #51cd00;
+  --glide-container-color-yellow: #ffcb00;
+  --glide-container-color-orange: #ff9f00;
+  --glide-container-color-red: #ff613d;
+  --glide-container-color-pink: #ff4bda;
+  --glide-container-color-purple: #af51f5;
+
+  --glide-externaledit-bg: var(--glide-logo) no-repeat center;
+
+  /* hints */
+  --glide-hint-color: #302505;
+  --glide-hint-border: solid 1px #c38a22;
+  --glide-hint-background: linear-gradient(to bottom, #fff785 0%, #ffc542 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glide-bg: rgb(26, 27, 37);
+    --glide-fg: white;
+    --glide-url-fg: #3cff7c;
+
+    --glide-of-bg: #4c679b;
+
+    --glide-header-first-bg: #444;
+    --glide-header-second-bg: #444;
+    --glide-header-third-bg: #333;
+    --glide-header-font-size: inherit;
+    --glide-header-font-weight: bold;
+    --glide-header-border-bottom: 1px solid #555;
+  }
+}

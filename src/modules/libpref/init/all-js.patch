@@ -1,0 +1,19 @@
+diff --git a/modules/libpref/init/all.js b/modules/libpref/init/all.js
+index e2e3f8cd1c3eb3db748d8bd5ab88bc3e7176eab6..7e862e11a5b2138137b11151b4d5f881d15b9138 100644
+--- a/modules/libpref/init/all.js
++++ b/modules/libpref/init/all.js
+@@ -4049,6 +4049,14 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
+ 
+ pref("extensions.formautofill.supportRTL", false);
+ 
++// ----- glide-injection-start -----
++
++// Glide loggers
++
++pref("glide.logging.loglevel", "Error");
++
++// ----- glide-injection-end -----
++
+ // Controls the log level for CookieBannerListService.sys.mjs.
+ pref("cookiebanners.listService.logLevel", "Error");
+ 

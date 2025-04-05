@@ -1,0 +1,90 @@
+diff --git a/layout/base/nsCaret.h b/layout/base/nsCaret.h
+index 686bc9daa0f4d568c3972a1746c9f7b2e1922f6a..d24c00399c5798f4febea6d3a00fd074843fd66e 100644
+--- a/layout/base/nsCaret.h
++++ b/layout/base/nsCaret.h
+@@ -46,6 +46,28 @@ class nsCaret final : public nsISelectionListener {
+ 
+   using CaretAssociationHint = mozilla::CaretAssociationHint;
+ 
++  // glide-injection-start
++  /**
++   * Defines how certain geometry methods should be calculated.
++   *
++   * This is needed as some methods like `.GetGeometry()` will be called
++   * calculate a desired caret position to move to when navigating & as
++   * we now support block style carets, the desired position would end up using
++   * the *start* of the block instead of the *end* where the cursor actually is.
++   */
++  enum class GeometryPositioning : bool {
++    /**
++     * Use rects / geometry for visually rendering the caret.
++     */
++    Visual,
++
++    /**
++     * Use rects / geometry for analysing the caret positioning.
++     */
++    ActualPosition
++  };
++  // glide-injection-end
++
+   nsresult Init(mozilla::PresShell*);
+   void Terminate();
+ 
+@@ -97,6 +119,16 @@ class nsCaret final : public nsISelectionListener {
+    **/
+   void SetCaretPosition(nsINode* aNode, int32_t aOffset);
+ 
++  // glide-injection-start
++  /**
++   * Internal method callback for `glide.mode` changes.
++   *
++   * This is only exposed publicly due to implementation details surrounding
++   * preference callbacks.
++   */
++  void GlideModeChangedCallbackInternal();
++  // glide-injection-end
++
+   /**
+    * Schedule a repaint for the frame where the caret would appear.
+    * Does not check visibility etc.
+@@ -125,8 +157,14 @@ class nsCaret final : public nsISelectionListener {
+    * A simple wrapper around GetGeometry. Does not take any caret state into
+    * account other than the current selection.
+    */
+-  nsIFrame* GetGeometry(nsRect* aRect) {
+-    return GetGeometry(GetSelection(), aRect);
++  // glide-override-start
++  nsIFrame* GetGeometry(nsRect* aRect, GeometryPositioning positioning =
++                                           GeometryPositioning::Visual) {
++    return GetGeometry(GetSelection(), aRect, positioning);
++    // glide-original
++    // nsIFrame* GetGeometry(nsRect* aRect) {
++    //   return GetGeometry(GetSelection(), aRect);
++    // glide-override-end
+   }
+ 
+   /** PaintCaret
+@@ -164,11 +202,17 @@ class nsCaret final : public nsISelectionListener {
+    * This rect does not include any extra decorations for bidi.
+    * @param aRect must be non-null
+    */
+-  static nsIFrame* GetGeometry(const mozilla::dom::Selection* aSelection,
+-                               nsRect* aRect);
+-
+-  static nsRect GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+-                                    nscoord* aBidiIndicatorSize);
++  static nsIFrame* GetGeometry(
++      const mozilla::dom::Selection* aSelection, nsRect* aRect,
++      // glide-override-start
++      GeometryPositioning positioning = GeometryPositioning::Visual);
++  // glide-override-end
++
++  static nsRect GetGeometryForFrame(
++      nsIFrame* aFrame, int32_t aFrameOffset, nscoord* aBidiIndicatorSize,
++      // glide-override-start
++      GeometryPositioning positioning = GeometryPositioning::Visual);
++  // glide-override-end
+ 
+   // Get the frame and frame offset based on aPosition.
+   static mozilla::CaretFrameData GetFrameAndOffset(

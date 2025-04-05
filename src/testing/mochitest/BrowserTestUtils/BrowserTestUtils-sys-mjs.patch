@@ -1,0 +1,13 @@
+diff --git a/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs b/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
+index b76a451fa7dd22fcff81a6659091fdd5ae56fc32..0e6ce153b319ecdd74000f8ea352f54453f89974 100644
+--- a/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
++++ b/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
+@@ -98,7 +98,7 @@ export var BrowserTestUtils = {
+    *        be opened,
+    * @param {string} options.url
+    *        The URL of the page to load.
+-   * @param {Function} taskFn
++   * @param {(browser: any) => void} taskFn
+    *        Async function representing that will be executed while
+    *        the tab is loaded. The first argument passed to the function is a
+    *        reference to the browser object for the new tab.

@@ -9,6 +9,6 @@ dependencies = [
 [tool.pyright]
 typeCheckingMode = "strict"
 extraPaths = [
-  "../build/",
-  "../python/mozbuild/"
+  "engine/build/",
+  "engine/python/mozbuild/"
 ]

@@ -1,0 +1,89 @@
+diff --git a/testing/mochitest/browser-test.js b/testing/mochitest/browser-test.js
+index ef29179988bb37e7ea441aa051b692e3ccc90f21..e4e2db83dbc327dbd8d09a8146c9b4e2ba1b22f0 100644
+--- a/testing/mochitest/browser-test.js
++++ b/testing/mochitest/browser-test.js
+@@ -248,6 +248,12 @@ function Tester(aTests, structuredLogger, aCallback) {
+   this.PerTestCoverageUtils = ChromeUtils.importESModule(
+     "resource://testing-common/PerTestCoverageUtils.sys.mjs"
+   ).PerTestCoverageUtils;
++  // glide-injection-start
++  this.GlideTestUtils = ChromeUtils.importESModule(
++    "resource://testing-common/GlideTestUtils.sys.mjs",
++    { global: "current" }
++  ).GlideTestUtils;
++  // glide-injection-end
+ 
+   this.PromiseTestUtils.init();
+ 
+@@ -1285,6 +1291,10 @@ Tester.prototype = {
+     scope.BrowserTestUtils = this.BrowserTestUtils;
+     scope.TestUtils = this.TestUtils;
+     scope.ExtensionTestUtils = this.ExtensionTestUtils;
++    // glide-injection-start
++    scope.GlideTestUtils = this.GlideTestUtils;
++    this.GlideTestUtils.__load_globals(scope);
++    // glide-injection-end
+     // Pass a custom report function for mochitest style reporting.
+     scope.Assert = new this.Assert(function (err, message, stack) {
+       currentTest.addResult(
+@@ -1626,6 +1636,16 @@ function testScope(aTester, aTest, expected) {
+       self.record(condition, name);
+     }
+   };
++  // glide-injection-start
++  this.notok = function test_notok(condition, name) {
++    if (arguments.length > 2) {
++      const ex = "Too many arguments passed to notok(condition, name)`.";
++      self.record(false, name, ex);
++    } else {
++      self.record(!condition, name);
++    }
++  };
++  // glide-injection-end
+   this.record = function test_record(condition, name, ex, stack, expected) {
+     if (expected == "fail") {
+       aTest.addResult(
+@@ -1659,6 +1679,15 @@ function testScope(aTester, aTest, expected) {
+       Components.stack.caller
+     );
+   };
++  // glide-injection-start
++  this.isjson = function test_is(a, b, name) {
++    self.is(
++      JSON.stringify(a, typeof a === "object" ? Object.keys(a).sort() : null),
++      JSON.stringify(b, typeof b === "object" ? Object.keys(b).sort() : null),
++      name
++    );
++  };
++  // glide-injection-start
+   this.isfuzzy = function test_isfuzzy(a, b, epsilon, name) {
+     self.record(
+       a >= b - epsilon && a <= b + epsilon,
+@@ -1843,6 +1872,17 @@ function testScope(aTester, aTest, expected) {
+     }
+   };
+ 
++  // glide-injection-start
++  this.sleep_frames = async function sleep_frames(count) {
++    for (let i = 0; i < count; i++) {
++      await new Promise(r => requestAnimationFrame(r));
++    }
++  };
++  this.sleep_forever = async function sleep_frames() {
++    await this.sleep_frames(999999999999999);
++  };
++  // glide-injection-end
++
+   this.requestCompleteLog = function test_requestCompleteLog() {
+     self.__tester.structuredLogger.deactivateBuffering();
+     self.registerCleanupFunction(function () {
+@@ -1879,6 +1919,9 @@ testScope.prototype = {
+   TestUtils: null,
+   ExtensionTestUtils: null,
+   Assert: null,
++  // glide-injection-start
++  GlideTestUtils: null,
++  // glide-injection-end
+ 
+   /**
+    * Add a function which returns a promise (usually an async function)

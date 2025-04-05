@@ -1,0 +1,24 @@
+diff --git a/browser/base/content/navigator-toolbox.js b/browser/base/content/navigator-toolbox.js
+index a338a828b750125619fe80fc530648bf370c1786..2988cb35fb2f120dea925be5e9672e454c2d6075 100644
+--- a/browser/base/content/navigator-toolbox.js
++++ b/browser/base/content/navigator-toolbox.js
+@@ -11,6 +11,19 @@ document.addEventListener(
+     const navigatorToolbox = document.getElementById("navigator-toolbox");
+     const widgetOverflow = document.getElementById("widget-overflow");
+ 
++    // glide-injection-start
++
++    // The default CSS adds a child node for the icon but as we don't have an icon
++    // it doesn't work. So just remove it here as the alternative is defining our own CSS class which
++    // will likely come with a lot of maintenance burden and this appears to be the only thing that doesn't
++    // work out of the box at the time of writing (2024-11-15).
++    const glide_mode_button = document.getElementById(
++      "glide-toolbar-mode-button"
++    );
++    glide_mode_button.removeChild(glide_mode_button.childNodes[1]);
++
++    // glide-injection-end
++
+     function onPopupShowing(event) {
+       switch (event.target.id) {
+         case "PlacesChevronPopup":

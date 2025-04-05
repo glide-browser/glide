@@ -78,7 +78,7 @@ globalThis.ChromeUtils = {
         return a_require("../bundled/prettier-html.mjs");
 
       case "resource://gre/modules/LayoutUtils.sys.mjs":
-      case "resource://gre/modules/Timer.jsm":
+      case "resource://gre/modules/Timer.sys.mjs":
       case "resource://gre/modules/Extension.sys.mjs":
       case "resource://gre/modules/ExtensionParent.sys.mjs":
       case "resource://gre/modules/ConduitsParent.sys.mjs":

@@ -1,0 +1,260 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+/**
+ * Attribution: mainly copied from Tridactyl.
+ */
+
+@namespace xul url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+xul|glide-commandline {
+    position: fixed !important;
+    bottom: 0 !important;
+    z-index: 2147483647 !important;
+    width: 100% !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+}
+
+[anonid="glide-colon"]::before {
+    content: ":";
+}
+
+xul|glide-commandline .glide-commandline-container {
+    overflow: hidden;
+    margin: 0;
+    top: 1px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+[anonid="glide-commandline-holder"] {
+    background: var(--glide-cmdl-bg);
+    color: var(--glide-cmdl-fg);
+    font-family: var(--glide-cmdl-font-family);
+    font-size: 9pt;
+    padding-left: 0.125ex;
+}
+
+xul|glide-commandline input {
+    width: 97%;
+    font-family: var(--glide-cmdl-font-family);
+    font-size: var(--glide-cmdl-font-size);
+    line-height: var(--glide-cmdl-line-height);
+    color: var(--glide-cmdl-fg);
+    background: var(--glide-cmdl-bg);
+    border: unset;
+}
+
+xul|glide-commandline input:focus {
+    outline: none;
+}
+
+/* COMPLETIONS */
+
+[anonid="glide-commandline-completions"] {
+    --option-height: var(--glide-cmplt-option-height);
+    color: var(--glide-cmplt-fg);
+    background: var(--glide-cmplt-bg);
+    display: inline-block;
+    font-size: var(--glide-cmplt-font-size);
+    font-family: var(--glide-cmplt-font-family);
+    overflow: hidden;
+    width: 100%;
+    border-top: var(--glide-cmplt-border-top);
+}
+
+[anonid="glide-commandline-completions"]>div {
+    max-height: calc(20 * var(--option-height));
+    min-height: calc(10 * var(--option-height));
+}
+
+[anonid="glide-commandline-completions"]>div>table {
+    width: 100%;
+    font-size: 9pt;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+[anonid="glide-commandline-completions"] table tr td.prefix {
+    width: 3.2em;
+    padding-left: 0.5em;
+    text-align: center;
+}
+
+[anonid="glide-commandline-completions"] table tr td.container,
+[anonid="glide-commandline-completions"] table tr td.icon,
+[anonid="glide-commandline-completions"] table tr td.privatewindow {
+    width: 1.5em;
+}
+
+[anonid="glide-commandline-completions"] table tr td.tabcount {
+    width: 6em;
+}
+
+[anonid="glide-commandline-completions"] table tr td.tgroup {
+    width: 10em;
+    padding-left: 0.5em;
+    text-align: right;
+}
+
+[anonid="glide-commandline-completions"] table tr td.tgroup:empty {
+    display: none;
+}
+
+[anonid="glide-commandline-completions"] table tr td.content {
+    width: 50%;
+}
+
+[anonid="glide-commandline-completions"] table tr td.time {
+    width: 20ex;
+    text-align: right;
+    padding-right: 2ex;
+}
+
+[anonid="glide-commandline-completions"] table tr {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+[anonid="glide-commandline-completions"] table tr td {
+    overflow: hidden;
+}
+
+[anonid="glide-commandline-completions"] img {
+    display: inline;
+    vertical-align: middle;
+    height: 1em;
+    width: 1em;
+    margin-right: 1em;
+}
+
+[anonid="glide-commandline-completions"] .section-header {
+    background: linear-gradient(var(--glide-header-first-bg),
+            var(--glide-header-second-bg),
+            var(--glide-header-third-bg));
+    font-size: var(--glide-header-font-size);
+    font-weight: var(--glide-header-font-weight);
+    border-bottom: var(--glide-header-border-bottom);
+    padding-left: 0.5ex;
+}
+
+[anonid="glide-commandline-completions"] .section-header,
+[anonid="glide-commandline-completions"] .gcl-option {
+    /* TODO: different var */
+    height: var(--option-height);
+    line-height: var(--option-height);
+}
+
+.glide-commandline-url {
+    text-decoration: var(--glide-url-text-decoration);
+}
+
+.gcl-table {
+    /* */
+}
+
+.gcl-option:not(.focused) .url {
+    color: var(--glide-url-fg);
+    background: var(--glide-url-bg);
+}
+
+[anonid="glide-commandline-completions"] a.url:hover {
+    cursor: var(--glide-url-cursor);
+    text-decoration: underline;
+}
+
+/* TODODOOO */
+/* Hide the URLs if the screen is small */
+@media all and (max-width: 500px) {
+    .url {
+        display: none;
+    }
+}
+
+.FindCompletionOption .match {
+    font-weight: bold;
+}
+
+[anonid="glide-commandline-completions"] .hidden {
+    display: none;
+}
+
+/* Pick the .url out especially because otherwise its link styles dominate. */
+[anonid="glide-commandline-completions"] .focused,
+[anonid="glide-commandline-completions"] .focused .url {
+    color: var(--glide-of-fg);
+    background: var(--glide-of-bg);
+}
+
+.gcl-option.incognito .privatewindow {
+    background-image: var(--glide-private-window-icon-url);
+}
+
+.TabCompletionOption td.status {
+    padding-left: 0.5em;
+    width: 5%;
+}
+
+.TabCompletionOption td.label {
+    width: 50%;
+}
+
+.TabCompletionOption td.url {
+    width: 100%;
+}
+
+.ExcmdCompletionOption td.excmd {
+    padding-left: 0.5em;
+    width: 20%;
+}
+
+.ExcmdCompletionOption td.documentation {
+    width: 100%;
+}
+
+.SettingsCompletionOption td.title {
+    padding-left: 0.5em;
+}
+
+[anonid="glide-commandline-completions"] .SettingsCompletionOption td.title,
+[anonid="glide-commandline-completions"] .SettingsCompletionOption td.content,
+[anonid="glide-commandline-completions"] .SettingsCompletionOption td.type {
+    width: 15%;
+    text-overflow: ellipsis;
+}
+
+[anonid="glide-commandline-completions"] .TabGroupCompletionOption td.title {
+    width: 15%;
+}
+
+[anonid="glide-commandline-completions"] .TabGroupCompletionOption td.content {
+    width: auto;
+}
+
+.HelpCompletionOption td.name {
+    width: 25%;
+}
+
+[anonid="glide-commandline-completions"] .SessionCompletionOption td.type {
+    width: 1ch !important;
+    padding: 0px 3pt;
+}
+
+[anonid="glide-commandline-completions"] .SessionCompletionOption td.time {
+    width: 5ch !important;
+    padding: 0px 3pt;
+    text-align: right;
+}
+
+[anonid="glide-commandline-completions"] .WindowCompletionOption td.id {
+    width: 6ch !important;
+    text-align: right;
+    padding: 0px 8pt;
+}

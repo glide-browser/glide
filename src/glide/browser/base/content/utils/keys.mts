@@ -21,7 +21,7 @@ import type {
   GlideCommandValue,
 } from "../browser-excmds.mjs";
 
-const { setTimeout } = ChromeUtils.import("resource://gre/modules/Timer.jsm");
+const { setTimeout } = ChromeUtils.importESModule("resource://gre/modules/Timer.sys.mjs");
 const { lastx } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/arrays.mjs"
 );

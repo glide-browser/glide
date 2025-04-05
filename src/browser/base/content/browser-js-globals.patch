@@ -1,0 +1,12 @@
+diff --git a/browser/base/content/browser.js.globals b/browser/base/content/browser.js.globals
+index 9e6a0f1587aabd26b4d3b3ec5939f4aa20916fe7..0a93dee058bf444287c9329b3aee030bd03ea222 100644
+--- a/browser/base/content/browser.js.globals
++++ b/browser/base/content/browser.js.globals
+@@ -104,6 +104,7 @@
+   "AMTelemetry",
+   "AboutNewTab",
+   "AboutReaderParent",
++  "GlideHandlerParent",
+   "AddonManager",
+   "BrowserTelemetryUtils",
+   "BrowserUIUtils",

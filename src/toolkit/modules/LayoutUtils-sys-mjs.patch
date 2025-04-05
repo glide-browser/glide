@@ -1,0 +1,13 @@
+diff --git a/toolkit/modules/LayoutUtils.sys.mjs b/toolkit/modules/LayoutUtils.sys.mjs
+index e6b0623421af199b36fbae4118a09a7d04d6c871..54116a43af5bf7541ee8edd9888678d5b8f17373 100644
+--- a/toolkit/modules/LayoutUtils.sys.mjs
++++ b/toolkit/modules/LayoutUtils.sys.mjs
+@@ -7,6 +7,8 @@ export var LayoutUtils = {
+   /**
+    * For a given DOM element, returns its position in screen coordinates of CSS units
+    * (<https://developer.mozilla.org/en-US/docs/Web/CSS/CSSOM_View/Coordinate_systems#screen>).
++   *
++   * @returns {DOMRect}
+    */
+   getElementBoundingScreenRect(aElement) {
+     let rect = aElement.getBoundingClientRect();

@@ -1,0 +1,22 @@
+diff --git a/browser/locales/en-US/browser/browserContext.ftl b/browser/locales/en-US/browser/browserContext.ftl
+index 2da88bf8ec975c8ef6e0ad2014556fe11ca75697..bac52bca179ed44b811ae1fe533cb54f1291d0df 100644
+--- a/browser/locales/en-US/browser/browserContext.ftl
++++ b/browser/locales/en-US/browser/browserContext.ftl
+@@ -81,6 +81,17 @@ toolbar-button-stop =
+ toolbar-button-stop-reload =
+     .title = { main-context-menu-reload.aria-label }
+ 
++########### glide-injection-start
++
++glide-toolbar-button-mode =
++    .label = Glide current mode
++    .tooltiptext = Glide current mode
++
++glide-error-notification-reload-config-button =
++    .label = Reload config
++
++########### glide-injection-end
++
+ ## Account toolbar Button
+ 
+ toolbar-button-account =

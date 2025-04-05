@@ -1,0 +1,32 @@
+diff --git a/layout/generic/nsFrameSelection.cpp b/layout/generic/nsFrameSelection.cpp
+index 0134d985e89fcd61c3ad86068c9aad7872d50453..3f27f7b7fb1c462d3ff43502b3b27ee12c9e2b00 100644
+--- a/layout/generic/nsFrameSelection.cpp
++++ b/layout/generic/nsFrameSelection.cpp
+@@ -504,7 +504,12 @@ nsresult nsFrameSelection::DesiredCaretPos::FetchPos(
+   caret->SetSelection(&aNormalSelection);
+ 
+   nsRect coord;
+-  nsIFrame* caretFrame = caret->GetGeometry(&coord);
++  // glide-override-start
++  nsIFrame* caretFrame =
++      caret->GetGeometry(&coord, nsCaret::GeometryPositioning::ActualPosition);
++  // glide-override-original
++  // nsIFrame* caretFrame = caret->GetGeometry(&coord);
++  // glide-override-end
+   if (!caretFrame) {
+     return NS_ERROR_FAILURE;
+   }
+@@ -1800,7 +1805,12 @@ nsresult nsFrameSelection::PageMove(bool aForward, bool aExtend,
+   }
+ 
+   nsRect caretPos;
+-  nsIFrame* caretFrame = nsCaret::GetGeometry(selection, &caretPos);
++  // glide-override-start
++  nsIFrame* caretFrame = nsCaret::GetGeometry(
++      selection, &caretPos, nsCaret::GeometryPositioning::Visual);
++  // glide-override-original
++  // nsIFrame* caretFrame = nsCaret::GetGeometry(selection, &caretPos);
++  // glide-override-end
+   if (!caretFrame) {
+     return NS_OK;
+   }

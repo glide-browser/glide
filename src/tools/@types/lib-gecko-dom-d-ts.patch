@@ -1,0 +1,14 @@
+diff --git a/tools/@types/lib.gecko.dom.d.ts b/tools/@types/lib.gecko.dom.d.ts
+index 0b547b9648b51ca3043f125d2d13acd4bed1ded2..465e1d368690293c6f51e46270fae310806dc932 100644
+--- a/tools/@types/lib.gecko.dom.d.ts
++++ b/tools/@types/lib.gecko.dom.d.ts
+@@ -24158,6 +24158,9 @@ declare var XULCommandEvent: {
+ };
+ 
+ interface XULElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
++    // glide-injection-start
++    keypress: KeyboardEvent
++    // glide-injection-end
+ }
+ 
+ interface XULElement extends Element, ElementCSSInlineStyle, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {

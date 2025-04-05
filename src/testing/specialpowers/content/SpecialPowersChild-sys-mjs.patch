@@ -1,0 +1,34 @@
+diff --git a/testing/specialpowers/content/SpecialPowersChild.sys.mjs b/testing/specialpowers/content/SpecialPowersChild.sys.mjs
+index 1219e323c48ef664e51ada792b31d5124e4b6daf..7ee748cf36d4da57d87421e4d5ab876713e2ad72 100644
+--- a/testing/specialpowers/content/SpecialPowersChild.sys.mjs
++++ b/testing/specialpowers/content/SpecialPowersChild.sys.mjs
+@@ -1520,23 +1520,25 @@ export class SpecialPowersChild extends JSWindowActorChild {
+    * Assert.sys.mjs. Any assertion methods called before the task resolves
+    * will be relayed back to the test environment of the caller.
+    *
+-   * @param {BrowsingContext or FrameLoaderOwner or WindowProxy} target
++   * @template {readonly any[]} T
++   * @template {unknown} R
++   * @param {BrowsingContext | FrameLoaderOwner | WindowProxy} target
+    *        The target in which to run the task. This may be any element
+    *        which implements the FrameLoaderOwner interface (including
+    *        HTML <iframe> elements and XUL <browser> elements) or a
+    *        WindowProxy (either in-process or remote).
+-   * @param {Array<any>} args
++   * @param {T | []} args
+    *        An array of arguments to pass to the task. All arguments
+    *        must be structured clone compatible, and will be cloned
+    *        before being passed to the task.
+-   * @param {function} task
++   * @param {(...args: T extends readonly any[] ? T : []) => R} task
+    *        The function to run in the context of the target. The
+    *        function will be stringified and re-evaluated in the context
+    *        of the target's content window. It may return any structured
+    *        clone compatible value, or a Promise which resolves to the
+    *        same, which will be returned to the caller.
+    *
+-   * @returns {Promise<any>}
++   * @returns {Promise<R>}
+    *        A promise which resolves to the return value of the task, or
+    *        which rejects if the task raises an exception. As this is
+    *        being written, the rejection value will always be undefined

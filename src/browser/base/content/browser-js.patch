@@ -1,0 +1,15 @@
+diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
+index b89846a1103827b7e65c0b6c9197e80761e3f5c0..b99180201ce66fc1d505c228454e0d9f86d33b15 100644
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -17,6 +17,10 @@ ChromeUtils.importESModule("resource://gre/modules/NotificationDB.sys.mjs");
+ // lazy module getters
+ 
+ ChromeUtils.defineESModuleGetters(this, {
++  // glide-injection-start
++  GlideHandlerParent: "resource:///actors/GlideHandlerParent.sys.mjs",
++  // glide-injection-end
++
+   AMTelemetry: "resource://gre/modules/AddonManager.sys.mjs",
+   AboutNewTab: "resource:///modules/AboutNewTab.sys.mjs",
+   AboutReaderParent: "resource:///actors/AboutReaderParent.sys.mjs",

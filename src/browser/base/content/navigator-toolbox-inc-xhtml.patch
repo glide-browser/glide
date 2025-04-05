@@ -1,0 +1,27 @@
+diff --git a/browser/base/content/navigator-toolbox.inc.xhtml b/browser/base/content/navigator-toolbox.inc.xhtml
+index feb9e4ef7e872b4cfbf0d55f24a34db275951c66..e7bd9a1020a35075b4d472eb293a484d9b2ac99c 100644
+--- a/browser/base/content/navigator-toolbox.inc.xhtml
++++ b/browser/base/content/navigator-toolbox.inc.xhtml
+@@ -155,6 +155,22 @@
+           </box>
+         </toolbarbutton>
+       </toolbaritem>
++
++      <!-- glide-injection-start -->
++      <!-- TODO(glide): should this be a button / popover menu? -->
++      <!-- TODO(glide): should this be removable? -->
++      <toolbarbutton id="glide-toolbar-mode-button" class="toolbarbutton-1 chromeclass-toolbar-additional glide-mode-button"
++                     badged="true"
++                     delegatesanchor="true"
++                     consumeanchor="glide-toolbar-mode-button"
++                     closemenu="none"
++                     data-l10n-id="glide-toolbar-button-mode"
++                     cui-areatype="toolbar"
++                     removable="true">
++        normal
++      </toolbarbutton>
++      <!-- glide-injection-end -->
++
+       <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional"/>
+       <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional titlebar-spacer" id="vertical-spacer" />
+       <toolbaritem id="urlbar-container"

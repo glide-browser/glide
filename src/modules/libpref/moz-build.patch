@@ -1,0 +1,14 @@
+diff --git a/modules/libpref/moz.build b/modules/libpref/moz.build
+index 4e582caaa58884b27be20c45e4c39b0b841261ef..0a9e18209fa93d75f68ff37578ba6e2123345577 100644
+--- a/modules/libpref/moz.build
++++ b/modules/libpref/moz.build
+@@ -52,6 +52,9 @@ pref_groups = [
+     "geo",
+     "gfx",
+     "gl",
++    # glide-injection-start
++    "glide",
++    # glide-injection-end
+     "html5",
+     "idle_period",
+     "image",

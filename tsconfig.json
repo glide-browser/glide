@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "typeAcquisition": {
     "enable": true,
-    "include": ["./@types/index.d.ts", "type-fest/index.d.ts"]
+    "include": ["type-fest/index.d.ts", "./engine/tools/@types/index.d.ts"]
   },
   "compilerOptions": {
     "target": "ES2024",
@@ -28,12 +28,13 @@
     "allowImportingTsExtensions": true
   },
   "exclude": [
-    "node_modules",
-    "bundled",
     "_dev",
-    "browser/base/content/dist",
-    "browser/base/content/test/*/dist",
-    "browser/base/content/utils/dist",
-    "browser/actors/dist"
+    "engine",
+    "node_modules",
+    "src/glide/bundled",
+    "src/glide/browser/base/content/dist",
+    "src/glide/browser/base/content/test/*/dist",
+    "src/glide/browser/browser/base/content/utils/dist",
+    "src/glide/browser/browser/actors/dist"
   ]
 }

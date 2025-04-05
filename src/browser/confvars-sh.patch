@@ -1,0 +1,17 @@
+diff --git a/browser/confvars.sh b/browser/confvars.sh
+index 6c27951bfaf54a0030b2db7f3fb15be0b653aa6f..bb34003f957193f0a25e47e783bfa3f4547e707f 100755
+--- a/browser/confvars.sh
++++ b/browser/confvars.sh
+@@ -9,5 +9,10 @@
+ # For mozilla-beta, mozilla-release, or mozilla-central repositories, use
+ # "unofficial" branding.
+ # For the mozilla-aurora repository, use "aurora".
+-MOZ_BRANDING_DIRECTORY=browser/branding/unofficial
+-MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/official
++
++# glide-injection-start
++MOZ_BRANDING_DIRECTORY=browser/branding/glide
++MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/glide
++# MOZ_BRANDING_DIRECTORY=browser/branding/unofficial
++# MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/official
++# glide-injection-end
