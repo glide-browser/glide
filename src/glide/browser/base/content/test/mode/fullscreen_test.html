@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Screen Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+        transition: background-color 0.3s ease;
+      }
+
+      .container {
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      button {
+        padding: 12px 24px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .fullscreen-indicator {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      .timer {
+        font-size: 24px;
+        margin: 20px 0;
+      }
+
+      body.fullscreen {
+        background-color: #2c3e50;
+        color: white;
+      }
+
+      body.fullscreen .container {
+        background-color: #34495e;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Full Screen Mode Test</h1>
+      <div class="timer">00:00:00</div>
+      <button id="fullscreen-btn">Enter Full Screen</button>
+      <button id="exit-btn" style="display: none">Exit Full Screen</button>
+      <div class="fullscreen-indicator">Status: Not in full screen mode</div>
+      <input id="input-1" />
+    </div>
+
+    <script>
+      const fullscreenBtn = document.getElementById("fullscreen-btn");
+      const exitBtn = document.getElementById("exit-btn");
+      const indicator = document.querySelector(".fullscreen-indicator");
+      const timer = document.querySelector(".timer");
+      let startTime;
+      let timerInterval;
+
+      // Update timer display
+      function updateTimer() {
+        const now = new Date();
+        const elapsedTime = now - startTime;
+        const hours = Math.floor(elapsedTime / 3600000)
+          .toString()
+          .padStart(2, "0");
+        const minutes = Math.floor((elapsedTime % 3600000) / 60000)
+          .toString()
+          .padStart(2, "0");
+        const seconds = Math.floor((elapsedTime % 60000) / 1000)
+          .toString()
+          .padStart(2, "0");
+        timer.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+
+      // Enter full screen mode
+      fullscreenBtn.addEventListener("click", () => {
+        const docEl = document.documentElement;
+
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) {
+          /* Safari */
+          docEl.webkitRequestFullscreen();
+        } else if (docEl.msRequestFullscreen) {
+          /* IE11 */
+          docEl.msRequestFullscreen();
+        }
+      });
+
+      // Exit full screen mode
+      exitBtn.addEventListener("click", () => {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          /* Safari */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          /* IE11 */
+          document.msExitFullscreen();
+        }
+      });
+
+      // Handle full screen change
+      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      document.addEventListener(
+        "webkitfullscreenchange",
+        handleFullscreenChange
+      );
+      document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+      function handleFullscreenChange() {
+        if (
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        ) {
+          // Full screen entered
+          indicator.textContent = "Status: In full screen mode";
+          fullscreenBtn.style.display = "none";
+          exitBtn.style.display = "inline-block";
+          document.body.classList.add("fullscreen");
+
+          // Start timer
+          startTime = new Date();
+          timerInterval = setInterval(updateTimer, 1000);
+        } else {
+          // Full screen exited
+          indicator.textContent = "Status: Not in full screen mode";
+          fullscreenBtn.style.display = "inline-block";
+          exitBtn.style.display = "none";
+          document.body.classList.remove("fullscreen");
+
+          // Stop timer
+          clearInterval(timerInterval);
+          timer.textContent = "00:00:00";
+        }
+      }
+    </script>
+  </body>
+</html>

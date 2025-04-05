@@ -1,0 +1,31 @@
+declare var GlideCommands: typeof import("../browser/base/content/browser-commands.mts").GlideCommands;
+declare var GlideExcmds: typeof import("../browser/base/content/browser-excmds.mts").GlideExcmds;
+declare var GLIDE_EXCOMMANDS: typeof import("../browser/base/content/browser-excmds.mts").GLIDE_EXCOMMANDS;
+
+declare type GlideCommandlineGroup =
+  import("../toolkit/content/widgets/glide-commandline.ts").GlideCommandlineGroup;
+
+interface GlideCommandlineCompletionOption {
+  name: string;
+  description: string;
+}
+
+/**
+ * The public interface of the `GlideCommandLine` XUL element
+ * defined in `glide/toolkit/content/widgets/glide-commandline.ts`.
+ */
+declare interface GlideCommandLineInterface {
+  prefill: string;
+
+  show({ prefill }: { prefill?: string } = {}): void;
+  toggle(): void;
+  refresh_data(): void;
+
+  get_active_group(): GlideCommandlineGroup;
+
+  remove_focused_browser_tab(): void;
+
+  set_completion_options(options: GlideCommandlineCompletionOption[]): void;
+}
+
+declare type GlideCommandLine = GlideCommandLineInterface & XULElement;

@@ -1,0 +1,3 @@
+toolkit.jar:
+%  content global %content/global/ contentaccessible=yes
+   content/global/elements/glide-commandline.js (widgets/dist/glide-commandline.js)

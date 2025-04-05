@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Scroll Testing Page</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .scroll-container {
+        position: relative;
+        min-width: 2000px;
+        min-height: 3000px;
+        background:
+          linear-gradient(45deg, #f3f3f3 25%, transparent 25%),
+          linear-gradient(-45deg, #f3f3f3 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #f3f3f3 75%),
+          linear-gradient(-45deg, transparent 75%, #f3f3f3 75%);
+        background-size: 40px 40px;
+        background-position:
+          0 0,
+          0 20px,
+          20px -20px,
+          -20px 0px;
+      }
+
+      .marker {
+        position: absolute;
+        padding: 10px;
+        background-color: #fff;
+        border: 2px solid #333;
+        border-radius: 5px;
+      }
+
+      .scroll-info {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+
+      .grid-line {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      .vertical {
+        width: 1px;
+        height: 100%;
+      }
+
+      .horizontal {
+        height: 1px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scroll-info" id="scrollInfo">
+      Scroll Position:<br />
+      X: <span id="scrollX">0</span>px<br />
+      Y: <span id="scrollY">0</span>px
+    </div>
+
+    <div class="scroll-container" id="container">
+      <!-- Grid lines -->
+      <div class="grid-line vertical" style="left: 25%"></div>
+      <div class="grid-line vertical" style="left: 50%"></div>
+      <div class="grid-line vertical" style="left: 75%"></div>
+      <div class="grid-line horizontal" style="top: 25%"></div>
+      <div class="grid-line horizontal" style="top: 50%"></div>
+      <div class="grid-line horizontal" style="top: 75%"></div>
+
+      <!-- Position markers -->
+      <div class="marker" role="button" style="top: 0; left: 0">
+        Top Left (0, 0)
+      </div>
+      <div class="marker" role="button" style="top: 0; right: 20px">
+        Top Right
+      </div>
+      <div class="marker" role="button" style="bottom: 20px; left: 0">
+        Bottom Left
+      </div>
+      <div class="marker" role="button" style="bottom: 20px; right: 20px">
+        Bottom Right
+      </div>
+      <div
+        class="marker"
+        role="button"
+        style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+      >
+        Center
+      </div>
+    </div>
+
+    <script>
+      const scrollInfo = {
+        x: document.getElementById("scrollX"),
+        y: document.getElementById("scrollY"),
+      };
+
+      window.addEventListener("scroll", () => {
+        scrollInfo.x.textContent = window.scrollX;
+        scrollInfo.y.textContent = window.scrollY;
+      });
+
+      // Add random markers for more scroll testing
+      const container = document.getElementById("container");
+      for (let i = 0; i < 20; i++) {
+        const marker = document.createElement("div");
+        marker.className = "marker";
+        marker.setAttribute("role", "button");
+        marker.style.left = Math.random() * 1900 + "px";
+        marker.style.top = Math.random() * 2900 + "px";
+        marker.textContent = `Marker ${i + 1}`;
+        container.appendChild(marker);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+glide.jar:
+% content glide %content/ contentaccessible=yes
+
+  content/browser-globals.js                   (content/dist/browser-globals.js)
+
+# ES modules
+  content/browser-commands.mjs                 (content/dist/browser-commands.mjs)
+  content/browser-excmds.mjs                   (content/dist/browser-excmds.mjs)
+  content/browser-mode.mjs                     (content/dist/browser-mode.mjs)
+  content/browser-dev.mjs                      (content/dist/browser-dev.mjs)
+  content/extensions.mjs                       (content/dist/extensions.mjs)
+  content/sandbox.mjs                          (content/dist/sandbox.mjs)
+  content/browser.mjs                          (content/dist/browser.mjs)
+  content/motions.mjs                          (content/dist/motions.mjs)
+  content/hinting.mjs                          (content/dist/hinting.mjs)
+  content/text-objects.mjs                     (content/dist/text-objects.mjs)
+  content/docs.mjs                             (content/dist/docs.mjs)
+  content/utils/dom.mjs                        (content/utils/dist/dom.mjs)
+  content/utils/ipc.mjs                        (content/utils/dist/ipc.mjs)
+  content/utils/html.mjs                       (content/utils/dist/html.mjs)
+  content/utils/keys.mjs                       (content/utils/dist/keys.mjs)
+  content/utils/args.mjs                       (content/utils/dist/args.mjs)
+  content/utils/arrays.mjs                     (content/utils/dist/arrays.mjs)
+  content/utils/guards.mjs                     (content/utils/dist/guards.mjs)
+  content/utils/dedent.mjs                     (content/utils/dist/dedent.mjs)
+  content/utils/objects.mjs                    (content/utils/dist/objects.mjs)
+  content/utils/strings.mjs                    (content/utils/dist/strings.mjs)
+
+# bundled dependencies
+  content/bundled/markdoc.mjs                  (../../bundled/markdoc.mjs)
+  content/bundled/shiki.mjs                    (../../bundled/shiki.mjs)
+  content/bundled/ts-blank-space.mjs           (../../bundled/ts-blank-space.mjs)
+  content/bundled/prettier.mjs                 (../../bundled/prettier.mjs)
+  content/bundled/prettier-html.mjs            (../../bundled/prettier-html.mjs)

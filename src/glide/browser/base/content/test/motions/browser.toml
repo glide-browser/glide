@@ -1,0 +1,8 @@
+[DEFAULT]
+support-files = []
+
+["dist/browser_motions.js"]
+https_first_disabled = true
+
+["dist/browser_text_objects.js"]
+https_first_disabled = true

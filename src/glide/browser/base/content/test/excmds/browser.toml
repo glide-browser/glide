@@ -1,0 +1,7 @@
+[DEFAULT]
+support-files = [
+  "scroll_test.html",
+]
+
+["dist/browser_excmds.js"]
+https_first_disabled = true

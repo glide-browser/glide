@@ -1,0 +1,12 @@
+# bundled versions of deps
+bundled/*
+
+# auto-generated docs
+docs/dist/
+
+# built JS files
+browser/actors/dist/
+browser/base/content/dist/
+browser/base/content/utils/dist/
+toolkit/content/widgets/dist/
+browser/base/content/test/*/dist/

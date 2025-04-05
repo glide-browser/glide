@@ -1,0 +1,418 @@
+/*
+ * TODO(glide): review these styles
+ * TODO(glide): fix mobile support
+ */
+
+@import url("./BerkeleyMono-Regular.woff2");
+
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("./BerkeleyMono-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  flex: 1;
+  padding: 0 !important;
+
+  /* fixes weird selection colouring */
+  line-height: 1.35em !important;
+  /* monospace-web reduces the max width significantly for some reason */
+  max-width: unset !important;
+}
+
+.shiki {
+  padding: 1em;
+  border: 1px solid #666;
+  border-width: 1px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.excmd-heading {
+  text-transform: none !important;
+}
+
+article h1 {
+  padding-top: unset !important;
+  margin-top: unset !important;
+  margin-bottom: unset !important;
+}
+
+.content-container > article {
+  max-width: 50em;
+  padding-left: 1em !important;
+  padding-top: unset !important;
+  margin-top: var(--line-height);
+  margin-left: var(--line-height);
+  margin-right: var(--line-height);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Berkeley Mono", "JetBrains Mono", monospace !important;
+  font-size: 1rem;
+  text-transform: none !important;
+  font-weight: 800 !important;
+}
+
+/* remove underlines from heading anchors */
+a:has(> :where(h1, h2, h3, h4, h5, h6)) {
+  text-decoration: none;
+}
+
+/* remove underlines from heading anchors */
+:where(h1, h2, h3, h4, h5, h6)::after {
+  color: var(--text-color-alt);
+  content: " #";
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+:where(h1, h2, h3, h4, h5, h6):hover::after {
+  opacity: 1;
+}
+
+figure {
+  margin: 0 !important;
+}
+
+figure pre {
+  margin-bottom: 0;
+}
+
+figcaption {
+  font-size: 0.85em !important;
+  color: var(--text-color-alt);
+  margin-top: 0.5rem !important;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Only apply background color to standalone <code> elements */
+code:not(pre code) {
+  background-color: #313131;
+  font-weight: 400;
+  color: #e6e6e6;
+}
+
+sup {
+  font-size: 0.75em !important;
+  color: var(--text-color-alt);
+}
+
+sup a {
+  color: var(--text-color-alt) !important;
+  text-decoration: none;
+}
+
+ol li {
+  padding-bottom: 0.5em !important;
+}
+
+ol li p {
+  display: inline;
+}
+
+.main-container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.content-container {
+  display: flex;
+  margin-top: unset;
+  flex: 1;
+  max-height: 100vh;
+  overflow: auto;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0px;
+  max-height: 100vh;
+  min-width: 25ch;
+  width: 20ch;
+  padding: calc(var(--line-height)) 2ch;
+  --border-thickness: 2px;
+  --line-height: 1.2rem;
+  background: var(--background-color);
+  font-family: var(--font-family);
+}
+
+.glide-sidenav-heading {
+  margin-bottom: 0.25em;
+  display: flex;
+  align-items: center;
+}
+
+.glide-sidenav-heading-link {
+  font-size: 1.2em;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.glide-sidenav-heading-img {
+  width: 1.25em;
+  height: 1.25em;
+  margin-bottom: -0.25em;
+  margin-right: -0.25em;
+}
+
+.sidenav a {
+  text-decoration: none;
+  display: block;
+}
+
+.sidenav a:hover {
+  background: var(--background-color-alt);
+}
+
+.sidenav li.is-active a {
+  color: var(--background-color-alt) !important;
+  background: var(--text-color);
+  font-weight: var(--font-weight-bold);
+}
+
+.github-logo svg {
+  display: block;
+  height: var(--line-height);
+  padding: 1px;
+}
+
+/* Update mobile styles */
+@media screen and (max-width: 768px) {
+  .topnav-links {
+    margin-left: 0;
+  }
+
+  /* TODO */
+  /* .sidebar { */
+  /* 	position: static; */
+  /* 	width: 100%; */
+  /* 	height: auto; */
+  /* 	padding-top: var(--line-height); */
+  /* 	border-right: none; */
+  /* 	border-bottom: var(--border-thickness) solid var(--text-color); */
+  /* } */
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.5rem;
+  border: none;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+}
+
+.copy-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  position: absolute;
+  transition: opacity 0.2s ease;
+}
+
+.copy-button:hover {
+  background: rgb(75, 70, 70) !important;
+  transition: opacity 0.2s ease;
+  border-radius: 4px;
+}
+
+.copy-button .check-icon {
+  opacity: 0;
+}
+
+.copy-button.copied .copy-icon {
+  opacity: 0;
+}
+
+.copy-button.copied .check-icon {
+  opacity: 1;
+}
+
+/* page-find styling */
+
+.search-button {
+  margin: 0;
+  margin-left: auto;
+  padding: calc(var(--line-height) * 0.25) 1ch;
+  background: var(--background-color-alt);
+  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  border-radius: 6px;
+  height: unset;
+  line-height: 1;
+  font-size: 1rem;
+}
+
+.search-button:hover {
+  background: var(--background-color);
+  border-color: hsla(0, 0%, 100%, 0.2);
+}
+
+/* Pagefind UI customization */
+#search {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: hsla(0, 0%, 0%, 0.6);
+  z-index: 300;
+  padding: 1rem;
+}
+
+.pagefind-ui {
+  max-width: 640px;
+  margin: 4rem auto 0;
+  background: var(--background-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px hsla(0, 0%, 0%, 0.4);
+  border: 1px solid hsla(0, 0%, 100%, 0.1);
+}
+
+.pagefind-ui__search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: var(--background-color);
+  border: 1px solid hsla(0, 0%, 100%, 0.2);
+  color: var(--text-color);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.pagefind-ui__search-input:focus {
+  outline: none;
+  border-color: hsla(0, 0%, 0%, 0.4);
+  background: var(--background-color-alt);
+}
+
+/* Style the search input placeholder */
+.pagefind-ui__search-input::placeholder {
+  color: var(--text-color-alt);
+  opacity: 0.7;
+}
+
+/* Style the clear button (x) in the search input */
+.pagefind-ui__search-clear {
+  color: var(--text-color);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.pagefind-ui__search-clear:hover {
+  opacity: 1;
+}
+
+.pagefind-ui__results-area {
+  margin-top: 1rem;
+  max-height: calc(100vh - 12rem);
+  overflow-y: auto;
+}
+
+.pagefind-ui__result {
+  padding: 1rem;
+  border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+  margin: 0;
+  border-radius: 0;
+}
+
+.pagefind-ui__result:last-child {
+  border-bottom: none;
+}
+
+.pagefind-ui__result:hover {
+  background: var(--background-color-alt);
+}
+
+.pagefind-ui__result-title {
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.pagefind-ui__result-excerpt {
+  margin-top: 0.5rem;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.pagefind-ui__message {
+  color: var(--text-color);
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Style for highlighted text in results */
+.pagefind-ui__result-excerpt mark,
+.pagefind-ui__result-title mark {
+  background: #404040;
+  color: #ffffff;
+  padding: 0.1rem 0.2rem;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+/* Add subtle animation for the highlights */
+.pagefind-ui__result-excerpt mark,
+.pagefind-ui__result-title mark {
+  animation: highlight-fade-in 0.15s ease-in;
+}
+
+@keyframes highlight-fade-in {
+  from {
+    background: transparent;
+    color: inherit;
+  }
+
+  to {
+    background: #404040;
+    color: #ffffff;
+  }
+}
+
+/* Add a subtle transition when hovering over results */
+.pagefind-ui__result {
+  transition: background-color 0.15s ease;
+}
+
+/* Make the title highlights stand out a bit more */
+.pagefind-ui__result-title mark {
+  background: #505050;
+}
+
+/* Add close button */
+.pagefind-ui__close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.pagefind-ui__close-button:hover {
+  opacity: 0.8;
+}
+
+/* Hide Pagefind branding */
+.pagefind-ui__powered-by {
+  display: none;
+}

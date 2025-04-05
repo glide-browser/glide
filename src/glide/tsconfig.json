@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "typeAcquisition": {
+    "enable": true,
+    "include": ["./@types/index.d.ts", "type-fest/index.d.ts"]
+  },
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "nodenext",
+    "moduleDetection": "force",
+    "allowJs": true,
+    "noEmit": true,
+    "lib": [],
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "skipLibCheck": true,
+    "noErrorTruncation": true,
+    "allowImportingTsExtensions": true
+  },
+  "exclude": [
+    "node_modules",
+    "bundled",
+    "_dev",
+    "browser/base/content/dist",
+    "browser/base/content/test/*/dist",
+    "browser/base/content/utils/dist",
+    "browser/actors/dist"
+  ]
+}

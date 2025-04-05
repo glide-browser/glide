@@ -1,0 +1,4 @@
+[DEFAULT]
+
+["dist/browser_keys.js"]
+https_first_disabled = true

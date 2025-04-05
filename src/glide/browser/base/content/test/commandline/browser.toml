@@ -1,0 +1,7 @@
+[DEFAULT]
+support-files = [
+  "basic.html",
+]
+
+["dist/browser_commandline.js"]
+https_first_disabled = true

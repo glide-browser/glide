@@ -1,0 +1,34 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# TODO(glide): make this `glide/docs` instead?
+#
+# maps to `resource://glide-docs/*`
+#
+# note: this is separate from `glide/browser/base/jar.mn` so that the
+#       embedded docs don't run in the main priveledged thread as we
+#       need access to WASM for `pagefind` which is disallowed in the
+#       main thread.
+
+glide.jar:
+% resource glide-docs %res/glide-docs/
+  # pages
+  res/glide-docs/index.html                      (./dist/index.html)
+  res/glide-docs/faq.html                        (./dist/faq.html)
+  res/glide-docs/modes.html                      (./dist/modes.html)
+  res/glide-docs/quickstart.html                 (./dist/quickstart.html)
+  res/glide-docs/ex-commands.html                (./dist/ex-commands.html)
+  res/glide-docs/key-mappings.html               (./dist/key-mappings.html)
+  # TODO(glide): don't require explicitly listing all the pages
+
+  # assets
+  res/glide-docs/docs.css                        (./docs.css)
+  res/glide-docs/docs.js                         (./docs.js)
+  res/glide-docs/logo.png                        (./logo.png)
+  res/glide-docs/BerkeleyMono-Regular.woff2      (./BerkeleyMono-Regular.woff2)
+
+  # dependencies
+  res/glide-docs/monospace-web/index.css         (./dist/monospace-web/index.css)
+  res/glide-docs/monospace-web/reset.css         (./dist/monospace-web/reset.css)
+  res/glide-docs/pagefind                        (./dist/pagefind/**/*)

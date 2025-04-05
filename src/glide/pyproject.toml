@@ -1,0 +1,14 @@
+[project]
+name = "glide"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = [
+    "watchfiles>=1.0.0",
+]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+extraPaths = [
+  "../build/",
+  "../python/mozbuild/"
+]

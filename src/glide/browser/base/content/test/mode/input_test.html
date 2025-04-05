@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test for auto mode switching</title>
+  </head>
+  <body>
+    <div class="input-container">
+      <label for="user_input_1">Enter your text:</label>
+      <input
+        type="text"
+        id="input-1"
+        name="user_input_1"
+        placeholder="Type something here..."
+      />
+    </div>
+    <div class="input-container">
+      <label for="user_input_2">Enter your text:</label>
+      <input
+        type="text"
+        id="input-2"
+        name="user_input_2"
+        placeholder="Type something here..."
+      />
+    </div>
+    <div id="shadow-host">
+      <template shadowrootmode="open">
+        <span>I'm in the shadow DOM</span>
+        <div>
+          <label for="shadow-input-1">Enter your text:</label>
+          <input
+            type="text"
+            id="shadow-input"
+            name="shadow-input-1"
+            placeholder="Type something here..."
+          />
+        </div>
+
+        <div id="shadow-host-2">
+          <template shadowrootmode="open">
+            <span>I'm a shadow DOM inside the shadow DOM</span>
+            <div>
+              <label for="shadow-input-2">Enter your text:</label>
+              <input
+                type="text"
+                id="shadow-input-2"
+                name="shadow-input-2"
+                placeholder="Type something here..."
+              />
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+    <div class="input-container">
+      <label for="user_input_3">Enter your text:</label>
+      <textarea
+        type="text"
+        id="textarea-1"
+        rows="3"
+        name="user_input_3"
+        placeholder="Type something here..."
+      >
+Line 1&#10;Line 2&#10;Line 3</textarea
+      >
+    </div>
+    <div class="input-container">
+      <label for="vim_test_area">Vim Motion Test Area:</label>
+      <textarea
+        id="vim-test-area"
+        name="vim_test_area"
+        rows="20"
+        cols="80"
+        style="font-family: monospace; white-space: pre"
+      >
+Quick brown fox jumps over the lazy dog! 
+Test (parentheses), [brackets], and {braces}.
+
+This is a new paragraph with some CamelCase words,
+snake_case_words, and hyphenated-words.
+You can practice 'single' and "double" quotes.
+
+Here's a list of items:
+* Item 1
+* Item 2
+* Item 3
+
+Some repeating words: word word word word
+Numbers: 123 456 789
+
+Text with punctuation... lots of it!!! Has commas, semicolons; and periods.
+Different-length      spaces     between    words.
+
+URLs: https://example.com
+Email: test@example.com
+
+def function_name():
+    # Indented code block
+    return "test"
+
+/* Block comment
+ * with multiple
+ * lines */</textarea
+      >
+    </div>
+    <div
+      contenteditable="true"
+      spellcheck="true"
+      role="textbox"
+      aria-readonly="false"
+      aria-multiline="true"
+      aria-label="Comment"
+      translate="no"
+    >
+      <p data-empty-text="Leave a comment…" aria-hidden="true">
+        <br />
+      </p>
+    </div>
+    <div
+      id="contenteditable-div-with-role-textbox"
+      contenteditable="true"
+      spellcheck="true"
+      role="textbox"
+      aria-readonly="false"
+      aria-multiline="true"
+      aria-label="Comment"
+      translate="no"
+      style="
+        min-height: 100px;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        background-color: #ffffff;
+      "
+    >
+      <p
+        data-empty-text="Leave a comment…"
+        aria-hidden="true"
+        style="margin: 0; color: #757575; font-style: italic"
+      >
+        contenteditable div with role=textbox
+        <br />
+      </p>
+    </div>
+  </body>
+</html>
