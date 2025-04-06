@@ -363,7 +363,7 @@ export async function markdown_to_html(
                     }).join("")}
                     <li>
                       <a
-                        href="https://github.com/RobertCraigie/glide"
+                        href="https://github.com/glide-browser/glide"
                         rel="me"
                         class="github-logo"
                         target="_blank"
