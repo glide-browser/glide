@@ -173,7 +173,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::KeyMappingPartial": {
-        const target = this.#last_key_event_element;
+        const target = this.#get_key_event_target();
         const editor = this.#get_editor(target);
 
         // for partial mapping matches in insert mode, temporarily add the key
@@ -198,7 +198,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::KeyMappingCancel": {
-        const target = this.#last_key_event_element;
+        const target = this.#get_key_event_target();
         const editor = this.#get_editor(target);
 
         // note: keep in sync with other conditions in `Glide::KeyMapping*`
@@ -217,7 +217,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::KeyMappingExecution": {
-        const target = this.#last_key_event_element;
+        const target = this.#get_key_event_target();
         const editor = this.#get_editor(target);
 
         // note: keep in sync with condition in `Glide::KeyMapping*`
@@ -292,6 +292,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
       default:
         throw assert_never(message);
     }
+  }
+
+  #get_key_event_target(): Element | null | undefined {
+    return this.#last_key_event_element ?? this.#get_active_element();
   }
 
   get sandbox(): Sandbox {

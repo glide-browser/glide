@@ -23,11 +23,6 @@ add_task(async function test_jj_insert_middle() {
       input.setSelectionRange(40, 40);
     });
 
-    // TODO(glide): remove this, currently working around a bug
-    EventUtils.synthesizeKey("KEY_ArrowLeft");
-    EventUtils.synthesizeKey("KEY_ArrowRight");
-    await sleep_frames(5);
-
     EventUtils.synthesizeKey("j");
     await sleep_frames(5);
     let value = await SpecialPowers.spawn(browser, [], async () => {
@@ -73,11 +68,6 @@ add_task(async function test_jj_insert_end() {
       input.focus();
     });
 
-    // TODO(glide): remove this, currently working around a bug
-    EventUtils.synthesizeKey("KEY_ArrowLeft");
-    EventUtils.synthesizeKey("KEY_ArrowRight");
-    await sleep_frames(5);
-
     await sleep_frames(1);
     EventUtils.synthesizeKey("j");
     await sleep_frames(4);
@@ -120,11 +110,6 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
       input.focus();
       input.setSelectionRange(40, 40);
     });
-
-    // TODO(glide): remove this, currently working around a bug
-    EventUtils.synthesizeKey("KEY_ArrowLeft");
-    EventUtils.synthesizeKey("KEY_ArrowRight");
-    await sleep_frames(5);
 
     EventUtils.synthesizeKey("j");
     await sleep_frames(1);
@@ -172,11 +157,6 @@ add_task(async function test_j_cancel_by_escape() {
       input.focus();
       input.setSelectionRange(40, 40);
     });
-
-    // TODO(glide): remove this, currently working around a bug
-    EventUtils.synthesizeKey("KEY_ArrowLeft");
-    EventUtils.synthesizeKey("KEY_ArrowRight");
-    await sleep_frames(5);
 
     EventUtils.synthesizeKey("j");
     await sleep_frames(2);
