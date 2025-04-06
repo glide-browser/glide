@@ -173,7 +173,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::KeyMappingPartial": {
-        const target = this.#get_key_event_target();
+        // for partial key mappings, we need to *only* rely on the active
+        // element as our `#last_key_event_element` will be behind as the
+        // keydown event does not get through to us in this context.
+        const target = this.#get_active_element();
+        this.#last_key_event_element = target;
+
         const editor = this.#get_editor(target);
 
         // for partial mapping matches in insert mode, temporarily add the key

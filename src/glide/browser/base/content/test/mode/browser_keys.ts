@@ -12,10 +12,13 @@ const KEYS_TEST_URI =
 const FULLSCREEN_TEST_URI =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/fullscreen_test.html";
 
+add_setup(async () => {
+  GlideBrowser.key_manager.reset_sequence();
+  await sleep_frames(1);
+});
+
 add_task(async function test_jj_insert_middle() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    GlideBrowser.key_manager.reset_sequence();
-
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
       const input = content.document.getElementById("input-2");
       input.value = uri;
@@ -59,7 +62,6 @@ add_task(async function test_jj_insert_middle() {
 
 add_task(async function test_jj_insert_end() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    GlideBrowser.key_manager.reset_sequence();
     await sleep_frames(1);
 
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
@@ -101,9 +103,6 @@ add_task(async function test_jj_insert_end() {
 
 add_task(async function test_jj_partial_cancel_by_other_keypress() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    GlideBrowser.key_manager.reset_sequence();
-    await sleep_frames(1);
-
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
       const input = content.document.getElementById("input-2");
       input.value = uri;
@@ -148,9 +147,6 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
 
 add_task(async function test_j_cancel_by_escape() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    GlideBrowser.key_manager.reset_sequence();
-    await sleep_frames(1);
-
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
       const input = content.document.getElementById("input-2");
       input.value = uri;
@@ -198,6 +194,52 @@ add_task(async function test_j_cancel_by_escape() {
     );
     is(selection_start, 41);
     is(selection_end, 41);
+  });
+});
+
+add_task(async function test_jj_switching_elements() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById("input-1");
+      input.value = "foo";
+      input.focus();
+    });
+
+    EventUtils.synthesizeKey("f");
+    EventUtils.synthesizeKey("j");
+    await sleep_frames(5);
+    let value = await SpecialPowers.spawn(browser, [], async () => {
+      return content.document.getElementById("input-1").value;
+    });
+    is(value, "foofj", "Partial insert mapping matches should insert the key");
+
+    // start a new context
+    EventUtils.synthesizeKey("KEY_Escape");
+    await sleep_frames(3);
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById("input-2");
+      input.value = "other";
+      input.focus();
+    });
+
+    await sleep_frames(3);
+    EventUtils.synthesizeKey("j");
+    await sleep_frames(4);
+
+    const [first_value, second_value] = await SpecialPowers.spawn(
+      browser,
+      [],
+      async () => {
+        return [
+          content.document.getElementById("input-1").value,
+          content.document.getElementById("input-2").value,
+        ];
+      }
+    );
+
+    is(first_value, "foofj", "first content should be the same as before");
+    is(second_value, "otherj", "second content should have j inserted");
   });
 });
 
@@ -316,9 +358,6 @@ add_task(async function test_Escape_to_exit_fullscreen() {
 
 add_task(async function test_d_op_pending_q_normal() {
   // Test that pressing "d" enters op-pending mode and then pressing "q" goes back to normal mode because q is not mapped
-  GlideBrowser.key_manager.reset_sequence();
-  await sleep_frames(1);
-
   EventUtils.synthesizeKey("d");
   await sleep_frames(4);
   is(
