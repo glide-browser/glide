@@ -7,9 +7,15 @@
  *
  * This is also a pretty naive solution, a better setup would read from the obj
  * directory in some fashion to determine the mappings. TODO(glide): <<
+ *
+ * Note: this file is also CJS so we can make use of synchronous requires.
  */
 
 // @ts-check
+
+const Path = require("path");
+
+const SRC_DIR = Path.join(__dirname, "..", "src");
 
 // @ts-ignore
 globalThis.ChromeUtils = {
@@ -22,60 +28,88 @@ globalThis.ChromeUtils = {
 
     switch (mod) {
       case "chrome://glide/content/utils/dedent.mjs":
-        return a_require("../browser/base/content/utils/dedent.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/dedent.mts`
+        );
       case "chrome://glide/content/utils/dom.mjs":
-        return a_require("../browser/base/content/utils/dom.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/utils/dom.mts`);
       case "chrome://glide/content/utils/html.mjs":
-        return a_require("../browser/base/content/utils/html.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/html.mts`
+        );
       case "chrome://glide/content/utils/keys.mjs":
-        return a_require("../browser/base/content/utils/keys.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/keys.mts`
+        );
       case "chrome://glide/content/utils/args.mjs":
-        return a_require("../browser/base/content/utils/args.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/args.mts`
+        );
       case "chrome://glide/content/utils/arrays.mjs":
-        return a_require("../browser/base/content/utils/arrays.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/arrays.mts`
+        );
       case "chrome://glide/content/utils/guards.mjs":
-        return a_require("../browser/base/content/utils/guards.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/guards.mts`
+        );
       case "chrome://glide/content/utils/objects.mjs":
-        return a_require("../browser/base/content/utils/guards.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/guards.mts`
+        );
       case "chrome://glide/content/utils/strings.mjs":
-        return a_require("../browser/base/content/utils/strings.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/strings.mts`
+        );
       case "chrome://glide/content/utils/ipc.mjs":
-        return a_require("../browser/base/content/utils/ipc.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/utils/ipc.mts`);
 
       case "chrome://glide/content/browser.mjs":
-        return a_require("../browser/base/content/browser.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/browser.mts`);
       case "chrome://glide/content/motions.mjs":
-        return a_require("../browser/base/content/motions.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/motions.mts`);
       case "chrome://glide/content/extensions.mjs":
-        return a_require("../browser/base/content/extensions.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/extensions.mts`
+        );
       case "chrome://glide/content/browser-mode.mjs":
-        return a_require("../browser/base/content/browser-mode.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/browser-mode.mts`
+        );
       case "chrome://glide/content/browser-dev.mjs":
-        return a_require("../browser/base/content/browser-dev.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/browser-dev.mts`
+        );
       case "chrome://glide/content/text-objects.mjs":
-        return a_require("../browser/base/content/text-objects.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/text-objects.mts`
+        );
       case "chrome://glide/content/browser-excmds.mjs":
-        return a_require("../browser/base/content/browser-excmds.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/browser-excmds.mts`
+        );
       case "chrome://glide/content/browser-commands.mjs":
-        return a_require("../browser/base/content/browser-commands.mts");
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/browser-commands.mts`
+        );
       case "chrome://glide/content/sandbox.mjs":
-        return a_require("../browser/base/content/sandbox.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/sandbox.mts`);
 
       case "chrome://glide/content/hinting.mjs":
-        return a_require("../browser/base/content/hinting.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/hinting.mts`);
       case "chrome://glide/content/docs.mjs":
-        return a_require("../browser/base/content/docs.mts");
+        return a_require(`${SRC_DIR}/glide/browser/base/content/docs.mts`);
 
       case "chrome://glide/content/bundled/shiki.mjs":
-        return a_require("../bundled/shiki.mjs");
+        return a_require(`${SRC_DIR}/glide/bundled/shiki.mjs`);
       case "chrome://glide/content/bundled/markdoc.mjs":
-        return a_require("../bundled/markdoc.mjs");
+        return a_require(`${SRC_DIR}/glide/bundled/markdoc.mjs`);
       case "chrome://glide/content/bundled/ts-blank-space.mjs":
-        return a_require("../bundled/ts-blank-space.mjs");
+        return a_require(`${SRC_DIR}/glide/bundled/ts-blank-space.mjs`);
       case "chrome://glide/content/bundled/prettier.mjs":
-        return a_require("../bundled/prettier.mjs");
+        return a_require(`${SRC_DIR}/glide/bundled/prettier.mjs`);
       case "chrome://glide/content/bundled/prettier-html.mjs":
-        return a_require("../bundled/prettier-html.mjs");
+        return a_require(`${SRC_DIR}/glide/bundled/prettier-html.mjs`);
 
       case "resource://gre/modules/LayoutUtils.sys.mjs":
       case "resource://gre/modules/Timer.sys.mjs":

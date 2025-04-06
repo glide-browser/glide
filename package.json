@@ -2,10 +2,19 @@
   "name": "glide",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
+    "bootstrap": "bash ./scripts/bootstrap.sh",
+
+    "dev": "pnpm tsn scripts/dev.mts",
+    "dev:watch": "pnpm tsn scripts/dev.mts --watch",
+
+    "bundle": "bash ./scripts/bundle.sh",
+    "build:docs": "pnpm tsn scripts/build-docs.mts",
+    "build:docs:index": "pnpm tsn scripts/build-docs.mts",
+    
     "tsc": "tsc",
     "format": "prettier -w .",
+    "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,6 +26,7 @@
     "@types/node": "^22.8.7",
     "chokidar": "^4.0.3",
     "esbuild": "^0.24.2",
+    "execa": "^9.5.2",
     "prettier": "^3.5.0",
     "shiki": "^2.3.2",
     "ts-blank-space": "^0.4.2",

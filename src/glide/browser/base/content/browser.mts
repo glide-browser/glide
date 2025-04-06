@@ -1000,10 +1000,10 @@ function make_glide_api(): typeof glide {
           throw new Error(
             `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
               [
-                Services.prefs.PREF_INT,
-                Services.prefs.PREF_BOOL,
-                Services.prefs.PREF_BOOL,
-                Services.prefs.PREF_INVALID,
+                Services.prefs.PREF_INT!,
+                Services.prefs.PREF_BOOL!,
+                Services.prefs.PREF_STRING!,
+                Services.prefs.PREF_INVALID!,
               ],
               { final: "or" }
             )}`

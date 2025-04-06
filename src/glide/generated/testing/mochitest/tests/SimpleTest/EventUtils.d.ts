@@ -1,11 +1,12 @@
 declare namespace EventUtils {
-declare function _EU_isMac(aWindow?: WindowProxy): boolean;
-declare function _EU_isWin(aWindow?: WindowProxy): boolean;
-declare function _EU_isLinux(aWindow?: WindowProxy): boolean;
-declare function _EU_isAndroid(aWindow?: WindowProxy): boolean;
+declare function _EU_isMac(aWindow?: Window & typeof globalThis): boolean;
+declare function _EU_isWin(aWindow?: Window & typeof globalThis): boolean;
+declare function _EU_isLinux(aWindow?: Window & typeof globalThis): boolean;
+declare function _EU_isAndroid(aWindow?: Window & typeof globalThis): boolean;
 declare function _EU_maybeWrap(o: any): any;
 declare function _EU_maybeUnwrap(o: any): any;
-declare function _EU_getPlatform(): "linux" | "android" | "windows" | "mac" | "unknown";
+declare function _EU_getPlatform(): "unknown" | "linux" | "android" | "windows" | "mac";
+declare function _EU_roundDevicePixels(aMaybeFractionalPixels: any): number;
 /**
  * promiseElementReadyForUserInput() dispatches mousemove events to aElement
  * and waits one of them for a while.  Then, returns "resolved" state when it's
@@ -17,7 +18,7 @@ declare function _EU_getPlatform(): "linux" | "android" | "windows" | "mac" | "u
  * but your test cannot check whether the element is now in APZ to deliver
  * a user input event.
  */
-declare function promiseElementReadyForUserInput(aElement: any, aWindow?: WindowProxy, aLogFunc?: any): Promise<void>;
+declare function promiseElementReadyForUserInput(aElement: any, aWindow?: Window & typeof globalThis, aLogFunc?: any): Promise<void>;
 declare function getElement(id: any): any;
 declare function computeButton(aEvent: any): any;
 declare function computeButtons(aEvent: any, utils: any): any;
@@ -39,7 +40,7 @@ declare function isHidden(aElement: any): boolean;
  * object with the properties set that the real drag event object should
  * have. This includes the type of the drag event.
  */
-declare function sendDragEvent(aEvent: any, aTarget: any, aWindow?: WindowProxy): any;
+declare function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): any;
 /**
  * Send the char aChar to the focused element.  This method handles casing of
  * chars (sends the right charcode, and sends a shift key for uppercase chars).
@@ -67,7 +68,7 @@ declare function sendKey(aKey: any, aWindow: any): void;
  * Parse the key modifier flags from aEvent. Used to share code between
  * synthesizeMouse and synthesizeKey.
  */
-declare function _parseModifiers(aEvent: any, aWindow?: WindowProxy): number;
+declare function _parseModifiers(aEvent: any, aWindow?: Window & typeof globalThis): number;
 /**
  * Synthesize a mouse event on a target. The actual client point is determined
  * by taking the aTarget's client box and offseting it by aOffsetX and
@@ -143,7 +144,7 @@ declare function getDragService(): any;
  */
 declare function _maybeEndDragSession(left: any, top: any, aEvent: any, aWindow: any): boolean;
 declare function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any): boolean;
-declare function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindow?: WindowProxy): boolean;
+declare function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindow?: Window & typeof globalThis): boolean;
 /**
  * Synthesize one or more touches at the points. aLeft, aTop, aEvent.id,
  * aEvent.rx, aEvent.ry, aEvent.angle, aEvent.force, aEvent.tiltX, aEvent.tiltY
@@ -180,7 +181,7 @@ declare function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindo
  */
 declare function synthesizeTouchAtPoint(aLeft: any, aTop: any, aEvent?: any, aWindow?: Window): any;
 declare function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any): boolean;
-declare function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: WindowProxy): void;
+declare function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Window & typeof globalThis): void;
 /**
  * Synthesize a wheel event without flush layout at a particular point in
  * aWindow.
@@ -198,7 +199,7 @@ declare function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Wi
  *
  * aWindow is optional, and defaults to the current window object.
  */
-declare function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow?: WindowProxy): void;
+declare function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Synthesize a wheel event on a target. The actual client point is determined
  * by taking the aTarget's client box and offseting it by aOffsetX and
@@ -218,7 +219,7 @@ declare function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWin
  * aWindow is optional, and defaults to the current window object.
  */
 declare function synthesizeWheel(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): void;
-declare function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aFlushMode?: number, aWindow?: WindowProxy): void;
+declare function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aFlushMode?: number, aWindow?: Window & typeof globalThis): void;
 /**
  * This is a wrapper around synthesizeWheel that waits for the wheel event
  * to be dispatched and for the subsequent layout/paints to be flushed.
@@ -231,15 +232,15 @@ declare function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, 
  * determining scroll completion and the refresh driver is not automatically
  * restored.
  */
-declare function sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: WindowProxy): void;
+declare function sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Similar to sendWheelAndPaint but without flushing layout for obtaining
  * ``aTarget`` position in ``aWindow`` before sending the wheel event.
  * ``aOffsetX`` and ``aOffsetY`` should be offsets against aWindow.
  */
-declare function sendWheelAndPaintNoFlush(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: WindowProxy): void;
-declare function synthesizeNativeTapAtCenter(aTarget: any, aLongTap?: boolean, aCallback?: any, aWindow?: WindowProxy): void;
-declare function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTap?: boolean, aCallback?: any, aWindow?: WindowProxy): void;
+declare function sendWheelAndPaintNoFlush(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
+declare function synthesizeNativeTapAtCenter(aTarget: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
+declare function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Similar to synthesizeMouse but generates a native widget level event
  * (so will actually move the "real" mouse cursor etc. Be careful because
@@ -301,7 +302,7 @@ declare function promiseNativeMouseEventAndWaitForEvent(aParams: any): Promise<a
  * This API is supposed to be used in those test cases that synthesize some
  * input events to chrome process and have some checks in content.
  */
-declare function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY: any, aCallback: any, aWindow?: WindowProxy): any;
+declare function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY: any, aCallback: any, aWindow?: Window & typeof globalThis): any;
 /**
  * Synthesize a key event. It is targeted at whatever would be targeted by an
  * actual keypress by the user, typically the focused element.
@@ -382,8 +383,8 @@ declare function synthesizeKey(aKey: string, aEvent?: {
  * This API is supposed to be used in those test cases that synthesize some
  * input events to chrome process and have some checks in content.
  */
-declare function synthesizeAndWaitKey(aKey: any, aEvent: any, aWindow: WindowProxy, checkBeforeSynthesize: any, checkAfterSynthesize: any): any;
-declare function _parseNativeModifiers(aModifiers: any, aWindow?: WindowProxy): number;
+declare function synthesizeAndWaitKey(aKey: any, aEvent: any, aWindow: Window & typeof globalThis, checkBeforeSynthesize: any, checkAfterSynthesize: any): any;
+declare function _parseNativeModifiers(aModifiers: any, aWindow?: Window & typeof globalThis): number;
 /**
  * synthesizeNativeKey() dispatches native key event on active window.
  * This is implemented only on Windows and Mac. Note that this function
@@ -409,7 +410,7 @@ declare function _parseNativeModifiers(aModifiers: any, aWindow?: WindowProxy): 
  * @return                      True if this function succeed dispatching
  *                              native key event.  Otherwise, false.
  */
-declare function synthesizeNativeKey(aKeyboardLayout: any, aNativeKeyCode: any, aModifiers: any, aChars: any, aUnmodifiedChars: any, aCallback: any, aWindow?: WindowProxy): boolean;
+declare function synthesizeNativeKey(aKeyboardLayout: any, aNativeKeyCode: any, aModifiers: any, aChars: any, aUnmodifiedChars: any, aCallback: any, aWindow?: Window & typeof globalThis): boolean;
 /**
  * Indicate that an event with an original target of aExpectedTarget and
  * a type of aExpectedEvent is expected to be fired, or not expected to
@@ -451,16 +452,16 @@ declare function synthesizeMouseExpectEvent(aTarget: any, aOffsetX: any, aOffset
  */
 declare function synthesizeKeyExpectEvent(key: any, aEvent: any, aExpectedTarget: any, aExpectedEvent: any, aTestName: any, aWindow: any): void;
 declare function disableNonTestMouseEvents(aDisable: any): void;
-declare function _getDOMWindowUtils(aWindow?: WindowProxy): any;
+declare function _getDOMWindowUtils(aWindow?: Window & typeof globalThis): any;
 declare function _defineConstant(name: any, value: any): void;
 declare function _getTIP(aWindow: any, aCallback: any): any;
-declare function _getKeyboardEvent(aWindow?: WindowProxy): any;
-declare function _guessKeyNameFromKeyCode(aKeyCode: any, aWindow?: WindowProxy): "Alt" | "AltGraph" | "Control" | "Meta" | "Shift" | "NumLock" | "ScrollLock" | "Cancel" | "Help" | "Backspace" | "Tab" | "Clear" | "Enter" | "Pause" | "Eisu" | "Escape" | "Convert" | "NonConvert" | "Accept" | "ModeChange" | "PageUp" | "PageDown" | "End" | "Home" | "ArrowLeft" | "ArrowUp" | "ArrowRight" | "ArrowDown" | "Select" | "Print" | "Execute" | "PrintScreen" | "Insert" | "Delete" | "OS" | "ContextMenu" | "Standby" | "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "F21" | "F22" | "F23" | "F24" | "AudioVolumeMute" | "AudioVolumeDown" | "AudioVolumeUp" | "Process" | "Attn" | "CrSel" | "ExSel" | "EraseEof" | "Play" | "Unidentified";
-declare function _createKeyboardEventDictionary(aKey: any, aKeyEvent: any, aTIP?: any, aWindow?: WindowProxy): {
+declare function _getKeyboardEvent(aWindow?: Window & typeof globalThis): any;
+declare function _guessKeyNameFromKeyCode(aKeyCode: any, aWindow?: Window & typeof globalThis): "Alt" | "AltGraph" | "Control" | "Meta" | "Shift" | "NumLock" | "ScrollLock" | "Cancel" | "Help" | "Backspace" | "Tab" | "Clear" | "Enter" | "Pause" | "Eisu" | "Escape" | "Convert" | "NonConvert" | "Accept" | "ModeChange" | "PageUp" | "PageDown" | "End" | "Home" | "ArrowLeft" | "ArrowUp" | "ArrowRight" | "ArrowDown" | "Select" | "Print" | "Execute" | "PrintScreen" | "Insert" | "Delete" | "OS" | "ContextMenu" | "Standby" | "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "F21" | "F22" | "F23" | "F24" | "AudioVolumeMute" | "AudioVolumeDown" | "AudioVolumeUp" | "Process" | "Attn" | "CrSel" | "ExSel" | "EraseEof" | "Play" | "Unidentified";
+declare function _createKeyboardEventDictionary(aKey: any, aKeyEvent: any, aTIP?: any, aWindow?: Window & typeof globalThis): {
     dictionary: any;
     flags: number;
 };
-declare function _emulateToActivateModifiers(aTIP: any, aKeyEvent: any, aWindow?: WindowProxy): {
+declare function _emulateToActivateModifiers(aTIP: any, aKeyEvent: any, aWindow?: Window & typeof globalThis): {
     normal: {
         key: string;
         attr: string;
@@ -470,7 +471,7 @@ declare function _emulateToActivateModifiers(aTIP: any, aKeyEvent: any, aWindow?
         attr: string;
     }[];
 };
-declare function _emulateToInactivateModifiers(aTIP: any, aModifiers: any, aWindow?: WindowProxy): void;
+declare function _emulateToInactivateModifiers(aTIP: any, aModifiers: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Synthesize a composition event and keydown event and keyup events unless
  * you prevent to dispatch them explicitly (see aEvent.key's explanation).
@@ -517,7 +518,7 @@ declare function _emulateToInactivateModifiers(aTIP: any, aModifiers: any, aWind
  * @param aCallback            Optional (If non-null, use the callback for
  *                             receiving notifications to IME)
  */
-declare function synthesizeComposition(aEvent: any, aWindow: WindowProxy, aCallback: any): void;
+declare function synthesizeComposition(aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): void;
 /**
  * Synthesize eCompositionChange event which causes a DOM text event, may
  * cause compositionupdate event, and causes keydown event and keyup event
@@ -582,7 +583,7 @@ declare function synthesizeComposition(aEvent: any, aWindow: WindowProxy, aCallb
  * @param aCallback     Optional (If non-null, use the callback for receiving
  *                      notifications to IME)
  */
-declare function synthesizeCompositionChange(aEvent: any, aWindow: WindowProxy, aCallback: any): void;
+declare function synthesizeCompositionChange(aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): void;
 /**
  * Synthesize a query text content event.
  *
@@ -630,7 +631,7 @@ declare function synthesizeQueryCaretRect(aOffset: any, aWindow: any): any;
  * @param aWindow  Optional (If null, current |window| will be used)
  * @return         True, if succeeded.  Otherwise false.
  */
-declare function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: any, aWindow?: WindowProxy): Promise<any>;
+declare function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: any, aWindow?: Window & typeof globalThis): Promise<any>;
 /**
  * Synthesize a query text rect event.
  *
@@ -1157,7 +1158,7 @@ declare const COMPOSITION_ATTR_RAW_CLAUSE: any;
 declare const COMPOSITION_ATTR_SELECTED_RAW_CLAUSE: any;
 declare const COMPOSITION_ATTR_CONVERTED_CLAUSE: any;
 declare const COMPOSITION_ATTR_SELECTED_CLAUSE: any;
-declare var TIPMap: WeakMap<WeakKey, any>;
+declare var TIPMap: WeakMap<object, any>;
 declare const QUERY_CONTENT_FLAG_USE_NATIVE_LINE_BREAK: 0;
 declare const QUERY_CONTENT_FLAG_USE_XP_LINE_BREAK: 1;
 declare const QUERY_CONTENT_FLAG_SELECTION_NORMAL: 0;

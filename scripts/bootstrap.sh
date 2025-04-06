@@ -6,9 +6,9 @@ cd "$(dirname "$0")/.."
 
 pnpm i
 
-mkdir -p bundled
+mkdir -p src/glide/bundled
 ./scripts/bundle.sh
 ./scripts/generate-types.sh
 
-../tsn scripts/build-docs.mts
-npx -y pagefind --site docs/dist
+pnpm build:docs
+pnpm build:docs:index

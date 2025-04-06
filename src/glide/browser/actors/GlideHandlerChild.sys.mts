@@ -359,8 +359,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
   #on_selectionchange(
     _doc: null,
     selection: Selection,
-    reason?: i16,
-    amount?: i32
+    reason?: number,
+    amount?: number
   ) {
     if (true as any) {
       return;

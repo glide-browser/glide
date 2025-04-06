@@ -50,12 +50,29 @@ interface nsIXPCComponents_Constructor {
   }
 }
 
+interface ComponentsExceptionOptions {
+  result?: number,
+  stack?: nsIStackFrame,
+  data?: object,
+}
+
+interface nsIException extends Exception {}
+
 interface nsIXPCComponents_Exception {
-  (...args: ConstructorParameters<typeof Error>): Error;
+  (
+    message?: string,
+    resultOrOptions?: number | ComponentsExceptionOptions,
+    stack?: nsIStackFrame,
+    data?: object
+  ): nsIException;
+}
+
+interface nsIXPCComponents_ID {
+  (uuid: string): nsID
 }
 
 interface nsIXPCComponents_utils_Sandbox {
-  (principal: nsIPrincipal | nsIPrincipal[], options: object): typeof globalThis;
+  (principal: nsIPrincipal | nsIPrincipal[], options: object): Sandbox;
 }
 
 interface nsXPCComponents_Classes {
@@ -74,14 +91,7 @@ interface nsXPCComponents_Utils {
   waiveXrays<T>(object: T): T;
 }
 
-// TODO: remove after next TS update.
-interface PromiseConstructor {
-  withResolvers<T>(): {
-    promise: Promise<T>;
-    resolve: (value: T | PromiseLike<T>) => void;
-    reject: (reason?: any) => void;
-  };
-}
+type Sandbox = typeof globalThis & nsISupports;
 
 // Hand-crafted artisanal types.
 interface XULBrowserElement extends XULFrameElement, FrameLoader {
