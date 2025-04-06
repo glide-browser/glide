@@ -136,6 +136,29 @@ declare var glide: {
       action?(target: HTMLElement): Promise<void>;
     }): void;
   };
+
+  keys: {
+    /**
+     * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}`.
+     *
+     * This blocks other input events from being processed until the promise resolves.
+     *
+     * Note: there can only be one `Promise` registered at any given time.
+     */
+    next(): Promise<glide.KeyEvent>;
+
+    /**
+     * Returns a `Promise` that resolves to a string representation of the last input event.
+     *
+     * This blocks other input events from being processed until the promise resolves.
+     *
+     * @example {'d'}
+     * @example {'<C-l>'}
+     *
+     * Note: there can only be one `Promise` registered at any given time.
+     */
+    next_str(): Promise<string>;
+  };
 };
 
 /**
@@ -149,7 +172,16 @@ declare function assert(value: unknown, message?: string): asserts value;
 declare function todo_assert(value: unknown, message?: string): void;
 
 declare namespace glide {
-  type TabWithID = Omit<browser.tabs.Tab, "id"> & { id: number };
+  export type TabWithID = Omit<browser.tabs.Tab, "id"> & { id: number };
+
+  export type KeyEvent = KeyboardEvent & {
+    /**
+     * The vim notation of the KeyEvent, e.g.
+     *
+     * `{ ctrlKey: true, key: 's' }` -> `'<C-s>'`
+     */
+    glide_key: string;
+  };
 }
 
 declare namespace $keymapcompletions {

@@ -647,12 +647,15 @@ class GlideBrowserClass {
    * The key here is the vim-notation version of a key event, e.g. `<C-d>`
    */
   keydown_event_results = new Map<string, { default_prevented: boolean }>();
+  next_key_waiter: {
+    resolve: (event: glide.KeyEvent) => void;
+  } | null = null;
 
   async #on_keydown(event: KeyboardEvent) {
-    const cache_key = Keys.event_to_key_notation(event);
+    const keyn = Keys.event_to_key_notation(event);
 
     // remove any previous results for this key combination
-    this.keydown_event_results.delete(cache_key);
+    this.keydown_event_results.delete(keyn);
 
     // Certain builting key mappings, such as `<Esc>` to exit fullscreen mode,
     // are handled internally in C++ code that dispatches an event *only* to chrome
@@ -673,13 +676,27 @@ class GlideBrowserClass {
       !event.defaultPreventedByContent
     ) {
       this._log.debug(
-        `Ignoring \`${cache_key}\` key event as it was dispatched from privileged non-JS code`
+        `Ignoring \`${keyn}\` key event as it was dispatched from privileged non-JS code`
       );
       return;
     }
 
     if (this.#modifier_keys.has(event.key)) {
       // we don't support mapping these keys by themselves, so just ignore them
+      return;
+    }
+
+    if (this.next_key_waiter !== null) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.keydown_event_results.set(keyn, { default_prevented: true });
+
+      const glide_event = event as glide.KeyEvent;
+      glide_event.glide_key = keyn;
+
+      this.next_key_waiter.resolve(glide_event);
+      this.next_key_waiter = null;
+
       return;
     }
 
@@ -698,7 +715,7 @@ class GlideBrowserClass {
       if (hints.length > 1) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        this.keydown_event_results.set(cache_key, { default_prevented: true });
+        this.keydown_event_results.set(keyn, { default_prevented: true });
 
         GlideCommands.filter_hints(label);
         return;
@@ -707,7 +724,7 @@ class GlideBrowserClass {
       if (hints.length === 1) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        this.keydown_event_results.set(cache_key, { default_prevented: true });
+        this.keydown_event_results.set(keyn, { default_prevented: true });
 
         this.get_focused_actor().send_async_message("Glide::ExecuteHint", {
           label,
@@ -750,7 +767,7 @@ class GlideBrowserClass {
       return;
     }
 
-    this.keydown_event_results.set(cache_key, { default_prevented: true });
+    this.keydown_event_results.set(keyn, { default_prevented: true });
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -980,6 +997,25 @@ function make_glide_api(): typeof glide {
         GlideBrowser.get_focused_actor().send_async_message("Glide::Hint", {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
         });
+      },
+    },
+    keys: {
+      async next() {
+        if (GlideBrowser.next_key_waiter) {
+          throw new Error(
+            "`glide.keys.next()` can only be registered one at a time"
+          );
+        }
+
+        return new Promise<glide.KeyEvent>(resolve => {
+          GlideBrowser.next_key_waiter = { resolve };
+        }).finally(() => {
+          GlideBrowser.next_key_waiter = null;
+        });
+      },
+
+      async next_str() {
+        return this.next().then(event => event.glide_key);
       },
     },
     pref(name, value) {
