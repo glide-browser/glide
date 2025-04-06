@@ -1,0 +1,21 @@
+diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
+index a107fbd4ab2bde7b036668c1e56654703f749e7a..46e97e00cba53eed399c6efb46445f045b772938 100644
+--- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
++++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
+@@ -60,6 +60,7 @@ const isMSIX =
+   AppConstants.platform === "win" &&
+   Services.sysinfo.getProperty("hasWinPackageId", false);
+ 
++// prettier-ignore
+ const BASE_MESSAGES = () => [
+   {
+     id: "FXA_ACCOUNTS_BADGE",
+@@ -1365,7 +1366,7 @@ const BASE_MESSAGES = () => [
+       id: "defaultBrowserCheck",
+     },
+   },
+-];
++].filter((msg) => !msg.id.toLowerCase().includes('promo'));
+ 
+ const PREONBOARDING_MESSAGES = () => [
+   {
