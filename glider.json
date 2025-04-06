@@ -1,0 +1,22 @@
+{
+  "name": "Glide Browser",
+  "vendor": "Glide",
+  "appId": "glide",
+  "binaryName": "glide",
+  "version": {
+    "product": "firefox",
+    "version": "137.0",
+    "candidate": "137.0"
+  },
+  "buildOptions": {
+    "windowsUseSymbolicLinks": false
+  },
+  "addons": {},
+  "brands": {},
+  "license": {
+    "ignoredFiles": [
+      ".*\\.json"
+    ],
+    "licenseType": "MPL-2.0"
+  }
+}

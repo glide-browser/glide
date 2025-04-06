@@ -1,0 +1,8 @@
+.dotbuild/
+.glider/
+engine/
+firefox-*/
+node_modules/
+.cache
+dist/
+compile_commands.json
