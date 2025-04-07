@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <textarea id="copy-content">This is the test content to copy</textarea>
+    <button id="copy-button">Copy to Clipboard</button>
+    <script>
+      document
+        .getElementById("copy-button")
+        .addEventListener("click", async () => {
+          document.getElementById("copy-content").select();
+          document.execCommand("copy");
+        });
+    </script>
+  </body>
+</html>

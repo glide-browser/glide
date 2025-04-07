@@ -787,6 +787,14 @@ class GlideBrowserClass {
     event.preventDefault();
     event.stopImmediatePropagation();
     this.keydown_event_results.set(keyn, { default_prevented: true });
+
+    // We need to manually notify that a user gesture happened (in this case a keypress)
+    // because our `.preventDefault()` causes this key event to not get registered automatically.
+    document!.notifyUserGestureActivation();
+    // we currently only send this to the focused actor as opposed to all actors to
+    // reduce resource usage as I think a case where you need user gestures to be recorded
+    // in another frame *should* be exceedingly rare.
+    this.get_focused_actor().sendAsyncMessage("Glide::RegisterUserActivation");
   }
 
   async #on_keypress(event: KeyboardEvent) {

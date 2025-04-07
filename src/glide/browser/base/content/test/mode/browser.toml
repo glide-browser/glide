@@ -1,5 +1,6 @@
 [DEFAULT]
 support-files = [
+  "clipboard_test.html",
   "key_test.html",
   "input_test.html",
   "fullscreen_test.html",

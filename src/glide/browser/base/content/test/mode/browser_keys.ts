@@ -12,6 +12,9 @@ const KEYS_TEST_URI =
 const FULLSCREEN_TEST_URI =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/fullscreen_test.html";
 
+const CLIPBOARD_TEST_URI =
+  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/clipboard_test.html";
+
 add_setup(async () => {
   GlideBrowser.key_manager.reset_sequence();
   await sleep_frames(1);
@@ -372,4 +375,35 @@ add_task(async function test_d_op_pending_q_normal() {
     "normal",
     "Pressing 'q' in op-pending mode returns to normal mode"
   );
+});
+
+add_task(async function test_mapping_user_gesture_activation() {
+  await BrowserTestUtils.withNewTab(CLIPBOARD_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.keymaps.set("normal", "yc", async () => {
+        glide.content.execute(
+          async () => {
+            const button = document!.getElementById(
+              "copy-button"
+            ) as HTMLButtonElement;
+            button.click();
+          },
+          { tab_id: await glide.tabs.active() }
+        );
+
+        glide.g.test_checked = true;
+      });
+    });
+
+    EventUtils.synthesizeKey("y");
+    EventUtils.synthesizeKey("c");
+    await sleep_frames(10);
+
+    // clicking the button should attempt to copy the contents of a `<textarea>` to
+    // the clipboard which will only work if user gestures were recently registered.
+    is(
+      await navigator.clipboard.readText(),
+      "This is the test content to copy"
+    );
+  });
 });

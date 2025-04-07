@@ -294,6 +294,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
         break;
       }
+      case "Glide::RegisterUserActivation": {
+        this.document?.notifyUserGestureActivation();
+        break;
+      }
       default:
         throw assert_never(message);
     }

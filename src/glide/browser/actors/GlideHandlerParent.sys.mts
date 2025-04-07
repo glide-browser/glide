@@ -15,6 +15,19 @@ const { assert_never } = ChromeUtils.importESModule(
 
 export interface ParentMessages {
   "Glide::StateUpdate": State;
+
+  /**
+   * Trigger manual registration of user gesture activation.
+   *
+   * This is useful for our key mappings, as we `.preventDefault()`,
+   * the normal Firefox code that would notify the document that a user
+   * gesture happened is not invoked, so we have to do it ourselves.
+   *
+   * This affects methods like `navigator.clipboard.writeText()` which
+   * can only be called shortly after some user input.
+   */
+  "Glide::RegisterUserActivation": null;
+
   "Glide::ExecuteContentCommand": {
     command: ContentExcmd;
     args: string;
