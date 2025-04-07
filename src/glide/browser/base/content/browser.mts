@@ -768,13 +768,6 @@ class GlideBrowserClass {
         mode,
         key: event.key,
       });
-
-      this.key_manager.register_delayed(() => {
-        this.key_manager.reset_sequence();
-        this.get_focused_actor().send_async_message("Glide::KeyMappingCancel", {
-          mode,
-        });
-      });
     } else if (mapping.value) {
       this.key_manager.reset_sequence();
       this.get_focused_actor().send_async_message(

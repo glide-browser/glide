@@ -21,7 +21,6 @@ import type {
   GlideCommandValue,
 } from "../browser-excmds.mjs";
 
-const { setTimeout } = ChromeUtils.importESModule("resource://gre/modules/Timer.sys.mjs");
 const { lastx } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/arrays.mjs"
 );
@@ -180,7 +179,6 @@ export class KeyManager {
     "op-pending": new KeyMappingTrie(),
   };
 
-  #id = 0;
   #current_sequence: string[] = [];
   #log: ConsoleInstance =
     console.createInstance ?
@@ -238,25 +236,10 @@ export class KeyManager {
     return this.#current_sequence.length !== 0;
   }
 
-  /**
-   * Register a function that'll be called after a set delay if no other keys have been pressed.
-   */
-  register_delayed(fn: () => void) {
-    const id = this.#id;
-
-    setTimeout(() => {
-      if (this.#id === id) {
-        fn();
-      }
-    }, 1000);
-  }
-
   handle_key_event(
     event: KeyboardEvent,
     current_mode: GlideMode
   ): KeyMappingTrieNode | undefined {
-    this.#id++;
-
     const keyn = event_to_key_notation(event);
     this.#current_sequence.push(keyn);
 
