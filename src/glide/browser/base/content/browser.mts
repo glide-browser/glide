@@ -687,9 +687,7 @@ class GlideBrowserClass {
     }
 
     if (this.next_key_waiter !== null) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      this.keydown_event_results.set(keyn, { default_prevented: true });
+      this.#prevent_keydown(keyn, event);
 
       const glide_event = event as glide.KeyEvent;
       glide_event.glide_key = keyn;
@@ -713,18 +711,14 @@ class GlideBrowserClass {
       this._log.debug({ hints, label });
 
       if (hints.length > 1) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        this.keydown_event_results.set(keyn, { default_prevented: true });
+        this.#prevent_keydown(keyn, event);
 
         GlideCommands.filter_hints(label);
         return;
       }
 
       if (hints.length === 1) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        this.keydown_event_results.set(keyn, { default_prevented: true });
+        this.#prevent_keydown(keyn, event);
 
         this.get_focused_actor().send_async_message("Glide::ExecuteHint", {
           label,
@@ -767,9 +761,7 @@ class GlideBrowserClass {
       return;
     }
 
-    this.keydown_event_results.set(keyn, { default_prevented: true });
-    event.preventDefault();
-    event.stopImmediatePropagation();
+    this.#prevent_keydown(keyn, event);
 
     if (mapping.has_children) {
       this.get_focused_actor().send_async_message("Glide::KeyMappingPartial", {
@@ -796,6 +788,12 @@ class GlideBrowserClass {
     }
 
     return;
+  }
+
+  #prevent_keydown(keyn: string, event: KeyboardEvent) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    this.keydown_event_results.set(keyn, { default_prevented: true });
   }
 
   async #on_keypress(event: KeyboardEvent) {
