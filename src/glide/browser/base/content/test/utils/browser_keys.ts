@@ -3,9 +3,6 @@
 
 "use strict";
 
-// @ts-expect-error TS complains about ESModule resolution from a non-ESM file
-//                  but it still resolves the type correctly?? so it really
-//                  just does not matter at all ¯\_(ツ)_/¯
 import type { KeyMappingTrieNode } from "../../utils/keys.mjs";
 
 const { split, event_to_key_notation, KeyManager, normalize, parse_modifiers } =
