@@ -5,7 +5,7 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox",
-    "version": "137.0",
+    "version": "137.0.1",
     "candidate": "137.0"
   },
   "buildOptions": {
