@@ -122,8 +122,6 @@ class GlideBrowserClass {
     this.key_manager.set("normal", "<leader>r", "reload");
     this.key_manager.set("normal", "<leader>R", "reload_hard");
     this.key_manager.set("normal", "<leader>b", "commandline_show tab ");
-    // TODO(glide): overload this with the behaviour of `norm b` in vim
-    this.key_manager.set("normal", "b", "commandline_show tab ");
 
     this.key_manager.set("normal", "gg", "scroll_top");
     this.key_manager.set("normal", "G", "scroll_bottom");
