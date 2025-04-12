@@ -138,6 +138,50 @@ export function select_motion(
   }
 }
 
+/**
+ * Returns the offset of the caret in the current line.
+ *
+ * This returns `0` in a couple of different situations:
+ * - caret is at the BOF
+ * - caret is at the first character after the BOF
+ * - caret is at the newline char (i.e. at the start of the line)
+ *
+ * col = 0
+ * ```
+ *█foo
+ * ---
+ * █oo
+ * ---
+ * foo
+ *█bar
+ * ```
+ *
+ * col = 2
+ * ```
+ * foo
+ * b█r
+ * ```
+ */
+export function get_column_offset(editor: nsIEditor): number {
+  let pos = 0;
+  let i = editor.selection.focusOffset - 1;
+  const content = editor.selection.focusNode?.textContent;
+  if (content == null) {
+    throw new Error("No focused text content");
+  }
+
+  while (true) {
+    const char = content.charAt(i);
+    if (char === "\n" || i <= 0) {
+      break;
+    }
+    pos++;
+    i--;
+  }
+
+  return pos;
+}
+
 export function start_of_word(editor: nsIEditor) {
   const starting_cls = text_obj.cls(current_char(editor));
 

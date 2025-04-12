@@ -1023,3 +1023,48 @@ add_task(async function test_visual_backwards() {
     await test_selection("ll", "rld");
   });
 });
+
+add_task(async function test_get_column_offset() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    async function get_column(): Promise<number> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        const element = (content.document as Document).querySelector(
+          "#textarea-1"
+        );
+        if (!element) throw new Error("no element");
+
+        const motions = ChromeUtils.importESModule(
+          "chrome://glide/content/motions.mjs"
+        );
+        return motions.get_column_offset(
+          (element as any as MozEditableElement).editor!
+        );
+      });
+    }
+
+    const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(
+      browser,
+      { text_start: "end" }
+    );
+
+    await set_text("Hello\nworld", "from the end of the line");
+
+    await set_selection(-1, "");
+    is(await get_column(), 0);
+
+    await set_selection(0, "H");
+    is(await get_column(), 0);
+
+    await set_selection(1, "e");
+    is(await get_column(), 1);
+
+    await set_selection(5, "\n");
+    is(await get_column(), 0);
+
+    await set_selection(6, "w");
+    is(await get_column(), 1);
+
+    await set_selection(10, "d");
+    is(await get_column(), 5);
+  });
+});
