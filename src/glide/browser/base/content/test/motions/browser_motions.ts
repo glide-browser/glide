@@ -6,14 +6,12 @@
 const INPUT_TEST_FILE =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
-add_task(async function test_x_mapping_single_line() {
+add_task(async function test_normal_x() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit } = GlideTestUtils.make_input_test_helpers(
-      browser,
-      {
+    const { set_text, test_edit, set_selection } =
+      GlideTestUtils.make_input_test_helpers(browser, {
         text_start: 1,
-      }
-    );
+      });
 
     await set_text("abcdef", "basic");
     await test_edit("x", "bcdef", 0, "b");
@@ -22,6 +20,14 @@ add_task(async function test_x_mapping_single_line() {
 
     await set_text("", "should do nothing on empty input");
     await test_edit("x", "", -1, "");
+
+    await set_text("fob\nbar", "should not cross line boundaries");
+    await test_edit("x", "ob\nbar", 0, "o");
+    await test_edit("xxxxxxxxx", "\nbar", -1, "");
+
+    await set_text("fob\nbar", "should not delete line boundaries");
+    await set_selection(3, "\n");
+    await test_edit("xxxx", "fob\nbar", 3, "\n");
   });
 });
 

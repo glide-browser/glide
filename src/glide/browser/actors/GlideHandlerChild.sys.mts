@@ -475,17 +475,28 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `x`, no editor available");
         }
 
+        if (
+          // caret is on the first line and it's empty
+          (motions.is_bof(editor) && motions.next_char(editor) === "\n") ||
+          // we don't want to delete newlines
+          motions.current_char(editor) === "\n"
+        ) {
+          return;
+        }
+
         // `foo █ar baz` -> `foo█ar baz`
         editor.deleteSelection(
           /* action */ editor.ePrevious,
           /* stripWrappers */ editor.eStrip
         );
-        // `foo█ar baz` -> `foo █r baz`
-        editor.selectionController.characterMove(
-          /* forward */ true,
-          /* extend */ false
-        );
-        // TODO(glide): this shouldn't cross line boundaries
+
+        if (motions.next_char(editor) !== "\n") {
+          // `foo█ar baz` -> `foo █r baz`
+          editor.selectionController.characterMove(
+            /* forward */ true,
+            /* extend */ false
+          );
+        }
         break;
       }
       case "0": {

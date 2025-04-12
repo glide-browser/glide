@@ -485,7 +485,7 @@ function selection_direction(
   return "backwards";
 }
 
-function preceding_char(editor: nsIEditor): string | null {
+export function preceding_char(editor: nsIEditor): string | null {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content");
@@ -498,7 +498,7 @@ function preceding_char(editor: nsIEditor): string | null {
   return content.charAt(index);
 }
 
-function current_char(editor: nsIEditor): string {
+export function current_char(editor: nsIEditor): string {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content");
@@ -507,7 +507,7 @@ function current_char(editor: nsIEditor): string {
   return content.charAt(editor.selection.focusOffset - 1);
 }
 
-function next_char(editor: nsIEditor): string {
+export function next_char(editor: nsIEditor): string {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content, cannot move forward");
@@ -526,7 +526,7 @@ function is_empty_line(editor: nsIEditor): boolean {
   );
 }
 
-function is_bof(
+export function is_bof(
   editor: nsIEditor,
   pos: "left" | "current" = "current"
 ): boolean {
@@ -540,13 +540,13 @@ function is_bof(
   }
 }
 
-function is_eof(editor: nsIEditor): boolean {
+export function is_eof(editor: nsIEditor): boolean {
   return (
     editor.selection.focusOffset ===
     editor.selection.focusNode?.textContent?.length
   );
 }
 
-function is_eol(editor: nsIEditor): boolean {
+export function is_eol(editor: nsIEditor): boolean {
   return current_char(editor) === "\n";
 }
