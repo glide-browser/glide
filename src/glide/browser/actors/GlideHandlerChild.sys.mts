@@ -382,12 +382,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
 
         const sequence = props.sequence.join("");
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error(
-            `Cannot execute motion \`${operator}${sequence}\`, no editor available`
-          );
-        }
+        const editor = this.#expect_editor(`${operator}${sequence}`);
 
         switch (operator) {
           case "d": {
@@ -431,49 +426,27 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "w": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `w`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         motions.forward_word(editor, /* bigword */ false, this.state?.mode);
-
         break;
       }
       case "W": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `W`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         motions.forward_word(editor, /* bigword */ true, this.state?.mode);
-
         break;
       }
       case "b": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `b`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         motions.back_word(editor, false);
         break;
       }
       case "B": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `B`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         motions.back_word(editor, true);
-
         break;
       }
       case "x": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `x`, no editor available");
-        }
+        const editor = this.#expect_editor(props.command.name);
 
         if (
           // caret is on the first line and it's empty
@@ -500,28 +473,17 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "0": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `0`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         motions.beginning_of_line(editor, false);
         break;
       }
       case "$": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `$`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         motions.end_of_line(editor, false);
         break;
       }
       case "o": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `o`, no editor available");
-        }
+        const editor = this.#expect_editor(props.command.name);
 
         editor.selectionController.intraLineMove(
           /* forward */ true,
@@ -533,20 +495,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "v": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `v`, no editor available");
-        }
-
         this.#change_mode("visual");
         break;
       }
       case "vh": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `vh`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         if (editor.selection.isCollapsed) {
           motions.back_char(editor, true);
         }
@@ -554,11 +507,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "vl": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `vl`, no editor available");
-        }
-
+        const editor = this.#expect_editor(props.command.name);
         if (editor.selection.isCollapsed) {
           editor.selectionController.characterMove(false, false);
           editor.selectionController.characterMove(true, true);
@@ -568,10 +517,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "vd": {
-        const editor = this.#get_editor(this.#get_active_element());
-        if (!editor) {
-          throw new Error("Cannot execute `vd`, no editor available");
-        }
+        const editor = this.#expect_editor(props.command.name);
 
         // `foo ██r` -> `foo |r`
         editor.deleteSelection(editor.ePrevious, editor.eStrip);
@@ -650,6 +596,15 @@ export class GlideHandlerChild extends JSWindowActorChild<
           this.document.activeElement as HTMLElement
         )
       : null;
+  }
+
+  #expect_editor(seq: string): nsIEditor {
+    const editor = this.#get_editor(this.#get_active_element());
+    if (!editor) {
+      throw new Error(`Cannot execute \`${seq}\`, no editor available`);
+    }
+
+    return editor;
   }
 
   /**
