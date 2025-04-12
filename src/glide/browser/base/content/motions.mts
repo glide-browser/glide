@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import type { GlideOperator } from "./browser-mode.mts";
+
 const text_obj = ChromeUtils.importESModule(
   "chrome://glide/content/text-objects.mjs"
 );
@@ -16,13 +18,14 @@ const strings = ChromeUtils.importESModule(
 /**
  * An exhaustive list of all currently supported motion operations.
  */
-export const MOTIONS = ["iw", "h", "j", "k", "l"] as const;
+export const MOTIONS = ["iw", "h", "j", "k", "l", "d"] as const;
 type GlideMotion = (typeof MOTIONS)[number];
 
 export function select_motion(
   editor: nsIEditor,
   motion: GlideMotion,
-  mode: GlideMode
+  mode: GlideMode,
+  operator: GlideOperator
 ):
   | {
       // TODO(glide): figure out a different pattern for this problem
@@ -132,6 +135,42 @@ export function select_motion(
       back_char(editor, false);
       forward_char(editor, true);
       break;
+    }
+    case "d": {
+      if (operator !== "d") {
+        // the `d` motion is only allowed with `dd`, e.g. `cd` doesn't do anything
+        return;
+      }
+
+      if (is_empty_line(editor)) {
+        // For empty lines, select just the newline character
+        editor.selectionController.characterMove(false, false);
+        editor.selectionController.characterMove(true, true);
+
+        return {
+          fixup_deletion() {
+            // Position cursor at the start of the next line after deletion
+            if (!is_eof(editor) && current_char(editor) === "\n") {
+              editor.selectionController.characterMove(true, false);
+            }
+          },
+        };
+      }
+
+      const col_pos = get_column_offset(editor);
+      beginning_of_line(editor, false, true);
+      end_of_line(editor, true, true);
+
+      return {
+        fixup_deletion() {
+          for (let i = 0; i < col_pos; i++) {
+            editor.selectionController.characterMove(true, false);
+            if (is_eof(editor) || next_char(editor) === "\n") {
+              break;
+            }
+          }
+        },
+      };
     }
     default:
       throw assert_never(motion, `Unknown motion: ${motion}`);
@@ -392,7 +431,7 @@ export function beginning_of_line(
     editor.selectionController.characterMove(false, extend);
   }
 
-  if (inclusive && current_char(editor) === "\n") {
+  if (inclusive && !is_bof(editor, "current")) {
     editor.selectionController.characterMove(false, extend);
   }
 }
@@ -475,6 +514,16 @@ function next_char(editor: nsIEditor): string {
   }
 
   return content.charAt(editor.selection.focusOffset);
+}
+
+function is_empty_line(editor: nsIEditor): boolean {
+  // An empty line is when we're on a newline and either:
+  // 1. The previous character is also a newline (empty line between text)
+  // 2. The next character is also a newline (empty line between text)
+  return (
+    current_char(editor) === "\n" &&
+    (preceding_char(editor) === "\n" || next_char(editor) === "\n")
+  );
 }
 
 function is_bof(

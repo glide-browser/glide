@@ -159,6 +159,53 @@ add_task(async function test_normal_dl() {
   });
 });
 
+add_task(async function test_normal_dd() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit, set_selection } =
+      GlideTestUtils.make_input_test_helpers(browser, { text_start: 0 });
+
+    await set_text("Hello world", "basic deletion");
+    await test_edit("dd", "", -1, "");
+
+    await set_text("Hello\nworld", "basic deletion");
+    await test_edit("dd", "world", 0, "w");
+
+    await set_text("Hello\nworld", "retains col position");
+    await set_selection(1, "e");
+    await test_edit("dd", "world", 1, "o");
+
+    await set_text("foo bar\nwoo", "retains col position for shorter line");
+    await set_selection(6, "r");
+    await test_edit("dd", "woo", 2, "o");
+
+    await set_text(
+      "barracks\nfab\nalice",
+      "retains col position for multi lines"
+    );
+    await set_selection(7, "s");
+    await test_edit("dd", "fab\nalice", 2, "b");
+
+    await set_text("Hello world", "at eof");
+    await set_selection(10, "d");
+    await test_edit("dd", "", -1, "");
+
+    await set_text("hello\n\nworld", "empty line handling");
+    await set_selection(6, "\n");
+    await test_edit("dd", "hello\nworld", 6, "w");
+
+    await set_text("hello\t\tworld", "tab handling");
+    await set_selection(5, "\t");
+    await test_edit("dd", "", -1, "");
+
+    await set_text("fob\nbar\nbaz", "is repeatable");
+    await set_selection(1, "o");
+    await test_edit("dd", "bar\nbaz", 1, "a");
+    await test_edit(".", "baz", 1, "a");
+    await test_edit(".", "", -1, "");
+    await test_edit(".", "", -1, "");
+  });
+});
+
 add_task(async function test_normal_dh() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, test_edit, set_selection } =

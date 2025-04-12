@@ -527,7 +527,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
               const result = motions.select_motion(
                 editor,
                 sequence as any,
-                this.state?.mode ?? "normal"
+                this.state?.mode ?? "normal",
+                operator
               );
 
               // if the motion didn't actually select anything, then there's
@@ -549,7 +550,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
               motions.select_motion(
                 editor,
                 sequence as any,
-                this.state?.mode ?? "normal"
+                this.state?.mode ?? "normal",
+                operator
               );
               motions.delete_selection(editor, false);
             });
