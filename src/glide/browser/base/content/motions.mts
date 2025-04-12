@@ -377,6 +377,32 @@ export function back_word(editor: nsIEditor, bigword: boolean) {
   }
 }
 
+export function next_para(editor: nsIEditor) {
+  while (true) {
+    editor.selectionController.lineMove(true, false);
+    editor.selectionController.intraLineMove(true, false);
+
+    if (is_empty_line(editor) || is_eof(editor)) {
+      break;
+    }
+  }
+}
+
+export function back_para(editor: nsIEditor) {
+  while (true) {
+    editor.selectionController.lineMove(false, false);
+    editor.selectionController.intraLineMove(false, false);
+
+    if (is_empty_line(editor) || is_bof(editor)) {
+      break;
+    }
+  }
+
+  if (is_bof(editor) && next_char(editor) !== "\n") {
+    editor.selectionController.characterMove(true, false);
+  }
+}
+
 /**
  * Move back one character, this does *not* cross line boundaries.
  */
@@ -532,7 +558,7 @@ export function is_bof(
 ): boolean {
   switch (pos) {
     case "left":
-      return editor.selection.focusOffset - 1 === 0;
+      return editor.selection.focusOffset - 1 <= 0;
     case "current":
       return editor.selection.focusOffset === 0;
     default:

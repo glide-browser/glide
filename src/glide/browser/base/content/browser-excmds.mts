@@ -334,6 +334,18 @@ export const GLIDE_EXCOMMANDS = [
     content: true,
     repeatable: true,
   },
+  {
+    name: "}",
+    description: "Move to the start of the next paragraph",
+    content: true,
+    repeatable: false,
+  },
+  {
+    name: "{",
+    description: "Move to the start of the previous paragraph",
+    content: true,
+    repeatable: false,
+  },
 
   // visual
   {

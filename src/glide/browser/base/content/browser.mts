@@ -188,6 +188,8 @@ class GlideBrowserClass {
     this.key_manager.set("normal", "B", "B");
     this.key_manager.set("normal", "x", "x");
     this.key_manager.set("normal", "o", "o");
+    this.key_manager.set("normal", "{", "{");
+    this.key_manager.set("normal", "}", "}");
 
     // TODO(glide-motions): more general support for numbers like this
     this.key_manager.set("normal", "0", "0");

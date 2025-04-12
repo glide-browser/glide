@@ -445,6 +445,16 @@ export class GlideHandlerChild extends JSWindowActorChild<
         motions.back_word(editor, true);
         break;
       }
+      case "{": {
+        const editor = this.#expect_editor(props.command.name);
+        motions.back_para(editor);
+        break;
+      }
+      case "}": {
+        const editor = this.#expect_editor(props.command.name);
+        motions.next_para(editor);
+        break;
+      }
       case "x": {
         const editor = this.#expect_editor(props.command.name);
 

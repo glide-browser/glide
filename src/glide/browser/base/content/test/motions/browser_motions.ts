@@ -957,6 +957,48 @@ add_task(async function test_normal_$() {
   });
 });
 
+add_task(async function test_normal_next_para() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_motion } = GlideTestUtils.make_input_test_helpers(
+      browser,
+      { text_start: 1 }
+    );
+
+    await set_text("Hello wurld", "single line");
+    await test_motion("}", 10, "d");
+    await test_motion("}", 10, "d");
+
+    await set_text("hello\nwurld", "two lines");
+    await test_motion("}", 10, "d");
+    await test_motion("}", 10, "d");
+
+    await set_text("hello\n\nwurld", "empty line");
+    await test_motion("}", 5, "\n");
+    await test_motion("}", 11, "d");
+  });
+});
+
+add_task(async function test_normal_next_para() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_motion } = GlideTestUtils.make_input_test_helpers(
+      browser,
+      { text_start: "end" }
+    );
+
+    await set_text("Hello wurld", "single line");
+    await test_motion("{", 0, "H");
+    await test_motion("{", 0, "H");
+
+    await set_text("hello\nwurld", "two lines");
+    await test_motion("{", 0, "h");
+    await test_motion("{", 0, "h");
+
+    await set_text("hello\n\nwurld", "empty line");
+    await test_motion("{", 5, "\n");
+    await test_motion("{", 0, "h");
+  });
+});
+
 add_task(async function test_visual_overlapping_selections() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, set_selection, test_selection, test_motion } =
