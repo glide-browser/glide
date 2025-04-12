@@ -10,7 +10,7 @@
 
     "bundle": "bash ./scripts/bundle.sh",
     "build:docs": "pnpm tsn scripts/build-docs.mts",
-    "build:docs:index": "pnpm tsn scripts/build-docs.mts",
+    "build:docs:index": "bash ./scripts/build-docs-index.sh",
     
     "tsc": "tsc",
     "format": "prettier -w .",
