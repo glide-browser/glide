@@ -334,138 +334,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
     );
   }
 
-  #selection_listeners = new WeakMap<Selection, nsISelectionListener>();
-  #last_selection_focus_offset = new WeakMap<Selection, number>();
-  #ignore_selection_changes: boolean = false;
-
-  /**
-   * Invoke the given function while disabling our normal mode selection
-   * snapping. See `$on_selectionchange()` for more information.
-   */
-  #with_disable_selection_snapping<T>(fn: () => T): T {
-    const prev = this.#ignore_selection_changes;
-    this.#ignore_selection_changes = true;
-    try {
-      const result = fn();
-      this.#ignore_selection_changes = prev;
-      return result;
-    } catch (err) {
-      this.#ignore_selection_changes = prev;
-      throw err;
-    }
-  }
-
-  /**
-   * Listener that is used to "snap" selections in `normal` mode because:
-   *
-   *   1. It is impossible to have the block caret at line index 0 for non-empty
-   *      lines.
-   *   2. `h` and `l` should not cross line boundaries.
-   *
-   * Note that this function is invoked both when *we* change the selection
-   * (e.g. with `editor.selectionController.characterMove()`) and when the
-   * *user* changes the selection. If the snapping behaviour isn't wanted in the
-   * format case, you can use `this.#with_disable_selection_snapping()`.
-   *
-   * Note: maps to the `nsISelectionListener` interface.
-   */
-  #on_selectionchange(
-    _doc: null,
-    selection: Selection,
-    reason?: number,
-    amount?: number
-  ) {
-    if (true as any) {
-      return;
-    }
-
-    this._log.debug(
-      "selection change callback with reason:",
-      reason,
-      "amount:",
-      amount
-    );
-
-    const previous = this.#last_selection_focus_offset.get(selection);
-    this.#last_selection_focus_offset.set(selection, selection.focusOffset);
-
-    if (this.state?.mode !== "normal") {
-      this._log.debug(
-        "selection change not applicable; mode=",
-        this.state?.mode
-      );
-      return;
-    }
-
-    if (this.#ignore_selection_changes) {
-      this._log.debug("ignoring selection change");
-      return;
-    }
-
-    const is_forwards_dir = !previous || previous < selection.focusOffset;
-    this._log.debug("selectionchange is forwards dir?", is_forwards_dir);
-
-    const current_char = selection.focusNode?.textContent?.charAt(
-      selection.focusOffset - 1
-    );
-    this._log.debug("selectionchange current char:", current_char);
-
-    if (
-      current_char === "\n" ||
-      // at offset==0, there is no previous newline character
-      (selection.focusOffset === 0 &&
-        selection.focusNode?.textContent &&
-        selection.focusNode.textContent.length > 0)
-    ) {
-      this._log.debug("snapping position");
-
-      if (is_forwards_dir) {
-        // attempted selection change looked like this:
-        // `foo|\nbar` -> `foo\n|bar`
-        //
-        // snap back to the original line:
-        // `foo\n|bar` -> `foo|\nbar`
-        selection.setPosition(selection.focusNode, selection.focusOffset - 1);
-      } else {
-        // attempted selection change looked like this:
-        // `foo\n|bar` -> `foo|\nbar`
-        //
-        // snap back to the original line:
-        // `foo|\nbar` -> `foo\n|bar`
-        selection.setPosition(selection.focusNode, selection.focusOffset + 1);
-      }
-    }
-  }
-
-  #maybe_add_editor_selection_listener(element: HTMLElement): boolean {
-    const editor = this.#get_editor(element);
-    if (!editor) {
-      // nothing to do
-      this._log.debug("there is no editor for the given element");
-      return false;
-    }
-
-    return this.#maybe_add_selection_listener(editor.selection);
-  }
-
-  #maybe_add_selection_listener(selection: Selection): boolean {
-    if (this.#selection_listeners.get(selection)) {
-      // nothing to do
-      return false;
-    }
-
-    this._log.debug("adding selection listener");
-    const listener = {
-      notifySelectionChanged: this.#on_selectionchange.bind(this),
-    } as any as nsISelectionListener;
-    this.#selection_listeners.set(selection, listener);
-
-    selection.addSelectionListener(listener);
-    // TODO(glide): do I have to remove the listener at some point?
-
-    return true;
-  }
-
   #handle_excmd(props: ParentMessages["Glide::ExecuteContentCommand"]): void {
     switch (props.command.name) {
       case "blur": {
@@ -523,38 +391,36 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         switch (operator) {
           case "d": {
-            this.#with_disable_selection_snapping(() => {
-              const result = motions.select_motion(
-                editor,
-                sequence as any,
-                this.state?.mode ?? "normal",
-                operator
-              );
+            const result = motions.select_motion(
+              editor,
+              sequence as any,
+              this.state?.mode ?? "normal",
+              operator
+            );
 
-              // if the motion didn't actually select anything, then there's
-              // nothing for us to delete
-              if (!editor.selection.isCollapsed) {
-                motions.delete_selection(editor, true);
-              }
+            // if the motion didn't actually select anything, then there's
+            // nothing for us to delete
+            if (!editor.selection.isCollapsed) {
+              motions.delete_selection(editor, true);
+            }
 
-              if (result?.fixup_deletion) {
-                result.fixup_deletion();
-              }
-            });
+            if (result?.fixup_deletion) {
+              result.fixup_deletion();
+            }
+
             this.#record_repeatable_command({ ...props, operator });
             this.#change_mode("normal");
             break;
           }
           case "c": {
-            this.#with_disable_selection_snapping(() => {
-              motions.select_motion(
-                editor,
-                sequence as any,
-                this.state?.mode ?? "normal",
-                operator
-              );
-              motions.delete_selection(editor, false);
-            });
+            motions.select_motion(
+              editor,
+              sequence as any,
+              this.state?.mode ?? "normal",
+              operator
+            );
+            motions.delete_selection(editor, false);
+
             this.#record_repeatable_command({ ...props, operator });
             this.#change_mode("insert");
             break;
@@ -570,9 +436,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `w`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          motions.forward_word(editor, /* bigword */ false, this.state?.mode);
-        });
+        motions.forward_word(editor, /* bigword */ false, this.state?.mode);
 
         break;
       }
@@ -582,9 +446,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `W`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          motions.forward_word(editor, /* bigword */ true, this.state?.mode);
-        });
+        motions.forward_word(editor, /* bigword */ true, this.state?.mode);
 
         break;
       }
@@ -594,10 +456,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `b`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          motions.back_word(editor, false);
-        });
-
+        motions.back_word(editor, false);
         break;
       }
       case "B": {
@@ -606,9 +465,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `B`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          motions.back_word(editor, true);
-        });
+        motions.back_word(editor, true);
 
         break;
       }
@@ -618,19 +475,17 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `x`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          // `foo █ar baz` -> `foo█ar baz`
-          editor.deleteSelection(
-            /* action */ editor.ePrevious,
-            /* stripWrappers */ editor.eStrip
-          );
-          // `foo█ar baz` -> `foo █r baz`
-          editor.selectionController.characterMove(
-            /* forward */ true,
-            /* extend */ false
-          );
-          // TODO(glide): this shouldn't cross line boundaries
-        });
+        // `foo █ar baz` -> `foo█ar baz`
+        editor.deleteSelection(
+          /* action */ editor.ePrevious,
+          /* stripWrappers */ editor.eStrip
+        );
+        // `foo█ar baz` -> `foo █r baz`
+        editor.selectionController.characterMove(
+          /* forward */ true,
+          /* extend */ false
+        );
+        // TODO(glide): this shouldn't cross line boundaries
         break;
       }
       case "0": {
@@ -639,9 +494,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `0`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          motions.beginning_of_line(editor, false);
-        });
+        motions.beginning_of_line(editor, false);
         break;
       }
       case "$": {
@@ -649,9 +502,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         if (!editor) {
           throw new Error("Cannot execute `$`, no editor available");
         }
-        this.#with_disable_selection_snapping(() => {
-          motions.end_of_line(editor, false);
-        });
+
+        motions.end_of_line(editor, false);
         break;
       }
       case "o": {
@@ -660,13 +512,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error("Cannot execute `o`, no editor available");
         }
 
-        this.#with_disable_selection_snapping(() => {
-          editor.selectionController.intraLineMove(
-            /* forward */ true,
-            /* extend */ false
-          );
-          editor.insertLineBreak();
-        });
+        editor.selectionController.intraLineMove(
+          /* forward */ true,
+          /* extend */ false
+        );
+        editor.insertLineBreak();
 
         this.#change_mode("insert");
         break;
@@ -685,12 +535,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
         if (!editor) {
           throw new Error("Cannot execute `vh`, no editor available");
         }
-        this.#with_disable_selection_snapping(() => {
-          if (editor.selection.isCollapsed) {
-            motions.back_char(editor, true);
-          }
+
+        if (editor.selection.isCollapsed) {
           motions.back_char(editor, true);
-        });
+        }
+        motions.back_char(editor, true);
         break;
       }
       case "vl": {
@@ -698,14 +547,13 @@ export class GlideHandlerChild extends JSWindowActorChild<
         if (!editor) {
           throw new Error("Cannot execute `vl`, no editor available");
         }
-        this.#with_disable_selection_snapping(() => {
-          if (editor.selection.isCollapsed) {
-            editor.selectionController.characterMove(false, false);
-            editor.selectionController.characterMove(true, true);
-          }
 
-          motions.forward_char(editor, true);
-        });
+        if (editor.selection.isCollapsed) {
+          editor.selectionController.characterMove(false, false);
+          editor.selectionController.characterMove(true, true);
+        }
+
+        motions.forward_char(editor, true);
         break;
       }
       case "vd": {
@@ -713,13 +561,13 @@ export class GlideHandlerChild extends JSWindowActorChild<
         if (!editor) {
           throw new Error("Cannot execute `vd`, no editor available");
         }
-        this.#with_disable_selection_snapping(() => {
-          // `foo ██r` -> `foo |r`
-          editor.deleteSelection(editor.ePrevious, editor.eStrip);
 
-          // `foo |r` -> `foo r|`
-          motions.forward_char(editor, false);
-        });
+        // `foo ██r` -> `foo |r`
+        editor.deleteSelection(editor.ePrevious, editor.eStrip);
+
+        // `foo |r` -> `foo r|`
+        motions.forward_char(editor, false);
+
         this.#change_mode("normal");
         break;
       }
@@ -881,7 +729,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
         const target = this.#get_active_nested_shadow_root_elem(
           event.target as HTMLElement
         );
-        this.#maybe_add_editor_selection_listener(target);
 
         const current_mode = this.state?.mode;
         if (current_mode === "ignore") {
