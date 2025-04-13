@@ -307,6 +307,67 @@ add_task(async function test_normal_dj() {
   });
 });
 
+add_task(async function test_normal_r() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit, set_selection } =
+      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+
+    await set_text("Hello world", "basic character replacement");
+    await test_edit("rx", "xello world", 0, "x");
+
+    await set_text("Hello world", "replacing with same character");
+    await set_selection(0);
+    await test_edit("rH", "Hello world", 0, "H");
+
+    await set_text("Hello world", "multiple replacements in sequence");
+    await set_selection(2);
+    await test_edit("rxry", "Heylo world", 2, "y");
+
+    await set_text("Hello\nworld", "replacement at end of line");
+    await set_selection(4);
+    await test_edit("rx", "Hellx\nworld", 4, "x");
+
+    await set_text("Hello\nworld", "replacement at start of line");
+    await set_selection(6);
+    await test_edit("rx", "Hello\nxorld", 6, "x");
+
+    await set_text("Hello world", "replacing with special character");
+    await set_selection(5);
+    await test_edit("r<", "Hello<world", 5, "<");
+
+    await set_text("Hello world", "replacing with number");
+    await set_selection(2);
+    await test_edit("r1", "He1lo world", 2, "1");
+
+    await set_text("Hello world", "ignores modifiers");
+    await set_selection(2);
+    await test_edit("r<D-c>", "Heclo world", 2, "c");
+
+    await set_text("Hello\nworld", "replacing newline character");
+    await set_selection(2);
+    await test_edit("r\n", "He\nlo\nworld", 2, "\n");
+
+    await set_text("Hello\tworld", "replacing tab character");
+    await set_selection(6, "w");
+    await test_edit("r<Tab>", "Hello\t\torld", 6, "\t");
+
+    await set_text("Hello\nworld\nfoobar", "r is repeatable with .");
+    await set_selection(1);
+    await test_edit("rx", "Hxllo\nworld\nfoobar", 1, "x");
+    await set_selection(7);
+    await test_edit(".", "Hxllo\nwxrld\nfoobar", 7, "x");
+    await set_selection(13);
+    await test_edit(".", "Hxllo\nwxrld\nfxobar", 13, "x");
+
+    await set_text("Hello\nworld", "at EOF");
+    await set_selection(10);
+    await test_edit("rx", "Hello\nworlx", 10, "x");
+
+    await set_text("", "on empty text");
+    await test_edit("rx", "x", 0, "x");
+  });
+});
+
 add_task(async function test_o_mapping() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, test_edit, set_selection } =

@@ -17,7 +17,7 @@ export type _CheckTypesInSync = Assert<
 >;
 
 export const OPERATOR_SCHEMA_TYPE = {
-  enum: ["d", "c"],
+  enum: ["d", "c", "r"],
 } as const satisfies ArgumentSchema["type"];
 
 export type GlideOperator = ParsedArg<{

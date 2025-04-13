@@ -516,7 +516,7 @@ export function split(seq: string): string[] {
       right_angle_bracket_index === i + 1
     ) {
       // if there is no corresponding `>` **or** if the very next char is a `>`, e.g. `<>`
-      // then we nee dto treat the `<` as an `<lt>` directly, instead of as part of the syntax
+      // then we need to treat the `<` as an `<lt>` directly, instead of as part of the syntax
       // for special characters / modifiers
       parts.push(char);
       i++;
@@ -529,4 +529,32 @@ export function split(seq: string): string[] {
   }
 
   return parts;
+}
+
+/**
+ * Returns whether or not a given key notation should
+ * be "printable", i.e. whether or not it should be inserted
+ * into text when editing.
+ *
+ * All non-special keys are printable and certain special keys
+ * are printable, e.g. `<Enter>`, `<Tab>`
+ */
+export function is_printable(keyn: string): boolean {
+  if (!keyn.startsWith("<")) {
+    // all non-special keys are treated as printable
+    return true;
+  }
+
+  return !(
+    keyn === "<Esc>" ||
+    keyn === "<BS>" ||
+    keyn === "<Up>" ||
+    keyn === "<Down>" ||
+    keyn === "<Left>" ||
+    keyn === "<Right>" ||
+    keyn === "<Del>" ||
+    keyn === "<Home>" ||
+    keyn === "<End>" ||
+    keyn.startsWith("<F") // fn keys
+  );
 }

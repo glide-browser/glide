@@ -12,6 +12,9 @@ import type {
 import type { ParentMessages } from "../../actors/GlideHandlerParent.sys.mjs";
 import type { GlideOperator } from "./browser-mode.mts";
 
+const Keys = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/keys.mjs"
+);
 const { assert_never, assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
@@ -211,6 +214,20 @@ export const GLIDE_EXCOMMANDS = [
       direction: {
         type: { enum: ["left", "right", "up", "down"] },
         required: true,
+        position: 0,
+      },
+    },
+  },
+
+  {
+    name: "r",
+    description: "Replace the current character",
+    content: false,
+    repeatable: false,
+    args_schema: {
+      character: {
+        type: "string",
+        required: false,
         position: 0,
       },
     },
@@ -712,6 +729,46 @@ class GlideExcmdsClass {
         } = this.#parse_command_args(command_meta, command);
         GlideBrowser.api.keymaps.del("insert", lhs);
         break;
+      }
+
+      case "r": {
+        const {
+          args: { character },
+        } = this.#parse_command_args(command_meta, command);
+
+        if (character) {
+          GlideBrowser.get_focused_actor().send_async_message(
+            "Glide::ReplaceChar",
+            {
+              character:
+                character === "<CR>" ? "\n"
+                : character === "<Tab>" ? "\t"
+                : character,
+            }
+          );
+          if (GlideBrowser.state.mode !== "normal") {
+            await GlideExcmds.execute("mode_change normal");
+          }
+
+          return;
+        }
+
+        await GlideExcmds.execute("mode_change op-pending --operator=r");
+
+        const event = await GlideBrowser.api.keys.next();
+        if (!Keys.is_printable(event.glide_key)) {
+          return;
+        }
+
+        return await GlideExcmds.execute(
+          `r ${
+            event.glide_key === "<CR>" || event.glide_key === "<Tab>" ?
+              event.glide_key
+              // note: intentionally using `.key` here as we don't care about modifiers
+            : event.key
+          }`,
+          { save_to_history: true }
+        );
       }
 
       case "help": {

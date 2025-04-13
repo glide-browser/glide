@@ -172,6 +172,16 @@ export class GlideHandlerChild extends JSWindowActorChild<
         this.#handle_excmd(message.data);
         break;
       }
+      case "Glide::ReplaceChar": {
+        const editor = this.#expect_editor("replace char");
+        motions.back_char(editor, false);
+        editor.deleteSelection(
+          /* action */ editor.eNext,
+          /* stripWrappers */ editor.eStrip
+        );
+        editor.insertText(message.data.character);
+        break;
+      }
       case "Glide::KeyMappingPartial": {
         // for partial key mappings, we need to *only* rely on the active
         // element as our `#last_key_event_element` will be behind as the
@@ -419,6 +429,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
             this.#record_repeatable_command({ ...props, operator });
             this.#change_mode("insert");
             break;
+          }
+          case "r": {
+            // implementation is in the main thread
+            throw new Error("The `r` operator cannot be executed");
           }
           default:
             throw assert_never(operator);
