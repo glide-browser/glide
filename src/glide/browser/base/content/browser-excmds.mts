@@ -410,7 +410,7 @@ export type GlideCommandCallback = () => void;
 export type GlideCommandValue = GlideCommandString | GlideCommandCallback;
 
 interface ExecuteProps {
-  mapping: KeyMappingTrieNode | null;
+  mapping?: KeyMappingTrieNode | null;
 
   /**
    * Whether or not the executed command should be saved so that it can be repeated with `.`
@@ -485,7 +485,7 @@ class GlideExcmdsClass {
   async execute(
     command: GlideCommandString | GlideCommandCallback,
     props?: ExecuteProps
-  ) {
+  ): Promise<void> {
     if (typeof command === "function") {
       return this.#execute_function_command(command, props);
     }
@@ -497,8 +497,9 @@ class GlideExcmdsClass {
     }
 
     if (
-      command_meta.repeatable &&
-      (props?.save_to_history === undefined || props.save_to_history)
+      typeof props?.save_to_history === "boolean" ?
+        props.save_to_history
+      : command_meta.repeatable
     ) {
       this.add_to_command_history({ type: "command", command });
     }
