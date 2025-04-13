@@ -29,6 +29,9 @@ const { assert_present } = ChromeUtils.importESModule(
 const { dedent } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/dedent.mjs"
 );
+const Keys = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/keys.mjs"
+);
 
 class GlideTestUtilsClass {
   commandline = new GlideCommandLineTestUtils();
@@ -83,6 +86,19 @@ class GlideTestUtilsClass {
     const str = func.toString();
     const body = str.substring(str.indexOf("{") + 1, str.lastIndexOf("}"));
     return dedent(body).trimEnd();
+  }
+
+  /**
+   * Take a given key sequence and synthesize events for each keyn,
+   *
+   * e.g. `ab<C-d>` will fire three different events, a, b, and ctrl+c
+   */
+  async synthesize_keyseq(keyseq: string) {
+    for (const keyn of Keys.split(keyseq)) {
+      const event = Keys.parse_modifiers(keyn);
+      await g.sleep_frames(3);
+      g.EventUtils.synthesizeKey(event.key, event);
+    }
   }
 
   /**
@@ -141,15 +157,12 @@ class GlideTestUtilsClass {
       },
 
       async test_motion(
-        motion: string | string[],
+        motion: string,
         expected_pos: number,
         expected_char: string,
         state?: "todo"
       ) {
-        for (const key of motion) {
-          await g.sleep_frames(3);
-          g.EventUtils.synthesizeKey(key);
-        }
+        await GlideTestUtils.synthesize_keyseq(motion);
         await g.sleep_frames(3);
 
         const [position, char] = await SpecialPowers.spawn(
@@ -201,10 +214,7 @@ class GlideTestUtilsClass {
           );
         }
 
-        for (const key of motion) {
-          await g.sleep_frames(3);
-          g.EventUtils.synthesizeKey(key);
-        }
+        await GlideTestUtils.synthesize_keyseq(motion);
         await g.sleep_frames(3);
 
         const [text, position] = await SpecialPowers.spawn(
@@ -230,10 +240,7 @@ class GlideTestUtilsClass {
         expected_selection: string,
         state?: "todo"
       ) {
-        for (const key of motion) {
-          await g.sleep_frames(3);
-          g.EventUtils.synthesizeKey(key);
-        }
+        await GlideTestUtils.synthesize_keyseq(motion);
         await g.sleep_frames(3);
 
         const selected_text = await SpecialPowers.spawn(

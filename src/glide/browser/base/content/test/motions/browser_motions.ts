@@ -1072,7 +1072,7 @@ add_task(async function test_visual_overlapping_selections() {
     await set_selection(4);
     await test_selection("vhh", "llo");
     await test_selection("ll", "o");
-    await test_motion(["KEY_Escape"], 4, "o");
+    await test_motion("<Esc>", 4, "o");
 
     await set_text("Hello world", "right then left");
     await set_selection(5); // " "
@@ -1092,36 +1092,36 @@ add_task(async function test_cancelling_visual_selections() {
 
     await set_text("Hello world", "going right then cancel");
     await test_selection("vllll", "Hello");
-    await test_motion(["KEY_Escape"], 4, "o");
+    await test_motion("<Esc>", 4, "o");
     is(GlideBrowser.state.mode, "normal", "Esc in visual should enter normal");
 
     await set_text("Hello world", "going left then cancel");
     await set_selection(10);
     await test_selection("vhhhh", "world");
-    await test_motion(["KEY_Escape"], 6, "w");
+    await test_motion("<Esc>", 6, "w");
 
     await set_text("Hello world", "going left then right then cancel");
     await set_selection(10);
     await test_selection("vhhhh", "world");
     await test_selection("ll", "rld");
-    await test_motion(["KEY_Escape"], 8, "r");
+    await test_motion("<Esc>", 8, "r");
 
     await set_text("Hello world", "going right then left then cancel");
     await test_selection("vllll", "Hello");
     await test_selection("hh", "Hel");
-    await test_motion(["KEY_Escape"], 2, "l");
+    await test_motion("<Esc>", 2, "l");
 
     await set_text("Hello world", "going right then back to the anchor");
     await set_selection(4);
     await test_selection("vll", "o w");
     await test_selection("hh", "o");
-    await test_motion(["KEY_Escape"], 4, "o");
+    await test_motion("<Esc>", 4, "o");
 
     await set_text("Hello world", "going left then back to the anchor");
     await set_selection(4);
     await test_selection("vhh", "llo");
     await test_selection("ll", "o");
-    await test_motion(["KEY_Escape"], 4, "o");
+    await test_motion("<Esc>", 4, "o");
   });
 });
 
