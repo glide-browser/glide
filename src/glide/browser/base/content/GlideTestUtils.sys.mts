@@ -12,7 +12,16 @@
  * global variables around and I could not figure out how to get `delete window[prop]` to
  * actually clean things up always.`
  */
-const g: typeof globalThis = {} as any;
+const g: {
+  // note: we have to explicitly list out the symbols we want
+  //       as there's an LSP bug where it otherwise thinks these
+  //       don't exist.
+  is: typeof is;
+  todo_is: typeof todo_is;
+  sleep_frames: typeof sleep_frames;
+  EventUtils: typeof EventUtils;
+  TestUtils: typeof TestUtils;
+} = {} as any;
 
 const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
