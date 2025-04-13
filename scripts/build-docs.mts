@@ -11,6 +11,7 @@
 //  alternatively `pnpm bootstrap` will do that for you
 
 import "./polyfill-chromeutils.cjs";
+import meow from "meow";
 import Path from "path";
 import fs from "fs/promises";
 import { DOCS_DIR, DOCS_DIST_DIR } from "./canonical-paths.mts";
@@ -21,6 +22,17 @@ const shiki = ChromeUtils.importESModule(
 const { markdown_to_html } = ChromeUtils.importESModule(
   "chrome://glide/content/docs.mjs"
 );
+
+const cli = meow({
+  importMeta: import.meta,
+  allowUnknownFlags: false,
+  flags: {
+    symlink: {
+      type: "boolean",
+      default: true,
+    },
+  },
+});
 
 const MD_GLOB_EXCLUDE = /monospace-web/;
 const SYMLINKS = [
@@ -84,12 +96,19 @@ for (const file of SYMLINKS) {
     await fs.mkdir(parent_dist_dir, { recursive: true });
   }
 
-  if (
-    await fs
-      .access(dist_file)
-      .then(() => false)
-      .catch(() => true)
-  ) {
+  if (cli.flags.symlink) {
+    const stat = await fs.stat(dist_file).catch(() => null);
+    if (stat?.isSymbolicLink()) {
+      continue;
+    }
+
+    if (stat) {
+      await fs.rm(dist_file);
+    }
+
     await fs.symlink(source_file, dist_file);
+  } else {
+    await fs.rm(dist_file);
+    await fs.copyFile(source_file, dist_file);
   }
 }

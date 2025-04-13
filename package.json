@@ -27,6 +27,7 @@
     "chokidar": "^4.0.3",
     "esbuild": "^0.25.2",
     "execa": "^9.5.2",
+    "meow": "^13.2.0",
     "prettier": "^3.5.3",
     "shiki": "^3.2.1",
     "ts-blank-space": "^0.6.1",
