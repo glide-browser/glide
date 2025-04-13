@@ -26,6 +26,9 @@ const g: {
 const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
+const { dedent } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/dedent.mjs"
+);
 
 class GlideTestUtilsClass {
   commandline = new GlideCommandLineTestUtils();
@@ -79,19 +82,7 @@ class GlideTestUtilsClass {
   #get_function_body(func: () => void): string {
     const str = func.toString();
     const body = str.substring(str.indexOf("{") + 1, str.lastIndexOf("}"));
-    return this.#dedent(body).trimEnd();
-  }
-
-  // minimal copy of https://www.npmjs.com/package/dedent
-  #dedent(str: string): string {
-    str = str.replace(/^\n/, "");
-    const match = str.match(/^[ \t]*(?=\S)/gm);
-    if (!match) return str;
-
-    const indent = Math.min(...match.map(x => x.length));
-    const regex = new RegExp(`^[ \\t]{${indent}}`, "gm");
-
-    return str.replace(regex, "");
+    return dedent(body).trimEnd();
   }
 
   /**

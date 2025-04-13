@@ -64,8 +64,13 @@ function _dedent(templ) {
   return string;
 }
 
+export function dedent(arg: string): string;
 export function dedent(
   strings: TemplateStringsArray,
+  ...values: unknown[]
+): string;
+export function dedent(
+  strings: TemplateStringsArray | string,
   ...values: unknown[]
 ): string {
   return (
