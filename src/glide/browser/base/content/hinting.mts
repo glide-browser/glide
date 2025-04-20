@@ -95,7 +95,7 @@ export const content = {
       "menulist",
       "checkbox",
       "radio",
-    ].flatMap(str => [str, str.toUpperCase(), `html:${str}`])
+    ].flatMap(str => [str, str.toUpperCase(), `html:${str}`, `xul:${str}`])
   ),
 
   // TODO(glide): add more `role`s
