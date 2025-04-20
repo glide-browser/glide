@@ -16,6 +16,27 @@ const strings = ChromeUtils.importESModule(
 );
 
 /**
+ * A minimal representation of `nsIEditor` so that we can re-implement editors
+ * for non-standard cases, e.g. Google Docs, Monaco.
+ */
+export interface Editor {
+  selection: {
+    isCollapsed: boolean;
+    focusNode?: {
+      textContent: string | null;
+    } | null;
+    focusOffset: number;
+    anchorOffset: number;
+  };
+  selectionController: {
+    characterMove(forward: boolean, extend: boolean): void;
+    lineMove(forward: boolean, extend: boolean): void;
+    intraLineMove(forward: boolean, extend: boolean): void;
+  };
+  deleteSelection(action: number, stripWrappers: number): void;
+}
+
+/**
  * An exhaustive list of all currently supported motion operations.
  */
 export const MOTIONS = ["iw", "h", "j", "k", "l", "d"] as const;
@@ -201,7 +222,7 @@ export function select_motion(
  * b█r
  * ```
  */
-export function get_column_offset(editor: nsIEditor): number {
+export function get_column_offset(editor: Editor): number {
   let pos = 0;
   let i = editor.selection.focusOffset - 1;
   const content = editor.selection.focusNode?.textContent;
@@ -221,7 +242,7 @@ export function get_column_offset(editor: nsIEditor): number {
   return pos;
 }
 
-export function start_of_word(editor: nsIEditor) {
+export function start_of_word(editor: Editor) {
   const starting_cls = text_obj.cls(current_char(editor));
 
   while (text_obj.cls(current_char(editor)) === starting_cls) {
@@ -243,7 +264,7 @@ export function start_of_word(editor: nsIEditor) {
 }
 
 export function end_of_word(
-  editor: nsIEditor,
+  editor: Editor,
   props?: { extend?: boolean; inclusive?: boolean }
 ) {
   if (is_eol(editor)) {
@@ -276,7 +297,7 @@ export function end_of_word(
  * `bigword=false` -> equivalent to `w`
  */
 export function forward_word(
-  editor: nsIEditor,
+  editor: Editor,
   bigword: boolean,
   mode: GlideMode | undefined
 ) {
@@ -323,7 +344,7 @@ export function forward_word(
  * `bigword=true`  -> equivalent to `B`
  * `bigword=false` -> equivalent to `b`
  */
-export function back_word(editor: nsIEditor, bigword: boolean) {
+export function back_word(editor: Editor, bigword: boolean) {
   // we always want to move one character back no matter what
   editor.selectionController.characterMove(
     /* forward */ false,
@@ -406,7 +427,7 @@ export function back_para(editor: nsIEditor) {
 /**
  * Move back one character, this does *not* cross line boundaries.
  */
-export function back_char(editor: nsIEditor, extend: boolean) {
+export function back_char(editor: Editor, extend: boolean) {
   if (
     (selection_direction(editor) !== "forwards" &&
       current_char(editor) === "\n") ||
@@ -423,7 +444,7 @@ export function back_char(editor: nsIEditor, extend: boolean) {
  * the line boundary by a single character when the selection is not collapsed
  * (a la visual mode).
  */
-export function forward_char(editor: nsIEditor, extend: boolean) {
+export function forward_char(editor: Editor, extend: boolean) {
   if (is_eof(editor)) {
     return;
   }
@@ -449,7 +470,7 @@ export function forward_char(editor: nsIEditor, extend: boolean) {
  * any leading whitespace.
  */
 export function beginning_of_line(
-  editor: nsIEditor,
+  editor: Editor,
   extend: boolean,
   inclusive: boolean = false
 ) {
@@ -467,7 +488,7 @@ export function beginning_of_line(
  * any trailing whitespace.
  */
 export function end_of_line(
-  editor: nsIEditor,
+  editor: Editor,
   extend: boolean,
   inclusive: boolean = false
 ) {
@@ -482,14 +503,14 @@ export function end_of_line(
 /**
  * Delete the current selection range.
  */
-export function delete_selection(editor: nsIEditor, forward: boolean) {
+export function delete_selection(editor: Editor, forward: boolean) {
   if (editor.selection.isCollapsed) {
     throw new Error("cannot delete collapsed selections");
   }
 
   editor.deleteSelection(
-    /* action */ editor.ePrevious,
-    /* stripWrappers */ editor.eStrip
+    /* action */ Ci.nsIEditor.ePrevious,
+    /* stripWrappers */ Ci.nsIEditor.eStrip
   );
 
   if (forward && !is_eol(editor)) {
@@ -498,7 +519,7 @@ export function delete_selection(editor: nsIEditor, forward: boolean) {
 }
 
 function selection_direction(
-  editor: nsIEditor
+  editor: Editor
 ): "forwards" | "backwards" | "collapsed" {
   if (editor.selection.isCollapsed) {
     return "collapsed";
@@ -511,7 +532,7 @@ function selection_direction(
   return "backwards";
 }
 
-export function preceding_char(editor: nsIEditor): string | null {
+export function preceding_char(editor: Editor): string | null {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content");
@@ -524,7 +545,7 @@ export function preceding_char(editor: nsIEditor): string | null {
   return content.charAt(index);
 }
 
-export function current_char(editor: nsIEditor): string {
+export function current_char(editor: Editor): string {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content");
@@ -533,7 +554,7 @@ export function current_char(editor: nsIEditor): string {
   return content.charAt(editor.selection.focusOffset - 1);
 }
 
-export function next_char(editor: nsIEditor): string {
+export function next_char(editor: Editor): string {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content, cannot move forward");
@@ -542,7 +563,7 @@ export function next_char(editor: nsIEditor): string {
   return content.charAt(editor.selection.focusOffset);
 }
 
-function is_empty_line(editor: nsIEditor): boolean {
+function is_empty_line(editor: Editor): boolean {
   // An empty line is when we're on a newline and either:
   // 1. The previous character is also a newline (empty line between text)
   // 2. The next character is also a newline (empty line between text)
@@ -553,7 +574,7 @@ function is_empty_line(editor: nsIEditor): boolean {
 }
 
 export function is_bof(
-  editor: nsIEditor,
+  editor: Editor,
   pos: "left" | "current" = "current"
 ): boolean {
   switch (pos) {
@@ -566,13 +587,13 @@ export function is_bof(
   }
 }
 
-export function is_eof(editor: nsIEditor): boolean {
+export function is_eof(editor: Editor): boolean {
   return (
     editor.selection.focusOffset ===
     editor.selection.focusNode?.textContent?.length
   );
 }
 
-export function is_eol(editor: nsIEditor): boolean {
+export function is_eol(editor: Editor): boolean {
   return current_char(editor) === "\n";
 }
