@@ -581,7 +581,7 @@ export function is_bof(
     case "left":
       return editor.selection.focusOffset - 1 <= 0;
     case "current":
-      return editor.selection.focusOffset === 0;
+      return editor.selection.focusOffset <= 0;
     default:
       throw assert_never(pos);
   }
