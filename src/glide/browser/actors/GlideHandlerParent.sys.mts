@@ -52,6 +52,7 @@ export interface ParentMessages {
       | GlideFunctionIPC<(target: HTMLElement) => Promise<void>>
       | null;
   };
+  "Glide::Move": { direction: GlideDirection };
   "Glide::Debug": null;
 }
 

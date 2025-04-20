@@ -308,6 +308,23 @@ export class GlideHandlerChild extends JSWindowActorChild<
         this.document?.notifyUserGestureActivation();
         break;
       }
+      case "Glide::Move": {
+        const doc_shell = assert_present(this.docShell);
+        switch (message.data.direction) {
+          case "left":
+            return doc_shell.doCommand("cmd_moveLeft");
+          case "right":
+            return doc_shell.doCommand("cmd_moveRight");
+          case "up":
+            return doc_shell.doCommand("cmd_moveUp");
+          case "down":
+            return doc_shell.doCommand("cmd_moveDown");
+          case "endline":
+            return doc_shell.doCommand("cmd_endLine");
+          default:
+            throw assert_never(message.data.direction);
+        }
+      }
       default:
         throw assert_never(message);
     }

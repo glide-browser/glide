@@ -636,14 +636,9 @@ class GlideExcmdsClass {
 
         // TODO(glide): use command chaining to do this instead
         if (automove) {
-          const doc_shell = assert_present(docShell, "No `docShell` present");
-          if (automove === "left") {
-            doc_shell.doCommand("cmd_moveLeft");
-          } else if (automove === "endline") {
-            doc_shell.doCommand("cmd_endLine");
-          } else {
-            throw assert_never(automove);
-          }
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", {
+            direction: automove,
+          });
         }
 
         if (current_mode === "normal" && mode === "normal") {
@@ -660,21 +655,11 @@ class GlideExcmdsClass {
         const {
           args: { direction },
         } = this.#parse_command_args(command_meta, command);
-        const doc_shell = assert_present(docShell, "No `docShell` present");
 
-        if (direction === "left") {
-          doc_shell.doCommand("cmd_moveLeft");
-        } else if (direction === "right") {
-          doc_shell.doCommand("cmd_moveRight");
-        } else if (direction === "up") {
-          doc_shell.doCommand("cmd_moveUp");
-        } else if (direction === "down") {
-          doc_shell.doCommand("cmd_moveDown");
-        } else {
-          throw assert_never(direction);
-        }
-
-        break;
+        return GlideBrowser.get_focused_actor().send_async_message(
+          "Glide::Move",
+          { direction }
+        );
       }
 
       case "echo": {
