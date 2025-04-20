@@ -102,6 +102,7 @@ export const content = {
   HINTABLE_ROLES: new Set([
     "link",
     "button",
+    "option",
     "menuitem",
     "menuitemcheckbox",
     "menuitemradio",
