@@ -1,12 +1,12 @@
 declare namespace EventUtils {
-declare function _EU_isMac(aWindow?: Window & typeof globalThis): boolean;
-declare function _EU_isWin(aWindow?: Window & typeof globalThis): boolean;
-declare function _EU_isLinux(aWindow?: Window & typeof globalThis): boolean;
-declare function _EU_isAndroid(aWindow?: Window & typeof globalThis): boolean;
-declare function _EU_maybeWrap(o: any): any;
-declare function _EU_maybeUnwrap(o: any): any;
-declare function _EU_getPlatform(): "unknown" | "linux" | "android" | "windows" | "mac";
-declare function _EU_roundDevicePixels(aMaybeFractionalPixels: any): number;
+function _EU_isMac(aWindow?: Window & typeof globalThis): boolean;
+function _EU_isWin(aWindow?: Window & typeof globalThis): boolean;
+function _EU_isLinux(aWindow?: Window & typeof globalThis): boolean;
+function _EU_isAndroid(aWindow?: Window & typeof globalThis): boolean;
+function _EU_maybeWrap(o: any): any;
+function _EU_maybeUnwrap(o: any): any;
+function _EU_getPlatform(): "unknown" | "linux" | "android" | "windows" | "mac";
+function _EU_roundDevicePixels(aMaybeFractionalPixels: any): number;
 /**
  * promiseElementReadyForUserInput() dispatches mousemove events to aElement
  * and waits one of them for a while.  Then, returns "resolved" state when it's
@@ -18,10 +18,10 @@ declare function _EU_roundDevicePixels(aMaybeFractionalPixels: any): number;
  * but your test cannot check whether the element is now in APZ to deliver
  * a user input event.
  */
-declare function promiseElementReadyForUserInput(aElement: any, aWindow?: Window & typeof globalThis, aLogFunc?: any): Promise<void>;
-declare function getElement(id: any): any;
-declare function computeButton(aEvent: any): any;
-declare function computeButtons(aEvent: any, utils: any): any;
+function promiseElementReadyForUserInput(aElement: any, aWindow?: Window & typeof globalThis, aLogFunc?: any): Promise<void>;
+function getElement(id: any): any;
+function computeButton(aEvent: any): any;
+function computeButtons(aEvent: any, utils: any): any;
 /**
  * Send a mouse event to the node aTarget (aTarget can be an id, or an
  * actual node) . The "event" passed in to aEvent is just a JavaScript
@@ -32,15 +32,15 @@ declare function computeButtons(aEvent: any, utils: any): any;
  *
  * ``sendMouseEvent({type:'click'}, 'node');``
  */
-declare function sendMouseEvent(aEvent: any, aTarget: any, aWindow: any): any;
-declare function isHidden(aElement: any): boolean;
+function sendMouseEvent(aEvent: any, aTarget: any, aWindow: any): any;
+function isHidden(aElement: any): boolean;
 /**
  * Send a drag event to the node aTarget (aTarget can be an id, or an
  * actual node) . The "event" passed in to aEvent is just a JavaScript
  * object with the properties set that the real drag event object should
  * have. This includes the type of the drag event.
  */
-declare function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): any;
+function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): any;
 /**
  * Send the char aChar to the focused element.  This method handles casing of
  * chars (sends the right charcode, and sends a shift key for uppercase chars).
@@ -49,26 +49,26 @@ declare function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typ
  * For now this method only works for ASCII characters and emulates the shift
  * key state on US keyboard layout.
  */
-declare function sendChar(aChar: any, aWindow: any): void;
+function sendChar(aChar: any, aWindow: any): void;
 /**
  * Send the string aStr to the focused element.
  *
  * For now this method only works for ASCII characters and emulates the shift
  * key state on US keyboard layout.
  */
-declare function sendString(aStr: any, aWindow: any): void;
+function sendString(aStr: any, aWindow: any): void;
 /**
  * Send the non-character key aKey to the focused node.
  * The name of the key should be the part that comes after ``DOM_VK_`` in the
  * KeyEvent constant name for this key.
  * No modifiers are handled at this point.
  */
-declare function sendKey(aKey: any, aWindow: any): void;
+function sendKey(aKey: any, aWindow: any): void;
 /**
  * Parse the key modifier flags from aEvent. Used to share code between
  * synthesizeMouse and synthesizeKey.
  */
-declare function _parseModifiers(aEvent: any, aWindow?: Window & typeof globalThis): number;
+function _parseModifiers(aEvent: any, aWindow?: Window & typeof globalThis): number;
 /**
  * Synthesize a mouse event on a target. The actual client point is determined
  * by taking the aTarget's client box and offseting it by aOffsetX and
@@ -86,7 +86,7 @@ declare function _parseModifiers(aEvent: any, aWindow?: Window & typeof globalTh
  *
  * Returns whether the event had preventDefault() called on it.
  */
-declare function synthesizeMouse(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): boolean;
+function synthesizeMouse(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): boolean;
 /**
  * Synthesize one or more touches on aTarget. aTarget can be either Element
  * or Array of Elements.  aOffsetX, aOffsetY, aEvent.id, aEvent.rx, aEvent.ry,
@@ -122,13 +122,13 @@ declare function synthesizeMouse(aTarget: any, aOffsetX: any, aOffsetY: any, aEv
  * @returns true if and only if aEvent.type is specified and default of the
  * event is prevented.
  */
-declare function synthesizeTouch(aTarget: Element | Element[], aOffsetX: number | number[], aOffsetY: number | number[], aEvent?: any, aWindow?: Window): any;
+function synthesizeTouch(aTarget: Element | Element[], aOffsetX: number | number[], aOffsetY: number | number[], aEvent?: any, aWindow?: Window): any;
 /**
  * Return the drag service.  Note that if we're in the headless mode, this
  * may return null because the service may be never instantiated (e.g., on
  * Linux).
  */
-declare function getDragService(): any;
+function getDragService(): any;
 /**
  * End drag session if there is.
  *
@@ -142,9 +142,9 @@ declare function getDragService(): any;
  * @return              true if handled.  In this case, the caller should not
  *                      synthesize DOM events basically.
  */
-declare function _maybeEndDragSession(left: any, top: any, aEvent: any, aWindow: any): boolean;
-declare function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any): boolean;
-declare function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindow?: Window & typeof globalThis): boolean;
+function _maybeEndDragSession(left: any, top: any, aEvent: any, aWindow: any): boolean;
+function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any): boolean;
+function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindow?: Window & typeof globalThis): boolean;
 /**
  * Synthesize one or more touches at the points. aLeft, aTop, aEvent.id,
  * aEvent.rx, aEvent.ry, aEvent.angle, aEvent.force, aEvent.tiltX, aEvent.tiltY
@@ -179,9 +179,9 @@ declare function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindo
  * @returns true if and only if aEvent.type is specified and default of the
  * event is prevented.
  */
-declare function synthesizeTouchAtPoint(aLeft: any, aTop: any, aEvent?: any, aWindow?: Window): any;
-declare function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any): boolean;
-declare function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Window & typeof globalThis): void;
+function synthesizeTouchAtPoint(aLeft: any, aTop: any, aEvent?: any, aWindow?: Window): any;
+function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any): boolean;
+function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Window & typeof globalThis): void;
 /**
  * Synthesize a wheel event without flush layout at a particular point in
  * aWindow.
@@ -199,7 +199,7 @@ declare function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Wi
  *
  * aWindow is optional, and defaults to the current window object.
  */
-declare function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow?: Window & typeof globalThis): void;
+function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Synthesize a wheel event on a target. The actual client point is determined
  * by taking the aTarget's client box and offseting it by aOffsetX and
@@ -218,8 +218,8 @@ declare function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWin
  *
  * aWindow is optional, and defaults to the current window object.
  */
-declare function synthesizeWheel(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): void;
-declare function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aFlushMode?: number, aWindow?: Window & typeof globalThis): void;
+function synthesizeWheel(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): void;
+function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aFlushMode?: number, aWindow?: Window & typeof globalThis): void;
 /**
  * This is a wrapper around synthesizeWheel that waits for the wheel event
  * to be dispatched and for the subsequent layout/paints to be flushed.
@@ -232,15 +232,15 @@ declare function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, 
  * determining scroll completion and the refresh driver is not automatically
  * restored.
  */
-declare function sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
+function sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Similar to sendWheelAndPaint but without flushing layout for obtaining
  * ``aTarget`` position in ``aWindow`` before sending the wheel event.
  * ``aOffsetX`` and ``aOffsetY`` should be offsets against aWindow.
  */
-declare function sendWheelAndPaintNoFlush(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
-declare function synthesizeNativeTapAtCenter(aTarget: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
-declare function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
+function sendWheelAndPaintNoFlush(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
+function synthesizeNativeTapAtCenter(aTarget: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
+function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Similar to synthesizeMouse but generates a native widget level event
  * (so will actually move the "real" mouse cursor etc. Be careful because
@@ -278,7 +278,7 @@ declare function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any,
  *        Defaults to target. If element under the point is in another widget from target's widget,
  *        e.g., when it's in a XUL <panel>, specify this.
  */
-declare function synthesizeNativeMouseEvent(aParams: {
+function synthesizeNativeMouseEvent(aParams: {
     type: string;
     target: Element;
     atCenter?: boolean;
@@ -292,9 +292,9 @@ declare function synthesizeNativeMouseEvent(aParams: {
     win?: Window;
     elementOnWidget?: Element;
 }, aCallback?: any): void;
-declare function promiseNativeMouseEvent(aParams: any): Promise<any>;
-declare function synthesizeNativeMouseEventAndWaitForEvent(aParams: any, aCallback: any): void;
-declare function promiseNativeMouseEventAndWaitForEvent(aParams: any): Promise<any>;
+function promiseNativeMouseEvent(aParams: any): Promise<any>;
+function synthesizeNativeMouseEventAndWaitForEvent(aParams: any, aCallback: any): void;
+function promiseNativeMouseEventAndWaitForEvent(aParams: any): Promise<any>;
 /**
  * This is a wrapper around synthesizeNativeMouseEvent that waits for the mouse
  * event to be dispatched to the target content.
@@ -302,7 +302,7 @@ declare function promiseNativeMouseEventAndWaitForEvent(aParams: any): Promise<a
  * This API is supposed to be used in those test cases that synthesize some
  * input events to chrome process and have some checks in content.
  */
-declare function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY: any, aCallback: any, aWindow?: Window & typeof globalThis): any;
+function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY: any, aCallback: any, aWindow?: Window & typeof globalThis): any;
 /**
  * Synthesize a key event. It is targeted at whatever would be targeted by an
  * actual keypress by the user, typically the focused element.
@@ -366,7 +366,7 @@ declare function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, a
  * not inactivated with this function).
  *
  */
-declare function synthesizeKey(aKey: string, aEvent?: {
+function synthesizeKey(aKey: string, aEvent?: {
     code?: string;
     repeat?: number;
     ctrlKey?: boolean;
@@ -383,8 +383,8 @@ declare function synthesizeKey(aKey: string, aEvent?: {
  * This API is supposed to be used in those test cases that synthesize some
  * input events to chrome process and have some checks in content.
  */
-declare function synthesizeAndWaitKey(aKey: any, aEvent: any, aWindow: Window & typeof globalThis, checkBeforeSynthesize: any, checkAfterSynthesize: any): any;
-declare function _parseNativeModifiers(aModifiers: any, aWindow?: Window & typeof globalThis): number;
+function synthesizeAndWaitKey(aKey: any, aEvent: any, aWindow: Window & typeof globalThis, checkBeforeSynthesize: any, checkAfterSynthesize: any): any;
+function _parseNativeModifiers(aModifiers: any, aWindow?: Window & typeof globalThis): number;
 /**
  * synthesizeNativeKey() dispatches native key event on active window.
  * This is implemented only on Windows and Mac. Note that this function
@@ -410,18 +410,18 @@ declare function _parseNativeModifiers(aModifiers: any, aWindow?: Window & typeo
  * @return                      True if this function succeed dispatching
  *                              native key event.  Otherwise, false.
  */
-declare function synthesizeNativeKey(aKeyboardLayout: any, aNativeKeyCode: any, aModifiers: any, aChars: any, aUnmodifiedChars: any, aCallback: any, aWindow?: Window & typeof globalThis): boolean;
+function synthesizeNativeKey(aKeyboardLayout: any, aNativeKeyCode: any, aModifiers: any, aChars: any, aUnmodifiedChars: any, aCallback: any, aWindow?: Window & typeof globalThis): boolean;
 /**
  * Indicate that an event with an original target of aExpectedTarget and
  * a type of aExpectedEvent is expected to be fired, or not expected to
  * be fired.
  */
-declare function _expectEvent(aExpectedTarget: any, aExpectedEvent: any, aTestName: any): (event: any) => void;
+function _expectEvent(aExpectedTarget: any, aExpectedEvent: any, aTestName: any): (event: any) => void;
 /**
  * Check if the event was fired or not. The event handler aEventHandler
  * will be removed.
  */
-declare function _checkExpectedEvent(aExpectedTarget: any, aExpectedEvent: any, aEventHandler: any, aTestName: any): void;
+function _checkExpectedEvent(aExpectedTarget: any, aExpectedEvent: any, aEventHandler: any, aTestName: any): void;
 /**
  * Similar to synthesizeMouse except that a test is performed to see if an
  * event is fired at the right target as a result.
@@ -436,7 +436,7 @@ declare function _checkExpectedEvent(aExpectedTarget: any, aExpectedEvent: any, 
  *
  * aWindow is optional, and defaults to the current window object.
  */
-declare function synthesizeMouseExpectEvent(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aExpectedTarget: any, aExpectedEvent: any, aTestName: any, aWindow: any): void;
+function synthesizeMouseExpectEvent(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aExpectedTarget: any, aExpectedEvent: any, aTestName: any, aWindow: any): void;
 /**
  * Similar to synthesizeKey except that a test is performed to see if an
  * event is fired at the right target as a result.
@@ -450,18 +450,18 @@ declare function synthesizeMouseExpectEvent(aTarget: any, aOffsetX: any, aOffset
  *
  * aWindow is optional, and defaults to the current window object.
  */
-declare function synthesizeKeyExpectEvent(key: any, aEvent: any, aExpectedTarget: any, aExpectedEvent: any, aTestName: any, aWindow: any): void;
-declare function disableNonTestMouseEvents(aDisable: any): void;
-declare function _getDOMWindowUtils(aWindow?: Window & typeof globalThis): any;
-declare function _defineConstant(name: any, value: any): void;
-declare function _getTIP(aWindow: any, aCallback: any): any;
-declare function _getKeyboardEvent(aWindow?: Window & typeof globalThis): any;
-declare function _guessKeyNameFromKeyCode(aKeyCode: any, aWindow?: Window & typeof globalThis): "Alt" | "AltGraph" | "Control" | "Meta" | "Shift" | "NumLock" | "ScrollLock" | "Cancel" | "Help" | "Backspace" | "Tab" | "Clear" | "Enter" | "Pause" | "Eisu" | "Escape" | "Convert" | "NonConvert" | "Accept" | "ModeChange" | "PageUp" | "PageDown" | "End" | "Home" | "ArrowLeft" | "ArrowUp" | "ArrowRight" | "ArrowDown" | "Select" | "Print" | "Execute" | "PrintScreen" | "Insert" | "Delete" | "OS" | "ContextMenu" | "Standby" | "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "F21" | "F22" | "F23" | "F24" | "AudioVolumeMute" | "AudioVolumeDown" | "AudioVolumeUp" | "Process" | "Attn" | "CrSel" | "ExSel" | "EraseEof" | "Play" | "Unidentified";
-declare function _createKeyboardEventDictionary(aKey: any, aKeyEvent: any, aTIP?: any, aWindow?: Window & typeof globalThis): {
+function synthesizeKeyExpectEvent(key: any, aEvent: any, aExpectedTarget: any, aExpectedEvent: any, aTestName: any, aWindow: any): void;
+function disableNonTestMouseEvents(aDisable: any): void;
+function _getDOMWindowUtils(aWindow?: Window & typeof globalThis): any;
+function _defineConstant(name: any, value: any): void;
+function _getTIP(aWindow: any, aCallback: any): any;
+function _getKeyboardEvent(aWindow?: Window & typeof globalThis): any;
+function _guessKeyNameFromKeyCode(aKeyCode: any, aWindow?: Window & typeof globalThis): "Alt" | "AltGraph" | "Control" | "Meta" | "Shift" | "NumLock" | "ScrollLock" | "Cancel" | "Help" | "Backspace" | "Tab" | "Clear" | "Enter" | "Pause" | "Eisu" | "Escape" | "Convert" | "NonConvert" | "Accept" | "ModeChange" | "PageUp" | "PageDown" | "End" | "Home" | "ArrowLeft" | "ArrowUp" | "ArrowRight" | "ArrowDown" | "Select" | "Print" | "Execute" | "PrintScreen" | "Insert" | "Delete" | "OS" | "ContextMenu" | "Standby" | "F1" | "F2" | "F3" | "F4" | "F5" | "F6" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12" | "F13" | "F14" | "F15" | "F16" | "F17" | "F18" | "F19" | "F20" | "F21" | "F22" | "F23" | "F24" | "AudioVolumeMute" | "AudioVolumeDown" | "AudioVolumeUp" | "Process" | "Attn" | "CrSel" | "ExSel" | "EraseEof" | "Play" | "Unidentified";
+function _createKeyboardEventDictionary(aKey: any, aKeyEvent: any, aTIP?: any, aWindow?: Window & typeof globalThis): {
     dictionary: any;
     flags: number;
 };
-declare function _emulateToActivateModifiers(aTIP: any, aKeyEvent: any, aWindow?: Window & typeof globalThis): {
+function _emulateToActivateModifiers(aTIP: any, aKeyEvent: any, aWindow?: Window & typeof globalThis): {
     normal: {
         key: string;
         attr: string;
@@ -471,7 +471,7 @@ declare function _emulateToActivateModifiers(aTIP: any, aKeyEvent: any, aWindow?
         attr: string;
     }[];
 };
-declare function _emulateToInactivateModifiers(aTIP: any, aModifiers: any, aWindow?: Window & typeof globalThis): void;
+function _emulateToInactivateModifiers(aTIP: any, aModifiers: any, aWindow?: Window & typeof globalThis): void;
 /**
  * Synthesize a composition event and keydown event and keyup events unless
  * you prevent to dispatch them explicitly (see aEvent.key's explanation).
@@ -518,7 +518,7 @@ declare function _emulateToInactivateModifiers(aTIP: any, aModifiers: any, aWind
  * @param aCallback            Optional (If non-null, use the callback for
  *                             receiving notifications to IME)
  */
-declare function synthesizeComposition(aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): void;
+function synthesizeComposition(aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): void;
 /**
  * Synthesize eCompositionChange event which causes a DOM text event, may
  * cause compositionupdate event, and causes keydown event and keyup event
@@ -583,7 +583,7 @@ declare function synthesizeComposition(aEvent: any, aWindow: Window & typeof glo
  * @param aCallback     Optional (If non-null, use the callback for receiving
  *                      notifications to IME)
  */
-declare function synthesizeCompositionChange(aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): void;
+function synthesizeCompositionChange(aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): void;
 /**
  * Synthesize a query text content event.
  *
@@ -597,7 +597,7 @@ declare function synthesizeCompositionChange(aEvent: any, aWindow: Window & type
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeQueryTextContent(aOffset: any, aLength: any, aIsRelative: any, aWindow: any): any;
+function synthesizeQueryTextContent(aOffset: any, aLength: any, aIsRelative: any, aWindow: any): any;
 /**
  * Synthesize a query selected text event.
  *
@@ -608,7 +608,7 @@ declare function synthesizeQueryTextContent(aOffset: any, aLength: any, aIsRelat
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeQuerySelectedText(aSelectionType: any, aWindow: any): any;
+function synthesizeQuerySelectedText(aSelectionType: any, aWindow: any): any;
 /**
  * Synthesize a query caret rect event.
  *
@@ -618,7 +618,7 @@ declare function synthesizeQuerySelectedText(aSelectionType: any, aWindow: any):
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeQueryCaretRect(aOffset: any, aWindow: any): any;
+function synthesizeQueryCaretRect(aOffset: any, aWindow: any): any;
 /**
  * Synthesize a selection set event.
  *
@@ -631,7 +631,7 @@ declare function synthesizeQueryCaretRect(aOffset: any, aWindow: any): any;
  * @param aWindow  Optional (If null, current |window| will be used)
  * @return         True, if succeeded.  Otherwise false.
  */
-declare function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: any, aWindow?: Window & typeof globalThis): Promise<any>;
+function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: any, aWindow?: Window & typeof globalThis): Promise<any>;
 /**
  * Synthesize a query text rect event.
  *
@@ -645,7 +645,7 @@ declare function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: an
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeQueryTextRect(aOffset: any, aLength: any, aIsRelative: any, aWindow: any): any;
+function synthesizeQueryTextRect(aOffset: any, aLength: any, aIsRelative: any, aWindow: any): any;
 /**
  * Synthesize a query text rect array event.
  *
@@ -657,7 +657,7 @@ declare function synthesizeQueryTextRect(aOffset: any, aLength: any, aIsRelative
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeQueryTextRectArray(aOffset: any, aLength: any, aWindow: any): any;
+function synthesizeQueryTextRectArray(aOffset: any, aLength: any, aWindow: any): any;
 /**
  * Synthesize a query editor rect event.
  *
@@ -665,7 +665,7 @@ declare function synthesizeQueryTextRectArray(aOffset: any, aLength: any, aWindo
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeQueryEditorRect(aWindow: any): any;
+function synthesizeQueryEditorRect(aWindow: any): any;
 /**
  * Synthesize a character at point event.
  *
@@ -674,7 +674,7 @@ declare function synthesizeQueryEditorRect(aWindow: any): any;
  * @return         An nsIQueryContentEventResult object.  If this failed,
  *                 the result might be null.
  */
-declare function synthesizeCharAtPoint(aX: any, aY: any, aWindow: any): any;
+function synthesizeCharAtPoint(aX: any, aY: any, aWindow: any): any;
 /**
  * INTERNAL USE ONLY
  * Create an event object to pass to sendDragEvent.
@@ -688,7 +688,7 @@ declare function synthesizeCharAtPoint(aX: any, aY: any, aWindow: any): any;
  *                       object
  * @return               An object to pass to sendDragEvent.
  */
-declare function createDragEventObject(aType: any, aDestElement: any, aDestWindow: any, aDataTransfer: any, aDragEvent: any): any;
+function createDragEventObject(aType: any, aDestElement: any, aDestWindow: any, aDataTransfer: any, aDragEvent: any): any;
 /**
  * Emulate a event sequence of dragstart, dragenter, and dragover.
  *
@@ -724,7 +724,7 @@ declare function createDragEventObject(aType: any, aDestElement: any, aDestWindo
  *        from sendDragEvent for dragover event, and the second element is the
  *        dataTransfer for the current drag session.
  */
-declare function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: Window, aDestWindow?: Window, aDragEvent?: any): any[];
+function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: Window, aDestWindow?: Window, aDragEvent?: any): any[];
 /**
  * Emulate the drop event and mouseup event.
  * This should be called after synthesizeDragOver.
@@ -743,7 +743,7 @@ declare function synthesizeDragOver(aSrcElement: Element, aDestElement: Element,
  * @return {String}
  *        "none" if aResult is true, ``aDataTransfer.dropEffect`` otherwise.
  */
-declare function synthesizeDropAfterDragOver(aResult: any, aDataTransfer: DataTransfer, aDestElement: Element, aDestWindow?: Window, aDragEvent?: any): string;
+function synthesizeDropAfterDragOver(aResult: any, aDataTransfer: DataTransfer, aDestElement: Element, aDestWindow?: Window, aDragEvent?: any): string;
 /**
  * Emulate a drag and drop by emulating a dragstart and firing events dragenter,
  * dragover, and drop.
@@ -778,11 +778,11 @@ declare function synthesizeDropAfterDragOver(aResult: any, aDataTransfer: DataTr
  * @return {String}
  *        The drop effect that was desired.
  */
-declare function synthesizeDrop(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: Window, aDestWindow?: Window, aDragEvent?: any): string;
-declare function _getFlattenedTreeParentNode(aNode: any): any;
-declare function _getInclusiveFlattenedTreeParentElement(aNode: any): any;
-declare function _nodeIsFlattenedTreeDescendantOf(aPossibleDescendant: any, aPossibleAncestor: any): boolean;
-declare function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
+function synthesizeDrop(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: Window, aDestWindow?: Window, aDragEvent?: any): string;
+function _getFlattenedTreeParentNode(aNode: any): any;
+function _getInclusiveFlattenedTreeParentElement(aNode: any): any;
+function _nodeIsFlattenedTreeDescendantOf(aPossibleDescendant: any, aPossibleAncestor: any): boolean;
+function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
 /**
  * Emulate a drag and drop by emulating a dragstart by mousedown and mousemove,
  * and firing events dragenter, dragover, drop, and dragend.
@@ -797,9 +797,9 @@ declare function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
  * @param {Element} aParams.srcElement
  *                The element to start dragging.  If srcSelection is
  *                set, this is computed for element at focus node.
- * @param {Selection|nil} aParams.srcSelection
+ * @param {Selection|null} aParams.srcSelection
  *                The selection to start to drag, set null if srcElement is set.
- * @param {Element|nil} aParams.destElement
+ * @param {Element|null} aParams.destElement
  *                The element to drop on. Pass null to emulate a drop on an invalid target.
  * @param {Number} aParams.srcX
  *                The initial x coordinate inside srcElement or ignored if srcSelection is set.
@@ -813,7 +813,7 @@ declare function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
  *                The final x coordinate inside srcElement
  * @param {Number} aParams.finalY
  *                The final x coordinate inside srcElement
- * @param {Any} aParams.id
+ * @param {any} aParams.id
  *                The pointer event id
  * @param {Window} aParams.srcWindow
  *                The window for dispatching event on srcElement, defaults to the current window object.
@@ -827,25 +827,25 @@ declare function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
  * @param {Function} aParams.logFunc
  *                Set function which takes one argument if you need to log rect of target.  E.g., `console.log`.
  */
-declare function synthesizePlainDragAndDrop(aParams: {
+function synthesizePlainDragAndDrop(aParams: {
     dragEvent: Event;
     srcElement: Element;
-    srcSelection: Selection | nil;
-    destElement: Element | nil;
+    srcSelection: Selection | null;
+    destElement: Element | null;
     srcX: number;
     srcY: number;
     stepX: number;
     stepY: number;
     finalX: number;
     finalY: number;
-    id: Any;
+    id: any;
     srcWindow: Window;
     destWindow: Window;
     expectCancelDragStart: boolean;
     expectSrcElementDisconnected: boolean;
     logFunc: Function;
 }): Promise<void>;
-declare function _checkDataTransferItems(aDataTransfer: any, aExpectedDragData: any): any;
+function _checkDataTransferItems(aDataTransfer: any, aExpectedDragData: any): any;
 /**
  * This callback type is used with ``synthesizePlainDragAndCancel()``.
  * It should compare ``actualData`` and ``expectedData`` and return
@@ -887,7 +887,7 @@ declare function _checkDataTransferItems(aDataTransfer: any, aExpectedDragData: 
  *        thrown exception, NOT false.  Therefore, you shouldn't
  *        use.
  */
-declare function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransferItems: any[]): boolean;
+function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransferItems: any[]): boolean;
 /**
  * Emulate a drag and drop by generating a dragstart from mousedown and mousemove,
  * then firing events dragover and drop (or dragleave if expectDragLeave is set).
@@ -905,7 +905,7 @@ declare function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransfe
  *                targetElement.  Default is sourceBrowsingCxt.
  * @param {Element} aParams.srcElement
  *                The element to drag.
- * @param {Element|nil} aParams.targetElement
+ * @param {Element|null} aParams.targetElement
  *                The element to drop on.
  * @param {Number} aParams.step
  *                The 2D step for mousemoves
@@ -948,11 +948,11 @@ declare function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransfe
  *                MockDragController that the function should use.  This
  *                function will automatically generate one if none is given.
  */
-declare function synthesizeMockDragAndDrop(aParams: {
+function synthesizeMockDragAndDrop(aParams: {
     sourceBrowsingCxt: Window;
     targetBrowsingCxt: Window;
     srcElement: Element;
-    targetElement: Element | nil;
+    targetElement: Element | null;
     step: number;
     expectCancelDragStart: boolean;
     cancel: number;
@@ -962,18 +962,18 @@ declare function synthesizeMockDragAndDrop(aParams: {
     expectNoDragTargetEvents: boolean;
     dropPromise: boolean;
 }): Promise<void>;
-declare function $(id: any): any;
-declare namespace _FlushModes {
+function $(id: any): any;
+namespace _FlushModes {
     let FLUSH: number;
     let NOFLUSH: number;
 }
-declare namespace KEYBOARD_LAYOUT_ARABIC {
+namespace KEYBOARD_LAYOUT_ARABIC {
     let name: string;
     let Mac: number;
     let Win: number;
     let hasAltGrOnWin: boolean;
 }
-declare namespace KEYBOARD_LAYOUT_ARABIC_PC {
+namespace KEYBOARD_LAYOUT_ARABIC_PC {
     let name_1: string;
     export { name_1 as name };
     let Mac_1: number;
@@ -983,7 +983,7 @@ declare namespace KEYBOARD_LAYOUT_ARABIC_PC {
     let hasAltGrOnWin_1: boolean;
     export { hasAltGrOnWin_1 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_BRAZILIAN_ABNT {
+namespace KEYBOARD_LAYOUT_BRAZILIAN_ABNT {
     let name_2: string;
     export { name_2 as name };
     let Mac_2: any;
@@ -993,7 +993,7 @@ declare namespace KEYBOARD_LAYOUT_BRAZILIAN_ABNT {
     let hasAltGrOnWin_2: boolean;
     export { hasAltGrOnWin_2 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_DVORAK_QWERTY {
+namespace KEYBOARD_LAYOUT_DVORAK_QWERTY {
     let name_3: string;
     export { name_3 as name };
     let Mac_3: number;
@@ -1003,7 +1003,7 @@ declare namespace KEYBOARD_LAYOUT_DVORAK_QWERTY {
     let hasAltGrOnWin_3: boolean;
     export { hasAltGrOnWin_3 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_EN_US {
+namespace KEYBOARD_LAYOUT_EN_US {
     let name_4: string;
     export { name_4 as name };
     let Mac_4: number;
@@ -1013,7 +1013,7 @@ declare namespace KEYBOARD_LAYOUT_EN_US {
     let hasAltGrOnWin_4: boolean;
     export { hasAltGrOnWin_4 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_FRENCH {
+namespace KEYBOARD_LAYOUT_FRENCH {
     let name_5: string;
     export { name_5 as name };
     let Mac_5: number;
@@ -1023,7 +1023,7 @@ declare namespace KEYBOARD_LAYOUT_FRENCH {
     let hasAltGrOnWin_5: boolean;
     export { hasAltGrOnWin_5 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_FRENCH_PC {
+namespace KEYBOARD_LAYOUT_FRENCH_PC {
     let name_6: string;
     export { name_6 as name };
     let Mac_6: number;
@@ -1033,7 +1033,7 @@ declare namespace KEYBOARD_LAYOUT_FRENCH_PC {
     let hasAltGrOnWin_6: boolean;
     export { hasAltGrOnWin_6 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_GREEK {
+namespace KEYBOARD_LAYOUT_GREEK {
     let name_7: string;
     export { name_7 as name };
     let Mac_7: number;
@@ -1043,7 +1043,7 @@ declare namespace KEYBOARD_LAYOUT_GREEK {
     let hasAltGrOnWin_7: boolean;
     export { hasAltGrOnWin_7 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_GERMAN {
+namespace KEYBOARD_LAYOUT_GERMAN {
     let name_8: string;
     export { name_8 as name };
     let Mac_8: number;
@@ -1053,7 +1053,7 @@ declare namespace KEYBOARD_LAYOUT_GERMAN {
     let hasAltGrOnWin_8: boolean;
     export { hasAltGrOnWin_8 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_HEBREW {
+namespace KEYBOARD_LAYOUT_HEBREW {
     let name_9: string;
     export { name_9 as name };
     let Mac_9: number;
@@ -1063,7 +1063,7 @@ declare namespace KEYBOARD_LAYOUT_HEBREW {
     let hasAltGrOnWin_9: boolean;
     export { hasAltGrOnWin_9 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_JAPANESE {
+namespace KEYBOARD_LAYOUT_JAPANESE {
     let name_10: string;
     export { name_10 as name };
     let Mac_10: any;
@@ -1073,7 +1073,7 @@ declare namespace KEYBOARD_LAYOUT_JAPANESE {
     let hasAltGrOnWin_10: boolean;
     export { hasAltGrOnWin_10 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_KHMER {
+namespace KEYBOARD_LAYOUT_KHMER {
     let name_11: string;
     export { name_11 as name };
     let Mac_11: any;
@@ -1083,7 +1083,7 @@ declare namespace KEYBOARD_LAYOUT_KHMER {
     let hasAltGrOnWin_11: boolean;
     export { hasAltGrOnWin_11 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_LITHUANIAN {
+namespace KEYBOARD_LAYOUT_LITHUANIAN {
     let name_12: string;
     export { name_12 as name };
     let Mac_12: number;
@@ -1093,7 +1093,7 @@ declare namespace KEYBOARD_LAYOUT_LITHUANIAN {
     let hasAltGrOnWin_12: boolean;
     export { hasAltGrOnWin_12 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_NORWEGIAN {
+namespace KEYBOARD_LAYOUT_NORWEGIAN {
     let name_13: string;
     export { name_13 as name };
     let Mac_13: number;
@@ -1103,7 +1103,7 @@ declare namespace KEYBOARD_LAYOUT_NORWEGIAN {
     let hasAltGrOnWin_13: boolean;
     export { hasAltGrOnWin_13 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_RUSSIAN {
+namespace KEYBOARD_LAYOUT_RUSSIAN {
     let name_14: string;
     export { name_14 as name };
     let Mac_14: any;
@@ -1113,7 +1113,7 @@ declare namespace KEYBOARD_LAYOUT_RUSSIAN {
     let hasAltGrOnWin_14: boolean;
     export { hasAltGrOnWin_14 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_RUSSIAN_MNEMONIC {
+namespace KEYBOARD_LAYOUT_RUSSIAN_MNEMONIC {
     let name_15: string;
     export { name_15 as name };
     let Mac_15: any;
@@ -1123,7 +1123,7 @@ declare namespace KEYBOARD_LAYOUT_RUSSIAN_MNEMONIC {
     let hasAltGrOnWin_15: boolean;
     export { hasAltGrOnWin_15 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_SPANISH {
+namespace KEYBOARD_LAYOUT_SPANISH {
     let name_16: string;
     export { name_16 as name };
     let Mac_16: number;
@@ -1133,7 +1133,7 @@ declare namespace KEYBOARD_LAYOUT_SPANISH {
     let hasAltGrOnWin_16: boolean;
     export { hasAltGrOnWin_16 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_SWEDISH {
+namespace KEYBOARD_LAYOUT_SWEDISH {
     let name_17: string;
     export { name_17 as name };
     let Mac_17: number;
@@ -1143,7 +1143,7 @@ declare namespace KEYBOARD_LAYOUT_SWEDISH {
     let hasAltGrOnWin_17: boolean;
     export { hasAltGrOnWin_17 as hasAltGrOnWin };
 }
-declare namespace KEYBOARD_LAYOUT_THAI {
+namespace KEYBOARD_LAYOUT_THAI {
     let name_18: string;
     export { name_18 as name };
     let Mac_18: number;
@@ -1153,29 +1153,29 @@ declare namespace KEYBOARD_LAYOUT_THAI {
     let hasAltGrOnWin_18: boolean;
     export { hasAltGrOnWin_18 as hasAltGrOnWin };
 }
-declare var _gSeenEvent: boolean;
-declare const COMPOSITION_ATTR_RAW_CLAUSE: any;
-declare const COMPOSITION_ATTR_SELECTED_RAW_CLAUSE: any;
-declare const COMPOSITION_ATTR_CONVERTED_CLAUSE: any;
-declare const COMPOSITION_ATTR_SELECTED_CLAUSE: any;
-declare var TIPMap: WeakMap<object, any>;
-declare const QUERY_CONTENT_FLAG_USE_NATIVE_LINE_BREAK: 0;
-declare const QUERY_CONTENT_FLAG_USE_XP_LINE_BREAK: 1;
-declare const QUERY_CONTENT_FLAG_SELECTION_NORMAL: 0;
-declare const QUERY_CONTENT_FLAG_SELECTION_SPELLCHECK: 2;
-declare const QUERY_CONTENT_FLAG_SELECTION_IME_RAWINPUT: 4;
-declare const QUERY_CONTENT_FLAG_SELECTION_IME_SELECTEDRAWTEXT: 8;
-declare const QUERY_CONTENT_FLAG_SELECTION_IME_CONVERTEDTEXT: 16;
-declare const QUERY_CONTENT_FLAG_SELECTION_IME_SELECTEDCONVERTEDTEXT: 32;
-declare const QUERY_CONTENT_FLAG_SELECTION_ACCESSIBILITY: 64;
-declare const QUERY_CONTENT_FLAG_SELECTION_FIND: 128;
-declare const QUERY_CONTENT_FLAG_SELECTION_URLSECONDARY: 256;
-declare const QUERY_CONTENT_FLAG_SELECTION_URLSTRIKEOUT: 512;
-declare const QUERY_CONTENT_FLAG_OFFSET_RELATIVE_TO_INSERTION_POINT: 1024;
-declare const SELECTION_SET_FLAG_USE_NATIVE_LINE_BREAK: 0;
-declare const SELECTION_SET_FLAG_USE_XP_LINE_BREAK: 1;
-declare const SELECTION_SET_FLAG_REVERSE: 2;
-declare class EventCounter {
+var _gSeenEvent: boolean;
+const COMPOSITION_ATTR_RAW_CLAUSE: any;
+const COMPOSITION_ATTR_SELECTED_RAW_CLAUSE: any;
+const COMPOSITION_ATTR_CONVERTED_CLAUSE: any;
+const COMPOSITION_ATTR_SELECTED_CLAUSE: any;
+var TIPMap: WeakMap<object, any>;
+const QUERY_CONTENT_FLAG_USE_NATIVE_LINE_BREAK: 0;
+const QUERY_CONTENT_FLAG_USE_XP_LINE_BREAK: 1;
+const QUERY_CONTENT_FLAG_SELECTION_NORMAL: 0;
+const QUERY_CONTENT_FLAG_SELECTION_SPELLCHECK: 2;
+const QUERY_CONTENT_FLAG_SELECTION_IME_RAWINPUT: 4;
+const QUERY_CONTENT_FLAG_SELECTION_IME_SELECTEDRAWTEXT: 8;
+const QUERY_CONTENT_FLAG_SELECTION_IME_CONVERTEDTEXT: 16;
+const QUERY_CONTENT_FLAG_SELECTION_IME_SELECTEDCONVERTEDTEXT: 32;
+const QUERY_CONTENT_FLAG_SELECTION_ACCESSIBILITY: 64;
+const QUERY_CONTENT_FLAG_SELECTION_FIND: 128;
+const QUERY_CONTENT_FLAG_SELECTION_URLSECONDARY: 256;
+const QUERY_CONTENT_FLAG_SELECTION_URLSTRIKEOUT: 512;
+const QUERY_CONTENT_FLAG_OFFSET_RELATIVE_TO_INSERTION_POINT: 1024;
+const SELECTION_SET_FLAG_USE_NATIVE_LINE_BREAK: 0;
+const SELECTION_SET_FLAG_USE_XP_LINE_BREAK: 1;
+const SELECTION_SET_FLAG_REVERSE: 2;
+class EventCounter {
     constructor(aTarget: any, aType: any, aOptions?: {});
     target: any;
     type: any;
