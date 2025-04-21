@@ -1,5 +1,5 @@
 diff --git a/testing/mochitest/tests/SimpleTest/EventUtils.js b/testing/mochitest/tests/SimpleTest/EventUtils.js
-index f67ab9fe9cb9ec5431d328220c192d63d71683f5..786638790bd126bd1810700b453de0c3a6ecfad7 100644
+index f67ab9fe9cb9ec5431d328220c192d63d71683f5..e12083bf289d0d7074b6573fc3ded525fe9229c6 100644
 --- a/testing/mochitest/tests/SimpleTest/EventUtils.js
 +++ b/testing/mochitest/tests/SimpleTest/EventUtils.js
 @@ -1623,22 +1623,26 @@ function synthesizeAndWaitNativeMouseMove(
@@ -34,3 +34,33 @@ index f67ab9fe9cb9ec5431d328220c192d63d71683f5..786638790bd126bd1810700b453de0c3
   *        Is optional and can be used to receive notifications from TIP.
   *
   * @description
+@@ -3434,9 +3438,9 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
+  * @param {Element} aParams.srcElement
+  *                The element to start dragging.  If srcSelection is
+  *                set, this is computed for element at focus node.
+- * @param {Selection|nil} aParams.srcSelection
++ * @param {Selection|null} aParams.srcSelection
+  *                The selection to start to drag, set null if srcElement is set.
+- * @param {Element|nil} aParams.destElement
++ * @param {Element|null} aParams.destElement
+  *                The element to drop on. Pass null to emulate a drop on an invalid target.
+  * @param {Number} aParams.srcX
+  *                The initial x coordinate inside srcElement or ignored if srcSelection is set.
+@@ -3450,7 +3454,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
+  *                The final x coordinate inside srcElement
+  * @param {Number} aParams.finalY
+  *                The final x coordinate inside srcElement
+- * @param {Any} aParams.id
++ * @param {any} aParams.id
+  *                The pointer event id
+  * @param {Window} aParams.srcWindow
+  *                The window for dispatching event on srcElement, defaults to the current window object.
+@@ -4055,7 +4059,7 @@ async function synthesizePlainDragAndCancel(
+  *                targetElement.  Default is sourceBrowsingCxt.
+  * @param {Element} aParams.srcElement
+  *                The element to drag.
+- * @param {Element|nil} aParams.targetElement
++ * @param {Element|null} aParams.targetElement
+  *                The element to drop on.
+  * @param {Number} aParams.step
+  *                The 2D step for mousemoves

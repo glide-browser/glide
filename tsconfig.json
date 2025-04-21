@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "typeAcquisition": {
     "enable": true,
-    "include": ["type-fest/index.d.ts", "./engine/tools/@types/index.d.ts"]
+    "include": ["type-fest/index.d.ts"]
   },
   "compilerOptions": {
     "target": "ES2024",

@@ -176,8 +176,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         const editor = this.#expect_editor("replace char");
         motions.back_char(editor, false);
         editor.deleteSelection(
-          /* action */ editor.eNext,
-          /* stripWrappers */ editor.eStrip
+          /* action */ editor.eNext!,
+          /* stripWrappers */ editor.eStrip!
         );
         editor.insertText(message.data.character);
         break;
@@ -247,8 +247,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
           const delete_length = message.data.sequence.length - 1;
           for (let i = 0; i < delete_length; i++) {
             editor.deleteSelection(
-              /* action */ editor.eNext,
-              /* stripWrappers */ editor.eStrip
+              /* action */ editor.eNext!,
+              /* stripWrappers */ editor.eStrip!
             );
           }
         }
@@ -500,8 +500,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         // `foo █ar baz` -> `foo█ar baz`
         editor.deleteSelection(
-          /* action */ editor.ePrevious,
-          /* stripWrappers */ editor.eStrip
+          /* action */ editor.ePrevious!,
+          /* stripWrappers */ editor.eStrip!
         );
 
         if (motions.next_char(editor) !== "\n") {
@@ -561,7 +561,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         const editor = this.#expect_editor(props.command.name);
 
         // `foo ██r` -> `foo |r`
-        editor.deleteSelection(editor.ePrevious, editor.eStrip);
+        editor.deleteSelection(editor.ePrevious!, editor.eStrip!);
 
         // `foo |r` -> `foo r|`
         motions.forward_char(editor, false);

@@ -509,8 +509,8 @@ export function delete_selection(editor: Editor, forward: boolean) {
   }
 
   editor.deleteSelection(
-    /* action */ Ci.nsIEditor.ePrevious,
-    /* stripWrappers */ Ci.nsIEditor.eStrip
+    /* action */ Ci.nsIEditor.ePrevious!,
+    /* stripWrappers */ Ci.nsIEditor.eStrip!
   );
 
   if (forward && !is_eol(editor)) {
