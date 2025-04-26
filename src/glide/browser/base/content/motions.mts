@@ -20,6 +20,7 @@ const strings = ChromeUtils.importESModule(
  * for non-standard cases, e.g. Google Docs, Monaco.
  */
 export interface Editor {
+  move?(direction: GlideDirection): void;
   selection: {
     isCollapsed: boolean;
     focusNode?: {
@@ -532,13 +533,16 @@ function selection_direction(
   return "backwards";
 }
 
-export function preceding_char(editor: Editor): string | null {
+export function preceding_char(
+  editor: Editor,
+  focus_offset?: number
+): string | null {
   const content = editor.selection.focusNode?.textContent;
   if (content == null) {
     throw new Error("No focused text content");
   }
 
-  const index = editor.selection.focusOffset - 2;
+  const index = (focus_offset ?? editor.selection.focusOffset) - 2;
   if (index < 0) {
     return null;
   }
@@ -561,6 +565,22 @@ export function next_char(editor: Editor): string {
   }
 
   return content.charAt(editor.selection.focusOffset);
+}
+
+export function get_line_preceding(editor: Editor) {
+  const buf = [];
+
+  var offset = editor.selection.focusOffset;
+  while (true) {
+    const char = preceding_char(editor, offset);
+    if (char === "\n" || offset - 1 <= 0) {
+      break;
+    }
+    buf.push(char);
+    offset--;
+  }
+
+  return buf.reverse().join("");
 }
 
 function is_empty_line(editor: Editor): boolean {

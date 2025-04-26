@@ -27,6 +27,7 @@ glide.jar:
   content/utils/dedent.mjs                     (content/utils/dist/dedent.mjs)
   content/utils/objects.mjs                    (content/utils/dist/objects.mjs)
   content/utils/strings.mjs                    (content/utils/dist/strings.mjs)
+  content/shims/google-docs.mjs                (content/shims/dist/google-docs.mjs)
 
 # bundled dependencies
   content/bundled/markdoc.mjs                  (../../bundled/markdoc.mjs)

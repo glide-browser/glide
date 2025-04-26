@@ -13,6 +13,8 @@ import type { SetNonNullable } from "type-fest";
 import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
 import type { ExtensionsAPI as ExtensionsAPIType } from "../base/content/extensions.mts";
 import type { Sandbox } from "../base/content/sandbox.mts";
+import type { Caret } from "../base/content/shims/google-docs.mts";
+import type { Editor } from "../base/content/motions.mts";
 
 const hinting = ChromeUtils.importESModule(
   "chrome://glide/content/hinting.mjs"
@@ -95,6 +97,9 @@ export class GlideHandlerChild extends JSWindowActorChild<
   #hint_scroll_listener: Function | null = null;
   #hint_scrollend_listener: Function | null = null;
 
+  #caret: Caret | null = null;
+  #active_editor: Editor | null = null;
+
   actorCreated() {
     this.state = null;
 
@@ -115,6 +120,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "Glide::StateUpdate": {
         const previous_mode = this.state?.mode;
         this.state = message.data;
+        this.#caret?.on_mode(message.data.mode);
 
         // if we're leaving `hint` mode, we don't need to listen to the
         // scroll events anymore
@@ -655,6 +661,34 @@ export class GlideHandlerChild extends JSWindowActorChild<
    * See `editor/nsIEditor.idl` for usage details.
    */
   #get_editor(element: Node | null | undefined): nsIEditor | null {
+    const hostname = this.contentWindow?.location.hostname;
+    if (
+      hostname === "docs.google.com" &&
+      // the docs content is the focused element
+      (element as HTMLElement)?.classList?.contains(
+        "docs-texteventtarget-iframe"
+      )
+    ) {
+      // TODO: when to evict the cache?
+      if (this.#active_editor) {
+        return this.#active_editor as any;
+      }
+
+      // TODO: do this on load as well, so caret isn't fucked
+      const GoogleDocs = ChromeUtils.importESModule(
+        "chrome://glide/content/shims/google-docs.mjs"
+      );
+      const { editor, caret } = GoogleDocs.make_editor(this.contentWindow!);
+      this.#active_editor = editor;
+      this.#caret = caret;
+      if (this.state?.mode) {
+        this.#caret.on_mode(this.state.mode);
+      }
+
+      // TODO: replace nsIEditor with Editor everywhere
+      return this.#active_editor as any;
+    }
+
     if (element != null && (element as any as MozEditableElement).editor) {
       return (element as any as MozEditableElement).editor;
     }
