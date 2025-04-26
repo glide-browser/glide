@@ -34,6 +34,22 @@
     }
   };
 
+  window.toggle_sidebar = function() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+    
+    // Update toggle button aria-expanded state
+    const toggleButton = document.querySelector('.toggle-sidebar');
+    if (sidebar.classList.contains('open')) {
+      toggleButton.setAttribute('aria-expanded', 'true');
+    } else {
+      toggleButton.setAttribute('aria-expanded', 'false');
+    }
+  };
+
   /**
    * @param {Event} event
    */
@@ -82,8 +98,11 @@
       resetStyles: false,
     });
 
-    document.getElementById("search-button").addEventListener("click", () => {
-      window.open_search();
+    // Add click handlers to buttons that might not have them from HTML
+    document.querySelectorAll(".search-button").forEach(button => {
+      button.addEventListener("click", () => {
+        window.open_search();
+      });
     });
 
     document.addEventListener("keydown", event => {
@@ -91,8 +110,13 @@
         event.preventDefault();
         window.toggle_search();
       } else if (event.key === "Escape") {
-        event.preventDefault();
-        window.close_search();
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar.classList.contains('open')) {
+          window.toggle_sidebar();
+          event.preventDefault();
+        } else {
+          window.close_search();
+        }
       }
     });
 

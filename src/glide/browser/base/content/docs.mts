@@ -324,6 +324,46 @@ export async function markdown_to_html(
         </head>
         <div class="main-container">
           <div id="search"></div>
+          <!-- Mobile header - only visible on small screens -->
+          <div class="mobile-header">
+            <div class="mobile-header-left">
+              <button
+                type="button"
+                class="toggle-sidebar"
+                aria-label="Toggle navigation menu"
+                aria-expanded="false"
+                onclick="toggle_sidebar()"
+              >
+                <!-- » -->
+                <!-- ⌨ -->
+                :
+                <!-- > -->
+                <!-- &#9776; -->
+              </button>
+            </div>
+            <a
+              href="${rel_to_dist}/index.html"
+              class="mobile-header-middle glide-sidenav-heading-link"
+            >
+              <img
+                src="${rel_to_dist}/logo.png"
+                class="glide-sidenav-heading-img"
+              />
+              Glide
+            </a>
+            <div class="mobile-header-right">
+              <button
+                type="button"
+                class="search-button"
+                aria-label="Search"
+                onclick="open_search()"
+              >
+                /
+              </button>
+            </div>
+          </div>
+          <!-- Sidebar overlay for mobile -->
+          <div class="sidebar-overlay" onclick="toggle_sidebar()"></div>
           <div class="content-container">
             <nav class="sidebar">
               <ul class="tree">

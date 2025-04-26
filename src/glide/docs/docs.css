@@ -28,6 +28,7 @@ body {
   border-width: 1px;
   border-radius: 5px;
   position: relative;
+  overflow-x: auto; /* Ensure code blocks don't overflow on small screens */
 }
 
 .excmd-heading {
@@ -144,6 +145,7 @@ ol li p {
   --line-height: 1.2rem;
   background: var(--background-color);
   font-family: var(--font-family);
+  z-index: 100; /* Ensure sidebar appears above content when in mobile mode */
 }
 
 .glide-sidenav-heading {
@@ -186,21 +188,223 @@ ol li p {
   padding: 1px;
 }
 
+/* Mobile sidebar toggle */
+/* TODO: remove customise from here */
+.toggle-sidebar {
+  display: none;
+  /* background: none; */
+  background: var(--background-color-alt);
+  /* border: none; */
+  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: auto;
+  position: relative;
+  z-index: 20;
+}
+
+.toggle-sidebar:hover {
+  background: var(--background-color);
+  border-color: hsla(0, 0%, 100%, 0.2);
+}
+
+/* Mobile header bar - visible only on mobile */
+.mobile-header {
+  display: none;
+  background: var(--background-color);
+  padding: 0.75rem 1rem;
+  border-bottom: var(--border-thickness) solid var(--text-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-header-middle {
+  display: flex;
+  align-items: center;
+  margin-left: 0 !important;
+}
+
+.mobile-header-right {
+  display: flex;
+  align-items: center;
+}
+
 /* Update mobile styles */
 @media screen and (max-width: 768px) {
   .topnav-links {
     margin-left: 0;
   }
 
-  /* TODO */
-  /* .sidebar { */
-  /* 	position: static; */
-  /* 	width: 100%; */
-  /* 	height: auto; */
-  /* 	padding-top: var(--line-height); */
-  /* 	border-right: none; */
-  /* 	border-bottom: var(--border-thickness) solid var(--text-color); */
-  /* } */
+  .content-container {
+    flex-direction: column;
+    max-height: none;
+  }
+
+  .main-container {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Show mobile header */
+  .mobile-header {
+    display: flex;
+  }
+
+  /* Create fixed sidebar that slides in from the left */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 80%;
+    max-width: 300px;
+    min-width: unset;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    z-index: 200;
+    overflow-y: auto;
+    padding: 1rem;
+    border-right: var(--border-thickness) solid var(--text-color);
+    border-bottom: none;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  /* When sidebar is open */
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Overlay when sidebar is open */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  .toggle-sidebar {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+
+    background: var(--background-color-alt);
+    /* border: none; */
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
+    border-radius: 6px;
+  }
+
+  .toggle-sidebar:hover {
+    /* background: var(--background-color-alt); */
+    background: var(--background-color);
+    border-color: hsla(0, 0%, 100%, 0.2);
+  }
+
+  /* Move logo and search to mobile header */
+  .mobile-header .glide-sidenav-heading-link {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 1rem;
+    font-weight: bold;
+  }
+
+  .mobile-header .glide-sidenav-heading-img {
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.5rem;
+  }
+
+  .mobile-header .search-button {
+    padding: 0.5rem 1rem;
+    margin-left: 0.75rem;
+    font-size: 0.9rem;
+    background: var(--background-color-alt);
+    border-radius: 4px;
+    font-family: "Berkeley Mono", "JetBrains Mono", monospace;
+  }
+
+  /* Hide the heading elements in sidebar since they're now in the header */
+  .sidebar .glide-sidenav-heading-link {
+    font-size: 1.5em;
+  }
+
+  .sidebar .search-button {
+    display: none;
+  }
+
+  .content-container > article {
+    padding: 1rem !important;
+    margin: 0 !important;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Fix body positioning */
+  body {
+    overflow-x: hidden;
+    margin-top: 0 !important;
+  }
+
+  .shiki {
+    max-width: 100%;
+    width: calc(100% - 2em);
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .pagefind-ui {
+    max-width: 90%;
+    margin: 2rem auto 0;
+    padding: 1rem;
+  }
+
+  .pagefind-ui__results-area {
+    max-height: calc(100vh - 8rem);
+  }
+}
+
+/* For very small screens */
+@media screen and (max-width: 480px) {
+  .copy-button {
+    padding: 0.3rem;
+    min-width: 2rem;
+    min-height: 2rem;
+  }
+
+  .copy-button svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .pagefind-ui {
+    margin-top: 1rem;
+    padding: 0.75rem;
+  }
 }
 
 .copy-button {
