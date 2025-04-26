@@ -203,9 +203,15 @@ class GlideBrowserClass {
 
     // visual motions
     this.key_manager.set("normal", "v", "v");
+    for (const motion of MOTIONS) {
+      this.key_manager.set("visual", motion, "execute_motion");
+    }
     this.key_manager.set("visual", "h", "vh");
     this.key_manager.set("visual", "l", "vl");
     this.key_manager.set("visual", "d", "vd");
+
+    // TODO: better setup here, piggy back off of MOTIONS?
+    //       same thing for normal mode tbh, shouldn't have to redefine things like `w`
 
     if (this.#startup_finished) {
       // clear all registered event listeners and any custom state on the `browser` object

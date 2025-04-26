@@ -169,7 +169,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::ExecuteContentCommand": {
-        this.#handle_excmd(message.data);
+        this.handle_excmd(message.data);
         break;
       }
       case "Glide::ReplaceChar": {
@@ -361,7 +361,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
     );
   }
 
-  #handle_excmd(props: ParentMessages["Glide::ExecuteContentCommand"]): void {
+  handle_excmd(props: ParentMessages["Glide::ExecuteContentCommand"]): void {
     switch (props.command.name) {
       case "blur": {
         const target = this.#get_active_element();
@@ -404,12 +404,19 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
       case "execute_motion": {
         const operator = props.operator ?? this.state?.operator;
-        if (!operator) {
-          throw new Error("cannot execute motion, no operator defined");
-        }
-
         const sequence = props.sequence.join("");
-        const editor = this.#expect_editor(`${operator}${sequence}`);
+        const editor = this.#expect_editor(`${operator || ""}${sequence}`);
+        if (!operator) {
+          motions.select_motion(
+            editor,
+            sequence as any,
+            this.state?.mode ?? "normal",
+            null,
+            this.state?.mode === "visual"
+          );
+          return;
+          // throw new Error("cannot execute motion, no operator defined");
+        }
 
         switch (operator) {
           case "d": {
@@ -417,7 +424,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
               editor,
               sequence as any,
               this.state?.mode ?? "normal",
-              operator
+              operator,
+              true
             );
 
             // if the motion didn't actually select anything, then there's
@@ -439,7 +447,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
               editor,
               sequence as any,
               this.state?.mode ?? "normal",
-              operator
+              operator,
+              true
             );
             motions.delete_selection(editor, false);
 
@@ -478,12 +487,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
       case "{": {
         const editor = this.#expect_editor(props.command.name);
-        motions.back_para(editor);
+        motions.back_para(editor, false);
         break;
       }
       case "}": {
         const editor = this.#expect_editor(props.command.name);
-        motions.next_para(editor);
+        motions.next_para(editor, false);
         break;
       }
       case "x": {

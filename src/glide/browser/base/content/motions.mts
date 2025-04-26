@@ -39,14 +39,17 @@ export interface Editor {
 /**
  * An exhaustive list of all currently supported motion operations.
  */
-export const MOTIONS = ["iw", "h", "j", "k", "l", "d"] as const;
+export const MOTIONS = ["iw", "h", "j", "k", "l", "d", "}"] as const;
 type GlideMotion = (typeof MOTIONS)[number];
 
+// TODO: rename to perform motion?
 export function select_motion(
-  editor: nsIEditor,
+  editor: Editor,
   motion: GlideMotion,
   mode: GlideMode,
-  operator: GlideOperator
+  operator: GlideOperator | null,
+  // TODO: handle this everywhere
+  extend: boolean
 ):
   | {
       // TODO(glide): figure out a different pattern for this problem
@@ -193,6 +196,11 @@ export function select_motion(
         },
       };
     }
+    case "}": {
+      // @ts-ignore TODO
+      next_para(editor, extend);
+      break;
+    }
     default:
       throw assert_never(motion, `Unknown motion: ${motion}`);
   }
@@ -303,6 +311,9 @@ export function forward_word(
 ) {
   const extend = mode === "visual";
   const starting_cls = text_obj.cls(current_char(editor));
+  console.log("starting cls", starting_cls);
+
+  // debugger;
 
   // we always want to move one character forward no matter what
   editor.selectionController.characterMove(true, extend);
@@ -318,8 +329,10 @@ export function forward_word(
         }
       }
     } else {
+      console.log("not whitespace, moving", starting_cls);
       // for non-bigword, the word boundary is anything other than the starting class
       while (text_obj.cls(current_char(editor)) === starting_cls) {
+        console.log("moving");
         editor.selectionController.characterMove(true, extend);
         if (is_eof(editor) || is_eol(editor)) {
           break;
@@ -329,7 +342,9 @@ export function forward_word(
   }
 
   // find the next word
+  console.log("until whitespace");
   while (text_obj.cls(current_char(editor)) === text_obj.CLS_WHITESPACE) {
+    console.log("again");
     editor.selectionController.characterMove(true, extend);
 
     if (is_eof(editor) || is_eol(editor)) {
@@ -398,10 +413,10 @@ export function back_word(editor: Editor, bigword: boolean) {
   }
 }
 
-export function next_para(editor: nsIEditor) {
+export function next_para(editor: nsIEditor, extend: boolean) {
   while (true) {
-    editor.selectionController.lineMove(true, false);
-    editor.selectionController.intraLineMove(true, false);
+    editor.selectionController.lineMove(true, extend);
+    editor.selectionController.intraLineMove(true, extend);
 
     if (is_empty_line(editor) || is_eof(editor)) {
       break;
@@ -409,10 +424,10 @@ export function next_para(editor: nsIEditor) {
   }
 }
 
-export function back_para(editor: nsIEditor) {
+export function back_para(editor: nsIEditor, extend: boolean) {
   while (true) {
-    editor.selectionController.lineMove(false, false);
-    editor.selectionController.intraLineMove(false, false);
+    editor.selectionController.lineMove(false, extend);
+    editor.selectionController.intraLineMove(false, extend);
 
     if (is_empty_line(editor) || is_bof(editor)) {
       break;
