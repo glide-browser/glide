@@ -12,6 +12,7 @@ DEFINES["MOZ_APP_MAXVERSION"] = CONFIG["MOZ_APP_MAXVERSION"]
 FINAL_TARGET_FILES.features["glide-internal@mozilla.org"] += [
     "manifest.json",
     "run.js",
+    "shim-google-docs.js",
 ]
 
 JAR_MANIFESTS += ["jar.mn"]

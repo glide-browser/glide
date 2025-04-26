@@ -69,5 +69,17 @@
     "scripts": [
       "run.js"
     ]
-  }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/*", "https://docs.google.com/*"],
+      "js": [
+        "shim-google-docs.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
 }

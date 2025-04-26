@@ -150,6 +150,7 @@ declare namespace MockedExports {
     "chrome://glide/content/browser-dev.mjs": typeof import("../src/glide/browser/base/content/browser-dev.mts");
     "chrome://glide/content/text-objects.mjs": typeof import("../src/glide/browser/base/content/text-objects.mts");
     "chrome://glide/content/hinting.mjs": typeof import("../src/glide/browser/base/content/hinting.mts");
+    "chrome://glide/content/shims/google-docs.mjs": typeof import("../src/glide/browser/base/content/shims/google-docs.mts");
 
     "chrome://glide/content/docs.mjs": typeof import("../src/glide/browser/base/content/docs.mts");
 
