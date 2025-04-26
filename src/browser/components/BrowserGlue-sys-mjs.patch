@@ -1,12 +1,11 @@
 diff --git a/browser/components/BrowserGlue.sys.mjs b/browser/components/BrowserGlue.sys.mjs
-index b8b6d30f0b3c968a8615ca601e06e50261d0dae6..27f441c9f466c6ee0ed2ab1df8c3fa5c0fd2331b 100644
+index b8b6d30f0b3c968a8615ca601e06e50261d0dae6..b19d7cf533a598cebd8d1d985033d395fc32cdfe 100644
 --- a/browser/components/BrowserGlue.sys.mjs
 +++ b/browser/components/BrowserGlue.sys.mjs
-@@ -221,6 +221,25 @@ let JSWINDOWACTORS = {
+@@ -221,6 +221,22 @@ let JSWINDOWACTORS = {
      enablePreference: "browser.contextual-password-manager.enabled",
    },
  
-+  // glide-injection-start
 +  GlideHandler: {
 +    parent: {
 +      esModuleURI: "resource:///actors/GlideHandlerParent.sys.mjs",
@@ -21,9 +20,7 @@ index b8b6d30f0b3c968a8615ca601e06e50261d0dae6..27f441c9f466c6ee0ed2ab1df8c3fa5c
 +      },
 +    },
 +    includeChrome: true,
-+    allFrames: true,
 +  },
-+  // glide-injection-end
 +
    AboutLogins: {
      parent: {
