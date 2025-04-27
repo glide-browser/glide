@@ -99,6 +99,8 @@ globalThis.ChromeUtils = {
         return a_require(`${SRC_DIR}/glide/browser/base/content/hinting.mts`);
       case "chrome://glide/content/docs.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/docs.mts`);
+      case "chrome://glide/content/jumplist.mjs":
+        return a_require(`${SRC_DIR}/glide/browser/base/content/jumplist.mts`);
 
       case "chrome://glide/content/bundled/shiki.mjs":
         return a_require(`${SRC_DIR}/glide/bundled/shiki.mjs`);

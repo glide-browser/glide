@@ -18,6 +18,10 @@ const Keys = ChromeUtils.importESModule(
   "chrome://glide/content/utils/keys.mjs",
   { global: "current" }
 );
+const Jumplist = ChromeUtils.importESModule(
+  "chrome://glide/content/jumplist.mjs",
+  { global: "current" }
+);
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
@@ -64,6 +68,7 @@ class GlideBrowserClass {
       })
       // createInstance isn't defined in tests
     : (console as any);
+  jumplist = new Jumplist.Jumplist();
 
   #startup_listeners = new Set<() => void>();
   #startup_finished: boolean = false;
@@ -97,6 +102,7 @@ class GlideBrowserClass {
         }
 
         GlideBrowserDev.init();
+        GlideBrowser.jumplist.init();
 
         GlideBrowser.#startup_listeners.clear();
         Services.obs.removeObserver(
@@ -125,6 +131,17 @@ class GlideBrowserClass {
 
     this.key_manager.set("normal", "gg", "scroll_top");
     this.key_manager.set("normal", "G", "scroll_bottom");
+
+    this.key_manager.set(
+      "normal",
+      "<C-o>",
+      this.jumplist.jump_backwards.bind(this.jumplist)
+    );
+    this.key_manager.set(
+      "normal",
+      "<C-i>",
+      this.jumplist.jump_forwards.bind(this.jumplist)
+    );
 
     // hint mode
     this.key_manager.set("normal", "<leader>f", "hint");
