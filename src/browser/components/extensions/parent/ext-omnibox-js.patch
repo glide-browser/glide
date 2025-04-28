@@ -1,0 +1,15 @@
+diff --git a/browser/components/extensions/parent/ext-omnibox.js b/browser/components/extensions/parent/ext-omnibox.js
+index d8d5f64941a85a360df88e1b930e8ab73e8ef4da..22e84b39d3ffebc321fba27d87e3de1e736e51e8 100644
+--- a/browser/components/extensions/parent/ext-omnibox.js
++++ b/browser/components/extensions/parent/ext-omnibox.js
+@@ -105,7 +105,9 @@ this.omnibox = class extends ExtensionAPIPersistent {
+   }
+ 
+   onShutdown() {
+-    ExtensionSearchHandler.unregisterKeyword(this.keyword);
++    if (this.keyword) {
++      ExtensionSearchHandler.unregisterKeyword(this.keyword);
++    }
+   }
+ 
+   getAPI(context) {

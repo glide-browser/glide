@@ -1,0 +1,13 @@
+diff --git a/browser/components/extensions/parent/ext-sidebarAction.js b/browser/components/extensions/parent/ext-sidebarAction.js
+index 2bdfe12f9ebde71b965b0a53cc57bad27a557a76..388e82d418a1956e45322e627babfd91d969a829 100644
+--- a/browser/components/extensions/parent/ext-sidebarAction.js
++++ b/browser/components/extensions/parent/ext-sidebarAction.js
+@@ -73,7 +73,7 @@ this.sidebarAction = class extends ExtensionAPI {
+   onShutdown(isAppShutdown) {
+     sidebarActionMap.delete(this.extension);
+ 
+-    this.tabContext.shutdown();
++    this.tabContext?.shutdown();
+ 
+     // Don't remove everything on app shutdown so session restore can handle
+     // restoring open sidebars.
