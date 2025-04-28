@@ -178,6 +178,7 @@ export class KeyManager {
     hint: new KeyMappingTrie(),
     "op-pending": new KeyMappingTrie(),
   };
+  #buf_mappings: Record<GlideMode, KeyMappingTrie> | null = null;
 
   #current_sequence: string[] = [];
   #log: ConsoleInstance =
@@ -202,30 +203,49 @@ export class KeyManager {
     };
 
     if (typeof modes === "string") {
-      const trie = this.#mappings[modes];
+      const trie = this.#mapping(modes, opts?.buffer ?? false);
       trie.add(mapping.sequence, mapping as KeyMapping);
     } else {
       for (const mode of modes) {
-        const trie = this.#mappings[mode];
+        const trie = this.#mapping(mode, opts?.buffer ?? false);
         trie.add(mapping.sequence, mapping as KeyMapping);
       }
     }
   }
 
-  del(modes: GlideMode | GlideMode[], lhs: string) {
+  del(modes: GlideMode | GlideMode[], lhs: string, opts?: KeymapDeleteOpts) {
     const sequence = split(lhs).map(normalize);
     for (const mode of typeof modes === "string" ? [modes] : modes) {
-      const trie = this.#mappings[mode];
+      const trie = this.#mapping(mode, opts?.buffer ?? false);
       trie.delete(sequence);
     }
   }
 
-  reset_sequence() {
-    this.#current_sequence = [];
+  clear_buffer() {
+    this.#buf_mappings = null;
   }
 
-  get mappings() {
-    return this.#mappings;
+  #mapping(mode: GlideMode, buffer: boolean): KeyMappingTrie {
+    if (buffer) {
+      if (!this.#buf_mappings) {
+        this.#buf_mappings = {
+          insert: new KeyMappingTrie(),
+          normal: new KeyMappingTrie(),
+          visual: new KeyMappingTrie(),
+          ignore: new KeyMappingTrie(),
+          hint: new KeyMappingTrie(),
+          "op-pending": new KeyMappingTrie(),
+        };
+      }
+
+      return this.#buf_mappings[mode];
+    }
+
+    return this.#mappings[mode];
+  }
+
+  reset_sequence() {
+    this.#current_sequence = [];
   }
 
   get current_sequence() {
@@ -243,8 +263,13 @@ export class KeyManager {
     const keyn = event_to_key_notation(event);
     this.#current_sequence.push(keyn);
 
-    const trie = this.#mappings[current_mode];
-    const node = trie.find(this.#current_sequence as [string, ...string[]]);
+    const sequence = this.#current_sequence as [string, ...string[]];
+
+    // TODO(glide): this breaks for cases where a buffer mapping shadows a longer global mapping
+    //              e.g. buffer: `<leader>a`, global: `<leader>ab`.
+    const node =
+      this.#buf_mappings?.[current_mode].find(sequence) ??
+      this.#mappings[current_mode].find(sequence);
     if (!node) {
       this.#log.debug(`${event.key} -> ${keyn} did not match`);
       return;

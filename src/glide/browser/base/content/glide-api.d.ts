@@ -8,7 +8,16 @@ declare type GlideMode =
 
 declare type KeymapOpts = {
   description?: string | undefined;
+
+  /**
+   * If `true`, creates a buffer-local mapping for the current buffer.
+   *
+   * @default {false}
+   */
+  buffer?: boolean;
 };
+
+declare type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
 declare interface GlideGlobals {
   mapleader: string;
