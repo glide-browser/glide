@@ -5,6 +5,8 @@
 glide.jar:
 % content glide %content/ contentaccessible=yes
 
+  content/glide-scripts.js                     (content/dist/glide-scripts.js)
+
 # ES modules
   content/browser-commands.mjs                 (content/dist/browser-commands.mjs)
   content/browser-excmds.mjs                   (content/dist/browser-excmds.mjs)

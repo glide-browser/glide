@@ -1,5 +1,5 @@
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index a107fbd4ab2bde7b036668c1e56654703f749e7a..46e97e00cba53eed399c6efb46445f045b772938 100644
+index 11ddabcb1eebcfde06b086637750af829983d811..7fd684708414b7792e4d90b80a0f76683868c25f 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 @@ -60,6 +60,7 @@ const isMSIX =
@@ -10,9 +10,9 @@ index a107fbd4ab2bde7b036668c1e56654703f749e7a..46e97e00cba53eed399c6efb46445f04
  const BASE_MESSAGES = () => [
    {
      id: "FXA_ACCOUNTS_BADGE",
-@@ -1365,7 +1366,7 @@ const BASE_MESSAGES = () => [
-       id: "defaultBrowserCheck",
-     },
+@@ -1404,7 +1405,7 @@ const BASE_MESSAGES = () => [
+     targeting:
+       "(firefoxVersion >= 138 && source == 'startup' && !isDefaultBrowser && !'browser.shell.checkDefaultBrowser'|preferenceValue && currentDate|date - 'browser.shell.userDisabledDefaultCheck'|preferenceValue * 1000 >= 604800000 && isMajorUpgrade != true && platformName != 'linux' && ((currentDate|date - profileAgeCreated) / 604800000) >= 5 && !activeNotifications && 'browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features'|preferenceValue && ((currentDate|date - profileAgeCreated) / 604800000) < 15",
    },
 -];
 +].filter((msg) => !msg.id.toLowerCase().includes('promo'));

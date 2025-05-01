@@ -1,12 +1,11 @@
 diff --git a/toolkit/components/extensions/ExtensionChild.sys.mjs b/toolkit/components/extensions/ExtensionChild.sys.mjs
-index ffee2aa789644e3eb88f752f4b45efa31ee1c4d8..b8bf31878e3d1fc196424e2ab499f320421fe5a3 100644
+index 27dc8a50e9fc683fbd2b5f923d7f1944b7d81959..8e3cd568dace992bc04a24d41f3b0cff3ef3e8fe 100644
 --- a/toolkit/components/extensions/ExtensionChild.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionChild.sys.mjs
-@@ -33,6 +33,17 @@ ChromeUtils.defineESModuleGetters(lazy, {
-   NativeApp: "resource://gre/modules/NativeMessaging.sys.mjs",
+@@ -28,6 +28,15 @@ const lazy = XPCOMUtils.declareLazy({
+   },
  });
  
-+// glide-injection-start
 +/** @type {typeof import("../../../glide/browser/base/content/utils/ipc.mts")} **/
 +const { deserialise_args } = ChromeUtils.importESModule(
 +  "chrome://glide/content/utils/ipc.mjs"
@@ -15,12 +14,11 @@ index ffee2aa789644e3eb88f752f4b45efa31ee1c4d8..b8bf31878e3d1fc196424e2ab499f320
 +const { create_sandbox } = ChromeUtils.importESModule(
 +  "chrome://glide/content/sandbox.mjs"
 +);
-+// glide-injection-end
 +
  import { ExtensionCommon } from "resource://gre/modules/ExtensionCommon.sys.mjs";
  import { ExtensionUtils } from "resource://gre/modules/ExtensionUtils.sys.mjs";
  
-@@ -887,6 +898,68 @@ export class ChildAPIManager {
+@@ -882,6 +891,67 @@ export class ChildAPIManager {
          return result;
        });
      }
@@ -84,7 +82,6 @@ index ffee2aa789644e3eb88f752f4b45efa31ee1c4d8..b8bf31878e3d1fc196424e2ab499f320
 +        return result;
 +      });
 +    }
-+    // glide-injection-end
 +
      if (!map.removedIds.has(data.listenerId)) {
        Services.console.logStringMessage(

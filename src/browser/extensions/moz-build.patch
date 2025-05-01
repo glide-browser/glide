@@ -1,5 +1,5 @@
 diff --git a/browser/extensions/moz.build b/browser/extensions/moz.build
-index e06072ffbcb306578058d1b7d0669a17d7559b11..b39485658e2d192e478b5b1c7ef8e53175051676 100644
+index f6071084bc760be0568fff25e5ad4c53bee8bbb9..739675988dbce6f8fac1e99e3de80bc84d2d236b 100644
 --- a/browser/extensions/moz.build
 +++ b/browser/extensions/moz.build
 @@ -6,6 +6,7 @@
@@ -7,6 +7,6 @@ index e06072ffbcb306578058d1b7d0669a17d7559b11..b39485658e2d192e478b5b1c7ef8e531
  DIRS += [
      "formautofill",
 +    "glide",
-     "screenshots",
      "webcompat",
-     "report-site-issue",
+     "pictureinpicture",
+     "search-detection",

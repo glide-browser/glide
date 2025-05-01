@@ -1,5 +1,5 @@
 diff --git a/layout/generic/nsIFrame.cpp b/layout/generic/nsIFrame.cpp
-index 01f724b0c42999107c4622323f849ddd2a6fe5c9..b767dde772d031e3db7a239802b29a003ed35ed3 100644
+index 0fff882bd3b643e3ab59cfaada984bef0ae7fee4..3fba682fcd5e84d3345413fd00b62960d85546b9 100644
 --- a/layout/generic/nsIFrame.cpp
 +++ b/layout/generic/nsIFrame.cpp
 @@ -11,6 +11,7 @@
@@ -10,20 +10,19 @@ index 01f724b0c42999107c4622323f849ddd2a6fe5c9..b767dde772d031e3db7a239802b29a00
  #include "gfx2DGlue.h"
  #include "gfxUtils.h"
  #include "mozilla/Attributes.h"
-@@ -20,6 +21,7 @@
- #include "mozilla/DisplayPortUtils.h"
+@@ -21,6 +22,7 @@
  #include "mozilla/EventForwards.h"
  #include "mozilla/FocusModel.h"
+ #include "mozilla/StaticPrefs_dom.h"
 +#include "mozilla/StaticPrefs_glide.h"
  #include "mozilla/dom/CSSAnimation.h"
  #include "mozilla/dom/CSSTransition.h"
  #include "mozilla/dom/ContentVisibilityAutoStateChangeEvent.h"
-@@ -2630,7 +2632,23 @@ void nsIFrame::DisplayCaret(nsDisplayListBuilder* aBuilder,
+@@ -2631,7 +2633,19 @@ void nsIFrame::DisplayCaret(nsDisplayListBuilder* aBuilder,
  }
  
  nscolor nsIFrame::GetCaretColorAt(int32_t aOffset) {
 -  return nsLayoutUtils::GetTextColor(this, &nsStyleUI::mCaretColor);
-+  // glide-override-start
 +  auto baseColor = nsLayoutUtils::GetTextColor(this, &nsStyleUI::mCaretColor);
 +
 +  // If in block caret mode, override the caret colour so that
@@ -37,9 +36,6 @@ index 01f724b0c42999107c4622323f849ddd2a6fe5c9..b767dde772d031e3db7a239802b29a00
 +  }
 +
 +  return baseColor;
-+  // glide-override-original
-+  // return nsLayoutUtils::GetTextColor(this, &nsStyleUI::mCaretColor);
-+  // glide-override-start
  }
  
  auto nsIFrame::ComputeShouldPaintBackground() const -> ShouldPaintBackground {
