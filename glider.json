@@ -5,11 +5,12 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox",
-    "version": "137.0.2",
+    "version": "138.0",
     "candidate": "137.0"
   },
   "buildOptions": {
-    "windowsUseSymbolicLinks": false
+    "windowsUseSymbolicLinks": false,
+    "generateBranding": true
   },
   "addons": {},
   "brands": {
