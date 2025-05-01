@@ -3,6 +3,10 @@
  * If you're updating some of the sources, see README for instructions.
  */
 
+/// <reference lib="es2024" />
+/// <reference lib="esnext.iterator" />
+
+/// <reference types="./lib.gecko.custom.d.ts" />
 /// <reference types="./lib.gecko.dom.d.ts" />
 /// <reference types="./lib.gecko.glean.d.ts" />
 /// <reference types="./lib.gecko.nsresult.d.ts" />
@@ -17,11 +21,6 @@
 
 /// Order of references matters here, for overriding type signatures.
 /// <reference types="./lib.gecko.tweaks.d.ts" />
-
-/// Substitutions for modules that can't be referenced directly from source.
-declare module "resource://gre/modules/AppConstants.sys.mjs" {
-  const AppConstants: typeof import("./substitutions/AppConstants.sys.d.mts").AppConstants;
-}
 
 declare global {
   const Cc: nsXPCComponents_Classes;

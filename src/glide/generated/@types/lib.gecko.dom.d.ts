@@ -5,7 +5,6 @@
  */
 
 /// <reference no-default-lib="true" />
-/// <reference lib="es2024" />
 
 type HTMLCollectionOf<T> = any;
 type IsInstance<T> = (obj: any) => obj is T;
@@ -415,6 +414,15 @@ interface ChildProcInfoDictionary {
 interface ChromeFilePropertyBag extends FilePropertyBag {
     existenceCheck?: boolean;
     name?: string;
+}
+
+interface ClearResourceCacheOptions {
+    pattern?: OriginAttributesPatternDictionary;
+    principal?: Principal;
+    schemelessSite?: string;
+    target?: ResourceCacheTarget;
+    types?: ResourceCacheType[];
+    url?: string;
 }
 
 interface ClientRectsAndTexts {
@@ -840,6 +848,7 @@ interface FailedCertSecurityInfo {
     certValidityRangeNotBefore?: DOMTimeStamp;
     channelStatus?: number;
     errorCodeString?: string;
+    errorIsOverridable?: boolean;
     errorMessage?: string;
     hasHPKP?: boolean;
     hasHSTS?: boolean;
@@ -1427,6 +1436,10 @@ interface IDBVersionChangeEventInit extends EventInit {
 interface IIRFilterOptions extends AudioNodeOptions {
     feedback: number[];
     feedforward: number[];
+}
+
+interface IdentityCredentialDisconnectOptions extends IdentityProviderConfig {
+    accountHint: string;
 }
 
 interface IdentityCredentialInit {
@@ -2221,6 +2234,7 @@ interface NavigateEventInit extends EventInit {
     info?: any;
     navigationType?: NavigationType;
     signal: AbortSignal;
+    sourceElement?: Element | null;
     userInitiated?: boolean;
 }
 
@@ -2269,7 +2283,13 @@ interface NetErrorInfo {
     responseStatusText?: string;
 }
 
+interface NotificationAction {
+    action: string;
+    title: string;
+}
+
 interface NotificationOptions {
+    actions?: NotificationAction[];
     body?: string;
     data?: any;
     dir?: NotificationDirection;
@@ -2988,6 +3008,11 @@ interface RTCDataChannelStats extends RTCStats {
     state?: RTCDataChannelState;
 }
 
+interface RTCDtlsFingerprint {
+    algorithm?: string;
+    value?: string;
+}
+
 interface RTCEncodedAudioFrameMetadata {
     contributingSources?: number[];
     payloadType?: number;
@@ -3256,6 +3281,7 @@ interface RTCRtpReceiveParameters extends RTCRtpParameters {
 }
 
 interface RTCRtpSendParameters extends RTCRtpParameters {
+    degradationPreference?: RTCDegradationPreference;
     encodings: RTCRtpEncodingParameters[];
     transactionId?: string;
 }
@@ -3448,6 +3474,7 @@ interface RequestInit {
     method?: string;
     mode?: RequestMode;
     mozErrors?: boolean;
+    neverTaint?: boolean;
     observe?: ObserverCallback;
     priority?: RequestPriority;
     redirect?: RequestRedirect;
@@ -3698,10 +3725,6 @@ interface TaskControllerInit {
 
 interface TaskPriorityChangeEventInit extends EventInit {
     previousPriority: TaskPriority;
-}
-
-interface TelemetryStopwatchOptions {
-    inSeconds?: boolean;
 }
 
 interface TestInterfaceAsyncIterableSingleOptions {
@@ -4975,6 +4998,7 @@ declare var AudioTrackList: {
 
 /** Available only in secure contexts. */
 interface AudioWorklet extends Worklet {
+    readonly port: MessagePort;
 }
 
 declare var AudioWorklet: {
@@ -7069,12 +7093,13 @@ declare var DelayNode: {
 };
 
 interface DeprecationReportBody extends ReportBody {
-    readonly anticipatedRemoval: DOMTimeStamp | null;
+    readonly anticipatedRemoval: any;
     readonly columnNumber: number | null;
     readonly id: string;
     readonly lineNumber: number | null;
     readonly message: string;
     readonly sourceFile: string | null;
+    toJSON(): any;
 }
 
 declare var DeprecationReportBody: {
@@ -8487,6 +8512,7 @@ interface GPUAdapterInfo {
     readonly architecture: string;
     readonly description: string;
     readonly device: string;
+    readonly isFallbackAdapter: boolean;
     readonly vendor: string;
     readonly wgpuBackend: string;
     readonly wgpuDevice: number;
@@ -8705,6 +8731,16 @@ declare var GPUError: {
     prototype: GPUError;
     new(): GPUError;
     isInstance: IsInstance<GPUError>;
+};
+
+/** Available only in secure contexts. */
+interface GPUExternalTexture extends GPUObjectBase {
+}
+
+declare var GPUExternalTexture: {
+    prototype: GPUExternalTexture;
+    new(): GPUExternalTexture;
+    isInstance: IsInstance<GPUExternalTexture>;
 };
 
 /** Available only in secure contexts. */
@@ -11836,6 +11872,7 @@ declare var IdentityCredential: {
     prototype: IdentityCredential;
     new(init: IdentityCredentialInit): IdentityCredential;
     isInstance: IsInstance<IdentityCredential>;
+    disconnect(options?: IdentityCredentialDisconnectOptions): Promise<void>;
 };
 
 interface IdleDeadline {
@@ -14167,6 +14204,7 @@ interface NavigateEvent extends Event {
     readonly info: any;
     readonly navigationType: NavigationType;
     readonly signal: AbortSignal;
+    readonly sourceElement: Element | null;
     readonly userInitiated: boolean;
     intercept(options?: NavigationInterceptOptions): void;
     scroll(): void;
@@ -14567,6 +14605,7 @@ interface NotificationEventMap {
 }
 
 interface Notification extends EventTarget {
+    readonly actions: NotificationAction[];
     readonly body: string | null;
     readonly data: any;
     readonly dir: NotificationDirection;
@@ -14592,6 +14631,7 @@ declare var Notification: {
     prototype: Notification;
     new(title: string, options?: NotificationOptions): Notification;
     isInstance: IsInstance<Notification>;
+    readonly maxActions: number;
     readonly permission: NotificationPermission;
     requestPermission(permissionCallback?: NotificationPermissionCallback): Promise<NotificationPermission>;
 };
@@ -15059,6 +15099,7 @@ interface PerformanceEventMap {
 
 interface Performance extends EventTarget {
     readonly eventCounts: EventCounts;
+    readonly interactionCount: number;
     readonly mozMemory: any;
     readonly navigation: PerformanceNavigation;
     onresourcetimingbufferfull: ((this: Performance, ev: Event) => any) | null;
@@ -15118,6 +15159,7 @@ declare var PerformanceEntryEvent: {
 
 interface PerformanceEventTiming extends PerformanceEntry {
     readonly cancelable: boolean;
+    readonly interactionId: number;
     readonly processingEnd: DOMHighResTimeStamp;
     readonly processingStart: DOMHighResTimeStamp;
     readonly target: Node | null;
@@ -15870,6 +15912,7 @@ declare var PushSubscriptionOptions: {
 
 interface RTCCertificate {
     readonly expires: DOMTimeStamp;
+    getFingerprints(): RTCDtlsFingerprint[];
 }
 
 declare var RTCCertificate: {
@@ -18406,7 +18449,6 @@ declare var Sanitizer: {
 
 interface Scheduler {
     postTask(callback: SchedulerPostTaskCallback, options?: SchedulerPostTaskOptions): Promise<any>;
-    yield(): Promise<void>;
 }
 
 declare var Scheduler: {
@@ -18576,7 +18618,7 @@ interface Selection {
     extend(node: Node, offset?: number): void;
     getComposedRanges(...shadowRoots: ShadowRoot[]): StaticRange[];
     getRangeAt(index: number): Range;
-    modify(alter: string, direction: string, granularity: string): void;
+    modify(alter?: string, direction?: string, granularity?: string): void;
     removeAllRanges(): void;
     removeRange(range: Range): void;
     removeSelectionListener(listenerToRemove: nsISelectionListener): void;
@@ -20362,10 +20404,9 @@ declare var URL: {
     new(url: string, base?: string): URL;
     isInstance: IsInstance<URL>;
     canParse(url: string, base?: string): boolean;
-    createObjectURL(blob: Blob): string;
-    createObjectURL(source: MediaSource): string;
+    createObjectURL(obj: Blob | MediaSource): string;
     fromURI(uri: URI): URL;
-    isValidObjectURL(url: string): boolean;
+    isBoundToBlob(url: string): boolean;
     parse(url: string, base?: string): URL | null;
     revokeObjectURL(url: string): void;
 };
@@ -23276,6 +23317,7 @@ interface Window extends EventTarget, AnimationFrameProvider, GlobalCrypto, Glob
     onvrdisplaypresentchange: ((this: Window, ev: Event) => any) | null;
     opener: any;
     readonly orientation: number;
+    readonly originAgentCluster: boolean;
     readonly outerHeight: number;
     readonly outerWidth: number;
     readonly pageXOffset: number;
@@ -23675,8 +23717,8 @@ interface XMLHttpRequest extends XMLHttpRequestEventTarget {
     getAllResponseHeaders(): string;
     getInterface(iid: any): any;
     getResponseHeader(header: string): string | null;
-    open(method: string, url: string | URL): void;
-    open(method: string, url: string | URL, async: boolean, user?: string | null, password?: string | null): void;
+    open(method: string, url: string): void;
+    open(method: string, url: string, async: boolean, user?: string | null, password?: string | null): void;
     overrideMimeType(mime: string): void;
     send(body?: Document | XMLHttpRequestBodyInit | null): void;
     sendInputStream(body: InputStream): void;
@@ -24351,13 +24393,7 @@ declare namespace ChromeUtils {
     function clearMessagingLayerSecurityStateByPrincipal(principal: Principal): void;
     function clearMessagingLayerSecurityStateBySite(schemelessSite: string, pattern?: OriginAttributesPatternDictionary): void;
     function clearRecentJSDevError(): void;
-    function clearResourceCache(chrome?: boolean): void;
-    function clearScriptCache(chrome?: boolean): void;
-    function clearScriptCacheByPrincipal(principal: Principal): void;
-    function clearScriptCacheBySite(schemelessSite: string, pattern?: OriginAttributesPatternDictionary): void;
-    function clearStyleSheetCache(chrome?: boolean): void;
-    function clearStyleSheetCacheByPrincipal(principal: Principal): void;
-    function clearStyleSheetCacheBySite(schemelessSite: string, pattern?: OriginAttributesPatternDictionary): void;
+    function clearResourceCache(options?: ClearResourceCacheOptions): void;
     function collectPerfStats(): Promise<string>;
     function collectScrollingData(): Promise<InteractionData>;
     function compileScript(url: string, options?: CompileScriptOptionsDictionary): Promise<PrecompiledScript>;
@@ -24598,20 +24634,6 @@ declare namespace SessionStoreUtils {
     function restoreFormData(document: Document, data?: CollectedData): boolean;
     function restoreScrollPosition(frame: Window, data?: CollectedData): void;
     function restoreSessionStorageFromParent(browsingContext: CanonicalBrowsingContext, sessionStorage: Record<string, Record<string, string>>): void;
-}
-
-declare namespace TelemetryStopwatch {
-    function cancel(histogram: HistogramID, obj?: any): boolean;
-    function cancelKeyed(histogram: HistogramID, key: HistogramKey, obj?: any): boolean;
-    function finish(histogram: HistogramID, obj?: any, canceledOkay?: boolean): boolean;
-    function finishKeyed(histogram: HistogramID, key: HistogramKey, obj?: any, canceledOkay?: boolean): boolean;
-    function running(histogram: HistogramID, obj?: any): boolean;
-    function runningKeyed(histogram: HistogramID, key: HistogramKey, obj?: any): boolean;
-    function setTestModeEnabled(testing?: boolean): void;
-    function start(histogram: HistogramID, obj?: any, options?: TelemetryStopwatchOptions): boolean;
-    function startKeyed(histogram: HistogramID, key: HistogramKey, obj?: any, options?: TelemetryStopwatchOptions): boolean;
-    function timeElapsed(histogram: HistogramID, obj?: any, canceledOkay?: boolean): number;
-    function timeElapsedKeyed(histogram: HistogramID, key: HistogramKey, obj?: any, canceledOkay?: boolean): number;
 }
 
 declare namespace TestUtils {
@@ -25169,6 +25191,7 @@ declare var onvrdisplaydisconnect: ((this: Window, ev: Event) => any) | null;
 declare var onvrdisplaypresentchange: ((this: Window, ev: Event) => any) | null;
 declare var opener: any;
 declare var orientation: number;
+declare var originAgentCluster: boolean;
 declare var outerHeight: number;
 declare var outerWidth: number;
 declare var pageXOffset: number;
@@ -25458,7 +25481,7 @@ type GPUBufferDynamicOffset = number;
 type GPUBufferUsageFlags = number;
 type GPUColor = number[] | GPUColorDict;
 type GPUColorWriteFlags = number;
-type GPUCopyExternalImageSource = ImageBitmap | HTMLCanvasElement | OffscreenCanvas;
+type GPUCopyExternalImageSource = ImageBitmap | HTMLImageElement | HTMLCanvasElement | OffscreenCanvas;
 type GPUDepthBias = number;
 type GPUExtent3D = GPUIntegerCoordinate[] | GPUExtent3DDict;
 type GPUFlagsConstant = number;
@@ -25582,7 +25605,7 @@ type CodecState = "closed" | "configured" | "unconfigured";
 type ColorGamut = "p3" | "rec2020" | "srgb";
 type ColorSpaceConversion = "default" | "none";
 type CompositeOperation = "accumulate" | "add" | "replace";
-type CompressionFormat = "deflate" | "deflate-raw" | "gzip";
+type CompressionFormat = "deflate" | "deflate-raw" | "gzip" | "zstd";
 type ConnectionType = "bluetooth" | "cellular" | "ethernet" | "none" | "other" | "unknown" | "wifi";
 type ConsoleLevel = "error" | "log" | "warning";
 type ConsoleLogLevel = "All" | "Clear" | "Debug" | "Dir" | "Dirxml" | "Error" | "Group" | "GroupEnd" | "Info" | "Log" | "Off" | "Profile" | "ProfileEnd" | "Time" | "TimeEnd" | "TimeLog" | "Trace" | "Warn";
@@ -25723,6 +25746,7 @@ type RTCBundlePolicy = "balanced" | "max-bundle" | "max-compat";
 type RTCCodecType = "decode" | "encode";
 type RTCDataChannelState = "closed" | "closing" | "connecting" | "open";
 type RTCDataChannelType = "arraybuffer" | "blob";
+type RTCDegradationPreference = "balanced" | "maintain-framerate" | "maintain-resolution";
 type RTCDtlsTransportState = "closed" | "connected" | "connecting" | "failed" | "new";
 type RTCEncodedVideoFrameType = "delta" | "empty" | "key";
 type RTCIceCandidateType = "host" | "prflx" | "relay" | "srflx";
@@ -25755,6 +25779,8 @@ type RequestMode = "cors" | "navigate" | "no-cors" | "same-origin";
 type RequestPriority = "auto" | "high" | "low";
 type RequestRedirect = "error" | "follow" | "manual";
 type ResizeObserverBoxOptions = "border-box" | "content-box" | "device-pixel-content-box";
+type ResourceCacheTarget = "chrome" | "content";
+type ResourceCacheType = "image" | "script" | "stylesheet";
 type ResponseType = "basic" | "cors" | "default" | "error" | "opaque" | "opaqueredirect";
 type SanitizerPresets = "default";
 type ScreenColorGamut = "p3" | "rec2020" | "srgb";

@@ -20,6 +20,14 @@ interface Document {
   createXULElement(name: "browser"): XULBrowserElement;
 }
 
+type nsIGleanPingNoReason = {
+  [K in keyof nsIGleanPing]: K extends "submit" ? (_?: never) => void : nsIGleanPing[K];
+}
+
+type nsIGleanPingWithReason<T> = {
+  [K in keyof nsIGleanPing]: K extends "submit" ? (reason: T) => void : nsIGleanPing[K];
+}
+
 interface MessageListenerManagerMixin {
   // Overloads that define `data` arg as required, since it's ~always expected.
   addMessageListener(msg: string, listener: { receiveMessage(_: ReceiveMessageArgument & { data })});
@@ -92,6 +100,10 @@ interface nsXPCComponents_Utils {
 }
 
 type Sandbox = typeof globalThis & nsISupports;
+
+interface WindowGlobalParent extends WindowContext {
+  readonly browsingContext: CanonicalBrowsingContext;
+}
 
 // Hand-crafted artisanal types.
 interface XULBrowserElement extends XULFrameElement, FrameLoader {

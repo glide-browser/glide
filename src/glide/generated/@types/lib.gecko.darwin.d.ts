@@ -43,6 +43,10 @@ interface nsIMacShellService extends nsIShellService {
 
 // https://searchfox.org/mozilla-central/source/widget/nsIMacDockSupport.idl
 
+interface nsIAppBundleLaunchOptions extends nsISupports {
+  readonly addsToRecentItems: boolean;
+}
+
 interface nsIMacDockSupport extends nsISupports {
   dockMenu: nsIStandaloneNativeMenu;
   activateApplication(aIgnoreOtherApplications: boolean): void;
@@ -50,6 +54,7 @@ interface nsIMacDockSupport extends nsISupports {
   setBadgeImage(aBadgeImage: imgIContainer, aPaintContext?: nsISVGPaintContext): void;
   readonly isAppInDock: boolean;
   ensureAppIsPinnedToDock(aAppPath?: string, aAppToReplacePath?: string): boolean;
+  launchAppBundle(aAppBundle: nsIFile, aArgs: string[], aLaunchOptions?: nsIAppBundleLaunchOptions): void;
 }
 
 // https://searchfox.org/mozilla-central/source/widget/nsIMacFinderProgress.idl
@@ -182,6 +187,7 @@ interface nsIXPCComponents_Interfaces {
   nsIAccessibleMacEvent: nsJSIID<nsIAccessibleMacEvent>;
   nsIKeychainMigrationUtils: nsJSIID<nsIKeychainMigrationUtils>;
   nsIMacShellService: nsJSIID<nsIMacShellService>;
+  nsIAppBundleLaunchOptions: nsJSIID<nsIAppBundleLaunchOptions>;
   nsIMacDockSupport: nsJSIID<nsIMacDockSupport>;
   nsIMacFinderProgressCanceledCallback: nsJSIID<nsIMacFinderProgressCanceledCallback>;
   nsIMacFinderProgress: nsJSIID<nsIMacFinderProgress>;
@@ -213,8 +219,8 @@ type InOutParam<T> = { value: T };
 /** XPCOM out param is written to the passed in object's value property. */
 type OutParam<T> = { value?: T };
 
-/** A named type to enable interfaces to inherit from enums. */
-type Enums<enums> = enums;
+/** Enable interfaces to inherit from enums: pick variants as optional. */
+type Enums<enums> = Partial<Pick<enums, keyof enums>>;
 
 /** Callable accepts either form of a [function] interface. */
 type Callable<iface> = iface | Extract<iface[keyof iface], Function>

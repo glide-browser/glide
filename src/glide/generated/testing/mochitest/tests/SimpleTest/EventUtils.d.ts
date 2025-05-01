@@ -183,62 +183,108 @@ function synthesizeTouchAtPoint(aLeft: any, aTop: any, aEvent?: any, aWindow?: W
 function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any): boolean;
 function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Window & typeof globalThis): void;
 /**
- * Synthesize a wheel event without flush layout at a particular point in
- * aWindow.
- *
- * aEvent is an object which may contain the properties:
- *   shiftKey, ctrlKey, altKey, metaKey, accessKey, deltaX, deltaY, deltaZ,
- *   deltaMode, lineOrPageDeltaX, lineOrPageDeltaY, isMomentum,
- *   isNoLineOrPageDelta, isCustomizedByPrefs, expectedOverflowDeltaX,
- *   expectedOverflowDeltaY
- *
- * deltaMode must be defined, others are ok even if undefined.
- *
- * expectedOverflowDeltaX and expectedOverflowDeltaY take integer value.  The
- * value is just checked as 0 or positive or negative.
- *
- * aWindow is optional, and defaults to the current window object.
+ * @typedef {Object} WheelEventData
+ * @property {string} [aEvent.accessKey] - The character or key associated with
+ *     the access key event. Typically a single character used to activate a UI
+ *     element via keyboard shortcuts (e.g., Alt + accessKey).
+ * @property {boolean} [aEvent.altKey] - If set to `true`, the Alt key will be
+ *     considered pressed.
+ * @property {boolean} [aEvent.asyncEnabled] - If `true`, the event is
+ *     dispatched to the parent process through APZ, without being injected
+ *     into the OS event queue.
+ * @property {boolean} [aEvent.ctrlKey] - If set to `true`, the Ctrl key will
+ *     be considered pressed.
+ * @property {number} [aEvent.deltaMode=WheelEvent.DOM_DELTA_PIXEL] - Delta Mode
+ *     for scrolling (pixel, line, or page), which must be one of the
+ *     `WheelEvent.DOM_DELTA_*` constants.
+ * @property {number} [aEvent.deltaX] - Floating-point value in CSS pixels to
+ *     scroll in the x direction.
+ * @property {number} [aEvent.deltaY] - Floating-point value in CSS pixels to
+ *     scroll in the y direction.
+ * @property {number} [aEvent.deltaZ] - Floating-point value in CSS pixels to
+ *     scroll in the z direction.
+ * @property {number} [aEvent.expectedOverflowDeltaX] - Decimal value
+ *     indicating horizontal scroll overflow. Only the sign is checked: `0`,
+ *     positive, or negative.
+ * @property {number} [aEvent.expectedOverflowDeltaY] - Decimal value
+ *     indicating vertical scroll overflow. Only the sign is checked: `0`,
+ *     positive, or negative.
+ * @property {boolean} [aEvent.isCustomizedByPrefs] - If set to `true` the
+ *     delta values are computed from preferences.
+ * @property {boolean} [aEvent.isMomentum] - If set to `true` the event will be
+ *     caused by momentum.
+ * @property {boolean} [aEvent.isNoLineOrPageDelta] - If `true`, the creator
+ *     does not set `lineOrPageDeltaX/Y`. When a widget wheel event is
+ *     generated from this object, those fields will be automatically
+ *     calculated during dispatch by the `EventStateManager`.
+ * @property {number} [aEvent.lineOrPageDeltaX] - If set to a non-zero value
+ *      for a `DOM_DELTA_PIXEL` event, the EventStateManager will dispatch a
+ *     `NS_MOUSE_SCROLL` event for a horizontal scroll.
+ * @property {number} [aEvent.lineOrPageDeltaY] - If set to a non-zero value
+ *     for a `DOM_DELTA_PIXEL` event, the EventStateManager will dispatch a
+ *     `NS_MOUSE_SCROLL` event for a vertical scroll.
+ * @property {boolean} [aEvent.metaKey] - If set to `true`, the Meta key will
+ *     be considered pressed.
+ * @property {boolean} [aEvent.shiftKey] - If set to `true`, the Shift key will
+ *     be considered pressed.
  */
-function synthesizeWheelAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow?: Window & typeof globalThis): void;
 /**
- * Synthesize a wheel event on a target. The actual client point is determined
- * by taking the aTarget's client box and offseting it by aOffsetX and
- * aOffsetY.
+ * Synthesize a wheel event in `aWindow` at a point, without flushing layout.
  *
- * aEvent is an object which may contain the properties:
- *   shiftKey, ctrlKey, altKey, metaKey, accessKey, deltaX, deltaY, deltaZ,
- *   deltaMode, lineOrPageDeltaX, lineOrPageDeltaY, isMomentum,
- *   isNoLineOrPageDelta, isCustomizedByPrefs, expectedOverflowDeltaX,
- *   expectedOverflowDeltaY
+ * `nsIDOMWindowUtils.sendWheelEvent` takes floats for the coordinates.
+ * Therefore, don't round or truncate the values.
  *
- * deltaMode must be defined, others are ok even if undefined.
- *
- * expectedOverflowDeltaX and expectedOverflowDeltaY take integer value.  The
- * value is just checked as 0 or positive or negative.
- *
- * aWindow is optional, and defaults to the current window object.
+ * @param {number} aLeft - Floating-point value for the X offset in CSS pixels.
+ * @param {number} aTop - Floating-point value for the Y offset in CSS pixels.
+ * @param {WheelEventData} aEvent - Details of the wheel event to dispatch.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
  */
-function synthesizeWheel(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): void;
+function synthesizeWheelAtPoint(aLeft: number, aTop: number, aEvent: WheelEventData, aWindow?: DOMWindow): void;
+/**
+ * Synthesize a wheel event on a target.
+ *
+ * The actual client point is determined by taking the aTarget's client box
+ * and offsetting it by aOffsetX and aOffsetY.
+ *
+ * @param {Element} aTarget - DOM element to dispatch the event on.
+ * @param {number} aOffsetX - X offset in CSS pixels from the element’s left edge.
+ * @param {number} aOffsetY - Y offset in CSS pixels from the element’s top edge.
+ * @param {WheelEventData} aEvent - Details of the wheel event to dispatch.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
+ */
+function synthesizeWheel(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: WheelEventData, aWindow?: DOMWindow): void;
 function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aFlushMode?: number, aWindow?: Window & typeof globalThis): void;
 /**
- * This is a wrapper around synthesizeWheel that waits for the wheel event
- * to be dispatched and for the subsequent layout/paints to be flushed.
+ * Wrapper around synthesizeWheel that waits for the wheel event to be
+ * dispatched and for any resulting layout and paint operations to flush.
  *
- * This requires including paint_listener.js. Tests must call
- * DOMWindowUtils.restoreNormalRefresh() before finishing, if they use this
- * function.
+ * Requires including `paint_listener.js`. Tests using this function must call
+ * `DOMWindowUtils.restoreNormalRefresh()` before finishing.
  *
- * If no callback is provided, the caller is assumed to have its own method of
- * determining scroll completion and the refresh driver is not automatically
- * restored.
+ * @param {Element} aTarget - DOM element to dispatch the event on.
+ * @param {number} aOffsetX - X offset in CSS pixels from the element’s left edge.
+ * @param {number} aOffsetY - Y offset in CSS pixels from the element’s top edge.
+ * @param {WheelEventData} aEvent - Details of the wheel event to dispatch.
+ * @param {Function} [aCallback] - Called after paint flush, if provided. If not,
+ *     the caller is expected to handle scroll completion manually. In this case,
+ *     the refresh driver will not be restored automatically.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
  */
-function sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
+function sendWheelAndPaint(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: WheelEventData, aCallback?: Function, aWindow?: DOMWindow): void;
 /**
- * Similar to sendWheelAndPaint but without flushing layout for obtaining
- * ``aTarget`` position in ``aWindow`` before sending the wheel event.
- * ``aOffsetX`` and ``aOffsetY`` should be offsets against aWindow.
+ * Similar to `sendWheelAndPaint()`, but skips layout flush when resolving
+ * `aTarget`'s position in `aWindow` before dispatching the wheel event.
+ *
+ * @param {Element} aTarget - DOM element to dispatch the event on.
+ * @param {number} aOffsetX - X offset in CSS pixels from the `aWindow`’s left edge.
+ * @param {number} aOffsetY - Y offset in CSS pixels from the `aWindow`’s top edge.
+ * @param {WheelEventData} aEvent - Details of the wheel event to dispatch.
+ * @param {Function} [aCallback] - Called after paint, if provided. If not,
+ *     the caller is expected to handle scroll completion manually. In this case,
+ *     the refresh driver will not be restored automatically.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
  */
-function sendWheelAndPaintNoFlush(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aWindow?: Window & typeof globalThis): void;
+function sendWheelAndPaintNoFlush(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: WheelEventData, aCallback?: Function, aWindow?: DOMWindow): void;
 function synthesizeNativeTapAtCenter(aTarget: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
 function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTap?: boolean, aCallback?: any, aWindow?: Window & typeof globalThis): void;
 /**
@@ -1185,6 +1231,102 @@ class EventCounter {
     unregister(): void;
     get count(): number;
 }
+type WheelEventData = {
+    /**
+     * - The character or key associated with
+     * the access key event. Typically a single character used to activate a UI
+     * element via keyboard shortcuts (e.g., Alt + accessKey).
+     */
+    accessKey?: string;
+    /**
+     * - If set to `true`, the Alt key will be
+     * considered pressed.
+     */
+    altKey?: boolean;
+    /**
+     * - If `true`, the event is
+     * dispatched to the parent process through APZ, without being injected
+     * into the OS event queue.
+     */
+    asyncEnabled?: boolean;
+    /**
+     * - If set to `true`, the Ctrl key will
+     * be considered pressed.
+     */
+    ctrlKey?: boolean;
+    /**
+     * - Delta Mode
+     * for scrolling (pixel, line, or page), which must be one of the
+     * `WheelEvent.DOM_DELTA_*` constants.
+     */
+    deltaMode?: number;
+    /**
+     * - Floating-point value in CSS pixels to
+     * scroll in the x direction.
+     */
+    deltaX?: number;
+    /**
+     * - Floating-point value in CSS pixels to
+     * scroll in the y direction.
+     */
+    deltaY?: number;
+    /**
+     * - Floating-point value in CSS pixels to
+     * scroll in the z direction.
+     */
+    deltaZ?: number;
+    /**
+     * - Decimal value
+     * indicating horizontal scroll overflow. Only the sign is checked: `0`,
+     * positive, or negative.
+     */
+    expectedOverflowDeltaX?: number;
+    /**
+     * - Decimal value
+     * indicating vertical scroll overflow. Only the sign is checked: `0`,
+     * positive, or negative.
+     */
+    expectedOverflowDeltaY?: number;
+    /**
+     * - If set to `true` the
+     * delta values are computed from preferences.
+     */
+    isCustomizedByPrefs?: boolean;
+    /**
+     * - If set to `true` the event will be
+     * caused by momentum.
+     */
+    isMomentum?: boolean;
+    /**
+     * - If `true`, the creator
+     * does not set `lineOrPageDeltaX/Y`. When a widget wheel event is
+     * generated from this object, those fields will be automatically
+     * calculated during dispatch by the `EventStateManager`.
+     */
+    isNoLineOrPageDelta?: boolean;
+    /**
+     * - If set to a non-zero value
+     * for a `DOM_DELTA_PIXEL` event, the EventStateManager will dispatch a
+     * `NS_MOUSE_SCROLL` event for a horizontal scroll.
+     */
+    lineOrPageDeltaX?: number;
+    /**
+     * - If set to a non-zero value
+     * for a `DOM_DELTA_PIXEL` event, the EventStateManager will dispatch a
+     * `NS_MOUSE_SCROLL` event for a vertical scroll.
+     */
+    lineOrPageDeltaY?: number;
+    /**
+     * - If set to `true`, the Meta key will
+     * be considered pressed.
+     */
+    metaKey?: boolean;
+    /**
+     * - If set to `true`, the Shift key will
+     * be considered pressed.
+     */
+    shiftKey?: boolean;
+};
 /**
  * This callback type is used with ``synthesizePlainDragAndCancel()``.
  * It should compare ``actualData`` and ``expectedData`` and return
