@@ -345,7 +345,7 @@ add_task(async function test_normal_r() {
 
     await set_text("Hello\nworld", "replacing newline character");
     await set_selection(2);
-    await test_edit("r\n", "He\nlo\nworld", 2, "\n");
+    await test_edit("r<CR>", "He\nlo\nworld", 2, "\n");
 
     await set_text("Hello\tworld", "replacing tab character");
     await set_selection(6, "w");
