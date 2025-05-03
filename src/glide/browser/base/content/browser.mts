@@ -177,7 +177,6 @@ class GlideBrowserClass {
     this.key_manager.set("normal", ".", "repeat");
     this.key_manager.set("normal", ":", "commandline_show");
 
-    this.key_manager.set("insert", "jj", "mode_change normal");
     this.key_manager.set(
       ["insert", "visual", "op-pending"],
       "<Esc>",
