@@ -126,7 +126,11 @@ declare var glide: {
      *
      * The mapping may remain defined for other modes where it applies.
      */
-    del(modes: GlideMode | GlideMode[], lhs: string): void;
+    del(
+      modes: GlideMode | GlideMode[],
+      lhs: string,
+      opts?: KeymapDeleteOpts
+    ): void;
   };
 
   hints: {

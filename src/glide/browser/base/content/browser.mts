@@ -950,8 +950,8 @@ function make_glide_api(): typeof glide {
       set(modes, lhs, rhs, opts) {
         GlideBrowser.key_manager.set(modes, lhs as string, rhs, opts);
       },
-      del(modes, lhs) {
-        GlideBrowser.key_manager.del(modes, lhs);
+      del(modes, lhs, opts) {
+        GlideBrowser.key_manager.del(modes, lhs, opts);
       },
     },
     tabs: {
