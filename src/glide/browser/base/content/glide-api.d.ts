@@ -203,7 +203,7 @@ declare namespace $keymapcompletions {
    * `<leader>` -> `<leader>f` | `<leader><CR>` ...
    * `g` -> `gg` | `gj` ...
    */
-  type T<const LHS> =
+  type T<LHS> =
     LHS extends "" ? SingleKey
     : LHS extends "<" ? SpecialKey | `<${ModifierKey}-`
     : LHS extends `${infer S}<${infer M}-` ?
