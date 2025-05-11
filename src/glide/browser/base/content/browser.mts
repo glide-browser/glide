@@ -308,13 +308,7 @@ class GlideBrowserClass {
         );
       }
 
-      if (this.#startup_finished) {
-        add_notification();
-      } else {
-        this.#startup_listeners.add(() => {
-          add_notification();
-        });
-      }
+      this.on_startup(add_notification);
     }
   }
 
@@ -340,6 +334,18 @@ class GlideBrowserClass {
       this.#api = make_glide_api();
     }
     return this.#api;
+  }
+
+  /**
+   * Register a callback to be invoked on startup finish, or if
+   * startup has already finished, invoke the callback immediately.
+   */
+  on_startup(cb: () => void): void {
+    if (this.#startup_finished) {
+      cb();
+    } else {
+      GlideBrowser.#startup_listeners.add(cb);
+    }
   }
 
   #extension_id = "glide-internal@mozilla.org";
@@ -473,7 +479,7 @@ class GlideBrowserClass {
             // we can't necessarily access the necessary extension context depending on how
             // early on in startup we are, so register a startup listener instead if we haven't
             // finished startup yet.
-            const call_listener = () => {
+            GlideBrowser.on_startup(() => {
               let method = GlideBrowser.browser_parent_api;
               for (const prop of previous_chain) {
                 method = method[prop];
@@ -485,13 +491,7 @@ class GlideBrowserClass {
               }
 
               return method(...args);
-            };
-
-            if (GlideBrowser.#startup_finished) {
-              call_listener();
-            } else {
-              GlideBrowser.#startup_listeners.add(call_listener);
-            }
+            });
 
             return;
           }
