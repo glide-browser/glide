@@ -23,7 +23,35 @@ declare interface GlideGlobals {
   mapleader: string;
 }
 
+declare type GlideAutocmdEvent = "UrlEnter";
+declare type GlideAutocmdPattern = RegExp;
+declare type GlideAutocmdArgs = {
+  UrlEnter: { readonly url: string };
+};
+
 declare var glide: {
+  autocmd: {
+    /**
+     * Create an autocmd that will be invoked whenever the focused URL changes.
+     *
+     * This includes:
+     *   1. URL changes within the same tab
+     *   2. Switching tabs
+     *   3. Navigating back and forth in history within the same tab
+     */
+    create(
+      event: "UrlEnter",
+      pattern: GlideAutocmdPattern,
+      callback: (args: GlideAutocmdArgs["UrlEnter"]) => void
+    ): void;
+
+    create<Event extends GlideAutocmdEvent>(
+      event: Event,
+      pattern: GlideAutocmdPattern,
+      callback: (args: GlideAutocmdArgs[Event]) => void
+    ): void;
+  };
+
   /**
    * Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so
    * that all customisation can be represented in a single `glide.ts` file.
@@ -148,6 +176,28 @@ declare var glide: {
        */
       action?(target: HTMLElement): Promise<void>;
     }): void;
+  };
+
+  buf: {
+    keymaps: {
+      set<const LHS>(
+        modes: GlideMode | GlideMode[],
+        lhs: $keymapcompletions.T<LHS>,
+        rhs: import("./browser-excmds.mjs").GlideCommandValue,
+        opts?: Omit<KeymapOpts, "buffer"> | undefined
+      ): void;
+
+      /**
+       * Remove the mapping of {lhs} for the {modes} where the map command applies.
+       *
+       * The mapping may remain defined for other modes where it applies.
+       */
+      del(
+        modes: GlideMode | GlideMode[],
+        lhs: string,
+        opts?: Omit<KeymapDeleteOpts, "buffer"> | undefined
+      ): void;
+    };
   };
 
   keys: {

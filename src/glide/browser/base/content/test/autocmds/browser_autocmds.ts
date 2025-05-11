@@ -1,0 +1,159 @@
+/* Any copyright is dedicated to the Public Domain.
+ * https://creativecommons.org/publicdomain/zero/1.0/ */
+
+"use strict";
+
+declare global {
+  interface GlideGlobals {
+    /** Marker that a single autocmd was triggered. */
+    triggered?: boolean;
+
+    /** Collects the order of multiple autocmd callbacks. */
+    calls?: string[];
+  }
+}
+
+const INPUT_TEST_URI =
+  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+
+add_setup(async function setup() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+    glide.g.triggered = false;
+  });
+});
+
+add_task(async function test_autocmd_triggers_on_matching_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create("UrlEnter", /input_test\.html/, () => {
+      glide.g.triggered = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+    ok(
+      GlideBrowser.api.g.triggered,
+      "UrlEnter autocmd should be triggered on matching URL"
+    );
+  });
+});
+
+add_task(async function test_autocmd_not_triggered_on_non_matching_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create("UrlEnter", /definitely-wont-match/, () => {
+      glide.g.triggered = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+    notok(
+      GlideBrowser.api.g.triggered,
+      "UrlEnter autocmd should NOT be triggered for non-matching URL"
+    );
+  });
+});
+
+add_task(async function test_multiple_autocmd_callbacks_all_fire() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmd.create("UrlEnter", /input_test/, () => {
+      glide.g.calls!.push("first");
+    });
+
+    glide.autocmd.create("UrlEnter", /input_test/, () => {
+      glide.g.calls!.push("second");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      ["first", "second"],
+      "All registered autocmd callbacks should fire in registration order"
+    );
+  });
+});
+
+add_task(async function test_urlenter_triggered_by_tab_switch() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmd.create("UrlEnter", /input_test/, () => {
+      glide.g.calls!.push("enter");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    is(num_calls(), 1, "Initial navigation should trigger exactly once");
+
+    const tab1 = gBrowser.selectedTab;
+
+    await BrowserTestUtils.withNewTab("about:mozilla", async _ => {
+      await sleep_frames(5);
+
+      is(
+        num_calls(),
+        1,
+        "Opening non-matching page should not trigger UrlEnter"
+      );
+
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+      await sleep_frames(5);
+
+      is(
+        num_calls(),
+        2,
+        "Switching tabs should retrigger UrlEnter for an already loaded page"
+      );
+    });
+  });
+});
+
+add_task(
+  async function test_autocmd_multiple_matching_tabs_triggers_once_each() {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.calls = [];
+
+      glide.autocmd.create("UrlEnter", /input_test/, () => {
+        glide.g.calls!.push("enter");
+      });
+    });
+
+    await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+      await sleep_frames(5);
+      const tab1 = gBrowser.selectedTab;
+
+      await BrowserTestUtils.withNewTab(INPUT_TEST_URI + "?second", async _ => {
+        await sleep_frames(5);
+        const tab2 = gBrowser.selectedTab;
+
+        isjson(
+          GlideBrowser.api.g.calls,
+          ["enter", "enter"],
+          "Each matching navigation should trigger UrlEnter once"
+        );
+
+        await BrowserTestUtils.switchTab(gBrowser, tab1);
+        await BrowserTestUtils.switchTab(gBrowser, tab2);
+        await sleep_frames(5);
+
+        isjson(
+          GlideBrowser.api.g.calls,
+          ["enter", "enter", "enter", "enter"],
+          "Switching between already loaded matching tabs should trigger again"
+        );
+      });
+    });
+  }
+);
+
+function num_calls() {
+  return (GlideBrowser.api.g.calls ?? []).length;
+}

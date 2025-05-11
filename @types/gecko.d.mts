@@ -20,6 +20,7 @@ declare namespace GlobalBrowser {
     tabContainer: TabContainer;
     removeTab(tab: BrowserTab): void;
     getBrowserForTab(tab: BrowserTab): Browser;
+    addProgressListener(listener: Partial<nsIWebProgressListener>): void;
     // note: missing lots of opts
     // see `browser/components/tabbrowser/content/tabbrowser.js`
     addTrustedTab(
@@ -199,6 +200,7 @@ declare namespace MockedExports {
     ) => KnownModules[S];
     defineModuleGetter: (target: any, variable: string, path: string) => void;
     defineESModuleGetters: (target: any, mappings: any) => void;
+    generateQI(interfaces: any[]): MozQueryInterface;
   }
 }
 

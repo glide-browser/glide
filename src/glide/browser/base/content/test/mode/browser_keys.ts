@@ -15,8 +15,20 @@ const FULLSCREEN_TEST_URI =
 const CLIPBOARD_TEST_URI =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/clipboard_test.html";
 
+declare global {
+  interface GlideGlobals {
+    invoked_buffer?: number;
+    invoked_global?: number;
+  }
+}
+
 add_setup(async () => {
   GlideBrowser.key_manager.reset_sequence();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("insert", "jj", "mode_change normal");
+  });
+
   await sleep_frames(1);
 });
 
@@ -405,5 +417,56 @@ add_task(async function test_mapping_user_gesture_activation() {
       await navigator.clipboard.readText(),
       "This is the test content to copy"
     );
+  });
+});
+
+add_task(async function test_buf_local_keymaps_override_global() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.invoked_buffer = 0;
+      glide.g.invoked_global = 0;
+
+      glide.keymaps.set("normal", "q", () => {
+        glide.g.invoked_global!++;
+      });
+
+      glide.buf.keymaps.set("normal", "q", () => {
+        glide.g.invoked_buffer!++;
+      });
+    });
+
+    EventUtils.synthesizeKey("q");
+    await sleep_frames(3);
+    is(
+      GlideBrowser.api.g.invoked_buffer,
+      1,
+      "Buffer-local mapping should be executed in the originating buffer"
+    );
+    is(
+      GlideBrowser.api.g.invoked_global,
+      0,
+      "Global mapping should be shadowed by the buffer-local mapping"
+    );
+
+    // Open a new tab to clear buffer-local mappings.
+    const new_tab = await BrowserTestUtils.openNewForegroundTab(
+      gBrowser,
+      KEYS_TEST_URI
+    );
+
+    EventUtils.synthesizeKey("q");
+    await sleep_frames(3);
+    is(
+      GlideBrowser.api.g.invoked_buffer,
+      1,
+      "Buffer-local mapping should not fire in a different buffer"
+    );
+    is(
+      GlideBrowser.api.g.invoked_global,
+      1,
+      "Global mapping should be executed in buffers without a buffer-local override"
+    );
+
+    BrowserTestUtils.removeTab(new_tab);
   });
 });

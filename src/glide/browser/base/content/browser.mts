@@ -78,6 +78,13 @@ class GlideBrowserClass {
   //       config contents
   #config_uri = "chrome://glide/config/glide.ts";
 
+  autocmds: {
+    [K in GlideAutocmdEvent]?: {
+      pattern: GlideAutocmdPattern;
+      callback: (args: GlideAutocmdArgs[K]) => (() => void) | void;
+    }[];
+  } = {};
+
   init() {
     document!.addEventListener("blur", this.#on_blur.bind(this), true);
     document!.addEventListener("keydown", this.#on_keydown.bind(this), true);
@@ -104,6 +111,8 @@ class GlideBrowserClass {
         GlideBrowserDev.init();
         GlideBrowser.jumplist.init();
 
+        gBrowser.addProgressListener(GlideBrowser.progress_listener);
+
         GlideBrowser.#startup_listeners.clear();
         Services.obs.removeObserver(
           startup_observer,
@@ -123,6 +132,8 @@ class GlideBrowserClass {
     this.#api = null;
     this.config_path = null;
     this.#clear_config_error_notification();
+
+    this.autocmds = {};
 
     this.key_manager = new Keys.KeyManager();
     this.key_manager.set("normal", "<leader>r", "reload");
@@ -309,6 +320,96 @@ class GlideBrowserClass {
       }
 
       this.on_startup(add_notification);
+    }
+  }
+
+  /**
+   * Listener that, once registered with `gBrowser.addProgressListener()`, will be invoked
+   * for different state changes in the browser.
+   */
+  get progress_listener(): Partial<nsIWebProgressListener> {
+    return redefine_getter(this, "progress_listener", {
+      QueryInterface: ChromeUtils.generateQI([
+        "nsIWebProgressListener",
+        "nsISupportsWeakReference",
+      ]),
+
+      $last_location: null as string | null,
+
+      /**
+       * See https://github.com/mozilla-firefox/firefox/blob/199896bcd330d391eae8e0eff155f99d0881d59b/uriloader/base/nsIWebProgressListener.idl#L541
+       */
+      onLocationChange(
+        web_progress: nsIWebProgress,
+        _request: nsIRequest,
+        location: nsIURI,
+        flags?: u32
+      ) {
+        GlideBrowser._log.debug("onLocationChange", location.spec, flags);
+        if (!flags) {
+          flags = 0;
+        }
+
+        // `onLocationChange` can be called multiple times during loads of the same location change,
+        // for example `google.com` results in two calls at the time of writing, one with *no* flags set
+        // and another with `STATE_START`, `STATE_BROKEN`, and `LOCATION_CHANGE_SAME_DOCUMENT`. I don't
+        // quite understand *why* this happens yet.
+        //
+        // To avoid firing events twice for the same load, we explicitly check if the location string
+        // is the same when `LOCATION_CHANGE_SAME_DOCUMENT` is set so that SPAs can still trigger new
+        // events, as they are conceptually different pages.
+        if (
+          flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT! &&
+          this.$last_location === location.spec
+        ) {
+          return;
+        }
+
+        this.$last_location = location.spec;
+
+        if (flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_HASHCHANGE!) {
+          // ignore changes that are just to the `#` part of the url
+          return;
+        }
+
+        if (!web_progress.isTopLevel) {
+          return; // ignore iframes etc.
+        }
+
+        GlideBrowser.clear_buffer();
+
+        const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
+        if (!cmds.length) {
+          return;
+        }
+
+        const args: GlideAutocmdArgs["UrlEnter"] = { url: location.spec };
+
+        for (const cmd of cmds) {
+          if (!cmd.pattern.test(location.spec)) {
+            continue;
+          }
+
+          // TODO: proper error handling
+          const cleanup = cmd.callback(args);
+          if (typeof cleanup === "function") {
+            GlideBrowser.#buffer_cleanups.push(cleanup);
+          }
+        }
+      },
+    });
+  }
+
+  #buffer_cleanups: (() => void)[] = [];
+
+  clear_buffer() {
+    this.key_manager.clear_buffer();
+
+    const cleanups = this.#buffer_cleanups;
+    this.#buffer_cleanups = [];
+
+    for (const cleanup of cleanups) {
+      cleanup();
     }
   }
 
@@ -946,12 +1047,42 @@ class GlideGlobals implements GlideG {
 function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
+    autocmd: {
+      create<Event extends GlideAutocmdEvent>(
+        event: Event,
+        pattern: GlideAutocmdPattern,
+        callback: (args: GlideAutocmdArgs[Event]) => void
+      ) {
+        const existing = GlideBrowser.autocmds[event];
+        if (existing) {
+          existing.push({ pattern, callback });
+        } else {
+          GlideBrowser.autocmds[event] = [{ pattern, callback }];
+        }
+      },
+    },
     keymaps: {
       set(modes, lhs, rhs, opts) {
         GlideBrowser.key_manager.set(modes, lhs as string, rhs, opts);
       },
       del(modes, lhs, opts) {
         GlideBrowser.key_manager.del(modes, lhs, opts);
+      },
+    },
+    buf: {
+      keymaps: {
+        set(modes, lhs, rhs, opts) {
+          GlideBrowser.key_manager.set(modes, lhs as string, rhs, {
+            ...opts,
+            buffer: true,
+          });
+        },
+        del(modes, lhs, opts) {
+          GlideBrowser.key_manager.del(modes, lhs as string, {
+            ...opts,
+            buffer: true,
+          });
+        },
       },
     },
     tabs: {

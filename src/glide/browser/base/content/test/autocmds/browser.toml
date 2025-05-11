@@ -1,0 +1,5 @@
+[DEFAULT]
+support-files = []
+
+["dist/browser_autocmds.js"]
+https_first_disabled = true
