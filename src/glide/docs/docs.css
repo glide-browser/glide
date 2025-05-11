@@ -119,6 +119,50 @@ ol li p {
   display: inline;
 }
 
+/* Define the animation */
+/* @keyframes target-fade { */
+/*   0% { */
+/*     background-color: yellow !important; */
+/*   } */
+/*   100% { */
+/*     background-color: transparent !important; */
+/*   } */
+/* } */
+/**/
+/* :target { */
+/*   animation: target-fade 1s ease !important; */
+/* } */
+
+/* TODO: this file isn't getting copied over */
+
+/*  ⤵  Only runs if the user has NOT asked to reduce motion  */
+@media (prefers-reduced-motion: no-preference) {
+  :target {
+    /* Initial look while the animation plays */
+    position: relative; /* so the pseudo-element is positioned correctly */
+    isolation: isolate; /* keep the overlay above its own contents only */
+  }
+
+  :target::after {
+    content: "";
+    position: absolute;
+    inset: 0; /* cover the whole heading */
+    background: #fffb8d; /* soft yellow highlight */
+    z-index: -1; /* sit under the text */
+    animation: flash-out 0.8s ease-out forwards;
+    pointer-events: none; /* keep links inside the heading clickable */
+  }
+
+  @keyframes flash-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
 .main-container {
   display: flex;
   min-height: 100vh;

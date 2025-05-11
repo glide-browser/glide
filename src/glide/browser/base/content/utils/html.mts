@@ -56,3 +56,8 @@ export function a(attrs: Attrs, children?: string[]): string {
 export function li(attrs?: Attrs, children?: string[]): string {
   return element("li", attrs, children);
 }
+
+/** <ul></ul> */
+export function ul(attrs?: Attrs, children?: string[]): string {
+  return element("ul", attrs, children);
+}

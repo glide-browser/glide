@@ -1,0 +1,3 @@
+# Glide Philosophy
+
+TODO

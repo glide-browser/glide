@@ -1,9 +1,18 @@
-# Key Mappings
+# Keys
 
-Glide uses the familiar Vim syntax for defining key mappings. If it can be mapped in Vim but not in Glide, that's a bug{% sup %}\[[1](#known-differences-with-vim)\]{% /sup %}.
+<!-- TODO: small links under the heading to the reference? -->
+
+<!-- TODO: anchor for known differences -->
+
+Glide supports defining key mappings with the same syntax as Vim. If it can be mapped in Vim but not in Glide, that's a bug{% sup %}\[[1](#known-differences-with-vim)\]{% /sup %}.
+
+This is because it is a proven syntax for defining key mappings and a core part of the [Glide Philosophy](./glide-philosophy.md) is to avoid reinventing the wheel and let you leverage existing knowledge.
 
 <!-- TODO: expand more on meta keys -->
-<!-- TODO: add a "what keys to map" section-->
+<!-- TODO: add a "what keys to map" section -->
+<!-- TODO: make sure casing always correct -->
+
+# Reference
 
 ## Special keys
 
@@ -23,10 +32,6 @@ Special keys are wrapped in angle brackets `<>`. For example:
 - `<End>` - End key
 - `<PageUp>` - Page Up key
 - `<PageDown>` - Page Down key
-
-## Function keys
-
-- `<F1>` through `<F12>` - Function keys
 
 ## Modifier keys
 
@@ -57,6 +62,10 @@ For example, `<lt>` is needed in _some_ cases so that `<` can be used alongside 
 - `<` -> valid, `<` by itself
 - `<D->` -> invalid
 - `<D-lt>` -> valid, `Command` + `<`
+
+## Function keys
+
+- `<F1>` through `<F12>` - Function keys
 
 ## Notes
 
