@@ -440,13 +440,6 @@ class GlideBrowserClass {
   }
 
   #create_browser_proxy_api(): typeof browser {
-    const childId = GlideBrowser.extension.backgroundContext?.childId;
-    if (!childId) {
-      // TODO(glide): define an easy way to register a listener for when
-      //              this would be possible and recommend it here.
-      throw new Error("Tried to access `browser` too early in startup");
-    }
-
     function create_browser_proxy_chain(
       previous_chain: (string | symbol)[] = []
     ) {
