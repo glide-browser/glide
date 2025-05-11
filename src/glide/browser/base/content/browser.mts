@@ -470,17 +470,30 @@ class GlideBrowserClass {
               `Handling request for \`${previous_chain}\` in the main thread`
             );
 
-            let method = GlideBrowser.browser_parent_api;
-            for (const prop of previous_chain) {
-              method = method[prop];
-              if (method == null) {
-                throw new Error(
-                  `Could not resolve \`browser\` property at path \`${previous_chain.join(".")}\` - \`${String(prop)}\` was not defined`
-                );
+            // we can't necessarily access the necessary extension context depending on how
+            // early on in startup we are, so register a startup listener instead if we haven't
+            // finished startup yet.
+            const call_listener = () => {
+              let method = GlideBrowser.browser_parent_api;
+              for (const prop of previous_chain) {
+                method = method[prop];
+                if (method == null) {
+                  throw new Error(
+                    `Could not resolve \`browser\` property at path \`${previous_chain.join(".")}\` - \`${String(prop)}\` was not defined`
+                  );
+                }
               }
+
+              return method(...args);
+            };
+
+            if (GlideBrowser.#startup_finished) {
+              call_listener();
+            } else {
+              GlideBrowser.#startup_listeners.add(call_listener);
             }
 
-            return method(...args);
+            return;
           }
 
           const method_path = previous_chain.join(".");
