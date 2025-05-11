@@ -383,13 +383,6 @@ class GlideBrowserClass {
     }
 
     // TODO(glide): some APIs need special casing
-    //
-    // - [ ] `menus`
-    // - [ ] `contextMenus`
-    // - [ ] `urlOverrides`
-    // - [ ] `action`
-    // - [ ] `pageAction`
-    // - [ ] `browserAction`
     const known_bad = new Set([
       "action",
       "browserAction",
@@ -397,6 +390,7 @@ class GlideBrowserClass {
       "contextMenus",
       "pageAction",
       "urlOverrides",
+      "trial",
     ]);
 
     // note: I'm not *exactly* sure why but the `.apiObj` object doesn't
