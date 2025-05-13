@@ -1,8 +1,8 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index a41b96b065a19cc386cc06227f5f4d9b446adeca..db0da6a4f94b5496e1b58dac7c9e8aec3b347c07 100644
+index a41b96b065a19cc386cc06227f5f4d9b446adeca..88469d5a0f6290d25248c6fe53f7ded86a13bb2a 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
-@@ -84,6 +84,22 @@ let JSWINDOWACTORS = {
+@@ -84,6 +84,23 @@ let JSWINDOWACTORS = {
      enablePreference: "browser.contextual-password-manager.enabled",
    },
  
@@ -19,6 +19,7 @@ index a41b96b065a19cc386cc06227f5f4d9b446adeca..db0da6a4f94b5496e1b58dac7c9e8aec
 +        keydown: {},
 +      },
 +    },
++    allFrames: true,
 +    includeChrome: true,
 +  },
 +
