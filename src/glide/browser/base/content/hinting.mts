@@ -98,7 +98,6 @@ export const content = {
     ].flatMap(str => [str, str.toUpperCase(), `html:${str}`, `xul:${str}`])
   ),
 
-  // TODO(glide): add more `role`s
   HINTABLE_ROLES: new Set([
     "link",
     "button",
@@ -106,6 +105,9 @@ export const content = {
     "menuitem",
     "menuitemcheckbox",
     "menuitemradio",
+    "tab",
+    "checkbox",
+    "radio",
   ]),
 
   *hintable_targets(root: Document | ShadowRoot): Generator<HTMLElement> {
