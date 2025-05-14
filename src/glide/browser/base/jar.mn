@@ -20,6 +20,7 @@ glide.jar:
   content/jumplist.mjs                         (content/dist/jumplist.mjs)
   content/text-objects.mjs                     (content/dist/text-objects.mjs)
   content/docs.mjs                             (content/dist/docs.mjs)
+  content/please.mjs                           (content/dist/please.mjs)
   content/utils/dom.mjs                        (content/utils/dist/dom.mjs)
   content/utils/ipc.mjs                        (content/utils/dist/ipc.mjs)
   content/utils/html.mjs                       (content/utils/dist/html.mjs)

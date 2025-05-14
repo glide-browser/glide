@@ -129,6 +129,17 @@ class GlideBrowserClass {
   }
 
   async reload_config() {
+    await this.#reload_config();
+
+    this.on_startup(() => {
+      const Please = ChromeUtils.importESModule(
+        "chrome://glide/content/please.mjs"
+      );
+      Please.pretty(this.api, this.browser_proxy_api);
+    });
+  }
+
+  async #reload_config() {
     this.#api = null;
     this.config_path = null;
     this.#clear_config_error_notification();
