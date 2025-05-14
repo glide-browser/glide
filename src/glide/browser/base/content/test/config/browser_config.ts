@@ -154,7 +154,7 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {
       // @ts-ignore
-      glide.pref("wow why does this pref not exist?", true);
+      glide.prefs.set("wow why does this pref not exist?", true);
     });
 
     await sleep_frames(5);
@@ -170,7 +170,7 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
         .querySelector(".message")
         .textContent.trim()
         .replace(CONFIG_LINE_COL_REGEX, ":X:X"),
-      "An error occurred while evaluating `pref@chrome://glide/content/browser.mjs:X:X\n@glide.ts:2:7` - Error: Invalid pref name wow why does this pref not exist?",
+      "An error occurred while evaluating `set@chrome://glide/content/browser.mjs:X:X\n@glide.ts:2:13` - Error: Invalid pref name wow why does this pref not exist?",
       "Notification should contain error message"
     );
   });

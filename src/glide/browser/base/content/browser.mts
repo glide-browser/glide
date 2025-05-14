@@ -1165,33 +1165,35 @@ function make_glide_api(): typeof glide {
         return this.next().then(event => event.glide_key);
       },
     },
-    pref(name, value) {
-      const type = Services.prefs.getPrefType(name);
-      switch (type) {
-        case Services.prefs.PREF_STRING:
-          Services.prefs.setStringPref(name, value as string);
-          break;
-        case Services.prefs.PREF_INT:
-          Services.prefs.setIntPref(name, value as number);
-          break;
-        case Services.prefs.PREF_BOOL:
-          Services.prefs.setBoolPref(name, value as boolean);
-          break;
-        case Services.prefs.PREF_INVALID:
-          throw new Error(`Invalid pref name ${name}`);
-        default:
-          throw new Error(
-            `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
-              [
-                Services.prefs.PREF_INT!,
-                Services.prefs.PREF_BOOL!,
-                Services.prefs.PREF_STRING!,
-                Services.prefs.PREF_INVALID!,
-              ],
-              { final: "or" }
-            )}`
-          );
-      }
+    prefs: {
+      set(name, value) {
+        const type = Services.prefs.getPrefType(name);
+        switch (type) {
+          case Services.prefs.PREF_STRING:
+            Services.prefs.setStringPref(name, value as string);
+            break;
+          case Services.prefs.PREF_INT:
+            Services.prefs.setIntPref(name, value as number);
+            break;
+          case Services.prefs.PREF_BOOL:
+            Services.prefs.setBoolPref(name, value as boolean);
+            break;
+          case Services.prefs.PREF_INVALID:
+            throw new Error(`Invalid pref name ${name}`);
+          default:
+            throw new Error(
+              `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
+                [
+                  Services.prefs.PREF_INT!,
+                  Services.prefs.PREF_BOOL!,
+                  Services.prefs.PREF_STRING!,
+                  Services.prefs.PREF_INVALID!,
+                ],
+                { final: "or" }
+              )}`
+            );
+        }
+      },
     },
   };
 }

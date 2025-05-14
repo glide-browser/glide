@@ -52,18 +52,20 @@ declare var glide: {
     ): void;
   };
 
-  /**
-   * Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so
-   * that all customisation can be represented in a single `glide.ts` file.
-   *
-   * **warning**: this function is expected to be called at the top-level of your config, there is no guarantee that calling `glide.pref()` in callbacks
-   *              will result in the pref being properly applied everywhere.
-   *
-   * **warning**: there is also no guarantee that these settings will be applied when first loaded, sometimes a restart is required.
-   *
-   * Note: these settings are intended for experienced users, changing them can have serious effects on your browser’s stability, security and performance.
-   */
-  pref(name: string, value: string | number | boolean): void;
+  prefs: {
+    /**
+     * Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so
+     * that all customisation can be represented in a single `glide.ts` file.
+     *
+     * **warning**: this function is expected to be called at the top-level of your config, there is no guarantee that calling `glide.pref()` in callbacks
+     *              will result in the pref being properly applied everywhere.
+     *
+     * **warning**: there is also no guarantee that these settings will be applied when first loaded, sometimes a restart is required.
+     *
+     * Note: these settings are intended for experienced users, changing them can have serious effects on your browser’s stability, security and performance.
+     */
+    set(name: string, value: string | number | boolean): void;
+  };
 
   /**
    * Equivalent to `vim.g`.
