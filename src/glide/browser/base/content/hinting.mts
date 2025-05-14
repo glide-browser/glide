@@ -46,8 +46,8 @@ export const content = {
       const dom_rect = target.getBoundingClientRect();
       const point_element = DOM.element_at_point(
         document,
-        dom_rect.x,
-        dom_rect.y
+        dom_rect.left + dom_rect.width * 0.5,
+        dom_rect.top + dom_rect.height * 0.5
       );
       if (
         point_element &&
@@ -109,7 +109,7 @@ export const content = {
   ]),
 
   *hintable_targets(root: Document | ShadowRoot): Generator<HTMLElement> {
-    for (const el of root.querySelectorAll("*")) {
+    for (const el of all_elements(root)) {
       if (!el) {
         continue;
       }
@@ -129,3 +129,13 @@ export const content = {
     }
   },
 };
+
+function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
+  for (const element of root.querySelectorAll("*")) {
+    if (!element) {
+      continue;
+    }
+
+    yield element as HTMLElement;
+  }
+}
