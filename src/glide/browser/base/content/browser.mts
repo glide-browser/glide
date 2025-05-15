@@ -1220,6 +1220,31 @@ function make_glide_api(): typeof glide {
             );
         }
       },
+      get(name) {
+        const type = Services.prefs.getPrefType(name);
+        switch (type) {
+          case Services.prefs.PREF_STRING:
+            return Services.prefs.getStringPref(name);
+          case Services.prefs.PREF_INT:
+            return Services.prefs.getIntPref(name);
+          case Services.prefs.PREF_BOOL:
+            return Services.prefs.getBoolPref(name);
+          case Services.prefs.PREF_INVALID:
+            throw new Error(`Invalid pref name ${name}`);
+          default:
+            throw new Error(
+              `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
+                [
+                  Services.prefs.PREF_INT!,
+                  Services.prefs.PREF_BOOL!,
+                  Services.prefs.PREF_STRING!,
+                  Services.prefs.PREF_INVALID!,
+                ],
+                { final: "or" }
+              )}`
+            );
+        }
+      },
     },
   };
 }

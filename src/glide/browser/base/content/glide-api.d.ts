@@ -65,6 +65,11 @@ declare var glide: {
      * Note: these settings are intended for experienced users, changing them can have serious effects on your browser’s stability, security and performance.
      */
     set(name: string, value: string | number | boolean): void;
+
+    /**
+     * Get the value of a preference.
+     */
+    get(name: string): string | number | boolean;
   };
 
   /**

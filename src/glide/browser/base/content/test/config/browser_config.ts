@@ -8,6 +8,12 @@ const INPUT_TEST_URI =
 
 const CONFIG_LINE_COL_REGEX = /(?<!@glide\.ts):(\d+):(\d+)/g;
 
+declare global {
+  interface GlideGlobals {
+    value?: unknown;
+  }
+}
+
 add_setup(async function setup() {
   await GlideTestUtils.reload_config(function _() {
     // empty placeholder config file
@@ -173,6 +179,22 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
       "An error occurred while evaluating `set@chrome://glide/content/browser.mjs:X:X\n@glide.ts:2:13` - Error: Invalid pref name wow why does this pref not exist?",
       "Notification should contain error message"
     );
+  });
+});
+
+add_task(async function test_glide_prefs_get() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.value = undefined;
+
+      glide.prefs.set("browser.active_color", "#EE0000");
+
+      glide.g.value = glide.prefs.get("browser.active_color");
+    });
+
+    await sleep_frames(5);
+
+    is(GlideBrowser.api.g.value, "#EE0000");
   });
 });
 
