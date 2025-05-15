@@ -39,13 +39,13 @@ declare var glide: {
      *   2. Switching tabs
      *   3. Navigating back and forth in history within the same tab
      */
-    create(
-      event: "UrlEnter",
+    create<const Event extends "UrlEnter">(
+      event: Event,
       pattern: GlideAutocmdPattern,
-      callback: (args: GlideAutocmdArgs["UrlEnter"]) => void
+      callback: (args: GlideAutocmdArgs[Event]) => void
     ): void;
 
-    create<Event extends GlideAutocmdEvent>(
+    create<const Event extends GlideAutocmdEvent>(
       event: Event,
       pattern: GlideAutocmdPattern,
       callback: (args: GlideAutocmdArgs[Event]) => void
