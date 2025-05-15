@@ -31,6 +31,10 @@ glide.jar:
   content/utils/dedent.mjs                     (content/utils/dist/dedent.mjs)
   content/utils/objects.mjs                    (content/utils/dist/objects.mjs)
   content/utils/strings.mjs                    (content/utils/dist/strings.mjs)
+  content/utils/resources.mjs                  (content/utils/dist/resources.mjs)
+
+# types
+  content/glide-api.d.ts                       (content/glide-api.d.ts)
 
 # bundled dependencies
   content/bundled/markdoc.mjs                  (../../bundled/markdoc.mjs)

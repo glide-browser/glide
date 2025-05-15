@@ -125,6 +125,21 @@ class GlideBrowserClass {
       "browser-idle-startup-tasks-finished"
     );
 
+    // copy the glide-api.d.ts file to the profile dir so it's easy to
+    // refer to it in the config file
+    this.on_startup(async () => {
+      const { fetch_resource } = ChromeUtils.importESModule(
+        "chrome://glide/content/utils/resources.mjs"
+      );
+
+      await IOUtils.writeUTF8(
+        PathUtils.join(PathUtils.profileDir, "glide-api.d.ts"),
+        await fetch_resource("chrome://glide/content/glide-api.d.ts", {
+          loadUsingSystemPrincipal: true,
+        })
+      );
+    });
+
     this.reload_config();
   }
 

@@ -141,6 +141,7 @@ declare namespace MockedExports {
     "chrome://glide/content/utils/dedent.mjs": typeof import("../src/glide/browser/base/content/utils/dedent.mts");
     "chrome://glide/content/utils/objects.mjs": typeof import("../src/glide/browser/base/content/utils/objects.mts");
     "chrome://glide/content/utils/strings.mjs": typeof import("../src/glide/browser/base/content/utils/strings.mts");
+    "chrome://glide/content/utils/resources.mjs": typeof import("../src/glide/browser/base/content/utils/resources.mts");
     "chrome://glide/content/browser.mjs": typeof import("../src/glide/browser/base/content/browser.mts");
     "chrome://glide/content/motions.mjs": typeof import("../src/glide/browser/base/content/motions.mts");
     "chrome://glide/content/sandbox.mjs": typeof import("../src/glide/browser/base/content/sandbox.mts");
@@ -183,6 +184,7 @@ declare namespace MockedExports {
 
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
+    "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");
   }
 
   interface ChromeUtils {

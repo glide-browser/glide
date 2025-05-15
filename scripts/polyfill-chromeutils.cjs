@@ -61,6 +61,10 @@ globalThis.ChromeUtils = {
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/utils/strings.mts`
         );
+      case "chrome://glide/content/utils/resources.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/resources.mts`
+        );
       case "chrome://glide/content/utils/ipc.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/utils/ipc.mts`);
       case "chrome://glide/content/please.mjs":
@@ -117,6 +121,7 @@ globalThis.ChromeUtils = {
 
       case "resource://gre/modules/LayoutUtils.sys.mjs":
       case "resource://gre/modules/Timer.sys.mjs":
+      case "resource://gre/modules/NetUtil.sys.mjs":
       case "resource://gre/modules/Extension.sys.mjs":
       case "resource://gre/modules/ExtensionParent.sys.mjs":
       case "resource://gre/modules/ConduitsParent.sys.mjs":
