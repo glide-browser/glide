@@ -78,27 +78,39 @@ declare namespace GlobalBrowser {
           parameter: "removed" | "dismissed" | "disconnected"
         ) => void;
       },
-      buttons?: {
-        label?: string;
-        accessKey?: string;
-        "l10n-id"?: string;
-        link?: string;
-        supportPage?: string;
-        popup?: string;
-        is?: string;
-        // TODO(glide-types): actually has arguments
-        callback?: () => void;
-      }[]
+      buttons?: NotificationBox.Button[]
     ): Promise<Notification>;
     removeNotification(notification: Notification): void;
 
     getNotificationWithValue(value: string): Notification;
   }
 
+  namespace NotificationBox {
+    interface Button {
+      label?: string;
+      accessKey?: string;
+      "l10n-id"?: string;
+      link?: string;
+      supportPage?: string;
+      popup?: string;
+      is?: string;
+      // TODO(glide-types): actually has arguments
+      callback?: () => void;
+    }
+  }
+
   interface Notification extends HTMLElement {
     shadowRoot: HTMLElement;
   }
 }
+
+interface MozElements {
+  NotificationBox: {
+    prototype: GlobalBrowser.NotificationBox;
+  };
+}
+
+declare var MozElements: MozElements;
 
 // TODO(glide-types)
 declare type BrowserTab = any;

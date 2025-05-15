@@ -324,29 +324,38 @@ class GlideBrowserClass {
       const message = `An error occurred while evaluating \`${loc}\` - ${err}`;
       this._log.error(message);
 
-      function add_notification() {
-        GlideBrowser._log.debug("adding config error notification");
-
-        const notificationBox = gBrowser.getNotificationBox();
-        notificationBox.appendNotification(
-          GlideBrowser.#config_error_id,
+      this.add_notification(this.#config_error_id, {
+        label: message,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [
           {
-            label: message,
-            priority: notificationBox.PRIORITY_CRITICAL_HIGH,
-          },
-          [
-            {
-              "l10n-id": "glide-error-notification-reload-config-button",
-              callback: () => {
-                GlideBrowser.reload_config();
-              },
+            "l10n-id": "glide-error-notification-reload-config-button",
+            callback: () => {
+              GlideBrowser.reload_config();
             },
-          ]
-        );
-      }
-
-      this.on_startup(add_notification);
+          },
+        ],
+      });
     }
+  }
+
+  add_notification(
+    type: string,
+    props: {
+      priority: number;
+      label: string;
+      eventCallback?: (
+        parameter: "removed" | "dismissed" | "disconnected"
+      ) => void;
+      buttons?: GlobalBrowser.NotificationBox.Button[];
+    }
+  ) {
+    this.on_startup(() => {
+      const { buttons, ...data } = props;
+
+      const notificationBox = gBrowser.getNotificationBox();
+      notificationBox.appendNotification(type, data, buttons);
+    });
   }
 
   /**
