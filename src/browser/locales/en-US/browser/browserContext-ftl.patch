@@ -1,5 +1,5 @@
 diff --git a/browser/locales/en-US/browser/browserContext.ftl b/browser/locales/en-US/browser/browserContext.ftl
-index 2da88bf8ec975c8ef6e0ad2014556fe11ca75697..bac52bca179ed44b811ae1fe533cb54f1291d0df 100644
+index 4b95b09620bee676b308d684e11efbd99a9ac6b0..79ac75b3b9e338bfbb33c10c7899bc3dd4f22936 100644
 --- a/browser/locales/en-US/browser/browserContext.ftl
 +++ b/browser/locales/en-US/browser/browserContext.ftl
 @@ -81,6 +81,17 @@ toolbar-button-stop =
@@ -13,7 +13,7 @@ index 2da88bf8ec975c8ef6e0ad2014556fe11ca75697..bac52bca179ed44b811ae1fe533cb54f
 +    .tooltiptext = Glide current mode
 +
 +glide-error-notification-reload-config-button =
-+    .label = Reload config
++    .label = :config_reload
 +
 +########### glide-injection-end
 +

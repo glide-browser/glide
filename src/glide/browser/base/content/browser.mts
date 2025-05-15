@@ -152,7 +152,62 @@ class GlideBrowserClass {
       );
       Please.pretty(this.api, this.browser_proxy_api);
     });
+
+    this.on_startup(async () => {
+      if (this.#config_watcher_id) {
+        clearInterval(this.#config_watcher_id);
+        this.#config_watcher_id = undefined;
+      }
+
+      const path = this.config_path;
+      if (!path) return;
+
+      this.#config_watcher_id = setInterval(async () => {
+        if (this.#config_pending_notification) {
+          // no need to do anything if we've already notified
+          return;
+        }
+
+        const stat = await IOUtils.stat(path);
+        if (!stat.lastModified) {
+          throw new Error(
+            `[config watcher]: stat of \`${path}\` does not include a \`lastModified\` value`
+          );
+        }
+
+        if (this.#config_modified_timestamp === undefined) {
+          // ignore first stat
+          this.#config_modified_timestamp = stat.lastModified;
+          return;
+        }
+
+        if (stat.lastModified > this.#config_modified_timestamp) {
+          this.#config_modified_timestamp = stat.lastModified;
+          this.#config_pending_notification = true;
+
+          this.add_notification(this.#config_pending_notification_id, {
+            label: "The config has been modified!",
+            priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+            buttons: [
+              {
+                "l10n-id": "glide-error-notification-reload-config-button",
+                callback: () => {
+                  this.#config_pending_notification = false;
+                  GlideBrowser.reload_config();
+                },
+              },
+            ],
+          });
+        }
+      }, 500) as any as number;
+    });
   }
+
+  #config_watcher_id: number | undefined;
+  readonly #config_pending_notification_id: string =
+    "glide-config-reload-notification";
+  #config_pending_notification: boolean = false;
+  #config_modified_timestamp: number | undefined;
 
   async #reload_config() {
     this.#api = null;
@@ -455,7 +510,10 @@ class GlideBrowserClass {
       const notificationBox = gBrowser.getNotificationBox();
       for (const notification of notificationBox.allNotifications) {
         const value = notification.getAttribute("value");
-        if (value === this.#config_error_id) {
+        if (
+          value === this.#config_error_id ||
+          value === this.#config_pending_notification_id
+        ) {
           notificationBox.removeNotification(notification);
         }
       }
