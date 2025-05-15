@@ -317,7 +317,7 @@ class GlideBrowserClass {
           typeof err.stack === "string"
         ) ?
           err.stack
-            .slice(0, err.stack.indexOf("\nreload_config"))
+            .slice(0, err.stack.indexOf("\n#reload_config"))
             .replace(this.#config_uri, "glide.ts")
         : "glide.ts";
 
