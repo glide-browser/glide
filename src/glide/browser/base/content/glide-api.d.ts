@@ -30,6 +30,9 @@ declare type GlideAutocmdArgs = {
 };
 
 declare var glide: {
+  ctx: {
+    url: string;
+  };
   autocmd: {
     /**
      * Create an autocmd that will be invoked whenever the focused URL changes.

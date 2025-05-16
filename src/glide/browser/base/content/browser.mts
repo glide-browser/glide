@@ -1143,6 +1143,15 @@ class GlideGlobals implements GlideG {
 function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
+    ctx: {
+      get url() {
+        const url = gBrowser?.selectedBrowser?.currentURI?.spec;
+        if (!url) {
+          throw new Error("Could not resolve the current URL.");
+        }
+        return url;
+      },
+    },
     autocmd: {
       create<Event extends GlideAutocmdEvent>(
         event: Event,

@@ -315,3 +315,23 @@ add_task(async function test_keys_next_special_keys() {
     );
   });
 });
+
+add_task(async function test_glide_ctx_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>u", () => {
+      glide.g.value = glide.ctx.url;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    EventUtils.synthesizeKey(" ");
+    EventUtils.synthesizeKey("u");
+    await sleep_frames(5);
+
+    is(
+      GlideBrowser.api.g.value,
+      INPUT_TEST_URI,
+      "glide.ctx.url should return the current page URL"
+    );
+  });
+});
