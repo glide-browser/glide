@@ -66,8 +66,6 @@
   ],
 
   "background": {
-    "scripts": [
-      "run.js"
-    ]
+    "scripts": ["run.js"]
   }
 }
