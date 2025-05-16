@@ -5267,7 +5267,7 @@ declare namespace browser.theme {
    * Make complete updates to the theme. Resolves when the update has completed.
    * @param details The properties of the theme to update.
    */
-  function update(details: _manifest.ThemeType): Prommise<void>;
+  function update(details: _manifest.ThemeType): Promise<void>;
   /**
    * Make complete updates to the theme. Resolves when the update has completed.
    * @param windowId The id of the window to update. No id updates all windows.
