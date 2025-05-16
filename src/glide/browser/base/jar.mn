@@ -34,7 +34,7 @@ glide.jar:
   content/utils/resources.mjs                  (content/utils/dist/resources.mjs)
 
 # types
-  content/glide-api.d.ts                       (content/glide-api.d.ts)
+  content/glide-api.d.ts                       (content/dist/api-bundled.d.ts)
 
 # bundled dependencies
   content/bundled/markdoc.mjs                  (../../bundled/markdoc.mjs)

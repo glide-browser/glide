@@ -32,6 +32,7 @@
     "engine",
     "node_modules",
     "src/glide/bundled",
+    "src/glide/browser/base/content/bundled.d.ts",
     "src/glide/browser/base/content/dist",
     "src/glide/browser/base/content/test/*/dist",
     "src/glide/browser/browser/base/content/utils/dist",

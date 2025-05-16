@@ -26,3 +26,9 @@ pnpm esbuild \
 prettier_path=$(dirname $(node -e 'console.log(require.resolve("prettier"))'))
 cp "$prettier_path/standalone.mjs" src/glide/bundled/prettier.mjs
 cp "$prettier_path/plugins/html.mjs" src/glide/bundled/prettier-html.mjs
+
+pnpm dts-bundle-generator \
+  src/glide/browser/base/content/bundled.d.ts \
+  -o src/glide/browser/base/content/dist/api-bundled.d.ts \
+  --inline-declare-global \
+  --project tsconfig.bundled.json
