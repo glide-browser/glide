@@ -148,6 +148,13 @@ class GlideBrowserClass {
       );
     });
 
+    this.on_startup(() => {
+      // check for extension errors every 500ms as there are no listeners we can register
+      // and the extension code is running with different privileges which makes setting
+      // up listeners a bit dubious / difficult
+      setInterval(this.flush_pending_error_notifications.bind(this), 500);
+    });
+
     this.reload_config();
   }
 
@@ -383,6 +390,31 @@ class GlideBrowserClass {
             "l10n-id": "glide-error-notification-reload-config-button",
             callback: () => {
               GlideBrowser.reload_config();
+            },
+          },
+        ],
+      });
+    }
+  }
+
+  flush_pending_error_notifications() {
+    const errors = this.extension.backgroundContext?.$glide_errors;
+    if (!errors) {
+      return;
+    }
+
+    this.extension.backgroundContext.$glide_errors = new Set();
+
+    for (const { error, source } of [...errors]) {
+      const loc = this.#clean_stack(error, source) ?? "<unknown>";
+      this.add_notification(this.#config_error_id, {
+        label: `An error occurred inside a Web Extension listener at ${loc} - ${error}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [
+          {
+            "l10n-id": "glide-error-notification-clear-all-button",
+            callback: () => {
+              this.remove_notification(this.#config_error_id);
             },
           },
         ],

@@ -251,7 +251,15 @@ interface WebExtension {
   backgroundContext: InstanceType<
     typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
   > &
-    InstanceType<_ExtensionCommon["BaseContext"]>;
+    InstanceType<_ExtensionCommon["BaseContext"]> & {
+      /**
+       * This is set in `toolkit/components/extensions/ExtensionCommon.sys.mjs` when any registered
+       * web extension listener in our internal extension (used by the config) throws an error.
+       *
+       * These errors should then be picked up by the main privileged code to report the error.
+       */
+      $glide_errors?: Set<{ error: unknown; source: string }>;
+    };
 }
 
 interface WebExtensionPolicy {

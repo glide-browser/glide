@@ -357,3 +357,65 @@ add_task(async function test_glide_excmds_execute() {
     );
   });
 });
+
+add_task(async function test_webext_listener_error() {
+  await GlideTestUtils.reload_config(function _() {
+    browser.webRequest.onCompleted.addListener(
+      _ => {
+        throw new Error(`an error in webRequest callback`);
+      },
+      { urls: ["*://*/*/input_test.html"] }
+    );
+  });
+  await sleep_frames(5);
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+    GlideBrowser.flush_pending_error_notifications();
+
+    let notification_box = gBrowser.getNotificationBox();
+    let notification =
+      notification_box.getNotificationWithValue("glide-config-error");
+
+    ok(notification, "Error notification should be shown");
+    is(
+      notification.shadowRoot.querySelector(".message")?.textContent?.trim(),
+      "An error occurred inside a Web Extension listener at @glide.ts:3:11 - Error: an error in webRequest callback",
+      "Notification should contain error message"
+    );
+  });
+});
+
+add_task(async function test_webext_storage_api_listener_error() {
+  // this API should hit a different code path than the listener test above
+
+  await GlideTestUtils.reload_config(function _() {
+    browser.storage.onChanged.addListener(() => {
+      throw new Error("an error in the storage listener");
+    });
+
+    glide.keymaps.set("normal", "<Space>q", async () => {
+      await browser.storage.local.set({ testKey: "testValue" });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+    EventUtils.synthesizeKey(" ");
+    EventUtils.synthesizeKey("q");
+    await sleep_frames(5);
+    GlideBrowser.flush_pending_error_notifications();
+    await sleep_frames(5);
+
+    let notification_box = gBrowser.getNotificationBox();
+    let notification =
+      notification_box.getNotificationWithValue("glide-config-error");
+
+    ok(notification, "Error notification should be shown");
+    is(
+      notification.shadowRoot.querySelector(".message")?.textContent?.trim(),
+      "An error occurred inside a Web Extension listener at @glide.ts:2:9 - Error: an error in the storage listener",
+      "Notification should contain error message"
+    );
+  });
+});

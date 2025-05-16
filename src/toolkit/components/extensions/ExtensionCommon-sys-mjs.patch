@@ -1,0 +1,43 @@
+diff --git a/toolkit/components/extensions/ExtensionCommon.sys.mjs b/toolkit/components/extensions/ExtensionCommon.sys.mjs
+index 5696368ca5b9908b07adf71c70c2538290802945..70e32a32641209ffdf109e2c08e5bc7cbf0830d5 100644
+--- a/toolkit/components/extensions/ExtensionCommon.sys.mjs
++++ b/toolkit/components/extensions/ExtensionCommon.sys.mjs
+@@ -675,6 +675,14 @@ export class BaseContext {
+       try {
+         return Reflect.apply(callback, null, args);
+       } catch (e) {
++        if (this.extension.id === "glide-internal@mozilla.org") {
++          // store any errors that happen when invoking one of the listeners
++          // registered in the config so that the browser code can pick it up
++          // and report the error
++          this.$glide_errors ??= new Set();
++          this.$glide_errors.add({ error: e, source: "applySafeWithoutClone" });
++        }
++
+         // An extension listener may as well be throwing an object that isn't
+         // an instance of Error, in that case we have to use fallbacks for the
+         // error message, fileName, lineNumber and columnNumber properties.
+@@ -2867,7 +2875,22 @@ class EventManager {
+           throw new Error("Called raw() on unloaded/inactive context");
+         }
+         resetIdle();
+-        let result = Reflect.apply(callback, null, args);
++
++        let result;
++
++        try {
++          result = Reflect.apply(callback, null, args);
++        } catch (error) {
++          if (this.context?.extension?.id === "glide-internal@mozilla.org") {
++            // store any errors that happen when invoking one of the listeners
++            // registered in the config so that the browser code can pick it up
++            // and report the error
++            this.context.$glide_errors ??= new Set();
++            this.context.$glide_errors.add({ error, source: "raw" });
++          }
++          throw error;
++        }
++
+         this.context.logActivity("api_event", this.name, { args, result });
+         return result;
+       },
