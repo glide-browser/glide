@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import type { GlideOperator } from "./browser-mode.mts";
+import type { GlideOperator } from "./browser-excmds-registry.mts";
 
 const text_obj = ChromeUtils.importESModule(
   "chrome://glide/content/text-objects.mjs"

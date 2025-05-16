@@ -78,10 +78,6 @@ globalThis.ChromeUtils = {
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/extensions.mts`
         );
-      case "chrome://glide/content/browser-mode.mjs":
-        return a_require(
-          `${SRC_DIR}/glide/browser/base/content/browser-mode.mts`
-        );
       case "chrome://glide/content/browser-dev.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/browser-dev.mts`
@@ -93,6 +89,10 @@ globalThis.ChromeUtils = {
       case "chrome://glide/content/browser-excmds.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/browser-excmds.mts`
+        );
+      case "chrome://glide/content/browser-excmds-registry.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/browser-excmds-registry.mts`
         );
       case "chrome://glide/content/browser-commands.mjs":
         return a_require(

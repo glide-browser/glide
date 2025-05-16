@@ -10,9 +10,12 @@ import("chrome://glide/content/browser-commands.mjs").then(
   }
 );
 
-import("chrome://glide/content/browser-excmds.mjs").then(
-  ({ GlideExcmds, GLIDE_EXCOMMANDS }) => {
-    window.GlideExcmds = GlideExcmds;
+import("chrome://glide/content/browser-excmds.mjs").then(({ GlideExcmds }) => {
+  window.GlideExcmds = GlideExcmds;
+});
+
+import("chrome://glide/content/browser-excmds-registry.mjs").then(
+  ({ GLIDE_EXCOMMANDS }) => {
     window.GLIDE_EXCOMMANDS = GLIDE_EXCOMMANDS;
   }
 );

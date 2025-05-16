@@ -1,3 +1,8 @@
+import type {
+  MODE_SCHEMA_TYPE,
+  ParsedArg,
+} from "../../browser-excmds-registry.mjs";
+
 // Valid: no args
 glide.content.execute(() => {}, { tab_id: 10 });
 
@@ -73,3 +78,16 @@ glide.keymaps.set("normal", "<S-F5>", "help");
 glide.keymaps.set("normal", "", "help");
 // @ts-expect-error partially completed modifier
 glide.keymaps.set("normal", "<A-", "help");
+
+/**
+ * If you get an error here then you need to update either the `MODE_SCHEMA_TYPE` constant
+ * in the `src/glide/browser/base/content/browser-excmds-registry.mtS` file, or the `GlideMode`
+ * type in `src/glide/browser/base/content/glide-api.d.ts`.
+ */
+export type _CheckTypesInSync = Assert<
+  Equals<
+    ParsedArg<{ type: typeof MODE_SCHEMA_TYPE; required: true }>,
+    GlideMode
+  >,
+  true
+>;

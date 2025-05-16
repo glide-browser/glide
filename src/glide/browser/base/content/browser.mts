@@ -5,7 +5,10 @@
 
 import type { SetRequired } from "type-fest";
 import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
-import type { GlideOperator } from "./browser-mode.mts";
+import type {
+  GlideOperator,
+  GlideCommandString,
+} from "./browser-excmds-registry.mts";
 
 const { GlideBrowserDev } = ChromeUtils.importESModule(
   "chrome://glide/content/browser-dev.mjs",

@@ -5,8 +5,10 @@
 
 import type { State, StateChangeListener } from "../base/content/browser.mjs";
 import type { ChildMessages, ChildQueries } from "./GlideHandlerChild.sys.mjs";
-import type { ContentExcmd } from "../base/content/browser-excmds.mjs";
-import type { GlideOperator } from "../base/content/browser-mode.mts";
+import type {
+  ContentExcmd,
+  GlideOperator,
+} from "../base/content/browser-excmds-registry.mts";
 import type { GlideFunctionIPC } from "../base/content/utils/ipc.mts";
 
 const { assert_never } = ChromeUtils.importESModule(

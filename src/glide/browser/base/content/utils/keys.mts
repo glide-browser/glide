@@ -19,7 +19,7 @@ import type {
   GlideCommandCallback,
   GlideCommandString,
   GlideCommandValue,
-} from "../browser-excmds.mjs";
+} from "../browser-excmds-registry.mts";
 
 const { lastx } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/arrays.mjs"

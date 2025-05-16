@@ -20,7 +20,7 @@ const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
 const { GLIDE_EXCOMMANDS } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-excmds.mjs"
+  "chrome://glide/content/browser-excmds-registry.mjs"
 );
 
 interface SidebarEntry {

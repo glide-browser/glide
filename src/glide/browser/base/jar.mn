@@ -10,7 +10,7 @@ glide.jar:
 # ES modules
   content/browser-commands.mjs                 (content/dist/browser-commands.mjs)
   content/browser-excmds.mjs                   (content/dist/browser-excmds.mjs)
-  content/browser-mode.mjs                     (content/dist/browser-mode.mjs)
+  content/browser-excmds-registry.mjs          (content/dist/browser-excmds-registry.mjs)
   content/browser-dev.mjs                      (content/dist/browser-dev.mjs)
   content/extensions.mjs                       (content/dist/extensions.mjs)
   content/sandbox.mjs                          (content/dist/sandbox.mjs)

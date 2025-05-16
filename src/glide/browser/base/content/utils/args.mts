@@ -3,36 +3,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import type {
+  ArgumentsSchema,
+  ArgumentSchema,
+  ParsedArgs,
+} from "../browser-excmds-registry.mts";
+
 const { is_present, assert_never } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
 const { human_join } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/arrays.mjs"
 );
-
-export interface ArgumentSchema {
-  type: "integer" | "string" | "boolean" | { enum: ReadonlyArray<string> };
-  required: boolean;
-  position?: number;
-  description?: string;
-}
-
-export type ArgumentsSchema = Record<string, ArgumentSchema>;
-
-type ArgType<Arg extends ArgumentSchema> =
-  Arg["type"] extends "string" ? string
-  : Arg["type"] extends "integer" ? number
-  : Arg["type"] extends "boolean" ? boolean
-  : Arg["type"] extends { enum: ReadonlyArray<string> } ?
-    Arg["type"]["enum"][number]
-  : never;
-
-export type ParsedArg<Arg extends ArgumentSchema> =
-  Arg["required"] extends true ? ArgType<Arg> : ArgType<Arg> | null;
-
-export type ParsedArgs<Schema extends ArgumentsSchema> = {
-  [K in keyof Schema]: ParsedArg<Schema[K]>;
-};
 
 export type ParseResult<Schema extends ArgumentsSchema> =
   | { valid: true; args: ParsedArgs<Schema>; remaining: string[] }

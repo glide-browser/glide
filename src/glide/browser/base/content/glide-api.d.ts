@@ -152,7 +152,7 @@ declare var glide: {
     set<const LHS>(
       modes: GlideMode | GlideMode[],
       lhs: $keymapcompletions.T<LHS>,
-      rhs: import("./browser-excmds.mjs").GlideCommandValue,
+      rhs: glide.ExcmdValue,
       opts?: KeymapOpts | undefined
     ): void;
 
@@ -190,7 +190,7 @@ declare var glide: {
       set<const LHS>(
         modes: GlideMode | GlideMode[],
         lhs: $keymapcompletions.T<LHS>,
-        rhs: import("./browser-excmds.mjs").GlideCommandValue,
+        rhs: glide.ExcmdValue,
         opts?: Omit<KeymapOpts, "buffer"> | undefined
       ): void;
 
@@ -252,6 +252,12 @@ declare namespace glide {
      */
     glide_key: string;
   };
+
+  export type ExcmdValue =
+    import("./browser-excmds-registry.mjs").GlideCommandValue;
+
+  export type ExcmdString =
+    import("./browser-excmds-registry.mjs").GlideCommandString;
 }
 
 declare namespace $keymapcompletions {
