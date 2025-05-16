@@ -25,6 +25,9 @@ const Jumplist = ChromeUtils.importESModule(
   "chrome://glide/content/jumplist.mjs",
   { global: "current" }
 );
+const Promises = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/promises.mjs"
+);
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
@@ -518,15 +521,11 @@ class GlideBrowserClass {
     const cleanups = this.#buffer_cleanups;
     this.#buffer_cleanups = [];
 
-    const results = await Promise.all(
-      cleanups.map(({ callback, source }) =>
-        Promise.resolve()
-          .then(() => callback())
-          .then(
-            value => ({ status: "fulfilled", value }) as const,
-            reason => ({ status: "rejected", reason, source }) as const
-          )
-      )
+    const results = await Promises.all_settled(
+      cleanups.map(({ callback, source }) => ({
+        callback,
+        metadata: { source },
+      }))
     );
     for (const result of results) {
       if (result.status === "fulfilled") {
@@ -537,9 +536,9 @@ class GlideBrowserClass {
       //       maybe limit the number of errors we display at once?
 
       const loc =
-        this.#clean_stack(result.reason, this.clear_buffer.name) ?? "<unknown>";
+        this.#clean_stack(result.reason, "all_settled") ?? "<unknown>";
 
-      const message = `Error occurred in ${result.source} \`${loc}\` - ${result.reason}`;
+      const message = `Error occurred in ${result.metadata.source} \`${loc}\` - ${result.reason}`;
       this._log.error(message);
 
       this.add_notification(this.#buffer_cleanup_notification_id, {
