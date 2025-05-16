@@ -449,13 +449,18 @@ class GlideBrowserClass {
       /**
        * See https://github.com/mozilla-firefox/firefox/blob/199896bcd330d391eae8e0eff155f99d0881d59b/uriloader/base/nsIWebProgressListener.idl#L541
        */
-      onLocationChange(
+      async onLocationChange(
         web_progress: nsIWebProgress,
         _request: nsIRequest,
         location: nsIURI,
         flags?: u32
       ) {
-        GlideBrowser._log.debug("onLocationChange", location.spec, flags);
+        GlideBrowser._log.debug(
+          "onLocationChange",
+          location.spec,
+          flags,
+          `topLevel=${web_progress.isTopLevel}`
+        );
         if (!flags) {
           flags = 0;
         }
@@ -486,7 +491,8 @@ class GlideBrowserClass {
           return; // ignore iframes etc.
         }
 
-        GlideBrowser.clear_buffer();
+        GlideBrowser._log.debug("onLocationChange clearing buffer");
+        await GlideBrowser.clear_buffer();
 
         const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
         if (!cmds.length) {
@@ -510,16 +516,16 @@ class GlideBrowserClass {
     });
   }
 
-  #buffer_cleanups: (() => void)[] = [];
+  #buffer_cleanups: (() => void | Promise<void>)[] = [];
 
-  clear_buffer() {
+  async clear_buffer() {
     this.key_manager.clear_buffer();
 
     const cleanups = this.#buffer_cleanups;
     this.#buffer_cleanups = [];
 
     for (const cleanup of cleanups) {
-      cleanup();
+      await cleanup();
     }
   }
 
