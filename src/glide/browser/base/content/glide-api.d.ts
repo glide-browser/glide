@@ -1,5 +1,5 @@
 declare global {
-  declare type GlideMode =
+  type GlideMode =
     | "normal"
     | "insert"
     | "visual"
@@ -7,7 +7,7 @@ declare global {
     | "ignore"
     | "hint";
 
-  declare type KeymapOpts = {
+  type KeymapOpts = {
     description?: string | undefined;
 
     /**
@@ -18,19 +18,19 @@ declare global {
     buffer?: boolean;
   };
 
-  declare type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
+  type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
-  declare interface GlideGlobals {
+  interface GlideGlobals {
     mapleader: string;
   }
 
-  declare type GlideAutocmdEvent = "UrlEnter";
-  declare type GlideAutocmdPattern = RegExp;
-  declare type GlideAutocmdArgs = {
+  type GlideAutocmdEvent = "UrlEnter";
+  type GlideAutocmdPattern = RegExp;
+  type GlideAutocmdArgs = {
     UrlEnter: { readonly url: string };
   };
 
-  declare var glide: {
+  var glide: {
     ctx: {
       url: string;
     };
@@ -245,14 +245,14 @@ declare global {
   /**
    * Assert an invariant. An \`AssertionError\` will be thrown if `value` is falsy.
    */
-  declare function assert(value: unknown, message?: string): asserts value;
+  function assert(value: unknown, message?: string): asserts value;
 
   /**
    * The inverse of `{@link assert}`, useful for blowing up when the condition becomes `truthy`.
    */
-  declare function todo_assert(value: unknown, message?: string): void;
+  function todo_assert(value: unknown, message?: string): void;
 
-  declare namespace glide {
+  namespace glide {
     export type TabWithID = Omit<browser.tabs.Tab, "id"> & { id: number };
 
     export type KeyEvent = KeyboardEvent & {
@@ -271,7 +271,7 @@ declare global {
       import("./browser-excmds-registry.mjs").GlideCommandString;
   }
 
-  declare namespace $keymapcompletions {
+  namespace $keymapcompletions {
     /**
      * This type takes in a string literal type, e.g. `<C-`, `a`, `<leader>`
      * and resolves a new string literal type union type that represents as many
