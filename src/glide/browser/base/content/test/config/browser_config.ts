@@ -335,3 +335,25 @@ add_task(async function test_glide_ctx_url() {
     );
   });
 });
+
+add_task(async function test_glide_excmds_execute() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = "initial";
+
+    glide.keymaps.set("normal", "<Space>e", async () => {
+      await glide.excmds.execute("config_reload");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    EventUtils.synthesizeKey(" ");
+    EventUtils.synthesizeKey("e");
+    await sleep_frames(5);
+
+    is(
+      GlideBrowser.api.g.value,
+      undefined,
+      "After config reload, the value should be reset to undefined"
+    );
+  });
+});

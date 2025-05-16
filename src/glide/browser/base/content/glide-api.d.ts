@@ -105,6 +105,13 @@ declare var glide: {
     active(): Promise<glide.TabWithID>;
   };
 
+  excmds: {
+    /**
+     * Execute an excmd, this is the same as typing `:cmd --args`.
+     */
+    execute(cmd: glide.ExcmdString): Promise<void>;
+  };
+
   content: {
     /**
      * Execute a function in the content process for the given tab.

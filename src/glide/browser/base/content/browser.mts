@@ -1213,6 +1213,11 @@ function make_glide_api(): typeof glide {
         return tab as SetRequired<typeof tab, "id">;
       },
     },
+    excmds: {
+      async execute(cmd: GlideCommandString): Promise<void> {
+        await GlideExcmds.execute(cmd);
+      },
+    },
     content: {
       async execute(func, opts) {
         const results =
