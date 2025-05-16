@@ -95,6 +95,30 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
   });
 });
 
+add_task(async function test_autocmd_error() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create("UrlEnter", /input_test/, () => {
+      throw new Error("ruh roh");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    let notification_box = gBrowser.getNotificationBox();
+    let notification = notification_box.getNotificationWithValue(
+      "glide-autocmd-error"
+    );
+
+    ok(notification, "Error notification should be shown");
+    is(
+      notification.shadowRoot.querySelector(".message")?.textContent?.trim(),
+      "Error occurred in UrlEnter autocmd `@glide.ts:2:9` - Error: ruh roh",
+      "Notification should contain error message"
+    );
+  });
+});
+
 add_task(async function test_autocmd_cleanup_error() {
   await GlideTestUtils.reload_config(function _() {
     glide.autocmd.create("UrlEnter", /input_test/, () => {

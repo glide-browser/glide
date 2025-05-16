@@ -494,22 +494,63 @@ class GlideBrowserClass {
 
         const args: GlideAutocmdArgs["UrlEnter"] = { url: location.spec };
 
-        for (const cmd of cmds) {
-          if (!cmd.pattern.test(location.spec)) {
+        const results = await Promise.allSettled(
+          cmds.map(cmd =>
+            (async () => {
+              if (!cmd.pattern.test(location.spec)) {
+                return;
+              }
+
+              const cleanup = await cmd.callback(args);
+              if (typeof cleanup === "function") {
+                GlideBrowser.#buffer_cleanups.push({
+                  callback: cleanup,
+                  source: "UrlEnter cleanup",
+                });
+              }
+            })()
+          )
+        );
+
+        for (const result of results) {
+          if (result.status === "fulfilled") {
             continue;
           }
 
-          const cleanup = await cmd.callback(args);
-          if (typeof cleanup === "function") {
-            GlideBrowser.#buffer_cleanups.push({
-              callback: cleanup,
-              source: "UrlEnter cleanup",
-            });
-          }
+          // TODO: if there are many errors this would be overwhelming...
+          //       maybe limit the number of errors we display at once?
+
+          const loc =
+            GlideBrowser.#clean_stack(result.reason, "get progress_listener") ??
+            "<unknown>";
+
+          const message = `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`;
+          GlideBrowser._log.error(message);
+
+          GlideBrowser.add_notification(
+            GlideBrowser.#autocmd_error_notification_id,
+            {
+              label: message,
+              priority:
+                MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+              buttons: [
+                {
+                  "l10n-id": "glide-error-notification-clear-all-button",
+                  callback: () => {
+                    GlideBrowser.remove_notification(
+                      GlideBrowser.#autocmd_error_notification_id
+                    );
+                  },
+                },
+              ],
+            }
+          );
         }
       },
     });
   }
+
+  #autocmd_error_notification_id = "glide-autocmd-error";
 
   #buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] =
     [];
