@@ -84,7 +84,9 @@ class GlideBrowserClass {
   autocmds: {
     [K in GlideAutocmdEvent]?: {
       pattern: GlideAutocmdPattern;
-      callback: (args: GlideAutocmdArgs[K]) => (() => void) | void;
+      callback: (
+        args: GlideAutocmdArgs[K]
+      ) => (() => void | Promise<void>) | void | Promise<void>;
     }[];
   } = {};
 
@@ -365,20 +367,8 @@ class GlideBrowserClass {
       const config_js = ts_blank_space(config_str);
       Cu.evalInSandbox(config_js, sandbox, null, this.#config_uri, 1, false);
     } catch (err) {
-      // extract the top level stack frame from a string like
-      // @glide.ts:7:7\nreload_config/<@chrome://glide/content/browser.mjs:120:12\n
       const loc =
-        (
-          typeof err === "object" &&
-          err != null &&
-          "stack" in err &&
-          typeof err.stack === "string"
-        ) ?
-          err.stack
-            .slice(0, err.stack.indexOf("\n#reload_config"))
-            .replace(this.#config_uri, "glide.ts")
-        : "glide.ts";
-
+        this.#clean_stack(err, this.#reload_config.name) ?? "glide.ts";
       const message = `An error occurred while evaluating \`${loc}\` - ${err}`;
       this._log.error(message);
 
@@ -506,17 +496,21 @@ class GlideBrowserClass {
             continue;
           }
 
-          // TODO: proper error handling
-          const cleanup = cmd.callback(args);
+          const cleanup = await cmd.callback(args);
           if (typeof cleanup === "function") {
-            GlideBrowser.#buffer_cleanups.push(cleanup);
+            GlideBrowser.#buffer_cleanups.push({
+              callback: cleanup,
+              source: "UrlEnter cleanup",
+            });
           }
         }
       },
     });
   }
 
-  #buffer_cleanups: (() => void | Promise<void>)[] = [];
+  #buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] =
+    [];
+  #buffer_cleanup_notification_id = "glide-buffer-cleanup-error";
 
   async clear_buffer() {
     this.key_manager.clear_buffer();
@@ -524,9 +518,69 @@ class GlideBrowserClass {
     const cleanups = this.#buffer_cleanups;
     this.#buffer_cleanups = [];
 
-    for (const cleanup of cleanups) {
-      await cleanup();
+    const results = await Promise.all(
+      cleanups.map(({ callback, source }) =>
+        Promise.resolve()
+          .then(() => callback())
+          .then(
+            value => ({ status: "fulfilled", value }) as const,
+            reason => ({ status: "rejected", reason, source }) as const
+          )
+      )
+    );
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      // TODO: if there are many errors this would be overwhelming...
+      //       maybe limit the number of errors we display at once?
+
+      const loc =
+        this.#clean_stack(result.reason, this.clear_buffer.name) ?? "<unknown>";
+
+      const message = `Error occurred in ${result.source} \`${loc}\` - ${result.reason}`;
+      this._log.error(message);
+
+      this.add_notification(this.#buffer_cleanup_notification_id, {
+        label: message,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [
+          {
+            "l10n-id": "glide-error-notification-clear-all-button",
+            callback: () => {
+              this.remove_notification(this.#buffer_cleanup_notification_id);
+            },
+          },
+        ],
+      });
     }
+  }
+
+  /**
+   * Remove internal stack frames from an error's stack trace, e.g.
+   *
+   * ```
+   * @glide.ts:7:7\nreload_config/<@chrome://glide/content/browser.mjs:120:12\n
+   * ```
+   *
+   * into just
+   *
+   * ```
+   * @glide.ts:7:7\n
+   * ```
+   */
+  #clean_stack(err: unknown, up_to_func_name: string): string | null {
+    return (
+        typeof err === "object" &&
+          err != null &&
+          "stack" in err &&
+          typeof err.stack === "string"
+      ) ?
+        err.stack
+          .slice(0, err.stack.indexOf(`\n${up_to_func_name}`))
+          .replace(this.#config_uri, "glide.ts")
+      : null;
   }
 
   #config_error_id = "glide-config-error";

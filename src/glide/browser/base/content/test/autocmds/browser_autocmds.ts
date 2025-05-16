@@ -61,10 +61,18 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
 
     glide.autocmd.create("UrlEnter", /input_test/, () => {
       glide.g.calls!.push("first");
+
+      return () => {
+        glide.g.calls!.push("first-cleanup");
+      };
     });
 
     glide.autocmd.create("UrlEnter", /input_test/, () => {
       glide.g.calls!.push("second");
+
+      return () => {
+        glide.g.calls!.push("second-cleanup");
+      };
     });
   });
 
@@ -75,6 +83,43 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
       GlideBrowser.api.g.calls,
       ["first", "second"],
       "All registered autocmd callbacks should fire in registration order"
+    );
+
+    await BrowserTestUtils.reloadTab(gBrowser.selectedTab);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      ["first", "second", "first-cleanup", "second-cleanup", "first", "second"],
+      "All registered autocmd callbacks should fire in registration order"
+    );
+  });
+});
+
+add_task(async function test_autocmd_cleanup_error() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create("UrlEnter", /input_test/, () => {
+      return () => {
+        throw new Error("ruh roh");
+      };
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    await BrowserTestUtils.reloadTab(gBrowser.selectedTab);
+    await sleep_frames(5);
+
+    let notification_box = gBrowser.getNotificationBox();
+    let notification = notification_box.getNotificationWithValue(
+      "glide-buffer-cleanup-error"
+    );
+
+    ok(notification, "Error notification should be shown");
+    is(
+      notification.shadowRoot.querySelector(".message")?.textContent?.trim(),
+      "Error occurred in UrlEnter cleanup `@glide.ts:3:11` - Error: ruh roh",
+      "Notification should contain error message"
     );
   });
 });
