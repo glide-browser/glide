@@ -285,7 +285,27 @@ class GlideExcmdsClass {
       }
 
       case "config": {
-        console.log("config path: ", GlideBrowser.config_path);
+        const id = "glide-config-path";
+        const config_path = GlideBrowser.config_path;
+
+        GlideBrowser.add_notification(id, {
+          label: `Config path: ${config_path}`,
+          priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+          buttons:
+            config_path ?
+              [
+                {
+                  "l10n-id": "glide-config-notification-copy-button",
+                  callback: () => {
+                    GlideCommands.copy_to_clipboard(config_path);
+                    GlideBrowser.remove_notification(id);
+                  },
+                },
+              ]
+            : [],
+        });
+
+        console.log("config path: ", config_path);
         break;
       }
 

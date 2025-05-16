@@ -416,6 +416,23 @@ class GlideBrowserClass {
     });
   }
 
+  remove_notification(type: string): boolean {
+    let found = false;
+
+    const notificationBox = gBrowser.getNotificationBox();
+    for (const notification of notificationBox.allNotifications) {
+      const value = notification.getAttribute("value");
+      if (value !== type) {
+        continue;
+      }
+
+      found = true;
+      notificationBox.removeNotification(notification);
+    }
+
+    return found;
+  }
+
   /**
    * Listener that, once registered with `gBrowser.addProgressListener()`, will be invoked
    * for different state changes in the browser.
