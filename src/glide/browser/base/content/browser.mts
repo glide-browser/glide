@@ -239,7 +239,7 @@ class GlideBrowserClass {
     );
 
     // hint mode
-    this.key_manager.set("normal", "<leader>f", "hint");
+    this.key_manager.set("normal", "f", "hint");
     this.key_manager.set("hint", "<Esc>", () => {
       GlideCommands.remove_hints();
     });
