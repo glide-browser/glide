@@ -20,6 +20,10 @@
   "keywords": [],
   "author": "",
   "license": "MPL-2.0",
+  "dependencies": {
+    "ts-blank-space": "^0.6.1",
+    "typescript": "^5.8.3"
+  },
   "devDependencies": {
     "@glide-browser/glider": "github:glide-browser/glider",
     "@markdoc/markdoc": "^0.5.1",
@@ -32,9 +36,7 @@
     "meow": "^13.2.0",
     "prettier": "^3.5.3",
     "shiki": "^3.2.1",
-    "ts-blank-space": "^0.6.1",
-    "type-fest": "^4.39.1",
-    "typescript": "^5.8.3"
+    "type-fest": "^4.39.1"
   },
   "private": true
 }

@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      ts-blank-space:
+        specifier: ^0.6.1
+        version: 0.6.1
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
     devDependencies:
       '@glide-browser/glider':
         specifier: github:glide-browser/glider
@@ -41,15 +48,9 @@ importers:
       shiki:
         specifier: ^3.2.1
         version: 3.2.1
-      ts-blank-space:
-        specifier: ^0.6.1
-        version: 0.6.1
       type-fest:
         specifier: ^4.39.1
         version: 4.39.1
-      typescript:
-        specifier: ^5.8.3
-        version: 5.8.3
 
 packages:
 
