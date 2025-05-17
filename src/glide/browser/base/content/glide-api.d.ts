@@ -74,6 +74,11 @@ declare global {
        * Get the value of a preference.
        */
       get(name: string): string | number | boolean;
+
+      /**
+       * Reset the pref value back to its default.
+       */
+      clear(name: string): void;
     };
 
     /**

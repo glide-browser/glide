@@ -1478,6 +1478,9 @@ function make_glide_api(): typeof glide {
             );
         }
       },
+      clear(name) {
+        Services.prefs.clearUserPref(name);
+      },
     },
   };
 }

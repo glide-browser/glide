@@ -198,6 +198,18 @@ add_task(async function test_glide_prefs_get() {
   });
 });
 
+add_task(async function test_glide_prefs_clear() {
+  const glide = GlideBrowser.api;
+  const pre = glide.prefs.get("browser.active_color");
+
+  glide.prefs.set("browser.active_color", "#EE0001");
+  isnot(glide.prefs.get("browser.active_color"), pre);
+
+  glide.prefs.clear("browser.active_color");
+
+  is(glide.prefs.get("browser.active_color"), pre);
+});
+
 add_task(async function test_keys_next_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>k", async () => {
