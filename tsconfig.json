@@ -32,6 +32,8 @@
     "engine",
     "node_modules",
     "src/glide/bundled",
+    // includes preprocessor annotations
+    "src/browser/app/profile/glide.js",
     "src/glide/browser/base/content/bundled.d.ts",
     "src/glide/browser/base/content/dist",
     "src/glide/browser/base/content/test/*/dist",

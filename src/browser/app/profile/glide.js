@@ -3,3 +3,5 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+
+#include remove-mozilla.js
