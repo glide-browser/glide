@@ -61,6 +61,10 @@ globalThis.ChromeUtils = {
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/utils/strings.mts`
         );
+      case "chrome://glide/content/utils/promises.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/utils/promises.mts`
+        );
       case "chrome://glide/content/utils/resources.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/utils/resources.mts`
