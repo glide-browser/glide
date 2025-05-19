@@ -325,96 +325,39 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
   {
-    name: "w",
-    description: "Move 1 word forwards",
+    name: "motion",
+    description: "Execute a given motion (internal)",
     content: true,
+    // repeatable is determined in `#motion_is_repeatable` in `GlideHandlerChild.sys.mts`
     repeatable: false,
-  },
-  {
-    name: "W",
-    description:
-      "Move 1 WORD forwards, unlike `w`, this only counts whitespace as a word boundary",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "b",
-    description: "Move 1 word backwards",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "B",
-    description:
-      "Move 1 WORD backwards, unlike `b`, this only counts whitespace as a word boundary",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "x",
-    description: "Delete the current character",
-    content: true,
-    repeatable: true,
-  },
-  {
-    name: "0",
-    description: "Move to the very beginning of the line",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "$",
-    description: "Move to the very end of the line",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "o",
-    description: "Begin a new line below the cursor and insert text",
-    content: true,
-    repeatable: true,
-  },
-  {
-    name: "}",
-    description: "Move to the start of the next paragraph",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "{",
-    description: "Move to the start of the previous paragraph",
-    content: true,
-    repeatable: false,
-  },
-
-  // visual
-  {
-    name: "v",
-    description: "Enter visual mode",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "vh",
-    description: "Extend the selection to the left",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "vl",
-    description: "Extend the selection to the right",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "vd",
-    description: "Delete the current selection",
-    content: true,
-    repeatable: false,
+    args_schema: {
+      keyseq: {
+        type: {
+          enum: [
+            "w",
+            "W",
+            "b",
+            "B",
+            "0",
+            "$",
+            "{",
+            "}",
+            "v",
+            "vh",
+            "vl",
+            "vd",
+            "x",
+            "o",
+          ],
+        },
+        required: true,
+        position: 0,
+      },
+    },
   },
 ] as const satisfies GlideExcmdInfo[];
 
-type GlideExcmdsMap = {
+export type GlideExcmdsMap = {
   [K in (typeof GLIDE_EXCOMMANDS)[number]["name"]]: Extract<
     (typeof GLIDE_EXCOMMANDS)[number],
     { name: K }

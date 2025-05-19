@@ -305,19 +305,19 @@ class GlideBrowserClass {
       this.key_manager.set("op-pending", motion, "execute_motion");
     }
 
-    this.key_manager.set(["normal", "visual"], "w", "w");
-    this.key_manager.set(["normal", "visual"], "W", "W");
-    this.key_manager.set("normal", "b", "b");
-    this.key_manager.set("normal", "B", "B");
-    this.key_manager.set("normal", "x", "x");
-    this.key_manager.set("normal", "o", "o");
-    this.key_manager.set("normal", "{", "{");
-    this.key_manager.set("normal", "}", "}");
+    this.key_manager.set(["normal", "visual"], "w", "motion w");
+    this.key_manager.set(["normal", "visual"], "W", "motion W");
+    this.key_manager.set("normal", "b", "motion b");
+    this.key_manager.set("normal", "B", "motion B");
+    this.key_manager.set("normal", "x", "motion x");
+    this.key_manager.set("normal", "o", "motion o");
+    this.key_manager.set("normal", "{", "motion {");
+    this.key_manager.set("normal", "}", "motion }");
     this.key_manager.set("normal", "r", "r");
 
     // TODO(glide-motions): more general support for numbers like this
-    this.key_manager.set("normal", "0", "0");
-    this.key_manager.set("normal", "$", "$");
+    this.key_manager.set("normal", "0", "motion 0");
+    this.key_manager.set("normal", "$", "motion $");
     this.key_manager.set("normal", "h", "caret_move left");
     this.key_manager.set("normal", "l", "caret_move right");
     this.key_manager.set("normal", "j", "caret_move down");
@@ -325,10 +325,10 @@ class GlideBrowserClass {
     this.key_manager.set("normal", "yy", "url_yank");
 
     // visual motions
-    this.key_manager.set("normal", "v", "v");
-    this.key_manager.set("visual", "h", "vh");
-    this.key_manager.set("visual", "l", "vl");
-    this.key_manager.set("visual", "d", "vd");
+    this.key_manager.set("normal", "v", "motion v");
+    this.key_manager.set("visual", "h", "motion vh");
+    this.key_manager.set("visual", "l", "motion vl");
+    this.key_manager.set("visual", "d", "motion vd");
 
     if (this.#startup_finished) {
       // clear all registered event listeners and any custom state on the `browser` object

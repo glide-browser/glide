@@ -13,6 +13,10 @@ import type { SetNonNullable } from "type-fest";
 import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
 import type { ExtensionsAPI as ExtensionsAPIType } from "../base/content/extensions.mts";
 import type { Sandbox } from "../base/content/sandbox.mts";
+import type {
+  GlideExcmdsMap,
+  ParsedArg,
+} from "../base/content/browser-excmds-registry.mts";
 
 const hinting = ChromeUtils.importESModule(
   "chrome://glide/content/hinting.mjs"
@@ -42,10 +46,7 @@ export interface ChildMessages {
   "Glide::ResolvedHints": { hints: GlideHintIPC[] };
   "Glide::HideHints": {};
   "Glide::ChangeMode": { mode: GlideMode };
-  "Glide::RecordRepeatableCommand": SetNonNullable<
-    ParentMessages["Glide::ExecuteContentCommand"],
-    "operator"
-  >;
+  "Glide::RecordRepeatableCommand": ParentMessages["Glide::ExecuteContentCommand"];
 }
 
 export interface ChildQueries {
@@ -456,121 +457,150 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
         break;
       }
-      case "w": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.forward_word(editor, /* bigword */ false, this.state?.mode);
-        break;
-      }
-      case "W": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.forward_word(editor, /* bigword */ true, this.state?.mode);
-        break;
-      }
-      case "b": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.back_word(editor, false);
-        break;
-      }
-      case "B": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.back_word(editor, true);
-        break;
-      }
-      case "{": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.back_para(editor);
-        break;
-      }
-      case "}": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.next_para(editor);
-        break;
-      }
-      case "x": {
-        const editor = this.#expect_editor(props.command.name);
+      case "motion": {
+        const {
+          args: { keyseq },
+        } = parse_command_args(props.command, props.args);
 
-        if (
-          // caret is on the first line and it's empty
-          (motions.is_bof(editor) && motions.next_char(editor) === "\n") ||
-          // we don't want to delete newlines
-          motions.current_char(editor) === "\n"
-        ) {
-          return;
+        if (this.#motion_is_repeatable(keyseq)) {
+          this.#record_repeatable_command(props);
         }
 
-        // `foo █ar baz` -> `foo█ar baz`
-        editor.deleteSelection(
-          /* action */ editor.ePrevious!,
-          /* stripWrappers */ editor.eStrip!
-        );
-
-        if (motions.next_char(editor) !== "\n") {
-          // `foo█ar baz` -> `foo █r baz`
-          editor.selectionController.characterMove(
-            /* forward */ true,
-            /* extend */ false
-          );
-        }
-        break;
-      }
-      case "0": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.beginning_of_line(editor, false);
-        break;
-      }
-      case "$": {
-        const editor = this.#expect_editor(props.command.name);
-        motions.end_of_line(editor, false);
-        break;
-      }
-      case "o": {
-        const editor = this.#expect_editor(props.command.name);
-
-        editor.selectionController.intraLineMove(
-          /* forward */ true,
-          /* extend */ false
-        );
-        editor.insertLineBreak();
-
-        this.#change_mode("insert");
-        break;
-      }
-      case "v": {
-        this.#change_mode("visual");
-        break;
-      }
-      case "vh": {
-        const editor = this.#expect_editor(props.command.name);
-        if (editor.selection.isCollapsed) {
-          motions.back_char(editor, true);
-        }
-        motions.back_char(editor, true);
-        break;
-      }
-      case "vl": {
-        const editor = this.#expect_editor(props.command.name);
-        if (editor.selection.isCollapsed) {
-          editor.selectionController.characterMove(false, false);
-          editor.selectionController.characterMove(true, true);
+        if (keyseq === "v") {
+          this.#change_mode("visual");
+          break;
         }
 
-        motions.forward_char(editor, true);
-        break;
-      }
-      case "vd": {
-        const editor = this.#expect_editor(props.command.name);
+        const editor = this.#expect_editor(keyseq);
+        switch (keyseq) {
+          case "w": {
+            motions.forward_word(editor, /* bigword */ false, this.state?.mode);
+            break;
+          }
+          case "W": {
+            motions.forward_word(editor, /* bigword */ true, this.state?.mode);
+            break;
+          }
+          case "b": {
+            motions.back_word(editor, false);
+            break;
+          }
+          case "B": {
+            motions.back_word(editor, true);
+            break;
+          }
+          case "{": {
+            motions.back_para(editor);
+            break;
+          }
+          case "}": {
+            motions.next_para(editor);
+            break;
+          }
+          case "0": {
+            motions.beginning_of_line(editor, false);
+            break;
+          }
+          case "$": {
+            motions.end_of_line(editor, false);
+            break;
+          }
+          case "vh": {
+            if (editor.selection.isCollapsed) {
+              motions.back_char(editor, true);
+            }
+            motions.back_char(editor, true);
+            break;
+          }
+          case "vl": {
+            if (editor.selection.isCollapsed) {
+              editor.selectionController.characterMove(false, false);
+              editor.selectionController.characterMove(true, true);
+            }
 
-        // `foo ██r` -> `foo |r`
-        editor.deleteSelection(editor.ePrevious!, editor.eStrip!);
+            motions.forward_char(editor, true);
+            break;
+          }
+          case "vd": {
+            // `foo ██r` -> `foo |r`
+            editor.deleteSelection(editor.ePrevious!, editor.eStrip!);
 
-        // `foo |r` -> `foo r|`
-        motions.forward_char(editor, false);
+            // `foo |r` -> `foo r|`
+            motions.forward_char(editor, false);
 
-        this.#change_mode("normal");
+            this.#change_mode("normal");
+            break;
+          }
+          case "x": {
+            if (
+              // caret is on the first line and it's empty
+              (motions.is_bof(editor) && motions.next_char(editor) === "\n") ||
+              // we don't want to delete newlines
+              motions.current_char(editor) === "\n"
+            ) {
+              return;
+            }
+
+            // `foo █ar baz` -> `foo█ar baz`
+            editor.deleteSelection(
+              /* action */ editor.ePrevious!,
+              /* stripWrappers */ editor.eStrip!
+            );
+
+            if (motions.next_char(editor) !== "\n") {
+              // `foo█ar baz` -> `foo █r baz`
+              editor.selectionController.characterMove(
+                /* forward */ true,
+                /* extend */ false
+              );
+            }
+            break;
+          }
+          case "o": {
+            editor.selectionController.intraLineMove(
+              /* forward */ true,
+              /* extend */ false
+            );
+            editor.insertLineBreak();
+
+            this.#change_mode("insert");
+            break;
+          }
+          default:
+            throw assert_never(keyseq);
+        }
         break;
       }
       default:
         throw assert_never(props.command);
+    }
+  }
+
+  /**
+   * Whether or not `.` should be updated to repeat this motion.
+   */
+  #motion_is_repeatable(
+    keyseq: ParsedArg<GlideExcmdsMap["motion"]["args_schema"]["keyseq"]>
+  ): boolean {
+    switch (keyseq) {
+      case "0":
+      case "w":
+      case "W":
+      case "b":
+      case "B":
+      case "$":
+      case "{":
+      case "}":
+      case "v":
+      case "vh":
+      case "vl":
+      case "vd":
+        return false;
+      case "x":
+      case "o":
+        return true;
+      default:
+        throw assert_never(keyseq);
     }
   }
 

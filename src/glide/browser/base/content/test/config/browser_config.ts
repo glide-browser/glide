@@ -94,7 +94,7 @@ add_task(async function test_invalid_config_notification() {
 
     // note: *not* using reload config directly
     GlideTestUtils.write_config(function _() {
-      glide.keymaps.set("normal", ";", "w");
+      glide.keymaps.set("normal", ";", "motion w");
     });
 
     // @ts-ignore
@@ -136,7 +136,7 @@ add_task(
 
       // note: *not* using reload config directly
       GlideTestUtils.write_config(function _() {
-        glide.keymaps.set("normal", ";", "w");
+        glide.keymaps.set("normal", ";", "motion w");
       });
 
       // TODO(glide): test util for executing a command with keys
