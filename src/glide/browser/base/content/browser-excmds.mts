@@ -407,6 +407,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "hints_remove": {
+        GlideCommands.remove_hints();
+        break;
+      }
+
       default:
         throw assert_never(
           command_meta,

@@ -314,6 +314,12 @@ export const GLIDE_EXCOMMANDS = [
       },
     },
   },
+  {
+    name: "hints_remove",
+    description: "Remove all hint labels and exit hint mode",
+    content: false,
+    repeatable: false,
+  },
 
   // ------------ vim motions ------------
   {

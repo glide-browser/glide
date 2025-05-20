@@ -32,9 +32,7 @@ export function init(glide: Glide) {
 
   // hint mode
   glide.keymaps.set("normal", "f", "hint");
-  glide.keymaps.set("hint", "<Esc>", () => {
-    GlideCommands.remove_hints();
-  });
+  glide.keymaps.set("hint", "<Esc>", "hints_remove");
 
   // tabs
   glide.keymaps.set(["insert", "normal"], "<C-d>", async () => {
