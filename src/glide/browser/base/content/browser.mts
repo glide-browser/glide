@@ -434,7 +434,7 @@ class GlideBrowserClass {
         const results = await Promise.allSettled(
           cmds.map(cmd =>
             (async () => {
-              if (!cmd.pattern.test(location.spec)) {
+              if (!GlideBrowser.#test_autocmd_pattern(cmd.pattern, location)) {
                 return;
               }
 
@@ -473,6 +473,25 @@ class GlideBrowserClass {
         }
       },
     });
+  }
+
+  #test_autocmd_pattern(
+    pattern: GlideAutocmdPattern,
+    location: nsIURI
+  ): boolean {
+    if ("test" in pattern) {
+      // note: don't use `instanceof` to avoid cross-realm issues
+      return pattern.test(location.spec);
+    }
+
+    if (
+      typeof pattern.hostname === "string" &&
+      location.displayHost !== pattern.hostname
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   get remove_all_notifications_button(): GlobalBrowser.NotificationBox.Button {

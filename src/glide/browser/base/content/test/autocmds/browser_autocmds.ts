@@ -55,6 +55,42 @@ add_task(async function test_autocmd_not_triggered_on_non_matching_url() {
   });
 });
 
+add_task(async function test_autocmd_triggers_on_host_matching_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create("UrlEnter", { hostname: "mochi.test" }, () => {
+      glide.g.triggered = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+    ok(
+      GlideBrowser.api.g.triggered,
+      "UrlEnter autocmd should be triggered on matching URL"
+    );
+  });
+});
+
+add_task(async function test_autocmd_not_triggered_on_host_not_matching_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create(
+      "UrlEnter",
+      { hostname: "definitely-wont-match" },
+      () => {
+        glide.g.triggered = true;
+      }
+    );
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+    notok(
+      GlideBrowser.api.g.triggered,
+      "UrlEnter autocmd should NOT be triggered for non-matching URL"
+    );
+  });
+});
+
 add_task(async function test_multiple_autocmd_callbacks_all_fire() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];

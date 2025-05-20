@@ -25,7 +25,7 @@ declare global {
   }
 
   type GlideAutocmdEvent = "UrlEnter";
-  type GlideAutocmdPattern = RegExp;
+  type GlideAutocmdPattern = RegExp | { hostname?: string };
   type GlideAutocmdArgs = {
     UrlEnter: { readonly url: string };
   };
