@@ -410,14 +410,7 @@ class GlideBrowserClass {
       this.add_notification(this.#config_error_id, {
         label: `An error occurred inside a Web Extension listener at ${loc} - ${error}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [
-          {
-            "l10n-id": "glide-error-notification-clear-all-button",
-            callback: () => {
-              this.remove_notification(this.#config_error_id);
-            },
-          },
-        ],
+        buttons: [this.#remove_all_notifications_button],
       });
     }
   }
@@ -456,6 +449,13 @@ class GlideBrowserClass {
     }
 
     return found;
+  }
+
+  remove_all_notifications(): void {
+    const notificationBox = gBrowser.getNotificationBox();
+    for (const notification of notificationBox.allNotifications) {
+      notificationBox.removeNotification(notification);
+    }
   }
 
   /**
@@ -559,34 +559,28 @@ class GlideBrowserClass {
           const message = `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`;
           GlideBrowser._log.error(message);
 
-          GlideBrowser.add_notification(
-            GlideBrowser.#autocmd_error_notification_id,
-            {
-              label: message,
-              priority:
-                MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-              buttons: [
-                {
-                  "l10n-id": "glide-error-notification-clear-all-button",
-                  callback: () => {
-                    GlideBrowser.remove_notification(
-                      GlideBrowser.#autocmd_error_notification_id
-                    );
-                  },
-                },
-              ],
-            }
-          );
+          GlideBrowser.add_notification("glide-autocmd-error", {
+            label: message,
+            priority:
+              MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+            buttons: [GlideBrowser.#remove_all_notifications_button],
+          });
         }
       },
     });
   }
 
-  #autocmd_error_notification_id = "glide-autocmd-error";
+  get #remove_all_notifications_button(): GlobalBrowser.NotificationBox.Button {
+    return {
+      "l10n-id": "glide-error-notification-clear-all-button",
+      callback: () => {
+        this.remove_all_notifications();
+      },
+    };
+  }
 
   #buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] =
     [];
-  #buffer_cleanup_notification_id = "glide-buffer-cleanup-error";
 
   async clear_buffer() {
     this.key_manager.clear_buffer();
@@ -614,17 +608,10 @@ class GlideBrowserClass {
       const message = `Error occurred in ${result.metadata.source} \`${loc}\` - ${result.reason}`;
       this._log.error(message);
 
-      this.add_notification(this.#buffer_cleanup_notification_id, {
+      this.add_notification("glide-buffer-cleanup-error", {
         label: message,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [
-          {
-            "l10n-id": "glide-error-notification-clear-all-button",
-            callback: () => {
-              this.remove_notification(this.#buffer_cleanup_notification_id);
-            },
-          },
-        ],
+        buttons: [this.#remove_all_notifications_button],
       });
     }
   }
