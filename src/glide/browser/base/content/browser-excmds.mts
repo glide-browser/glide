@@ -105,6 +105,28 @@ class GlideExcmdsClass {
     command: GlideCommandString | GlideCommandCallback,
     props?: ExecuteProps
   ): Promise<void> {
+    try {
+      await this.#execute(command, props);
+    } catch (err) {
+      const message = `An error occurred executing ${
+        typeof command === "string" ? `excmd \`${command}\``
+        : "an excmd function" + command.name ? ` (${command.name})`
+        : ""
+      } - ${err}`;
+      GlideBrowser._log.error(message);
+
+      GlideBrowser.add_notification("glide-excmd-error", {
+        label: message,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    }
+  }
+
+  async #execute(
+    command: GlideCommandString | GlideCommandCallback,
+    props?: ExecuteProps
+  ): Promise<void> {
     if (typeof command === "function") {
       return this.#execute_function_command(command, props);
     }

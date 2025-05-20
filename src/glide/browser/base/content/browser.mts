@@ -410,7 +410,7 @@ class GlideBrowserClass {
       this.add_notification(this.#config_error_id, {
         label: `An error occurred inside a Web Extension listener at ${loc} - ${error}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [this.#remove_all_notifications_button],
+        buttons: [this.remove_all_notifications_button],
       });
     }
   }
@@ -563,14 +563,14 @@ class GlideBrowserClass {
             label: message,
             priority:
               MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-            buttons: [GlideBrowser.#remove_all_notifications_button],
+            buttons: [GlideBrowser.remove_all_notifications_button],
           });
         }
       },
     });
   }
 
-  get #remove_all_notifications_button(): GlobalBrowser.NotificationBox.Button {
+  get remove_all_notifications_button(): GlobalBrowser.NotificationBox.Button {
     return {
       "l10n-id": "glide-error-notification-clear-all-button",
       callback: () => {
@@ -611,7 +611,7 @@ class GlideBrowserClass {
       this.add_notification("glide-buffer-cleanup-error", {
         label: message,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [this.#remove_all_notifications_button],
+        buttons: [this.remove_all_notifications_button],
       });
     }
   }
