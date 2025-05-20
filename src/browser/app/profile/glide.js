@@ -5,3 +5,4 @@
 pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 
 #include remove-mozilla.js
+#include betterfox.js
