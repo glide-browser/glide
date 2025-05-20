@@ -34,6 +34,9 @@ glide.jar:
   content/utils/promises.mjs                   (content/utils/dist/promises.mjs)
   content/utils/resources.mjs                  (content/utils/dist/resources.mjs)
 
+# default plugins
+  content/plugins/keymaps.mjs                  (content/plugins/dist/keymaps.mjs)
+
 # types
   content/glide-api.d.ts                       (content/dist/api-bundled.d.ts)
 

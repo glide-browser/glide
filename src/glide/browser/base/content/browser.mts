@@ -10,12 +10,13 @@ import type {
   GlideCommandString,
 } from "./browser-excmds-registry.mts";
 
+const DefaultKeymaps = ChromeUtils.importESModule(
+  "chrome://glide/content/plugins/keymaps.mjs",
+  { global: "current" }
+);
 const { GlideBrowserDev } = ChromeUtils.importESModule(
   "chrome://glide/content/browser-dev.mjs",
   { global: "current" }
-);
-const { MOTIONS } = ChromeUtils.importESModule(
-  "chrome://glide/content/motions.mjs"
 );
 const Keys = ChromeUtils.importESModule(
   "chrome://glide/content/utils/keys.mjs",
@@ -232,103 +233,7 @@ class GlideBrowserClass {
     this.autocmds = {};
 
     this.key_manager = new Keys.KeyManager();
-    this.key_manager.set("normal", "<leader>r", "reload");
-    this.key_manager.set("normal", "<leader>R", "reload_hard");
-    this.key_manager.set("normal", "<leader>b", "commandline_show tab ");
-
-    this.key_manager.set("normal", "gg", "scroll_top");
-    this.key_manager.set("normal", "G", "scroll_bottom");
-
-    this.key_manager.set(
-      "normal",
-      "<C-o>",
-      this.jumplist.jump_backwards.bind(this.jumplist)
-    );
-    this.key_manager.set(
-      "normal",
-      "<C-i>",
-      this.jumplist.jump_forwards.bind(this.jumplist)
-    );
-
-    // hint mode
-    this.key_manager.set("normal", "f", "hint");
-    this.key_manager.set("hint", "<Esc>", () => {
-      GlideCommands.remove_hints();
-    });
-
-    // ignore mode
-    this.key_manager.set(
-      ["normal", "insert", "visual"],
-      "<S-Esc>",
-      "mode_change ignore"
-    );
-    this.key_manager.set("ignore", "<S-Esc>", "mode_change normal");
-
-    // history
-    this.key_manager.set(["normal", "insert"], "<C-h>", "back");
-    this.key_manager.set(["normal", "insert"], "<C-l>", "forward");
-
-    // tabs
-    this.key_manager.set(["insert", "normal"], "<C-d>", async () => {
-      if (GlideCommands.get_active_commandline_group() === "tab") {
-        GlideCommands.remove_active_commandline_browser_tab();
-      } else {
-        await GlideExcmds.execute("scroll_page_down");
-      }
-    });
-    this.key_manager.set(["normal", "insert"], "<C-u>", "scroll_page_up");
-    this.key_manager.set("normal", "<leader>d", "tab_close");
-    this.key_manager.set(["normal", "insert"], "<C-j>", "tab_next");
-    this.key_manager.set(["normal", "insert"], "<C-k>", "tab_prev");
-
-    this.key_manager.set("normal", ".", "repeat");
-    this.key_manager.set("normal", ":", "commandline_show");
-
-    this.key_manager.set(
-      ["insert", "visual", "op-pending"],
-      "<Esc>",
-      "mode_change normal"
-    );
-
-    this.key_manager.set("normal", "i", "mode_change insert --automove=left");
-    this.key_manager.set("normal", "a", "mode_change insert");
-    this.key_manager.set(
-      "normal",
-      "A",
-      "mode_change insert --automove=endline"
-    );
-
-    // vim motions
-    this.key_manager.set("normal", "d", "mode_change op-pending --operator=d");
-    this.key_manager.set("normal", "c", "mode_change op-pending --operator=c");
-    for (const motion of MOTIONS) {
-      this.key_manager.set("op-pending", motion, "execute_motion");
-    }
-
-    this.key_manager.set(["normal", "visual"], "w", "motion w");
-    this.key_manager.set(["normal", "visual"], "W", "motion W");
-    this.key_manager.set("normal", "b", "motion b");
-    this.key_manager.set("normal", "B", "motion B");
-    this.key_manager.set("normal", "x", "motion x");
-    this.key_manager.set("normal", "o", "motion o");
-    this.key_manager.set("normal", "{", "motion {");
-    this.key_manager.set("normal", "}", "motion }");
-    this.key_manager.set("normal", "r", "r");
-
-    // TODO(glide-motions): more general support for numbers like this
-    this.key_manager.set("normal", "0", "motion 0");
-    this.key_manager.set("normal", "$", "motion $");
-    this.key_manager.set("normal", "h", "caret_move left");
-    this.key_manager.set("normal", "l", "caret_move right");
-    this.key_manager.set("normal", "j", "caret_move down");
-    this.key_manager.set("normal", "k", "caret_move up");
-    this.key_manager.set("normal", "yy", "url_yank");
-
-    // visual motions
-    this.key_manager.set("normal", "v", "motion v");
-    this.key_manager.set("visual", "h", "motion vh");
-    this.key_manager.set("visual", "l", "motion vl");
-    this.key_manager.set("visual", "d", "motion vd");
+    DefaultKeymaps.init(this.api);
 
     if (this.#startup_finished) {
       // clear all registered event listeners and any custom state on the `browser` object

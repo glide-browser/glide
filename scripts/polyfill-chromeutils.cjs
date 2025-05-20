@@ -27,6 +27,10 @@ globalThis.ChromeUtils = {
     const mod = module_uri;
 
     switch (mod) {
+      case "chrome://glide/content/plugins/keymaps.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/plugins/keymaps.mts`
+        );
       case "chrome://glide/content/utils/dedent.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/utils/dedent.mts`
