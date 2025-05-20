@@ -170,7 +170,7 @@ declare namespace MockedExports {
 
     "chrome://glide/content/docs.mjs": typeof import("../src/glide/browser/base/content/docs.mts");
 
-    // venodred / bundled
+    // vendored / bundled
     "chrome://glide/content/bundled/shiki.mjs": typeof import("shiki");
     "chrome://glide/content/bundled/markdoc.mjs": {
       default: typeof import("@markdoc/markdoc");
