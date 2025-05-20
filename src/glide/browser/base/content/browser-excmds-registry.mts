@@ -321,6 +321,20 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
 
+  // jumplist
+  {
+    name: "jumplist_back",
+    description: "Jump back in the jumplist",
+    content: false,
+    repeatable: false,
+  },
+  {
+    name: "jumplist_forward",
+    description: "Jump forward in the jumplist",
+    content: false,
+    repeatable: false,
+  },
+
   // ------------ vim motions ------------
   {
     name: "execute_motion",

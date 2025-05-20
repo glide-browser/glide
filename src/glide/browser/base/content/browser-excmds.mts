@@ -412,6 +412,16 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "jumplist_back": {
+        GlideBrowser.jumplist.jump_backwards();
+        break;
+      }
+
+      case "jumplist_forward": {
+        GlideBrowser.jumplist.jump_forwards();
+        break;
+      }
+
       default:
         throw assert_never(
           command_meta,

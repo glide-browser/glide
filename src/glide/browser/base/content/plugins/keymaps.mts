@@ -93,14 +93,6 @@ export function init(glide: Glide) {
   glide.keymaps.set("visual", "d", "motion vd");
 
   // jumplist
-  glide.keymaps.set(
-    "normal",
-    "<C-o>",
-    GlideBrowser.jumplist.jump_backwards.bind(GlideBrowser.jumplist)
-  );
-  glide.keymaps.set(
-    "normal",
-    "<C-i>",
-    GlideBrowser.jumplist.jump_forwards.bind(GlideBrowser.jumplist)
-  );
+  glide.keymaps.set("normal", "<C-o>", "jumplist_back");
+  glide.keymaps.set("normal", "<C-i>", "jumplist_forward");
 }
