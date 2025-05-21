@@ -89,6 +89,7 @@ export const content = {
       "textarea",
       "button",
       "details",
+      "option",
       // firefox XUL elements
       "toolbarbutton",
       "richlistitem",
