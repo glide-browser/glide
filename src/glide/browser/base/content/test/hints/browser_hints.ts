@@ -9,6 +9,7 @@ const FILE =
 add_setup(async () => {
   await GlideTestUtils.synthesize_keyseq("<escape>");
   is(GlideBrowser.state.mode, "normal");
+  await sleep_frames(3);
 });
 
 function get_hints(): HTMLElement[] {
@@ -26,6 +27,19 @@ add_task(async function test_f_shows_hints() {
       "Mode should be 'hint' after pressing 'f'"
     );
     ok(get_hints().length > 0, "Hints should be visible on the page");
+
+    await GlideTestUtils.synthesize_keyseq("<escape>");
+    await sleep_frames(5);
+
+    is(
+      GlideBrowser.state.mode,
+      "normal",
+      "Mode should return to 'normal' after pressing Escape"
+    );
+    ok(
+      get_hints().length === 0,
+      "Hints should be removed after exiting hint mode"
+    );
   });
 });
 
@@ -55,29 +69,6 @@ add_task(async function test_hints_follow_link() {
       GlideBrowser.state.mode,
       "normal",
       "Mode should return to 'normal' after following hint"
-    );
-  });
-});
-
-add_task(async function test_escape_exits_hint_mode() {
-  await BrowserTestUtils.withNewTab(FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("f");
-    is(
-      GlideBrowser.state.mode,
-      "hint",
-      "Mode should be 'hint' after pressing 'f'"
-    );
-
-    await GlideTestUtils.synthesize_keyseq("<escape>");
-
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Mode should return to 'normal' after pressing Escape"
-    );
-    ok(
-      get_hints().length === 0,
-      "Hints should be removed after exiting hint mode"
     );
   });
 });
