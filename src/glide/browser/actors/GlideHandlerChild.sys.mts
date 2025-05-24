@@ -300,6 +300,22 @@ export class GlideHandlerChild extends JSWindowActorChild<
             break;
           }
 
+          case "newtab-click": {
+            const previous = hint.target.getAttribute("target");
+            try {
+              hint.target.setAttribute("target", "_blank");
+              hint.target.focus();
+              hint.target.click();
+            } finally {
+              if (previous == null) {
+                hint.target.removeAttribute("target");
+              } else {
+                hint.target.setAttribute("target", previous);
+              }
+            }
+            break;
+          }
+
           default:
             throw assert_never(action);
         }

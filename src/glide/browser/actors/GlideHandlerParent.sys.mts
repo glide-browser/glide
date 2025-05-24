@@ -51,6 +51,7 @@ export interface ParentMessages {
   "Glide::Hint": {
     action?:
       | "click"
+      | "newtab-click"
       | GlideFunctionIPC<(target: HTMLElement) => Promise<void>>
       | null;
   };

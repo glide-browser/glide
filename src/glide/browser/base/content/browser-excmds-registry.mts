@@ -309,7 +309,7 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
     args_schema: {
       "--action": {
-        type: { enum: ["click"] },
+        type: { enum: ["click", "newtab-click"] },
         required: false,
       },
     },
