@@ -1,21 +1,17 @@
 diff --git a/browser/themes/shared/toolbarbuttons.css b/browser/themes/shared/toolbarbuttons.css
-index 26b58ee104a432a359ba2667d2e49a9231e81fef..58f316ac7a44e5f56bba7c09fbe1ba7edae65693 100644
+index d84326072652a48d7fc9b61c585fb00ac4b506ab..e6409a2054755a05da354f89cbf35b9cdbbc54e4 100644
 --- a/browser/themes/shared/toolbarbuttons.css
 +++ b/browser/themes/shared/toolbarbuttons.css
-@@ -601,6 +601,17 @@ toolbar:not(#TabsToolbar) > #personal-bookmarks {
+@@ -632,6 +632,13 @@ toolbar:not(#TabsToolbar) > #personal-bookmarks {
    }
  }
  
-+/* glide-injection-start */
-+
 +.glide-mode-button {
 +  /* TODO(glide): does this work with localisation? */
-+  min-width: 10ch;
++  min-width: 11ch;
 +  justify-content: left !important;
 +  padding-right: 0;
 +}
-+
-+/* glide-injection-end */
 +
  /* Flexible spacer sizing */
  
