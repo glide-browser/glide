@@ -1,0 +1,7 @@
+[DEFAULT]
+support-files = [
+  "hints_test.html",
+]
+
+["dist/browser_hints.js"]
+https_first_disabled = true

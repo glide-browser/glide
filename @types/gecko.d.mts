@@ -15,6 +15,7 @@ declare var gBrowser: GlobalBrowser.GlobalBrowser;
 declare namespace GlobalBrowser {
   interface GlobalBrowser {
     // tabs
+    tabs: BrowserTab[];
     selectedBrowser: BrowserTab | undefined;
     selectedTab: BrowserTab | undefined;
     tabContainer: TabContainer;
