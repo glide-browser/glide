@@ -96,8 +96,8 @@ class GlideTestUtilsClass {
   async synthesize_keyseq(keyseq: string) {
     for (const keyn of Keys.split(keyseq)) {
       const event = Keys.parse_modifiers(keyn);
-      await g.sleep_frames(3);
       g.EventUtils.synthesizeKey(event.key, event);
+      await g.sleep_frames(3);
     }
   }
 
