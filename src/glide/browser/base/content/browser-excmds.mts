@@ -422,6 +422,20 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "hint": {
+        const { args } = this.#parse_command_args(command_meta, command);
+        const location = args["--location"] === "chrome" ? "chrome" : "content";
+        const actor =
+          location === "chrome" ? GlideBrowser.get_chrome_actor()
+          : location === "content" ? GlideBrowser.get_content_actor()
+          : assert_never(location);
+        actor.send_async_message("Glide::Hint", {
+          action: args["--action"],
+          location,
+        });
+        break;
+      }
+
       default:
         throw assert_never(
           command_meta,

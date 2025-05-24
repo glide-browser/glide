@@ -305,11 +305,15 @@ export const GLIDE_EXCOMMANDS = [
   {
     name: "hint",
     description: "Show hint labels for jumping to clickable elements",
-    content: true,
+    content: false,
     repeatable: false,
     args_schema: {
       "--action": {
         type: { enum: ["click", "newtab-click"] },
+        required: false,
+      },
+      "--location": {
+        type: { enum: ["content", "chrome"] },
         required: false,
       },
     },

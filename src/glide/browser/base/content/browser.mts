@@ -994,9 +994,12 @@ class GlideBrowserClass {
       if (hints.length === 1) {
         this.#prevent_keydown(keyn, event);
 
-        this.get_focused_actor().send_async_message("Glide::ExecuteHint", {
-          label,
-        });
+        const location = GlideCommands.get_hints_location();
+        const actor =
+          location === "chrome" ? GlideBrowser.get_chrome_actor()
+          : location === "content" ? GlideBrowser.get_content_actor()
+          : assert_never(location);
+        actor.send_async_message("Glide::ExecuteHint", { label });
 
         this.key_manager.reset_sequence();
         GlideCommands.remove_hints();
@@ -1103,7 +1106,7 @@ class GlideBrowserClass {
     const active_element = document?.activeElement;
     if (!active_element) {
       this._log.debug("nothing is focused");
-      return this.#get_chrome_actor();
+      return this.get_chrome_actor();
     }
 
     // the custom `<browser>` element appears to be the lowest part of the content frame
@@ -1111,14 +1114,14 @@ class GlideBrowserClass {
     const is_content_focused = active_element instanceof browser_element;
     if (is_content_focused) {
       this._log.debug("content is focused");
-      return this.#get_content_actor();
+      return this.get_content_actor();
     }
 
     this._log.debug("chrome is focused");
-    return this.#get_chrome_actor();
+    return this.get_chrome_actor();
   }
 
-  #get_content_actor(): GlideHandlerParent {
+  get_content_actor(): GlideHandlerParent {
     let tab_browser = gBrowser.selectedBrowser;
     let content_wgp = assert_present(
       tab_browser.browsingContext
@@ -1131,7 +1134,7 @@ class GlideBrowserClass {
     return content_wgp.getActor("GlideHandler") as any as GlideHandlerParent;
   }
 
-  #get_chrome_actor(): GlideHandlerParent {
+  get_chrome_actor(): GlideHandlerParent {
     return (
       (browsingContext as any)?.currentWindowGlobal as typeof windowGlobalChild
     )?.getActor("GlideHandler") as any as GlideHandlerParent;
@@ -1313,6 +1316,7 @@ function make_glide_api(): typeof glide {
       activate(opts) {
         GlideBrowser.get_focused_actor().send_async_message("Glide::Hint", {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
+          location: opts?.location ?? "content",
         });
       },
     },

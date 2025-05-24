@@ -91,6 +91,7 @@ class GlideCommandsClass {
 
     const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
     browser.$hints = [];
+    browser.$hints_location = undefined;
   }
 
   /**
@@ -150,16 +151,22 @@ class GlideCommandsClass {
     return browser.$hints ?? [];
   }
 
+  get_hints_location(): GlideHintLocation {
+    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
+    return browser.$hints_location ?? "content";
+  }
+
   hide_hints() {
     const container = this.#upsert_hints_container();
     container.style.setProperty("display", "none", "important");
   }
 
-  show_hints(hints: GlideHintIPC[]) {
+  show_hints(hints: GlideHintIPC[], location: GlideHintLocation) {
     this.#clear_hints();
 
     const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
     browser.$hints = hints;
+    browser.$hints_location = location;
 
     const container = this.#upsert_hints_container();
     container.style.removeProperty("display");
@@ -167,11 +174,13 @@ class GlideCommandsClass {
     // the hints return an x/y of the screen rect, so to position it correctly inside the browser UI
     // we need to figure out what the screen rect is for the browser itself and then subtract that
     // from the hint x/y
-    const browser_box = LayoutUtils.getElementBoundingScreenRect(browser);
+    const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(
+      document!.body
+    );
 
     for (const hint of hints) {
-      let y = hint.screen_y - browser_box.y;
-      const x = hint.screen_x - browser_box.x;
+      let y = hint.screen_y - chrome_ui_box.y;
+      const x = hint.screen_x - chrome_ui_box.x;
       if (y < 0) {
         // TODO(glide): only do this if the hints come from the content frame
         // TODO(glide): do this filtering in the actor instead so we get better char strings
@@ -190,7 +199,7 @@ class GlideCommandsClass {
       container.appendChild(hint_div);
     }
 
-    browser.parentNode.insertAdjacentElement("afterend", container);
+    document!.body!.insertAdjacentElement("afterend", container);
   }
 
   async #create_commandline(tab: BrowserTab, opts: { prefill?: string } = {}) {

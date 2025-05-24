@@ -7,6 +7,8 @@ declare global {
     | "ignore"
     | "hint";
 
+  type GlideHintLocation = "content" | "chrome";
+
   type KeymapOpts = {
     description?: string | undefined;
 
@@ -198,6 +200,16 @@ declare global {
          * This is executed in the content process.
          */
         action?(target: HTMLElement): Promise<void>;
+
+        /**
+         * Which area to generate hints for.
+         *
+         * - `content` - Show hints for clickable elements within the web page (links, buttons, etc.)
+         * - `chrome` - Show hints for browser interface elements (toolbar buttons, tabs, menus, etc.)
+         *
+         * @default "content"
+         */
+        location?: GlideHintLocation;
       }): void;
     };
 

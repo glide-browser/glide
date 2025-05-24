@@ -49,6 +49,7 @@ export interface ParentMessages {
   "Glide::BlurActiveElement": null;
   "Glide::ExecuteHint": { label: string };
   "Glide::Hint": {
+    location: GlideHintLocation;
     action?:
       | "click"
       | "newtab-click"
@@ -150,7 +151,10 @@ export class GlideHandlerParent extends JSWindowActorParent<
       }
 
       case "Glide::ResolvedHints": {
-        this.glide_commands!.show_hints(message.data.hints);
+        this.glide_commands!.show_hints(
+          message.data.hints,
+          message.data.location
+        );
         break;
       }
 

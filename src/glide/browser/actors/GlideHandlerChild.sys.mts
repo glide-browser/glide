@@ -43,7 +43,10 @@ const { create_sandbox } = ChromeUtils.importESModule(
 );
 
 export interface ChildMessages {
-  "Glide::ResolvedHints": { hints: GlideHintIPC[] };
+  "Glide::ResolvedHints": {
+    hints: GlideHintIPC[];
+    location: GlideHintLocation;
+  };
   "Glide::HideHints": {};
   "Glide::ChangeMode": { mode: GlideMode };
   "Glide::RecordRepeatableCommand": ParentMessages["Glide::ExecuteContentCommand"];
@@ -414,11 +417,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
         window.scroll(window.scrollX, window.scrollMaxY);
         break;
       }
-      case "hint": {
-        const { args } = parse_command_args(props.command, props.args);
-        this.#start_hints({ action: args["--action"] });
-        break;
-      }
       case "execute_motion": {
         const operator = props.operator ?? this.state?.operator;
         if (!operator) {
@@ -639,6 +637,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       actor.#active_hints = hints;
 
       actor.send_async_message("Glide::ResolvedHints", {
+        location: props.location,
         // strip out the `target` as we cannot / don't need to send it
         hints: hints.map(({ target: _target, ...rest }) => rest),
       });

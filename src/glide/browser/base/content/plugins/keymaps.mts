@@ -33,6 +33,7 @@ export function init(glide: Glide) {
   // hint mode
   glide.keymaps.set("normal", "f", "hint");
   glide.keymaps.set("normal", "F", "hint --action=newtab-click");
+  glide.keymaps.set("normal", "<leader>f", "hint --location=chrome");
   glide.keymaps.set("hint", "<Esc>", "hints_remove");
 
   // tabs
