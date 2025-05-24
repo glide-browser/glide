@@ -1192,7 +1192,7 @@ type GlideG = (typeof glide)["g"];
  * Implements the `glide.g` API.
  */
 class GlideGlobals implements GlideG {
-  #mapleader = "\\";
+  #mapleader = "<Space>";
 
   get mapleader() {
     return this.#mapleader;
