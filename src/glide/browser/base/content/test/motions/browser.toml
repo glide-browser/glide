@@ -1,7 +1,16 @@
 [DEFAULT]
 support-files = []
 
-["dist/browser_motions.js"]
+["dist/browser_normal_motions.js"]
+https_first_disabled = true
+
+["dist/browser_visual_motions.js"]
+https_first_disabled = true
+
+["dist/browser_words.js"]
+https_first_disabled = true
+
+["dist/browser_utils.js"]
 https_first_disabled = true
 
 ["dist/browser_text_objects.js"]
