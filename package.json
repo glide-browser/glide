@@ -11,6 +11,8 @@
     "bundle": "bash ./scripts/bundle.sh",
     "build:docs": "pnpm tsn scripts/build-docs.mts",
     "build:docs:index": "bash ./scripts/build-docs-index.sh",
+
+    "lint": "./scripts/lint.sh",
     
     "tsc": "tsc",
     "format": "prettier -w .",

@@ -32,6 +32,8 @@
     "engine",
     "node_modules",
     "src/glide/bundled",
+    // needs to be tested individually
+    "src/glide/browser/base/content/test/config/types",
     // includes preprocessor annotations
     "src/browser/app/profile/glide.js",
     "src/glide/browser/base/content/bundled.d.ts",
