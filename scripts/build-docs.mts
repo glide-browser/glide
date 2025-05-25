@@ -45,7 +45,7 @@ const SYMLINKS = [
 ];
 
 const highlighter = await shiki.createHighlighter({
-  langs: ["typescript", "javascript"],
+  langs: ["typescript", "javascript", "html"],
   themes: [
     "catppuccin-mocha",
     "nord",
