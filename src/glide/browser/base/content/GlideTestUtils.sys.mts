@@ -94,7 +94,7 @@ class GlideTestUtilsClass {
    * e.g. `ab<C-d>` will fire three different events, a, b, and ctrl+c
    */
   async synthesize_keyseq(keyseq: string) {
-    for (const keyn of Keys.split(keyseq)) {
+    for (const keyn of Keys.split(Keys.normalize(keyseq))) {
       const event = Keys.parse_modifiers(keyn);
       g.EventUtils.synthesizeKey(event.key, event);
       await g.sleep_frames(3);
