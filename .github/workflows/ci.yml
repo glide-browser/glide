@@ -34,3 +34,16 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Download Firefox
+        run: |
+          pnpm glider download
+
+      - name: Import patches
+        run: |
+          pnpm glider import
+          pnpm dev
+
+      - name: Run lint
+        run: |
+          pnpm lint
