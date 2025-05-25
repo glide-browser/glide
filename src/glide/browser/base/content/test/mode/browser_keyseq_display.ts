@@ -55,14 +55,12 @@ add_task(async function test_keyseq_display_element_creation() {
 add_task(async function test_keyseq_display_multi_key_sequence() {
   await GlideTestUtils.synthesize_keyseq("<escape>");
 
-  EventUtils.synthesizeKey("g");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("g");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "g", "Should display 'g' for first key");
 
-  EventUtils.synthesizeKey("g");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("g");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(
@@ -73,14 +71,12 @@ add_task(async function test_keyseq_display_multi_key_sequence() {
 });
 
 add_task(async function test_keyseq_op_pending() {
-  EventUtils.synthesizeKey("d");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("d");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "d", "Should display 'd'");
 
-  EventUtils.synthesizeKey("w");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("w");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(
@@ -92,14 +88,12 @@ add_task(async function test_keyseq_op_pending() {
 });
 
 add_task(async function test_keyseq_display_clears_on_invalid_sequence() {
-  EventUtils.synthesizeKey("g");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("g");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "g", "Should display 'g'");
 
-  EventUtils.synthesizeKey("x");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("x");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(
@@ -113,16 +107,14 @@ add_task(async function test_keyseq_display_with_op_pending_mode() {
   // Test with operator-pending mode which shows keyseq
   GlideBrowser.api.g.test_executed = false;
 
-  EventUtils.synthesizeKey("d");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("d");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "d", "Should display 'd' in op-pending mode");
   is(GlideBrowser.state.mode, "op-pending", "Should be in op-pending mode");
 
   // Cancel with escape
-  EventUtils.synthesizeKey("KEY_Escape");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("<Esc>");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "", "Keyseq should be cleared after escape");
@@ -137,8 +129,7 @@ add_task(async function test_keyseq_display_without_toolbar_button() {
   original_button!.remove();
 
   // This should not throw an error
-  EventUtils.synthesizeKey("g");
-  await sleep_frames(2);
+  await GlideTestUtils.synthesize_keyseq("g");
 
   const keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(

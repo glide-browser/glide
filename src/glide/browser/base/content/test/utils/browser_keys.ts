@@ -211,11 +211,7 @@ add_task(async function test_leader() {
     { mozSystemGroup: true, capture: true }
   );
 
-  EventUtils.synthesizeKey("\\");
-  EventUtils.synthesizeKey("s");
-  EventUtils.synthesizeKey("f");
-
-  await new Promise(r => requestAnimationFrame(r));
+  await GlideTestUtils.synthesize_keyseq("\\sf");
 
   ok(node);
   is(node.value?.command, "back");

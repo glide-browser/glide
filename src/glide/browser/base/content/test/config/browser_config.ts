@@ -52,16 +52,14 @@ add_task(async function test_g_stores_arbitrary_data() {
 });
 
 add_task(async function test_keymap_reloading() {
-  EventUtils.synthesizeKey(";");
-  await sleep_frames(5);
+  await GlideTestUtils.synthesize_keyseq(";");
   is(GlideBrowser.state.mode, "normal");
 
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", ";", "mode_change insert");
   });
 
-  EventUtils.synthesizeKey(";");
-  await sleep_frames(5);
+  await GlideTestUtils.synthesize_keyseq(";");
   is(GlideBrowser.state.mode, "insert");
 });
 
@@ -217,12 +215,9 @@ add_task(async function test_keys_next_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("k");
-    await sleep_frames(5);
+    await GlideTestUtils.synthesize_keyseq("<Space>k");
 
-    EventUtils.synthesizeKey("a");
-    await sleep_frames(10);
+    await GlideTestUtils.synthesize_keyseq("a");
 
     is(
       GlideBrowser.api.g.received_key,
@@ -240,12 +235,9 @@ add_task(async function test_keys_next_str_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("s");
-    await sleep_frames(5);
+    await GlideTestUtils.synthesize_keyseq("<Space>s");
 
-    EventUtils.synthesizeKey("l", { ctrlKey: true });
-    await sleep_frames(10);
+    await GlideTestUtils.synthesize_keyseq("<C-l>");
 
     is(
       GlideBrowser.api.g.received_key,
@@ -278,12 +270,9 @@ add_task(async function test_keys_next_concurrency_disallowed() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("c");
-    await sleep_frames(10);
+    await GlideTestUtils.synthesize_keyseq("<Space>c");
 
-    EventUtils.synthesizeKey("x");
-    await sleep_frames(10);
+    await GlideTestUtils.synthesize_keyseq("x");
 
     // Verify an error was thrown for the second call
     ok(
@@ -310,12 +299,9 @@ add_task(async function test_keys_next_special_keys() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("p");
-    await sleep_frames(5);
+    await GlideTestUtils.synthesize_keyseq("<Space>p");
 
-    EventUtils.synthesizeKey("KEY_Escape");
-    await sleep_frames(10);
+    await GlideTestUtils.synthesize_keyseq("<Esc>");
 
     is(
       GlideBrowser.api.g.received_key,
@@ -333,9 +319,7 @@ add_task(async function test_glide_ctx_url() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("u");
-    await sleep_frames(5);
+    await GlideTestUtils.synthesize_keyseq("<Space>u");
 
     is(
       GlideBrowser.api.g.value,
@@ -355,9 +339,7 @@ add_task(async function test_glide_excmds_execute() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("e");
-    await sleep_frames(5);
+    await GlideTestUtils.synthesize_keyseq("<Space>e");
 
     is(
       GlideBrowser.api.g.value,
@@ -409,9 +391,7 @@ add_task(async function test_webext_storage_api_listener_error() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await sleep_frames(5);
-    EventUtils.synthesizeKey(" ");
-    EventUtils.synthesizeKey("q");
-    await sleep_frames(5);
+    await GlideTestUtils.synthesize_keyseq("<Space>q");
     GlideBrowser.flush_pending_error_notifications();
     await sleep_frames(5);
 

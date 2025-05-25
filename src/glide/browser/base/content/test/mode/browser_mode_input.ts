@@ -21,14 +21,7 @@ add_task(async function test_focus_input_element_activates_insert_mode() {
       "Waiting for mode button to show `insert` mode"
     );
 
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("c");
-    EventUtils.synthesizeKey("r");
-    await new Promise(r => requestAnimationFrame(r));
-    await new Promise(r => requestAnimationFrame(r));
-    await new Promise(r => requestAnimationFrame(r));
-    await new Promise(r => requestAnimationFrame(r));
+    await GlideTestUtils.synthesize_keyseq("abcr");
 
     const inputContent = await SpecialPowers.spawn(
       browser,
@@ -58,10 +51,7 @@ add_task(async function test_focus_input_element_while_in_insert_mode() {
       "Waiting for mode button to show `insert` mode"
     );
 
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("c");
-    EventUtils.synthesizeKey("r");
+    await GlideTestUtils.synthesize_keyseq("abcr");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
       await new Promise(r => content.requestAnimationFrame(r));
@@ -86,10 +76,7 @@ add_task(async function test_about_settings_search() {
       "Waiting for mode button to show `insert` mode"
     );
 
-    EventUtils.synthesizeKey("r");
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("c");
+    await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(
       browser,
@@ -122,10 +109,7 @@ add_task(async function test_shadow_dom() {
       "Waiting for mode button to show `insert` mode"
     );
 
-    EventUtils.synthesizeKey("r");
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("c");
+    await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
       await new Promise(r => content.requestAnimationFrame(r));
@@ -160,10 +144,7 @@ add_task(async function test_direct_click_nested_shadow_dom() {
       "Waiting for mode button to show `insert` mode"
     );
 
-    EventUtils.synthesizeKey("r");
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("c");
+    await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
       await new Promise(r => content.requestAnimationFrame(r));
@@ -196,10 +177,7 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
       "Waiting for mode button to show `insert` mode"
     );
 
-    EventUtils.synthesizeKey("r");
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("c");
+    await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
       await new Promise(r => content.requestAnimationFrame(r));
@@ -218,8 +196,7 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
 
 add_task(async function test_focus_input_element_in_ignore_mode() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
-    EventUtils.synthesizeKey("KEY_Escape", { shiftKey: true });
-    await sleep_frames(1);
+    await GlideTestUtils.synthesize_keyseq("<S-Esc>");
     is(GlideBrowser.state.mode, "ignore");
 
     await SpecialPowers.spawn(browser, [], async () => {
@@ -231,8 +208,7 @@ add_task(async function test_focus_input_element_in_ignore_mode() {
       "ignore",
       "mode should still be `ignore` even after focusing an element"
     );
-    EventUtils.synthesizeKey("KEY_Escape", { shiftKey: true });
-    await sleep_frames(1);
+    await GlideTestUtils.synthesize_keyseq("<S-Esc>");
   });
 });
 
