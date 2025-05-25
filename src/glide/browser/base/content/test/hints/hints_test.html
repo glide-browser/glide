@@ -26,7 +26,9 @@
         padding: 8px 15px;
         cursor: pointer;
       }
-      input, textarea, select {
+      input,
+      textarea,
+      select {
         margin: 5px;
         padding: 5px;
       }
@@ -59,7 +61,10 @@
   </head>
   <body>
     <h1>Glide Hints Testing Page</h1>
-    <p>This page contains various interactive elements for testing hint functionality.</p>
+    <p>
+      This page contains various interactive elements for testing hint
+      functionality.
+    </p>
 
     <div class="section">
       <h3>Navigation Links</h3>
@@ -67,16 +72,26 @@
         <li><a href="#section1">Go to Section 1</a></li>
         <li><a href="#section2">Go to Section 2</a></li>
         <li><a href="#section3">Go to Section 3</a></li>
-        <li><a href="https://example.com" target="_blank">External Link (New Tab)</a></li>
+        <li>
+          <a href="https://example.com" target="_blank"
+            >External Link (New Tab)</a
+          >
+        </li>
         <li><a href="mailto:test@example.com">Email Link</a></li>
-        <li><a href="javascript:alert('JavaScript Link')">JavaScript Link</a></li>
+        <li>
+          <a href="javascript:alert('JavaScript Link')">JavaScript Link</a>
+        </li>
       </ul>
     </div>
 
     <div class="section button-group">
       <h3>Buttons</h3>
-      <button type="button" onclick="alert('Button 1 clicked!')">Button 1</button>
-      <button type="button" onclick="alert('Button 2 clicked!')">Button 2</button>
+      <button type="button" onclick="alert('Button 1 clicked!')">
+        Button 1
+      </button>
+      <button type="button" onclick="alert('Button 2 clicked!')">
+        Button 2
+      </button>
       <button type="submit">Submit Button</button>
       <button type="reset">Reset Button</button>
       <button disabled>Disabled Button</button>
@@ -95,7 +110,11 @@
         </div>
         <div>
           <label for="password-input">Password Input:</label>
-          <input type="password" id="password-input" placeholder="Enter password" />
+          <input
+            type="password"
+            id="password-input"
+            placeholder="Enter password"
+          />
         </div>
         <div>
           <label for="checkbox1">
@@ -104,17 +123,30 @@
         </div>
         <div>
           <label for="checkbox2">
-            <input type="checkbox" id="checkbox2" checked /> Checkbox 2 (Checked)
+            <input type="checkbox" id="checkbox2" checked /> Checkbox 2
+            (Checked)
           </label>
         </div>
         <div>
           <label for="radio1">
-            <input type="radio" id="radio1" name="radio-group" value="option1" /> Radio Option 1
+            <input
+              type="radio"
+              id="radio1"
+              name="radio-group"
+              value="option1"
+            />
+            Radio Option 1
           </label>
         </div>
         <div>
           <label for="radio2">
-            <input type="radio" id="radio2" name="radio-group" value="option2" /> Radio Option 2
+            <input
+              type="radio"
+              id="radio2"
+              name="radio-group"
+              value="option2"
+            />
+            Radio Option 2
           </label>
         </div>
         <div>
@@ -129,7 +161,12 @@
         <div>
           <label for="textarea">Textarea:</label>
           <br />
-          <textarea id="textarea" rows="4" cols="50" placeholder="Enter multi-line text here"></textarea>
+          <textarea
+            id="textarea"
+            rows="4"
+            cols="50"
+            placeholder="Enter multi-line text here"
+          ></textarea>
         </div>
       </form>
     </div>
@@ -137,38 +174,60 @@
     <div class="section interactive-section">
       <h3>Interactive Elements</h3>
       <div>
-        <span onclick="alert('Clickable span!')" style="cursor: pointer; color: blue; text-decoration: underline;">
+        <span
+          onclick="alert('Clickable span!')"
+          style="cursor: pointer; color: blue; text-decoration: underline"
+        >
           Clickable Span
         </span>
       </div>
       <div>
-        <div onclick="alert('Clickable div!')" style="cursor: pointer; background: #eee; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">
+        <div
+          onclick="alert('Clickable div!')"
+          style="
+            cursor: pointer;
+            background: #eee;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+          "
+        >
           Clickable Div
         </div>
       </div>
       <div>
-        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMDA2NkNDIi8+Cjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1nPC90ZXh0Pgo8L3N2Zz4K" 
-             alt="Clickable Image" 
-             onclick="alert('Image clicked!')" 
-             style="cursor: pointer; margin: 10px 0;" />
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMDA2NkNDIi8+Cjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1nPC90ZXh0Pgo8L3N2Zz4K"
+          alt="Clickable Image"
+          onclick="alert('Image clicked!')"
+          style="cursor: pointer; margin: 10px 0"
+        />
       </div>
     </div>
 
     <div class="section" id="section1">
       <h3>Section 1 - More Links</h3>
       <p>This section contains additional links to test hint functionality:</p>
-      <a href="#top">Back to Top</a> |
-      <a href="#section2">Next Section</a> |
-      <a href="javascript:void(0)" onclick="console.log('Console log link')">Console Log</a>
+      <a href="#top">Back to Top</a> | <a href="#section2">Next Section</a> |
+      <a href="javascript:void(0)" onclick="console.log('Console log link')"
+        >Console Log</a
+      >
     </div>
 
     <div class="section" id="section2">
       <h3>Section 2 - Nested Elements</h3>
       <div>
         <p>Testing nested clickable elements:</p>
-        <div onclick="alert('Outer div clicked!')" style="padding: 20px; background: #f0f0f0; cursor: pointer;">
+        <div
+          onclick="alert('Outer div clicked!')"
+          style="padding: 20px; background: #f0f0f0; cursor: pointer"
+        >
           Outer clickable div
-          <button onclick="event.stopPropagation(); alert('Inner button clicked!')">Inner Button</button>
+          <button
+            onclick="event.stopPropagation(); alert('Inner button clicked!')"
+          >
+            Inner Button
+          </button>
           <a href="#section3" onclick="event.stopPropagation()">Inner Link</a>
         </div>
       </div>
@@ -177,34 +236,43 @@
     <div class="section" id="section3">
       <h3>Section 3 - Special Cases</h3>
       <div>
-        <a href="#" style="display: none;">Hidden Link</a>
-        <a href="#" style="visibility: hidden;">Invisible Link</a>
-        <a href="#" style="opacity: 0;">Transparent Link</a>
-        <a href="#test" style="color: white; background: white;">Hard to See Link</a>
+        <a href="#" style="display: none">Hidden Link</a>
+        <a href="#" style="visibility: hidden">Invisible Link</a>
+        <a href="#" style="opacity: 0">Transparent Link</a>
+        <a href="#test" style="color: white; background: white"
+          >Hard to See Link</a
+        >
       </div>
       <div>
         <details>
           <summary>Expandable Content (click to expand)</summary>
-          <p>This content is initially hidden. It contains a <a href="#details-link">link inside details</a>.</p>
+          <p>
+            This content is initially hidden. It contains a
+            <a href="#details-link">link inside details</a>.
+          </p>
         </details>
       </div>
     </div>
 
     <div class="section">
       <h3>Content Editable</h3>
-      <div contenteditable="true" style="border: 1px solid #ccc; padding: 10px; min-height: 50px;">
+      <div
+        contenteditable="true"
+        style="border: 1px solid #ccc; padding: 10px; min-height: 50px"
+      >
         This is editable content. You can click here to edit.
       </div>
     </div>
 
     <script>
       // Add some dynamic content for testing
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('Hints test page loaded');
-        
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Hints test page loaded");
+
         // Add a dynamically created link
-        const dynamicDiv = document.createElement('div');
-        dynamicDiv.innerHTML = '<p>Dynamically added: <a href="#dynamic">Dynamic Link</a></p>';
+        const dynamicDiv = document.createElement("div");
+        dynamicDiv.innerHTML =
+          '<p>Dynamically added: <a href="#dynamic">Dynamic Link</a></p>';
         document.body.appendChild(dynamicDiv);
       });
     </script>

@@ -1,3 +1,6 @@
+# firefox
+engine/
+
 # bundled versions of deps
 src/glide/bundled/*
 
@@ -14,6 +17,18 @@ src/glide/browser/base/content/utils/dist/
 src/glide/toolkit/content/widgets/dist/
 src/glide/browser/base/content/test/*/dist/
 
+# contains preprocesser annotations
+src/browser/app/profile/glide.js
+
+# vendored
+src/glide/docs/themes/tokyonight-light.json
+src/browser/app/profile/betterfox.js
+
 # misc
+package.json
 pnpm-lock.yaml
 src/glide/browser/base/content/glide-scripts.inc
+
+# deps
+.venv/
+node_modules/

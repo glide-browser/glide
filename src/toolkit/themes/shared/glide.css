@@ -58,7 +58,7 @@
   --glide-cmplt-option-height: 1.4em;
   --glide-cmplt-fg: var(--glide-fg);
   --glide-cmplt-bg: var(--glide-bg);
-  --glide-cmplt-font-size: calc(var(--glide-font-size) * 10/12);
+  --glide-cmplt-font-size: calc(var(--glide-font-size) * 10 / 12);
   --glide-cmplt-font-family: monospace;
   --glide-cmplt-border-top: 1px solid grey;
 
