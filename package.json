@@ -40,6 +40,6 @@
     "shiki": "^3.2.1",
     "type-fest": "^4.39.1"
   },
-  "packageManager": "pnpm@10.6.1",
+  "packageManager": "pnpm@10.11.0",
   "private": true
 }

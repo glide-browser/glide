@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # needed while we have private dependencies
+      - name: Configure GitHub auth
+        run: |
+          TOKEN="${{ secrets.REPO_ACCESS_TOKEN_TMP }}"
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
+            "git@github.com:glide-browser/glider.git"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
