@@ -75,3 +75,15 @@ glide.keymaps.set("normal", "<S-F5>", "help");
 glide.keymaps.set("normal", "", "help");
 // @ts-expect-error partially completed modifier
 glide.keymaps.set("normal", "<A-", "help");
+
+browser.tabs.query({});
+
+// @ts-expect-error missing args
+browser.tabs.query();
+
+function takes_tab(_tab: Browser.Tabs.Tab): void {}
+
+browser.tabs.get(1).then(tab => takes_tab(tab));
+
+// @ts-expect-error invalid arg type
+takes_tab({});

@@ -38,7 +38,8 @@
     "meow": "^13.2.0",
     "prettier": "^3.5.3",
     "shiki": "^3.2.1",
-    "type-fest": "^4.39.1"
+    "type-fest": "^4.39.1",
+    "webextension-polyfill": "github:glide-browser/webextension-types"
   },
   "packageManager": "pnpm@10.11.0",
   "private": true

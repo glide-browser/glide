@@ -404,9 +404,12 @@ add_task(async function test_storage_api() {
         result["testKey"] === "testValue",
         "Storage data doesn't match what was stored"
       );
-      assert(result["complexData"]?.nested, "Nested data not stored correctly");
       assert(
-        result["complexData"]?.count === 42,
+        (result["complexData"] as any)?.nested,
+        "Nested data not stored correctly"
+      );
+      assert(
+        (result["complexData"] as any)?.count === 42,
         "Count value not stored correctly"
       );
 
@@ -740,7 +743,7 @@ add_task(async function test_function_script_injection() {
         },
         // @ts-ignore
         func: BODY_STYLE => {
-          document?.body?.style.setProperty("border", BODY_STYLE);
+          document?.body?.style.setProperty("border", BODY_STYLE as string);
         },
         args: [BODY_STYLE],
       });
@@ -800,7 +803,7 @@ add_task(async function test_function_script_injection() {
         },
         // @ts-ignore
         func: function _(BODY_STYLE) {
-          document?.body?.style.setProperty("border", BODY_STYLE);
+          document?.body?.style.setProperty("border", BODY_STYLE as string);
         },
         args: [BODY_STYLE],
       });
@@ -852,7 +855,7 @@ add_task(async function test_function_script_injection() {
 add_task(async function test_runtime_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>r", async () => {
-      browser.runtime.onMessage.addListener((...args) => {
+      browser.runtime.onMessage.addListener((...args: any[]) => {
         console.log({ args });
         throw new Error("yoooooo");
       });

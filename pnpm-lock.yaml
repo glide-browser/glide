@@ -51,6 +51,9 @@ importers:
       type-fest:
         specifier: ^4.39.1
         version: 4.39.1
+      webextension-polyfill:
+        specifier: github:glide-browser/webextension-types
+        version: webextension-polyfill-ts@git+https://git@github.com:glide-browser/webextension-types.git#5d4bc8263e3c1267f4c5c1cff44b422903d59ff6
 
 packages:
 
@@ -1281,6 +1284,10 @@ packages:
 
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
+
+  webextension-polyfill-ts@git+https://git@github.com:glide-browser/webextension-types.git#5d4bc8263e3c1267f4c5c1cff44b422903d59ff6:
+    resolution: {commit: 5d4bc8263e3c1267f4c5c1cff44b422903d59ff6, repo: git@github.com:glide-browser/webextension-types.git, type: git}
+    version: 0.26.0
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -2557,6 +2564,8 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
+
+  webextension-polyfill-ts@git+https://git@github.com:glide-browser/webextension-types.git#5d4bc8263e3c1267f4c5c1cff44b422903d59ff6: {}
 
   which@2.0.2:
     dependencies:

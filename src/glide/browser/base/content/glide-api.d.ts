@@ -279,7 +279,7 @@ declare global {
   function todo_assert(value: unknown, message?: string): void;
 
   namespace glide {
-    export type TabWithID = Omit<browser.tabs.Tab, "id"> & { id: number };
+    export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
 
     export type KeyEvent = KeyboardEvent & {
       /**

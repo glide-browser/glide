@@ -18,8 +18,8 @@ add_task(async function test_tabs_active() {
       const tab = await glide.tabs.active();
       assert(tab.url, INPUT_TEST_URI);
 
-      const tabs: browser.tabs.Tab[] = [];
-      const windows: browser.windows.Window[] = [];
+      const tabs: Browser.Tabs.Tab[] = [];
+      const windows: Browser.Windows.Window[] = [];
 
       try {
         tabs.push(await browser.tabs.create({}));

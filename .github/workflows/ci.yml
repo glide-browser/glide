@@ -20,6 +20,9 @@ jobs:
           git config --global \
             url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
             "git@github.com:glide-browser/glider.git"
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/webextension-types.git".insteadOf \
+            "git@github.com:glide-browser/webextension-types.git"
 
       - uses: pnpm/action-setup@v4
 

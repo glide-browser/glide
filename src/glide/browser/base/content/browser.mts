@@ -1339,10 +1339,10 @@ function make_glide_api(): typeof glide {
             throw result.error;
           }
 
-          throw new Error(result.error);
+          throw new Error(result.error as any);
         }
 
-        return result.result;
+        return result.result as any;
       },
     },
     hints: {
