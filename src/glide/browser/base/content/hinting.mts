@@ -38,12 +38,17 @@ export const content = {
         continue;
       }
 
+      const dom_rect = target.getBoundingClientRect();
+      if (dom_rect.width === 0 && dom_rect.height === 0) {
+        // if the element has no size its not visible, so don't include it
+        continue;
+      }
+
       // check if the target is visibly hidden due to overlapping with another element by
       // querying for the element at the same coordinates as the target.
       //
       // if said element does not include the target as a child node or if the target doesn't
       // include the element as a child then we assume the target is hidden and shouldn't be hinted.
-      const dom_rect = target.getBoundingClientRect();
       const point_element = DOM.element_at_point(
         document,
         dom_rect.left + dom_rect.width * 0.5,
