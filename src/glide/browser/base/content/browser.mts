@@ -1029,7 +1029,7 @@ class GlideBrowserClass {
 
         const location = GlideCommands.get_hints_location();
         const actor =
-          location === "chrome" ? GlideBrowser.get_chrome_actor()
+          location === "browser-ui" ? GlideBrowser.get_chrome_actor()
           : location === "content" ? GlideBrowser.get_content_actor()
           : assert_never(location);
         actor.send_async_message("Glide::ExecuteHint", { label });

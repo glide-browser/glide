@@ -313,7 +313,7 @@ export const GLIDE_EXCOMMANDS = [
         required: false,
       },
       "--location": {
-        type: { enum: ["content", "chrome"] },
+        type: { enum: ["content", "browser-ui"] },
         required: false,
       },
     },

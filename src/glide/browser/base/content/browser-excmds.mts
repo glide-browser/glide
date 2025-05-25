@@ -424,9 +424,10 @@ class GlideExcmdsClass {
 
       case "hint": {
         const { args } = this.#parse_command_args(command_meta, command);
-        const location = args["--location"] === "chrome" ? "chrome" : "content";
+        const location =
+          args["--location"] === "browser-ui" ? "browser-ui" : "content";
         const actor =
-          location === "chrome" ? GlideBrowser.get_chrome_actor()
+          location === "browser-ui" ? GlideBrowser.get_chrome_actor()
           : location === "content" ? GlideBrowser.get_content_actor()
           : assert_never(location);
         actor.send_async_message("Glide::Hint", {

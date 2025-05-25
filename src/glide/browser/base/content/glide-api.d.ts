@@ -7,7 +7,7 @@ declare global {
     | "ignore"
     | "hint";
 
-  type GlideHintLocation = "content" | "chrome";
+  type GlideHintLocation = "content" | "browser-ui";
 
   type KeymapOpts = {
     description?: string | undefined;
