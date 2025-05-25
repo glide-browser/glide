@@ -11,6 +11,7 @@
     "bundle": "bash ./scripts/bundle.sh",
     "build:docs": "pnpm tsn scripts/build-docs.mts",
     "build:docs:index": "bash ./scripts/build-docs-index.sh",
+    "build:types": "bash ./scripts/generate-types.sh",
 
     "lint": "./scripts/lint.sh",
     
