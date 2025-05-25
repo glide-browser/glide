@@ -889,9 +889,13 @@ class GlideBrowserClass {
   }
 
   #update_mode_ui() {
-    document!.getElementById(
-      "glide-toolbar-mode-button"
-    )!.childNodes[0]!.textContent = this.state.mode;
+    const element = document!.getElementById("glide-toolbar-mode-button");
+    if (!element) {
+      // user removed it from the toolbar
+      return;
+    }
+
+    element.childNodes[0]!.textContent = this.state.mode;
   }
 
   #on_blur() {

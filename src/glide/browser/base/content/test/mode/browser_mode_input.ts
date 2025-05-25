@@ -231,5 +231,22 @@ add_task(async function test_focus_input_element_in_ignore_mode() {
       "ignore",
       "mode should still be `ignore` even after focusing an element"
     );
+    EventUtils.synthesizeKey("KEY_Escape", { shiftKey: true });
+    await sleep_frames(1);
   });
+});
+
+add_task(async function test_toolbar_removed() {
+  // emulate user customised toolbar and removed the element
+  const original_button = document!.getElementById("glide-toolbar-mode-button");
+  original_button!.remove();
+
+  // test that these don't error
+  await GlideTestUtils.synthesize_keyseq("<S-Esc>");
+  is(GlideBrowser.state.mode, "ignore");
+  await GlideTestUtils.synthesize_keyseq("<S-Esc>");
+  is(GlideBrowser.state.mode, "normal");
+
+  // Restore the button for other tests
+  document!.body!.appendChild(original_button!);
 });

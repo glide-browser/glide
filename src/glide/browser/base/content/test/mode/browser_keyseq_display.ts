@@ -134,7 +134,7 @@ add_task(async function test_keyseq_display_without_toolbar_button() {
   const original_button = document!.getElementById(
     "glide-toolbar-keyseq-button"
   );
-  original_button?.remove();
+  original_button!.remove();
 
   // This should not throw an error
   EventUtils.synthesizeKey("g");
@@ -148,7 +148,5 @@ add_task(async function test_keyseq_display_without_toolbar_button() {
   );
 
   // Restore the button for other tests
-  if (original_button) {
-    document!.body!.appendChild(original_button);
-  }
+  document!.body!.appendChild(original_button!);
 });
