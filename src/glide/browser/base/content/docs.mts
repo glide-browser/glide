@@ -82,6 +82,7 @@ export async function markdown_to_html(
             "variable.declaration.hcl variable.other.readwrite.hcl",
             "meta.mapping.key.hcl variable.other.readwrite.hcl",
             "variable.other.declaration",
+            "variable.other.constant",
           ],
           settings: {
             // same colour as `entity.name` / variable access
