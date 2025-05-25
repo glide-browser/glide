@@ -5,5 +5,8 @@
 pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 
+// disable AI sidebar by default
+pref("browser.ml.chat.enabled", false);
+
 #include remove-mozilla.js
 #include betterfox.js
