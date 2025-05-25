@@ -68,7 +68,10 @@ export async function markdown_to_html(
   const tokyonight = highlighter.getTheme("tokyo-night");
   const tokyonight_light = highlighter.getTheme("tokyo-night-light");
 
-  const themes: Record<string, ThemeRegistrationResolved> = {
+  const dark_text_fg = "#c0caf5";
+  const light_text_fg = "#343B58";
+
+  const themes = {
     dark: {
       ...tokyonight,
       settings: [
@@ -88,7 +91,7 @@ export async function markdown_to_html(
             // same colour as `entity.name` / variable access
             // e.g. `glide.keymaps.set()`
             //       ^^^^^
-            foreground: "#c0caf5",
+            foreground: dark_text_fg,
           },
         },
       ],
@@ -111,9 +114,45 @@ export async function markdown_to_html(
             // same colour as `entity.name` / variable access
             // e.g. `glide.keymaps.set()`
             //       ^^^^^
-            foreground: "#343B58",
+            foreground: light_text_fg,
           },
         },
+      ],
+    },
+  } as const satisfies Record<string, ThemeRegistrationResolved>;
+
+  // these are *only* used for the fallback inline code case, if a language is
+  // explicitly requested in an inline block we still use the standard syntax
+  // highlighting theme defined above.
+  const inline_themes: Record<string, ThemeRegistrationResolved> = {
+    dark: {
+      ...themes.dark,
+      name: "inline-tokynight",
+      settings: [
+        ...(themes.dark.settings ?? []),
+        {
+          // don't change the `<` or `|` operators
+          scope: ["keyword.operator.relational", "keyword.operator.bitwise"],
+          settings: { foreground: dark_text_fg },
+        },
+        // change the default foreground colour to match the text as that's what we need
+        // for things like `\` which don't have specific tokens
+        { settings: { foreground: dark_text_fg } },
+      ],
+    },
+    light: {
+      ...themes.light,
+      name: "inline-tokyonight-light",
+      settings: [
+        ...(themes.light.settings ?? []),
+        {
+          // don't change the `<` or `|` operators
+          scope: ["keyword.operator.relational", "keyword.operator.bitwise"],
+          settings: { foreground: light_text_fg },
+        },
+        // change the default foreground colour to match the text as that's what we need
+        // for things like `\` which don't have specific tokens
+        { settings: { foreground: light_text_fg } },
       ],
     },
   };
@@ -226,18 +265,22 @@ export async function markdown_to_html(
           // with `$lang:$content`
           const [, language, code] = content.match(/^(\w+):(.+)$/) || [];
 
-          if (!language || !code || language === "glide") {
-            // no syntax highlighting if a language isn't given
-            return new Markdoc.Tag("code", node.transformAttributes(), [
-              content,
-            ]);
-          }
-
-          const highlighted = highlighter.codeToHtml(code, {
-            lang: language,
-            themes,
-            structure: "inline",
-          });
+          const highlighted =
+            !language || !code || language === "glide" ?
+              // if the language isn't explicitly configured, then default to a slightly
+              // modified version of TypeScript syntax highlighting as I've found
+              // that generally to work quite well and looks much better than the default
+              // <code> highlighting we have
+              highlighter.codeToHtml(code ?? content, {
+                lang: language ?? "typescript",
+                themes: inline_themes,
+                structure: "inline",
+              })
+            : highlighter.codeToHtml(code, {
+                lang: language,
+                themes,
+                structure: "inline",
+              });
 
           const id = patch_id();
           patches[id] = html`<span class="shiki-inline">${highlighted}</span>`;
