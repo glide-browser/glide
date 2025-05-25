@@ -35,9 +35,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Download Firefox
+      - name: Bootstrap repo
         run: |
           pnpm glider download
+          pnpm bootstrap
 
       - name: Import patches
         run: |
