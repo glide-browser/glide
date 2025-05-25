@@ -167,6 +167,7 @@ export interface KeyMapping {
   sequence: string[];
   command: GlideCommandString | GlideCommandCallback;
   description?: string | undefined;
+  retain_key_display?: boolean;
 }
 
 export class KeyManager {
@@ -200,6 +201,7 @@ export class KeyManager {
       sequence: split(lhs).map(normalize),
       command: rhs,
       description: opts?.description,
+      retain_key_display: opts?.retain_key_display,
     };
 
     if (typeof modes === "string") {

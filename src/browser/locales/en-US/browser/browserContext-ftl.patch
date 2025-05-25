@@ -1,8 +1,8 @@
 diff --git a/browser/locales/en-US/browser/browserContext.ftl b/browser/locales/en-US/browser/browserContext.ftl
-index 4b95b09620bee676b308d684e11efbd99a9ac6b0..6f211d545e296403e9b6cd4cc9419e53b215a0cb 100644
+index 4b95b09620bee676b308d684e11efbd99a9ac6b0..e3443cd941b27b33b2cbc7ef21fa388874c84b87 100644
 --- a/browser/locales/en-US/browser/browserContext.ftl
 +++ b/browser/locales/en-US/browser/browserContext.ftl
-@@ -81,6 +81,23 @@ toolbar-button-stop =
+@@ -81,6 +81,27 @@ toolbar-button-stop =
  toolbar-button-stop-reload =
      .title = { main-context-menu-reload.aria-label }
  
@@ -11,6 +11,10 @@ index 4b95b09620bee676b308d684e11efbd99a9ac6b0..6f211d545e296403e9b6cd4cc9419e53
 +glide-toolbar-button-mode =
 +    .label = Glide current mode
 +    .tooltiptext = Glide current mode
++
++glide-toolbar-button-keyseq =
++    .label = Glide current key sequence
++    .tooltiptext = Glide current key sequence
 +
 +glide-error-notification-reload-config-button =
 +    .label = :config_reload

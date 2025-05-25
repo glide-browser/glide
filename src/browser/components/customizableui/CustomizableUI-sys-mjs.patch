@@ -1,8 +1,8 @@
 diff --git a/browser/components/customizableui/CustomizableUI.sys.mjs b/browser/components/customizableui/CustomizableUI.sys.mjs
-index 9392b42a1de7310719a6cc8aaf11bd857e8fa69a..bbbc425b07af638accebad49c1b5901609668cc3 100644
+index 5bb6be19f7f855b129aac921af1ed5cfc63d732b..0b0b958fa9594c0611236a9472981e5534cb8514 100644
 --- a/browser/components/customizableui/CustomizableUI.sys.mjs
 +++ b/browser/components/customizableui/CustomizableUI.sys.mjs
-@@ -310,6 +310,7 @@ var CustomizableUIInternal = {
+@@ -331,6 +331,7 @@ var CustomizableUIInternal = {
        "back-button",
        "forward-button",
        "stop-reload-button",
@@ -10,3 +10,11 @@ index 9392b42a1de7310719a6cc8aaf11bd857e8fa69a..bbbc425b07af638accebad49c1b59016
        Services.policies.isAllowed("removeHomeButtonByDefault")
          ? null
          : "home-button",
+@@ -340,6 +341,7 @@ var CustomizableUIInternal = {
+       "spring",
+       "save-to-pocket-button",
+       "downloads-button",
++      "glide-toolbar-keyseq-button",
+       AppConstants.MOZ_DEV_EDITION ? "developer-button" : null,
+       "fxa-toolbar-menu-button",
+       lazy.resetPBMToolbarButtonEnabled ? "reset-pbm-toolbar-button" : null,

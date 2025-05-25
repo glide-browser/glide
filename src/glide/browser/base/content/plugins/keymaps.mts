@@ -63,8 +63,12 @@ export function init(glide: Glide) {
   glide.keymaps.set("normal", "A", "mode_change insert --automove=endline");
 
   // vim motions
-  glide.keymaps.set("normal", "d", "mode_change op-pending --operator=d");
-  glide.keymaps.set("normal", "c", "mode_change op-pending --operator=c");
+  glide.keymaps.set("normal", "d", "mode_change op-pending --operator=d", {
+    retain_key_display: true,
+  });
+  glide.keymaps.set("normal", "c", "mode_change op-pending --operator=c", {
+    retain_key_display: true,
+  });
   for (const motion of MOTIONS) {
     glide.keymaps.set("op-pending", motion, "execute_motion");
   }

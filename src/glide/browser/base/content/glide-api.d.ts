@@ -18,6 +18,15 @@ declare global {
      * @default {false}
      */
     buffer?: boolean;
+
+    /**
+     * If true, the key sequence will be displayed even after the mapping is executed.
+     *
+     * This is useful for mappings that are conceptually chained but are not *actually*, e.g. `diw`.
+     *
+     * @default false
+     */
+    retain_key_display?: boolean;
   };
 
   type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;

@@ -1,8 +1,8 @@
 diff --git a/browser/base/content/navigator-toolbox.js b/browser/base/content/navigator-toolbox.js
-index a338a828b750125619fe80fc530648bf370c1786..2988cb35fb2f120dea925be5e9672e454c2d6075 100644
+index c6fefefef50c73bcfb2e4b2ac347741d3f3d5cbc..fbca8f2f93400703e592e974066c720c8e644b08 100644
 --- a/browser/base/content/navigator-toolbox.js
 +++ b/browser/base/content/navigator-toolbox.js
-@@ -11,6 +11,19 @@ document.addEventListener(
+@@ -11,6 +11,23 @@ document.addEventListener(
      const navigatorToolbox = document.getElementById("navigator-toolbox");
      const widgetOverflow = document.getElementById("widget-overflow");
  
@@ -16,6 +16,10 @@ index a338a828b750125619fe80fc530648bf370c1786..2988cb35fb2f120dea925be5e9672e45
 +      "glide-toolbar-mode-button"
 +    );
 +    glide_mode_button.removeChild(glide_mode_button.childNodes[1]);
++    const glide_keyseq_button = document.getElementById(
++      "glide-toolbar-keyseq-button"
++    );
++    glide_keyseq_button.removeChild(glide_keyseq_button.childNodes[0]);
 +
 +    // glide-injection-end
 +

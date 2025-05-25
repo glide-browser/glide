@@ -29,6 +29,9 @@ const Jumplist = ChromeUtils.importESModule(
 const Promises = ChromeUtils.importESModule(
   "chrome://glide/content/utils/promises.mjs"
 );
+const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
+  global: "current",
+});
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
@@ -920,6 +923,30 @@ class GlideBrowserClass {
     resolve: (event: glide.KeyEvent) => void;
   } | null = null;
 
+  /**
+   * This uses a different state than the *actual* key mappings so that we can
+   * display things like `di`, which wouldn't normally be displayed as it is not defined
+   * as a single mapping, e.g. `diw`, but instead defined as `d` + `iw`.
+   */
+  #current_display_keyseq: string[] = [];
+  #display_keyseq(keyseq: string[]) {
+    this.#current_display_keyseq = keyseq;
+    const element = document?.getElementById("glide-toolbar-keyseq-button");
+    if (!element) {
+      return;
+    }
+
+    const id = "glide-toolbar-keyseq-span";
+    const text_element = document?.getElementById(id) as HTMLSpanElement | null;
+    if (text_element) {
+      text_element.textContent = keyseq.join("");
+    } else {
+      element.appendChild(
+        DOM.create_element("span", { id, textContent: keyseq.join("") })
+      );
+    }
+  }
+
   async #on_keydown(event: KeyboardEvent) {
     const keyn = Keys.event_to_key_notation(event);
 
@@ -944,6 +971,7 @@ class GlideBrowserClass {
       !event.defaultPreventedByChrome &&
       !event.defaultPreventedByContent
     ) {
+      this.#display_keyseq([]);
       this._log.debug(
         `Ignoring \`${keyn}\` key event as it was dispatched from privileged non-JS code`
       );
@@ -971,6 +999,12 @@ class GlideBrowserClass {
     const has_partial = this.key_manager.has_partial_mapping;
     const current_sequence = this.key_manager.current_sequence;
     const mapping = this.key_manager.handle_key_event(event, mode);
+
+    if (mapping?.has_children || mapping?.value?.retain_key_display) {
+      this.#display_keyseq([...this.#current_display_keyseq, keyn]);
+    } else {
+      this.#display_keyseq([]);
+    }
 
     if (!mapping && this.state.mode === "hint") {
       const label = [...current_sequence].join("");

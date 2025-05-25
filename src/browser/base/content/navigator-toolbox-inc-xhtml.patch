@@ -1,8 +1,8 @@
 diff --git a/browser/base/content/navigator-toolbox.inc.xhtml b/browser/base/content/navigator-toolbox.inc.xhtml
-index feb9e4ef7e872b4cfbf0d55f24a34db275951c66..e7bd9a1020a35075b4d472eb293a484d9b2ac99c 100644
+index 30e7b9b2ac63db6ccd2727a9341081cecefc25cb..50310b0d787d7e930e32672314d0425cebaa3871 100644
 --- a/browser/base/content/navigator-toolbox.inc.xhtml
 +++ b/browser/base/content/navigator-toolbox.inc.xhtml
-@@ -155,6 +155,22 @@
+@@ -156,6 +156,22 @@
            </box>
          </toolbarbutton>
        </toolbaritem>
@@ -25,3 +25,19 @@ index feb9e4ef7e872b4cfbf0d55f24a34db275951c66..e7bd9a1020a35075b4d472eb293a484d
        <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional"/>
        <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional titlebar-spacer" id="vertical-spacer" />
        <toolbaritem id="urlbar-container"
+@@ -455,6 +471,15 @@
+         </box>
+       </toolbarbutton>
+ 
++      <toolbarbutton id="glide-toolbar-keyseq-button" class="toolbarbutton-1 chromeclass-toolbar-additional glide-keyseq-button"
++                     badged="true"
++                     delegatesanchor="true"
++                     consumeanchor="glide-toolbar-keyseq-button"
++                     closemenu="none"
++                     data-l10n-id="glide-toolbar-button-keyseq"
++                     cui-areatype="toolbar"
++                     removable="true">
++      </toolbarbutton>
+       <toolbarbutton id="fxa-toolbar-menu-button" class="toolbarbutton-1 chromeclass-toolbar-additional subviewbutton-nav"
+                      badged="true"
+                      delegatesanchor="true"
