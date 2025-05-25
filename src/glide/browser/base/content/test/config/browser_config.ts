@@ -74,9 +74,8 @@ add_task(async function test_invalid_config_notification() {
 
     await sleep_frames(5);
 
-    let notification_box = gBrowser.getNotificationBox();
     let notification =
-      notification_box.getNotificationWithValue("glide-config-error");
+      gNotificationBox.getNotificationWithValue("glide-config-error");
 
     ok(notification, "Error notification should be shown");
     is(
@@ -101,11 +100,11 @@ add_task(async function test_invalid_config_notification() {
     reload_button.click();
     await sleep_frames(5);
     ok(
-      !notification_box.getNotificationWithValue("glide-config-error"),
+      !gNotificationBox.getNotificationWithValue("glide-config-error"),
       "Notification should be removed after fixing config + reload"
     );
     is(
-      notification_box.currentNotification,
+      gNotificationBox.currentNotification,
       null,
       "No notification should be present"
     );
@@ -122,9 +121,8 @@ add_task(
 
       await sleep_frames(5);
 
-      let notification_box = gBrowser.getNotificationBox();
       let notification =
-        notification_box.getNotificationWithValue("glide-config-error");
+        gNotificationBox.getNotificationWithValue("glide-config-error");
 
       ok(notification, "Error notification should be shown");
       is(
@@ -144,11 +142,11 @@ add_task(
 
       await sleep_frames(5);
       ok(
-        !notification_box.getNotificationWithValue("glide-config-error"),
+        !gNotificationBox.getNotificationWithValue("glide-config-error"),
         "Notification should be removed after fixing config + reload"
       );
       is(
-        notification_box.currentNotification,
+        gNotificationBox.currentNotification,
         null,
         "No notification should be present"
       );
@@ -165,9 +163,8 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
 
     await sleep_frames(5);
 
-    let notification_box = gBrowser.getNotificationBox();
     let notification =
-      notification_box.getNotificationWithValue("glide-config-error");
+      gNotificationBox.getNotificationWithValue("glide-config-error");
 
     ok(notification, "Error notification should be shown");
     is(
@@ -385,9 +382,8 @@ add_task(async function test_webext_listener_error() {
     await sleep_frames(5);
     GlideBrowser.flush_pending_error_notifications();
 
-    let notification_box = gBrowser.getNotificationBox();
     let notification =
-      notification_box.getNotificationWithValue("glide-config-error");
+      gNotificationBox.getNotificationWithValue("glide-config-error");
 
     ok(notification, "Error notification should be shown");
     is(
@@ -419,9 +415,8 @@ add_task(async function test_webext_storage_api_listener_error() {
     GlideBrowser.flush_pending_error_notifications();
     await sleep_frames(5);
 
-    let notification_box = gBrowser.getNotificationBox();
     let notification =
-      notification_box.getNotificationWithValue("glide-config-error");
+      gNotificationBox.getNotificationWithValue("glide-config-error");
 
     ok(notification, "Error notification should be shown");
     is(

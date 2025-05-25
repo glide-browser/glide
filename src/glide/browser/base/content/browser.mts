@@ -101,7 +101,7 @@ class GlideBrowserClass {
     document!.addEventListener("keyup", this.#on_keyup.bind(this), true);
 
     // As this code is ran very early in the browser startup process, we can't rely on things like
-    // `gBrowser.getNotificationBox()` working immediately as there are a couple of error states
+    // `gNotificationBox` working immediately as there are a couple of error states
     // depending on how fast/slow our config loading is, it'll either cause an error or just silently
     // ignore the notification....
     //
@@ -333,33 +333,29 @@ class GlideBrowserClass {
   ) {
     this.on_startup(() => {
       const { buttons, ...data } = props;
-
-      const notificationBox = gBrowser.getNotificationBox();
-      notificationBox.appendNotification(type, data, buttons);
+      gNotificationBox.appendNotification(type, data, buttons);
     });
   }
 
   remove_notification(type: string): boolean {
     let found = false;
 
-    const notificationBox = gBrowser.getNotificationBox();
-    for (const notification of notificationBox.allNotifications) {
+    for (const notification of gNotificationBox.allNotifications) {
       const value = notification.getAttribute("value");
       if (value !== type) {
         continue;
       }
 
       found = true;
-      notificationBox.removeNotification(notification);
+      gNotificationBox.removeNotification(notification);
     }
 
     return found;
   }
 
   remove_all_notifications(): void {
-    const notificationBox = gBrowser.getNotificationBox();
-    for (const notification of notificationBox.allNotifications) {
-      notificationBox.removeNotification(notification);
+    for (const notification of gNotificationBox.allNotifications) {
+      gNotificationBox.removeNotification(notification);
     }
   }
 
@@ -570,14 +566,13 @@ class GlideBrowserClass {
 
   #clear_config_error_notification() {
     try {
-      const notificationBox = gBrowser.getNotificationBox();
-      for (const notification of notificationBox.allNotifications) {
+      for (const notification of gNotificationBox.allNotifications) {
         const value = notification.getAttribute("value");
         if (
           value === this.#config_error_id ||
           value === this.#config_pending_notification_id
         ) {
-          notificationBox.removeNotification(notification);
+          gNotificationBox.removeNotification(notification);
         }
       }
     } catch (_) {

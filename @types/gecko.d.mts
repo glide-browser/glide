@@ -6,6 +6,7 @@
 // with some helpful improvements
 
 declare var gBrowser: GlobalBrowser.GlobalBrowser;
+declare var gNotificationBox: GlobalBrowser.NotificationBox;
 
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`

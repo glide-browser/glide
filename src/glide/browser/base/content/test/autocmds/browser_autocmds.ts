@@ -123,8 +123,7 @@ add_task(async function test_autocmd_error() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await sleep_frames(5);
 
-    let notification_box = gBrowser.getNotificationBox();
-    let notification = notification_box.getNotificationWithValue(
+    let notification = gNotificationBox.getNotificationWithValue(
       "glide-autocmd-error"
     );
 
@@ -152,8 +151,7 @@ add_task(async function test_autocmd_cleanup_error() {
     await BrowserTestUtils.reloadTab(gBrowser.selectedTab);
     await sleep_frames(5);
 
-    let notification_box = gBrowser.getNotificationBox();
-    let notification = notification_box.getNotificationWithValue(
+    let notification = gNotificationBox.getNotificationWithValue(
       "glide-buffer-cleanup-error"
     );
 
