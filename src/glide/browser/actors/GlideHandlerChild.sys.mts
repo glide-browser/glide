@@ -741,6 +741,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
   }
 
   handleEvent(event: Event) {
+    if (!event.isTrusted) {
+      // note: I *think* this is redundant because AFAIK only trusted events
+      // should be fired here but there's no downside in including this check
+      return;
+    }
+
     const target = event.target as Element | null;
 
     this._log.debug("Event:", {
