@@ -48,6 +48,10 @@ const SIDEBAR: SidebarEntry[] = [
     href: "key-mappings.html",
   },
   {
+    name: "Hints",
+    href: "hints.html",
+  },
+  {
     name: "FAQ",
     href: "faq.html",
   },
