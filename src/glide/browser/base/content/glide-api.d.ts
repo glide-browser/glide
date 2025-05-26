@@ -7,39 +7,9 @@ declare global {
     | "ignore"
     | "hint";
 
-  type GlideHintLocation = "content" | "browser-ui";
-
-  type KeymapOpts = {
-    description?: string | undefined;
-
-    /**
-     * If `true`, creates a buffer-local mapping for the current buffer.
-     *
-     * @default {false}
-     */
-    buffer?: boolean;
-
-    /**
-     * If true, the key sequence will be displayed even after the mapping is executed.
-     *
-     * This is useful for mappings that are conceptually chained but are not *actually*, e.g. `diw`.
-     *
-     * @default false
-     */
-    retain_key_display?: boolean;
-  };
-
-  type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
-
   interface GlideGlobals {
     mapleader: string;
   }
-
-  type GlideAutocmdEvent = "UrlEnter";
-  type GlideAutocmdPattern = RegExp | { hostname?: string };
-  type GlideAutocmdArgs = {
-    UrlEnter: { readonly url: string };
-  };
 
   var glide: {
     ctx: {
@@ -65,14 +35,14 @@ declare global {
        */
       create<const Event extends "UrlEnter">(
         event: Event,
-        pattern: GlideAutocmdPattern,
-        callback: (args: GlideAutocmdArgs[Event]) => void
+        pattern: glide.AutocmdPattern,
+        callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
 
-      create<const Event extends GlideAutocmdEvent>(
+      create<const Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: GlideAutocmdPattern,
-        callback: (args: GlideAutocmdArgs[Event]) => void
+        pattern: glide.AutocmdPattern,
+        callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
     };
 
@@ -191,7 +161,7 @@ declare global {
         modes: GlideMode | GlideMode[],
         lhs: $keymapcompletions.T<LHS>,
         rhs: glide.ExcmdValue,
-        opts?: KeymapOpts | undefined
+        opts?: glide.KeymapOpts | undefined
       ): void;
 
       /**
@@ -202,7 +172,7 @@ declare global {
       del(
         modes: GlideMode | GlideMode[],
         lhs: string,
-        opts?: KeymapDeleteOpts
+        opts?: glide.KeymapDeleteOpts
       ): void;
     };
 
@@ -229,7 +199,7 @@ declare global {
          *
          * @default "content"
          */
-        location?: GlideHintLocation;
+        location?: glide.HintLocation;
       }): void;
     };
 
@@ -239,7 +209,7 @@ declare global {
           modes: GlideMode | GlideMode[],
           lhs: $keymapcompletions.T<LHS>,
           rhs: glide.ExcmdValue,
-          opts?: Omit<KeymapOpts, "buffer"> | undefined
+          opts?: Omit<glide.KeymapOpts, "buffer"> | undefined
         ): void;
 
         /**
@@ -250,7 +220,7 @@ declare global {
         del(
           modes: GlideMode | GlideMode[],
           lhs: string,
-          opts?: Omit<KeymapDeleteOpts, "buffer"> | undefined
+          opts?: Omit<glide.KeymapDeleteOpts, "buffer"> | undefined
         ): void;
       };
     };
@@ -308,6 +278,36 @@ declare global {
 
     export type ExcmdString =
       import("./browser-excmds-registry.mjs").GlideCommandString;
+
+    type HintLocation = "content" | "browser-ui";
+
+    type KeymapOpts = {
+      description?: string | undefined;
+
+      /**
+       * If `true`, creates a buffer-local mapping for the current buffer.
+       *
+       * @default {false}
+       */
+      buffer?: boolean;
+
+      /**
+       * If true, the key sequence will be displayed even after the mapping is executed.
+       *
+       * This is useful for mappings that are conceptually chained but are not *actually*, e.g. `diw`.
+       *
+       * @default false
+       */
+      retain_key_display?: boolean;
+    };
+
+    type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
+
+    type AutocmdEvent = "UrlEnter";
+    type AutocmdPattern = RegExp | { hostname?: string };
+    type AutocmdArgs = {
+      UrlEnter: { readonly url: string };
+    };
   }
 
   namespace $keymapcompletions {

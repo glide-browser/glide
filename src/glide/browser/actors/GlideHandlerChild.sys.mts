@@ -9,7 +9,6 @@ import type {
   ParentMessages,
   ParentQueries,
 } from "./GlideHandlerParent.sys.mjs";
-import type { SetNonNullable } from "type-fest";
 import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
 import type { ExtensionsAPI as ExtensionsAPIType } from "../base/content/extensions.mts";
 import type { Sandbox } from "../base/content/sandbox.mts";
@@ -45,7 +44,7 @@ const { create_sandbox } = ChromeUtils.importESModule(
 export interface ChildMessages {
   "Glide::ResolvedHints": {
     hints: GlideHintIPC[];
-    location: GlideHintLocation;
+    location: glide.HintLocation;
   };
   "Glide::HideHints": {};
   "Glide::ChangeMode": { mode: GlideMode };

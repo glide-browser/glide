@@ -195,7 +195,7 @@ export class KeyManager {
     modes: GlideMode | GlideMode[],
     lhs: string,
     rhs: GlideCommandValue,
-    opts?: KeymapOpts | undefined
+    opts?: glide.KeymapOpts | undefined
   ): void {
     const mapping: KeyMapping = {
       sequence: split(lhs).map(normalize),
@@ -215,7 +215,11 @@ export class KeyManager {
     }
   }
 
-  del(modes: GlideMode | GlideMode[], lhs: string, opts?: KeymapDeleteOpts) {
+  del(
+    modes: GlideMode | GlideMode[],
+    lhs: string,
+    opts?: glide.KeymapDeleteOpts
+  ) {
     const sequence = split(lhs).map(normalize);
     for (const mode of typeof modes === "string" ? [modes] : modes) {
       const trie = this.#mapping(mode, opts?.buffer ?? false);

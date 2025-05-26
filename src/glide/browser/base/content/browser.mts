@@ -97,10 +97,10 @@ class GlideBrowserClass {
   #config_uri = "chrome://glide/config/glide.ts";
 
   autocmds: {
-    [K in GlideAutocmdEvent]?: {
-      pattern: GlideAutocmdPattern;
+    [K in glide.AutocmdEvent]?: {
+      pattern: glide.AutocmdPattern;
       callback: (
-        args: GlideAutocmdArgs[K]
+        args: glide.AutocmdArgs[K]
       ) => (() => void | Promise<void>) | void | Promise<void>;
     }[];
   } = {};
@@ -435,7 +435,7 @@ class GlideBrowserClass {
           return;
         }
 
-        const args: GlideAutocmdArgs["UrlEnter"] = { url: location.spec };
+        const args: glide.AutocmdArgs["UrlEnter"] = { url: location.spec };
 
         const results = await Promise.allSettled(
           cmds.map(cmd =>
@@ -480,7 +480,7 @@ class GlideBrowserClass {
   }
 
   #test_autocmd_pattern(
-    pattern: GlideAutocmdPattern,
+    pattern: glide.AutocmdPattern,
     location: nsIURI
   ): boolean {
     if ("test" in pattern) {
@@ -1254,10 +1254,10 @@ function make_glide_api(): typeof glide {
       },
     },
     autocmd: {
-      create<Event extends GlideAutocmdEvent>(
+      create<Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: GlideAutocmdPattern,
-        callback: (args: GlideAutocmdArgs[Event]) => void
+        pattern: glide.AutocmdPattern,
+        callback: (args: glide.AutocmdArgs[Event]) => void
       ) {
         const existing = GlideBrowser.autocmds[event];
         if (existing) {

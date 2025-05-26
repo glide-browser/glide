@@ -151,7 +151,7 @@ class GlideCommandsClass {
     return browser.$hints ?? [];
   }
 
-  get_hints_location(): GlideHintLocation {
+  get_hints_location(): glide.HintLocation {
     const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
     return browser.$hints_location ?? "content";
   }
@@ -161,7 +161,7 @@ class GlideCommandsClass {
     container.style.setProperty("display", "none", "important");
   }
 
-  show_hints(hints: GlideHintIPC[], location: GlideHintLocation) {
+  show_hints(hints: GlideHintIPC[], location: glide.HintLocation) {
     this.#clear_hints();
 
     const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);

@@ -54,7 +54,7 @@ export interface ParentMessages {
   "Glide::BlurActiveElement": null;
   "Glide::ExecuteHint": { label: string };
   "Glide::Hint": {
-    location: GlideHintLocation;
+    location: glide.HintLocation;
     action?:
       | "click"
       | "newtab-click"
