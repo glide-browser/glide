@@ -4,7 +4,6 @@
 
 declare global {
   const browser: Browser.Browser;
-
   namespace Browser {
     /**
      * Namespace: browser.activityLog
@@ -4715,7 +4714,7 @@ declare global {
         getMessage(
           messageName: string,
           substitutions?: string[] | string
-        ): string;
+        ): Promise<string>;
 
         /**
          * Gets the browser UI language of the browser. This is different from $(ref:i18n.getAcceptLanguages)
@@ -4770,7 +4769,7 @@ declare global {
          *
          * @param path Optional. The path appended to the end of the generated URL.
          */
-        getRedirectURL(path?: string): string;
+        getRedirectURL(path?: string): Promise<string>;
       }
     }
 
@@ -8404,7 +8403,7 @@ declare global {
          *
          * @returns The manifest details.
          */
-        getManifest(): Browser.Manifest.WebExtensionManifest;
+        getManifest(): Promise<Manifest.WebExtensionManifest>;
 
         /**
          * Converts a relative path within an app/extension install directory to a fully-qualified URL.
@@ -8412,7 +8411,7 @@ declare global {
          * @param path A path to a resource within an app/extension expressed relative to its install directory.
          * @returns The fully-qualified URL to the resource.
          */
-        getURL(path: string): string;
+        getURL(path: string): Promise<string>;
 
         /**
          * Get the frameId of any window global or frame element.
