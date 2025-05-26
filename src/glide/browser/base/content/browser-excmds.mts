@@ -108,13 +108,13 @@ class GlideExcmdsClass {
     try {
       await this.#execute(command, props);
     } catch (err) {
+      GlideBrowser._log.error(err);
+
       const message = `An error occurred executing ${
         typeof command === "string" ? `excmd \`${command}\``
         : "an excmd function" + command.name ? ` (${command.name})`
         : ""
       } - ${err}`;
-      GlideBrowser._log.error(message);
-
       GlideBrowser.add_notification("glide-excmd-error", {
         label: message,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,

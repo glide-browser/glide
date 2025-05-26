@@ -285,13 +285,12 @@ class GlideBrowserClass {
       const config_js = ts_blank_space(config_str);
       Cu.evalInSandbox(config_js, sandbox, null, this.#config_uri, 1, false);
     } catch (err) {
+      this._log.error(err);
+
       const loc =
         this.#clean_stack(err, this.#reload_config.name) ?? "glide.ts";
-      const message = `An error occurred while evaluating \`${loc}\` - ${err}`;
-      this._log.error(message);
-
       this.add_notification(this.#config_error_id, {
-        label: message,
+        label: `An error occurred while evaluating \`${loc}\` - ${err}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
         buttons: [
           {
@@ -453,18 +452,16 @@ class GlideBrowserClass {
             continue;
           }
 
+          GlideBrowser._log.error(result.reason);
+
           // TODO: if there are many errors this would be overwhelming...
           //       maybe limit the number of errors we display at once?
 
           const loc =
             GlideBrowser.#clean_stack(result.reason, "get progress_listener") ??
             "<unknown>";
-
-          const message = `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`;
-          GlideBrowser._log.error(message);
-
           GlideBrowser.add_notification("glide-autocmd-error", {
-            label: message,
+            label: `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`,
             priority:
               MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
             buttons: [GlideBrowser.remove_all_notifications_button],
@@ -522,17 +519,14 @@ class GlideBrowserClass {
         continue;
       }
 
+      this._log.error(result.reason);
+
       // TODO: if there are many errors this would be overwhelming...
       //       maybe limit the number of errors we display at once?
-
       const loc =
         this.#clean_stack(result.reason, "all_settled") ?? "<unknown>";
-
-      const message = `Error occurred in ${result.metadata.source} \`${loc}\` - ${result.reason}`;
-      this._log.error(message);
-
       this.add_notification("glide-buffer-cleanup-error", {
-        label: message,
+        label: `Error occurred in ${result.metadata.source} \`${loc}\` - ${result.reason}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
         buttons: [this.remove_all_notifications_button],
       });
