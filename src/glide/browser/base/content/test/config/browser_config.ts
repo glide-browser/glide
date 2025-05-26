@@ -155,8 +155,11 @@ add_task(
 add_task(async function test_invalid_config_notification_nested_stack_trace() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {
-      // @ts-ignore
-      glide.prefs.set("wow why does this pref not exist?", true);
+      function my_func() {
+        throw new Error("ruh roh");
+      }
+
+      my_func();
     });
 
     await sleep_frames(5);
@@ -170,10 +173,27 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
       notification.shadowRoot
         .querySelector(".message")
         .textContent.trim()
-        .replace(CONFIG_LINE_COL_REGEX, ":X:X"),
-      "An error occurred while evaluating `set@chrome://glide/content/browser.mjs:X:X\n@glide.ts:2:13` - Error: Invalid pref name wow why does this pref not exist?",
+        .replaceAll(CONFIG_LINE_COL_REGEX, ":X:X"),
+      "An error occurred while evaluating `my_func@glide.ts:2:9\n@chrome://glide/config/glide.ts:X:X` - Error: ruh roh",
       "Notification should contain error message"
     );
+  });
+});
+
+add_task(async function test_glide_prefs_set() {
+  is(GlideBrowser.api.prefs.get("ui.highlight"), undefined);
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.value = undefined;
+
+      glide.prefs.set("ui.highlight", "#edc73b");
+    });
+
+    await sleep_frames(5);
+
+    is(GlideBrowser.api.prefs.get("ui.highlight"), "#edc73b");
+    GlideBrowser.api.prefs.clear("ui.highlight");
   });
 });
 

@@ -1386,7 +1386,18 @@ function make_glide_api(): typeof glide {
             Services.prefs.setBoolPref(name, value as boolean);
             break;
           case Services.prefs.PREF_INVALID:
-            throw new Error(`Invalid pref name ${name}`);
+            switch (typeof value) {
+              case "string":
+                return Services.prefs.setStringPref(name, value);
+              case "number":
+                return Services.prefs.setIntPref(name, value);
+              case "boolean":
+                return Services.prefs.setBoolPref(name, value);
+              default:
+                throw new Error(
+                  `Invalid pref type, expected string, number or boolean but got ${typeof value}`
+                );
+            }
           default:
             throw new Error(
               `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
