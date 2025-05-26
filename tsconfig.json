@@ -32,11 +32,15 @@
     "engine",
     "node_modules",
     "src/glide/bundled",
+    "src/glide.ts",
+    // bundled types, tested separately and excluded here so that type changes don't
+    // require running bundle all the time
+    "src/glide/browser/base/content/bundled.d.ts",
+    "src/glide/browser/base/content/dist/api-bundled.d.ts",
     // needs to be tested individually
     "src/glide/browser/base/content/test/config/types",
     // includes preprocessor annotations
     "src/browser/app/profile/glide.js",
-    "src/glide/browser/base/content/bundled.d.ts",
     "src/glide/browser/base/content/dist",
     "src/glide/browser/base/content/test/*/dist",
     "src/glide/browser/browser/base/content/utils/dist",
