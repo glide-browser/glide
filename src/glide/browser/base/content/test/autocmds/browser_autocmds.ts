@@ -239,6 +239,26 @@ add_task(
   }
 );
 
+add_task(async function test_about_blank_with_hostname_filter() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmd.create("UrlEnter", { hostname: "example.com" }, () => {
+      glide.g.calls!.push("should-not-trigger");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab("about:blank", async _ => {
+    await sleep_frames(5);
+    
+    isjson(
+      GlideBrowser.api.g.calls,
+      [],
+      "UrlEnter autocmd with hostname filter should not trigger for about:blank"
+    );
+  });
+});
+
 function num_calls() {
   return (GlideBrowser.api.g.calls ?? []).length;
 }

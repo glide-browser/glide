@@ -488,11 +488,17 @@ class GlideBrowserClass {
       return pattern.test(location.spec);
     }
 
-    if (
-      typeof pattern.hostname === "string" &&
-      location.displayHost !== pattern.hostname
-    ) {
-      return false;
+    if (typeof pattern.hostname === "string") {
+      // checking displayHost may fail on certain special pages that don't have a hostname
+      // for example `about:blank`
+      try {
+        if (location.displayHost !== pattern.hostname) {
+          return false;
+        }
+      } catch (_) {
+        // if the host is invalid/not set it could never match
+        return false;
+      }
     }
 
     return true;
