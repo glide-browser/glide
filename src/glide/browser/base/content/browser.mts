@@ -1411,7 +1411,7 @@ function make_glide_api(): typeof glide {
           case Services.prefs.PREF_BOOL:
             return Services.prefs.getBoolPref(name);
           case Services.prefs.PREF_INVALID:
-            throw new Error(`Invalid pref name ${name}`);
+            return undefined;
           default:
             throw new Error(
               `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(

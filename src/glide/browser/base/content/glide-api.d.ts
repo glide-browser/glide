@@ -82,9 +82,11 @@ declare global {
       set(name: string, value: string | number | boolean): void;
 
       /**
-       * Get the value of a preference.
+       * Get the value of a pref.
+       *
+       * If the pref is not defined, then `undefined` is returned.
        */
-      get(name: string): string | number | boolean;
+      get(name: string): string | number | boolean | undefined;
 
       /**
        * Reset the pref value back to its default.

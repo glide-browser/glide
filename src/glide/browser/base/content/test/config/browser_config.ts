@@ -193,6 +193,19 @@ add_task(async function test_glide_prefs_get() {
   });
 });
 
+add_task(async function test_glide_prefs_get_undefined_pref() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.value = "unset";
+      glide.g.value = glide.prefs.get("my_new_pref");
+    });
+
+    await sleep_frames(5);
+
+    is(GlideBrowser.api.g.value, undefined);
+  });
+});
+
 add_task(async function test_glide_prefs_clear() {
   const glide = GlideBrowser.api;
   const pre = glide.prefs.get("browser.active_color");
