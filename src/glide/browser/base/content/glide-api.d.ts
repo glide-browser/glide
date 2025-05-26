@@ -15,8 +15,17 @@ declare global {
     ctx: {
       url: string;
     };
+
+    /**
+     * Set browser-wide options.
+     */
     o: glide.Options;
+
+    /**
+     * Set buffer specific options.
+     */
     bo: Partial<glide.Options>;
+
     autocmd: {
       /**
        * Create an autocmd that will be invoked whenever the focused URL changes.
