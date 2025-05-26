@@ -396,7 +396,7 @@ add_task(async function test_webext_listener_error() {
   await sleep_frames(5);
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(5);
+    await sleep_frames(20);
     GlideBrowser.flush_pending_error_notifications();
 
     let notification =
