@@ -45,6 +45,15 @@ declare global {
     ctx: {
       url: string;
     };
+    o: {
+      /**
+       * Color used to briefly highlight text when it's yanked.
+       *
+       * @example "#ff6b35" // Orange highlight
+       * @default "#edc73b"
+       */
+      yank_highlight: glide.RGBString;
+    };
     autocmd: {
       /**
        * Create an autocmd that will be invoked whenever the focused URL changes.
@@ -281,6 +290,8 @@ declare global {
   function todo_assert(value: unknown, message?: string): void;
 
   namespace glide {
+    export type RGBString = `#${string}`;
+
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
 
     export type KeyEvent = KeyboardEvent & {

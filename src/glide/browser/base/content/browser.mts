@@ -1241,6 +1241,9 @@ class GlideGlobals implements GlideG {
 function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
+    o: {
+      yank_highlight: "#edc73b",
+    },
     ctx: {
       get url() {
         const url = gBrowser?.selectedBrowser?.currentURI?.spec;
