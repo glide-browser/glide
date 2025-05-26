@@ -161,6 +161,37 @@ export async function markdown_to_html(
     },
   };
 
+  const language_themes: Partial<
+    Record<string, Record<string, ThemeRegistrationResolved>>
+  > = {
+    html: {
+      dark: {
+        ...themes.dark,
+        name: "html-tokyonight",
+        settings: [
+          ...(themes.dark.settings ?? []),
+          {
+            // avoid rendering unknown HTML element names differently
+            scope: ["invalid", "invalid.illegal"],
+            settings: { foreground: "#F7768E" },
+          },
+        ],
+      },
+      light: {
+        ...themes.light,
+        name: "html-tokyonight-light",
+        settings: [
+          ...(themes.light.settings ?? []),
+          {
+            // avoid rendering unknown HTML element names differently
+            scope: ["invalid", "invalid.illegal"],
+            settings: { foreground: "#8C4351" },
+          },
+        ],
+      },
+    },
+  };
+
   // this is required to easily support syntax highlighting with markdoc
   //
   // there seems to be no way to return raw HTML from a `transform()` function
@@ -282,7 +313,7 @@ export async function markdown_to_html(
               })
             : highlighter.codeToHtml(code, {
                 lang: language,
-                themes,
+                themes: language_themes[language] ?? themes,
                 structure: "inline",
               });
 
