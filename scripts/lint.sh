@@ -9,4 +9,5 @@ pnpm tsc
 
 echo "============ checking bundled config types ============"
 
+./scripts/bundle-types.sh
 cd src/glide/browser/base/content/test/config/types && exec "$tsc_path"
