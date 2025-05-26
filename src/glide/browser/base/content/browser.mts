@@ -511,6 +511,7 @@ class GlideBrowserClass {
     [];
 
   async clear_buffer() {
+    this.api.bo = {};
     this.key_manager.clear_buffer();
 
     const cleanups = this.#buffer_cleanups;
@@ -1216,6 +1217,15 @@ class GlideBrowserClass {
 
     return null;
   }
+
+  /**
+   * Returns either a buffer-specific option, or the global version. In that order
+   */
+  get_option<Name extends keyof glide.Options>(
+    name: Name
+  ): glide.Options[Name] {
+    return this.api.bo[name] || this.api.o[name];
+  }
 }
 
 export const GlideBrowser = new GlideBrowserClass();
@@ -1244,6 +1254,7 @@ function make_glide_api(): typeof glide {
     o: {
       yank_highlight: "#edc73b",
     },
+    bo: {},
     ctx: {
       get url() {
         const url = gBrowser?.selectedBrowser?.currentURI?.spec;

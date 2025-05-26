@@ -448,7 +448,10 @@ class GlideExcmdsClass {
         const glide = GlideBrowser.api;
         const previous = glide.prefs.get("ui.highlight");
 
-        glide.prefs.set("ui.highlight", glide.o.yank_highlight);
+        glide.prefs.set(
+          "ui.highlight",
+          GlideBrowser.get_option("yank_highlight")
+        );
 
         setTimeout(() => {
           if (typeof previous === "undefined") {
