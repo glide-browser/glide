@@ -118,11 +118,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
     switch (message.name) {
       case "Glide::StateUpdate": {
         const previous_mode = this.state?.mode;
-        this.state = message.data;
+        this.state = message.data.state;
 
         // if we're leaving `hint` mode, we don't need to listen to the
         // scroll events anymore
-        if (previous_mode === "hint" && message.data.mode !== "hint") {
+        if (previous_mode === "hint" && message.data.state.mode !== "hint") {
           this.#active_hints = [];
           this.#hint_action = null;
 

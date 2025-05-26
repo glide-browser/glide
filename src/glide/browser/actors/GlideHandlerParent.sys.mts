@@ -16,7 +16,7 @@ const { assert_never } = ChromeUtils.importESModule(
 );
 
 export interface ParentMessages {
-  "Glide::StateUpdate": State;
+  "Glide::StateUpdate": { state: State };
 
   /**
    * Trigger manual registration of user gesture activation.
