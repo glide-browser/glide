@@ -133,6 +133,8 @@ add_task(async function test_autocmd_error() {
       "Error occurred in UrlEnter autocmd `@glide.ts:2:9` - Error: ruh roh",
       "Notification should contain error message"
     );
+
+    gNotificationBox.removeNotification(notification);
   });
 });
 
@@ -140,7 +142,7 @@ add_task(async function test_autocmd_cleanup_error() {
   await GlideTestUtils.reload_config(function _() {
     glide.autocmd.create("UrlEnter", /input_test/, () => {
       return () => {
-        throw new Error("ruh roh");
+        throw new Error("dead");
       };
     });
   });
@@ -158,9 +160,11 @@ add_task(async function test_autocmd_cleanup_error() {
     ok(notification, "Error notification should be shown");
     is(
       notification.shadowRoot.querySelector(".message")?.textContent?.trim(),
-      "Error occurred in UrlEnter cleanup `@glide.ts:3:11` - Error: ruh roh",
+      "Error occurred in UrlEnter cleanup `@glide.ts:3:11` - Error: dead",
       "Notification should contain error message"
     );
+
+    gNotificationBox.removeNotification(notification);
   });
 });
 
@@ -250,7 +254,7 @@ add_task(async function test_about_blank_with_hostname_filter() {
 
   await BrowserTestUtils.withNewTab("about:blank", async _ => {
     await sleep_frames(5);
-    
+
     isjson(
       GlideBrowser.api.g.calls,
       [],

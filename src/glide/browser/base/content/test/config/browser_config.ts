@@ -177,6 +177,8 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
       "An error occurred while evaluating `my_func@glide.ts:2:9\n@chrome://glide/config/glide.ts:X:X` - Error: ruh roh",
       "Notification should contain error message"
     );
+
+    gNotificationBox.removeNotification(notification);
   });
 });
 
@@ -408,6 +410,7 @@ add_task(async function test_webext_listener_error() {
       "An error occurred inside a Web Extension listener at @glide.ts:3:11 - Error: an error in webRequest callback",
       "Notification should contain error message"
     );
+    gNotificationBox.removeNotification(notification);
   });
 });
 
@@ -439,5 +442,7 @@ add_task(async function test_webext_storage_api_listener_error() {
       "An error occurred inside a Web Extension listener at @glide.ts:2:9 - Error: an error in the storage listener",
       "Notification should contain error message"
     );
+
+    gNotificationBox.removeNotification(notification);
   });
 });
