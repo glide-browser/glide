@@ -1,0 +1,13 @@
+diff --git a/browser/components/preferences/preferences.xhtml b/browser/components/preferences/preferences.xhtml
+index b3b128cb5eb8c005c642965a8c8e5e68bf756e77..f8fc4620d6b538d5dcc5f3bfa017cfc607682f08 100644
+--- a/browser/components/preferences/preferences.xhtml
++++ b/browser/components/preferences/preferences.xhtml
+@@ -81,6 +81,8 @@
+ 
+   <link rel="shortcut icon" href="chrome://global/skin/icons/settings.svg"/>
+ 
++  <script src="chrome://glide/content/browser/preferences/glide.js"></script>
++
+   <script src="chrome://browser/content/utilityOverlay.js"/>
+   <script src="chrome://global/content/preferencesBindings.js"/>
+   <script src="chrome://browser/content/preferences/preferences.js"/>
