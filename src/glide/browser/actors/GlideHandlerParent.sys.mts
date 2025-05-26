@@ -3,7 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import type { State, StateChangeListener } from "../base/content/browser.mjs";
+import type {
+  State,
+  StateChangeListener,
+  StateChangeMeta,
+} from "../base/content/browser.mjs";
 import type { ChildMessages, ChildQueries } from "./GlideHandlerChild.sys.mjs";
 import type {
   ContentExcmd,
@@ -16,7 +20,7 @@ const { assert_never } = ChromeUtils.importESModule(
 );
 
 export interface ParentMessages {
-  "Glide::StateUpdate": { state: State };
+  "Glide::StateUpdate": { state: State; meta?: StateChangeMeta };
 
   /**
    * Trigger manual registration of user gesture activation.
@@ -44,6 +48,7 @@ export interface ParentMessages {
     mode: GlideMode;
     key: string;
   };
+  "Glide::SelectionCollapse": {};
   "Glide::KeyMappingCancel": { mode: GlideMode };
   "Glide::ReplaceChar": { character: string };
   "Glide::BlurActiveElement": null;
@@ -60,7 +65,12 @@ export interface ParentMessages {
   "Glide::Debug": null;
 }
 
-export interface ParentQueries {}
+export interface ParentQueries {
+  "Glide::Query::CopySelection": {
+    props: {};
+    result: undefined;
+  };
+}
 
 export class GlideHandlerParent extends JSWindowActorParent<
   ParentMessages,
@@ -90,6 +100,10 @@ export class GlideHandlerParent extends JSWindowActorParent<
     obj?: ParentMessages[MessageName] | undefined,
     transferables?: any
   ) => void = this.sendAsyncMessage;
+  send_query: <QueryName extends keyof ParentQueries>(
+    messageName: QueryName,
+    obj?: ParentQueries[QueryName]["props"] | undefined
+  ) => Promise<ParentQueries[QueryName]["result"]> = this.sendQuery;
 
   didDestroy() {
     const glide_browser = this.glide_browser;
@@ -110,7 +124,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
     return this.browsingContext?.topChromeWindow?.GlideExcmds;
   }
 
-  on_state_change(state: State) {
+  on_state_change(state: State, meta?: StateChangeMeta) {
     // sanity check in case this callback is invoked
     // when we no longer have a browser context as attempting
     // to send a message will result in an error.
@@ -118,7 +132,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
     // note that this *should* never happen, as we remove our callback
     // in the `didDestroy()` method above.
     if (!this.has_been_destroyed()) {
-      this.send_async_message("Glide::StateUpdate", state);
+      this.send_async_message("Glide::StateUpdate", { state, meta });
     }
   }
 

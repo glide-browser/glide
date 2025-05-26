@@ -437,6 +437,32 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "visual_selection_copy": {
+        const actor = GlideBrowser.get_focused_actor();
+        await actor.send_query("Glide::Query::CopySelection");
+
+        GlideBrowser._change_mode("normal", {
+          meta: { disable_auto_collapse: true },
+        });
+
+        const glide = GlideBrowser.api;
+        const previous = glide.prefs.get("ui.highlight");
+
+        glide.prefs.set("ui.highlight", "#edc73b");
+
+        setTimeout(() => {
+          if (typeof previous === "undefined") {
+            glide.prefs.clear("ui.highlight");
+          } else {
+            glide.prefs.set("ui.highlight", previous);
+          }
+
+          actor.send_async_message("Glide::SelectionCollapse");
+        }, 150);
+
+        break;
+      }
+
       default:
         throw assert_never(
           command_meta,

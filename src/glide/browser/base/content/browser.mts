@@ -53,13 +53,21 @@ export interface State {
   mode: GlideMode;
   operator: GlideOperator | null;
 }
+export interface StateChangeMeta {
+  /* By default, when exiting visual mode we collapse the selection but for certain cases, e.g.
+   * yanking, we want to display a short animation first. */
+  disable_auto_collapse?: boolean;
+}
 
 const _defaultState: State = {
   mode: "normal",
   operator: null,
 };
 
-export type StateChangeListener = (new_state: State) => void;
+export type StateChangeListener = (
+  new_state: State,
+  meta: StateChangeMeta | undefined
+) => void;
 
 const DEBOUNCE_MODE_ANIMATION_FRAMES = 3;
 
@@ -835,7 +843,7 @@ class GlideBrowserClass {
 
   _change_mode(
     new_mode: GlideMode,
-    props?: { operator?: GlideOperator | null }
+    props?: { operator?: GlideOperator | null; meta?: StateChangeMeta }
   ) {
     const previous_mode = this.state.mode;
     this.state.mode = new_mode;
@@ -844,7 +852,7 @@ class GlideBrowserClass {
     Services.prefs.setIntPref("glide.mode", this.#mode_to_int_enum(new_mode));
 
     for (const listener of this.state_listeners) {
-      listener(this.state);
+      listener(this.state, props?.meta);
     }
 
     if (

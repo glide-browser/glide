@@ -149,7 +149,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
         // the exact position we collapse to should be where the caret was last
         // moved to, the above example assumes that visual mode was entered on
         // the `o` and was extended to the `d`.
-        if (previous_mode === "visual" && this.state.mode === "normal") {
+        if (
+          previous_mode === "visual" &&
+          this.state.mode === "normal" &&
+          !message.data.meta?.disable_auto_collapse
+        ) {
           const editor = this.#get_editor(this.#get_active_element());
 
           if (editor && !editor.selection.isCollapsed) {
@@ -345,6 +349,21 @@ export class GlideHandlerChild extends JSWindowActorChild<
             throw assert_never(message.data.direction);
         }
       }
+
+      case "Glide::SelectionCollapse": {
+        const editor = this.#expect_editor("selection_collapse");
+        editor.selection.collapseToEnd();
+        break;
+      }
+
+      // ----------------- queries -----------------
+
+      case "Glide::Query::CopySelection": {
+        const editor = this.#expect_editor("selection_copy");
+        editor.copy();
+        break;
+      }
+
       default:
         throw assert_never(message);
     }

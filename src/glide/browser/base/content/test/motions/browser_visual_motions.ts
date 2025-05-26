@@ -125,3 +125,27 @@ add_task(async function test_visual_backwards() {
     await test_selection("ll", "rld");
   });
 });
+
+add_task(async function test_visual_yank_to_clipboard() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(
+      browser,
+      { text_start: 1 }
+    );
+
+    await set_text("Hello world", "yank selection to clipboard");
+    await set_selection(1);
+    await GlideTestUtils.synthesize_keyseq("vlll");
+    await sleep_frames(3);
+
+    await GlideTestUtils.synthesize_keyseq("y");
+
+    const clipboardText = await navigator.clipboard.readText();
+    is(clipboardText, "ello", "Selected text should be copied to clipboard");
+    is(
+      GlideBrowser.state.mode,
+      "normal",
+      "Should return to normal mode after yank"
+    );
+  });
+});

@@ -257,6 +257,14 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "visual_selection_copy",
+    description:
+      "Copy the currently selected text to the clipboard & change to normal mode",
+    content: false,
+    repeatable: false,
+  },
+
+  {
     name: "help",
     description: "Open the docs",
     content: false,
