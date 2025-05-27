@@ -1,5 +1,5 @@
 diff --git a/toolkit/themes/shared/desktop-jar.inc.mn b/toolkit/themes/shared/desktop-jar.inc.mn
-index 530d95c9c32f8c056946c85c22335bb546cbedf3..49faf5936f9267aa27afe1f9d86fb32cf6d2b883 100644
+index 9f41a9206d65664a0ff481d874e80a7b02a2f25d..e12e0ce2c1b5022b45abe61bec3892981c340d59 100644
 --- a/toolkit/themes/shared/desktop-jar.inc.mn
 +++ b/toolkit/themes/shared/desktop-jar.inc.mn
 @@ -34,6 +34,9 @@
@@ -11,4 +11,4 @@ index 530d95c9c32f8c056946c85c22335bb546cbedf3..49faf5936f9267aa27afe1f9d86fb32c
 +  skin/classic/global/glide-commandline.css                (../../shared/glide-commandline.css)
    skin/classic/global/global-shared.css                    (../../shared/global-shared.css)
    skin/classic/global/menu.css                             (../../shared/menu.css)
-   skin/classic/global/menulist-shared.css                  (../../shared/menulist-shared.css)
+   skin/classic/global/menulist.css                         (../../shared/menulist.css)

@@ -5,7 +5,7 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox-dev",
-    "version": "139.0b10",
+    "version": "140.0b1",
     "candidate": "139.0b10"
   },
   "buildOptions": {
@@ -36,7 +36,9 @@
     }
   },
   "license": {
-    "ignoredFiles": [".*\\.json"],
+    "ignoredFiles": [
+      ".*\\.json"
+    ],
     "licenseType": "MPL-2.0"
   }
 }

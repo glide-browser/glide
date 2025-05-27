@@ -1,10 +1,10 @@
 diff --git a/testing/specialpowers/content/SpecialPowersChild.sys.mjs b/testing/specialpowers/content/SpecialPowersChild.sys.mjs
-index 1219e323c48ef664e51ada792b31d5124e4b6daf..7ee748cf36d4da57d87421e4d5ab876713e2ad72 100644
+index a4113ea921b3423797dbece3897a3e35a49954ea..58314d8efceb357b2c01e0de6c84242e42b70af7 100644
 --- a/testing/specialpowers/content/SpecialPowersChild.sys.mjs
 +++ b/testing/specialpowers/content/SpecialPowersChild.sys.mjs
-@@ -1520,23 +1520,25 @@ export class SpecialPowersChild extends JSWindowActorChild {
-    * Assert.sys.mjs. Any assertion methods called before the task resolves
-    * will be relayed back to the test environment of the caller.
+@@ -1514,23 +1514,25 @@ export class SpecialPowersChild extends JSWindowActorChild {
+    * use SpecialPowersForProcess from SpecialPowersProcessActor.sys.mjs,
+    * which lives until the specified child process terminates.
     *
 -   * @param {BrowsingContext or FrameLoaderOwner or WindowProxy} target
 +   * @template {readonly any[]} T

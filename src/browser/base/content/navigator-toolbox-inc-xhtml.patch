@@ -1,15 +1,12 @@
 diff --git a/browser/base/content/navigator-toolbox.inc.xhtml b/browser/base/content/navigator-toolbox.inc.xhtml
-index 30e7b9b2ac63db6ccd2727a9341081cecefc25cb..50310b0d787d7e930e32672314d0425cebaa3871 100644
+index 754181405c8f44c672a8c78eda341e422be5e62b..5e4528fa551ab4da00fe300b80356ae656c287d5 100644
 --- a/browser/base/content/navigator-toolbox.inc.xhtml
 +++ b/browser/base/content/navigator-toolbox.inc.xhtml
-@@ -156,6 +156,22 @@
+@@ -155,6 +155,18 @@
            </box>
          </toolbarbutton>
        </toolbaritem>
 +
-+      <!-- glide-injection-start -->
-+      <!-- TODO(glide): should this be a button / popover menu? -->
-+      <!-- TODO(glide): should this be removable? -->
 +      <toolbarbutton id="glide-toolbar-mode-button" class="toolbarbutton-1 chromeclass-toolbar-additional glide-mode-button"
 +                     badged="true"
 +                     delegatesanchor="true"
@@ -20,12 +17,11 @@ index 30e7b9b2ac63db6ccd2727a9341081cecefc25cb..50310b0d787d7e930e32672314d0425c
 +                     removable="true">
 +        normal
 +      </toolbarbutton>
-+      <!-- glide-injection-end -->
-+
++      
        <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional"/>
-       <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional titlebar-spacer" id="vertical-spacer" />
-       <toolbaritem id="urlbar-container"
-@@ -455,6 +471,15 @@
+       <toolbarspring cui-areatype="toolbar"
+                    class="chromeclass-toolbar-additional titlebar-spacer"
+@@ -450,6 +462,15 @@
          </box>
        </toolbarbutton>
  
