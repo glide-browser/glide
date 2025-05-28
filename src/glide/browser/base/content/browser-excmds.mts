@@ -16,6 +16,9 @@ import type {
   GlideCommandCallback,
 } from "./browser-excmds-registry.mts";
 
+const MozUtils = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/moz.mjs"
+);
 const Keys = ChromeUtils.importESModule(
   "chrome://glide/content/utils/keys.mjs"
 );
@@ -302,7 +305,7 @@ class GlideExcmdsClass {
         if (!url) {
           throw new Error("Could not find a URL to copy");
         }
-        GlideCommands.copy_to_clipboard(url);
+        MozUtils.copy_to_clipboard(window, url);
         break;
       }
 
@@ -319,7 +322,7 @@ class GlideExcmdsClass {
                 {
                   "l10n-id": "glide-config-notification-copy-button",
                   callback: () => {
-                    GlideCommands.copy_to_clipboard(config_path);
+                    MozUtils.copy_to_clipboard(window, config_path);
                     GlideBrowser.remove_notification(id);
                   },
                 },

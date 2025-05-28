@@ -147,6 +147,7 @@ declare namespace MockedExports {
    */
   interface KnownModules {
     "chrome://glide/content/utils/dom.mjs": typeof import("../src/glide/browser/base/content/utils/dom.mts");
+    "chrome://glide/content/utils/moz.mjs": typeof import("../src/glide/browser/base/content/utils/moz.mts");
     "chrome://glide/content/utils/ipc.mjs": typeof import("../src/glide/browser/base/content/utils/ipc.mts");
     "chrome://glide/content/utils/html.mjs": typeof import("../src/glide/browser/base/content/utils/html.mts");
     "chrome://glide/content/utils/keys.mjs": typeof import("../src/glide/browser/base/content/utils/keys.mts");
