@@ -6,8 +6,6 @@ const { MOTIONS } = ChromeUtils.importESModule(
   "chrome://glide/content/motions.mjs"
 );
 
-type Glide = typeof glide;
-
 export function init(glide: Glide) {
   glide.keymaps.set("normal", "<leader>r", "reload");
   glide.keymaps.set("normal", "<leader>R", "reload_hard");

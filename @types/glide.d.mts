@@ -10,6 +10,9 @@ interface GlideCommandlineCompletionOption {
   description: string;
 }
 
+type Glide = typeof glide;
+type Browser = typeof browser;
+
 /**
  * The public interface of the `GlideCommandLine` XUL element
  * defined in `glide/toolkit/content/widgets/glide-commandline.ts`.

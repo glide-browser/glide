@@ -1,6 +1,3 @@
-type Glide = typeof glide;
-type Browser = typeof browser;
-
 export function pretty(glide: Glide, browser: Browser): void {
   browser.webNavigation.onCompleted.addListener(
     async details => {
