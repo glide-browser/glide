@@ -464,7 +464,7 @@ class GlideExcmdsClass {
           }
 
           actor.send_async_message("Glide::SelectionCollapse");
-        }, 150);
+        }, GlideBrowser.get_option("yank_highlight_time"));
 
         break;
       }

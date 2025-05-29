@@ -127,6 +127,11 @@ add_task(async function test_visual_backwards() {
 });
 
 add_task(async function test_visual_yank_editable_to_clipboard() {
+  await GlideTestUtils.reload_config(function _() {
+    // lower the highlight time so our tests can be fast
+    glide.o.yank_highlight_time = 1;
+  });
+
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(
       browser,
@@ -151,6 +156,11 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
 });
 
 add_task(async function test_visual_yank_non_editable_to_clipboard() {
+  await GlideTestUtils.reload_config(function _() {
+    // lower the highlight time so our tests can be fast
+    glide.o.yank_highlight_time = 1;
+  });
+
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
       const window = content as Window;

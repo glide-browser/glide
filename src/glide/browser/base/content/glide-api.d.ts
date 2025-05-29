@@ -273,6 +273,13 @@ declare global {
        * @default "#edc73b"
        */
       yank_highlight: glide.RGBString;
+
+      /**
+       * How long, in milliseconds, to highlight the selection for when it's yanked.
+       *
+       * @default 150
+       */
+      yank_highlight_time: number;
     };
 
     export type RGBString = `#${string}`;

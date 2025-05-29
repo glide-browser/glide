@@ -1253,6 +1253,7 @@ function make_glide_api(): typeof glide {
     g: new GlideGlobals(),
     o: {
       yank_highlight: "#edc73b",
+      yank_highlight_time: 150,
     },
     bo: {},
     ctx: {
