@@ -23,6 +23,9 @@ const hinting = ChromeUtils.importESModule(
 const motions = ChromeUtils.importESModule(
   "chrome://glide/content/motions.mjs"
 );
+const MozUtils = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/moz.mjs"
+);
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule(
@@ -358,8 +361,20 @@ export class GlideHandlerChild extends JSWindowActorChild<
       // ----------------- queries -----------------
 
       case "Glide::Query::CopySelection": {
-        const editor = this.#expect_editor("selection_copy");
-        editor.copy();
+        const selection = this.contentWindow?.getSelection()?.toString();
+        if (!selection) {
+          // fallback to an editor for `<textarea>` and `<input>`
+          // https://developer.mozilla.org/en-US/docs/Web/API/Window/getSelection#related_objects
+          const editor = this.#get_editor(this.#get_active_element());
+          if (!editor) {
+            throw new Error("Could not resolve a selection to copy");
+          }
+
+          editor.copy();
+          break;
+        }
+
+        MozUtils.copy_to_clipboard(this.contentWindow!, selection);
         break;
       }
 

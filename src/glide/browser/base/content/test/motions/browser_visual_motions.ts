@@ -126,7 +126,7 @@ add_task(async function test_visual_backwards() {
   });
 });
 
-add_task(async function test_visual_yank_to_clipboard() {
+add_task(async function test_visual_yank_editable_to_clipboard() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(
       browser,
@@ -142,6 +142,46 @@ add_task(async function test_visual_yank_to_clipboard() {
 
     const clipboardText = await navigator.clipboard.readText();
     is(clipboardText, "ello", "Selected text should be copied to clipboard");
+    is(
+      GlideBrowser.state.mode,
+      "normal",
+      "Should return to normal mode after yank"
+    );
+  });
+});
+
+add_task(async function test_visual_yank_non_editable_to_clipboard() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    await SpecialPowers.spawn(browser, [], async () => {
+      const window = content as Window;
+      const document = content.document as Document;
+
+      const label = document.querySelector('label[for="user_input_1"]');
+      if (!label) {
+        throw new Error("Could not find label element");
+      }
+
+      // Create a selection on the label text
+      const range = document.createRange();
+      range.selectNodeContents(label);
+
+      const selection = window.getSelection()!;
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      // Focus the window to ensure selection is active
+      window.focus();
+    });
+
+    await sleep_frames(3);
+    await GlideTestUtils.synthesize_keyseq("vy");
+    await sleep_frames(3);
+
+    is(
+      await navigator.clipboard.readText(),
+      "Enter your text:",
+      "Label text should be copied to clipboard"
+    );
     is(
       GlideBrowser.state.mode,
       "normal",
