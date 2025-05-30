@@ -6,7 +6,7 @@ Press `f` to enter `hint` mode and Glide will overlay text [labels](#label-gener
 
 You can press `<Esc>` to exit `hint` mode at any time.
 
-**Note:** Hints are static. Scroll or DOM changes require pressing `f` again to regenerate, although existing hints will still work.
+**Note:** Hints are static. Scroll or DOM changes require pressing `f` again to regenerate, although existing hints will still point to their original elements.
 
 # Reference
 
@@ -20,13 +20,13 @@ An element is considered "hintable" if any of the following are true:
 
 Then, for the element to actually have a hint generated, it must be visible on the page and not be overlapped by another element.
 
-For example, if a modal is open then only elements inside the modal will have hints.
+For example, if a modal is open then only elements *inside* the modal will have hints.
 
 <!-- TODO: link `editable` to other docs explaining it once they exist -->
 
 ## Label generation
 
-Labels are generated using the lowercase alphabet with this priority order:
+Labels are generated using the following lowercase alphabet with this priority order:
 
 ```
 hjklasdfgyuiopqwertnmzxcvb
