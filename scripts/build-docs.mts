@@ -108,7 +108,7 @@ for (const file of SYMLINKS) {
 
     await fs.symlink(source_file, dist_file);
   } else {
-    await fs.rm(dist_file);
+    await fs.rm(dist_file).catch(() => null);
     await fs.copyFile(source_file, dist_file);
   }
 }
