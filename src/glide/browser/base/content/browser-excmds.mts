@@ -469,6 +469,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "undo": {
+        docShell?.doCommand("cmd_undo");
+        break;
+      }
+
       default:
         throw assert_never(
           command_meta,

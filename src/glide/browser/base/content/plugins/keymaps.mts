@@ -60,6 +60,8 @@ export function init(glide: Glide) {
   glide.keymaps.set("normal", "a", "mode_change insert");
   glide.keymaps.set("normal", "A", "mode_change insert --automove=endline");
 
+  glide.keymaps.set("normal", "u", "undo");
+
   // vim motions
   glide.keymaps.set("normal", "d", "mode_change op-pending --operator=d", {
     retain_key_display: true,

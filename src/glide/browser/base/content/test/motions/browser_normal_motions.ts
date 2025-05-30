@@ -407,3 +407,21 @@ add_task(async function test_normal_next_para() {
     await test_motion("{", 0, "h");
   });
 });
+
+add_task(async function test_normal_u() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit } = GlideTestUtils.make_input_test_helpers(
+      browser,
+      { text_start: 1 }
+    );
+
+    await set_text("Hello world", "basic undo after deletion");
+    await test_edit("x", "ello world", 0, "e");
+    await test_edit("u", "Hello world", 0, "H");
+
+    await set_text("Hello world", "undo after multiple deletions");
+    await test_edit("xx", "llo world", 0, "l");
+    await test_edit("u", "ello world", 0, "e");
+    await test_edit("u", "Hello world", 0, "H");
+  });
+});
