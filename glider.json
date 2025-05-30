@@ -5,8 +5,8 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox-dev",
-    "version": "140.0b1",
-    "candidate": "139.0b10"
+    "version": "140.0b3",
+    "candidate": "140.0b3"
   },
   "buildOptions": {
     "windowsUseSymbolicLinks": false,
@@ -20,7 +20,7 @@
       "brandShortName": "Glide",
       "brandFullName": "Glide Browser",
       "release": {
-        "displayVersion": "0.1.1a",
+        "displayVersion": "0.1.5a",
         "github": {
           "repo": "glide-browser/glide"
         },
