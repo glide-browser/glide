@@ -9,7 +9,7 @@ const { MOTIONS } = ChromeUtils.importESModule(
 export function init(glide: Glide) {
   glide.keymaps.set("normal", "<leader>r", "reload");
   glide.keymaps.set("normal", "<leader>R", "reload_hard");
-  glide.keymaps.set("normal", "<leader>b", "commandline_show tab ");
+  glide.keymaps.set("normal", "<leader><leader>", "commandline_show tab ");
 
   glide.keymaps.set("normal", "gg", "scroll_top");
   glide.keymaps.set("normal", "G", "scroll_bottom");
