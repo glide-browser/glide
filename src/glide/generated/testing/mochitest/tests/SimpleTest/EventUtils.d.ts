@@ -197,11 +197,11 @@ function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Window & t
  * @property {number} [aEvent.deltaMode=WheelEvent.DOM_DELTA_PIXEL] - Delta Mode
  *     for scrolling (pixel, line, or page), which must be one of the
  *     `WheelEvent.DOM_DELTA_*` constants.
- * @property {number} [aEvent.deltaX] - Floating-point value in CSS pixels to
+ * @property {number} [aEvent.deltaX=0] - Floating-point value in CSS pixels to
  *     scroll in the x direction.
- * @property {number} [aEvent.deltaY] - Floating-point value in CSS pixels to
+ * @property {number} [aEvent.deltaY=0] - Floating-point value in CSS pixels to
  *     scroll in the y direction.
- * @property {number} [aEvent.deltaZ] - Floating-point value in CSS pixels to
+ * @property {number} [aEvent.deltaZ=0] - Floating-point value in CSS pixels to
  *     scroll in the z direction.
  * @property {number} [aEvent.expectedOverflowDeltaX] - Decimal value
  *     indicating horizontal scroll overflow. Only the sign is checked: `0`,
@@ -499,6 +499,23 @@ function synthesizeMouseExpectEvent(aTarget: any, aOffsetX: any, aOffsetY: any, 
 function synthesizeKeyExpectEvent(key: any, aEvent: any, aExpectedTarget: any, aExpectedEvent: any, aTestName: any, aWindow: any): void;
 function disableNonTestMouseEvents(aDisable: any): void;
 function _getDOMWindowUtils(aWindow?: Window & typeof globalThis): any;
+/**
+ * @param {Window} aWindow The window.
+ * @returns The scaling value applied to the top window.
+ */
+function _getTopWindowResolution(aWindow: Window): number;
+/**
+ * @param {Window} aWindow The window which you want to get its x-offset in the
+ * screen.
+ * @returns The screenX of aWindow in the unscaled CSS pixels.
+ */
+function _getScreenXInUnscaledCSSPixels(aWindow: Window): any;
+/**
+ * @param {Window} aWindow The window which you want to get its y-offset in the
+ * screen.
+ * @returns The screenY of aWindow in the unscaled CSS pixels.
+ */
+function _getScreenYInUnscaledCSSPixels(aWindow: Window): any;
 function _defineConstant(name: any, value: any): void;
 function _getTIP(aWindow: any, aCallback: any): any;
 function _getKeyboardEvent(aWindow?: Window & typeof globalThis): any;

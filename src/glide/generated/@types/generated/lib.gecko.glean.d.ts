@@ -23,13 +23,6 @@ interface GleanImpl {
     change: GleanTimingDistribution;
   }
 
-  privacySanitize: {
-    dialogOpen: GleanEvent;
-    clear: GleanEvent;
-    clearingTimeSpanSelected: GleanEvent;
-    loadTime: GleanTimingDistribution;
-  }
-
   securityUiProtectionspopup: {
     openProtectionsPopup: GleanEvent;
     closeProtectionsPopup: GleanEvent;
@@ -86,10 +79,6 @@ interface GleanImpl {
   networking: {
     captivePortalBannerDisplayed: GleanCounter;
     captivePortalBannerDisplayTime: Record<string, GleanCounter>;
-    dohHeuristicsAttempts: GleanCounter;
-    dohHeuristicsPassCount: GleanCounter;
-    dohHeuristicsResult: GleanQuantity;
-    dohHeuristicEverTripped: Record<string, GleanBoolean>;
     speculativeConnectOutcome: Record<string, GleanCounter>;
     cookieTimestampFixedCount: Record<string, GleanCounter>;
     cookieCreationFixupDiff: GleanCustomDistribution;
@@ -196,6 +185,8 @@ interface GleanImpl {
     httpChannelPageOpenToFirstSentHttpsRr: GleanTimingDistribution;
     httpToHttpsUpgradeReason: Record<string, GleanCounter>;
     httpsHttpOrLocal: Record<string, GleanCounter>;
+    localNetworkAccess: Record<string, GleanCounter>;
+    localNetworkAccessPort: GleanCustomDistribution;
     httpChannelSubOpenToFirstSentHttpsRr: GleanTimingDistribution;
     transactionWaitTimeHttpsRr: GleanTimingDistribution;
     proxyInfoType: Record<string, GleanCounter>;
@@ -237,6 +228,10 @@ interface GleanImpl {
     httpsRecordState: Record<string, GleanCounter>;
     nssInitialization: GleanQuantity;
     loadingCertsTask: GleanQuantity;
+    dohHeuristicsAttempts: GleanCounter;
+    dohHeuristicsPassCount: GleanCounter;
+    dohHeuristicsResult: GleanQuantity;
+    dohHeuristicEverTripped: Record<string, GleanBoolean>;
   }
 
   browserTimings: {
@@ -289,6 +284,14 @@ interface GleanImpl {
     unknownKeys: Record<string, GleanCounter>;
   }
 
+  gleanAttribution: {
+    ext: GleanObject;
+  }
+
+  gleanDistribution: {
+    ext: GleanObject;
+  }
+
   browserBackup: {
     enabled: GleanBoolean;
     schedulerEnabled: GleanBoolean;
@@ -326,24 +329,6 @@ interface GleanImpl {
     error: GleanEvent;
   }
 
-  doh: {
-    evaluateV2Heuristics: GleanEvent;
-    stateEnabled: GleanEvent;
-    stateDisabled: GleanEvent;
-    stateManuallyDisabled: GleanEvent;
-    statePolicyDisabled: GleanEvent;
-    stateUninstalled: GleanEvent;
-    stateUiok: GleanEvent;
-    stateUidisabled: GleanEvent;
-    stateRollback: GleanEvent;
-    stateShutdown: GleanEvent;
-  }
-
-  securityDohTrrPerformance: {
-    resolvedRecord: GleanEvent;
-    trrselectDryrunresult: GleanEvent;
-  }
-
   downloads: {
     panelShown: GleanCounter;
     addedFileExtension: GleanEvent;
@@ -356,8 +341,6 @@ interface GleanImpl {
     activeTicks: GleanCounter;
     protectTime: GleanTimingDistribution;
     largestContentfulPaint: GleanTimingDistribution;
-    time: GleanTimingDistribution;
-    asyncSheetLoad: GleanTimingDistribution;
     httpContentHtml5parserOndatafinishedToOnstopDelay: GleanTimingDistribution;
     osSocketLimitReached: GleanCounter;
     subCompleteLoadNet: GleanTimingDistribution;
@@ -426,10 +409,12 @@ interface GleanImpl {
 
   genaiLinkpreview: {
     enabled: GleanBoolean;
+    cardAiConsent: GleanEvent;
     cardClose: GleanEvent;
     cardLink: GleanEvent;
     fetch: GleanEvent;
     generate: GleanEvent;
+    keyPointsToggle: GleanEvent;
     labsCheckbox: GleanEvent;
     start: GleanEvent;
   }
@@ -476,6 +461,7 @@ interface GleanImpl {
   browserStartup: {
     abouthomeCacheResult: GleanQuantity;
     abouthomeCacheShutdownwrite: GleanBoolean;
+    kioskMode: GleanBoolean;
   }
 
   datasanitization: {
@@ -517,6 +503,7 @@ interface GleanImpl {
     httpsOnlyModeEnabledPbm: GleanQuantity;
     globalPrivacyControlEnabled: GleanQuantity;
     fissionPrincipals: GleanEvent;
+    shadowedHtmlDocumentPropertyAccess: GleanEvent;
     unexpectedLoad: GleanEvent;
     evalUsageSystemContext: GleanEvent;
     cspViolationInternalPage: GleanEvent;
@@ -559,6 +546,7 @@ interface GleanImpl {
     linuxPermsWizard: GleanEvent;
     safariPermsWizard: GleanEvent;
     safariPasswordFileWizard: GleanEvent;
+    chromePasswordFileWizard: GleanEvent;
     migrationStartedWizard: GleanEvent;
     migrationFinishedWizard: GleanEvent;
     entryPointCategorical: Record<string, GleanCounter>;
@@ -617,6 +605,10 @@ interface GleanImpl {
     abouthomeCacheConstruction: GleanTimingDistribution;
     reportContentOpen: GleanEvent;
     reportContentSubmit: GleanEvent;
+    metricRegistered: Record<string, GleanBoolean>;
+    pingRegistered: Record<string, GleanBoolean>;
+    activityStreamCtorSuccess: GleanBoolean;
+    addonReadySuccess: GleanBoolean;
   }
 
   newtabSearch: {
@@ -657,14 +649,14 @@ interface GleanImpl {
   }
 
   newtabContent: {
+    experimentName: GleanString;
+    experimentBranch: GleanString;
+    inferredInterests: GleanString;
     coarseOs: GleanString;
-    coarseOsVersion: GleanString;
     utcOffset: GleanQuantity;
+    country: GleanString;
     surfaceId: GleanString;
     followedSections: GleanStringList;
-    activeExperiments: GleanObject;
-    activeRollouts: GleanObject;
-    enrollmentsMap: GleanObject;
     impression: GleanEvent;
     click: GleanEvent;
     dismiss: GleanEvent;
@@ -1053,54 +1045,6 @@ interface GleanImpl {
     shutdownOk: Record<string, GleanCounter>;
   }
 
-  shoppingSettings: {
-    nimbusDisabledShopping: GleanBoolean;
-    componentOptedOut: GleanBoolean;
-    hasOnboarded: GleanBoolean;
-    disabledAds: GleanBoolean;
-    autoOpenUserDisabled: GleanBoolean;
-  }
-
-  shopping: {
-    surfaceDisplayed: GleanEvent;
-    surfaceReanalyzeClicked: GleanEvent;
-    surfaceShowQualityExplainerClicked: GleanEvent;
-    surfaceSettingsExpandClicked: GleanEvent;
-    surfaceClosed: GleanEvent;
-    addressBarIconClicked: GleanEvent;
-    surfaceShowMoreReviewsButtonClicked: GleanEvent;
-    surfaceShowTermsClicked: GleanEvent;
-    surfaceShowPrivacyPolicyClicked: GleanEvent;
-    surfaceNotNowClicked: GleanEvent;
-    surfaceOptInClicked: GleanEvent;
-    surfaceOnboardingDisplayed: GleanEvent;
-    surfaceNoReviewReliabilityAvailable: GleanEvent;
-    surfaceAnalyzeReviewsNoneAvailableClicked: GleanEvent;
-    surfaceLearnMoreClicked: GleanEvent;
-    surfaceShowQualityExplainerUrlClicked: GleanEvent;
-    addressBarIconDisplayed: GleanEvent;
-    surfaceReactivatedButtonClicked: GleanEvent;
-    surfaceStaleAnalysisShown: GleanEvent;
-    productPageVisits: GleanCounter;
-    surfacePoweredByFakespotLinkClicked: GleanEvent;
-    addressBarFeatureCalloutDisplayed: GleanEvent;
-    surfaceAdsClicked: GleanEvent;
-    surfaceAdsImpression: GleanEvent;
-    surfaceAdsPlacement: GleanEvent;
-    surfaceNoAdsAvailable: GleanEvent;
-    surfaceAdsSettingToggled: GleanEvent;
-    surfaceOptOutButtonClicked: GleanEvent;
-    surfaceAutoOpenSettingToggled: GleanEvent;
-    surfaceNoThanksButtonClicked: GleanEvent;
-    surfaceYesKeepClosedButtonClicked: GleanEvent;
-    surfaceNotificationCardImpression: GleanEvent;
-    surfaceNotificationCardMoveRightClicked: GleanEvent;
-    surfaceNotificationCardMoveLeftClicked: GleanEvent;
-    surfaceNotificationCardDismissClicked: GleanEvent;
-    surfaceNotificationCardSidebarSettingsClicked: GleanEvent;
-    sidebarToggle: GleanEvent;
-  }
-
   sidebar: {
     expand: GleanEvent;
     resize: GleanEvent;
@@ -1115,7 +1059,6 @@ interface GleanImpl {
     syncedTabsIconClick: GleanEvent;
     bookmarksIconClick: GleanEvent;
     addonIconClick: GleanEvent;
-    shoppingReviewCheckerIconClick: GleanEvent;
     keyboardShortcut: GleanEvent;
   }
 
@@ -1145,7 +1088,6 @@ interface GleanImpl {
     syncedTabsEnabled: GleanEvent;
     historyEnabled: GleanEvent;
     bookmarksEnabled: GleanEvent;
-    shoppingReviewCheckerEnabled: GleanEvent;
     extensionsClicked: GleanEvent;
     sidebarDisplay: GleanEvent;
     sidebarPosition: GleanEvent;
@@ -1207,10 +1149,14 @@ interface GleanImpl {
     tabCountInGroups: Record<string, GleanQuantity>;
     save: GleanEvent;
     delete: GleanEvent;
+    ungroup: GleanEvent;
     tabInteractions: Record<string, GleanCounter>;
+    groupInteractions: Record<string, GleanCounter>;
     smartTabOptin: GleanEvent;
     smartTabTopic: GleanEvent;
     smartTabSuggest: GleanEvent;
+    smartTab: GleanEvent;
+    smartTabEnabled: GleanBoolean;
   }
 
   browserTabswitch: {
@@ -1234,6 +1180,7 @@ interface GleanImpl {
 
   urlbar: {
     abandonment: GleanEvent;
+    disable: GleanEvent;
     engagement: GleanEvent;
     fakespotEngagement: GleanEvent;
     exposure: GleanEvent;
@@ -1380,6 +1327,10 @@ interface GleanImpl {
   linkIconSizesAttr: {
     usage: GleanCustomDistribution;
     dimension: GleanCustomDistribution;
+  }
+
+  contextualServices: {
+    contextId: GleanUuid;
   }
 
   devtoolsAccessibility: {
@@ -1677,6 +1628,11 @@ interface GleanImpl {
     jsErrorstackSetterNoErrordata: GleanCounter;
     jsDateparse: GleanCounter;
     jsDateparseImplDef: GleanCounter;
+    jsRegexpSymbolProtocolOnPrimitive: GleanCounter;
+    jsLargeOomReported: GleanCounter;
+    jsSmallOomReported: GleanCounter;
+    jsLargeOomRecovered: GleanCounter;
+    jsSmallOomRecovered: GleanCounter;
     consoleAssert: GleanCounter;
     consoleClear: GleanCounter;
     consoleCount: GleanCounter;
@@ -1941,6 +1897,8 @@ interface GleanImpl {
     documentQueryCommandStateOrValueInsertBrOnReturn: GleanCounter;
     documentQueryCommandSupportedOrEnabledContentReadOnly: GleanCounter;
     documentQueryCommandSupportedOrEnabledInsertBrOnReturn: GleanCounter;
+    animationCommitstyles: GleanCounter;
+    commitStylesNonFillingFinalValue: GleanCounter;
     feBlend: GleanCounter;
     feColorMatrix: GleanCounter;
     feComponentTransfer: GleanCounter;
@@ -2035,6 +1993,11 @@ interface GleanImpl {
     jsErrorstackSetterNoErrordata: GleanCounter;
     jsDateparse: GleanCounter;
     jsDateparseImplDef: GleanCounter;
+    jsRegexpSymbolProtocolOnPrimitive: GleanCounter;
+    jsLargeOomReported: GleanCounter;
+    jsSmallOomReported: GleanCounter;
+    jsLargeOomRecovered: GleanCounter;
+    jsSmallOomRecovered: GleanCounter;
     consoleAssert: GleanCounter;
     consoleClear: GleanCounter;
     consoleCount: GleanCounter;
@@ -2299,6 +2262,8 @@ interface GleanImpl {
     documentQueryCommandStateOrValueInsertBrOnReturn: GleanCounter;
     documentQueryCommandSupportedOrEnabledContentReadOnly: GleanCounter;
     documentQueryCommandSupportedOrEnabledInsertBrOnReturn: GleanCounter;
+    animationCommitstyles: GleanCounter;
+    commitStylesNonFillingFinalValue: GleanCounter;
     feBlend: GleanCounter;
     feColorMatrix: GleanCounter;
     feComponentTransfer: GleanCounter;
@@ -2921,6 +2886,7 @@ interface GleanImpl {
     cssViewTimelineAxis: GleanCounter;
     cssViewTimelineInset: GleanCounter;
     cssViewTimelineName: GleanCounter;
+    cssViewTransitionClass: GleanCounter;
     cssViewTransitionName: GleanCounter;
     cssWebkitTextStrokeWidth: GleanCounter;
     cssWillChange: GleanCounter;
@@ -3628,6 +3594,7 @@ interface GleanImpl {
     cssViewTimelineAxis: GleanCounter;
     cssViewTimelineInset: GleanCounter;
     cssViewTimelineName: GleanCounter;
+    cssViewTransitionClass: GleanCounter;
     cssViewTransitionName: GleanCounter;
     cssWebkitTextStrokeWidth: GleanCounter;
     cssWillChange: GleanCounter;
@@ -4262,7 +4229,6 @@ interface GleanImpl {
     http3FcpSupportsHttp3: GleanTimingDistribution;
     h3pFcpWithPriority: GleanTimingDistribution;
     http3FcpWithoutPriority: GleanTimingDistribution;
-    asyncSheetLoad: GleanTimingDistribution;
   }
 
   performanceTime: {
@@ -4348,6 +4314,10 @@ interface GleanImpl {
 
   domQuotaTry: {
     errorStep: GleanEvent;
+  }
+
+  quotamanager: {
+    restoreOriginDirectoryMetadataCounter: GleanCounter;
   }
 
   quotamanagerInitializeRepository: {
@@ -4483,6 +4453,14 @@ interface GleanImpl {
     crash: GleanCustomDistribution;
     macosVideoLowPower: Record<string, GleanCounter>;
     sanityTest: GleanCustomDistribution;
+    d2dEnabled: GleanBoolean;
+    dwriteEnabled: GleanBoolean;
+    contentBackend: GleanString;
+    headless: GleanBoolean;
+    targetFrameRate: GleanQuantity;
+    textScaleFactor: GleanString;
+    monitors: GleanObject;
+    adapters: GleanObject;
   }
 
   gfxDisplay: {
@@ -4613,6 +4591,15 @@ interface GleanImpl {
     speedAvif: GleanMemoryDistribution;
   }
 
+  intl: {
+    requestedLocales: GleanStringList;
+    availableLocales: GleanStringList;
+    appLocales: GleanStringList;
+    systemLocales: GleanStringList;
+    regionalPrefsLocales: GleanStringList;
+    acceptLanguages: GleanStringList;
+  }
+
   process: {
     childLaunch: GleanTimingDistribution;
     lifetime: GleanTimingDistribution;
@@ -4627,12 +4614,6 @@ interface GleanImpl {
     crashesWithDump: Record<string, GleanCounter>;
     launchFailure: Record<string, GleanCounter>;
     killHard: Record<string, GleanCounter>;
-  }
-
-  performanceCloneDeserialize: {
-    size: GleanMemoryDistribution;
-    items: GleanCustomDistribution;
-    time: GleanTimingDistribution;
   }
 
   javascriptIon: {
@@ -4790,6 +4771,7 @@ interface GleanImpl {
     subOpenToFirstReceived: GleanTimingDistribution;
     subTlsHandshake: GleanTimingDistribution;
     subTcpConnection: GleanTimingDistribution;
+    pageLoadSize: Record<string, GleanMemoryDistribution>;
     tlsEarlyDataNegotiated: Record<string, GleanCounter>;
     tlsEarlyDataAccepted: Record<string, GleanCounter>;
     tlsEarlyDataBytesWritten: GleanCustomDistribution;
@@ -5073,6 +5055,7 @@ interface GleanImpl {
 
   pkcs11: {
     thirdPartyModulesLoaded: GleanQuantity;
+    externalTrustAnchorModuleLoaded: GleanBoolean;
   }
 
   certVerificationTime: {
@@ -5154,6 +5137,8 @@ interface GleanImpl {
     rejectedSyscalls: Record<string, GleanCounter>;
     failedLaunchKeyed: Record<string, GleanCustomDistribution>;
     hasUserNamespaces: Record<string, GleanCounter>;
+    effectiveContentProcessLevel: GleanQuantity;
+    contentWin32kLockdownState: GleanQuantity;
   }
 
   uptakeRemotecontentResult: {
@@ -5169,6 +5154,13 @@ interface GleanImpl {
   fxa: {
     connectAccount: GleanEvent;
     disconnectAccount: GleanEvent;
+    syncEnabled: GleanBoolean;
+    accountEnabled: GleanBoolean;
+  }
+
+  syncSettings: {
+    openChooseWhatToSyncMenu: GleanEvent;
+    save: GleanEvent;
   }
 
   fxaAvatarMenu: {
@@ -5412,6 +5404,8 @@ interface GleanImpl {
     availablePhysical: GleanQuantity;
     availableSwap: GleanQuantity;
     availableVirtual: GleanQuantity;
+    jsLargeAllocationFailure: GleanString;
+    jsOutOfMemory: GleanString;
     lowPhysical: GleanQuantity;
     oomAllocationSize: GleanQuantity;
     purgeablePhysical: GleanQuantity;
@@ -5462,6 +5456,24 @@ interface GleanImpl {
     pending: GleanCounter;
     collectorErrors: Record<string, GleanCounter>;
     channelStatus: Record<string, GleanCounter>;
+  }
+
+  doh: {
+    evaluateV2Heuristics: GleanEvent;
+    stateEnabled: GleanEvent;
+    stateDisabled: GleanEvent;
+    stateManuallyDisabled: GleanEvent;
+    statePolicyDisabled: GleanEvent;
+    stateUninstalled: GleanEvent;
+    stateUiok: GleanEvent;
+    stateUidisabled: GleanEvent;
+    stateRollback: GleanEvent;
+    stateShutdown: GleanEvent;
+  }
+
+  securityDohTrrPerformance: {
+    resolvedRecord: GleanEvent;
+    trrselectDryrunresult: GleanEvent;
   }
 
   policies: {
@@ -5728,6 +5740,10 @@ interface GleanImpl {
     reachFxmsMessage9: GleanEvent;
     reachFxmsMessage10: GleanEvent;
     reachFxmsMessage11: GleanEvent;
+    reachFxmsMessage12: GleanEvent;
+    reachFxmsMessage13: GleanEvent;
+    reachFxmsMessage14: GleanEvent;
+    reachFxmsMessage15: GleanEvent;
   }
 
   firefoxAiRuntime: {
@@ -5735,6 +5751,17 @@ interface GleanImpl {
     engineCreationFailure: GleanEvent;
     runInferenceFailure: GleanEvent;
     runInferenceSuccess: Record<string, GleanTimingDistribution>;
+    modelDownload: GleanEvent;
+    modelDeletion: GleanEvent;
+  }
+
+  modelManagement: {
+    removeInitiated: GleanEvent;
+    removeConfirmation: GleanEvent;
+    listItemManage: GleanEvent;
+    extensionModelLink: GleanEvent;
+    listView: GleanEvent;
+    detailsView: GleanEvent;
   }
 
   nimbusTargetingEnvironment: {
@@ -5748,10 +5775,12 @@ interface GleanImpl {
   nimbusTargetingContext: {
     activeExperiments: GleanObject;
     activeRollouts: GleanObject;
+    addonsInfo: GleanObject;
     addressesSaved: GleanQuantity;
     archBits: GleanQuantity;
     attributionData: GleanObject;
     browserSettings: GleanObject;
+    buildId: GleanQuantity;
     currentDate: GleanString;
     defaultPdfHandler: GleanObject;
     distributionId: GleanString;
@@ -5822,6 +5851,19 @@ interface GleanImpl {
     expPrefChangedPreferenceStudy: GleanEvent;
     validationFailedNimbusExperiment: GleanEvent;
     recipeFreshness: Record<string, GleanQuantity>;
+  }
+
+  heartbeat: {
+    flowId: GleanUuid;
+    offered: GleanDatetime;
+    learnMore: GleanDatetime;
+    voted: GleanDatetime;
+    engaged: GleanDatetime;
+    closed: GleanDatetime;
+    expired: GleanDatetime;
+    windowClosed: GleanDatetime;
+    score: GleanQuantity;
+    surveyId: GleanString;
   }
 
   pwmgr: {
@@ -6105,6 +6147,7 @@ interface GleanImpl {
     hasTrackingContentBlocked: GleanBoolean;
     isPrivateBrowsing: GleanBoolean;
     btpHasPurgedSite: GleanBoolean;
+    etpCategory: GleanString;
   }
 
   brokenSiteReportTabInfoFrameworks: {
@@ -6499,18 +6542,6 @@ interface GleanImpl {
     failedRequests: Record<string, GleanCounter>;
   }
 
-  shoppingProduct: {
-    requestError: GleanEvent;
-    requestFailure: GleanEvent;
-    serverFailure: GleanEvent;
-    requestRetried: GleanEvent;
-    requestRetriesFailed: GleanEvent;
-    requestAborted: GleanEvent;
-    invalidRequest: GleanEvent;
-    invalidResponse: GleanEvent;
-    invalidOhttpConfig: GleanEvent;
-  }
-
   legacyTelemetry: {
     clientId: GleanUuid;
     profileGroupId: GleanUuid;
@@ -6558,6 +6589,7 @@ interface GleanImpl {
 
   usage: {
     profileId: GleanUuid;
+    profileGroupId: GleanUuid;
     os: GleanString;
     osVersion: GleanString;
     windowsBuildNumber: GleanQuantity;
@@ -6750,6 +6782,13 @@ interface GleanImpl {
   system: {
     osVersion: GleanString;
     previousOsVersion: GleanString;
+    memory: GleanQuantity;
+    virtualMemory: GleanQuantity;
+    isWow64: GleanBoolean;
+    isWowArm64: GleanBoolean;
+    hasWinPackageId: GleanBoolean;
+    winPackageFamilyName: GleanString;
+    appleModelId: GleanString;
   }
 
   systemDefault: {
@@ -6767,6 +6806,12 @@ interface GleanImpl {
     daysSinceLastAppLaunch: GleanQuantity;
   }
 
+  addons: {
+    activeAddons: GleanObject;
+    theme: GleanObject;
+    activeGMPlugins: GleanObject;
+  }
+
   addonsManager: {
     install: GleanEvent;
     update: GleanEvent;
@@ -6774,6 +6819,7 @@ interface GleanImpl {
     manage: GleanEvent;
     reportSuspiciousSite: GleanEvent;
     compatibilityCheckEnabled: GleanBoolean;
+    xpistatesWriteErrors: GleanEvent;
     installExtension: GleanEvent;
     installTheme: GleanEvent;
     installLocale: GleanEvent;
@@ -6928,13 +6974,26 @@ interface GleanImpl {
     bitshresult: Record<string, GleanCounter>;
     moveResult: Record<string, GleanCounter>;
     noWindowAutoRestarts: GleanCounter;
-    skipStartupUpdateReason: Record<string, GleanCounter>;
     suppressPrompts: GleanBoolean;
     versionPin: GleanString;
   }
 
   updater: {
     available: GleanBoolean;
+  }
+
+  updateSettings: {
+    channel: GleanString;
+    enabled: GleanBoolean;
+    autoDownload: GleanBoolean;
+    background: GleanBoolean;
+  }
+
+  profiles: {
+    creationDate: GleanQuantity;
+    resetDate: GleanQuantity;
+    firstUseDate: GleanQuantity;
+    recoveredFromBackup: GleanQuantity;
   }
 
   gecko: {
@@ -6966,6 +7025,24 @@ interface GleanImpl {
     imeNameOnWindows: Record<string, GleanBoolean>;
     imeNameOnWindowsInsertedCrlf: Record<string, GleanBoolean>;
     touchEnabledDevice: Record<string, GleanCounter>;
+  }
+
+  gfxFeatures: {
+    compositor: GleanString;
+    d3d11: GleanObject;
+    d2d: GleanObject;
+    hwCompositing: GleanObject;
+    gpuProcess: GleanObject;
+    webrender: GleanObject;
+    wrCompositor: GleanObject;
+    openglCompositing: GleanObject;
+    omtp: GleanObject;
+  }
+
+  windowsSecurity: {
+    antivirus: GleanStringList;
+    antispyware: GleanStringList;
+    firewall: GleanStringList;
   }
 
   timerThread: {
@@ -7026,6 +7103,25 @@ interface GleanImpl {
     l2Cache: GleanQuantity;
     l3Cache: GleanQuantity;
     speed: GleanQuantity;
+    extensions: GleanStringList;
+  }
+
+  hdd: {
+    profile: GleanObject;
+    binary: GleanObject;
+    system: GleanObject;
+  }
+
+  systemOs: {
+    name: GleanString;
+    version: GleanString;
+    locale: GleanString;
+    distro: GleanString;
+    distroVersion: GleanString;
+    servicePackMajor: GleanQuantity;
+    servicePackMinor: GleanQuantity;
+    windowsBuildNumber: GleanQuantity;
+    windowsUbr: GleanQuantity;
   }
 }
 
@@ -7042,6 +7138,7 @@ interface GleanPingsImpl {
   quickSuggestDeletionRequest: nsIGleanPingNoReason;
   urlbarKeywordExposure: nsIGleanPingNoReason;
   prototypeNoCodeEvents: nsIGleanPingNoReason;
+  contextIdDeletionRequest: nsIGleanPingNoReason;
   pageload: nsIGleanPingWithReason<"startup"|"threshold">;
   useCounters: nsIGleanPingWithReason<"app_shutdown_confirmed"|"idle_startup">;
   fxAccounts: nsIGleanPingWithReason<"active"|"dirty_startup"|"inactive">;
@@ -7058,6 +7155,7 @@ interface GleanPingsImpl {
   collectionDisabledPing: nsIGleanPingNoReason;
   disabledPing: nsIGleanPingNoReason;
   nimbusTargetingContext: nsIGleanPingNoReason;
+  heartbeat: nsIGleanPingNoReason;
   brokenSiteReport: nsIGleanPingNoReason;
   userCharacteristics: nsIGleanPingNoReason;
   usageReporting: nsIGleanPingWithReason<"dirty_startup"|"inactive"|"active">;
