@@ -52,7 +52,7 @@ export interface ParentMessages {
   "Glide::KeyMappingCancel": { mode: GlideMode };
   "Glide::ReplaceChar": { character: string };
   "Glide::BlurActiveElement": null;
-  "Glide::ExecuteHint": { label: string };
+  "Glide::ExecuteHint": { id: number };
   "Glide::Hint": {
     location: glide.HintLocation;
     action?:

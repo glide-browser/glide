@@ -1,23 +1,20 @@
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
-const Strings = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/strings.mjs"
-);
 const { LayoutUtils } = ChromeUtils.importESModule(
   "resource://gre/modules/LayoutUtils.sys.mjs"
 );
 
-const ALPHABET = "hjklasdfgyuiopqwertnmzxcvb".split("");
+export const ALPHABET = "hjklasdfgyuiopqwertnmzxcvb".split("");
 
 // prioritise the chars in their order in the above string
 // as we want to try and stay on the home row as much as possible
-const ALPHABET_COST_MAP: Record<string, number> = {};
+export const ALPHABET_COST_MAP: Record<string, number> = {};
 let cost = 0;
 for (const char of ALPHABET) {
   ALPHABET_COST_MAP[char] = cost += 0.1;
 }
 
 export interface GlideHint {
-  label: string;
+  id: number;
   target: HTMLElement;
   screen_x: number;
   screen_y: number;
@@ -25,12 +22,13 @@ export interface GlideHint {
   height: number;
 }
 
-export type GlideHintIPC = Omit<GlideHint, "target">;
+export type GlideHintIPC = Omit<GlideHint, "target" | "label">;
 
 export const content = {
   resolve_hints(document: Document): GlideHint[] {
     const hints: GlideHint[] = [];
 
+    let i = 0;
     for (const target of this.hintable_targets(document)) {
       // check if the element is in the viewport and not hidden due to `display` styling
       // or other similar states
@@ -64,24 +62,13 @@ export const content = {
 
       const rect = LayoutUtils.getElementBoundingScreenRect(target);
       hints.push({
+        id: i++,
         target,
-        // set afterwards below
-        label: "",
         screen_x: rect.x,
         screen_y: rect.y,
         width: rect.width,
         height: rect.height,
       });
-    }
-
-    const labels = Strings.generate_prefix_free_codes(
-      ALPHABET,
-      hints.length,
-      ALPHABET_COST_MAP
-    );
-
-    for (let i = 0; i < hints.length; i++) {
-      hints[i]!.label = labels[i]!;
     }
 
     return hints;

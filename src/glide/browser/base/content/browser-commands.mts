@@ -6,8 +6,14 @@
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
   global: "current",
 });
+const Strings = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/strings.mjs"
+);
 const { LayoutUtils } = ChromeUtils.importESModule(
   "resource://gre/modules/LayoutUtils.sys.mjs"
+);
+const Hinting = ChromeUtils.importESModule(
+  "chrome://glide/content/hinting.mjs"
 );
 
 /**
@@ -116,7 +122,7 @@ class GlideCommandsClass {
     return container;
   }
 
-  get_active_hints(): GlideHintIPC[] {
+  get_active_hints(): GlideResolvedHint[] {
     const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
     return browser.$hints ?? [];
   }
@@ -131,12 +137,8 @@ class GlideCommandsClass {
     container.style.setProperty("display", "none", "important");
   }
 
-  show_hints(hints: GlideHintIPC[], location: glide.HintLocation) {
+  show_hints(ipc_hints: GlideHintIPC[], location: glide.HintLocation) {
     this.#clear_hints();
-
-    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
-    browser.$hints = hints;
-    browser.$hints_location = location;
 
     const container = this.#upsert_hints_container();
     container.style.removeProperty("display");
@@ -148,7 +150,8 @@ class GlideCommandsClass {
       document!.body
     );
 
-    for (const hint of hints) {
+    const hints: GlideResolvedHint[] = [];
+    for (const hint of ipc_hints) {
       let y = hint.screen_y - chrome_ui_box.y;
       const x = hint.screen_x - chrome_ui_box.x;
       if (y < 0) {
@@ -157,17 +160,34 @@ class GlideCommandsClass {
         continue;
       }
 
+      hints.push({ ...hint, label: "", x, y });
+    }
+
+    const labels = Strings.generate_prefix_free_codes(
+      Hinting.ALPHABET,
+      hints.length,
+      Hinting.ALPHABET_COST_MAP
+    );
+
+    for (let i = 0; i < hints.length; i++) {
+      const hint = hints[i]!;
+      hint.label = labels[i]!;
+
       const hint_div = DOM.create_element("div", {
         className: `glide-reset glide-internal-hint-marker`,
         style: {
-          top: `${y}px`,
-          left: `${x}px`,
+          top: `${hint.y}px`,
+          left: `${hint.x}px`,
           zIndex: "2140000008",
         },
         children: [DOM.create_element("span", { children: [hint.label] })],
       });
       container.appendChild(hint_div);
     }
+
+    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
+    browser.$hints = hints;
+    browser.$hints_location = location;
 
     document!.body!.insertAdjacentElement("afterend", container);
   }

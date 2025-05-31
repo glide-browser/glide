@@ -284,12 +284,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
       case "Glide::ExecuteHint": {
         const hint = this.#active_hints.find(
-          hint => hint.label === message.data.label
+          hint => hint.id === message.data.id
         );
         if (!hint) {
-          throw new Error(
-            `Could not find a hint with label: ${message.data.label}`
-          );
+          throw new Error(`Could not find a hint with ID: ${message.data.id}`);
         }
 
         const action = this.#hint_action;

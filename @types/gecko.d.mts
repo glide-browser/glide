@@ -51,7 +51,7 @@ declare namespace GlobalBrowser {
     $hints_container?: HTMLElement | null | undefined;
     $hints_location?: GlideHintLocation;
     // TODO(glide): just look at the elements in the container instead?
-    $hints?: GlideHintIPC[];
+    $hints?: GlideResolvedHint[];
   }
 
   /**
@@ -133,6 +133,12 @@ declare type _ExtensionCommon =
 
 declare type GlideHintIPC =
   import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
+
+declare type GlideResolvedHint = Omit<GlideHintIPC, "target"> & {
+  x: number;
+  y: number;
+  label: string;
+};
 
 /**
  * Namespace anything that has its types mocked out here. These definitions are
