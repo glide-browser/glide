@@ -49,12 +49,6 @@ jobs:
         run: |
           pnpm bootstrap
 
-      - name: Import patches
-        run: |
-          pnpm glider import
-          pnpm dev
-          pnpm build:types
-
       - name: Run lint
         run: |
           pnpm lint
