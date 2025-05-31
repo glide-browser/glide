@@ -17,7 +17,7 @@ importers:
     devDependencies:
       '@glide-browser/glider':
         specifier: github:glide-browser/glider
-        version: git+https://git@github.com:glide-browser/glider.git#49a59c8509659939a0d6cae930bec0448c211382
+        version: git+https://git@github.com:glide-browser/glider.git#8bb3bc63b5b8ae5c561346196305885275f13a7f
       '@markdoc/markdoc':
         specifier: ^0.5.1
         version: 0.5.1
@@ -207,9 +207,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@glide-browser/glider@git+https://git@github.com:glide-browser/glider.git#49a59c8509659939a0d6cae930bec0448c211382':
-    resolution: {commit: 49a59c8509659939a0d6cae930bec0448c211382, repo: git@github.com:glide-browser/glider.git, type: git}
-    version: 1.11.6
+  '@glide-browser/glider@git+https://git@github.com:glide-browser/glider.git#8bb3bc63b5b8ae5c561346196305885275f13a7f':
+    resolution: {commit: 8bb3bc63b5b8ae5c561346196305885275f13a7f, repo: git@github.com:glide-browser/glider.git, type: git}
+    version: 1.12.0
     hasBin: true
 
   '@markdoc/markdoc@0.5.1':
@@ -1412,7 +1412,7 @@ snapshots:
   '@esbuild/win32-x64@0.25.2':
     optional: true
 
-  '@glide-browser/glider@git+https://git@github.com:glide-browser/glider.git#49a59c8509659939a0d6cae930bec0448c211382':
+  '@glide-browser/glider@git+https://git@github.com:glide-browser/glider.git#8bb3bc63b5b8ae5c561346196305885275f13a7f':
     dependencies:
       '@resvg/resvg-js': 1.4.0
       async-icns: 1.0.2

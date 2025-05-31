@@ -5,10 +5,12 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox-dev",
+    "tag": "FIREFOX_140_0b3_RELEASE",
     "version": "140.0b3",
     "candidate": "140.0b3"
   },
   "buildOptions": {
+    "useGitFetch": true,
     "windowsUseSymbolicLinks": false,
     "generateBranding": true
   },
