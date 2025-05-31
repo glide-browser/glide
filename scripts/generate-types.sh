@@ -36,4 +36,6 @@ echo "}" >> "$TEMP_FILE"
 mv "$TEMP_FILE" src/glide/generated/testing/mochitest/tests/SimpleTest/EventUtils.d.ts
 
 mkdir -p src/glide/generated/@types
+mkdir -p src/glide/generated/@types/generated
 cp engine/tools/@types/*.ts src/glide/generated/@types/
+cp engine/tools/@types/generated/*.ts src/glide/generated/@types/generated/
