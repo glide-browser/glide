@@ -1,16 +1,4 @@
 declare global {
-  type GlideMode =
-    | "normal"
-    | "insert"
-    | "visual"
-    | "op-pending"
-    | "ignore"
-    | "hint";
-
-  interface GlideGlobals {
-    mapleader: string;
-  }
-
   var glide: {
     ctx: {
       url: string;
@@ -248,6 +236,18 @@ declare global {
       next_str(): Promise<string>;
     };
   };
+
+  type GlideMode =
+    | "normal"
+    | "insert"
+    | "visual"
+    | "op-pending"
+    | "ignore"
+    | "hint";
+
+  interface GlideGlobals {
+    mapleader: string;
+  }
 
   /**
    * Assert an invariant. An \`AssertionError\` will be thrown if `value` is falsy.
