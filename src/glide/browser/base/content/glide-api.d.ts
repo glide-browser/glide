@@ -57,8 +57,6 @@ declare global {
        *              will result in the pref being properly applied everywhere.
        *
        * **warning**: there is also no guarantee that these settings will be applied when first loaded, sometimes a restart is required.
-       *
-       * Note: these settings are intended for experienced users, changing them can have serious effects on your browser’s stability, security and performance.
        */
       set(name: string, value: string | number | boolean): void;
 
