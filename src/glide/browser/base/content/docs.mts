@@ -196,13 +196,31 @@ export async function markdown_to_html(
   //
   // there seems to be no way to return raw HTML from a `transform()` function
   // as it gets unconditionally escaped.
-  const patches: Record<string, string> = {};
+  const patches: Record<string, { html: string; content: string }> = {};
   var patch_counter = 0;
 
   function patch_id() {
     const id = `GLIDE_HIGHLIGHT_PATCH_${patch_counter}\n`;
     patch_counter++;
     return id;
+  }
+
+  /**
+   * Return the joined raw string conents of each child, if the children
+   * correspond to a HTML patch, then use the actual patch contents instead
+   * of our magic string
+   */
+  function get_node_content(children: RenderableTreeNode[]): string {
+    const content = children
+      .filter(child => typeof child === "string")
+      .join(" ");
+
+    const patch = patches[content];
+    if (patch) {
+      return patch.content;
+    }
+
+    return content;
   }
 
   const content = Markdoc.transform(ast, {
@@ -253,10 +271,15 @@ export async function markdown_to_html(
             );
           }
 
+          const children = node.transformChildren(config);
+
           const id = patch_id();
-          patches[id] = html`<a href="${href}" target="_blank" rel="noopener"
-            >${node.transformChildren(config)}</a
-          >`;
+          patches[id] = {
+            html: html`<a href="${href}" target="_blank" rel="noopener"
+              >${children}</a
+            >`,
+            content: get_node_content(children),
+          };
           return id;
         },
       },
@@ -271,9 +294,7 @@ export async function markdown_to_html(
         transform(node, config) {
           /** Key mappings -> key-mappings */
           function generate_anchor_id(children: RenderableTreeNode[]) {
-            return children
-              .filter(child => typeof child === "string")
-              .join(" ")
+            return get_node_content(children)
               .replace(/[?]/g, "")
               .replace(/\s+/g, "-")
               .toLowerCase();
@@ -318,7 +339,10 @@ export async function markdown_to_html(
               });
 
           const id = patch_id();
-          patches[id] = html`<span class="shiki-inline">${highlighted}</span>`;
+          patches[id] = {
+            html: html`<span class="shiki-inline">${highlighted}</span>`,
+            content: code ?? content,
+          };
           return id;
         },
       },
@@ -340,20 +364,23 @@ export async function markdown_to_html(
           });
 
           const id = patch_id();
-          patches[id] =
-            caption ?
-              // indenting the highlighted html results in bad whitespace
-              // prettier-ignore
-              html`
-                <figure>
-                ${highlighted.replace('</pre>', `${copy_to_clipboard_button()}</pre>`)}
-                  <figcaption>${caption}</figcaption>
-                </figure>
-              `
-            : highlighted.replace(
-                "</pre>",
-                `${copy_to_clipboard_button()}</pre>`
-              );
+          patches[id] = {
+            html:
+              caption ?
+                // indenting the highlighted html results in bad whitespace
+                // prettier-ignore
+                html`
+                  <figure>
+                  ${highlighted.replace('</pre>', `${copy_to_clipboard_button()}</pre>`)}
+                    <figcaption>${caption}</figcaption>
+                  </figure>
+                `
+              : highlighted.replace(
+                  "</pre>",
+                  `${copy_to_clipboard_button()}</pre>`
+                ),
+            content,
+          };
           return id;
         },
       },
@@ -365,7 +392,7 @@ export async function markdown_to_html(
     const regex = new RegExp(`(${Object.keys(patches).join("|")})`, "g");
     html_body = html_body.replaceAll(regex, substr =>
       assert_present(
-        patches[substr],
+        patches[substr]?.html,
         `could not resolve a highlight patch for ${substr}`
       )
     );
