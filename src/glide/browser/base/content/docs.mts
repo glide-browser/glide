@@ -326,14 +326,14 @@ export async function markdown_to_html(
               .toLowerCase();
           }
 
-          let { id, ...attributes } = node.transformAttributes(config);
+          let { id, level, ...attributes } = node.transformAttributes(config);
           const children = node.transformChildren(config);
           if (!id) {
             id = generate_anchor_id(children);
           }
 
-          const level = assert_present(
-            attributes["level"] ?? node.attributes["level"],
+          level = assert_present(
+            level ?? node.attributes["level"],
             "Expected level attribute to be set on headings"
           );
           const has_code = node.walk().some(child => child.type === "code");
