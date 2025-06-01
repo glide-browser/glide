@@ -225,6 +225,8 @@ export async function markdown_to_html(
     return content;
   }
 
+  const lines = source.split("\n");
+
   const content = Markdoc.transform(ast, {
     tags: {
       "excmd-list": {
@@ -247,6 +249,27 @@ export async function markdown_to_html(
       sup: {
         render: "sup",
         attributes: {},
+      },
+      html: {
+        description: "Renders raw HTML content",
+        transform(node) {
+          // note: this doesn't support inline usage, it must be
+          // ```md
+          // {% html %}
+          // <div>content</div>
+          // {% /html %}
+          // ```
+          const first = node.lines[0]! + 1;
+          const last = node.lines.at(-1)! - 1;
+          const content = lines.slice(first, last);
+
+          const id = patch_id();
+          patches[id] = {
+            html: content.join("\n"),
+            content: "",
+          };
+          return id;
+        },
       },
     },
     nodes: {
