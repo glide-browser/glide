@@ -310,6 +310,7 @@ export async function markdown_to_html(
       },
       heading: {
         attributes: {
+          id: { type: String, required: false },
           level: { type: Number, required: true, default: 1 },
         },
 
@@ -327,7 +328,7 @@ export async function markdown_to_html(
 
           const attributes = node.transformAttributes(config);
           const children = node.transformChildren(config);
-          const id = generate_anchor_id(children);
+          const id = attributes["id"] ?? generate_anchor_id(children);
           const level = assert_present(
             attributes["level"] ?? node.attributes["level"],
             "Expected level attribute to be set on headings"
