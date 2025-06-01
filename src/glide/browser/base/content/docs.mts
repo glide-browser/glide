@@ -30,6 +30,8 @@ interface SidebarEntry {
   target?: string;
 }
 
+const IGNORE_CODE_LANGS = new Set(["glide", "about"]);
+
 const SIDEBAR: SidebarEntry[] = [
   {
     name: "Quickstart",
@@ -321,19 +323,21 @@ export async function markdown_to_html(
           // with `$lang:$content`
           const [, language, code] = content.match(/^(\w+):(.+)$/) || [];
 
+          const default_language = "typescript";
           const highlighted =
-            !language || !code || language === "glide" ?
+            !language || !code ?
               // if the language isn't explicitly configured, then default to a slightly
               // modified version of TypeScript syntax highlighting as I've found
               // that generally to work quite well and looks much better than the default
               // <code> highlighting we have
               highlighter.codeToHtml(code ?? content, {
-                lang: language ?? "typescript",
+                lang: language ?? default_language,
                 themes: inline_themes,
                 structure: "inline",
               })
             : highlighter.codeToHtml(code, {
-                lang: language,
+                lang:
+                  IGNORE_CODE_LANGS.has(language) ? default_language : language,
                 themes: language_themes[language] ?? themes,
                 structure: "inline",
               });
