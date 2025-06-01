@@ -124,6 +124,10 @@ hr {
   border-top: var(--border-thickness) solid var(--text-color) !important;
 }
 
+.code-heading {
+  font-weight: normal !important;
+}
+
 .main-container {
   display: flex;
   min-height: 100vh;

@@ -333,9 +333,17 @@ export async function markdown_to_html(
             attributes["level"] ?? node.attributes["level"],
             "Expected level attribute to be set on headings"
           );
+          const has_code = node.walk().some(child => child.type === "code");
 
           return new Markdoc.Tag("a", { ...attributes, href: `#${id}` }, [
-            new Markdoc.Tag(`h${level}`, { id }, children),
+            new Markdoc.Tag(
+              `h${level}`,
+              {
+                id,
+                ...(has_code ? { class: "code-heading" } : undefined),
+              },
+              children
+            ),
           ]);
         },
       },
