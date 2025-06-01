@@ -119,6 +119,11 @@ ol li p {
   display: inline;
 }
 
+hr {
+  height: 0 !important;
+  border-top: var(--border-thickness) solid var(--text-color) !important;
+}
+
 .main-container {
   display: flex;
   min-height: 100vh;
