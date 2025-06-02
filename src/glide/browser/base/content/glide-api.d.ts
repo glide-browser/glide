@@ -1,6 +1,16 @@
 declare global {
+  /**
+   * *The* interface to the Glide API.
+   *
+   * All
+   */
   var glide: {
     ctx: {
+      /**
+       * The URL of the currently focused tab.
+       *
+       *
+       */
       url: string;
     };
 
@@ -36,6 +46,9 @@ declare global {
       ): void;
     };
 
+    /**
+     * API for managing user preferences, this is an alternative to `prefs.js` for easier integration with other Glide features.
+     */
     prefs: {
       /**
        * Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so
@@ -71,6 +84,8 @@ declare global {
      *     my_prop?: boolean;
      *   }
      * }
+     *
+     * glide.g.my_prop = true
      * ```
      */
     g: GlideGlobals;
@@ -111,7 +126,10 @@ declare global {
        * function set_body_border_style(css: string) {
        *  document.body.style.setProperty('border', css)
        * }
-       * await glide.content.execute(set_body_border_style, { tab_id, args: ["20px dotted pink"] })
+       * await glide.content.execute(
+       *   set_body_border_style,
+       *   { tab_id, args: ["20px dotted pink"] }
+       * )
        * ```
        *
        * Note: all `args` must be JSON serialisable.

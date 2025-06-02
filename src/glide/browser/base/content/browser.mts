@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+// TODO: add a keymapping to click the body, for dismissing modals and stuff
+
 import type { SetRequired } from "type-fest";
 import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
 import type {
@@ -131,7 +133,10 @@ class GlideBrowserClass {
         GlideBrowserDev.init();
         GlideBrowser.jumplist.init();
 
-        gBrowser.addProgressListener(GlideBrowser.progress_listener);
+        // TODO: how is this sometimes undefined?
+        if (typeof gBrowser !== "undefined") {
+          gBrowser.addProgressListener(GlideBrowser.progress_listener);
+        }
 
         GlideBrowser.#startup_listeners.clear();
         Services.obs.removeObserver(
@@ -1340,6 +1345,7 @@ function make_glide_api(): typeof glide {
     },
     content: {
       async execute(func, opts) {
+        // TODO: this needs to use our sandbox
         const results =
           await GlideBrowser.browser_proxy_api.scripting.executeScript({
             target: {

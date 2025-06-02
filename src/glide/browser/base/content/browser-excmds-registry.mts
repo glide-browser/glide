@@ -242,6 +242,7 @@ export const GLIDE_EXCOMMANDS = [
     },
   },
 
+  // TODO: repeatable
   {
     name: "r",
     description: "Replace the current character",

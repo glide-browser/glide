@@ -39,6 +39,7 @@
     "meow": "^13.2.0",
     "prettier": "^3.5.3",
     "shiki": "^3.2.1",
+    "ts-morph": "^26.0.0",
     "type-fest": "^4.39.1",
     "webextension-polyfill": "github:glide-browser/webextension-types"
   },

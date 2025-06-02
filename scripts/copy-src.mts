@@ -13,8 +13,10 @@ import fs from "fs/promises";
 import chokidar from "chokidar";
 import Path from "path";
 import { SRC_DIR, ENGINE_DIR } from "./canonical-paths.mts";
+import { Stats } from "fs";
 
 const dir_cache = new Set<string>();
+const stat_cache = new Map<string, Stats>();
 
 async function copy(abs_path: string) {
   const rel_path = Path.relative(SRC_DIR, abs_path);
@@ -32,6 +34,19 @@ async function copy(abs_path: string) {
 
   await fs.mkdir(engine_dir, { recursive: true });
   await fs.rm(engine_path, { force: true });
+
+  const stat =
+    stat_cache.get(abs_path) ??
+    (await (async () => {
+      const s = await fs.stat(abs_path);
+      stat_cache.set(abs_path, s);
+      return s;
+    })());
+
+  if (stat.isSymbolicLink()) {
+    console.log(abs_path);
+    throw new Error("ruh roh");
+  }
   await fs.copyFile(abs_path, engine_path);
 }
 

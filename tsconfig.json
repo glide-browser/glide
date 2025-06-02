@@ -34,7 +34,6 @@
     "engine",
     "node_modules",
     "src/glide/bundled",
-    "src/glide.ts",
     // bundled types, tested separately and excluded here so that type changes don't
     // require running bundle all the time
     "src/glide/browser/base/content/bundled.d.ts",

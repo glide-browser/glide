@@ -30,9 +30,44 @@ body {
   position: relative;
 }
 
+/* @layer reset { */
+/*   a, */
+/*   a:link, */
+/*   a:visited, */
+/*   a:active, */
+/*   a:focus { */
+/*     /* color: unset; */
+/*     text-decoration-line: unset !important; */
+/*     text-decoration-style: unset !important; */
+/*     text-decoration-color: unset !important; */
+/*     cursor: unset !important; */
+/*     outline: unset !important; */
+/*     background-color: unset !important; */
+/*     /* display: unset;   <-- only if you’re about to set your own */
+/*   } */
+/* } */
+
+.shiki-no-code {
+  padding: 0 !important;
+  border: none !important;
+}
+
+.shiki a {
+  all: unset !important;
+  /* color: var(--shiki-dark) !important; */
+  text-decoration: underline dotted !important;
+  /* text-underline-position: below; */
+  text-underline-offset: 0.3em !important;
+  /* text-decoration: none !important; */
+}
+
 .excmd-heading {
   text-transform: none !important;
 }
+
+/* article { */
+/*   padding-bottom: 200px !important; */
+/* } */
 
 article h1 {
   padding-top: unset !important;
@@ -76,6 +111,13 @@ a:has(> :where(h1, h2, h3, h4, h5, h6)) {
 
 :where(h1, h2, h3, h4, h5, h6):hover::after {
   opacity: 1;
+}
+
+.invisible-header {
+  margin: 0 !important;
+}
+.invisible-header::after {
+  display: none !important;
 }
 
 figure {
@@ -126,6 +168,15 @@ hr {
 
 .code-heading {
   font-weight: normal !important;
+  /* margin-top: 3em !important; */
+}
+
+h2.code-heading {
+  margin-top: 3em !important;
+}
+
+h3.code-heading {
+  margin-top: 2em !important;
 }
 
 .main-container {

@@ -1,4 +1,4 @@
-import type { RenderableTreeNode } from "@markdoc/markdoc";
+import type { RenderableTreeNode, Node } from "@markdoc/markdoc";
 import type { Highlighter, ThemeRegistrationResolved } from "shiki";
 
 const Html = ChromeUtils.importESModule(
@@ -23,6 +23,10 @@ const { GLIDE_EXCOMMANDS } = ChromeUtils.importESModule(
   "chrome://glide/content/browser-excmds-registry.mjs"
 );
 
+// TODO: for api ref
+//   - decrease <hr> padding / size depending on depth
+//   - or maybe don't need hr at all?
+
 interface SidebarEntry {
   name: string;
   href: string;
@@ -38,6 +42,19 @@ const SIDEBAR: SidebarEntry[] = [
     href: "quickstart.html",
   },
   {
+    name: "API",
+    href: "api.html",
+  },
+  // TODO
+  {
+    name: "API Generated",
+    href: "api-generated.html",
+  },
+  {
+    name: "Cofig",
+    href: "config.html",
+  },
+  {
     name: "Modes",
     href: "modes.html",
   },
@@ -46,9 +63,13 @@ const SIDEBAR: SidebarEntry[] = [
     href: "ex-commands.html",
   },
   {
-    name: "Key Mappings",
-    href: "key-mappings.html",
+    name: "Keys",
+    href: "keys.html",
   },
+  // {
+  //   name: "Key Mappings",
+  //   href: "key-mappings.html",
+  // },
   {
     name: "Hints",
     href: "hints.html",
@@ -226,6 +247,7 @@ export async function markdown_to_html(
   }
 
   const lines = source.split("\n");
+  const styles: string[] = [];
 
   const content = Markdoc.transform(ast, {
     tags: {
@@ -244,6 +266,88 @@ export async function markdown_to_html(
               config
             )
           );
+        },
+      },
+      "api-heading": {
+        attributes: {
+          id: { type: String, required: true },
+        },
+        transform(node) {
+          console.log(node);
+          console.log(node.attributes);
+
+          // note: this doesn't support inline usage, it must be
+          // ```md
+          // {% html %}
+          // <div>content</div>
+          // {% /html %}
+          // ```
+          const first = node.lines[0]! + 1;
+          const last = node.lines.at(-1)! - 1;
+          const content = lines.slice(first, last).join("\n");
+          console.log({ content });
+
+          // const code: Partial<Node> = { attributes: { content, }, };
+
+          const html_id = node.attributes["id"];
+          const id = patch_id();
+
+          const highlighted = highlighter.codeToHtml(content, {
+            lang: "typescript",
+            themes,
+            transformers: [
+              {
+                pre(node) {
+                  this.addClassToHast(node, "shiki-no-code");
+                },
+              },
+            ],
+            // decorations: [
+            //   // glide
+            //   {
+            //     start: { line: 0, character: 0 },
+            //     end: { line: 0, character: 5 },
+            //     tagName: "a",
+            //     properties: { href: "#glide" },
+            //   },
+            //   // prefs
+            //   {
+            //     // line and character are 0-indexed
+            //     start: { line: 0, character: 6 },
+            //     end: { line: 0, character: 11 },
+            //     tagName: "a",
+            //     properties: {
+            //       href: "#glide.prefs",
+            //     },
+            //   },
+            // ],
+          });
+
+          patches[id] = {
+            html: `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
+            content: "",
+          };
+
+          return id;
+
+          // const html_id = config.nodes?.code?.transform?.(
+          //   code as Node,
+          //   config
+          // ) as any as string;
+          // const patch = patches[html_id]!;
+          // // console.log({ html: patch.html });
+          //
+          // patch.html = patch.html.replaceAll("<br>", "<br>&nbsp;");
+          //
+          // // console.log({ foo });
+          //
+          // return html_id;
+
+          // new Markdoc.Tag("a", { ...attributes, href: `#${id}` }, [
+          //   new Markdoc.Tag(`h${level}`, { id }, children),
+          // ]);
+
+          // throw new Error("foo");
         },
       },
       sup: {
@@ -269,6 +373,24 @@ export async function markdown_to_html(
             content: "",
           };
           return id;
+        },
+      },
+      styles: {
+        description: "Inject custom CSS",
+        transform(node) {
+          // note: this doesn't support inline usage, it must be
+          // ```md
+          // {% styles %}
+          // .foo {
+          //   /* ... */
+          // }
+          // {% /styles %}
+          // ```
+          const first = node.lines[0]! + 1;
+          const last = node.lines.at(-1)! - 1;
+          const content = lines.slice(first, last);
+          styles.push(content.join("\n"));
+          return "";
         },
       },
     },
@@ -353,6 +475,9 @@ export async function markdown_to_html(
       code: {
         transform(node) {
           const content = node.attributes["content"] as string;
+          // if (content.includes("glide.prefs.set")) {
+          //   content = `glide.prefs.set(\n  name: string,\n  value: string | number | boolean\n): void`;
+          // }
 
           // support specifying the language of the inline code block
           // with `$lang:$content`
@@ -463,6 +588,15 @@ export async function markdown_to_html(
             rel="stylesheet"
             href="${rel_to_dist}/monospace-web/index.css"
           />
+          ${styles
+            .map(
+              css => html`
+                <style>
+                  ${css}
+                </style>
+              `
+            )
+            .join("\n")}
 
           <script src="${rel_to_dist}/pagefind/pagefind-ui.js"></script>
           <script src="${rel_to_dist}/docs.js"></script>
