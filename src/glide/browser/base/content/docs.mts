@@ -38,6 +38,10 @@ const SIDEBAR: SidebarEntry[] = [
     href: "quickstart.html",
   },
   {
+    name: "API",
+    href: "api.html",
+  },
+  {
     name: "Modes",
     href: "modes.html",
   },
@@ -245,6 +249,42 @@ export async function markdown_to_html(
               config
             )
           );
+        },
+      },
+      "api-heading": {
+        attributes: {
+          id: { type: String, required: true },
+        },
+        transform(node) {
+          // note: this doesn't support inline usage, it must be
+          // ```md
+          // {% api-heading %}
+          // glide.prefs.set(name, value): void
+          // {% /api-heading %}
+          // ```
+          const first = node.lines[0]! + 1;
+          const last = node.lines.at(-1)! - 1;
+          const content = lines.slice(first, last).join("\n");
+
+          const html_id = node.attributes["id"];
+          const id = patch_id();
+
+          const highlighted = highlighter.codeToHtml(content, {
+            lang: "typescript",
+            themes,
+            transformers: [
+              {
+                pre(node) {
+                  this.addClassToHast(node, "shiki-no-box");
+                },
+              },
+            ],
+          });
+          patches[id] = {
+            html: `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
+            content: "",
+          };
+          return id;
         },
       },
       sup: {
