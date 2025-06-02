@@ -226,6 +226,7 @@ export async function markdown_to_html(
   }
 
   const lines = source.split("\n");
+  const styles: string[] = [];
 
   const content = Markdoc.transform(ast, {
     tags: {
@@ -269,6 +270,24 @@ export async function markdown_to_html(
             content: "",
           };
           return id;
+        },
+      },
+      styles: {
+        description: "Inject custom CSS",
+        transform(node) {
+          // note: this doesn't support inline usage, it must be
+          // ```md
+          // {% styles %}
+          // .foo {
+          //   /* ... */
+          // }
+          // {% /styles %}
+          // ```
+          const first = node.lines[0]! + 1;
+          const last = node.lines.at(-1)! - 1;
+          const content = lines.slice(first, last);
+          styles.push(content.join("\n"));
+          return "";
         },
       },
     },
@@ -463,6 +482,15 @@ export async function markdown_to_html(
             rel="stylesheet"
             href="${rel_to_dist}/monospace-web/index.css"
           />
+          ${styles
+            .map(
+              css => html`
+                <style>
+                  ${css}
+                </style>
+              `
+            )
+            .join("\n")}
 
           <script src="${rel_to_dist}/pagefind/pagefind-ui.js"></script>
           <script src="${rel_to_dist}/docs.js"></script>
