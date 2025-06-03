@@ -99,7 +99,7 @@ class GlideBrowserClass {
 
   autocmds: {
     [K in glide.AutocmdEvent]?: {
-      pattern: glide.AutocmdPattern;
+      pattern: glide.AutocmdPatterns[K];
       callback: (
         args: glide.AutocmdArgs[K]
       ) => (() => void | Promise<void>) | void | Promise<void>;
@@ -441,7 +441,9 @@ class GlideBrowserClass {
         const results = await Promise.allSettled(
           cmds.map(cmd =>
             (async () => {
-              if (!GlideBrowser.#test_autocmd_pattern(cmd.pattern, location)) {
+              if (
+                !GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)
+              ) {
                 return;
               }
 
@@ -480,8 +482,8 @@ class GlideBrowserClass {
     });
   }
 
-  #test_autocmd_pattern(
-    pattern: glide.AutocmdPattern,
+  #test_url_autocmd_pattern(
+    pattern: glide.AutocmdPatterns["UrlEnter"],
     location: nsIURI
   ): boolean {
     if ("test" in pattern) {
@@ -1276,14 +1278,16 @@ function make_glide_api(): typeof glide {
     autocmd: {
       create<Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: glide.AutocmdPattern,
+        pattern: glide.AutocmdPatterns[Event],
         callback: (args: glide.AutocmdArgs[Event]) => void
       ) {
         const existing = GlideBrowser.autocmds[event];
         if (existing) {
           existing.push({ pattern, callback });
         } else {
-          GlideBrowser.autocmds[event] = [{ pattern, callback }];
+          GlideBrowser.autocmds[event] = [
+            { pattern, callback },
+          ] as (typeof GlideBrowser.autocmds)[Event];
         }
       },
     },

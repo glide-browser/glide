@@ -25,13 +25,13 @@ declare global {
        */
       create<const Event extends "UrlEnter">(
         event: Event,
-        pattern: glide.AutocmdPattern,
+        pattern: glide.AutocmdPatterns[Event],
         callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
 
       create<const Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: glide.AutocmdPattern,
+        pattern: glide.AutocmdPatterns[Event],
         callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
     };
@@ -324,7 +324,9 @@ declare global {
     type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
     type AutocmdEvent = "UrlEnter";
-    type AutocmdPattern = RegExp | { hostname?: string };
+    type AutocmdPatterns = {
+      UrlEnter: RegExp | { hostname?: string };
+    };
     type AutocmdArgs = {
       UrlEnter: { readonly url: string };
     };
