@@ -66,6 +66,7 @@ const _defaultState: State = {
 
 export type StateChangeListener = (
   new_state: State,
+  old_state: State,
   meta: StateChangeMeta | undefined
 ) => void;
 
@@ -852,18 +853,18 @@ class GlideBrowserClass {
     new_mode: GlideMode,
     props?: { operator?: GlideOperator | null; meta?: StateChangeMeta }
   ) {
-    const previous_mode = this.state.mode;
+    const old_state = { ...this.state };
     this.state.mode = new_mode;
     this.state.operator = props?.operator ?? null;
 
     Services.prefs.setIntPref("glide.mode", this.#mode_to_int_enum(new_mode));
 
     for (const listener of this.state_listeners) {
-      listener(this.state, props?.meta);
+      listener(this.state, old_state, props?.meta);
     }
 
     if (
-      previous_mode === "hint" &&
+      old_state.mode === "hint" &&
       // browser dev toolbox pref to inspect hint styling
       // `...` at the top-right then `Disable Popup Auto-Hide`
       !Services.prefs.getBoolPref("ui.popup.disable_autohide")

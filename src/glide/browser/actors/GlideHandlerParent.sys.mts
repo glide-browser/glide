@@ -124,7 +124,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
     return this.browsingContext?.topChromeWindow?.GlideExcmds;
   }
 
-  on_state_change(state: State, meta?: StateChangeMeta) {
+  on_state_change(state: State, _old_state: State, meta?: StateChangeMeta) {
     // sanity check in case this callback is invoked
     // when we no longer have a browser context as attempting
     // to send a message will result in an error.
