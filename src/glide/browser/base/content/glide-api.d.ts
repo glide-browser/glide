@@ -29,6 +29,34 @@ declare global {
         callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
 
+      /**
+       * Create an autocmd that will be invoked whenever the mode changes.
+       *
+       * The pattern is matched against `old_mode:new_mode`. You can also use `*` as a placeholder
+       * to match *any* mode.
+       *
+       * for example, to define an autocmd that will be fired every time visual mode is entered:
+       *
+       * `*:visual`
+       *
+       * or when visual mode is left:
+       *
+       * `visual:*`
+       *
+       * or transitioning from visual to insert:
+       *
+       * `visual:insert`
+       *
+       * or for just any mode:
+       *
+       * `*`
+       */
+      create<const Event extends "ModeChanged">(
+        event: Event,
+        pattern: glide.AutocmdPatterns[Event],
+        callback: (args: glide.AutocmdArgs[Event]) => void
+      ): void;
+
       create<const Event extends glide.AutocmdEvent>(
         event: Event,
         pattern: glide.AutocmdPatterns[Event],
@@ -323,12 +351,17 @@ declare global {
 
     type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
-    type AutocmdEvent = "UrlEnter";
+    type AutocmdEvent = "UrlEnter" | "ModeChanged";
     type AutocmdPatterns = {
       UrlEnter: RegExp | { hostname?: string };
+      ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
     };
     type AutocmdArgs = {
       UrlEnter: { readonly url: string };
+      ModeChanged: {
+        readonly old_mode: GlideMode;
+        readonly new_mode: GlideMode;
+      };
     };
   }
 

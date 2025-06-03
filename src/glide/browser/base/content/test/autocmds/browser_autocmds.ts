@@ -263,6 +263,157 @@ add_task(async function test_about_blank_with_hostname_filter() {
   });
 });
 
+add_task(async function test_mode_changed_autocmd() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmd.create("ModeChanged", "*", args => {
+      glide.g.calls!.push(`${args.old_mode}->${args.new_mode}`);
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await sleep_frames(5);
+
+    // insert
+    await SpecialPowers.spawn(browser, [], async () => {
+      content.document.getElementById("input-1").focus();
+    });
+    await sleep_frames(5);
+
+    // normal
+    EventUtils.synthesizeKey("KEY_Escape");
+    await sleep_frames(5);
+
+    // visual
+    EventUtils.synthesizeKey("v");
+    await sleep_frames(5);
+
+    // normal
+    EventUtils.synthesizeKey("KEY_Escape");
+    await sleep_frames(5);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      ["normal->insert", "insert->normal", "normal->visual", "visual->normal"],
+      "ModeChanged autocmd should track all mode transitions"
+    );
+  });
+});
+
+add_task(async function test_mode_changed_specific_pattern() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmd.create("ModeChanged", "normal:insert", () => {
+      glide.g.calls!.push("normal-to-insert");
+    });
+
+    glide.autocmd.create("ModeChanged", "insert:*", args => {
+      glide.g.calls!.push(`leaving-insert-to-${args.new_mode}`);
+    });
+
+    glide.autocmd.create("ModeChanged", "*:visual", args => {
+      glide.g.calls!.push(`${args.old_mode}-entering-visual`);
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await sleep_frames(5);
+
+    // insert
+    await SpecialPowers.spawn(browser, [], async () => {
+      content.document.getElementById("input-1").focus();
+    });
+    await sleep_frames(5);
+
+    // normal
+    EventUtils.synthesizeKey("KEY_Escape");
+    await sleep_frames(5);
+
+    // visual
+    EventUtils.synthesizeKey("v");
+    await sleep_frames(5);
+
+    // normal
+    EventUtils.synthesizeKey("KEY_Escape");
+    await sleep_frames(5);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      [
+        "normal-to-insert",
+        "leaving-insert-to-normal",
+        "normal-entering-visual",
+      ],
+      "ModeChanged autocmd patterns should match correctly"
+    );
+  });
+});
+
+add_task(async function test_mode_changed_multiple_callbacks() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmd.create("ModeChanged", "*", () => {
+      glide.g.calls!.push("first");
+    });
+
+    glide.autocmd.create("ModeChanged", "*", () => {
+      glide.g.calls!.push("second");
+    });
+
+    glide.autocmd.create("ModeChanged", "normal:insert", () => {
+      glide.g.calls!.push("specific");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await sleep_frames(5);
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      content.document.getElementById("input-1").focus();
+    });
+    await sleep_frames(5);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      ["first", "second", "specific"],
+      "Multiple ModeChanged autocmds should fire in registration order"
+    );
+  });
+});
+
+add_task(async function test_mode_changed_error_handling() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmd.create("ModeChanged", "*", () => {
+      throw new Error("mode change failed");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await sleep_frames(5);
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      content.document.getElementById("input-1").focus();
+    });
+    await sleep_frames(5);
+
+    let notification = gNotificationBox.getNotificationWithValue(
+      "glide-autocmd-error"
+    );
+
+    ok(notification, "Error notification should be shown");
+    ok(
+      notification.shadowRoot
+        .querySelector(".message")
+        ?.textContent?.includes("Error occurred in ModeChanged autocmd"),
+      "Notification should indicate ModeChanged autocmd error"
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
 function num_calls() {
   return (GlideBrowser.api.g.calls ?? []).length;
 }

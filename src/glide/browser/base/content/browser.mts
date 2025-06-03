@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import type { SetRequired } from "type-fest";
+import type { SetRequired, Split } from "type-fest";
 import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
 import type {
   GlideOperator,
@@ -128,6 +128,10 @@ class GlideBrowserClass {
         for (const listener of GlideBrowser.#startup_listeners) {
           listener();
         }
+
+        GlideBrowser.add_state_change_listener(
+          GlideBrowser.#state_change_autocmd
+        );
 
         GlideBrowserDev.init();
         GlideBrowser.jumplist.init();
@@ -309,6 +313,69 @@ class GlideBrowserClass {
             },
           },
         ],
+      });
+    }
+  }
+
+  async #state_change_autocmd(new_state: State, old_state: State) {
+    const cmds = GlideBrowser.autocmds.ModeChanged ?? [];
+    if (!cmds.length) {
+      return;
+    }
+
+    const args: glide.AutocmdArgs["ModeChanged"] = {
+      new_mode: new_state.mode,
+      old_mode: old_state.mode,
+    };
+
+    // TODO: display errors as they come in
+    const results = await Promise.allSettled(
+      cmds.map(cmd =>
+        (async () => {
+          if (cmd.pattern !== "*") {
+            const [left, right] = cmd.pattern.split(":") as Split<
+              typeof cmd.pattern,
+              ":"
+            >;
+
+            if (left !== "*" && left !== old_state.mode) {
+              // no match
+              return;
+            }
+
+            if (right !== "*" && right !== new_state.mode) {
+              // no match
+              return;
+            }
+          }
+
+          const cleanup = await cmd.callback(args);
+          if (typeof cleanup === "function") {
+            throw new Error(
+              "ModeChanged autocmds cannot define cleanup functions"
+            );
+          }
+        })()
+      )
+    );
+
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      GlideBrowser._log.error(result.reason);
+
+      // TODO: if there are many errors this would be overwhelming...
+      //       maybe limit the number of errors we display at once?
+
+      const loc =
+        GlideBrowser.#clean_stack(result.reason, "#state_change_autocmd") ??
+        "<unknown>";
+      GlideBrowser.add_notification("glide-autocmd-error", {
+        label: `Error occurred in ModeChanged autocmd \`${loc}\` - ${result.reason}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
       });
     }
   }
