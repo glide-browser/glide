@@ -256,6 +256,10 @@ class GlideCommandsClass {
     return null;
   }
 
+  get_commandline(): GlideCommandLine | null {
+    return this.#get_cached_commandline(gBrowser.selectedTab);
+  }
+
   #get_cached_commandline(tab: BrowserTab): GlideCommandLine | null {
     return tab._glide_commandline;
   }

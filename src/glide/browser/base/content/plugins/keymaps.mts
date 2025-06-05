@@ -38,6 +38,8 @@ export function init(glide: Glide) {
 
   // command mode
   glide.keymaps.set("command", "<Esc>", "mode_change normal");
+  glide.keymaps.set("command", "<Tab>", "commandline_focus_next");
+  glide.keymaps.set("command", "<S-Tab>", "commandline_focus_back");
   glide.keymaps.set("command", "<C-d>", () => {
     GlideCommands.remove_active_commandline_browser_tab();
   });

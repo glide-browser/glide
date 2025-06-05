@@ -199,6 +199,20 @@ export const GLIDE_EXCOMMANDS = [
     args_schema: {},
     repeatable: false,
   },
+  {
+    name: "commandline_focus_next",
+    description: "Focus the next completion in the commandline",
+    content: false,
+    args_schema: {},
+    repeatable: false,
+  },
+  {
+    name: "commandline_focus_back",
+    description: "Focus the previous completion in the commandline",
+    content: false,
+    args_schema: {},
+    repeatable: false,
+  },
 
   {
     name: "url_yank",

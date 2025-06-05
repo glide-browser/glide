@@ -24,6 +24,9 @@ declare interface GlideCommandLineInterface {
   toggle(): void;
   refresh_data(): void;
 
+  focus_next(): void;
+  focus_back(): void;
+
   get_active_group(): GlideCommandlineGroup;
 
   remove_focused_browser_tab(): void;

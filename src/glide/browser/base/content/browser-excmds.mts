@@ -254,6 +254,26 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "commandline_focus_next": {
+        const commandline = GlideCommands.get_commandline();
+        if (!commandline) {
+          throw new Error("No commandline present");
+        }
+
+        commandline.focus_next();
+        break;
+      }
+
+      case "commandline_focus_back": {
+        const commandline = GlideCommands.get_commandline();
+        if (!commandline) {
+          throw new Error("No commandline present");
+        }
+
+        commandline.focus_back();
+        break;
+      }
+
       case "mode_change": {
         const { args } = this.#parse_command_args(command_meta, command);
         const { mode, "--automove": automove, "--operator": operator } = args;

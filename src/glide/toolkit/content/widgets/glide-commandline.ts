@@ -101,11 +101,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       this.addEventListener(
         "keypress",
         event => {
-          if (event.keyCode == event.DOM_VK_TAB) {
-            event.preventDefault();
-            this.#handle_tab(event);
-            this.#last_action = "switch-focus";
-          } else if (event.keyCode == event.DOM_VK_RETURN) {
+          if (event.keyCode == event.DOM_VK_RETURN) {
             event.preventDefault();
             this.#handle_return();
           } else if (event.keyCode == event.DOM_VK_ESCAPE) {
@@ -220,13 +216,22 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       }
     }
 
-    #handle_tab(event: KeyboardEvent) {
+    focus_next() {
+      this.#handle_tab(false);
+    }
+
+    focus_back() {
+      this.#handle_tab(true);
+    }
+
+    #handle_tab(reverse: boolean) {
+      this.#last_action = "switch-focus";
+
       const rows = this.query_selector_all<HTMLElement>(".gcl-option");
       if (!rows.length) {
         return;
       }
 
-      const reverse = event.shiftKey;
       const focused_index =
         this.#focused_index === -1 ?
           reverse ? rows.length
