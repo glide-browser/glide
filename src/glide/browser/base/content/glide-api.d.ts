@@ -271,6 +271,7 @@ declare global {
     | "visual"
     | "op-pending"
     | "ignore"
+    | "command"
     | "hint";
 
   interface GlideGlobals {

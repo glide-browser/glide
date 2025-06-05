@@ -14,6 +14,7 @@ enum class GlideMode : uint32_t {
   OpPending = 3,
   Ignore = 4,
   Hint = 5,
+  Command = 6,
 };
 
 /**
@@ -29,6 +30,7 @@ __attribute__((used)) static bool shouldRenderBlockCaret(
     StripAtomic<RelaxedAtomicInt32> mode) {
   switch (mode) {
     case UnderlyingValue(GlideMode::Ignore):
+    case UnderlyingValue(GlideMode::Command):
     case UnderlyingValue(GlideMode::Insert): {
       return false;
     }
@@ -75,6 +77,7 @@ __attribute__((used)) static bool shouldRenderUnderlineCaret(
     case UnderlyingValue(GlideMode::Visual):
     case UnderlyingValue(GlideMode::Ignore):
     case UnderlyingValue(GlideMode::Normal):
+    case UnderlyingValue(GlideMode::Command):
     case UnderlyingValue(GlideMode::Insert): {
       return false;
     }

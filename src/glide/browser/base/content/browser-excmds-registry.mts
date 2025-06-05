@@ -44,7 +44,15 @@ export interface GlideExcmdInfo<Args extends ArgumentsSchema = {}> {
 }
 
 export const MODE_SCHEMA_TYPE = {
-  enum: ["normal", "insert", "visual", "op-pending", "ignore", "hint"],
+  enum: [
+    "normal",
+    "insert",
+    "visual",
+    "op-pending",
+    "ignore",
+    "command",
+    "hint",
+  ],
 } as const satisfies ArgumentSchema["type"];
 
 export const OPERATOR_SCHEMA_TYPE = {

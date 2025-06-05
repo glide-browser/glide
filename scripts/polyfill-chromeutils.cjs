@@ -96,6 +96,10 @@ globalThis.ChromeUtils = {
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/text-objects.mts`
         );
+      case "chrome://glide/content/browser-constants.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/browser-constants.mts`
+        );
       case "chrome://glide/content/browser-excmds.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/browser-excmds.mts`

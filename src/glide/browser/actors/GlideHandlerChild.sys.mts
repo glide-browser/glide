@@ -26,6 +26,9 @@ const motions = ChromeUtils.importESModule(
 const MozUtils = ChromeUtils.importESModule(
   "chrome://glide/content/utils/moz.mjs"
 );
+const { GLIDE_COMMANDLINE_INPUT_ANONID } = ChromeUtils.importESModule(
+  "chrome://glide/content/browser-constants.mjs"
+);
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule(
@@ -828,6 +831,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
         this._log.debug("current mode", current_mode ?? "unset");
 
         function get_new_mode(): GlideMode {
+          if (
+            target.getAttribute("anonid") === GLIDE_COMMANDLINE_INPUT_ANONID
+          ) {
+            return "command";
+          }
+
           if (DOM.is_text_editable(target)) {
             return "insert";
           }

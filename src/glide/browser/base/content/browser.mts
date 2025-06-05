@@ -913,6 +913,8 @@ class GlideBrowserClass {
         return 4;
       case "hint":
         return 5;
+      case "command":
+        return 6;
       default:
         throw assert_never(mode);
     }

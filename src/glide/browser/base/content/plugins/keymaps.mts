@@ -15,13 +15,7 @@ export function init(glide: Glide) {
   glide.keymaps.set("normal", "G", "scroll_bottom");
   glide.keymaps.set("normal", "gg", "scroll_top");
   glide.keymaps.set("normal", "G", "scroll_bottom");
-  glide.keymaps.set(["insert", "normal"], "<C-d>", async () => {
-    if (GlideCommands.get_active_commandline_group() === "tab") {
-      GlideCommands.remove_active_commandline_browser_tab();
-    } else {
-      await GlideExcmds.execute("scroll_page_down");
-    }
-  });
+  glide.keymaps.set(["insert", "normal"], "<C-d>", "scroll_page_down");
   glide.keymaps.set(["normal", "insert"], "<C-u>", "scroll_page_up");
 
   // ignore mode
@@ -41,6 +35,12 @@ export function init(glide: Glide) {
   glide.keymaps.set("normal", "F", "hint --action=newtab-click");
   glide.keymaps.set("normal", "<leader>f", "hint --location=browser-ui");
   glide.keymaps.set("hint", "<Esc>", "hints_remove");
+
+  // command mode
+  glide.keymaps.set("command", "<Esc>", "mode_change normal");
+  glide.keymaps.set("command", "<C-d>", () => {
+    GlideCommands.remove_active_commandline_browser_tab();
+  });
 
   // tabs
   glide.keymaps.set("normal", "<leader>d", "tab_close");

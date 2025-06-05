@@ -307,8 +307,8 @@ class GlideCommandLineTestUtils {
     await g.TestUtils.waitForCondition(
       () =>
         document!.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
+        "command",
+      "Waiting for mode button to show `command` mode"
     );
   }
 

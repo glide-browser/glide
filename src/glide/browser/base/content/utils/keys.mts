@@ -177,6 +177,7 @@ export class KeyManager {
     visual: new KeyMappingTrie(),
     ignore: new KeyMappingTrie(),
     hint: new KeyMappingTrie(),
+    command: new KeyMappingTrie(),
     "op-pending": new KeyMappingTrie(),
   };
   #buf_mappings: Record<GlideMode, KeyMappingTrie> | null = null;
@@ -240,6 +241,7 @@ export class KeyManager {
           visual: new KeyMappingTrie(),
           ignore: new KeyMappingTrie(),
           hint: new KeyMappingTrie(),
+          command: new KeyMappingTrie(),
           "op-pending": new KeyMappingTrie(),
         };
       }
