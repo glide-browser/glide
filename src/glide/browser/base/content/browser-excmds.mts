@@ -274,6 +274,16 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "commandline_accept": {
+        const commandline = GlideCommands.get_commandline();
+        if (!commandline) {
+          throw new Error("No commandline present");
+        }
+
+        await commandline.accept_focused();
+        break;
+      }
+
       case "mode_change": {
         const { args } = this.#parse_command_args(command_meta, command);
         const { mode, "--automove": automove, "--operator": operator } = args;

@@ -101,10 +101,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       this.addEventListener(
         "keypress",
         event => {
-          if (event.keyCode == event.DOM_VK_RETURN) {
-            event.preventDefault();
-            this.#handle_return();
-          } else if (event.keyCode == event.DOM_VK_ESCAPE) {
+          if (event.keyCode == event.DOM_VK_ESCAPE) {
             event.preventDefault();
             this.close();
           } else {
@@ -331,7 +328,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       this._filter_table();
     }
 
-    async #handle_return() {
+    async accept_focused(): Promise<void> {
       const row = this.#get_active_row();
       if (!row) {
         return;

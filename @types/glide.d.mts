@@ -24,6 +24,8 @@ declare interface GlideCommandLineInterface {
   toggle(): void;
   refresh_data(): void;
 
+  accept_focused(): Promise<void>;
+
   focus_next(): void;
   focus_back(): void;
 
