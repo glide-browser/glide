@@ -1,5 +1,5 @@
 diff --git a/toolkit/components/extensions/ExtensionCommon.sys.mjs b/toolkit/components/extensions/ExtensionCommon.sys.mjs
-index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..1101d7da2907d713f4f206e02d5d3231eef47da5 100644
+index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..8657542c78a7f86a367dcee9192c59e82d0991b1 100644
 --- a/toolkit/components/extensions/ExtensionCommon.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionCommon.sys.mjs
 @@ -697,6 +697,14 @@ export class BaseContext {
@@ -17,7 +17,7 @@ index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..1101d7da2907d713f4f206e02d5d3231
          if (this.isProxyContextParent) {
            Cu.reportError(e);
          }
-@@ -2760,6 +2768,22 @@ class EventManager {
+@@ -2760,6 +2768,25 @@ class EventManager {
      EventManager._writePersistentListeners(extension);
    }
  
@@ -30,7 +30,10 @@ index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..1101d7da2907d713f4f206e02d5d3231
 +        // registered in the config so that the browser code can pick it up
 +        // and report the error
 +        this.context.$glide_errors ??= new Set();
-+        this.context.$glide_errors.add({ error, source: "raw" });
++        this.context.$glide_errors.add({
++          error,
++          source: "_callAndRecordGlideError",
++        });
 +      }
 +
 +      throw error;
@@ -40,7 +43,7 @@ index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..1101d7da2907d713f4f206e02d5d3231
    addListener(callback, ...args) {
      if (this.unregister.has(callback)) {
        return;
-@@ -2819,12 +2843,12 @@ class EventManager {
+@@ -2819,12 +2846,12 @@ class EventManager {
            this.context.isProxyContextParent ||
            lazy.callFunctionAndLogExceptionDisabled
          ) {
