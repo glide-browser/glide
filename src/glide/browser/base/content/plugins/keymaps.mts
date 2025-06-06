@@ -37,7 +37,7 @@ export function init(glide: Glide) {
   glide.keymaps.set("hint", "<Esc>", "hints_remove");
 
   // command mode
-  glide.keymaps.set("command", "<Esc>", "mode_change normal");
+  glide.keymaps.set("command", "<Esc>", "commandline_toggle");
   glide.keymaps.set("command", "<Tab>", "commandline_focus_next");
   glide.keymaps.set("command", "<S-Tab>", "commandline_focus_back");
   glide.keymaps.set("command", "<Enter>", "commandline_accept");

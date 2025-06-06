@@ -28,15 +28,11 @@ add_task(async function test_basic_commandline() {
         "normal",
       "Waiting for mode button to show `normal` mode"
     );
-    notok(
-      document!.querySelector<HTMLElement>("glide-commandline")!.hidden,
-      "Commandline should not be hidden after pressing escape once"
-    );
 
     EventUtils.synthesizeKey("KEY_Escape");
     ok(
       document!.querySelector<HTMLElement>("glide-commandline")!.hidden,
-      "Commandline should be hidden after pressing escape in normal mode"
+      "Commandline should be hidden after pressing escape"
     );
   });
 });
