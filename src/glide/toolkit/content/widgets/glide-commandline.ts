@@ -105,7 +105,13 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       this.addEventListener(
         "keypress",
         event => {
-          if (event.keyCode == event.DOM_VK_ESCAPE) {
+          if (event.keyCode == event.DOM_VK_TAB) {
+            event.preventDefault();
+            this.#handle_tab(event.shiftKey);
+          } else if (event.keyCode == event.DOM_VK_RETURN) {
+            event.preventDefault();
+            this.accept_focused();
+          } else if (event.keyCode == event.DOM_VK_ESCAPE) {
             event.preventDefault();
             this.close();
           } else {
