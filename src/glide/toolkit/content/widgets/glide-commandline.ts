@@ -98,6 +98,10 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         this.#options.push(command);
       }
 
+      this.addEventListener("focusout", () => {
+        this.close();
+      });
+
       this.addEventListener(
         "keypress",
         event => {

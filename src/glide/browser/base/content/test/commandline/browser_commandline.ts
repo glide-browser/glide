@@ -115,41 +115,6 @@ add_task(async function test_basic_tabbing() {
   });
 });
 
-add_task(async function test_focus_restore() {
-  await BrowserTestUtils.withNewTab(FILE, async () => {
-    await GlideTestUtils.commandline.open();
-
-    EventUtils.synthesizeKey("f");
-    EventUtils.synthesizeKey("o");
-    EventUtils.synthesizeKey("o");
-
-    const commandline = document!.querySelector("glide-commandline")!;
-    const input = commandline.querySelector<HTMLInputElement>(
-      '[anonid="glide-commandline-input"]'
-    );
-
-    is(input!.value, "foo", "Input should contain 'foo'");
-
-    // Move focus away to the browser content
-    gBrowser.selectedBrowser.focus();
-    isnot(
-      document!.activeElement,
-      input,
-      "Focus should have moved away from command line"
-    );
-
-    // Reopen command line
-    await GlideTestUtils.commandline.open();
-
-    is(
-      input!.value,
-      "foo",
-      "Input value should be preserved after focus restore"
-    );
-    is(document!.activeElement, input, "Input should regain focus");
-  });
-});
-
 add_task(async function test_tabs() {
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -242,6 +207,40 @@ add_task(async function test_excmd_enter() {
       GlideTestUtils.commandline.focused_row()!.children[0]!.textContent,
       "examplecmd",
       "the focused command should be retained after editing the filter"
+    );
+  });
+});
+
+add_task(async function test_commandline_closes_on_blur() {
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await GlideTestUtils.commandline.open();
+
+    const commandline = document!.querySelector(
+      "glide-commandline"
+    ) as GlideCommandLine;
+    const input = commandline.querySelector<HTMLInputElement>(
+      '[anonid="glide-commandline-input"]'
+    );
+
+    ok(!commandline.hidden, "Commandline should be visible after opening");
+    is(document!.activeElement, input, "Input should have focus");
+
+    EventUtils.synthesizeKey("t");
+    EventUtils.synthesizeKey("e");
+    EventUtils.synthesizeKey("s");
+    EventUtils.synthesizeKey("t");
+    is(input!.value, "test", "Input should contain 'test'");
+
+    // Move focus to browser content
+    gBrowser.selectedBrowser.focus();
+    await sleep_frames(50);
+
+    ok(commandline.hidden, "Commandline should be hidden after losing focus");
+    await TestUtils.waitForCondition(
+      () =>
+        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
+        "normal",
+      "Waiting for mode button to show `normal` mode"
     );
   });
 });
