@@ -1,0 +1,69 @@
+name: Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/glide/docs/**"
+      - "src/glide/browser/base/content/glide-api.d.ts"
+      - "scripts/build-docs.mts"
+      - "scripts/build-api-reference.mts"
+      - ".github/workflows/docs.yml"
+
+jobs:
+  deploy:
+    environment: docs
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # needed while we have private dependencies
+      - name: Configure GitHub auth
+        run: |
+          TOKEN="${{ secrets.REPO_ACCESS_TOKEN }}"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
+            "git@github.com:glide-browser/glider.git"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/webextension-types.git".insteadOf \
+            "git@github.com:glide-browser/webextension-types.git"
+
+          git config --global \
+            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+            "git@github.com:mozilla-firefox/firefox.git"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Bundle vendored dependencies
+        run: pnpm bundle
+
+      - name: Build docs
+        run: pnpm build:docs:full
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0.0
+        with:
+          publish-dir: "./src/glide/docs/dist"
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          overwrites-pull-request-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
