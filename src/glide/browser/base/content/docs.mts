@@ -375,6 +375,7 @@ export async function markdown_to_html(
           id: { type: String, required: false },
           level: { type: Number, required: true, default: 1 },
           class: { type: String, required: false },
+          style: { type: String, required: false },
         },
 
         /**
@@ -393,6 +394,7 @@ export async function markdown_to_html(
             id,
             level,
             class: $class,
+            style,
             ...attributes
           } = node.transformAttributes(config);
           const children = node.transformChildren(config);
@@ -411,6 +413,7 @@ export async function markdown_to_html(
               `h${level}`,
               {
                 id,
+                ...(style ? { style } : undefined),
                 ...(has_code ? { class: Words([$class, "code-heading"]) }
                 : $class ? { class: $class }
                 : undefined),
