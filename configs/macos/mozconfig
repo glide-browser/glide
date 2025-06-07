@@ -19,10 +19,10 @@ ac_add_options --enable-lto=cross,thin
 # As of Clang 13, the default is -mcpu=apple-m1 when using a aarch64-apple-macos target,
 # but we're using apple64-apple-darwin, which defaults to -mcpu=apple-a7, which disables
 # a bunch of # performance-enabling CPU features.
-export CFLAGS="-O3 -march=armv8.3-a+simd -mcpu=apple-m1"
-export CPPFLAGS="-O3 -march=armv8.3-a+simd -mcpu=apple-m1"
-export CXXFLAGS="-O3 -march=armv8.3-a+simd -mcpu=apple-m1"
-export LDFLAGS="-Wl,-O3 -march=armv8.3-a+simd -mcpu=apple-m1"
+export CFLAGS="-O3 -march=armv8.3-a+simd"
+export CPPFLAGS="-O3 -march=armv8.3-a+simd"
+export CXXFLAGS="-O3 -march=armv8.3-a+simd"
+export LDFLAGS="-Wl,-O3 -march=armv8.3-a+simd"
 export RUSTFLAGS="-C target-feature=+v8.3a -Ctarget-cpu=apple-m1"
 
 export VERBOSE=1
