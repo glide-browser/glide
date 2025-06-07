@@ -4,6 +4,8 @@ set -eux
 
 cd "$(dirname "$0")/.."
 
+mkdir -p src/glide/bundled
+
 pnpm esbuild \
   --format=esm \
   --minify \
