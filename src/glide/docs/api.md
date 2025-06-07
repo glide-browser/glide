@@ -9,14 +9,14 @@ font-size: revert !important;
 
 ## `glide.ctx` {% id="glide.ctx" %}
 
-### `glide.ctx.url: url` {% id="glide.ctx.url" %}
+### `glide.ctx.url: string` {% id="glide.ctx.url" %}
 
 
-## `glide.o: o` {% id="glide.o" %}
+## `glide.o: glide.Options` {% id="glide.o" %}
 
 Set browser-wide options.
 
-## `glide.bo: bo` {% id="glide.bo" %}
+## `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
 Set buffer specific options.
 
@@ -51,7 +51,7 @@ glide.prefs.clear(name): void
 
 
 Reset the pref value back to its default.
-## `glide.g: g` {% id="glide.g" %}
+## `glide.g: GlideGlobals` {% id="glide.g" %}
 
 Equivalent to `vim.g`.
 

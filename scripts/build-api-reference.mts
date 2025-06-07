@@ -146,7 +146,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
     // `foo: string` or `foo: undefined`
     if (is_keyword(inner) || Node.isTypeReference(inner)) {
-      yield `\n${Header} \`${QualifiedName}: ${Name}\` {% id="${QualifiedName}" %}\n`;
+      yield `\n${Header} \`${QualifiedName}: ${inner.getText()}\` {% id="${QualifiedName}" %}\n`;
 
       if (docs) {
         yield docs.getDescription();
