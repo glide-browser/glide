@@ -502,12 +502,18 @@ export async function markdown_to_html(
   var html_body = Markdoc.renderers.html(content);
   if (Object.keys(patches).length) {
     const regex = new RegExp(`(${Object.keys(patches).join("|")})`, "g");
-    html_body = html_body.replaceAll(regex, substr =>
-      assert_present(
-        patches[substr]?.html,
-        `could not resolve a highlight patch for ${substr}`
-      )
-    );
+
+    let did_replace = false;
+    do {
+      did_replace = false;
+      html_body = html_body.replaceAll(regex, substr => {
+        did_replace = true;
+        return assert_present(
+          patches[substr]?.html,
+          `could not resolve a highlight patch for ${substr}`
+        );
+      });
+    } while (did_replace);
   }
 
   const rel_to_dist = "../".repeat(props.nested_count - 1).slice(0, -1) || ".";
