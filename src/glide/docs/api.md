@@ -1,5 +1,5 @@
 {% styles %}
-h1, h2, h3, h4, h5 {
+h1, h2 {
 font-size: revert !important;
 }
 {% /styles %}
@@ -7,20 +7,20 @@ font-size: revert !important;
 # `glide` {% id="glide" %}
 
 
-## `glide.ctx` {% id="glide.ctx" %}
+## • `glide.ctx` {% id="glide.ctx" %}
 
 ### `glide.ctx.url: string` {% id="glide.ctx.url" %}
 
 
-## `glide.o: glide.Options` {% id="glide.o" %}
+## • `glide.o: glide.Options` {% id="glide.o" %}
 
 Set browser-wide options.
 
-## `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
+## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
 Set buffer specific options.
 
-## `glide.prefs` {% id="glide.prefs" %}
+## • `glide.prefs` {% id="glide.prefs" %}
 
 
 {% api-heading id="glide.prefs.set" %}
@@ -51,7 +51,7 @@ glide.prefs.clear(name): void
 
 
 Reset the pref value back to its default.
-## `glide.g: GlideGlobals` {% id="glide.g" %}
+## • `glide.g: GlideGlobals` {% id="glide.g" %}
 
 Equivalent to `vim.g`.
 
@@ -64,7 +64,7 @@ declare global {
 }
 ```
 
-## `glide.tabs` {% id="glide.tabs" %}
+## • `glide.tabs` {% id="glide.tabs" %}
 
 
 {% api-heading id="glide.tabs.active" %}
@@ -82,7 +82,7 @@ const tab = await browser.tabs.query({
 })[0];
 ```
 But with additional error handling for invalid states.
-## `glide.excmds` {% id="glide.excmds" %}
+## • `glide.excmds` {% id="glide.excmds" %}
 
 
 {% api-heading id="glide.excmds.execute" %}
@@ -91,7 +91,7 @@ glide.excmds.execute(cmd): Promise<void>
 
 
 Execute an excmd, this is the same as typing `:cmd --args`.
-## `glide.content` {% id="glide.content" %}
+## • `glide.content` {% id="glide.content" %}
 
 
 {% api-heading id="glide.content.execute" %}
@@ -114,7 +114,7 @@ await glide.content.execute(set_body_border_style, { tab_id, args: ["20px dotted
 ```
 
 Note: all `args` must be JSON serialisable.
-## `glide.keymaps` {% id="glide.keymaps" %}
+## • `glide.keymaps` {% id="glide.keymaps" %}
 
 
 {% api-heading id="glide.keymaps.set" %}
@@ -131,7 +131,7 @@ glide.keymaps.del(modes, lhs, opts?): void
 Remove the mapping of {lhs} for the {modes} where the map command applies.
 
 The mapping may remain defined for other modes where it applies.
-## `glide.hints` {% id="glide.hints" %}
+## • `glide.hints` {% id="glide.hints" %}
 
 
 {% api-heading id="glide.hints.activate" %}
@@ -143,7 +143,7 @@ Active and show hints for "clickable" elements in the content frame.
 
 An optional `action()` function can be passed that will be invoked when
 a hint is selected.
-## `glide.buf` {% id="glide.buf" %}
+## • `glide.buf` {% id="glide.buf" %}
 
 ### `glide.buf.keymaps` {% id="glide.buf.keymaps" %}
 
@@ -162,7 +162,7 @@ glide.buf.keymaps.del(modes, lhs, opts?): void
 Remove the mapping of {lhs} for the {modes} where the map command applies.
 
 The mapping may remain defined for other modes where it applies.
-## `glide.keys` {% id="glide.keys" %}
+## • `glide.keys` {% id="glide.keys" %}
 
 
 {% api-heading id="glide.keys.next" %}

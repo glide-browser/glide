@@ -40,7 +40,7 @@ async function main() {
     // we actually do want the headings to act as visual hierarchy here
     markdown`
       {% styles %}
-      h1, h2, h3, h4, h5 {
+      h1, h2 {
       font-size: revert !important;
       }
       {% /styles %}
@@ -63,8 +63,6 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
   // note: we assume everything here is exported as it should only be called
   //       for types in our `declare global`module.
 
-  const Header = Array(parents.length + 2).join("#");
-
   if (Node.isModuleBlock(node)) {
     yield* traverse_children(node, parents);
     return;
@@ -81,7 +79,10 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
         declaration.getName(),
       ].join(".");
 
-      yield `\n${Header} \`${QualifiedName}\` {% id="${QualifiedName}" %}\n`;
+      yield* Header(`${QualifiedName}`, {
+        parents,
+        id: QualifiedName,
+      });
 
       if (docs) {
         yield docs.getDescription();
@@ -146,7 +147,10 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
     // `foo: string` or `foo: undefined`
     if (is_keyword(inner) || Node.isTypeReference(inner)) {
-      yield `\n${Header} \`${QualifiedName}: ${inner.getText()}\` {% id="${QualifiedName}" %}\n`;
+      yield* Header(`${QualifiedName}: ${inner.getText()}`, {
+        parents,
+        id: QualifiedName,
+      });
 
       if (docs) {
         yield docs.getDescription();
@@ -159,7 +163,10 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       return;
     }
 
-    yield `\n${Header} \`${QualifiedName}\` {% id="${QualifiedName}" %}\n`;
+    yield* Header(`${QualifiedName}`, {
+      parents,
+      id: QualifiedName,
+    });
 
     if (docs) {
       yield docs.getDescription();
@@ -170,6 +177,17 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
   }
 
   console.warn("unhandled TS Node:", node.getKindName());
+}
+
+function* Header(
+  Code: string,
+  { parents, id }: { parents: ParentEntry[]; id: string }
+): Generator<string> {
+  const Bullet = parents.length === 1 ? "• " : "";
+
+  const HeaderHash = Array(parents.length + 2).join("#");
+
+  yield `\n${HeaderHash} ${Bullet}\`${Code}\` {% id="${id}" %}\n`;
 }
 
 function is_keyword(node: TSM.Node): boolean {
