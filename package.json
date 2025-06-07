@@ -8,6 +8,8 @@
     "dev": "pnpm tsn scripts/dev.mts",
     "dev:watch": "pnpm tsn scripts/dev.mts --watch",
 
+    "build": "pnpm glider build",
+
     "bundle": "bash ./scripts/bundle.sh",
     "build:docs": "pnpm tsn scripts/build-docs.mts",
     "build:docs:index": "bash ./scripts/build-docs-index.sh",
