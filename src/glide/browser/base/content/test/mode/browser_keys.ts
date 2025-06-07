@@ -470,3 +470,44 @@ add_task(async function test_buf_local_keymaps_override_global() {
     BrowserTestUtils.removeTab(new_tab);
   });
 });
+
+add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.invoked_buffer = 0;
+      glide.g.invoked_global = 0;
+
+      glide.keymaps.set("normal", "q", () => {
+        glide.g.invoked_global!++;
+      });
+
+      glide.buf.keymaps.del("normal", "q");
+    });
+
+    EventUtils.synthesizeKey("q");
+    await sleep_frames(3);
+    is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
+    is(
+      GlideBrowser.api.g.invoked_global,
+      0,
+      "Global mapping should be deleted"
+    );
+
+    // Open a new tab to clear buffer-local mappings.
+    const new_tab = await BrowserTestUtils.openNewForegroundTab(
+      gBrowser,
+      KEYS_TEST_URI
+    );
+
+    EventUtils.synthesizeKey("q");
+    await sleep_frames(3);
+    is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
+    is(
+      GlideBrowser.api.g.invoked_global,
+      1,
+      "Global mapping should be executed in buffers without a buffer-local deletion"
+    );
+
+    BrowserTestUtils.removeTab(new_tab);
+  });
+});

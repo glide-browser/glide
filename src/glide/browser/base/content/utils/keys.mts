@@ -89,6 +89,23 @@ export class KeyMappingTrieNode {
   }
 
   /**
+   * Returns true if this node and all its descendants only contain soft deleted mappings.
+   */
+  has_only_deleted_mappings(): boolean {
+    if (this.value && !this.value.deleted) {
+      return false;
+    }
+
+    for (const child of this.children.values()) {
+      if (!child.has_only_deleted_mappings()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Delete redundant nodes that don't correspond to a mapping directly
    * or don't have any child mappings.
    *
@@ -158,6 +175,30 @@ class KeyMappingTrie {
     this.root.$clean();
   }
 
+  /**
+   * Soft-delete a mapping sequence by marking it as deleted rather than removing it.
+   */
+  soft_delete(sequence: string[]) {
+    let node = this.root;
+
+    for (const key of sequence) {
+      var sub = node.get(key);
+      if (!sub) {
+        sub = new KeyMappingTrieNode();
+        node.children.set(key, sub);
+      }
+      node = sub;
+    }
+
+    node.value ??= {
+      sequence,
+      command: () => {
+        throw new Error("attempted to execute a deleted mapping");
+      },
+    };
+    node.value.deleted = true;
+  }
+
   find(sequence: [string, ...string[]]): KeyMappingTrieNode | null {
     return this.root.find(sequence);
   }
@@ -168,6 +209,12 @@ export interface KeyMapping {
   command: GlideCommandString | GlideCommandCallback;
   description?: string | undefined;
   retain_key_display?: boolean;
+
+  /**
+   * Indicates if the mapping has been soft-deleted, used for buffer-local
+   * mappings to override global mappings.
+   */
+  deleted?: boolean;
 }
 
 export class KeyManager {
@@ -222,9 +269,19 @@ export class KeyManager {
     opts?: glide.KeymapDeleteOpts
   ) {
     const sequence = split(lhs).map(normalize);
+    const is_buffer = opts?.buffer ?? false;
+
     for (const mode of typeof modes === "string" ? [modes] : modes) {
-      const trie = this.#mapping(mode, opts?.buffer ?? false);
-      trie.delete(sequence);
+      const trie = this.#mapping(mode, is_buffer);
+
+      if (is_buffer) {
+        // for buffer-local mappings we need to register the deletion in some way
+        // so that it overrides the global mappings, so create a "soft deleted" entry
+        // instead of actually deleting.
+        trie.soft_delete(sequence);
+      } else {
+        trie.delete(sequence);
+      }
     }
   }
 
@@ -280,6 +337,18 @@ export class KeyManager {
       this.#mappings[current_mode].find(sequence);
     if (!node) {
       this.#log.debug(`${event.key} -> ${keyn} did not match`);
+      return;
+    }
+
+    // we shouldn't return deleted mappings
+    if (node.value?.deleted) {
+      this.#log.debug(`${event.key} -> ${keyn} matched a deleted mapping`);
+      return;
+    }
+    if (node.has_only_deleted_mappings()) {
+      this.#log.debug(
+        `All continuations from ${this.#current_sequence.join("")} are deleted, skipping`
+      );
       return;
     }
 
