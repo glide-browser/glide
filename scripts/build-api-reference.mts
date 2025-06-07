@@ -63,6 +63,11 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
   // note: we assume everything here is exported as it should only be called
   //       for types in our `declare global`module.
 
+  const directives = get_directives(node);
+  if (directives.skip) {
+    return;
+  }
+
   if (Node.isModuleBlock(node)) {
     yield* traverse_children(node, parents);
     return;
@@ -216,6 +221,7 @@ function* Header(
 }
 
 interface DocsDirectives {
+  skip?: boolean;
   expand_type_reference?: boolean;
 }
 
@@ -232,6 +238,10 @@ function get_directives(node: TSM.Node): DocsDirectives {
       switch (name) {
         case "docs-expand-type-reference": {
           directives.expand_type_reference = true;
+          break;
+        }
+        case "docs-skip": {
+          directives.skip = true;
           break;
         }
       }

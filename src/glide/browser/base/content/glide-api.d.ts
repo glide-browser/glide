@@ -295,6 +295,7 @@ declare global {
     /**
      * Corresponds to `glide.o` or `glie.bo`.
      */
+    /// @docs-skip
     export type Options = {
       /**
        * Color used to briefly highlight text when it's yanked.
@@ -325,9 +326,11 @@ declare global {
       glide_key: string;
     };
 
+    /// @docs-skip
     export type ExcmdValue =
       import("./browser-excmds-registry.mjs").GlideCommandValue;
 
+    /// @docs-skip
     export type ExcmdString =
       import("./browser-excmds-registry.mjs").GlideCommandString;
 
