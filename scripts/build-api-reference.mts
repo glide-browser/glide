@@ -13,6 +13,7 @@ import assert from "assert";
 import { Node } from "ts-morph";
 import fs from "node:fs/promises";
 import { markdown } from "../src/glide/browser/base/content/utils/dedent.mts";
+import { Words } from "../src/glide/browser/base/content/utils/strings.mts";
 
 const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
@@ -206,18 +207,58 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
     return;
   }
 
+  // namespace glide
+  if (Node.isModuleDeclaration(node)) {
+    if (node.getName() !== "glide") {
+      console.warn(`skipping ${node.getName()} module`);
+      return;
+    }
+
+    yield* Header(`Types`, {
+      parents,
+      id: "types",
+      attrs: 'style="margin-top: 3em !important"',
+    });
+
+    const block = node.getFirstChildByKindOrThrow(ts.SyntaxKind.ModuleBlock);
+    yield* traverse_children(block, [...parents, { name: "glide", node }]);
+    return;
+  }
+
+  // export type RGBString = ...
+  if (Node.isTypeAliasDeclaration(node)) {
+    if (node.getName() !== "RGBString") {
+      console.warn(`skipping ${node.getName()} type for now`);
+      return;
+    }
+
+    const Name = node.getName();
+    const QualifiedName = [...parents.map(({ name }) => name), Name].join(".");
+    const body = children(node)[2];
+
+    if (body) {
+      yield* Header(`${QualifiedName}: '#\${string}'`, {
+        parents,
+        id: QualifiedName,
+      });
+    } else {
+      console.warn(`no body for ${Name}`);
+    }
+    return;
+  }
+
   console.warn("unhandled TS Node:", node.getKindName());
 }
 
 function* Header(
   Code: string,
-  { parents, id }: { parents: ParentEntry[]; id: string }
+  { parents, id, attrs }: { parents: ParentEntry[]; id: string; attrs?: string }
 ): Generator<string> {
   const Bullet = parents.length === 1 ? "• " : "";
 
   const HeaderHash = Array(parents.length + 2).join("#");
 
-  yield `\n${HeaderHash} ${Bullet}\`${Code}\` {% id="${id}" %}\n`;
+  yield `\n${HeaderHash} ${Bullet}\`${Code}\` {% ${Words([`id="${id}"`, attrs])} %}\n`;
 }
 
 interface DocsDirectives {

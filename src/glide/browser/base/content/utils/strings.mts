@@ -108,6 +108,6 @@ export function generate_prefix_free_codes(
   return all_candidates.slice(0, n).map(c => c.code);
 }
 
-export function Words(strings: string[]): string {
+export function Words(strings: (string | undefined)[]): string {
   return strings.filter(Boolean).join(" ");
 }

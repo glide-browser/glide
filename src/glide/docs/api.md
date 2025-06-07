@@ -194,3 +194,7 @@ glide.keys.next_str(): Promise<string>
 Returns a `Promise` that resolves to a string representation of the last input event.
 
 This blocks other input events from being processed until the promise resolves.
+
+# `Types` {% id="types" style="margin-top: 3em !important" %}
+
+## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}

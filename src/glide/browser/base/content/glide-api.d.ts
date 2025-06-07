@@ -315,6 +315,7 @@ declare global {
 
     export type RGBString = `#${string}`;
 
+    /// @docs-skip
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
 
     export type KeyEvent = KeyboardEvent & {
