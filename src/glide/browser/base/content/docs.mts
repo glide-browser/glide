@@ -16,6 +16,9 @@ const { default: Markdoc } = ChromeUtils.importESModule(
 const { markdown, html } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/dedent.mjs"
 );
+const { Words } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/strings.mjs"
+);
 const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
@@ -408,7 +411,7 @@ export async function markdown_to_html(
               `h${level}`,
               {
                 id,
-                ...(has_code ? { class: `${$class} code-heading` }
+                ...(has_code ? { class: Words([$class, "code-heading"]) }
                 : $class ? { class: $class }
                 : undefined),
               },
