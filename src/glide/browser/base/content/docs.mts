@@ -371,6 +371,7 @@ export async function markdown_to_html(
         attributes: {
           id: { type: String, required: false },
           level: { type: Number, required: true, default: 1 },
+          class: { type: String, required: false },
         },
 
         /**
@@ -385,7 +386,12 @@ export async function markdown_to_html(
               .toLowerCase();
           }
 
-          let { id, level, ...attributes } = node.transformAttributes(config);
+          let {
+            id,
+            level,
+            class: $class,
+            ...attributes
+          } = node.transformAttributes(config);
           const children = node.transformChildren(config);
           if (!id) {
             id = generate_anchor_id(children);
@@ -402,7 +408,9 @@ export async function markdown_to_html(
               `h${level}`,
               {
                 id,
-                ...(has_code ? { class: "code-heading" } : undefined),
+                ...(has_code ? { class: `${$class} code-heading` }
+                : $class ? { class: $class }
+                : undefined),
               },
               children
             ),
