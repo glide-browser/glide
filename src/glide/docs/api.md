@@ -16,6 +16,16 @@ font-size: revert !important;
 
 Set browser-wide options.
 
+### `glide.o.yank_highlight: glide.RGBString` {% id="glide.o.yank_highlight" %}
+
+Color used to briefly highlight text when it's yanked.
+
+
+### `glide.o.yank_highlight_time: number` {% id="glide.o.yank_highlight_time" %}
+
+How long, in milliseconds, to highlight the selection for when it's yanked.
+
+
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
 Set buffer specific options.

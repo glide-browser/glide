@@ -158,7 +158,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
       yield "\n";
 
-      yield* traverse_children(inner, [...parents, { name: Name, node }]);
+      yield* traverse_further(inner, [...parents, { name: Name, node }]);
 
       return;
     }
@@ -172,7 +172,32 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       yield docs.getDescription();
     }
 
-    yield* traverse_children(inner, [...parents, { name: Name, node }]);
+    yield* traverse_further(inner, [...parents, { name: Name, node }]);
+
+    return;
+  }
+
+  if (Node.isTypeReference(node)) {
+    const parent = node.getParent();
+    const directives = get_directives(parent);
+    if (!directives.expand_type_reference) {
+      // only render children of a TypeReference in this scope if we've been
+      // explicitly told to do so, as this is useful in some cases, e.g. `glide.o`
+      // but we definitely do not want to duplicate types everywhere.
+      return;
+    }
+
+    const symbol = node.getTypeName().getSymbol();
+    const declaration = symbol?.getDeclarations()[0];
+    const defn = declaration?.getFirstChildByKind(ts.SyntaxKind.TypeLiteral);
+    if (defn) {
+      yield* traverse_children(defn, parents);
+      return;
+    }
+
+    console.warn(
+      "type reference with no TypeLiteral declaration is not supported"
+    );
     return;
   }
 
@@ -188,6 +213,32 @@ function* Header(
   const HeaderHash = Array(parents.length + 2).join("#");
 
   yield `\n${HeaderHash} ${Bullet}\`${Code}\` {% id="${id}" %}\n`;
+}
+
+interface DocsDirectives {
+  expand_type_reference?: boolean;
+}
+
+const DIRECTIVES_PATTERN = /\@(.*)/g;
+
+function get_directives(node: TSM.Node): DocsDirectives {
+  const directives: DocsDirectives = {};
+
+  for (const comment of node.getLeadingCommentRanges()) {
+    const matches = comment.getText().matchAll(DIRECTIVES_PATTERN);
+    for (const match of matches) {
+      const [_, name] = match;
+
+      switch (name) {
+        case "docs-expand-type-reference": {
+          directives.expand_type_reference = true;
+          break;
+        }
+      }
+    }
+  }
+
+  return directives;
 }
 
 function is_keyword(node: TSM.Node): boolean {
@@ -221,6 +272,22 @@ function render_method_signature(
     .join(", ");
 
   return `${name}(${params}): ${node.getReturnTypeNode()?.getText() ?? "void"}`;
+}
+
+function* traverse_further(
+  node: Node,
+  parents: ParentEntry[]
+): Generator<string> {
+  const parent = node.getParent();
+  if (parent) {
+    const directives = get_directives(parent);
+    if (directives.expand_type_reference) {
+      yield* traverse(node, parents);
+      return;
+    }
+  }
+
+  yield* traverse_children(node, parents);
 }
 
 function* traverse_children(

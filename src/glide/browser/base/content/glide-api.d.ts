@@ -7,10 +7,13 @@ declare global {
     /**
      * Set browser-wide options.
      */
+    /// @docs-expand-type-reference
     o: glide.Options;
 
     /**
      * Set buffer specific options.
+     *
+     * This has the exact same API as `glide.o`.
      */
     bo: Partial<glide.Options>;
 
