@@ -73,6 +73,10 @@ const SIDEBAR: SidebarEntry[] = [
     name: "FAQ",
     href: "faq.html",
   },
+  {
+    name: "Contributing",
+    href: "contributing.html",
+  },
 ];
 
 const tokenizer = new Markdoc.Tokenizer({ allowComments: true });
