@@ -443,3 +443,44 @@ h3.code-heading {
 .pagefind-ui__powered-by {
   display: none;
 }
+
+/* GitHub-style admonitions */
+.admonition {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #999;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.admonition-title {
+  font-weight: var(--font-weight-bold);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  text-transform: lowercase;
+}
+
+.admonition > p:first-of-type {
+  margin-top: 0;
+}
+
+.admonition > *:last-child {
+  margin-bottom: 0;
+}
+
+/* prefixes */
+.admonition-note .admonition-title::before {
+  content: "› ";
+}
+.admonition-tip .admonition-title::before {
+  content: "✓ ";
+}
+.admonition-important .admonition-title::before {
+  content: "! ";
+}
+.admonition-warning .admonition-title::before {
+  content: "⚠ ";
+}
+.admonition-caution .admonition-title::before {
+  content: "✗ ";
+}

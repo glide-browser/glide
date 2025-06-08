@@ -35,6 +35,15 @@ interface SidebarEntry {
 
 const IGNORE_CODE_LANGS = new Set(["glide", "about"]);
 
+// GitHub-style admonition types
+const ADMONITION_TYPES = new Set([
+  "NOTE",
+  "TIP",
+  "IMPORTANT",
+  "WARNING",
+  "CAUTION",
+]);
+
 const SIDEBAR: SidebarEntry[] = [
   {
     name: "Quickstart",
@@ -335,6 +344,68 @@ export async function markdown_to_html(
       },
     },
     nodes: {
+      blockquote: {
+        /**
+         * Transform GitHub-style admonitions:
+         *
+         * > [!NOTE]
+         * > This is a note
+         *
+         * Into styled blocks.
+         */
+        transform(node, config) {
+          const children = node.transformChildren(config);
+          const DefaultBlockquote = new Markdoc.Tag("blockquote", {}, children);
+
+          const first_para = children[0];
+          if (
+            !first_para ||
+            typeof first_para !== "object" ||
+            Array.isArray(first_para) ||
+            first_para.name !== "p" ||
+            !first_para.children ||
+            !Array.isArray(first_para.children) ||
+            !first_para.children.length
+          ) {
+            return DefaultBlockquote;
+          }
+
+          const first_child = first_para.children[0];
+          if (typeof first_child !== "string") {
+            return DefaultBlockquote;
+          }
+
+          const match = first_child.match(/^\[!(\w+)\]\s*/);
+          if (match && ADMONITION_TYPES.has(match[1]!)) {
+            const type = match[1]!.toLowerCase();
+
+            // Remove the [!TYPE] prefix from the first child
+            first_para.children[0] = first_child.replace(/^\[!\w+\]\s*/, "");
+
+            // If the first paragraph is now empty or just whitespace, remove it
+            if (
+              first_para.children.length === 1 &&
+              typeof first_para.children[0] === "string" &&
+              first_para.children[0].trim() === ""
+            ) {
+              children.shift();
+            }
+
+            return new Markdoc.Tag(
+              "div",
+              { class: `admonition admonition-${type}` },
+              [
+                new Markdoc.Tag("div", { class: "admonition-title" }, [
+                  `${type}`,
+                ]),
+                ...children,
+              ]
+            );
+          }
+
+          return DefaultBlockquote;
+        },
+      },
       link: {
         /**
          * `[...](./quickstart.md)` -> `<a href="./quickstart.html">`
