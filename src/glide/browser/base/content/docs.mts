@@ -541,9 +541,14 @@ export async function markdown_to_html(
                 themes: inline_themes,
                 structure: "inline",
               })
+            : IGNORE_CODE_LANGS.has(language) ?
+              highlighter.codeToHtml(content, {
+                lang: default_language,
+                themes: language_themes[default_language] ?? themes,
+                structure: "inline",
+              })
             : highlighter.codeToHtml(code, {
-                lang:
-                  IGNORE_CODE_LANGS.has(language) ? default_language : language,
+                lang: language,
                 themes: language_themes[language] ?? themes,
                 structure: "inline",
               });
