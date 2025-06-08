@@ -125,6 +125,13 @@ sup a {
 
 ol li {
   padding-bottom: 0.5em !important;
+  padding-left: 3ch !important;
+  position: relative;
+}
+
+ol li::before {
+  position: absolute;
+  left: 0;
 }
 
 ol li p {
