@@ -14,6 +14,7 @@ pnpm glider download
 pnpm build:docs
 pnpm build:docs:index
 
+pnpm glider set brand glide
 pnpm glider import
 pnpm dev
 pnpm build:types
