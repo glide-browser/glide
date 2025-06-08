@@ -11,6 +11,7 @@
     "build": "pnpm glider build",
 
     "launch": "pnpm glider run",
+    "mach": "./engine/mach",
 
     "bundle": "bash ./scripts/bundle.sh",
     "build:docs": "pnpm tsn scripts/build-docs.mts",
@@ -24,7 +25,7 @@
     "tsc": "tsc",
     "format": "prettier -w .",
     "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "pnpm mach test glide"
   },
   "keywords": [],
   "author": "",
