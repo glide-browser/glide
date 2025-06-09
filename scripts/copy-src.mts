@@ -81,6 +81,16 @@ export async function main() {
       console.time(`Copied ${path}`);
       await copy(path);
       console.timeEnd(`Copied ${path}`);
+    })
+    .on("unlink", async abs_path => {
+      console.time(`Removed ${abs_path}`);
+
+      const rel_path = Path.relative(SRC_DIR, abs_path);
+      const engine_path = Path.join(ENGINE_DIR, rel_path);
+
+      await fs.rm(engine_path);
+
+      console.timeEnd(`Removed ${abs_path}`);
     });
 }
 
