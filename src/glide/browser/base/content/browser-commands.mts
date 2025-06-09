@@ -65,9 +65,8 @@ class GlideCommandsClass {
     const container = this.#upsert_hints_container();
     container.innerHTML = "";
 
-    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
-    browser.$hints = [];
-    browser.$hints_location = undefined;
+    gBrowser.$hints = [];
+    gBrowser.$hints_location = undefined;
   }
 
   /**
@@ -106,11 +105,8 @@ class GlideCommandsClass {
   }
 
   #upsert_hints_container(): HTMLElement {
-    const tab = gBrowser.selectedTab;
-    const browser = gBrowser.getBrowserForTab(tab);
-
-    if (browser.$hints_container) {
-      return browser.$hints_container;
+    if (gBrowser.$hints_container) {
+      return gBrowser.$hints_container;
     }
 
     const container = DOM.create_element("div", {
@@ -118,18 +114,16 @@ class GlideCommandsClass {
       className: "glide-reset glide-hints-container",
       popover: "manual",
     });
-    browser.$hints_container = container;
+    gBrowser.$hints_container = container;
     return container;
   }
 
   get_active_hints(): GlideResolvedHint[] {
-    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
-    return browser.$hints ?? [];
+    return gBrowser.$hints ?? [];
   }
 
   get_hints_location(): glide.HintLocation {
-    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
-    return browser.$hints_location ?? "content";
+    return gBrowser.$hints_location ?? "content";
   }
 
   hide_hints() {
@@ -185,9 +179,8 @@ class GlideCommandsClass {
       container.appendChild(hint_div);
     }
 
-    const browser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
-    browser.$hints = hints;
-    browser.$hints_location = location;
+    gBrowser.$hints = hints;
+    gBrowser.$hints_location = location;
 
     document!.body!.insertAdjacentElement("afterend", container);
   }

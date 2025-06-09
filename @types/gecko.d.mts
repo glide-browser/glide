@@ -35,6 +35,12 @@ declare namespace GlobalBrowser {
 
     // notifications
     getNotificationBox(): NotificationBox;
+
+    /* used to cache the hint container element */
+    $hints_container?: HTMLElement | null | undefined;
+    $hints_location?: GlideHintLocation;
+    // TODO(glide): just look at the elements in the container instead?
+    $hints?: GlideResolvedHint[];
   }
 
   /** Corresponds to the `<tabs>` element */
@@ -46,12 +52,6 @@ declare namespace GlobalBrowser {
   /** Corresponds to the `<browser>` element */
   interface Browser extends HTMLElement {
     parentNode: HTMLElement;
-
-    /* used to cache the hint container element */
-    $hints_container?: HTMLElement | null | undefined;
-    $hints_location?: GlideHintLocation;
-    // TODO(glide): just look at the elements in the container instead?
-    $hints?: GlideResolvedHint[];
   }
 
   /**
