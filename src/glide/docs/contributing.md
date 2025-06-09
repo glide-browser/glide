@@ -169,6 +169,12 @@ file:///path-to-glide-directory/src/glide/docs/dist/contributing.html
 > [!TIP]
 > You do not actually need to build Glide from scratch to update the docs!
 
+### Debugging Hints
+
+When debugging hints, the hint popups will disappear when you try to inspect them with the [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html). To prevent this, you can disable popup auto-hide in the Browser Toolbox, see the [Firefox docs](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html#debugging-popups) for how to do so.
+
+Now, hints will only be cleared once activated or when `<Esc>` is pressed.
+
 ## Concepts
 
 ### Glider
