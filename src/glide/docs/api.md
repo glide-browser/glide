@@ -12,6 +12,15 @@ font-size: revert !important;
 ### `glide.ctx.url: string` {% id="glide.ctx.url" %}
 
 
+
+{% api-heading id="glide.ctx.is_editing" %}
+glide.ctx.is_editing(): Promise<boolean>
+{% /api-heading %}
+
+
+Whether or not the currently focused element is editable.
+
+This includes but is not limited to `<textarea>`, `<input>`, `contenteditable=true`.
 ## • `glide.o: glide.Options` {% id="glide.o" %}
 
 Set browser-wide options.
@@ -29,6 +38,8 @@ How long, in milliseconds, to highlight the selection for when it's yanked.
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
 Set buffer specific options.
+
+This has the exact same API as `glide.o`.
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 

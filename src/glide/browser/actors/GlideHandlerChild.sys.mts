@@ -379,6 +379,15 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
 
+      case "Glide::Query::IsEditing": {
+        const element = this.#get_active_element();
+        if (!element) {
+          return false;
+        }
+
+        return DOM.is_text_editable(element);
+      }
+
       default:
         throw assert_never(message);
     }

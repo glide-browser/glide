@@ -70,6 +70,10 @@ export interface ParentQueries {
     props: {};
     result: undefined;
   };
+  "Glide::Query::IsEditing": {
+    props: {};
+    result: boolean;
+  };
 }
 
 export class GlideHandlerParent extends JSWindowActorParent<

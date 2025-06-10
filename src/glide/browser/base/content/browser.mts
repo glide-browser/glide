@@ -1343,6 +1343,12 @@ function make_glide_api(): typeof glide {
         }
         return url;
       },
+
+      async is_editing() {
+        return await GlideBrowser.get_focused_actor().send_query(
+          "Glide::Query::IsEditing"
+        );
+      },
     },
     autocmd: {
       create<Event extends glide.AutocmdEvent>(

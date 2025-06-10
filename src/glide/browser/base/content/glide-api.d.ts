@@ -2,6 +2,13 @@ declare global {
   var glide: {
     ctx: {
       url: string;
+
+      /**
+       * Whether or not the currently focused element is editable.
+       *
+       * This includes but is not limited to `<textarea>`, `<input>`, `contenteditable=true`.
+       */
+      is_editing(): Promise<boolean>;
     };
 
     /**
