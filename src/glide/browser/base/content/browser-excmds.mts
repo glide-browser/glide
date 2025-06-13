@@ -440,6 +440,13 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "tutor": {
+        gBrowser.addTrustedTab("resource://glide-tutor/index.html", {
+          inBackground: false, // ensure active/selected
+        });
+        break;
+      }
+
       case "hints_remove": {
         GlideCommands.remove_hints();
         break;

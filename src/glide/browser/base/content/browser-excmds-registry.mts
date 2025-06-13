@@ -300,6 +300,13 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
 
+  {
+    name: "tutor",
+    description: "Open the Glide tutorial",
+    content: false,
+    repeatable: false,
+  },
+
   // TODO
   // {
   //   name: "bookmark",
