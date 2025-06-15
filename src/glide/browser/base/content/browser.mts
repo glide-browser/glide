@@ -1255,34 +1255,36 @@ class GlideBrowserClass {
     )?.getActor("GlideHandler") as any as GlideHandlerParent;
   }
 
+  /**
+   * The directories, in order, that we'll look for a `glide.ts` file in.
+   */
+  get config_dirs(): string[] {
+    const xdg_dir = Services.env.get("XDG_CONFIG_HOME");
+    return redefine_getter(
+      this,
+      "config_dirs",
+      [
+        Services.dirsvc.get("CurWorkD", Ci.nsIFile).path,
+
+        PathUtils.profileDir,
+
+        xdg_dir ? PathUtils.join(xdg_dir, "glide") : null,
+
+        PathUtils.join(
+          Services.dirsvc.get("Home", Ci.nsIFile).path,
+          ".config",
+          "glide"
+        ),
+      ].filter(Boolean)
+    );
+  }
+
   async resolve_config_path(): Promise<string | null> {
-    const cwd_dir = Services.dirsvc.get("CurWorkD", Ci.nsIFile);
-    const from_cwd_dir = await this.#get_config_from_dir(cwd_dir.path);
-    if (from_cwd_dir) {
-      return from_cwd_dir;
-    }
-
-    const from_profile_dir = await this.#get_config_from_dir(
-      PathUtils.profileDir
-    );
-    if (from_profile_dir) {
-      return from_profile_dir;
-    }
-
-    const xdg_config = Services.env.get("XDG_CONFIG_HOME");
-    if (xdg_config) {
-      const from_xdg = await this.#get_config_from_dir(xdg_config);
-      if (from_xdg) {
-        return from_xdg;
+    for (const config_dir of this.config_dirs) {
+      const file = await this.#get_config_from_dir(config_dir);
+      if (file) {
+        return file;
       }
-    }
-
-    const home_dir = Services.dirsvc.get("Home", Ci.nsIFile);
-    const from_home_config = await this.#get_config_from_dir(
-      PathUtils.join(home_dir.path, ".config", "glide")
-    );
-    if (from_home_config) {
-      return from_home_config;
     }
 
     return null;
