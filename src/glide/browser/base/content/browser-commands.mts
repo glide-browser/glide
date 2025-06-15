@@ -172,7 +172,7 @@ class GlideCommandsClass {
         style: {
           top: `${hint.y}px`,
           left: `${hint.x}px`,
-          zIndex: "2140000008",
+          zIndex: "2147483647",
         },
         children: [DOM.create_element("span", { children: [hint.label] })],
       });

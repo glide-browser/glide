@@ -12,7 +12,7 @@
 xul|glide-commandline {
   position: fixed !important;
   bottom: 0 !important;
-  z-index: 2147483647 !important;
+  z-index: 2147483646 !important;
   width: 100% !important;
   border: 0 !important;
   padding: 0 !important;
