@@ -98,6 +98,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
    */
   #last_key_event_element: Element | null | undefined = null;
 
+  #last_focused_input_element: HTMLElement | null = null;
+
   #active_hints: GlideHint[] = [];
   #hint_action: HintAction | null = null;
   #is_scrolling: boolean = false;
@@ -628,6 +630,31 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
         break;
       }
+      case "focusinput": {
+        const {
+          args: { filter },
+        } = parse_command_args(props.command, props.args);
+
+        switch (filter) {
+          case "last": {
+            if (this.#last_focused_input_element) {
+              this.#last_focused_input_element.focus();
+
+              if (!DOM.is_visible(this.#last_focused_input_element)) {
+                this.#last_focused_input_element.scrollIntoView();
+              }
+            } else {
+              throw new Error("no input element");
+            }
+
+            break;
+          }
+          default:
+            throw assert_never(filter);
+        }
+
+        break;
+      }
       default:
         throw assert_never(props.command);
     }
@@ -830,6 +857,9 @@ export class GlideHandlerChild extends JSWindowActorChild<
         const target = this.#get_active_nested_shadow_root_elem(
           event.target as HTMLElement
         );
+        if (DOM.is_text_editable(target)) {
+          this.#last_focused_input_element = target;
+        }
 
         const current_mode = this.state?.mode;
         if (current_mode === "ignore") {

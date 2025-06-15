@@ -347,6 +347,20 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "focusinput",
+    description: "Focus an input element based on the given filter",
+    content: true,
+    repeatable: false,
+    args_schema: {
+      filter: {
+        type: { enum: ["last"] },
+        required: true,
+        position: 0,
+      },
+    },
+  },
+
+  {
     name: "hint",
     description: "Show hint labels for jumping to clickable elements",
     content: false,

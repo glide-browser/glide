@@ -34,6 +34,9 @@ export function init(glide: Glide) {
   glide.keymaps.set("normal", "<leader>f", "hint --location=browser-ui");
   glide.keymaps.set("hint", "<Esc>", "hints_remove");
 
+  // page navigation
+  glide.keymaps.set("normal", "gi", "focusinput last");
+
   // command mode
   glide.keymaps.set("command", "<Esc>", "commandline_toggle");
   glide.keymaps.set("command", "<Tab>", "commandline_focus_next");
