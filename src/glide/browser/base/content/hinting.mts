@@ -25,11 +25,11 @@ export interface GlideHint {
 export type GlideHintIPC = Omit<GlideHint, "target" | "label">;
 
 export const content = {
-  resolve_hints(document: Document): GlideHint[] {
+  resolve_hints(document: Document, opts?: { selector?: string }): GlideHint[] {
     const hints: GlideHint[] = [];
 
     let i = 0;
-    for (const target of this.hintable_targets(document)) {
+    for (const target of this.hintable_targets(document, opts?.selector)) {
       // check if the element is in the viewport and not hidden due to `display` styling
       // or other similar states
       if (!DOM.is_visible(target)) {
@@ -104,14 +104,21 @@ export const content = {
     "radio",
   ]),
 
-  *hintable_targets(root: Document | ShadowRoot): Generator<HTMLElement> {
+  *hintable_targets(
+    root: Document | ShadowRoot,
+    selector: string | undefined
+  ): Generator<HTMLElement> {
     for (const el of all_elements(root)) {
       if (!el) {
         continue;
       }
 
       const target = el as HTMLElement;
-      if (
+      if (selector) {
+        if (target.matches(selector)) {
+          yield target;
+        }
+      } else if (
         this.HINTABLE_ELEMENT_TAGS.has(target.tagName) ||
         (target.role && this.HINTABLE_ROLES.has(target.role)) ||
         DOM.is_text_editable(target)
@@ -120,7 +127,7 @@ export const content = {
       }
 
       if (target.shadowRoot) {
-        yield* this.hintable_targets(target.shadowRoot);
+        yield* this.hintable_targets(target.shadowRoot, selector);
       }
     }
   },

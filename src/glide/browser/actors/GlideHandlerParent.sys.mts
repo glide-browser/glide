@@ -55,6 +55,7 @@ export interface ParentMessages {
   "Glide::ExecuteHint": { id: number };
   "Glide::Hint": {
     location: glide.HintLocation;
+    selector?: string;
     action?:
       | "click"
       | "newtab-click"

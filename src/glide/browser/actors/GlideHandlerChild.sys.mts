@@ -676,7 +676,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
       actor.#is_scrolling = false;
 
-      const hints = hinting.content.resolve_hints(actor.document!);
+      const hints = hinting.content.resolve_hints(actor.document!, props);
       actor.#active_hints = hints;
 
       actor.send_async_message("Glide::ResolvedHints", {

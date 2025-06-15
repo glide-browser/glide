@@ -211,6 +211,14 @@ declare global {
        */
       show(opts?: {
         /**
+         * Show hints for all elements matching this query selector.
+         *
+         * @example "li, textarea"
+         * @example "[id="my-element"]"
+         */
+        selector?: string;
+
+        /**
          * Callback invoked when the selected hint is chosen.
          *
          * This is executed in the content process.

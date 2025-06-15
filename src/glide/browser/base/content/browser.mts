@@ -1455,6 +1455,7 @@ function make_glide_api(): typeof glide {
       show(opts) {
         GlideBrowser.get_focused_actor().send_async_message("Glide::Hint", {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
+          selector: opts?.selector,
           location: opts?.location ?? "content",
         });
       },
