@@ -402,7 +402,7 @@ class GlideBrowserClass {
     type: string,
     props: {
       priority: number;
-      label: string;
+      label: string | DocumentFragment;
       eventCallback?: (
         parameter: "removed" | "dismissed" | "disconnected"
       ) => void;

@@ -76,7 +76,7 @@ declare namespace GlobalBrowser {
       aType: string,
       props: {
         priority: number;
-        label: string;
+        label: string | DocumentFragment;
         eventCallback?: (
           parameter: "removed" | "dismissed" | "disconnected"
         ) => void;
