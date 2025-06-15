@@ -112,6 +112,7 @@ add_task(async function test_scrolling() {
     var last_y = min_y;
 
     await GlideTestUtils.synthesize_keyseq("<C-d>");
+    await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-d> should retain the x position`);
     ok(y > last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
@@ -119,18 +120,44 @@ add_task(async function test_scrolling() {
     last_y = y;
 
     await GlideTestUtils.synthesize_keyseq("<C-d>");
+    await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-d> should retain the x position`);
     ok(y > last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
 
     await GlideTestUtils.synthesize_keyseq("<C-u>");
+    await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-u> should retain the x position`);
     is(y, last_y, `<C-u> should decrease y to the previous <C-d>`);
 
     await GlideTestUtils.synthesize_keyseq("<C-u>");
+    await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-u> should retain the x position`);
     is(y, min_y, `Second <C-u> should decrease y to the minimum`);
+
+    await GlideTestUtils.synthesize_keyseq("gg");
+    var [x, y] = await get_scroll();
+
+    // Test j scrolls down
+    await GlideTestUtils.synthesize_keyseq("j");
+    await sleep_frames(50);
+    var [x, new_y] = await get_scroll();
+    ok(new_y > y, `j should scroll down`);
+
+    // Test k scrolls up
+    await GlideTestUtils.synthesize_keyseq("k");
+    await sleep_frames(50);
+    var [x, y] = await get_scroll();
+    is(y, min_y, `k should scroll back up`);
+
+    // Test h scrolls left
+    for (let i = 0; i < 10; i++) {
+      await GlideTestUtils.synthesize_keyseq("h");
+    }
+    await sleep_frames(100);
+    var [new_x, y] = await get_scroll();
+    is(new_x, min_x, `h should scroll to the left edge`);
   });
 });

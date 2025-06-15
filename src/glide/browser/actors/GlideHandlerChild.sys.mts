@@ -339,15 +339,48 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
       case "Glide::Move": {
         const doc_shell = assert_present(this.docShell);
+
+        const editor = this.#get_editor(this.#get_active_element());
+        if (editor) {
+          this._log.debug(
+            `[Glide::Move]: editor available, using commands directly`
+          );
+          // if we have an editor, sending the following commands should always work
+          switch (message.data.direction) {
+            case "left":
+              return doc_shell.doCommand("cmd_moveLeft");
+            case "right":
+              return doc_shell.doCommand("cmd_moveRight");
+            case "up":
+              return doc_shell.doCommand("cmd_moveUp");
+            case "down":
+              return doc_shell.doCommand("cmd_moveDown");
+            case "endline":
+              return doc_shell.doCommand("cmd_endLine");
+            default:
+              throw assert_never(message.data.direction);
+          }
+        }
+
+        // if we don't have an editor, the above commands seem to not always
+        // work. so we need to use an alternative method for scrolling, sending
+        // a wheel event directly.
+        this._log.debug(
+          `[Glide::Move]: no editor available, manually scrolling`
+        );
+
+        const delta = 200;
+        const window = assert_present(this.contentWindow, "no content window");
+
         switch (message.data.direction) {
           case "left":
-            return doc_shell.doCommand("cmd_moveLeft");
+            return DOM.scroll(window, { type: "pixel", x: -delta });
           case "right":
-            return doc_shell.doCommand("cmd_moveRight");
+            return DOM.scroll(window, { type: "pixel", x: delta });
           case "up":
-            return doc_shell.doCommand("cmd_moveUp");
+            return DOM.scroll(window, { type: "pixel", y: -delta });
           case "down":
-            return doc_shell.doCommand("cmd_moveDown");
+            return DOM.scroll(window, { type: "pixel", y: delta });
           case "endline":
             return doc_shell.doCommand("cmd_endLine");
           default:
@@ -438,20 +471,16 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "scroll_top": {
         const window = assert_present(this.contentWindow, "no contentWindow");
         this._log.debug(`[scroll_top]: scrolling to x=${window.scrollX} y=0`);
-        assert_present(this.contentWindow, "no contentWindow").scroll(
-          window.scrollX,
-          0
-        );
+
+        window.scroll(window.scrollX, 0);
         break;
       }
       case "scroll_page_down": {
-        const window = assert_present(this.contentWindow, "no contentWindow");
-        window.scrollByPages(1);
+        DOM.scroll(this.contentWindow!, { type: "page", y: 1 });
         break;
       }
       case "scroll_page_up": {
-        const window = assert_present(this.contentWindow, "no contentWindow");
-        window.scrollByPages(-1);
+        DOM.scroll(this.contentWindow!, { type: "page", y: -1 });
         break;
       }
       case "scroll_bottom": {
@@ -459,6 +488,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         this._log.debug(
           `[scroll_bottom]: scrolling to x=${window.scrollX} y=${window.scrollMaxY}`
         );
+
         window.scroll(window.scrollX, window.scrollMaxY);
         break;
       }

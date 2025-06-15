@@ -210,3 +210,41 @@ export function element_at_point(
 
   return element as HTMLElement;
 }
+
+export function scroll(
+  window: Window,
+  delta: { type: "page" | "pixel"; x?: number; y?: number; z?: number }
+): void {
+  window.windowUtils.sendWheelEvent(
+    window.scrollX,
+    window.scrollY,
+    delta.x ?? 0,
+    delta.y ?? 0,
+    delta.z ?? 0,
+    delta.type === "pixel" ?
+      WheelEvent.DOM_DELTA_PIXEL
+    : WheelEvent.DOM_DELTA_PAGE,
+    0, // modifiers
+    0, // line or page delta X
+    0, // line or page delta Y
+    0 // options
+  );
+}
+
+export function scroll_to(
+  window: Window,
+  coords: { x: number; y: number }
+): void {
+  window.windowUtils.sendWheelEvent(
+    coords.x,
+    coords.y,
+    0,
+    0,
+    0,
+    WheelEvent.DOM_DELTA_PIXEL,
+    0, // modifiers
+    0, // line or page delta X
+    0, // line or page delta Y
+    0 // options
+  );
+}
