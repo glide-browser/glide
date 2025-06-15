@@ -204,12 +204,12 @@ declare global {
 
     hints: {
       /**
-       * Active and show hints for "clickable" elements in the content frame.
+       * Find and show hints for "clickable" elements in the content frame.
        *
        * An optional `action()` function can be passed that will be invoked when
        * a hint is selected.
        */
-      activate(opts?: {
+      show(opts?: {
         /**
          * Callback invoked when the selected hint is chosen.
          *

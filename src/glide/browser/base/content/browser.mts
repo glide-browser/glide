@@ -1452,7 +1452,7 @@ function make_glide_api(): typeof glide {
       },
     },
     hints: {
-      activate(opts) {
+      show(opts) {
         GlideBrowser.get_focused_actor().send_async_message("Glide::Hint", {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
           location: opts?.location ?? "content",

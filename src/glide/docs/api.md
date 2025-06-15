@@ -155,12 +155,12 @@ The mapping may remain defined for other modes where it applies.
 ## • `glide.hints` {% id="glide.hints" %}
 
 
-{% api-heading id="glide.hints.activate" %}
-glide.hints.activate(opts?): void
+{% api-heading id="glide.hints.show" %}
+glide.hints.show(opts?): void
 {% /api-heading %}
 
 
-Active and show hints for "clickable" elements in the content frame.
+Find and show hints for "clickable" elements in the content frame.
 
 An optional `action()` function can be passed that will be invoked when
 a hint is selected.
