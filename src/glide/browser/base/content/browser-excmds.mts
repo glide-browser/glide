@@ -471,6 +471,7 @@ class GlideExcmdsClass {
           : location === "content" ? GlideBrowser.get_content_actor()
           : assert_never(location);
         actor.send_async_message("Glide::Hint", {
+          selector: args["-s"] ?? undefined,
           action: args["--action"],
           location,
         });

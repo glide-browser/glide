@@ -54,10 +54,11 @@ If there are too many hints for each label to have a single character from the a
 
 ### `:hint`
 
-| Flag         | Default   | Choices                    | Description                  |
-| ------------ | --------- | -------------------------- | ---------------------------- |
-| `--action`   | `click`   | `ts:click \| newtab-click` | How to activate the element  |
-| `--location` | `content` | `ts:content \| browser-ui` | Where to generate hints from |
+| Flag         | Default   | Types                      | Description                                                                                                                      |
+| ------------ | --------- | :------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `-s`         | `ts:null` | `ts:string`                | *Only* show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors). |
+| `--action`   | `click`   | `ts:click \| newtab-click` | How to activate the element                                                                                                      |
+| `--location` | `content` | `ts:content \| browser-ui` | Where to generate hints from                                                                                                     |
 
 Examples:
 
@@ -65,4 +66,5 @@ Examples:
 :hint
 :hint --action=newtab-click
 :hint --location=browser-ui
+:hint -s "a, input"
 ```

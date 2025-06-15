@@ -366,6 +366,12 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: false,
     args_schema: {
+      "-s": {
+        type: "string",
+        required: false,
+        description:
+          "*Only* show hints for all elements matching this CSS selector",
+      },
       "--action": {
         type: { enum: ["click", "newtab-click"] },
         required: false,

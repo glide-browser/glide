@@ -211,7 +211,7 @@ declare global {
        */
       show(opts?: {
         /**
-         * Show hints for all elements matching this query selector.
+         * *Only* show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors).
          *
          * @example "li, textarea"
          * @example "[id="my-element"]"
