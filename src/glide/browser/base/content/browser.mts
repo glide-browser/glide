@@ -128,6 +128,7 @@ class GlideBrowserClass {
         for (const listener of GlideBrowser.#startup_listeners) {
           listener();
         }
+        GlideBrowser.#startup_listeners.clear();
 
         GlideBrowser.add_state_change_listener(
           GlideBrowser.#state_change_autocmd
@@ -138,7 +139,6 @@ class GlideBrowserClass {
 
         gBrowser.addProgressListener(GlideBrowser.progress_listener);
 
-        GlideBrowser.#startup_listeners.clear();
         Services.obs.removeObserver(
           startup_observer,
           "browser-idle-startup-tasks-finished"
