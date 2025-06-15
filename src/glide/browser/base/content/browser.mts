@@ -172,7 +172,41 @@ class GlideBrowserClass {
       setInterval(this.flush_pending_error_notifications.bind(this), 500);
     });
 
-    this.reload_config();
+    const config_promise = this.reload_config();
+
+    this.on_startup(async () => {
+      await config_promise;
+
+      const results = await Promise.allSettled(
+        (GlideBrowser.autocmds.Startup ?? []).map(cmd =>
+          (async () => {
+            const cleanup = await cmd.callback({});
+            if (typeof cleanup === "function") {
+              throw new Error(
+                "Startup autocmds cannot define cleanup functions"
+              );
+            }
+          })()
+        )
+      );
+
+      for (const result of results) {
+        if (result.status === "fulfilled") {
+          continue;
+        }
+
+        GlideBrowser._log.error(result.reason);
+        const loc =
+          GlideBrowser.#clean_stack(result.reason, "reload_config") ??
+          "<unknown>";
+        GlideBrowser.add_notification("glide-autocmd-error", {
+          label: `Error occurred in Startup autocmd \`${loc}\` - ${result.reason}`,
+          priority:
+            MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+          buttons: [GlideBrowser.remove_all_notifications_button],
+        });
+      }
+    });
   }
 
   async reload_config() {
@@ -1355,11 +1389,27 @@ function make_glide_api(): typeof glide {
     autocmd: {
       create<Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: glide.AutocmdPatterns[Event],
-        callback: (args: glide.AutocmdArgs[Event]) => void
+        pattern_or_callback: glide.AutocmdPatterns[Event] extends never ?
+          (args: glide.AutocmdArgs[Event]) => void
+        : glide.AutocmdPatterns[Event],
+        callback?: (args: glide.AutocmdArgs[Event]) => void
       ) {
+        if (typeof pattern_or_callback === "function" && callback) {
+          throw new Error(
+            "provided a function as a pattern and a callback. only one should be provided"
+          );
+        }
+
+        let pattern: glide.AutocmdPatterns[Event] | null = null;
+        if (typeof pattern_or_callback === "function") {
+          callback = pattern_or_callback;
+        } else {
+          pattern = pattern_or_callback as glide.AutocmdPatterns[Event];
+        }
+
         const existing = GlideBrowser.autocmds[event];
         if (existing) {
+          // @ts-ignore
           existing.push({ pattern, callback });
         } else {
           GlideBrowser.autocmds[event] = [

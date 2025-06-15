@@ -67,10 +67,23 @@ declare global {
         callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
 
+      /**
+       * Create an autocmd that will be invoked when initial startup is finished.
+       *
+       * **note**: this command is only invoked *once*, it is *not* invoked when the config
+       *           is reloaded.
+       */
+      create<const Event extends "Startup">(
+        event: Event,
+        callback: (args: glide.AutocmdArgs[Event]) => void
+      ): void;
+
       create<const Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: glide.AutocmdPatterns[Event],
-        callback: (args: glide.AutocmdArgs[Event]) => void
+        pattern: glide.AutocmdPatterns[Event] extends never ?
+          (args: glide.AutocmdArgs[Event]) => void
+        : glide.AutocmdPatterns[Event],
+        callback?: (args: glide.AutocmdArgs[Event]) => void
       ): void;
     };
 
@@ -374,10 +387,11 @@ declare global {
 
     type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
-    type AutocmdEvent = "UrlEnter" | "ModeChanged";
+    type AutocmdEvent = "UrlEnter" | "ModeChanged" | "Startup";
     type AutocmdPatterns = {
       UrlEnter: RegExp | { hostname?: string };
       ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
+      Startup: null;
     };
     type AutocmdArgs = {
       UrlEnter: { readonly url: string };
@@ -385,6 +399,7 @@ declare global {
         readonly old_mode: GlideMode;
         readonly new_mode: GlideMode;
       };
+      Startup: {};
     };
   }
 
