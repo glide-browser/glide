@@ -121,7 +121,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
@@ -134,7 +134,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
@@ -147,7 +147,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
@@ -161,7 +161,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
@@ -249,12 +249,14 @@ export const GLIDE_EXCOMMANDS = [
       },
       "--automove": {
         type: { enum: ["left", "endline"] },
+        required: false,
       },
       "--operator": {
         type: OPERATOR_SCHEMA_TYPE,
+        required: false,
         description: "Only applicable for operator-pending mode",
       },
-    },
+    } as const satisfies ArgumentsSchema,
   },
 
   {
@@ -268,7 +270,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
   },
 
   {
@@ -282,7 +284,7 @@ export const GLIDE_EXCOMMANDS = [
         required: false,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
   },
 
   {
@@ -357,7 +359,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
   },
 
   {
@@ -380,7 +382,7 @@ export const GLIDE_EXCOMMANDS = [
         type: { enum: ["content", "browser-ui"] },
         required: false,
       },
-    },
+    } as const satisfies ArgumentsSchema,
   },
   {
     name: "hints_remove",
@@ -441,7 +443,7 @@ export const GLIDE_EXCOMMANDS = [
         required: true,
         position: 0,
       },
-    },
+    } as const satisfies ArgumentsSchema,
   },
 
   {
