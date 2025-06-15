@@ -293,3 +293,158 @@ add_task(async function test_missing_positional_argument() {
     "should have missing positional error"
   );
 });
+
+add_task(async function test_quoted_strings_with_spaces() {
+  const parsed = parse_command_args({
+    args: 'foo "bar baz"',
+    schema: {},
+  });
+  ok(parsed.valid, "should be valid");
+  is(parsed.remaining.length, 2, "should have 2 remaining args");
+  is(parsed.remaining[0], "foo");
+  is(parsed.remaining[1], "bar baz");
+});
+
+add_task(async function test_quoted_strings_in_flags() {
+  const parsed = parse_command_args({
+    args: '--message="hello world" --path="/some/path with spaces"',
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+      "--path": {
+        type: "string",
+        required: true,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with quoted flag values");
+  is(parsed.args["--message"], "hello world");
+  is(parsed.args["--path"], "/some/path with spaces");
+});
+
+add_task(async function test_quoted_strings_space_separated() {
+  const parsed = parse_command_args({
+    args: '--message "hello world" --path "/some/path with spaces"',
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+      "--path": {
+        type: "string",
+        required: true,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with space-separated quoted values");
+  is(parsed.args["--message"], "hello world");
+  is(parsed.args["--path"], "/some/path with spaces");
+});
+
+add_task(async function test_single_quotes() {
+  const parsed = parse_command_args({
+    args: "--message='hello world' --path='/some/path with spaces'",
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+      "--path": {
+        type: "string",
+        required: true,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with single quotes");
+  is(parsed.args["--message"], "hello world");
+  is(parsed.args["--path"], "/some/path with spaces");
+});
+
+add_task(async function test_mixed_quotes() {
+  const parsed = parse_command_args({
+    args: `--message="It's working" --other='She said "hello"'`,
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+      "--other": {
+        type: "string",
+        required: true,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with mixed quotes");
+  is(parsed.args["--message"], "It's working");
+  is(parsed.args["--other"], 'She said "hello"');
+});
+
+add_task(async function test_escaped_quotes() {
+  const parsed = parse_command_args({
+    args: '--message="hello ""world"""',
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with escaped quotes");
+  is(parsed.args["--message"], 'hello "world"');
+});
+
+add_task(async function test_quoted_positional_args() {
+  const parsed = parse_command_args({
+    args: '"input file.txt" "output file.txt"',
+    schema: {
+      input: {
+        type: "string",
+        required: true,
+        position: 0,
+      },
+      output: {
+        type: "string",
+        required: true,
+        position: 1,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with quoted positional args");
+  is(parsed.args["input"], "input file.txt");
+  is(parsed.args["output"], "output file.txt");
+});
+
+add_task(async function test_empty_quoted_strings() {
+  const parsed = parse_command_args({
+    args: '--message="" --path=""',
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+      "--path": {
+        type: "string",
+        required: false,
+      },
+    },
+  });
+  ok(parsed.valid, "should be valid with empty quoted strings");
+  is(parsed.args["--message"], "");
+  is(parsed.args["--path"], "");
+});
+
+add_task(async function test_unclosed_quotes() {
+  const parsed = parse_command_args({
+    args: '--message="hello world',
+    schema: {
+      "--message": {
+        type: "string",
+        required: true,
+      },
+    },
+  });
+  ok(parsed.valid, "should handle unclosed quotes gracefully");
+  is(parsed.args["--message"], "hello world");
+});

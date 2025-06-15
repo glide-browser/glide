@@ -16,6 +16,70 @@ const { human_join } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/arrays.mjs"
 );
 
+/**
+ * Tokenizes a command line string, respecting quoted strings.
+ *
+ * Supports both single and double quotes.
+ *
+ * Example: `foo "bar baz" 'qux quux'` -> ["foo", "bar baz", "qux quux"]
+ */
+function tokenize_args(input: string): (string | null)[] {
+  const tokens: string[] = [];
+  let current = "";
+  let in_quotes = false;
+  let quote_char = "";
+
+  const chars = input.trim().split("");
+
+  for (let i = 0; i < chars.length; i++) {
+    const char = chars[i];
+    const next_char = chars[i + 1];
+
+    if (in_quotes) {
+      if (char === quote_char) {
+        // Check for escaped quote
+        if (next_char === quote_char) {
+          current += char;
+          i++; // Skip the next quote
+        } else {
+          // End of quoted string
+          in_quotes = false;
+          quote_char = "";
+        }
+      } else {
+        current += char;
+      }
+      continue;
+    }
+
+    if (char === '"' || char === "'") {
+      // Start of quoted string
+      in_quotes = true;
+      quote_char = char;
+    } else if (char === " " || char === "\t") {
+      // Whitespace - end current token if any
+      if (current) {
+        tokens.push(current);
+        current = "";
+      }
+    } else {
+      current += char;
+    }
+    continue;
+  }
+
+  if (current) {
+    tokens.push(current);
+  }
+
+  // If we're still in quotes, that's an error, but we'll just close it
+  if (in_quotes && current) {
+    tokens.push(current);
+  }
+
+  return tokens.filter(Boolean);
+}
+
 export type ParseResult<Schema extends ArgumentsSchema> =
   | { valid: true; args: ParsedArgs<Schema>; remaining: string[] }
   | { valid: false; errors: string[] };
@@ -24,10 +88,7 @@ export function parse_command_args<Schema extends ArgumentsSchema>(props: {
   args: string;
   schema: Schema;
 }): ParseResult<Schema> {
-  const tokens: (string | null)[] = props.args
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+  const tokens: (string | null)[] = tokenize_args(props.args);
   const errors: string[] = [];
   const remaining: string[] = [];
   const parsed: Record<string, unknown> = {};
