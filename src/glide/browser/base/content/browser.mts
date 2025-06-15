@@ -1220,7 +1220,7 @@ class GlideBrowserClass {
     );
     const active_element = document?.activeElement;
     if (!active_element) {
-      this._log.debug("nothing is focused");
+      this._log.debug("nothing is focused defaulting to chrome");
       return this.get_chrome_actor();
     }
 
