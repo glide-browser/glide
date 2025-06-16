@@ -4,7 +4,8 @@
 
 /* eslint-env node */
 
-module.exports = {
+/** @type {import('prettier').Config} */
+const config = {
   experimentalTernaries: true,
   arrowParens: "avoid",
   endOfLine: "lf",
@@ -12,3 +13,5 @@ module.exports = {
   tabWidth: 2,
   trailingComma: "es5",
 };
+
+module.exports = config;
