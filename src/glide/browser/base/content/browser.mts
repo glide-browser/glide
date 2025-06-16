@@ -197,8 +197,7 @@ class GlideBrowserClass {
 
         GlideBrowser._log.error(result.reason);
         const loc =
-          GlideBrowser.#clean_stack(result.reason, "reload_config") ??
-          "<unknown>";
+          GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
         GlideBrowser.add_notification("glide-autocmd-error", {
           label: `Error occurred in Startup autocmd \`${loc}\` - ${result.reason}`,
           priority:
