@@ -1,0 +1,43 @@
+diff --git a/browser/locales/en-US/browser/aboutDialog.ftl b/browser/locales/en-US/browser/aboutDialog.ftl
+index d266d15b6ce87e3c6dc6a81f5a991810542bdd4e..095408acdb760511f5bfdcca003ed64c53dab6bc 100644
+--- a/browser/locales/en-US/browser/aboutDialog.ftl
++++ b/browser/locales/en-US/browser/aboutDialog.ftl
+@@ -71,26 +71,30 @@ bottom-links-privacy = Privacy Notice
+ 
+ # Example of resulting string: 66.0.1 (64-bit)
+ # Variables:
+-#   $version (String): version of Firefox, e.g. 66.0.1
++#   $version (String): version of Glide, e.g. 66.0.1
+ #   $bits (Number): bits of the architecture (32 or 64)
+-aboutDialog-version = { $version } ({ $bits }-bit)
++#   $firefoxVersion (String): version of Firefox
++aboutDialog-version = { $version } ({ $bits }-bit) • Firefox { $firefoxVersion }
+ 
+ # Example of resulting string: 66.0a1 (2019-01-16) (64-bit)
+ # Variables:
+-#   $version (String): version of Firefox for Nightly builds, e.g. 66.0a1
++#   $version (String): version of Glide for Nightly builds, e.g. 66.0a1
+ #   $isodate (String): date in ISO format, e.g. 2019-01-16
+ #   $bits (Number): bits of the architecture (32 or 64)
+-aboutDialog-version-nightly = { $version } ({ $isodate }) ({ $bits }-bit)
++#   $firefoxVersion (String): version of Firefox
++aboutDialog-version-nightly = { $version } ({ $isodate }) ({ $bits }-bit) • Firefox { $firefoxVersion }
+ 
+ # Example of resulting string: 131.0a1 (aarch64)
+ # Variables:
+-#   $version (String): version of Firefox, e.g. 66.0.1
++#   $version (String): version of Glide, e.g. 66.0.1
+ #   $arch (String): name of the architecture (arm, aarch64, etc.)
+-aboutdialog-version-arch = { $version } ({ $arch })
++#   $firefoxVersion (String): version of Firefox
++aboutdialog-version-arch = { $version } ({ $arch }) • Firefox { $firefoxVersion }
+ 
+ # Example of resulting string: 131.0a1 (2024-08-27) (aarch64)
+ # Variables:
+-#   $version (String): version of Firefox for Nightly builds, e.g. 66.0a1
++#   $version (String): version of Glide for Nightly builds, e.g. 66.0a1
+ #   $isodate (String): date in ISO format, e.g. 2019-01-16
+ #   $arch (String): name of the architecture (arm, aarch64, etc.)
+-aboutdialog-version-arch-nightly = { $version } ({ $isodate }) ({ $arch })
++#   $firefoxVersion (String): version of Firefox
++aboutdialog-version-arch-nightly = { $version } ({ $isodate }) ({ $arch }) • Firefox { $firefoxVersion }

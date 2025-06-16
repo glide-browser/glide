@@ -1,0 +1,12 @@
+diff --git a/browser/base/content/aboutDialog.js b/browser/base/content/aboutDialog.js
+index f6e1391baf12abb91c85a95107bb3923118746c0..e7e7deb6b4e28abcba70738ff357dc9f7d3c43c5 100644
+--- a/browser/base/content/aboutDialog.js
++++ b/browser/base/content/aboutDialog.js
+@@ -53,6 +53,7 @@ function init() {
+   let versionIdKey = "base";
+   let versionAttributes = {
+     version: AppConstants.MOZ_APP_VERSION_DISPLAY,
++    firefoxVersion: Services.appinfo.platformVersion,
+   };
+ 
+   let arch = Services.sysinfo.get("arch");
