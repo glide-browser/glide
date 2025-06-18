@@ -518,6 +518,35 @@ export function normalize(keyn: string): string {
   return event_to_key_notation(parsed);
 }
 
+/**
+ * Take a single key, without modifiers or <>, and return the string identifier
+ * that Firefox would send if the given key had been physically pressed.
+ *
+ * @example "Space" -> " "
+ */
+function keyn_to_event_repr(key: string): string {
+  switch (key) {
+    case "Space":
+      return " ";
+    case "ArrowUp":
+      return "Up";
+    case "ArrowDown":
+      return "Down";
+    case "ArrowLeft":
+      return "Left";
+    case "ArrowRight":
+      return "Right";
+    case "BS":
+      return "Backspace";
+    case "CR":
+      return "Enter";
+    case "Del":
+      return "Delete";
+    default:
+      return key;
+  }
+}
+
 type GlideParsedMapping = Mutable<GlideMappingEvent>;
 
 /**
@@ -527,6 +556,7 @@ type GlideParsedMapping = Mutable<GlideMappingEvent>;
  * ```ts
  * `parse_modifiers('H') -> {shiftKey: false, key: 'H'}`
  * `parse_modifiers('<S-H>') -> {shiftKey: true, key: 'H'}`
+ * `parse_modifiers('<Space>') -> {key: ' '}`
  * ```
  */
 export function parse_modifiers(keyn: string): GlideParsedMapping {
@@ -549,7 +579,7 @@ export function parse_modifiers(keyn: string): GlideParsedMapping {
   const parts = stripped.split("-");
   // [C,S,h] -> [C,S]
   const modifier_parts = parts.slice(0, -1);
-  parsed.key = parts.at(-1)!;
+  parsed.key = keyn_to_event_repr(parts.at(-1)!);
 
   for (const part of modifier_parts) {
     switch (part) {
