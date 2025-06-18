@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // On MacOS, Firefox loads *two* top-level windows, one with the standard `browser.xhtml` frame
 // that is loaded on every platform and a separate hidden window:
 //
@@ -29,6 +27,7 @@ if (!window.location.toString().endsWith("hiddenWindowMac.xhtml")) {
 
   import("chrome://glide/content/browser-excmds-registry.mjs").then(
     ({ GLIDE_EXCOMMANDS }) => {
+      // @ts-expect-error TS doesn't recognise that window.GLIDE_EXCOMMANDS is defined
       window.GLIDE_EXCOMMANDS = GLIDE_EXCOMMANDS;
     }
   );
