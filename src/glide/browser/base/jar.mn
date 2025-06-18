@@ -18,7 +18,6 @@ glide.jar:
   content/browser.mjs                          (content/dist/browser.mjs)
   content/motions.mjs                          (content/dist/motions.mjs)
   content/hinting.mjs                          (content/dist/hinting.mjs)
-  content/jumplist.mjs                         (content/dist/jumplist.mjs)
   content/text-objects.mjs                     (content/dist/text-objects.mjs)
   content/docs.mjs                             (content/dist/docs.mjs)
   content/please.mjs                           (content/dist/please.mjs)
@@ -38,6 +37,7 @@ glide.jar:
 
 # default plugins
   content/plugins/keymaps.mjs                  (content/plugins/dist/keymaps.mjs)
+  content/plugins/jumplist.mjs                 (content/plugins/dist/jumplist.mjs)
 
 # types
   content/glide-api.d.ts                       (content/dist/api-bundled.d.ts)

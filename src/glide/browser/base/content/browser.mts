@@ -9,6 +9,7 @@ import type {
   GlideOperator,
   GlideCommandString,
 } from "./browser-excmds-registry.mts";
+import type { Jumplist } from "./plugins/jumplist.mts";
 
 const DefaultKeymaps = ChromeUtils.importESModule(
   "chrome://glide/content/plugins/keymaps.mjs",
@@ -22,9 +23,8 @@ const Keys = ChromeUtils.importESModule(
   "chrome://glide/content/utils/keys.mjs",
   { global: "current" }
 );
-const Jumplist = ChromeUtils.importESModule(
-  "chrome://glide/content/jumplist.mjs",
-  { global: "current" }
+const JumplistPlugin = ChromeUtils.importESModule(
+  "chrome://glide/content/plugins/jumplist.mjs"
 );
 const Promises = ChromeUtils.importESModule(
   "chrome://glide/content/utils/promises.mjs"
@@ -87,7 +87,9 @@ class GlideBrowserClass {
       })
       // createInstance isn't defined in tests
     : (console as any);
-  jumplist = new Jumplist.Jumplist();
+
+  // added in `.reload_config()`
+  jumplist: Jumplist = null as any;
 
   #startup_listeners = new Set<() => void>();
   #startup_finished: boolean = false;
@@ -135,7 +137,6 @@ class GlideBrowserClass {
         );
 
         GlideBrowserDev.init();
-        GlideBrowser.jumplist.init();
 
         gBrowser.addProgressListener(GlideBrowser.progress_listener);
 
@@ -282,7 +283,14 @@ class GlideBrowserClass {
     this.autocmds = {};
 
     this.key_manager = new Keys.KeyManager();
+
+    // default plugins
     DefaultKeymaps.init(this.api);
+
+    this.jumplist = new JumplistPlugin.Jumplist(
+      this.api,
+      this.browser_proxy_api
+    );
 
     if (this.#startup_finished) {
       // clear all registered event listeners and any custom state on the `browser` object

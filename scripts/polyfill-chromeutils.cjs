@@ -31,6 +31,10 @@ globalThis.ChromeUtils = {
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/plugins/keymaps.mts`
         );
+      case "chrome://glide/content/plugins/jumplist.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/plugins/jumplist.mts`
+        );
       case "chrome://glide/content/utils/dedent.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/utils/dedent.mts`
@@ -119,8 +123,6 @@ globalThis.ChromeUtils = {
         return a_require(`${SRC_DIR}/glide/browser/base/content/hinting.mts`);
       case "chrome://glide/content/docs.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/docs.mts`);
-      case "chrome://glide/content/jumplist.mjs":
-        return a_require(`${SRC_DIR}/glide/browser/base/content/jumplist.mts`);
 
       case "chrome://glide/content/bundled/shiki.mjs":
         return a_require(`${SRC_DIR}/glide/bundled/shiki.mjs`);

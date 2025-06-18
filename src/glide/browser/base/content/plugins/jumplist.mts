@@ -2,7 +2,7 @@ const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
 
-export type JumplistEntry = {
+type JumplistEntry = {
   type: "tab";
   tab_id: number;
 };
@@ -12,43 +12,44 @@ export class Jumplist {
   #entries: Array<JumplistEntry> = [];
   #index: number = -1;
   #is_jumping: boolean = false;
+  #browser: Browser.Browser;
 
-  init() {
-    GlideBrowser.browser_proxy_api.tabs.onActivated.addListener(change_info => {
-      if (this.#is_jumping) {
-        this.#is_jumping = false;
-        return;
-      }
+  constructor(glide: Glide, browser: Browser.Browser) {
+    this.#browser = browser;
 
-      // If we’re not at the tip, i.e. the user `<C-o>` and then activated a new
-      // tab without using `<C-i>` then drop the forward slice as we're starting
-      // a new "branch".
-      if (this.#index < this.#entries.length - 1) {
-        this.#entries.splice(this.#index + 1);
-      }
+    glide.autocmd.create("Startup", () => {
+      browser.tabs.onActivated.addListener(change_info => {
+        if (this.#is_jumping) {
+          this.#is_jumping = false;
+          return;
+        }
 
-      this.#entries.push({ type: "tab", tab_id: change_info.tabId });
-      this.#index = this.#entries.length - 1;
+        // If we’re not at the tip, i.e. the user `<C-o>` and then activated a new
+        // tab without using `<C-i>` then drop the forward slice as we're starting
+        // a new "branch".
+        if (this.#index < this.#entries.length - 1) {
+          this.#entries.splice(this.#index + 1);
+        }
 
-      if (this.#entries.length > this.max_entries) {
-        const overflow = this.#entries.length - this.max_entries;
-        this.#entries.splice(0, overflow);
-        this.#index -= overflow;
-      }
+        this.#entries.push({ type: "tab", tab_id: change_info.tabId });
+        this.#index = this.#entries.length - 1;
+
+        if (this.#entries.length > this.max_entries) {
+          const overflow = this.#entries.length - this.max_entries;
+          this.#entries.splice(0, overflow);
+          this.#index -= overflow;
+        }
+      });
     });
   }
 
-  get #web() {
-    return GlideBrowser.browser_proxy_api;
-  }
-
   async #get_tab(id: number): Promise<Browser.Tabs.Tab | null> {
-    return this.#web.tabs.get(id).catch(() => null);
+    return this.#browser.tabs.get(id).catch(() => null);
   }
 
   async #switch_tab(entry: JumplistEntry) {
     this.#is_jumping = true;
-    await this.#web.tabs.update(entry.tab_id, { active: true });
+    await this.#browser.tabs.update(entry.tab_id, { active: true });
   }
 
   async jump_backwards() {

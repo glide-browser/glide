@@ -176,11 +176,11 @@ declare namespace MockedExports {
     "chrome://glide/content/browser-dev.mjs": typeof import("../src/glide/browser/base/content/browser-dev.mts");
     "chrome://glide/content/text-objects.mjs": typeof import("../src/glide/browser/base/content/text-objects.mts");
     "chrome://glide/content/hinting.mjs": typeof import("../src/glide/browser/base/content/hinting.mts");
-    "chrome://glide/content/jumplist.mjs": typeof import("../src/glide/browser/base/content/jumplist.mts");
     "chrome://glide/content/please.mjs": typeof import("../src/glide/browser/base/content/please.mts");
 
     // internal / default plugins
     "chrome://glide/content/plugins/keymaps.mjs": typeof import("../src/glide/browser/base/content/plugins/keymaps.mts");
+    "chrome://glide/content/plugins/jumplist.mjs": typeof import("../src/glide/browser/base/content/plugins/jumplist.mts");
 
     "chrome://glide/content/docs.mjs": typeof import("../src/glide/browser/base/content/docs.mts");
 
