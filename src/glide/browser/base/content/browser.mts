@@ -127,10 +127,12 @@ class GlideBrowserClass {
       observe() {
         GlideBrowser.#startup_finished = true;
 
-        for (const listener of GlideBrowser.#startup_listeners) {
+        const listeners = [...GlideBrowser.#startup_listeners];
+        GlideBrowser.#startup_listeners.clear();
+
+        for (const listener of listeners) {
           listener();
         }
-        GlideBrowser.#startup_listeners.clear();
 
         GlideBrowser.add_state_change_listener(
           GlideBrowser.#state_change_autocmd
