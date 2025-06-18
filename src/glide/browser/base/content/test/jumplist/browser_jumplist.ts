@@ -122,3 +122,48 @@ add_task(async function test_jumplist_max_entries_trim() {
     GlideBrowser.jumplist.max_entries = max_entries;
   }
 });
+
+add_task(async function test_jumplist_deleted_intermediary_tab() {
+  const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
+  BrowserTestUtils.startLoadingURIString(browser, uri(0));
+  await BrowserTestUtils.browserLoaded(browser);
+
+  const tab1 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(1));
+  const tab2 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(2));
+  const tab3 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(3));
+  const tab4 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(4));
+
+  is(current_url(), uri(4), "Currently on tab4");
+
+  await keys("<C-o><C-o>");
+  await sleep_frames(5);
+  is(current_url(), uri(2), "Jumped back to tab2");
+
+  // delete tab3 while we're *not* on it
+  BrowserTestUtils.removeTab(tab3);
+
+  await keys("<C-i>");
+  await sleep_frames(5);
+  is(current_url(), uri(4), "Skipped deleted tab3 and jumped to tab4");
+
+  await keys("<C-o>");
+  await sleep_frames(5);
+  is(current_url(), uri(2), "Can still jump backwards");
+
+  // delete tab2 while we're on it
+  BrowserTestUtils.removeTab(tab2);
+  await sleep_frames(5);
+
+  ok(current_url() !== uri(2), "No longer on deleted tab2");
+
+  await keys("<C-o>");
+  await sleep_frames(5);
+  is(current_url(), uri(1), "Skipped deleted tab2 and jumped to tab1");
+
+  await keys("<C-i><C-i>");
+  await sleep_frames(5);
+  is(current_url(), uri(4), "Skipped deleted tabs and jumped to tab4");
+
+  BrowserTestUtils.removeTab(tab1);
+  BrowserTestUtils.removeTab(tab4);
+});

@@ -38,40 +38,62 @@ export class Jumplist {
     });
   }
 
+  get #web() {
+    return GlideBrowser.browser_proxy_api;
+  }
+
+  async #get_tab(id: number): Promise<Browser.Tabs.Tab | null> {
+    return this.#web.tabs.get(id).catch(() => null);
+  }
+
   async #switch_tab(entry: JumplistEntry) {
     this.#is_jumping = true;
-    await GlideBrowser.browser_proxy_api.tabs.update(entry.tab_id, {
-      active: true,
-    });
+    await this.#web.tabs.update(entry.tab_id, { active: true });
   }
 
   async jump_backwards() {
-    if (this.#index <= 0) {
-      return;
-    }
+    while (true) {
+      if (this.#index <= 0) {
+        return;
+      }
 
-    this.#index--;
+      this.#index--;
 
-    await this.#switch_tab(
-      assert_present(
+      const entry = assert_present(
         this.#entries[this.#index],
         `no entry for jumplist index ${this.#index}`
-      )
-    );
+      );
+      const tab = await this.#get_tab(entry.tab_id);
+      if (!tab) {
+        // go until we find a tab that hasn't been deleted
+        continue;
+      }
+
+      await this.#switch_tab(entry);
+      return;
+    }
   }
 
   async jump_forwards() {
-    if (this.#index >= this.#entries.length - 1) {
-      return;
-    }
+    while (true) {
+      if (this.#index >= this.#entries.length - 1) {
+        return;
+      }
 
-    this.#index++;
+      this.#index++;
 
-    await this.#switch_tab(
-      assert_present(
+      const entry = assert_present(
         this.#entries[this.#index],
         `no entry for jumplist index ${this.#index}`
-      )
-    );
+      );
+      const tab = await this.#get_tab(entry.tab_id);
+      if (!tab) {
+        // go until we find a tab that hasn't been deleted
+        continue;
+      }
+
+      await this.#switch_tab(entry);
+      return;
+    }
   }
 }
