@@ -327,7 +327,6 @@ class GlideBrowserClass {
 
     const sandbox = create_sandbox({
       document,
-      window,
       console,
       get glide() {
         return GlideBrowser.api;

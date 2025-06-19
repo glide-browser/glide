@@ -168,6 +168,7 @@ declare namespace MockedExports {
     "chrome://glide/content/browser.mjs": typeof import("../src/glide/browser/base/content/browser.mts");
     "chrome://glide/content/motions.mjs": typeof import("../src/glide/browser/base/content/motions.mts");
     "chrome://glide/content/sandbox.mjs": typeof import("../src/glide/browser/base/content/sandbox.mts");
+    "chrome://glide/content/sandbox-properties.mjs": typeof import("../src/glide/browser/base/content/sandbox-properties.mjs");
     "chrome://glide/content/extensions.mjs": typeof import("../src/glide/browser/base/content/extensions.mts");
     "chrome://glide/content/browser-constants.mjs": typeof import("../src/glide/browser/base/content/browser-constants.mts");
     "chrome://glide/content/browser-excmds.mjs": typeof import("../src/glide/browser/base/content/browser-excmds.mts");

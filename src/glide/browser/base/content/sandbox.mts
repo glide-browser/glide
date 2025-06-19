@@ -7,6 +7,10 @@ const { get_all_properties } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/objects.mjs"
 );
 
+const { WINDOW_PROPERTIES } = ChromeUtils.importESModule(
+  "chrome://glide/content/sandbox-properties.mjs"
+);
+
 /**
  * Represents an object returned by {@link create_sandbox}.
  */
@@ -15,7 +19,6 @@ export type Sandbox = {} & { readonly __brand: unique symbol };
 interface SandboxProps {
   console: typeof console;
   document: Document | null;
-  window: Window | WindowProxy | null;
   browser: typeof browser;
   // TODO(glide): support accessing the glide API from the content process
   glide: typeof glide | null;
@@ -26,16 +29,27 @@ interface SandboxProps {
  *
  * This is used to try and create an as consistent as possible environment
  * between the different processes where we eval functions.
- *
- * Warning: for simplicity's sake this mutates the given object.
  */
 export function create_sandbox(props: SandboxProps): Sandbox {
+  // options pass here correspond to:
+  // https://github.com/mozilla-firefox/firefox/blob/0f7aa808c07a1644fb2b386113aa3a2b31befe24/js/xpconnect/idl/xpccomponents.idl#L151
   return Cu.Sandbox(Cu.getGlobalForObject({}), {
+    // remove `Cu`, etc
+    wantComponents: false,
+    // don't allow waiving x-rays
+    allowWaivers: false,
+
     sandboxPrototype: Object.assign(
-      props,
+      {
+        console: props.console,
+        document: props.document,
+        browser: props.browser,
+        glide: props.glide,
+      },
       props.document ?
         get_all_properties(props.document.defaultView, {
           include_getters: false,
+          pick: WINDOW_PROPERTIES,
         })
       : {},
       {

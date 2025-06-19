@@ -446,3 +446,105 @@ add_task(async function test_webext_storage_api_listener_error() {
     gNotificationBox.removeNotification(notification);
   });
 });
+
+declare global {
+  interface GlideGlobals {
+    sb?: any;
+  }
+}
+
+add_task(async function test_config_sandbox_properties() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.sb = {};
+
+    // These should be available (common web APIs)
+    glide.g.sb.has_fetch = typeof fetch !== "undefined";
+    glide.g.sb.has_setTimeout = typeof setTimeout !== "undefined";
+    glide.g.sb.has_console = typeof console !== "undefined";
+    glide.g.sb.has_document = typeof document !== "undefined";
+
+    // These should NOT be available (internals)
+    glide.g.sb.has_openDialog = typeof openDialog !== "undefined";
+    glide.g.sb.has_GlideBrowser = typeof GlideBrowser !== "undefined";
+    glide.g.sb.has_ChromeUtils = typeof ChromeUtils !== "undefined";
+    glide.g.sb.has_Services = typeof Services !== "undefined";
+    glide.g.sb.has_Components = typeof Components !== "undefined";
+    glide.g.sb.has_Cu = typeof Cu !== "undefined";
+    glide.g.sb.has_Cc = typeof Cc !== "undefined";
+    glide.g.sb.has_Ci = typeof Ci !== "undefined";
+    glide.g.sb.has_gBrowser = typeof gBrowser !== "undefined";
+    glide.g.sb.has_gNotificationBox = typeof gNotificationBox !== "undefined";
+    glide.g.sb.has_BrowserTestUtils = typeof BrowserTestUtils !== "undefined";
+    glide.g.sb.has_GlideTestUtils = typeof GlideTestUtils !== "undefined";
+    glide.g.sb.has_GlideExcmds = typeof GlideExcmds !== "undefined";
+  });
+
+  ok(
+    GlideBrowser.api.g.sb.has_fetch,
+    "fetch should be available in config sandbox"
+  );
+  ok(
+    GlideBrowser.api.g.sb.has_setTimeout,
+    "setTimeout should be available in config sandbox"
+  );
+  ok(
+    GlideBrowser.api.g.sb.has_console,
+    "console should be available in config sandbox"
+  );
+  ok(
+    GlideBrowser.api.g.sb.has_document,
+    "document should be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_openDialog,
+    "openDialog should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_GlideBrowser,
+    "GlideBrowser should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_ChromeUtils,
+    "ChromeUtils should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_Services,
+    "Services should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_Components,
+    "Components should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_Cu,
+    "Cu should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_Cc,
+    "Cc should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_Ci,
+    "Ci should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_gBrowser,
+    "gBrowser should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_gNotificationBox,
+    "gNotificationBox should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_BrowserTestUtils,
+    "BrowserTestUtils should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_GlideTestUtils,
+    "GlideTestUtils should NOT be available in config sandbox"
+  );
+  ok(
+    !GlideBrowser.api.g.sb.has_GlideExcmds,
+    "GlideExcmds should NOT be available in config sandbox"
+  );
+});

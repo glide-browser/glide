@@ -439,7 +439,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
       "sandbox",
       create_sandbox({
         document: this.document,
-        window: this.contentWindow,
         console,
         get browser() {
           return actor.extension_api.browser_proxy_api;

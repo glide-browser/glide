@@ -118,6 +118,10 @@ globalThis.ChromeUtils = {
         );
       case "chrome://glide/content/sandbox.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/sandbox.mts`);
+      case "chrome://glide/content/sandbox-properties.mjs":
+        return a_require(
+          `${SRC_DIR}/glide/browser/base/content/sandbox-properties.mjs`
+        );
 
       case "chrome://glide/content/hinting.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/hinting.mts`);

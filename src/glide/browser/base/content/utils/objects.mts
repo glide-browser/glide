@@ -36,6 +36,11 @@ export function get_all_properties<T>(
      *      `TypeError: 'get window' called on an object that does not implement interface Window.`
      */
     include_getters?: boolean;
+
+    /**
+     * Only include the given properties.
+     */
+    pick?: Set<string>;
   } = { include_getters: true }
 ): T {
   const new_obj = {};
@@ -43,6 +48,10 @@ export function get_all_properties<T>(
     Object.getOwnPropertyDescriptors(object)
   )) {
     if (!opts.include_getters && !Object.hasOwn(descriptor, "value")) {
+      continue;
+    }
+
+    if (opts.pick && !opts.pick.has(name)) {
       continue;
     }
 
