@@ -462,6 +462,7 @@ add_task(async function test_config_sandbox_properties() {
     glide.g.sb.has_setTimeout = typeof setTimeout !== "undefined";
     glide.g.sb.has_console = typeof console !== "undefined";
     glide.g.sb.has_document = typeof document !== "undefined";
+    glide.g.sb.has_navigator = typeof navigator !== "undefined";
 
     // These should NOT be available (internals)
     glide.g.sb.has_openDialog = typeof openDialog !== "undefined";
@@ -494,6 +495,10 @@ add_task(async function test_config_sandbox_properties() {
   ok(
     GlideBrowser.api.g.sb.has_document,
     "document should be available in config sandbox"
+  );
+  ok(
+    GlideBrowser.api.g.sb.has_navigator,
+    "navigator should be available in config sandbox"
   );
   ok(
     !GlideBrowser.api.g.sb.has_openDialog,

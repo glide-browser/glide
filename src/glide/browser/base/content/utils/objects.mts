@@ -25,37 +25,3 @@ export function redefine_getter<O, Key extends keyof O, Value extends O[Key]>(
   });
   return value;
 }
-
-export function get_all_properties<T>(
-  object: T,
-  opts: {
-    /**
-     * This is requires as we can't copy over getters in certain contexts,
-     *
-     * e.g. doing so on the `Window` object results in
-     *      `TypeError: 'get window' called on an object that does not implement interface Window.`
-     */
-    include_getters?: boolean;
-
-    /**
-     * Only include the given properties.
-     */
-    pick?: Set<string>;
-  } = { include_getters: true }
-): T {
-  const new_obj = {};
-  for (const [name, descriptor] of Object.entries(
-    Object.getOwnPropertyDescriptors(object)
-  )) {
-    if (!opts.include_getters && !Object.hasOwn(descriptor, "value")) {
-      continue;
-    }
-
-    if (opts.pick && !opts.pick.has(name)) {
-      continue;
-    }
-
-    Object.defineProperty(new_obj, name, { ...descriptor, enumerable: true });
-  }
-  return new_obj as T;
-}
