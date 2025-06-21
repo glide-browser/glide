@@ -36,8 +36,6 @@ export function create_sandbox(props: SandboxProps): Sandbox {
   return Cu.Sandbox(Cu.getGlobalForObject({}), {
     // remove `Cu`, etc
     wantComponents: false,
-    // don't allow waiving x-rays
-    allowWaivers: false,
 
     sandboxPrototype: Object.assign(
       {
