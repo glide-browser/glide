@@ -2,6 +2,11 @@ name: macOS Release Build
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to sign'
+        required: true
+        type: string
 
 jobs:
   macos-sign:
@@ -56,7 +61,7 @@ jobs:
           mkdir -p dist
           ./.github/scripts/github-download-artifact.sh
         env:
-          TAG: "v0.1.11a"
+          TAG: ${{ inputs.tag }}
           ASSET_NAME: "glide-aarch64.mac.dmg"
           OUTPUT_FILE: "dist/glide.dmg"
           GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
@@ -111,8 +116,8 @@ jobs:
           AARCH64_DMG_PATH: ./dist/glide.dmg
           PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
 
-      - name: Upload signed DMG
-        uses: actions/upload-artifact@v4
-        with:
-          name: glide.macos-aarch64.dmg
-          path: ./engine/glide.macos-aarch64.dmg
+      - name: Upload signed DMG to release
+        run: |
+          gh release upload ${{ inputs.tag }} ./engine/glide.macos-aarch64.dmg#glide.macos-aarch64-signed.dmg --clobber
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
