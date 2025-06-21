@@ -17,7 +17,7 @@ import { Words } from "../src/glide/browser/base/content/utils/strings.mts";
 
 const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
-  "glide.autocmd",
+  "glide.autocmds",
 ]);
 
 async function main() {

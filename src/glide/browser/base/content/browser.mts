@@ -1394,7 +1394,7 @@ function make_glide_api(): typeof glide {
         );
       },
     },
-    autocmd: {
+    autocmds: {
       create<Event extends glide.AutocmdEvent>(
         event: Event,
         pattern_or_callback: glide.AutocmdPatterns[Event] extends never ?

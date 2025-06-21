@@ -17,7 +17,7 @@ export class Jumplist {
   constructor(glide: Glide, browser: Browser.Browser) {
     this.#browser = browser;
 
-    glide.autocmd.create("Startup", () => {
+    glide.autocmds.create("Startup", () => {
       browser.tabs.onActivated.addListener(change_info => {
         if (this.#is_jumping) {
           this.#is_jumping = false;

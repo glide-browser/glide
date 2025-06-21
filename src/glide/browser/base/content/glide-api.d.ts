@@ -24,7 +24,7 @@ declare global {
      */
     bo: Partial<glide.Options>;
 
-    autocmd: {
+    autocmds: {
       /**
        * Create an autocmd that will be invoked whenever the focused URL changes.
        *

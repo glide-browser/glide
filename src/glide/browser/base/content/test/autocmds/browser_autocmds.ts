@@ -27,11 +27,11 @@ add_task(async function test_autocmd_regexp_filter() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("UrlEnter", /input_test\.html/, () => {
+    glide.autocmds.create("UrlEnter", /input_test\.html/, () => {
       glide.g.calls!.push("expected-call");
     });
 
-    glide.autocmd.create("UrlEnter", /definitely-wont-match/, () => {
+    glide.autocmds.create("UrlEnter", /definitely-wont-match/, () => {
       glide.g.calls!.push("bad-call");
     });
   });
@@ -50,11 +50,11 @@ add_task(async function test_autocmd_host_filter() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("UrlEnter", { hostname: "mochi.test" }, () => {
+    glide.autocmds.create("UrlEnter", { hostname: "mochi.test" }, () => {
       glide.g.calls!.push("expected-call");
     });
 
-    glide.autocmd.create(
+    glide.autocmds.create(
       "UrlEnter",
       { hostname: "definitely-wont-match" },
       () => {
@@ -77,7 +77,7 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("UrlEnter", /input_test/, () => {
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
       glide.g.calls!.push("first");
 
       return () => {
@@ -85,7 +85,7 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
       };
     });
 
-    glide.autocmd.create("UrlEnter", /input_test/, () => {
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
       glide.g.calls!.push("second");
 
       return () => {
@@ -115,7 +115,7 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
 
 add_task(async function test_autocmd_error() {
   await GlideTestUtils.reload_config(function _() {
-    glide.autocmd.create("UrlEnter", /input_test/, () => {
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
       throw new Error("ruh roh");
     });
   });
@@ -140,7 +140,7 @@ add_task(async function test_autocmd_error() {
 
 add_task(async function test_autocmd_cleanup_error() {
   await GlideTestUtils.reload_config(function _() {
-    glide.autocmd.create("UrlEnter", /input_test/, () => {
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
       return () => {
         throw new Error("dead");
       };
@@ -172,7 +172,7 @@ add_task(async function test_urlenter_triggered_by_tab_switch() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("UrlEnter", /input_test/, () => {
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
       glide.g.calls!.push("enter");
     });
   });
@@ -210,7 +210,7 @@ add_task(
     await GlideTestUtils.reload_config(function _() {
       glide.g.calls = [];
 
-      glide.autocmd.create("UrlEnter", /input_test/, () => {
+      glide.autocmds.create("UrlEnter", /input_test/, () => {
         glide.g.calls!.push("enter");
       });
     });
@@ -247,7 +247,7 @@ add_task(async function test_about_blank_with_hostname_filter() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("UrlEnter", { hostname: "example.com" }, () => {
+    glide.autocmds.create("UrlEnter", { hostname: "example.com" }, () => {
       glide.g.calls!.push("should-not-trigger");
     });
   });
@@ -267,7 +267,7 @@ add_task(async function test_mode_changed_autocmd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("ModeChanged", "*", args => {
+    glide.autocmds.create("ModeChanged", "*", args => {
       glide.g.calls!.push(`${args.old_mode}->${args.new_mode}`);
     });
   });
@@ -305,15 +305,15 @@ add_task(async function test_mode_changed_specific_pattern() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("ModeChanged", "normal:insert", () => {
+    glide.autocmds.create("ModeChanged", "normal:insert", () => {
       glide.g.calls!.push("normal-to-insert");
     });
 
-    glide.autocmd.create("ModeChanged", "insert:*", args => {
+    glide.autocmds.create("ModeChanged", "insert:*", args => {
       glide.g.calls!.push(`leaving-insert-to-${args.new_mode}`);
     });
 
-    glide.autocmd.create("ModeChanged", "*:visual", args => {
+    glide.autocmds.create("ModeChanged", "*:visual", args => {
       glide.g.calls!.push(`${args.old_mode}-entering-visual`);
     });
   });
@@ -355,15 +355,15 @@ add_task(async function test_mode_changed_multiple_callbacks() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
 
-    glide.autocmd.create("ModeChanged", "*", () => {
+    glide.autocmds.create("ModeChanged", "*", () => {
       glide.g.calls!.push("first");
     });
 
-    glide.autocmd.create("ModeChanged", "*", () => {
+    glide.autocmds.create("ModeChanged", "*", () => {
       glide.g.calls!.push("second");
     });
 
-    glide.autocmd.create("ModeChanged", "normal:insert", () => {
+    glide.autocmds.create("ModeChanged", "normal:insert", () => {
       glide.g.calls!.push("specific");
     });
   });
@@ -386,7 +386,7 @@ add_task(async function test_mode_changed_multiple_callbacks() {
 
 add_task(async function test_mode_changed_error_handling() {
   await GlideTestUtils.reload_config(function _() {
-    glide.autocmd.create("ModeChanged", "*", () => {
+    glide.autocmds.create("ModeChanged", "*", () => {
       throw new Error("mode change failed");
     });
   });
