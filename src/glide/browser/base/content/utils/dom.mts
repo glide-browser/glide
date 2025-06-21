@@ -1,3 +1,11 @@
+const logger: ConsoleInstance =
+  console.createInstance ?
+    console.createInstance({
+      prefix: "Glide[DOM]",
+      maxLogLevelPref: "glide.logging.loglevel",
+    })
+  : (console as any);
+
 const EDITABLE_NODE_NAMES = new Set(["SELECT", "TEXTAREA", "OBJECT"]);
 
 /**
@@ -211,10 +219,13 @@ export function element_at_point(
   return element as HTMLElement;
 }
 
-export function scroll(
+export async function scroll(
   window: Window,
   delta: { type: "page" | "pixel"; x?: number; y?: number; z?: number }
-): void {
+): Promise<void> {
+  const prev_x = window.scrollX;
+  const prev_y = window.scrollY;
+
   window.windowUtils.sendWheelEvent(
     window.scrollX,
     window.scrollY,
@@ -229,6 +240,39 @@ export function scroll(
     0, // line or page delta Y
     0 // options
   );
+
+  // For some reason, `sendWheelEvent()` doesn't always actually trigger a scroll until
+  // the user *actually* scrolls with a mouse/trackpad.
+  //
+  // I've been able to ~somewhat reliably reproduce this by opening two tabs, rapidly
+  // switching between them and then trying to scroll.
+  //
+  // I couldn't figure out a *real* fix for this, so this is an attempt to workaround this bug
+  // by checking if the window was scrolled within 5 frames, and scrolling using a separate method
+  // that does seem to work when `sendWheelEvent()` does not.
+  //
+  // Note: this entirely breaks nested frame scrolling, but as this bug is *very* annoying, that
+  //       is a tradeoff we'll have to make for now.
+  //
+  // Note: we can't just always use `.scrollTo()` because that *also* doesn't work in certain *other* cases.
+
+  for (let i = 0; i < 5; i++) {
+    if (delta.x && window.scrollX !== prev_x) {
+      return;
+    }
+    if (delta.y && window.scrollY !== prev_y) {
+      return;
+    }
+
+    await new Promise(r => window.requestAnimationFrame(r));
+  }
+
+  logger.debug("using scroll fallback");
+  window.scrollTo({
+    left: prev_x + (delta.x ?? 0),
+    top: prev_y + (delta.y ?? 0),
+    behavior: "instant",
+  });
 }
 
 export function scroll_to(
