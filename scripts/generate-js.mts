@@ -11,10 +11,11 @@
  * This script is copied from similar scripts in the same dir in the firefox codebase.
  */
 
-const fs = require("fs");
+import fs from "fs";
+import * as webidl2 from "webidl2";
 
 // Convert Mozilla-flavor webidl into idl parsable by @w3c/webidl2.js.
-function preprocess(webidl) {
+function preprocess(webidl: string): string {
   return webidl
     .replaceAll(/^#.+/gm, "")
     .replaceAll(/\binterface \w+;/gm, "")
@@ -26,7 +27,9 @@ function preprocess(webidl) {
 }
 
 // Check if a member has Chrome-only extended attributes
-function isChromeOnly(member) {
+function isChromeOnly(
+  member: webidl2.IDLRootType | webidl2.IDLInterfaceMemberType
+) {
   if (!member.extAttrs) return false;
 
   for (const attr of member.extAttrs) {
@@ -39,11 +42,12 @@ function isChromeOnly(member) {
       const funcValue = attr.rhs.value;
       // Common Chrome-only function checks
       if (
-        funcValue.includes("IsChromeOrUAWidget") ||
-        funcValue.includes("IsInChromeDocument") ||
-        funcValue.includes("IsCertifiedApp") ||
-        funcValue.includes("IsPrivilegedChromeWindow") ||
-        funcValue.includes("IsChromeWindow")
+        typeof funcValue === "string" &&
+        (funcValue.includes("IsChromeOrUAWidget") ||
+          funcValue.includes("IsInChromeDocument") ||
+          funcValue.includes("IsCertifiedApp") ||
+          funcValue.includes("IsPrivilegedChromeWindow") ||
+          funcValue.includes("IsChromeWindow"))
       ) {
         return true;
       }
@@ -53,8 +57,11 @@ function isChromeOnly(member) {
     if (attr.name === "Pref" && attr.rhs && attr.rhs.value) {
       const prefValue = attr.rhs.value;
       if (
-        prefValue.includes("dom.webcomponents.shadowdom.declarative.enabled") ||
-        prefValue.includes("dom.mozBrowserFramesEnabled")
+        typeof prefValue === "string" &&
+        (prefValue.includes(
+          "dom.webcomponents.shadowdom.declarative.enabled"
+        ) ||
+          prefValue.includes("dom.mozBrowserFramesEnabled"))
       ) {
         return true;
       }
@@ -65,8 +72,10 @@ function isChromeOnly(member) {
 }
 
 // Extract properties from a parsed interface
-function extractInterfaceProperties(iface) {
-  const properties = new Set();
+function extractInterfaceProperties(
+  iface: webidl2.InterfaceType | webidl2.InterfaceMixinType
+): Set<string> {
+  const properties = new Set<string>();
 
   // Add regular attributes
   if (iface.members) {
@@ -92,13 +101,11 @@ function extractInterfaceProperties(iface) {
 }
 
 // Extract all Window properties from WebIDL files
-async function extractWindowProperties(webidls) {
-  const webidl2 = await import("webidl2");
-
-  const windowProperties = new Set();
-  const mixinProperties = new Map(); // Store mixin properties for later
-  const inheritedInterfaces = new Map(); // Store inheritance relationships
-  const includesStatements = []; // Store includes statements for later processing
+async function extractWindowProperties(webidls: string[]) {
+  const windowProperties = new Set<string>();
+  const mixinProperties = new Map<string, Set<string>>();
+  const inheritedInterfaces = new Map();
+  const includesStatements = [];
 
   // First pass: Parse all WebIDL files and collect interfaces/mixins
   for (const webidlPath of webidls) {
@@ -139,7 +146,7 @@ async function extractWindowProperties(webidls) {
           // Store mixin properties (merge if already exists)
           if (mixinProperties.has(def.name)) {
             const existing = mixinProperties.get(def.name);
-            props.forEach(p => existing.add(p));
+            props.forEach(p => existing!.add(p));
           } else {
             mixinProperties.set(def.name, props);
           }
@@ -162,14 +169,14 @@ async function extractWindowProperties(webidls) {
   for (const inc of includesStatements) {
     if (inc.target === "Window" && mixinProperties.has(inc.includes)) {
       const mixinProps = mixinProperties.get(inc.includes);
-      mixinProps.forEach(p => windowProperties.add(p));
+      mixinProps!.forEach(p => windowProperties.add(p));
     }
   }
 
   return Array.from(windowProperties).sort();
 }
 
-function generateModule(properties) {
+function generateModule(properties: string[]): string {
   return `/**
  * NOTE: Do not modify this file by hand.
  * Content was generated from WebIDL sources.
@@ -183,11 +190,11 @@ export const WINDOW_PROPERTIES = new Set(${JSON.stringify(properties, null, 2)})
 `;
 }
 
-async function main(output_file) {
+async function main(output_file: string) {
   const webidl_files = fs
-    .readdirSync("dom/webidl")
+    .readdirSync("engine/dom/webidl")
     .filter(p => p.endsWith(".webidl"));
-  const webidlPaths = webidl_files.map(f => `dom/webidl/${f}`);
+  const webidlPaths = webidl_files.map(f => `engine/dom/webidl/${f}`);
   const properties = await extractWindowProperties(webidlPaths);
   const moduleContent = generateModule(properties);
 
@@ -199,6 +206,5 @@ async function main(output_file) {
   fs.writeFileSync(output_file, moduleContent);
 }
 
-if (require.main === module) {
-  main(...process.argv.slice(2));
-}
+// @ts-ignore
+main(...process.argv.slice(2));

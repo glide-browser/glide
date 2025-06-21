@@ -19,6 +19,7 @@
     "build:docs:api": "pnpm tsn ./scripts/build-api-reference.mts",
     "build:docs:full": "pnpm build:docs --symlink=false && pnpm build:docs:api && pnpm build:docs:index",
     "build:types": "bash ./scripts/generate-types.sh",
+    "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
 
     "lint": "./scripts/lint.sh",
     
@@ -39,6 +40,7 @@
     "@markdoc/markdoc": "^0.5.1",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^22.14.0",
+    "@types/webidl2": "^24.4.3",
     "chokidar": "^4.0.3",
     "dts-bundle-generator": "^9.5.1",
     "esbuild": "^0.25.2",
@@ -48,7 +50,8 @@
     "shiki": "^3.2.1",
     "ts-morph": "^26.0.0",
     "type-fest": "^4.39.1",
-    "webextension-polyfill": "github:glide-browser/webextension-types"
+    "webextension-polyfill": "github:glide-browser/webextension-types",
+    "webidl2": "^24.4.1"
   },
   "packageManager": "pnpm@10.11.0",
   "private": true

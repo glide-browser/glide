@@ -30,7 +30,3 @@ cp "$prettier_path/standalone.mjs" src/glide/bundled/prettier.mjs
 cp "$prettier_path/plugins/html.mjs" src/glide/bundled/prettier-html.mjs
 
 ./scripts/bundle-types.sh
-
-cd engine
-
-node ./tools/ts/build_sandbox_properties.js ../src/glide/browser/base/content/sandbox-properties.mjs

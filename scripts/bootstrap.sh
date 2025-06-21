@@ -13,6 +13,7 @@ pnpm glider download
 
 pnpm build:docs
 pnpm build:docs:index
+pnpm build:js
 
 pnpm glider set brand glide
 pnpm glider import
