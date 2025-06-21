@@ -38,66 +38,72 @@ const IGNORED_FILES = new Set([
 ]);
 
 export async function main() {
-  const watcher = chokidar
-    .watch([SRC_DIR], {
-      ignored: (abs_path, stats) => {
-        if (abs_path.includes("node_modules") || abs_path.includes(".venv")) {
-          return true;
-        }
+  return await new Promise<void>((resolve, reject) => {
+    const watcher = chokidar
+      .watch([SRC_DIR], {
+        ignored: (abs_path, stats) => {
+          if (abs_path.includes("node_modules") || abs_path.includes(".venv")) {
+            return true;
+          }
 
-        if (!stats || !stats.isFile()) {
-          // allow non-files (likely dirs)
+          if (!stats || !stats.isFile()) {
+            // allow non-files (likely dirs)
+            return false;
+          }
+
+          const rel_path = Path.relative(SRC_DIR, abs_path);
+          if (!rel_path.endsWith("ts")) {
+            // we only care about TS files
+            return true;
+          }
+
+          if (
+            // ignore scripts as they'll never be built
+            rel_path.startsWith("glide/scripts/") ||
+            // ignore .d.ts as they'll never be built
+            rel_path.startsWith("glide/generated/") ||
+            rel_path.startsWith("glide/@types/") ||
+            rel_path.endsWith(".d.ts")
+          ) {
+            return true;
+          }
+
+          if (IGNORED_FILES.has(rel_path)) {
+            return true;
+          }
+
           return false;
+        },
+      })
+      .on("add", path => {
+        BUILD_FILES.add(path);
+      })
+      .on("ready", async () => {
+        console.log(`Building ${BUILD_FILES.size} TS files`);
+        console.time("✨ Built TS in");
+        for (const path of BUILD_FILES) {
+          await build(path);
         }
 
-        const rel_path = Path.relative(SRC_DIR, abs_path);
-        if (!rel_path.endsWith("ts")) {
-          // we only care about TS files
-          return true;
+        if (process.argv.includes("--watch")) {
+          console.timeEnd("✨ Built TS in");
+          console.log("\nWatching:");
+          return;
         }
 
-        if (
-          // ignore scripts as they'll never be built
-          rel_path.startsWith("glide/scripts/") ||
-          // ignore .d.ts as they'll never be built
-          rel_path.startsWith("glide/generated/") ||
-          rel_path.startsWith("glide/@types/") ||
-          rel_path.endsWith(".d.ts")
-        ) {
-          return true;
-        }
-
-        if (IGNORED_FILES.has(rel_path)) {
-          return true;
-        }
-
-        return false;
-      },
-    })
-    .on("add", path => {
-      BUILD_FILES.add(path);
-    })
-    .on("ready", async () => {
-      console.log(`Building ${BUILD_FILES.size} TS files`);
-      console.time("✨ Built TS in");
-      for (const path of BUILD_FILES) {
-        await build(path);
-      }
-
-      if (process.argv.includes("--watch")) {
         console.timeEnd("✨ Built TS in");
-        console.log("\nWatching:");
-        return;
-      }
-
-      console.timeEnd("✨ Built TS in");
-      watcher.close();
-    })
-    .on("change", async path => {
-      console.time(`Built ${path}`);
-      await build(path);
-      console.timeEnd(`Built ${path}`);
-    });
+        await watcher.close();
+        resolve();
+      })
+      .on("change", async path => {
+        console.time(`Built ${path}`);
+        await build(path);
+        console.timeEnd(`Built ${path}`);
+      })
+      .on("error", error => {
+        reject(error);
+      });
+  });
 }
 
 if (import.meta.url.endsWith(process.argv[1]!)) {

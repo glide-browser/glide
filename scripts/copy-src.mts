@@ -38,60 +38,66 @@ async function copy(abs_path: string) {
 const COPY_FILES = new Set<string>();
 
 export async function main() {
-  const watcher = chokidar
-    .watch([SRC_DIR], {
-      ignored: (abs_path, stats) => {
-        if (abs_path.includes("node_modules") || abs_path.includes(".venv")) {
-          return true;
-        }
+  await new Promise<void>((resolve, reject) => {
+    const watcher = chokidar
+      .watch([SRC_DIR], {
+        ignored: (abs_path, stats) => {
+          if (abs_path.includes("node_modules") || abs_path.includes(".venv")) {
+            return true;
+          }
 
-        if (!stats || !stats.isFile()) {
-          // allow non-files (likely dirs)
+          if (!stats || !stats.isFile()) {
+            // allow non-files (likely dirs)
+            return false;
+          }
+
+          if (abs_path.endsWith(".patch")) {
+            // these are managed by glider
+            return true;
+          }
+
           return false;
+        },
+      })
+      .on("add", path => {
+        COPY_FILES.add(path);
+      })
+      .on("ready", async () => {
+        console.log(`Copying ${COPY_FILES.size} files to engine/`);
+        console.time("✨ Copied in");
+        for (const path of COPY_FILES) {
+          await copy(path);
         }
 
-        if (abs_path.endsWith(".patch")) {
-          // these are managed by glider
-          return true;
+        if (process.argv.includes("--watch")) {
+          console.timeEnd("✨ Copied in");
+          console.log("\nWatching:");
+          return;
         }
 
-        return false;
-      },
-    })
-    .on("add", path => {
-      COPY_FILES.add(path);
-    })
-    .on("ready", async () => {
-      console.log(`Copying ${COPY_FILES.size} files to engine/`);
-      console.time("✨ Copied in");
-      for (const path of COPY_FILES) {
-        await copy(path);
-      }
-
-      if (process.argv.includes("--watch")) {
         console.timeEnd("✨ Copied in");
-        console.log("\nWatching:");
-        return;
-      }
+        await watcher.close();
+        resolve();
+      })
+      .on("change", async path => {
+        console.time(`Copied ${path}`);
+        await copy(path);
+        console.timeEnd(`Copied ${path}`);
+      })
+      .on("unlink", async abs_path => {
+        console.time(`Removed ${abs_path}`);
 
-      console.timeEnd("✨ Copied in");
-      watcher.close();
-    })
-    .on("change", async path => {
-      console.time(`Copied ${path}`);
-      await copy(path);
-      console.timeEnd(`Copied ${path}`);
-    })
-    .on("unlink", async abs_path => {
-      console.time(`Removed ${abs_path}`);
+        const rel_path = Path.relative(SRC_DIR, abs_path);
+        const engine_path = Path.join(ENGINE_DIR, rel_path);
 
-      const rel_path = Path.relative(SRC_DIR, abs_path);
-      const engine_path = Path.join(ENGINE_DIR, rel_path);
+        await fs.rm(engine_path);
 
-      await fs.rm(engine_path);
-
-      console.timeEnd(`Removed ${abs_path}`);
-    });
+        console.timeEnd(`Removed ${abs_path}`);
+      })
+      .on("error", error => {
+        reject(error);
+      });
+  });
 }
 
 if (import.meta.url.endsWith(process.argv[1]!)) {
