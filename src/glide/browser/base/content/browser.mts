@@ -1487,6 +1487,13 @@ function make_glide_api(): typeof glide {
       async execute(cmd: GlideCommandString): Promise<void> {
         await GlideExcmds.execute(cmd);
       },
+      create<const Excmd extends glide.ExcmdCreateProps>(
+        info: Excmd,
+        fn: () => void | Promise<void>
+      ): Excmd {
+        GlideExcmds.add_user_cmd(info, fn);
+        return info;
+      },
     },
     content: {
       async execute(func, opts) {

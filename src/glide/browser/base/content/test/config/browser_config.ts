@@ -553,3 +553,29 @@ add_task(async function test_config_sandbox_properties() {
     "GlideExcmds should NOT be available in config sandbox"
   );
 });
+
+add_task(async function test_excmds_create() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.excmds.create(
+      {
+        name: "hello",
+        description: "test",
+      },
+      () => {
+        glide.g.value = "from hello excmd";
+      }
+    );
+
+    glide.keymaps.set("normal", "<leader>0", "hello");
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>0");
+
+    is(
+      GlideBrowser.api.g.value,
+      "from hello excmd",
+      "the excmd callback should set g.value"
+    );
+  });
+});

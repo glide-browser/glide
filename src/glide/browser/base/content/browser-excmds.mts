@@ -126,6 +126,18 @@ class GlideExcmdsClass {
     }
   }
 
+  #user_cmds: Map<string, GlideExcmdInfo & { fn: () => void | Promise<void> }> =
+    new Map();
+
+  add_user_cmd(info: glide.ExcmdCreateProps, fn: () => void | Promise<void>) {
+    this.#user_cmds.set(info.name, {
+      ...info,
+      content: false,
+      repeatable: false,
+      fn,
+    });
+  }
+
   async #execute(
     command: GlideCommandString | GlideCommandCallback,
     props?: ExecuteProps
@@ -135,6 +147,12 @@ class GlideExcmdsClass {
     }
 
     const name = extract_command_name(command);
+
+    const meta = this.#user_cmds.get(name);
+    if (meta) {
+      return await meta.fn();
+    }
+
     const command_meta = GLIDE_EXCOMMANDS_MAP[name as GlideExcmdName];
     if (!command_meta) {
       throw new Error(`Unknown excmd: \`${name}\``);

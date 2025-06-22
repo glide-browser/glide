@@ -147,6 +147,14 @@ declare global {
        * Execute an excmd, this is the same as typing `:cmd --args`.
        */
       execute(cmd: glide.ExcmdString): Promise<void>;
+
+      /**
+       * Create a new excmd.
+       */
+      create<const Excmd extends glide.ExcmdCreateProps>(
+        info: Excmd,
+        fn: () => void | Promise<void>
+      ): Excmd;
     };
 
     content: {
@@ -358,6 +366,12 @@ declare global {
        * `{ ctrlKey: true, key: 's' }` -> `'<C-s>'`
        */
       glide_key: string;
+    };
+
+    /// @docs-skip
+    export type ExcmdCreateProps = {
+      name: string;
+      description: string;
     };
 
     /// @docs-skip
