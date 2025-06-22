@@ -170,7 +170,7 @@ export function create_element<K extends keyof HTMLElementTagNameMap>(
 
   for (const [prop, value] of Object.entries(props?.style ?? {})) {
     // @ts-ignore
-    element.style.setProperty(prop, value);
+    element.style[prop] = value;
   }
 
   // @ts-ignore
