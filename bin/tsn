@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# run typescript files with node.js, presumes v23+
+
+set -e
+
+node --no-warnings --experimental-strip-types "$@"
