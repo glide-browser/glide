@@ -30,6 +30,9 @@ const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule(
 );
 const { parse_command_args: base_parse_command_args } =
   ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
+const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
+  global: "current",
+});
 
 interface ExecuteProps {
   mapping?: KeyMappingTrieNode | null;
@@ -364,25 +367,88 @@ class GlideExcmdsClass {
       case "config": {
         const id = "glide-config-path";
         const config_path = GlideBrowser.config_path;
+        if (config_path) {
+          GlideBrowser.add_notification(id, {
+            label: `Config path: ${config_path}`,
+            priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+            buttons: [
+              {
+                "l10n-id": "glide-config-notification-copy-button",
+                callback: () => {
+                  MozUtils.copy_to_clipboard(window, config_path);
+                  GlideBrowser.remove_notification(id);
+                },
+              },
+            ],
+          });
+
+          console.log("config path: ", config_path);
+          return;
+        }
+
+        const fragment = document!.createDocumentFragment();
+        fragment.appendChild(
+          DOM.create_element("div", {
+            textContent:
+              "No config file found. Create a glide.ts file at one of:",
+          })
+        );
+
+        const max_description_length = Math.max(
+          ...GlideBrowser.config_dirs.map(
+            ({ description }) => description.length
+          )
+        );
+
+        const list = DOM.create_element("ul", {
+          style: {
+            margin: "8px 0",
+            paddingLeft: "20px",
+          },
+          children: GlideBrowser.config_dirs.map(({ path, description }) => {
+            return DOM.create_element("li", {
+              style: {
+                display: "flex",
+                alignItems: "baseline",
+                gap: "12px",
+                marginBottom: "4px",
+              },
+              children: [
+                DOM.create_element("span", {
+                  textContent: `[${description}]`,
+                  style: {
+                    color: "#C0CAF5",
+                    fontSize: "0.85em",
+                    minWidth: `${max_description_length + 2}ch`,
+                  },
+                }),
+
+                DOM.create_element("span", {
+                  textContent: PathUtils.join(path, "glide.ts"),
+                  style: {
+                    fontFamily: "monospace",
+                  },
+                }),
+              ],
+            });
+          }),
+        });
+        fragment.appendChild(list);
 
         GlideBrowser.add_notification(id, {
-          label: `Config path: ${config_path}`,
+          label: fragment,
           priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
-          buttons:
-            config_path ?
-              [
-                {
-                  "l10n-id": "glide-config-notification-copy-button",
-                  callback: () => {
-                    MozUtils.copy_to_clipboard(window, config_path);
-                    GlideBrowser.remove_notification(id);
-                  },
-                },
-              ]
-            : [],
+          buttons: GlideBrowser.config_dirs.map(({ path, description }) => ({
+            label: `Copy ${description}`,
+            callback: () => {
+              MozUtils.copy_to_clipboard(
+                window,
+                PathUtils.join(path, "glide.ts")
+              );
+              GlideBrowser.remove_notification(id);
+            },
+          })),
         });
-
-        console.log("config path: ", config_path);
         break;
       }
 
