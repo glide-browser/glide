@@ -381,6 +381,11 @@ export const GLIDE_EXCOMMANDS = [
         description:
           "*Only* show hints for all elements matching this CSS selector",
       },
+      "-e": {
+        type: "boolean",
+        required: false,
+        description: "*Only* show hints for all elements that are editable",
+      },
       "--action": {
         type: { enum: ["click", "newtab-click"] },
         required: false,

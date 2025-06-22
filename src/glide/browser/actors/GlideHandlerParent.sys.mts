@@ -56,6 +56,7 @@ export interface ParentMessages {
   "Glide::Hint": {
     location: glide.HintLocation;
     selector?: string;
+    editable_only?: boolean;
     action?:
       | "click"
       | "newtab-click"

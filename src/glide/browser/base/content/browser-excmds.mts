@@ -481,6 +481,7 @@ class GlideExcmdsClass {
         actor.send_async_message("Glide::Hint", {
           selector: args["-s"] ?? undefined,
           action: args["--action"],
+          editable_only: args["-e"] ?? undefined,
           location,
         });
         break;

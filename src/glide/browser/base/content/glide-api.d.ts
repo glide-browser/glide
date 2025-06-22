@@ -232,6 +232,11 @@ declare global {
         selector?: string;
 
         /**
+         * *Only* show hints for elements that are editable.
+         */
+        editable?: boolean;
+
+        /**
          * Callback invoked when the selected hint is chosen.
          *
          * This is executed in the content process.

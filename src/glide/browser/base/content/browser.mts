@@ -1525,6 +1525,7 @@ function make_glide_api(): typeof glide {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
           selector: opts?.selector,
           location: opts?.location ?? "content",
+          editable_only: opts?.editable ?? undefined,
         });
       },
     },

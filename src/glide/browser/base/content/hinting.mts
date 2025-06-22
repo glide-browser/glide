@@ -24,12 +24,17 @@ export interface GlideHint {
 
 export type GlideHintIPC = Omit<GlideHint, "target" | "label">;
 
+interface ResolveProps {
+  selector?: string;
+  editable_only?: boolean;
+}
+
 export const content = {
-  resolve_hints(document: Document, opts?: { selector?: string }): GlideHint[] {
+  resolve_hints(document: Document, opts?: ResolveProps): GlideHint[] {
     const hints: GlideHint[] = [];
 
     let i = 0;
-    for (const target of this.hintable_targets(document, opts?.selector)) {
+    for (const target of this.hintable_targets(document, opts)) {
       // check if the element is in the viewport and not hidden due to `display` styling
       // or other similar states
       if (!DOM.is_visible(target)) {
@@ -106,7 +111,7 @@ export const content = {
 
   *hintable_targets(
     root: Document | ShadowRoot,
-    selector: string | undefined
+    opts: ResolveProps | undefined
   ): Generator<HTMLElement> {
     for (const el of all_elements(root)) {
       if (!el) {
@@ -114,8 +119,17 @@ export const content = {
       }
 
       const target = el as HTMLElement;
-      if (selector) {
-        if (target.matches(selector)) {
+
+      // filters use logical and, they must *all* return `true` for the target to be included.
+      const filters = [
+        opts?.selector ? target.matches(opts.selector) : null,
+        typeof opts?.editable_only !== "undefined" ?
+          DOM.is_text_editable(target)
+        : null,
+      ].filter(v => v != null);
+
+      if (filters.length) {
+        if (filters.every(b => b)) {
           yield target;
         }
       } else if (
@@ -127,7 +141,7 @@ export const content = {
       }
 
       if (target.shadowRoot) {
-        yield* this.hintable_targets(target.shadowRoot, selector);
+        yield* this.hintable_targets(target.shadowRoot, opts);
       }
     }
   },
