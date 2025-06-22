@@ -94,9 +94,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
           // TODO(glide): is there a way to fix this?
         : (console as any);
 
-      for (const command of GLIDE_EXCOMMANDS) {
-        this.#options.push(command);
-      }
+      this.#init_excmds();
 
       this.addEventListener("focusout", () => {
         if (!Services.prefs.getBoolPref("ui.popup.disable_autohide", false)) {
@@ -283,7 +281,20 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       this.refresh_tabs({ new_index: -1 });
     }
 
+    #init_excmds() {
+      this.#options = [];
+
+      for (const command of GLIDE_EXCOMMANDS) {
+        this.#options.push(command);
+      }
+
+      for (const command of GlideExcmds.user_cmds.values()) {
+        this.#options.push(command);
+      }
+    }
+
     refresh_data() {
+      this.#init_excmds();
       // TODO(glide): only if tabs active
       this.refresh_tabs({ new_index: null });
     }

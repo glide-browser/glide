@@ -138,6 +138,10 @@ class GlideExcmdsClass {
     });
   }
 
+  get user_cmds(): ReadonlyMap<string, GlideExcmdInfo> {
+    return this.#user_cmds;
+  }
+
   async #execute(
     command: GlideCommandString | GlideCommandCallback,
     props?: ExecuteProps
