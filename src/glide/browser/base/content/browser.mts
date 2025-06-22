@@ -5,6 +5,7 @@
 
 import type { SetRequired, Split } from "type-fest";
 import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
+import type { GlideDocsParent } from "../../actors/GlideDocsParent.sys.mjs";
 import type {
   GlideOperator,
   GlideCommandString,
@@ -1289,6 +1290,15 @@ class GlideBrowserClass {
     // in certain cases, I'm not sure exactly *when* that can happen but `.getExistingActor()`
     // breaks our tests.
     return content_wgp.getActor("GlideHandler") as any as GlideHandlerParent;
+  }
+
+  get_docs_actor(): GlideDocsParent {
+    let tab_browser = gBrowser.selectedBrowser;
+    let content_wgp = assert_present(
+      tab_browser.browsingContext
+        .currentWindowGlobal as typeof windowGlobalChild
+    );
+    return content_wgp.getActor("GlideDocs") as any as GlideDocsParent;
   }
 
   get_chrome_actor(): GlideHandlerParent {

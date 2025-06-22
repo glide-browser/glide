@@ -112,6 +112,13 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "map",
+    description: "Show all mappings",
+    content: false,
+    repeatable: false,
+  },
+
+  {
     // TODO(glide): this should also remove from `visual` and `operator-pending` modes when we have them
     name: "unmap",
     description: "Remove a mapping from normal mode",

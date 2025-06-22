@@ -1,0 +1,197 @@
+:root {
+  --highlight-color: #f0f0f0;
+  --key-bg: #f5f5f5;
+  --key-border: #d0d0d0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --highlight-color: #313131;
+    --key-bg: #313131;
+    --key-border: #444;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.35em;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+h1 {
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--text-color-alt);
+}
+
+/* Search */
+.search-container {
+  flex: 1;
+  max-width: 400px;
+}
+
+#search {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: inherit;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: var(--border-thickness) solid var(--border-color);
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#search:focus {
+  border-color: var(--text-color);
+}
+
+#search::placeholder {
+  color: var(--text-color-alt);
+}
+
+/* Mode tabs */
+.mode-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: var(--border-thickness) solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  color: var(--text-color-alt);
+  border: none;
+  border-radius: 5px 5px 0 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+
+.tab:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color);
+}
+
+.tab.active {
+  color: var(--text-color);
+  background-color: var(--highlight-color);
+}
+
+/* Mappings container */
+#mappings-container {
+  min-height: 400px;
+}
+
+.mode-section {
+  margin-bottom: 3rem;
+}
+
+.mappings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Individual mapping */
+.mapping-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.mapping-item:hover {
+  background-color: var(--highlight-color);
+}
+
+.mapping-key {
+  font-weight: bold;
+  font-family: inherit;
+  background-color: var(--key-bg);
+  border: 1px solid var(--key-border);
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+  min-width: 80px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mapping-arrow {
+  color: var(--text-color-alt);
+  flex-shrink: 0;
+}
+
+.mapping-command {
+  font-family: inherit;
+  color: var(--text-color);
+  flex-shrink: 0;
+  min-width: 200px;
+}
+
+.mapping-description {
+  color: var(--text-color-alt);
+  margin-left: auto;
+  text-align: right;
+}
+
+/* Animation */
+@media (prefers-reduced-motion: no-preference) {
+  .mapping-item {
+    animation: fadeIn 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

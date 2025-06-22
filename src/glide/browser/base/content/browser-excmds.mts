@@ -369,6 +369,14 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "map": {
+        // this will render the mappings through `src/glide/browser/actors/GlideDocsChild.sys.mts`
+        gBrowser.addTrustedTab("resource://glide-docs/dynamic/mappings.html", {
+          inBackground: false, // ensure active/selected
+        });
+        break;
+      }
+
       case "unmap": {
         const {
           args: { lhs },

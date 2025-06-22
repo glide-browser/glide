@@ -15,6 +15,7 @@
  *     e.g. `ab`, `<C-a>b`, `x<lt>`, `<leader>sf`
  */
 
+import type { SetNonNullable } from "type-fest";
 import type {
   GlideCommandCallback,
   GlideCommandString,
@@ -27,6 +28,8 @@ const { lastx } = ChromeUtils.importESModule(
 const { is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
+
+type KeyMappingTrieNodeWithValue = SetNonNullable<KeyMappingTrieNode, "value">;
 
 export class KeyMappingTrieNode {
   value: KeyMapping | null = null;
@@ -86,6 +89,15 @@ export class KeyMappingTrieNode {
 
   get has_children(): boolean {
     return this.children.size > 0;
+  }
+
+  *recurse(): IterableIterator<KeyMappingTrieNodeWithValue> {
+    for (const child of this.children.values()) {
+      if (child.value) {
+        yield child as KeyMappingTrieNodeWithValue;
+      }
+      yield* child.recurse();
+    }
   }
 
   /**
@@ -202,6 +214,10 @@ class KeyMappingTrie {
   find(sequence: [string, ...string[]]): KeyMappingTrieNode | null {
     return this.root.find(sequence);
   }
+
+  *recurse(): IterableIterator<KeyMappingTrieNodeWithValue> {
+    yield* this.root.recurse();
+  }
 }
 
 export interface KeyMapping {
@@ -238,6 +254,10 @@ export class KeyManager {
       })
       // createInstance isn't defined in tests
     : (console as any);
+
+  get global_mappings(): Readonly<Record<GlideMode, KeyMappingTrie>> {
+    return this.#mappings;
+  }
 
   set(
     modes: GlideMode | GlideMode[],

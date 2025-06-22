@@ -32,3 +32,8 @@ glide.jar:
   res/glide-docs/monospace-web/index.css         (./dist/monospace-web/index.css)
   res/glide-docs/monospace-web/reset.css         (./dist/monospace-web/reset.css)
   res/glide-docs/pagefind                        (./dist/pagefind/**/*)
+
+  # runtime-generated docs
+  res/glide-docs/dynamic/mappings.html           (./dynamic/mappings.html)
+  res/glide-docs/dynamic/mappings.css            (./dynamic/mappings.css)
+  res/glide-docs/dynamic/mappings.js             (./dynamic/dist/mappings.js)
