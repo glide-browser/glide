@@ -99,7 +99,9 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       }
 
       this.addEventListener("focusout", () => {
-        this.close();
+        if (!Services.prefs.getBoolPref("ui.popup.disable_autohide", false)) {
+          this.close();
+        }
       });
 
       this.addEventListener(
