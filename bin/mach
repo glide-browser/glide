@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/../engine/"
+
+# turn `src/` paths into relative `engine/` paths, this is helpful for
+# auto-completions, e.g. `mach test src/glide/browser/base/content/test/config`
+ARGS=()
+for arg in "$@"; do
+    if [[ "$arg" == src/* ]]; then
+        path_after_src="${arg#src/}"
+        
+        if [[ -e "${path_after_src}" ]]; then
+            ARGS+=("${path_after_src}")
+        else
+            ARGS+=("${arg}")
+        fi
+    else
+        # pass through unchanged
+        ARGS+=("${arg}")
+    fi
+done
+
+./mach "${ARGS[@]}"
