@@ -23,7 +23,7 @@
 
     "lint": "./scripts/lint.sh",
     
-    "tsc": "tsc",
+    "tsc": "tsc -p tsconfig.check.json",
     "format": "prettier -w .",
     "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
     "test": "pnpm mach test glide"
