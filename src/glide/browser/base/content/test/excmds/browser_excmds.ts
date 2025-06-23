@@ -161,3 +161,53 @@ add_task(async function test_scrolling() {
     is(new_x, min_x, `h should scroll to the left edge`);
   });
 });
+
+add_task(async function test_gi_focuses_last_used_input() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    await SpecialPowers.spawn(browser, [], async () => {
+      content.document.getElementById("input-1").focus();
+    });
+    await sleep_frames(100);
+
+    await TestUtils.waitForCondition(
+      () =>
+        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
+        "insert",
+      "Waiting for mode button to show `insert` mode"
+    );
+
+    await GlideTestUtils.synthesize_keyseq("hello");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      content.document.getElementById("input-1").blur();
+    });
+
+    await TestUtils.waitForCondition(
+      () =>
+        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
+        "normal",
+      "Waiting for mode button to show `normal` mode"
+    );
+
+    await GlideTestUtils.synthesize_keyseq("gi");
+
+    await TestUtils.waitForCondition(
+      () =>
+        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
+        "insert",
+      "Waiting for mode button to show `insert` mode after gi"
+    );
+
+    await GlideTestUtils.synthesize_keyseq(" world");
+    const inputContent = await SpecialPowers.spawn(
+      browser,
+      [],
+      async () => content.document.getElementById("input-1").value
+    );
+    is(
+      inputContent,
+      "hello world",
+      "gi should focus the previously used input element"
+    );
+  });
+});
