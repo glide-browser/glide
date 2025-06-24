@@ -112,6 +112,13 @@ glide.excmds.execute(cmd): Promise<void>
 
 
 Execute an excmd, this is the same as typing `:cmd --args`.
+
+{% api-heading id="glide.excmds.create" %}
+glide.excmds.create(info, fn): Excmd
+{% /api-heading %}
+
+
+Create a new excmd.
 ## • `glide.content` {% id="glide.content" %}
 
 
