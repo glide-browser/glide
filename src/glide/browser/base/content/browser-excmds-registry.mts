@@ -386,6 +386,12 @@ export const GLIDE_EXCOMMANDS = [
         required: false,
         description: "*Only* show hints for all elements that are editable",
       },
+      "--auto": {
+        type: "boolean",
+        required: false,
+        description:
+          "If only one hint is generated, automatically activate it.",
+      },
       "--action": {
         type: { enum: ["click", "newtab-click"] },
         required: false,

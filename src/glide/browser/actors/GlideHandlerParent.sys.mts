@@ -55,6 +55,7 @@ export interface ParentMessages {
   "Glide::ExecuteHint": { id: number };
   "Glide::Hint": {
     location: glide.HintLocation;
+    auto_activate: boolean;
     selector?: string;
     editable_only?: boolean;
     action?:
@@ -173,7 +174,8 @@ export class GlideHandlerParent extends JSWindowActorParent<
       case "Glide::ResolvedHints": {
         this.glide_commands!.show_hints(
           message.data.hints,
-          message.data.location
+          message.data.location,
+          message.data.auto_activate
         );
         break;
       }

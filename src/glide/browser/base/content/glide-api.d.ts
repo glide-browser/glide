@@ -245,6 +245,13 @@ declare global {
         editable?: boolean;
 
         /**
+         * If only one hint is generated, automatically activate it.
+         *
+         * @default false
+         */
+        auto_activate?: boolean;
+
+        /**
          * Callback invoked when the selected hint is chosen.
          *
          * This is executed in the content process.

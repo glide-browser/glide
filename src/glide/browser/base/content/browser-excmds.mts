@@ -571,6 +571,7 @@ class GlideExcmdsClass {
           action: args["--action"],
           editable_only: args["-e"] ?? undefined,
           location,
+          auto_activate: args["--auto"] ?? false,
         });
         break;
       }

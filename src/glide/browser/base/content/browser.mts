@@ -1542,6 +1542,7 @@ function make_glide_api(): typeof glide {
           selector: opts?.selector,
           location: opts?.location ?? "content",
           editable_only: opts?.editable ?? undefined,
+          auto_activate: opts?.auto_activate ?? false,
         });
       },
     },

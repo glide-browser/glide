@@ -15,6 +15,9 @@ const { LayoutUtils } = ChromeUtils.importESModule(
 const Hinting = ChromeUtils.importESModule(
   "chrome://glide/content/hinting.mjs"
 );
+const { assert_never } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/guards.mjs"
+);
 
 /**
  * Collection of internal helper functions.
@@ -131,7 +134,11 @@ class GlideCommandsClass {
     container.style.setProperty("display", "none", "important");
   }
 
-  show_hints(ipc_hints: GlideHintIPC[], location: glide.HintLocation) {
+  show_hints(
+    ipc_hints: GlideHintIPC[],
+    location: glide.HintLocation,
+    auto_activate: boolean
+  ) {
     this.#clear_hints();
 
     const container = this.#upsert_hints_container();
@@ -155,6 +162,16 @@ class GlideCommandsClass {
       }
 
       hints.push({ ...hint, label: "", x, y });
+    }
+
+    if (auto_activate && hints.length === 1) {
+      const actor =
+        location === "browser-ui" ? GlideBrowser.get_chrome_actor()
+        : location === "content" ? GlideBrowser.get_content_actor()
+        : assert_never(location);
+      actor.send_async_message("Glide::ExecuteHint", { id: hints[0]!.id });
+      this.remove_hints();
+      return;
     }
 
     const labels = Strings.generate_prefix_free_codes(

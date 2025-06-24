@@ -51,6 +51,7 @@ export interface ChildMessages {
   "Glide::ResolvedHints": {
     hints: GlideHintIPC[];
     location: glide.HintLocation;
+    auto_activate: boolean;
   };
   "Glide::HideHints": {};
   "Glide::ChangeMode": { mode: GlideMode };
@@ -737,6 +738,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
       actor.send_async_message("Glide::ResolvedHints", {
         location: props.location,
+        auto_activate: props.auto_activate,
         // strip out the `target` as we cannot / don't need to send it
         hints: hints.map(({ target: _target, ...rest }) => rest),
       });

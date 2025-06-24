@@ -5,6 +5,8 @@
 
 const FILE =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html";
+const SINGLE_HINT_FILE =
+  "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/single_hint_test.html";
 
 add_setup(async () => {
   await GlideTestUtils.synthesize_keyseq("<escape>");
@@ -118,5 +120,26 @@ add_task(async function test_partial_hint_filtering() {
       filtered_hints >= 0,
       "Should have some hints remaining or none if no matches"
     );
+  });
+});
+
+add_task(async function test_auto_activate_single_hint() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", "hint --auto");
+  });
+
+  await BrowserTestUtils.withNewTab(SINGLE_HINT_FILE, async _ => {
+    await GlideTestUtils.synthesize_keyseq("f");
+
+    await sleep_frames(5);
+
+    ok(
+      GlideBrowser.state.mode === "normal",
+      "Should have entered auto-activated to normal"
+    );
+
+    is(gBrowser.selectedBrowser?.currentURI.spec, FILE);
+
+    await sleep_frames(3);
   });
 });
