@@ -11,7 +11,7 @@ cd "$(dirname "$0")/.."
 
 rm -rf src/glide/generated
 
-pnpm tsc \
+./node_modules/.bin/tsc \
   --declaration \
   --allowJs \
   --emitDeclarationOnly \
