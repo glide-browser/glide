@@ -294,6 +294,25 @@ declare global {
 
     keys: {
       /**
+       * Send a key sequence to the browser, simulating physical key presses.
+       *
+       * The key sequence can include multiple regular keys, special keys, and modifiers.
+       *
+       * For example:
+       *
+       * ```ts
+       * // Send a simple key sequence, each char is sent separately
+       * await glide.keys.send("hello");
+       *
+       * // Send with modifiers, results in two events
+       * // - { ctrlKey: true, key: 'a' }
+       * // - { ctrlKey: true, key: 'c' }
+       * await glide.keys.send("<C-a><C-c>");
+       * ```
+       */
+      send<const Keys>(keyseq: $keymapcompletions.T<Keys>): Promise<void>;
+
+      /**
        * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}`.
        *
        * This blocks other input events from being processed until the promise resolves.

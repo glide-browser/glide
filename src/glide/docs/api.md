@@ -186,6 +186,27 @@ The mapping may remain defined for other modes where it applies.
 ## • `glide.keys` {% id="glide.keys" %}
 
 
+{% api-heading id="glide.keys.send" %}
+glide.keys.send(keyseq): Promise<void>
+{% /api-heading %}
+
+
+Send a key sequence to the browser, simulating physical key presses.
+
+The key sequence can include multiple regular keys, special keys, and modifiers.
+
+For example:
+
+```ts
+// Send a simple key sequence, each char is sent separately
+await glide.keys.send("hello");
+
+// Send with modifiers, results in two events
+// - { ctrlKey: true, key: 'a' }
+// - { ctrlKey: true, key: 'c' }
+await glide.keys.send("<C-a><C-c>");
+```
+
 {% api-heading id="glide.keys.next" %}
 glide.keys.next(): Promise<glide.KeyEvent>
 {% /api-heading %}

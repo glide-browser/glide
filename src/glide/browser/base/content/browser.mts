@@ -1547,6 +1547,13 @@ function make_glide_api(): typeof glide {
       },
     },
     keys: {
+      async send(input) {
+        const EventUtils = ChromeUtils.importESModule(
+          "chrome://glide/content/event-utils.mjs",
+          { global: "current" }
+        );
+        await EventUtils.synthesize_keyseq(input as string);
+      },
       async next() {
         if (GlideBrowser.next_key_waiter) {
           throw new Error(

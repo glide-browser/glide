@@ -579,3 +579,61 @@ add_task(async function test_excmds_create() {
     );
   });
 });
+
+add_task(async function test_keys_send_api() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>t", async () => {
+      glide.g.value = "before send";
+      await glide.keys.send("j");
+    });
+
+    glide.keymaps.set("normal", "j", () => {
+      glide.g.value = "after send";
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await sleep_frames(50);
+
+    is(
+      GlideBrowser.api.g.value,
+      "after send",
+      "glide.keys.send() should trigger the 'j' keymap"
+    );
+  });
+});
+
+add_task(async function test_keys_send_to_input_element() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("insert", "<C-k>", async () => {
+      await glide.keys.send("hello");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById("input-1");
+      input.focus();
+      input.value = "";
+    });
+    await sleep_frames(3);
+    is(
+      GlideBrowser.state.mode,
+      "insert",
+      "Should be in insert mode when input is focused"
+    );
+
+    await GlideTestUtils.synthesize_keyseq("<C-k>");
+    await sleep_frames(5);
+
+    is(
+      await SpecialPowers.spawn(browser, [], async () => {
+        const input = content.document.getElementById("input-1");
+        return input.value;
+      }),
+      "hello",
+      "glide.keys.send() should insert text into focused input element"
+    );
+  });
+});
