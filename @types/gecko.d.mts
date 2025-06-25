@@ -81,7 +81,9 @@ declare namespace GlobalBrowser {
           parameter: "removed" | "dismissed" | "disconnected"
         ) => void;
       },
-      buttons?: NotificationBox.Button[]
+      buttons?: NotificationBox.Button[],
+      aDisableClickJackingDelay?: boolean,
+      dismissable?: boolean
     ): Promise<Notification>;
     removeNotification(notification: Notification): void;
 

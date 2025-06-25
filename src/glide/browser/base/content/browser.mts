@@ -467,7 +467,18 @@ class GlideBrowserClass {
   ) {
     this.on_startup(() => {
       const { buttons, ...data } = props;
-      gNotificationBox.appendNotification(type, data, buttons);
+      gNotificationBox.appendNotification(
+        type,
+        data,
+        buttons,
+        // for the vast majority of our notifications, the click jacking delay just adds
+        // visual noise and distraction as most of them will be triggered after say a keypress,
+        // not when just browsing the web normally.
+        //
+        // of course this *could* stil happen, but I think the tradeoff is worth the risk of
+        // some user potentially accidentally clicking a notification button.
+        /* disable clickjacking */ true
+      );
     });
   }
 
