@@ -670,3 +670,65 @@ add_task(async function test_keys_send_accepts_glide_key() {
     );
   });
 });
+
+declare global {
+  interface GlideModes {
+    test_custom_mode: "test_custom_mode";
+  }
+}
+
+add_task(async function test_custom_modes() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.modes.register("test_custom_mode");
+
+    glide.keymaps.set("normal", "<Space>t", async () => {
+      await glide.excmds.execute("mode_change test_custom_mode");
+    });
+
+    glide.keymaps.set("test_custom_mode", "j", async () => {
+      glide.g.value = "from custom mode keymap";
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await sleep_frames(10);
+    is(
+      GlideBrowser.state.mode,
+      "test_custom_mode",
+      "we should switch to the custom mode"
+    );
+
+    await GlideTestUtils.synthesize_keyseq("j");
+    await sleep_frames(10);
+    is(
+      GlideBrowser.api.g.value,
+      "from custom mode keymap",
+      "the custom mode keymap callback should be invoked"
+    );
+
+    await GlideBrowser.api.excmds.execute("mode_change normal");
+  });
+});
+
+add_task(async function test_registering_mode_twice_results_in_an_error() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.modes.register("normal");
+  });
+
+  await sleep_frames(100);
+
+  let notification =
+    gNotificationBox.getNotificationWithValue("glide-config-error");
+
+  ok(notification, "Error notification should be shown");
+  is(
+    // @ts-ignore
+    notification.shadowRoot
+      .querySelector(".message")
+      .textContent.trim()
+      .replaceAll(CONFIG_LINE_COL_REGEX, ":X:X"),
+    "An error occurred while evaluating `register@chrome://glide/content/browser.mjs:X:X\n@glide.ts:1:13` - Error: The `normal` mode has already been registered. Modes can only be registered once",
+    "Notification should contain error message"
+  );
+});

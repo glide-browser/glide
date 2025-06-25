@@ -15,6 +15,7 @@ enum class GlideMode : uint32_t {
   Ignore = 4,
   Hint = 5,
   Command = 6,
+  Other = 7,
 };
 
 /**
@@ -45,6 +46,7 @@ __attribute__((used)) static bool shouldRenderBlockCaret(
     // doesn't matter.
     case UnderlyingValue(GlideMode::Hint):
     case UnderlyingValue(GlideMode::Visual):
+    case UnderlyingValue(GlideMode::Other):
     case UnderlyingValue(GlideMode::Normal): {
       return true;
     }
@@ -78,6 +80,7 @@ __attribute__((used)) static bool shouldRenderUnderlineCaret(
     case UnderlyingValue(GlideMode::Ignore):
     case UnderlyingValue(GlideMode::Normal):
     case UnderlyingValue(GlideMode::Command):
+    case UnderlyingValue(GlideMode::Other):
     case UnderlyingValue(GlideMode::Insert): {
       return false;
     }

@@ -52,7 +52,7 @@ export const MODE_SCHEMA_TYPE = {
     "ignore",
     "command",
     "hint",
-  ],
+  ] as GlideMode[],
 } as const satisfies ArgumentSchema["type"];
 
 export const OPERATOR_SCHEMA_TYPE = {

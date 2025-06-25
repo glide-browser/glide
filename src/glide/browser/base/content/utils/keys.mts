@@ -28,6 +28,9 @@ const { lastx } = ChromeUtils.importESModule(
 const { is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
+const { redefine_getter } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/objects.mjs"
+);
 
 type KeyMappingTrieNodeWithValue = SetNonNullable<KeyMappingTrieNode, "value">;
 
@@ -234,15 +237,6 @@ export interface KeyMapping {
 }
 
 export class KeyManager {
-  #mappings: Record<GlideMode, KeyMappingTrie> = {
-    insert: new KeyMappingTrie(),
-    normal: new KeyMappingTrie(),
-    visual: new KeyMappingTrie(),
-    ignore: new KeyMappingTrie(),
-    hint: new KeyMappingTrie(),
-    command: new KeyMappingTrie(),
-    "op-pending": new KeyMappingTrie(),
-  };
   #buf_mappings: Record<GlideMode, KeyMappingTrie> | null = null;
 
   #current_sequence: string[] = [];
@@ -255,8 +249,22 @@ export class KeyManager {
       // createInstance isn't defined in tests
     : (console as any);
 
+  register_mode(mode: GlideMode): void {
+    if (!this._mappings[mode]) {
+      this._mappings[mode] = new KeyMappingTrie();
+    }
+
+    if (this.#buf_mappings && !this.#buf_mappings[mode]) {
+      this.#buf_mappings[mode] = new KeyMappingTrie();
+    }
+  }
+
+  get _mappings(): Record<GlideMode, KeyMappingTrie> {
+    return redefine_getter(this, "_mappings", this.#make_modes_tries());
+  }
+
   get global_mappings(): Readonly<Record<GlideMode, KeyMappingTrie>> {
-    return this.#mappings;
+    return this._mappings;
   }
 
   set(
@@ -312,21 +320,19 @@ export class KeyManager {
   #mapping(mode: GlideMode, buffer: boolean): KeyMappingTrie {
     if (buffer) {
       if (!this.#buf_mappings) {
-        this.#buf_mappings = {
-          insert: new KeyMappingTrie(),
-          normal: new KeyMappingTrie(),
-          visual: new KeyMappingTrie(),
-          ignore: new KeyMappingTrie(),
-          hint: new KeyMappingTrie(),
-          command: new KeyMappingTrie(),
-          "op-pending": new KeyMappingTrie(),
-        };
+        this.#buf_mappings = this.#make_modes_tries();
       }
 
       return this.#buf_mappings[mode];
     }
 
-    return this.#mappings[mode];
+    return this._mappings[mode];
+  }
+
+  #make_modes_tries(): Record<GlideMode, KeyMappingTrie> {
+    return Object.fromEntries(
+      GlideBrowser.mode_names.map(mode => [mode, new KeyMappingTrie()])
+    ) as Record<GlideMode, KeyMappingTrie>;
   }
 
   reset_sequence() {
@@ -354,7 +360,7 @@ export class KeyManager {
     //              e.g. buffer: `<leader>a`, global: `<leader>ab`.
     const node =
       this.#buf_mappings?.[current_mode].find(sequence) ??
-      this.#mappings[current_mode].find(sequence);
+      this._mappings[current_mode].find(sequence);
     if (!node) {
       this.#log.debug(`${event.key} -> ${keyn} did not match`);
       return;

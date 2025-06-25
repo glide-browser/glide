@@ -234,6 +234,29 @@ Returns a `Promise` that resolves to a string representation of the last input e
 
 This blocks other input events from being processed until the promise resolves.
 
+## • `glide.modes` {% id="glide.modes" %}
+
+
+{% api-heading id="glide.modes.register" %}
+glide.modes.register(mode): void
+{% /api-heading %}
+
+
+Register a custom `mode`.
+
+**note**: you must *also* register it as a type like so:
+
+```typescript
+declare global {
+  interface GlideModes {
+    leap: "leap";
+  }
+}
+glide.modes.register('leap')
+```
+
+**note**: there is currently no way to change how the caret is rendered
+          for your custom mode, it will always be a block caret.
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 
 ## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}

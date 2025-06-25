@@ -49,6 +49,9 @@ const { redefine_getter } = ChromeUtils.importESModule(
 const { create_sandbox } = ChromeUtils.importESModule(
   "chrome://glide/content/sandbox.mjs"
 );
+const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule(
+  "chrome://glide/content/browser-excmds-registry.mjs"
+);
 
 export interface State {
   mode: GlideMode;
@@ -281,11 +284,21 @@ class GlideBrowserClass {
   async #reload_config() {
     this.#api = null;
     this.config_path = null;
+    this._modes = {} as any;
     this.#clear_config_error_notification();
 
     this.autocmds = {};
 
     this.key_manager = new Keys.KeyManager();
+
+    // builtin modes
+    this.api.modes.register("hint");
+    this.api.modes.register("normal");
+    this.api.modes.register("insert");
+    this.api.modes.register("visual");
+    this.api.modes.register("ignore");
+    this.api.modes.register("command");
+    this.api.modes.register("op-pending");
 
     // default plugins
     DefaultKeymaps.init(this.api);
@@ -941,6 +954,12 @@ class GlideBrowserClass {
     return this.state_listeners.delete(cb);
   }
 
+  _modes: { [k in GlideMode]: {} } = {} as any;
+
+  get mode_names(): GlideMode[] {
+    return Object.keys(this._modes) as GlideMode[];
+  }
+
   // must correspond exactly with `glide/cpp/Glide.h::GlideMode`
   #mode_to_int_enum(mode: GlideMode): number {
     switch (mode) {
@@ -958,8 +977,15 @@ class GlideBrowserClass {
         return 5;
       case "command":
         return 6;
+      case "test_custom_mode":
+        // only for testing purposes, tests have to "mutate" global types
+        return 7;
       default:
-        throw assert_never(mode);
+        // note: explicitly not using `assert_never()` because custom modes will
+        //       hit this branch, but for our purposes we want to ensure any new
+        //       modes we add are covered in this switch
+        ((_x: never) => {})(mode);
+        return 7;
     }
   }
 
@@ -1574,6 +1600,19 @@ function make_glide_api(): typeof glide {
 
       async next_str() {
         return this.next().then(event => event.glide_key);
+      },
+    },
+    modes: {
+      register(mode) {
+        if (GlideBrowser._modes[mode]) {
+          throw new Error(
+            `The \`${mode}\` mode has already been registered. Modes can only be registered once`
+          );
+        }
+
+        GlideBrowser._modes[mode] = {};
+        MODE_SCHEMA_TYPE.enum.push(mode);
+        GlideBrowser.key_manager.register_mode(mode);
       },
     },
     prefs: {

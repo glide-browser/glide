@@ -33,7 +33,6 @@ const BUILD_FILES = new Set<string>();
 // TS files we don't care about building
 const IGNORED_FILES = new Set([
   "glide.ts",
-  "glide/browser/base/content/test/config/config_types.ts",
   "glide/browser/base/content/test/config/types/config.ts",
 ]);
 

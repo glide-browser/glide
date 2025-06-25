@@ -335,16 +335,62 @@ declare global {
        */
       next_str(): Promise<string>;
     };
+
+    modes: {
+      /**
+       * Register a custom `mode`.
+       *
+       * **note**: you must *also* register it as a type like so:
+       *
+       * ```typescript
+       * declare global {
+       *   interface GlideModes {
+       *     leap: "leap";
+       *   }
+       * }
+       * glide.modes.register('leap')
+       * ```
+       *
+       * **note**: there is currently no way to change how the caret is rendered
+       *           for your custom mode, it will always be a block caret.
+       */
+      register<Mode extends keyof GlideModes>(mode: Mode): void;
+    };
   };
 
-  type GlideMode =
-    | "normal"
-    | "insert"
-    | "visual"
-    | "op-pending"
-    | "ignore"
-    | "command"
-    | "hint";
+  /**
+   * Defines all the supported modes.
+   *
+   * **note**: the key is what defines the list of supported modes, currently the value is
+   *           not used for anything.
+   *
+   * **note**: you must *also* register it at runtime like so:
+   *
+   * ```typescript
+   * declare global {
+   *   interface GlideModes {
+   *     leap: "leap";
+   *   }
+   * }
+   * glide.modes.register('leap')
+   * ```
+   */
+  interface GlideModes {
+    hint: "hint";
+    normal: "normal";
+    insert: "insert";
+    visual: "visual";
+    ignore: "ignore";
+    command: "command";
+    "op-pending": "op-pending";
+  }
+
+  /**
+   * All of the supported modes.
+   *
+   * See {@link GlideModes} for more information.
+   */
+  type GlideMode = keyof GlideModes;
 
   interface GlideGlobals {
     mapleader: string;
