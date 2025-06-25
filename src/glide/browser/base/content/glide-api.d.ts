@@ -353,13 +353,13 @@ declare global {
        *     leap: "leap";
        *   }
        * }
-       * glide.modes.register('leap')
+       * glide.modes.register('leap', { caret: 'normal' })
        * ```
-       *
-       * **note**: there is currently no way to change how the caret is rendered
-       *           for your custom mode, it will always be a block caret.
        */
-      register<Mode extends keyof GlideModes>(mode: Mode): void;
+      register<Mode extends keyof GlideModes>(
+        mode: Mode,
+        opts: { caret: "block" | "line" | "underline" }
+      ): void;
     };
   };
 
@@ -377,7 +377,7 @@ declare global {
    *     leap: "leap";
    *   }
    * }
-   * glide.modes.register('leap')
+   * glide.modes.register('leap', { caret: 'normal' })
    * ```
    */
   interface GlideModes {

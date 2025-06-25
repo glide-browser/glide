@@ -242,7 +242,7 @@ This blocks other input events from being processed until the promise resolves.
 
 
 {% api-heading id="glide.modes.register" %}
-glide.modes.register(mode): void
+glide.modes.register(mode, opts): void
 {% /api-heading %}
 
 
@@ -256,11 +256,8 @@ declare global {
     leap: "leap";
   }
 }
-glide.modes.register('leap')
+glide.modes.register('leap', { caret: 'normal' })
 ```
-
-**note**: there is currently no way to change how the caret is rendered
-          for your custom mode, it will always be a block caret.
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 
 ## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}

@@ -679,7 +679,7 @@ declare global {
 
 add_task(async function test_custom_modes() {
   await GlideTestUtils.reload_config(function _() {
-    glide.modes.register("test_custom_mode");
+    glide.modes.register("test_custom_mode", { caret: "underline" });
 
     glide.keymaps.set("normal", "<Space>t", async () => {
       await glide.excmds.execute("mode_change test_custom_mode");
@@ -713,7 +713,7 @@ add_task(async function test_custom_modes() {
 
 add_task(async function test_registering_mode_twice_results_in_an_error() {
   await GlideTestUtils.reload_config(function _() {
-    glide.modes.register("normal");
+    glide.modes.register("normal", { caret: "block" });
   });
 
   await sleep_frames(100);

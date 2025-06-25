@@ -292,13 +292,13 @@ class GlideBrowserClass {
     this.key_manager = new Keys.KeyManager();
 
     // builtin modes
-    this.api.modes.register("hint");
-    this.api.modes.register("normal");
-    this.api.modes.register("insert");
-    this.api.modes.register("visual");
-    this.api.modes.register("ignore");
-    this.api.modes.register("command");
-    this.api.modes.register("op-pending");
+    this.api.modes.register("hint", { caret: "block" });
+    this.api.modes.register("normal", { caret: "block" });
+    this.api.modes.register("visual", { caret: "block" });
+    this.api.modes.register("ignore", { caret: "line" });
+    this.api.modes.register("insert", { caret: "line" });
+    this.api.modes.register("command", { caret: "line" });
+    this.api.modes.register("op-pending", { caret: "underline" });
 
     // default plugins
     DefaultKeymaps.init(this.api);
@@ -965,34 +965,31 @@ class GlideBrowserClass {
     return this.state_listeners.delete(cb);
   }
 
-  _modes: { [k in GlideMode]: {} } = {} as any;
+  _modes: { [k in GlideMode]: { caret: "block" | "line" | "underline" } } =
+    {} as any;
 
   get mode_names(): GlideMode[] {
     return Object.keys(this._modes) as GlideMode[];
   }
 
   // must correspond exactly with `src/glide/cpp/Glide.h::GlideCaretStyle`
-  #mode_to_int_enum(mode: GlideMode): number {
-    switch (mode) {
-      case "hint":
-      case "normal":
-      case "visual":
-        return 0; // block
-      case "op-pending":
-        return 1; // underline
-      case "insert":
-      case "ignore":
-      case "command":
-        return 2; // line
-      case "test_custom_mode":
-        // only for testing purposes, tests have to "mutate" global types
-        return 0; // block
+  #mode_to_style_enum(mode: GlideMode): number {
+    const cfg = this._modes[mode];
+    if (!cfg) {
+      throw new Error(
+        `Attempting to use a mode \`${mode}\` that hasn't been set with \`glide.modes.register()\` `
+      );
+    }
+
+    switch (cfg.caret) {
+      case "block":
+        return 0;
+      case "underline":
+        return 1;
+      case "line":
+        return 2;
       default:
-        // note: explicitly not using `assert_never()` because custom modes will
-        //       hit this branch, but for our purposes we want to ensure any new
-        //       modes we add are covered in this switch
-        ((_x: never) => {})(mode);
-        return 0; // block
+        throw assert_never(cfg.caret);
     }
   }
 
@@ -1006,7 +1003,7 @@ class GlideBrowserClass {
 
     Services.prefs.setIntPref(
       "glide.caret.style",
-      this.#mode_to_int_enum(new_mode)
+      this.#mode_to_style_enum(new_mode)
     );
 
     for (const listener of this.state_listeners) {
@@ -1616,14 +1613,14 @@ function make_glide_api(): typeof glide {
       },
     },
     modes: {
-      register(mode) {
+      register(mode, opts) {
         if (GlideBrowser._modes[mode]) {
           throw new Error(
             `The \`${mode}\` mode has already been registered. Modes can only be registered once`
           );
         }
 
-        GlideBrowser._modes[mode] = {};
+        GlideBrowser._modes[mode] = { caret: opts.caret };
         MODE_SCHEMA_TYPE.enum.push(mode);
         GlideBrowser.key_manager.register_mode(mode);
       },
