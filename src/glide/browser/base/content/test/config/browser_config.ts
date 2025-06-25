@@ -637,3 +637,36 @@ add_task(async function test_keys_send_to_input_element() {
     );
   });
 });
+
+add_task(async function test_keys_send_accepts_glide_key() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>t", async () => {
+      glide.g.value = "before next";
+
+      const key = await glide.keys.next();
+      glide.g.value = "before send";
+
+      await glide.keys.send(key);
+    });
+
+    glide.keymaps.set("normal", "j", () => {
+      glide.g.value = "after send";
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await sleep_frames(50);
+
+    is(GlideBrowser.api.g.value, "before next", "should wait for the next key");
+
+    await GlideTestUtils.synthesize_keyseq("j");
+    await sleep_frames(10);
+
+    is(
+      GlideBrowser.api.g.value,
+      "after send",
+      "glide.keys.send() should trigger the 'j' keymap"
+    );
+  });
+});

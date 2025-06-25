@@ -310,7 +310,9 @@ declare global {
        * await glide.keys.send("<C-a><C-c>");
        * ```
        */
-      send<const Keys>(keyseq: $keymapcompletions.T<Keys>): Promise<void>;
+      send<const Keys>(
+        keyseq: $keymapcompletions.T<Keys> | { glide_key: string }
+      ): Promise<void>;
 
       /**
        * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}`.

@@ -1552,7 +1552,11 @@ function make_glide_api(): typeof glide {
           "chrome://glide/content/event-utils.mjs",
           { global: "current" }
         );
-        await EventUtils.synthesize_keyseq(input as string);
+        await EventUtils.synthesize_keyseq(
+          typeof input === "object" && input && "glide_key" in input ?
+            input.glide_key
+          : (input as string)
+        );
       },
       async next() {
         if (GlideBrowser.next_key_waiter) {
