@@ -971,32 +971,28 @@ class GlideBrowserClass {
     return Object.keys(this._modes) as GlideMode[];
   }
 
-  // must correspond exactly with `glide/cpp/Glide.h::GlideMode`
+  // must correspond exactly with `src/glide/cpp/Glide.h::GlideCaretStyle`
   #mode_to_int_enum(mode: GlideMode): number {
     switch (mode) {
-      case "normal":
-        return 0;
-      case "insert":
-        return 1;
-      case "visual":
-        return 2;
-      case "op-pending":
-        return 3;
-      case "ignore":
-        return 4;
       case "hint":
-        return 5;
+      case "normal":
+      case "visual":
+        return 0; // block
+      case "op-pending":
+        return 1; // underline
+      case "insert":
+      case "ignore":
       case "command":
-        return 6;
+        return 2; // line
       case "test_custom_mode":
         // only for testing purposes, tests have to "mutate" global types
-        return 7;
+        return 0; // block
       default:
         // note: explicitly not using `assert_never()` because custom modes will
         //       hit this branch, but for our purposes we want to ensure any new
         //       modes we add are covered in this switch
         ((_x: never) => {})(mode);
-        return 7;
+        return 0; // block
     }
   }
 
@@ -1008,7 +1004,10 @@ class GlideBrowserClass {
     this.state.mode = new_mode;
     this.state.operator = props?.operator ?? null;
 
-    Services.prefs.setIntPref("glide.mode", this.#mode_to_int_enum(new_mode));
+    Services.prefs.setIntPref(
+      "glide.caret.style",
+      this.#mode_to_int_enum(new_mode)
+    );
 
     for (const listener of this.state_listeners) {
       listener(this.state, old_state, props?.meta);

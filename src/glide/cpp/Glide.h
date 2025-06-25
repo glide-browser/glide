@@ -7,15 +7,10 @@
 
 namespace mozilla {
 namespace glide {
-enum class GlideMode : uint32_t {
-  Normal = 0,
-  Insert = 1,
-  Visual = 2,
-  OpPending = 3,
-  Ignore = 4,
-  Hint = 5,
-  Command = 6,
-  Other = 7,
+enum class GlideCaretStyle : uint32_t {
+  Block = 0,
+  Underline = 1,
+  Line = 2,
 };
 
 /**
@@ -24,34 +19,21 @@ enum class GlideMode : uint32_t {
  *
  * e.g. with the caret on `b` in `foo bar` -> `foo █ar`
  *
- * Note: this takes an integer instead of `GlideMode` because the calling code
+ * Note: this takes an integer instead of `GlideCaretStyle` because the calling code
  *       only gets access to the integer version through the pref callback.
  */
 __attribute__((used)) static bool shouldRenderBlockCaret(
-    StripAtomic<RelaxedAtomicInt32> mode) {
-  switch (mode) {
-    case UnderlyingValue(GlideMode::Ignore):
-    case UnderlyingValue(GlideMode::Command):
-    case UnderlyingValue(GlideMode::Insert): {
-      return false;
-    }
-
-    // note: operator pending mode uses the underline caret style
-    case UnderlyingValue(GlideMode::OpPending): {
-      return false;
-    }
-
-    // note: visual mode hits a different code path for drawing the selection
-    // that currently doesn't take the caret into effect, so this value
-    // doesn't matter.
-    case UnderlyingValue(GlideMode::Hint):
-    case UnderlyingValue(GlideMode::Visual):
-    case UnderlyingValue(GlideMode::Other):
-    case UnderlyingValue(GlideMode::Normal): {
+    StripAtomic<RelaxedAtomicInt32> style) {
+  switch (style) {
+    case UnderlyingValue(GlideCaretStyle::Block): {
       return true;
     }
+    case UnderlyingValue(GlideCaretStyle::Line):
+    case UnderlyingValue(GlideCaretStyle::Underline): {
+      return false;
+    }
     default:
-      MOZ_ASSERT_UNREACHABLE("Unexpected glide mode enum value");
+      MOZ_ASSERT_UNREACHABLE("Unexpected glide caret style enum value");
       return false;
   }
 }
@@ -65,28 +47,22 @@ __attribute__((used)) static bool shouldRenderBlockCaret(
  * (this example might not render in the correct position depending on your
  * font)
  *
- * Note: this takes an integer instead of `GlideMode` because the calling code
+ * Note: this takes an integer instead of `GlideCaretStyle` because the calling code
  *       only gets access to the integer version through the pref callback.
  */
 __attribute__((used)) static bool shouldRenderUnderlineCaret(
-    StripAtomic<RelaxedAtomicInt32> mode) {
-  switch (mode) {
-    case UnderlyingValue(GlideMode::OpPending): {
+    StripAtomic<RelaxedAtomicInt32> style) {
+  switch (style) {
+    case UnderlyingValue(GlideCaretStyle::Underline): {
       return true;
     }
-
-    case UnderlyingValue(GlideMode::Hint):
-    case UnderlyingValue(GlideMode::Visual):
-    case UnderlyingValue(GlideMode::Ignore):
-    case UnderlyingValue(GlideMode::Normal):
-    case UnderlyingValue(GlideMode::Command):
-    case UnderlyingValue(GlideMode::Other):
-    case UnderlyingValue(GlideMode::Insert): {
+    case UnderlyingValue(GlideCaretStyle::Line):
+    case UnderlyingValue(GlideCaretStyle::Block): {
       return false;
     }
 
     default:
-      MOZ_ASSERT_UNREACHABLE("Unexpected glide mode enum value");
+      MOZ_ASSERT_UNREACHABLE("Unexpected glide caret style enum value");
       return false;
   }
 }

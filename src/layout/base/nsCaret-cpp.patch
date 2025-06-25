@@ -1,5 +1,5 @@
 diff --git a/layout/base/nsCaret.cpp b/layout/base/nsCaret.cpp
-index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa9b19158e 100644
+index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb88ed7fa5 100644
 --- a/layout/base/nsCaret.cpp
 +++ b/layout/base/nsCaret.cpp
 @@ -10,13 +10,20 @@
@@ -28,17 +28,17 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
  nsCaret::~nsCaret() { StopBlinking(); }
  
 +// glide-injection-start
-+static void GlideModeChangedCallback(const char* aPrefName, void* aData) {
++static void GlideCaretStyleChangedCallback(const char* aPrefName, void* aData) {
 +  if (!aData) {
 +    return;
 +  }
 +  nsCaret* self = static_cast<nsCaret*>(aData);
 +  if (self) {
-+    self->GlideModeChangedCallbackInternal();
++    self->GlideCaretStyleChangedCallbackInternal();
 +  }
 +}
 +
-+void nsCaret::GlideModeChangedCallbackInternal() {
++void nsCaret::GlideCaretStyleChangedCallbackInternal() {
 +  ResetBlinking();
 +  SchedulePaint();
 +}
@@ -47,18 +47,19 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
  nsresult nsCaret::Init(PresShell* aPresShell) {
    NS_ENSURE_ARG(aPresShell);
  
-@@ -67,6 +91,10 @@ nsresult nsCaret::Init(PresShell* aPresShell) {
+@@ -67,6 +91,11 @@ nsresult nsCaret::Init(PresShell* aPresShell) {
      return NS_ERROR_FAILURE;
    }
  
 +  // glide-injection-start
-+  Preferences::RegisterCallback(GlideModeChangedCallback, "glide.mode", this);
++  Preferences::RegisterCallback(GlideCaretStyleChangedCallback,
++                                "glide.caret.style", this);
 +  // glide-injection-end
 +
    selection->AddSelectionListener(this);
    mDomSelectionWeak = selection;
    UpdateCaretPositionFromSelectionIfNeeded();
-@@ -96,6 +124,68 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
+@@ -96,6 +125,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
        nsPresContext::CSSPixelsToAppUnits(
            LookAndFeel::GetInt(LookAndFeel::IntID::CaretWidth, 1));
  
@@ -73,10 +74,11 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
 +  //
 +  // Note this is also used for the underline caret rendering as that needs to
 +  // be based off of the character width as well.
-+  StripAtomic<RelaxedAtomicInt32> glideMode = StaticPrefs::glide_mode();
++  StripAtomic<RelaxedAtomicInt32> glideCaretStyle =
++      StaticPrefs::glide_caret_style();
 +  if (StaticPrefs::glide_vimcaret() &&
-+      (glide::shouldRenderBlockCaret(glideMode) ||
-+       glide::shouldRenderUnderlineCaret(glideMode))) {
++      (glide::shouldRenderBlockCaret(glideCaretStyle) ||
++       glide::shouldRenderUnderlineCaret(glideCaretStyle))) {
 +    if (nsTextFrame* textFrame = do_QueryFrame(aFrame)) {
 +      nsIContent* content = textFrame->GetContent();
 +      if (content) {
@@ -127,19 +129,20 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
    if (DrawCJKCaret(aFrame, aOffset)) {
      caretWidth += nsPresContext::CSSPixelsToAppUnits(1);
    }
-@@ -123,6 +213,11 @@ void nsCaret::Terminate() {
+@@ -123,6 +215,12 @@ void nsCaret::Terminate() {
    if (mDomSelectionWeak) {
      mDomSelectionWeak->RemoveSelectionListener(this);
    }
 +
 +  // glide-injection-start
-+  Preferences::UnregisterCallback(GlideModeChangedCallback, "glide.mode", this);
++  Preferences::UnregisterCallback(GlideCaretStyleChangedCallback,
++                                  "glide.caret.style", this);
 +  // glide-injection-end
 +
    mDomSelectionWeak = nullptr;
    mPresShell = nullptr;
    mCaretPosition = {};
-@@ -257,7 +352,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
+@@ -257,7 +355,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
  
  /* static */
  nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
@@ -152,16 +155,17 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
    nsPoint framePos(0, 0);
    nsRect rect;
    nsresult rv = aFrame->GetPointFromOffset(aFrameOffset, &framePos);
-@@ -303,6 +402,16 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -303,6 +405,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      }
    }
  
 +  // glide-injection-start
-+  StripAtomic<RelaxedAtomicInt32> glideMode = StaticPrefs::glide_mode();
++  StripAtomic<RelaxedAtomicInt32> glideCaretStyle =
++      StaticPrefs::glide_caret_style();
 +  if (positioning == GeometryPositioning::Visual &&
 +      StaticPrefs::glide_vimcaret() &&
-+      (glide::shouldRenderBlockCaret(glideMode) ||
-+       glide::shouldRenderUnderlineCaret(glideMode))) {
++      (glide::shouldRenderBlockCaret(glideCaretStyle) ||
++       glide::shouldRenderUnderlineCaret(glideCaretStyle))) {
 +    inlineOffset = -(caretMetrics.mCaretWidth);
 +  }
 +  // glide-injection-end
@@ -169,7 +173,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
    // on RTL frames the right edge of mCaretRect must be equal to framePos
    if (aFrame->StyleVisibility()->mDirection == StyleDirection::Rtl) {
      if (vertical) {
-@@ -320,10 +429,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -320,10 +433,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      framePos.y = caretBlockAxisMetrics.mOffset;
    }
  
@@ -181,7 +185,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
 +  nscoord extent = caretBlockAxisMetrics.mExtent;
 +  if (positioning == GeometryPositioning::Visual &&
 +      StaticPrefs::glide_vimcaret() &&
-+      glide::shouldRenderUnderlineCaret(glideMode)) {
++      glide::shouldRenderUnderlineCaret(glideCaretStyle)) {
 +    // render the inline caret as 10% of the full character extent
 +    // (i.e. the caret height)
 +    nscoord newExtent = extent * 0.1;
@@ -203,7 +207,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
  
    rect.MoveBy(AdjustRectForClipping(rect, aFrame, vertical));
    if (aBidiIndicatorSize) {
-@@ -367,11 +495,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
+@@ -367,11 +499,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
  }
  
  /* static */
@@ -225,14 +229,15 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..aec5cc6604fe8401faa61987368255aa
    }
    return data.mFrame;
  }
-@@ -614,7 +750,11 @@ void nsCaret::ResetBlinking() {
+@@ -614,7 +754,12 @@ void nsCaret::ResetBlinking() {
    }
  
    const int32_t oldBlinkTime = mBlinkTime;
 -  mBlinkTime = LookAndFeel::CaretBlinkTime();
-+  StripAtomic<RelaxedAtomicInt32> glideMode = StaticPrefs::glide_mode();
-+  auto mBlinkTime = glide::shouldRenderBlockCaret(glideMode) ||
-+                            glide::shouldRenderUnderlineCaret(glideMode)
++  StripAtomic<RelaxedAtomicInt32> glideCaretStyle =
++      StaticPrefs::glide_caret_style();
++  auto mBlinkTime = glide::shouldRenderBlockCaret(glideCaretStyle) ||
++                            glide::shouldRenderUnderlineCaret(glideCaretStyle)
 +                        ? 0
 +                        : LookAndFeel::CaretBlinkTime();
    if (mBlinkTime <= 0) {

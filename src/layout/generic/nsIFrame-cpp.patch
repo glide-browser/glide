@@ -1,5 +1,5 @@
 diff --git a/layout/generic/nsIFrame.cpp b/layout/generic/nsIFrame.cpp
-index 0fff882bd3b643e3ab59cfaada984bef0ae7fee4..3fba682fcd5e84d3345413fd00b62960d85546b9 100644
+index 44c32bd164138aeb13665aba1995ee12650d7fa5..493eb90d455e02415be35c7e1c31feba12565b07 100644
 --- a/layout/generic/nsIFrame.cpp
 +++ b/layout/generic/nsIFrame.cpp
 @@ -11,6 +11,7 @@
@@ -18,7 +18,7 @@ index 0fff882bd3b643e3ab59cfaada984bef0ae7fee4..3fba682fcd5e84d3345413fd00b62960
  #include "mozilla/dom/CSSAnimation.h"
  #include "mozilla/dom/CSSTransition.h"
  #include "mozilla/dom/ContentVisibilityAutoStateChangeEvent.h"
-@@ -2631,7 +2633,19 @@ void nsIFrame::DisplayCaret(nsDisplayListBuilder* aBuilder,
+@@ -2657,7 +2659,19 @@ void nsIFrame::DisplayCaret(nsDisplayListBuilder* aBuilder,
  }
  
  nscolor nsIFrame::GetCaretColorAt(int32_t aOffset) {
@@ -28,8 +28,8 @@ index 0fff882bd3b643e3ab59cfaada984bef0ae7fee4..3fba682fcd5e84d3345413fd00b62960
 +  // If in block caret mode, override the caret colour so that
 +  // the underlying character can be visible by always using using
 +  // an alpha.
-+  StripAtomic<RelaxedAtomicInt32> glideMode = StaticPrefs::glide_mode();
-+  if (StaticPrefs::glide_vimcaret() && glide::shouldRenderBlockCaret(glideMode)) {
++  StripAtomic<RelaxedAtomicInt32> glideCaretStyle = StaticPrefs::glide_caret_style();
++  if (StaticPrefs::glide_vimcaret() && glide::shouldRenderBlockCaret(glideCaretStyle)) {
 +    auto color = sRGBColor::FromABGR(baseColor);
 +    color.a = 0.5;
 +    return color.ToABGR();

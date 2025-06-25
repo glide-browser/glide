@@ -1,5 +1,5 @@
 diff --git a/layout/base/nsCaret.h b/layout/base/nsCaret.h
-index 686bc9daa0f4d568c3972a1746c9f7b2e1922f6a..d24c00399c5798f4febea6d3a00fd074843fd66e 100644
+index 686bc9daa0f4d568c3972a1746c9f7b2e1922f6a..192186685da61989ea71c51475583b0c1a9b6bde 100644
 --- a/layout/base/nsCaret.h
 +++ b/layout/base/nsCaret.h
 @@ -46,6 +46,28 @@ class nsCaret final : public nsISelectionListener {
@@ -37,12 +37,12 @@ index 686bc9daa0f4d568c3972a1746c9f7b2e1922f6a..d24c00399c5798f4febea6d3a00fd074
  
 +  // glide-injection-start
 +  /**
-+   * Internal method callback for `glide.mode` changes.
++   * Internal method callback for `glide.caret.style` changes.
 +   *
 +   * This is only exposed publicly due to implementation details surrounding
 +   * preference callbacks.
 +   */
-+  void GlideModeChangedCallbackInternal();
++  void GlideCaretStyleChangedCallbackInternal();
 +  // glide-injection-end
 +
    /**
