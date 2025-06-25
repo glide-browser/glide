@@ -732,3 +732,21 @@ add_task(async function test_registering_mode_twice_results_in_an_error() {
     "Notification should contain error message"
   );
 });
+
+add_task(async function test_ctx_mode() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>t", async () => {
+      glide.g.value = glide.ctx.mode;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await sleep_frames(10);
+    is(
+      GlideBrowser.api.g.value,
+      "normal",
+      "the keymap should be invoked and set the value to the current mode"
+    );
+  });
+});

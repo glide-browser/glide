@@ -1,6 +1,11 @@
 declare global {
   var glide: {
     ctx: {
+      /**
+       * The currently active mode.
+       */
+      mode: GlideMode;
+
       url: string;
 
       /**

@@ -9,6 +9,10 @@ font-size: revert !important;
 
 ## • `glide.ctx` {% id="glide.ctx" %}
 
+### `glide.ctx.mode: GlideMode` {% id="glide.ctx.mode" %}
+
+The currently active mode.
+
 ### `glide.ctx.url: string` {% id="glide.ctx.url" %}
 
 

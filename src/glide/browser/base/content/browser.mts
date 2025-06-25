@@ -1425,6 +1425,9 @@ function make_glide_api(): typeof glide {
     },
     bo: {},
     ctx: {
+      get mode() {
+        return GlideBrowser.state.mode;
+      },
       get url() {
         const url = gBrowser?.selectedBrowser?.currentURI?.spec;
         if (!url) {
