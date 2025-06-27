@@ -235,7 +235,7 @@ class GlideBrowserClass {
       if (!path) return;
 
       this.#config_watcher_id = setInterval(async () => {
-        if (this.#config_pending_notification) {
+        if (this.get_notification_by_id(this.#config_pending_notification_id)) {
           // no need to do anything if we've already notified
           return;
         }
@@ -255,7 +255,6 @@ class GlideBrowserClass {
 
         if (stat.lastModified > this.#config_modified_timestamp) {
           this.#config_modified_timestamp = stat.lastModified;
-          this.#config_pending_notification = true;
 
           this.add_notification(this.#config_pending_notification_id, {
             label: "The config has been modified!",
@@ -264,7 +263,6 @@ class GlideBrowserClass {
               {
                 "l10n-id": "glide-error-notification-reload-config-button",
                 callback: () => {
-                  this.#config_pending_notification = false;
                   GlideBrowser.reload_config();
                 },
               },
@@ -278,7 +276,6 @@ class GlideBrowserClass {
   #config_watcher_id: number | undefined;
   readonly #config_pending_notification_id: string =
     "glide-config-reload-notification";
-  #config_pending_notification: boolean = false;
   #config_modified_timestamp: number | undefined;
 
   async #reload_config() {
@@ -480,6 +477,10 @@ class GlideBrowserClass {
         /* disable clickjacking */ true
       );
     });
+  }
+
+  get_notification_by_id(id: string): GlobalBrowser.Notification | null {
+    return gNotificationBox.getNotificationWithValue(id);
   }
 
   remove_notification(type: string): boolean {
