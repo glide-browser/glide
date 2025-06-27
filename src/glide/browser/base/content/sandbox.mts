@@ -29,30 +29,27 @@ interface SandboxProps {
 export function create_sandbox(props: SandboxProps): Sandbox {
   // options pass here correspond to:
   // https://github.com/mozilla-firefox/firefox/blob/0f7aa808c07a1644fb2b386113aa3a2b31befe24/js/xpconnect/idl/xpccomponents.idl#L151
-  let proto = Object.assign(
-    {
-      console: props.console,
-      document: props.document,
-      browser: props.browser,
-      glide: props.glide,
+  let proto = {
+    console: props.console,
+    document: props.document,
+    browser: props.browser,
+    glide: props.glide,
+
+    // helper function for asserting invariants
+    assert(value: unknown, message?: string): asserts value {
+      if (!value) {
+        throw new AssertionError({ message, actual: value });
+      }
     },
-    {
-      // helper function for asserting invariants
-      assert(value: unknown, message?: string): asserts value {
-        if (!value) {
-          throw new AssertionError({ message, actual: value });
-        }
-      },
-      todo_assert(value: unknown, message?: string): asserts value {
-        if (value) {
-          throw new AssertionError({
-            message: message ?? `Expected \`${value}\` to be falsy`,
-            actual: value,
-          });
-        }
-      },
-    }
-  );
+    todo_assert(value: unknown, message?: string): asserts value {
+      if (value) {
+        throw new AssertionError({
+          message: message ?? `Expected \`${value}\` to be falsy`,
+          actual: value,
+        });
+      }
+    },
+  };
 
   if (props.document) {
     for (const [name, descriptor] of Object.entries(
