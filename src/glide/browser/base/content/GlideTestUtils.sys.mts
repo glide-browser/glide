@@ -29,8 +29,9 @@ const { assert_present } = ChromeUtils.importESModule(
 const { dedent } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/dedent.mjs"
 );
-const Keys = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/keys.mjs"
+const GlideEventUtils = ChromeUtils.importESModule(
+  "chrome://glide/content/event-utils.mjs",
+  { global: "current" }
 );
 
 class GlideTestUtilsClass {
@@ -94,11 +95,9 @@ class GlideTestUtilsClass {
    * e.g. `ab<C-d>` will fire three different events, a, b, and ctrl+c
    */
   async synthesize_keyseq(keyseq: string) {
-    for (const keyn of Keys.split(keyseq).map(Keys.normalize)) {
-      const event = Keys.parse_modifiers(keyn);
-      g.EventUtils.synthesizeKey(event.key, event);
-      await g.sleep_frames(3);
-    }
+    // note: we intentionally do *not* use the available `EventUtils.synthesizeKey` function
+    //       so that we can test our modified version of it in `src/glide/browser/base/content/event-utils.mts`
+    await GlideEventUtils.synthesize_keyseq(keyseq);
   }
 
   /**
