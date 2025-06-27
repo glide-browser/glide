@@ -33,6 +33,8 @@ declare namespace GlobalBrowser {
       }
     ): BrowserTab;
 
+    currentURI: nsIURI;
+
     // notifications
     getNotificationBox(): NotificationBox;
 

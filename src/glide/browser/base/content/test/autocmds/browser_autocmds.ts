@@ -414,6 +414,28 @@ add_task(async function test_mode_changed_error_handling() {
   });
 });
 
+add_task(async function test_urlenter_triggered_on_config_reload() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.calls = [];
+
+      glide.autocmds.create("UrlEnter", /input_test/, () => {
+        glide.g.calls!.push("reloaded-config");
+      });
+    });
+
+    await sleep_frames(5);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      ["reloaded-config"],
+      "UrlEnter autocmd should be triggered on config reload for already loaded tabs"
+    );
+  });
+});
+
 function num_calls() {
   return (GlideBrowser.api.g.calls ?? []).length;
 }

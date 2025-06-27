@@ -218,6 +218,10 @@ class GlideBrowserClass {
   async reload_config() {
     await this.#reload_config();
 
+    this.on_startup(async () => {
+      await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
+    });
+
     this.on_startup(() => {
       const Please = ChromeUtils.importESModule(
         "chrome://glide/content/please.mjs"
@@ -563,58 +567,59 @@ class GlideBrowserClass {
           return; // ignore iframes etc.
         }
 
-        GlideBrowser._log.debug("onLocationChange clearing buffer");
+        GlideBrowser._log.debug("onLocationChange - clearing buffer");
         await GlideBrowser.clear_buffer();
 
-        const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
-        if (!cmds.length) {
-          return;
-        }
-
-        const args: glide.AutocmdArgs["UrlEnter"] = { url: location.spec };
-
-        const results = await Promise.allSettled(
-          cmds.map(cmd =>
-            (async () => {
-              if (
-                !GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)
-              ) {
-                return;
-              }
-
-              const cleanup = await cmd.callback(args);
-              if (typeof cleanup === "function") {
-                GlideBrowser.#buffer_cleanups.push({
-                  callback: cleanup,
-                  source: "UrlEnter cleanup",
-                });
-              }
-            })()
-          )
-        );
-
-        for (const result of results) {
-          if (result.status === "fulfilled") {
-            continue;
-          }
-
-          GlideBrowser._log.error(result.reason);
-
-          // TODO: if there are many errors this would be overwhelming...
-          //       maybe limit the number of errors we display at once?
-
-          const loc =
-            GlideBrowser.#clean_stack(result.reason, "get progress_listener") ??
-            "<unknown>";
-          GlideBrowser.add_notification("glide-autocmd-error", {
-            label: `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`,
-            priority:
-              MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-            buttons: [GlideBrowser.remove_all_notifications_button],
-          });
-        }
+        await GlideBrowser.#invoke_urlenter_autocmd(location);
       },
     });
+  }
+
+  async #invoke_urlenter_autocmd(location: nsIURI) {
+    const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
+    if (!cmds.length) {
+      return;
+    }
+
+    const args: glide.AutocmdArgs["UrlEnter"] = { url: location.spec };
+
+    const results = await Promise.allSettled(
+      cmds.map(cmd =>
+        (async () => {
+          if (!GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)) {
+            return;
+          }
+
+          const cleanup = await cmd.callback(args);
+          if (typeof cleanup === "function") {
+            GlideBrowser.#buffer_cleanups.push({
+              callback: cleanup,
+              source: "UrlEnter cleanup",
+            });
+          }
+        })()
+      )
+    );
+
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      GlideBrowser._log.error(result.reason);
+
+      // TODO: if there are many errors this would be overwhelming...
+      //       maybe limit the number of errors we display at once?
+
+      const loc =
+        GlideBrowser.#clean_stack(result.reason, "#invoke_urlenter_autocmd") ??
+        "<unknown>";
+      GlideBrowser.add_notification("glide-autocmd-error", {
+        label: `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    }
   }
 
   #test_url_autocmd_pattern(
