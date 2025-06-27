@@ -104,6 +104,10 @@ export function init(glide: Glide) {
   glide.keymaps.set("visual", "y", "visual_selection_copy");
 
   // jumplist
-  glide.keymaps.set("normal", "<C-o>", "jumplist_back");
-  glide.keymaps.set("normal", "<C-i>", "jumplist_forward");
+  // note: unlike Vim, we define these keymaps in insert mode as well
+  //       as it can be jarring when switching tabs, for the jumplist
+  //       to stop working just because you had an input element
+  //       focused in a particular tab
+  glide.keymaps.set(["normal", "insert"], "<C-o>", "jumplist_back");
+  glide.keymaps.set(["normal", "insert"], "<C-i>", "jumplist_forward");
 }
