@@ -218,6 +218,10 @@ class GlideBrowserClass {
   async reload_config() {
     await this.#reload_config();
 
+    this.on_startup(async () => {
+      await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
+    });
+
     this.on_startup(() => {
       const Please = ChromeUtils.importESModule(
         "chrome://glide/content/please.mjs"
