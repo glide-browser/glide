@@ -19,6 +19,7 @@ declare global {
   interface GlideGlobals {
     invoked_buffer?: number;
     invoked_global?: number;
+    invoked_after_reload?: number;
   }
 }
 
@@ -509,5 +510,111 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
     );
 
     BrowserTestUtils.removeTab(new_tab);
+  });
+});
+
+add_task(async function test_buf_keymaps_registered_after_config_reload() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.invoked_buffer = 0;
+      glide.g.invoked_global = 0;
+      glide.g.invoked_after_reload = 0;
+
+      glide.keymaps.set("normal", "t", () => {
+        glide.g.invoked_global!++;
+      });
+
+      glide.buf.keymaps.set("normal", "t", () => {
+        glide.g.invoked_buffer!++;
+      });
+
+      glide.buf.keymaps.set("normal", "r", () => {
+        glide.g.invoked_buffer!++;
+      });
+    });
+
+    EventUtils.synthesizeKey("t");
+    await sleep_frames(3);
+    is(
+      GlideBrowser.api.g.invoked_buffer,
+      1,
+      "Initial buffer keymap should work"
+    );
+    is(
+      GlideBrowser.api.g.invoked_global,
+      0,
+      "Global keymap should be overridden"
+    );
+
+    // Reload config with different buffer keymaps
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.invoked_buffer = 0;
+      glide.g.invoked_global = 0;
+      glide.g.invoked_after_reload = 0;
+
+      glide.keymaps.set("normal", "t", () => {
+        glide.g.invoked_global!++;
+      });
+
+      // Add a new buffer keymap after reload
+      glide.buf.keymaps.set("normal", "u", () => {
+        glide.g.invoked_after_reload!++;
+      });
+
+      // Keep one of the original keymaps
+      glide.buf.keymaps.set("normal", "r", () => {
+        glide.g.invoked_buffer!++;
+      });
+    });
+
+    EventUtils.synthesizeKey("t");
+    await sleep_frames(3);
+    is(
+      GlideBrowser.api.g.invoked_buffer,
+      0,
+      "Old buffer keymap should not fire"
+    );
+    is(
+      GlideBrowser.api.g.invoked_global,
+      1,
+      "Global keymap should now be active"
+    );
+
+    // Test that new buffer keymap 'u' works
+    EventUtils.synthesizeKey("u");
+    await sleep_frames(3);
+    is(
+      GlideBrowser.api.g.invoked_after_reload,
+      1,
+      "New buffer keymap registered after reload should work"
+    );
+
+    // Test that kept buffer keymap 'r' still works
+    EventUtils.synthesizeKey("r");
+    await sleep_frames(3);
+    is(
+      GlideBrowser.api.g.invoked_buffer,
+      1,
+      "Kept buffer keymap should still work after reload"
+    );
+
+    // Open new tab to verify buffer keymaps don't leak
+    await BrowserTestUtils.withNewTab(KEYS_TEST_URI, async _ => {
+      EventUtils.synthesizeKey("u");
+      await sleep_frames(3);
+      is(
+        GlideBrowser.api.g.invoked_after_reload,
+        1,
+        "Buffer keymap should not fire in new tab"
+      );
+
+      EventUtils.synthesizeKey("t");
+      await sleep_frames(3);
+      is(
+        GlideBrowser.api.g.invoked_global,
+        2,
+        "Global keymap should work in new tab"
+      );
+    });
   });
 });
