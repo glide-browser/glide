@@ -143,3 +143,30 @@ add_task(async function test_auto_activate_single_hint() {
     await sleep_frames(3);
   });
 });
+
+add_task(async function test_include_selector() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", "hint");
+    glide.keymaps.set("normal", "F", "hint --include 'p'");
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _ => {
+    // First, test without --include
+    await GlideTestUtils.synthesize_keyseq("f");
+    const standard_hints = get_hints();
+    const standard_count = standard_hints.length;
+
+    await GlideTestUtils.synthesize_keyseq("<Esc>");
+    await sleep_frames(3);
+
+    // Now test with --include
+    await GlideTestUtils.synthesize_keyseq("F");
+    await sleep_frames(3);
+
+    const extended_hints = get_hints();
+    ok(
+      extended_hints.length > standard_count,
+      `Extended hints (${extended_hints.length}) should be more than standard hints (${standard_count})`
+    );
+  });
+});

@@ -245,6 +245,15 @@ declare global {
         selector?: string;
 
         /**
+         * *Also* show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors)
+         * as well as the default set of [hintable elements](https://glide-browser.app/hints#hintable-elements).
+         *
+         * @example "li, textarea"
+         * @example "[id="my-element"]"
+         */
+        include?: string;
+
+        /**
          * *Only* show hints for elements that are editable.
          */
         editable?: boolean;

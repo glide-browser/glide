@@ -26,6 +26,7 @@ export type GlideHintIPC = Omit<GlideHint, "target" | "label">;
 
 interface ResolveProps {
   selector?: string;
+  include?: string;
   editable_only?: boolean;
 }
 
@@ -135,6 +136,7 @@ export const content = {
       } else if (
         this.HINTABLE_ELEMENT_TAGS.has(target.tagName) ||
         (target.role && this.HINTABLE_ROLES.has(target.role)) ||
+        (opts?.include && target.matches(opts?.include)) ||
         DOM.is_text_editable(target)
       ) {
         yield target;

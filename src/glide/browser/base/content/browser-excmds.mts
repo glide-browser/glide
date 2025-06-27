@@ -568,6 +568,7 @@ class GlideExcmdsClass {
           : assert_never(location);
         actor.send_async_message("Glide::Hint", {
           selector: args["-s"] ?? undefined,
+          include: args["--include"] ?? undefined,
           action: args["--action"],
           editable_only: args["-e"] ?? undefined,
           location,

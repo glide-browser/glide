@@ -1583,6 +1583,7 @@ function make_glide_api(): typeof glide {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
           selector: opts?.selector,
           location: opts?.location ?? "content",
+          include: opts?.include,
           editable_only: opts?.editable ?? undefined,
           auto_activate: opts?.auto_activate ?? false,
         });

@@ -381,6 +381,12 @@ export const GLIDE_EXCOMMANDS = [
         description:
           "*Only* show hints for all elements matching this CSS selector",
       },
+      "--include": {
+        type: "string",
+        required: false,
+        description:
+          "*Also* show hints for all elements matching this CSS selector",
+      },
       "-e": {
         type: "boolean",
         required: false,

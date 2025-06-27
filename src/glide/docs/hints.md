@@ -54,12 +54,13 @@ If there are too many hints for each label to have a single character from the a
 
 ### `:hint`
 
-| Flag         | Default   | Types                      | Description                                                                                                                      |
-| ------------ | --------- | :------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `-s`         | `ts:null` | `ts:string`                | *Only* show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors). |
-| `-e`         | `ts:null` | `ts:boolean`               | *Only* show hints for elements that are editable.                                                                                |
-| `--action`   | `click`   | `ts:click \| newtab-click` | How to activate the element                                                                                                      |
-| `--location` | `content` | `ts:content \| browser-ui` | Where to generate hints from                                                                                                     |
+| Flag         | Default   | Types                      | Description                                                                                                                                                     |
+| ------------ | --------- | :------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-s`         | `ts:null` | `ts:string`                | *Only* show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors).                                |
+| `-e`         | `ts:null` | `ts:boolean`               | *Only* show hints for elements that are editable.                                                                                                               |
+| `--include`  | `ts:null` | `ts:string`                | Extend the default set of [hintable elements](#hintable-elements) with a custom [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors). |
+| `--action`   | `click`   | `ts:click \| newtab-click` | How to activate the element                                                                                                                                     |
+| `--location` | `content` | `ts:content \| browser-ui` | Where to generate hints from                                                                                                                                    |
 
 Note that filters use a logical and, they all must pass for the element to be hinted.
 
@@ -72,4 +73,7 @@ Examples:
 :hint --action=newtab-click
 :hint --location=browser-ui
 :hint -s "a, input"
+:hint -s "[onclick]"
+:hint -e
+:hint --include ".custom-button"
 ```

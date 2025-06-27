@@ -57,6 +57,7 @@ export interface ParentMessages {
     location: glide.HintLocation;
     auto_activate: boolean;
     selector?: string;
+    include?: string;
     editable_only?: boolean;
     action?:
       | "click"
