@@ -265,6 +265,10 @@ interface BroadcastConduit extends _BroadcastConduit {
  */
 interface WebExtension {
   id: string;
+  /** e.g. `moz-extension://1b6f6144-9bd9-4133-a645-79de92539951/` */
+  baseURL: string;
+  /** e.g. `1b6f6144-9bd9-4133-a645-79de92539951` */
+  uuid: string;
   apiManager: InstanceType<_ExtensionCommon["LazyAPIManager"]>;
   backgroundContext: InstanceType<
     typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
