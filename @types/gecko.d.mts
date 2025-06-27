@@ -87,7 +87,7 @@ declare namespace GlobalBrowser {
     ): Promise<Notification>;
     removeNotification(notification: Notification): void;
 
-    getNotificationWithValue(value: string): Notification;
+    getNotificationWithValue(value: string): Notification | null;
   }
 
   namespace NotificationBox {
