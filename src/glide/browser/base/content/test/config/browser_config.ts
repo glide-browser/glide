@@ -254,10 +254,10 @@ add_task(async function test_keys_next_api() {
 
     await GlideTestUtils.synthesize_keyseq("a");
 
-    is(
-      GlideBrowser.api.g.received_key,
-      "a",
-      "glide.keys.next() should capture the 'a' key correctly"
+    await TestUtils.waitForCondition(
+      () => GlideBrowser.api.g.received_key === "a",
+      "glide.keys.next() should capture the 'a' key correctly",
+      10
     );
   });
 });
@@ -274,10 +274,10 @@ add_task(async function test_keys_next_str_api() {
 
     await GlideTestUtils.synthesize_keyseq("<C-l>");
 
-    is(
-      GlideBrowser.api.g.received_key,
-      "<C-l>",
-      "glide.keys.next_str() should capture the '<C-l>' key correctly"
+    await TestUtils.waitForCondition(
+      () => GlideBrowser.api.g.received_key === "<C-l>",
+      "glide.keys.next() should capture the '<C-l>' key correctly",
+      10
     );
   });
 });
@@ -309,6 +309,12 @@ add_task(async function test_keys_next_concurrency_disallowed() {
 
     await GlideTestUtils.synthesize_keyseq("x");
 
+    await TestUtils.waitForCondition(
+      () => GlideBrowser.api.g.received_key === "x",
+      "First call should still receive the key correctly",
+      10
+    );
+
     // Verify an error was thrown for the second call
     ok(
       GlideBrowser.api.g.error_thrown,
@@ -338,10 +344,10 @@ add_task(async function test_keys_next_special_keys() {
 
     await GlideTestUtils.synthesize_keyseq("<Esc>");
 
-    is(
-      GlideBrowser.api.g.received_key,
-      "<Esc>",
-      "glide.keys.next_str() should capture the Escape key correctly"
+    await TestUtils.waitForCondition(
+      () => GlideBrowser.api.g.received_key === "<Esc>",
+      "glide.keys.next_str() should capture the Escape key correctly",
+      10
     );
   });
 });
@@ -398,7 +404,7 @@ add_task(async function test_webext_listener_error() {
   await sleep_frames(5);
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(20);
+    await sleep_frames(50);
     GlideBrowser.flush_pending_error_notifications();
 
     let notification =
@@ -430,8 +436,8 @@ add_task(async function test_webext_storage_api_listener_error() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await sleep_frames(5);
     await GlideTestUtils.synthesize_keyseq("<Space>q");
+    await sleep_frames(50);
     GlideBrowser.flush_pending_error_notifications();
-    await sleep_frames(5);
 
     let notification =
       gNotificationBox.getNotificationWithValue("glide-config-error");
