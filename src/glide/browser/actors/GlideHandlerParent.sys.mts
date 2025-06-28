@@ -173,6 +173,14 @@ export class GlideHandlerParent extends JSWindowActorParent<
       }
 
       case "Glide::ResolvedHints": {
+        if (this.glide_browser?.state.mode !== "hint") {
+          // if we're no longer in hint mode, then we shouldn't
+          // do anything with the hints we resolved.
+          //
+          // this can happen if you start and exit hint mode frequently.
+          return;
+        }
+
         this.glide_commands!.show_hints(
           message.data.hints,
           message.data.location,
