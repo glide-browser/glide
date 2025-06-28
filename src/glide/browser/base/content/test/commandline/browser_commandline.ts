@@ -41,8 +41,8 @@ add_task(async function test_basic_filtering() {
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 
-    EventUtils.synthesizeKey("e");
-    EventUtils.synthesizeKey("x");
+    await GlideTestUtils.synthesize_keyseq("ex");
+    await sleep_frames(3);
 
     let visible_rows = GlideTestUtils.commandline.visible_rows();
 
@@ -55,6 +55,7 @@ add_task(async function test_basic_filtering() {
 
     EventUtils.synthesizeKey("KEY_Backspace");
     EventUtils.synthesizeKey("KEY_Backspace");
+    await sleep_frames(3);
 
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
@@ -212,6 +213,8 @@ add_task(async function test_excmd_enter() {
 });
 
 add_task(async function test_commandline_closes_on_blur() {
+  await sleep_frames(20);
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 

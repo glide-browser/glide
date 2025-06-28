@@ -280,7 +280,7 @@ class GlideCommandLineTestUtils {
    * Open the commandline with 3 fake options inserted.
    */
   async open() {
-    g.EventUtils.synthesizeKey(":");
+    await GlideTestUtils.synthesize_keyseq(":");
 
     await new Promise(r => requestAnimationFrame(r));
 

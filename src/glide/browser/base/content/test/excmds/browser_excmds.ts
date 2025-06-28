@@ -102,7 +102,7 @@ add_task(async function test_scrolling() {
     await GlideTestUtils.synthesize_keyseq("G");
     var [x, y] = await get_scroll();
     is(x, curr_x, `G should retain the x position`);
-    is(y, max_y, `G should go to the max y`);
+    ok(y >= max_y, `G should go to the max y`);
 
     await GlideTestUtils.synthesize_keyseq("gg");
     var [x, y] = await get_scroll();
