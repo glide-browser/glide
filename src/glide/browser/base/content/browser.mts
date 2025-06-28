@@ -1059,6 +1059,10 @@ class GlideBrowserClass {
     }
 
     element.childNodes[0]!.textContent = this.state.mode;
+    (element as HTMLElement).style.setProperty(
+      "--toolbarbutton-icon-fill-attention",
+      `var(--glide-mode-${this.state.mode})`
+    );
   }
 
   #on_blur() {

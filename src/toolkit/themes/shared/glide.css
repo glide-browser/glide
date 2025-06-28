@@ -15,6 +15,14 @@
   --glide-status-fg: var(--glide-fg);
   --glide-status-border: 1px lightgray solid;
   --glide-status-border-radius: 2px;
+  --glide-mode-hint: #f3a;
+  --glide-mode-normal: #a89984;
+  --glide-mode-insert: #83a598;
+  --glide-mode-visual: #fe8019;
+  --glide-mode-ignore: #CC79A7;
+  --glide-mode-command: #fb4934;
+  --glide-mode-op-pending: #b8bb26;
+  --glide-fallback-mode: #FFFFFF;
 
   /* Search highlight */
   --glide-search-highlight-color: yellow;
