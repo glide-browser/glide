@@ -164,6 +164,21 @@ class GlideCommandsClass {
       hints.push({ ...hint, label: "", x, y });
     }
 
+    if (!hints.length) {
+      const notification_id = "glide-no-hints-found";
+
+      // remove any existing notification to avoid spamming, there should still
+      // be a visual indicator that the new notification was added
+      GlideBrowser.remove_notification(notification_id);
+      GlideBrowser.add_notification(notification_id, {
+        label: `No hints found`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+      GlideBrowser._change_mode("normal");
+      return;
+    }
+
     if (auto_activate && hints.length === 1) {
       const actor =
         location === "browser-ui" ? GlideBrowser.get_chrome_actor()
