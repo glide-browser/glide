@@ -9,6 +9,7 @@
     "dev:watch": "pnpm tsn scripts/dev.mts --watch",
 
     "build": "pnpm glider build",
+    "package": "pnpm glider package",
 
     "launch": "pnpm glider run",
     "mach": "./engine/mach",
