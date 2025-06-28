@@ -1,8 +1,8 @@
 diff --git a/browser/themes/shared/toolbarbuttons.css b/browser/themes/shared/toolbarbuttons.css
-index 44155838b9b2e8856ed1a0fb3e1bf969bd319184..894180e5556c0dc5c9a997e2979bbd966c76c92f 100644
+index a8df2d5cd8b3009daa033a9bf06908be78adeb3b..e84cd55c0e1b1026ce34a4ffbb57a97971103e51 100644
 --- a/browser/themes/shared/toolbarbuttons.css
 +++ b/browser/themes/shared/toolbarbuttons.css
-@@ -632,6 +632,37 @@ toolbar:not(#TabsToolbar) > #personal-bookmarks {
+@@ -638,6 +638,37 @@ toolbar:not(#TabsToolbar) > #personal-bookmarks {
    }
  }
  
@@ -39,4 +39,4 @@ index 44155838b9b2e8856ed1a0fb3e1bf969bd319184..894180e5556c0dc5c9a997e2979bbd96
 +
  /* Flexible spacer sizing */
  
- toolbarpaletteitem[place=toolbar][id^=wrapper-customizableui-special-spring],
+ toolbarpaletteitem[place="toolbar"][id^="wrapper-customizableui-special-spring"],

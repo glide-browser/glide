@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index efaf96ee2980104b5778f66e8b0885a668035323..3ba3432f4b703fe3ffdb65e3245f4397d41fef78 100644
+index 907f272470a2da6880d722ee1dd8716ee9cc4aa4..69e1c05a9bcbf69254867bbb92c0949f074694d2 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3366,3 +3366,5 @@ pref("toolkit.contentRelevancy.log", false);
- // rotation altogether.
- pref("browser.contextual-services.contextId.rotation-in-days", 0);
- pref("browser.contextual-services.contextId.rust-component.enabled", false);
+@@ -3386,3 +3386,5 @@ pref("browser.contextual-services.contextId.rust-component.enabled", true);
+ 
+ // Pref to enable the IP protection feature
+ pref("browser.ipProtection.enabled", false);
 +
 +#include glide.js

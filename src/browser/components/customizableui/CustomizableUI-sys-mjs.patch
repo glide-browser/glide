@@ -1,5 +1,5 @@
 diff --git a/browser/components/customizableui/CustomizableUI.sys.mjs b/browser/components/customizableui/CustomizableUI.sys.mjs
-index 5bb6be19f7f855b129aac921af1ed5cfc63d732b..0b0b958fa9594c0611236a9472981e5534cb8514 100644
+index 8c9b11d0c1ce7ae016889950e92b3adda318235c..72499df59779dfd34bab06a804ba6dac43c336f9 100644
 --- a/browser/components/customizableui/CustomizableUI.sys.mjs
 +++ b/browser/components/customizableui/CustomizableUI.sys.mjs
 @@ -331,6 +331,7 @@ var CustomizableUIInternal = {
@@ -10,9 +10,9 @@ index 5bb6be19f7f855b129aac921af1ed5cfc63d732b..0b0b958fa9594c0611236a9472981e55
        Services.policies.isAllowed("removeHomeButtonByDefault")
          ? null
          : "home-button",
-@@ -340,6 +341,7 @@ var CustomizableUIInternal = {
+@@ -339,6 +340,7 @@ var CustomizableUIInternal = {
+       "urlbar-container",
        "spring",
-       "save-to-pocket-button",
        "downloads-button",
 +      "glide-toolbar-keyseq-button",
        AppConstants.MOZ_DEV_EDITION ? "developer-button" : null,

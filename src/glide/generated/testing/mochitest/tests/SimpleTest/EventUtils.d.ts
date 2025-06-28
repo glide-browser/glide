@@ -238,8 +238,10 @@ function synthesizeTouchAtCenter(aTarget: any, aEvent?: {}, aWindow?: Window & t
  * @param {number} aTop - Floating-point value for the Y offset in CSS pixels.
  * @param {WheelEventData} aEvent - Details of the wheel event to dispatch.
  * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
+ * @param {Function} [aCallback=null] - A callback function that is invoked when
+ *                                      the wheel event is dispatched.
  */
-function synthesizeWheelAtPoint(aLeft: number, aTop: number, aEvent: WheelEventData, aWindow?: DOMWindow): void;
+function synthesizeWheelAtPoint(aLeft: number, aTop: number, aEvent: WheelEventData, aWindow?: DOMWindow, aCallback?: Function): void;
 /**
  * Synthesize a wheel event on a target.
  *
@@ -251,8 +253,10 @@ function synthesizeWheelAtPoint(aLeft: number, aTop: number, aEvent: WheelEventD
  * @param {number} aOffsetY - Y offset in CSS pixels from the element’s top edge.
  * @param {WheelEventData} aEvent - Details of the wheel event to dispatch.
  * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
+ * @param {Function} [aCallback=null] - A callback function that is invoked when
+ *                                      the wheel event is dispatched.
  */
-function synthesizeWheel(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: WheelEventData, aWindow?: DOMWindow): void;
+function synthesizeWheel(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: WheelEventData, aWindow?: DOMWindow, aCallback?: Function): void;
 function _sendWheelAndPaint(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aCallback: any, aFlushMode?: number, aWindow?: Window & typeof globalThis): void;
 /**
  * Wrapper around synthesizeWheel that waits for the wheel event to be
