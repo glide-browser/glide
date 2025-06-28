@@ -85,14 +85,19 @@ export async function main() {
         console.timeEnd(`Copied ${path}`);
       })
       .on("unlink", async abs_path => {
-        console.time(`Removed ${abs_path}`);
+        try {
+          console.time(`Removed ${abs_path}`);
 
-        const rel_path = Path.relative(SRC_DIR, abs_path);
-        const engine_path = Path.join(ENGINE_DIR, rel_path);
+          const rel_path = Path.relative(SRC_DIR, abs_path);
+          const engine_path = Path.join(ENGINE_DIR, rel_path);
 
-        await fs.rm(engine_path);
+          await fs.rm(engine_path);
 
-        console.timeEnd(`Removed ${abs_path}`);
+          console.timeEnd(`Removed ${abs_path}`);
+        } catch (err) {
+          // can happen due to race conditions with this watcher and the docs watcher
+          console.log("ignoring error while unlinking", err);
+        }
       })
       .on("error", error => {
         reject(error);
