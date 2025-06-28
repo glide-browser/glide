@@ -503,7 +503,10 @@ declare global {
     type AutocmdArgs = {
       UrlEnter: { readonly url: string };
       ModeChanged: {
-        readonly old_mode: GlideMode;
+        /**
+         * This may be `null` when first loading Glide or when reloading the config.
+         */
+        readonly old_mode: GlideMode | null;
         readonly new_mode: GlideMode;
       };
       Startup: {};

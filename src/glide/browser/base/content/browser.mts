@@ -222,6 +222,13 @@ class GlideBrowserClass {
       await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
     });
 
+    this.on_startup(async () => {
+      await this.#state_change_autocmd(this.state, {
+        mode: null,
+        operator: null,
+      });
+    });
+
     this.on_startup(() => {
       const Please = ChromeUtils.importESModule(
         "chrome://glide/content/please.mjs"
@@ -374,7 +381,10 @@ class GlideBrowserClass {
     }
   }
 
-  async #state_change_autocmd(new_state: State, old_state: State) {
+  async #state_change_autocmd(
+    new_state: State,
+    old_state: Omit<State, "mode"> & { mode: GlideMode | null }
+  ) {
     const cmds = GlideBrowser.autocmds.ModeChanged ?? [];
     if (!cmds.length) {
       return;

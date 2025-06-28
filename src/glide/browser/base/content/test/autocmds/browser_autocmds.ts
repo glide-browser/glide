@@ -295,8 +295,34 @@ add_task(async function test_mode_changed_autocmd() {
 
     isjson(
       GlideBrowser.api.g.calls,
-      ["normal->insert", "insert->normal", "normal->visual", "visual->normal"],
+      [
+        "null->normal",
+        "normal->insert",
+        "insert->normal",
+        "normal->visual",
+        "visual->normal",
+      ],
       "ModeChanged autocmd should track all mode transitions"
+    );
+  });
+});
+
+add_task(async function test_mode_changed_autocmd_config_reload() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("ModeChanged", "*", args => {
+      glide.g.calls!.push(`${args.old_mode}->${args.new_mode}`);
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(10);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      ["null->normal"],
+      "ModeChanged autocmd should be called for the initial mode load"
     );
   });
 });
@@ -378,7 +404,7 @@ add_task(async function test_mode_changed_multiple_callbacks() {
 
     isjson(
       GlideBrowser.api.g.calls,
-      ["first", "second", "specific"],
+      ["first", "second", "first", "second", "specific"],
       "Multiple ModeChanged autocmds should fire in registration order"
     );
   });
