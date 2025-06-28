@@ -491,3 +491,8 @@ h3.code-heading {
 .admonition-caution .admonition-title::before {
   content: "✗ ";
 }
+
+table th,
+table td {
+  border: 1px solid var(--text-color);
+}
