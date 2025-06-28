@@ -20,9 +20,19 @@ function get_hints(): HTMLElement[] {
   ) as HTMLElement[];
 }
 
+async function wait_for_hints(): Promise<HTMLElement[]> {
+  await TestUtils.waitForCondition(
+    () => get_hints().length > 0,
+    "waiting for hints to be shown",
+    5 // ms interval
+  );
+  return get_hints();
+}
+
 add_task(async function test_f_shows_hints() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("f");
+    await wait_for_hints();
     is(
       GlideBrowser.state.mode,
       "hint",
@@ -48,6 +58,7 @@ add_task(async function test_f_shows_hints() {
 add_task(async function test_F_shows_hints() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("F");
+    await wait_for_hints();
     is(
       GlideBrowser.state.mode,
       "hint",
@@ -60,6 +71,7 @@ add_task(async function test_F_shows_hints() {
 add_task(async function test_hints_follow_link() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("f");
+    await wait_for_hints();
 
     const first_hint = get_hints()[0];
     ok(first_hint);
@@ -80,12 +92,14 @@ add_task(async function test_F_opens_new_tab() {
     const initial_tab_count = gBrowser.tabs.length;
 
     await GlideTestUtils.synthesize_keyseq("F");
+    await wait_for_hints();
 
     const first_hint = get_hints()[0];
     ok(first_hint);
     ok(first_hint.textContent);
 
     await GlideTestUtils.synthesize_keyseq(first_hint.textContent);
+    await sleep_frames(3);
 
     const final_tab_count = gBrowser.tabs.length;
     is(
@@ -110,6 +124,7 @@ add_task(async function test_F_opens_new_tab() {
 add_task(async function test_partial_hint_filtering() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("f");
+    await wait_for_hints();
     const initial_count = get_hints().length;
 
     await GlideTestUtils.synthesize_keyseq("a");
@@ -130,7 +145,6 @@ add_task(async function test_auto_activate_single_hint() {
 
   await BrowserTestUtils.withNewTab(SINGLE_HINT_FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("f");
-
     await sleep_frames(5);
 
     ok(
@@ -153,6 +167,7 @@ add_task(async function test_include_selector() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     // First, test without --include
     await GlideTestUtils.synthesize_keyseq("f");
+    await wait_for_hints();
     const standard_hints = get_hints();
     const standard_count = standard_hints.length;
 
@@ -161,6 +176,7 @@ add_task(async function test_include_selector() {
 
     // Now test with --include
     await GlideTestUtils.synthesize_keyseq("F");
+    await wait_for_hints();
     await sleep_frames(3);
 
     const extended_hints = get_hints();
