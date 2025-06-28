@@ -23,6 +23,8 @@ const g: {
   TestUtils: typeof TestUtils;
 } = {} as any;
 
+declare var content: TestContent;
+
 const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
@@ -115,7 +117,9 @@ class GlideTestUtilsClass {
           browser,
           [text, opts.text_start],
           async (text, text_start) => {
-            const textarea = content.document.getElementById("textarea-1");
+            const textarea = content.document.getElementById(
+              "textarea-1"
+            )! as HTMLTextAreaElement;
             textarea.focus();
             textarea.value = text;
 
@@ -137,7 +141,9 @@ class GlideTestUtilsClass {
 
       async is_text(expected_text: string) {
         const text = await SpecialPowers.spawn(browser, [], async () => {
-          const textarea = content.document.getElementById("textarea-1");
+          const textarea = content.document.getElementById(
+            "textarea-1"
+          )! as HTMLTextAreaElement;
           return textarea.value;
         });
         g.is(text, expected_text, `${name}/${assertion_index}`);
@@ -145,7 +151,9 @@ class GlideTestUtilsClass {
 
       async set_selection(pos: number, expected_char?: string) {
         const char = await SpecialPowers.spawn(browser, [pos], async pos => {
-          const el = content.document.getElementById("textarea-1");
+          const el = content.document.getElementById(
+            "textarea-1"
+          )! as HTMLTextAreaElement;
           el.setSelectionRange(pos + 1, pos + 1);
           return el.value.charAt(pos);
         });
@@ -168,8 +176,10 @@ class GlideTestUtilsClass {
           browser,
           [],
           async () => {
-            const textarea = content.document.getElementById("textarea-1");
-            const pos = textarea.selectionStart - 1;
+            const textarea = content.document.getElementById(
+              "textarea-1"
+            )! as HTMLTextAreaElement;
+            const pos = textarea.selectionStart! - 1;
             return [pos, textarea.value.charAt(pos)];
           }
         );
@@ -192,9 +202,11 @@ class GlideTestUtilsClass {
             browser,
             [expected_pos],
             async expected_pos =>
-              content.document
-                .getElementById("textarea-1")
-                .setSelectionRange(expected_pos + 1, expected_pos + 1)
+              (
+                content.document.getElementById(
+                  "textarea-1"
+                )! as HTMLTextAreaElement
+              ).setSelectionRange(expected_pos + 1, expected_pos + 1)
           );
         }
       },
@@ -220,8 +232,10 @@ class GlideTestUtilsClass {
           browser,
           [],
           async () => {
-            const textarea = content.document.getElementById("textarea-1");
-            return [textarea.value, textarea.selectionStart - 1];
+            const textarea = content.document.getElementById(
+              "textarea-1"
+            )! as HTMLTextAreaElement;
+            return [textarea.value, textarea.selectionStart! - 1];
           }
         );
         g.is(text, expected_text, `${name}/${assertion_index}`);
@@ -246,10 +260,12 @@ class GlideTestUtilsClass {
           browser,
           [],
           async () => {
-            const textarea = content.document.getElementById("textarea-1");
+            const textarea = content.document.getElementById(
+              "textarea-1"
+            )! as HTMLTextAreaElement;
             return textarea.value.slice(
-              textarea.selectionStart,
-              textarea.selectionEnd
+              textarea.selectionStart!,
+              textarea.selectionEnd!
             );
           }
         );

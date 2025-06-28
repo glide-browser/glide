@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const INPUT_TEST_FILE =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -10,9 +12,7 @@ add_task(async function test_get_column_offset() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     async function get_column(): Promise<number> {
       return await SpecialPowers.spawn(browser, [], async () => {
-        const element = (content.document as Document).querySelector(
-          "#textarea-1"
-        );
+        const element = content.document.querySelector("#textarea-1");
         if (!element) throw new Error("no element");
 
         const motions = ChromeUtils.importESModule(

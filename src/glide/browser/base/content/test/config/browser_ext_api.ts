@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 declare global {
   interface GlideGlobals {
     /** set this at the end of a config-defined function to verify it was invoked */
@@ -130,7 +132,7 @@ add_task(async function test_css_injection() {
     await sleep_frames(20);
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
-      const styles = content.window.getComputedStyle(content.document.body);
+      const styles = content.window.getComputedStyle(content.document.body!)!;
       return styles.border;
     });
     is(border_style, "20px dotted rgb(255, 192, 203)");
@@ -139,7 +141,7 @@ add_task(async function test_css_injection() {
     await sleep_frames(20);
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
-      const styles = content.window.getComputedStyle(content.document.body);
+      const styles = content.window.getComputedStyle(content.document.body!)!;
       return styles.border;
     });
     is(border_style, "0px rgb(0, 0, 0)");
@@ -162,7 +164,7 @@ add_task(async function test_script_injection() {
     const border_style = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.body.style.border
+      async () => content.document.body!.style.border
     );
     is(border_style, "20px dotted pink");
   });
@@ -724,7 +726,7 @@ add_task(async function test_function_script_injection() {
     const border_style = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.body.style.border
+      async () => content.document.body!.style.border
     );
     is(border_style, "5px solid green", "method call with no args");
   });
@@ -756,7 +758,7 @@ add_task(async function test_function_script_injection() {
     const border_style = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.body.style.border
+      async () => content.document.body!.style.border
     );
     is(border_style, "5px solid red", "method call with args");
   });
@@ -785,7 +787,7 @@ add_task(async function test_function_script_injection() {
     const border_style = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.body.style.border
+      async () => content.document.body!.style.border
     );
     is(border_style, "5px solid green", "function syntax with no args");
   });
@@ -816,7 +818,7 @@ add_task(async function test_function_script_injection() {
     const border_style = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.body.style.border
+      async () => content.document.body!.style.border
     );
     is(border_style, "5px solid red", "method call with args");
   });

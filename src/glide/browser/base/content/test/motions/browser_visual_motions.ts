@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const INPUT_TEST_FILE =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -163,8 +165,8 @@ add_task(async function test_visual_yank_non_editable_to_clipboard() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      const window = content as Window;
-      const document = content.document as Document;
+      const window = content.window;
+      const document = content.document;
 
       const label = document.querySelector('label[for="user_input_1"]');
       if (!label) {

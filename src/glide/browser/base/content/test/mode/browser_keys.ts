@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const INPUT_TEST_URI =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -36,7 +38,9 @@ add_setup(async () => {
 add_task(async function test_jj_insert_middle() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input = content.document.getElementById("input-2");
+      const input = content.document.getElementById(
+        "input-2"
+      )! as HTMLInputElement;
       input.value = uri;
       input.focus();
       input.setSelectionRange(40, 40);
@@ -45,7 +49,8 @@ add_task(async function test_jj_insert_middle() {
     EventUtils.synthesizeKey("j");
     await sleep_frames(5);
     let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById("input-2").value;
+      return content.document.getElementById<HTMLInputElement>("input-2")!
+        .value;
     });
     is(
       value,
@@ -57,7 +62,8 @@ add_task(async function test_jj_insert_middle() {
     await sleep_frames(4);
 
     value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById("input-2").value;
+      return content.document.getElementById<HTMLInputElement>("input-2")!
+        .value;
     });
 
     // content should not have `jj` now
@@ -67,7 +73,8 @@ add_task(async function test_jj_insert_middle() {
       browser,
       [],
       async () => {
-        const input = content.document.getElementById("input-2");
+        const input =
+          content.document.getElementById<HTMLInputElement>("input-2")!;
         return [input.selectionStart, input.selectionEnd];
       }
     );
@@ -81,7 +88,8 @@ add_task(async function test_jj_insert_end() {
     await sleep_frames(1);
 
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input = content.document.getElementById("input-2");
+      const input =
+        content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = uri;
       input.focus();
     });
@@ -91,7 +99,8 @@ add_task(async function test_jj_insert_end() {
     await sleep_frames(4);
 
     let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById("input-2").value;
+      return content.document.getElementById<HTMLInputElement>("input-2")!
+        .value;
     });
     is(value, INPUT_TEST_URI + "j");
 
@@ -103,13 +112,14 @@ add_task(async function test_jj_insert_end() {
       await SpecialPowers.spawn(
         browser,
         [],
-        async () => content.document.getElementById("input-2").value
+        async () =>
+          content.document.getElementById<HTMLInputElement>("input-2")!.value
       ),
       INPUT_TEST_URI
     );
     is(
       await SpecialPowers.spawn(browser, [], async () =>
-        content.document.getElementById("input-2").matches(":focus")
+        content.document.getElementById("input-2")!.matches(":focus")
       ),
       true,
       "input should still have focus"
@@ -120,7 +130,8 @@ add_task(async function test_jj_insert_end() {
 add_task(async function test_jj_partial_cancel_by_other_keypress() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input = content.document.getElementById("input-2");
+      const input =
+        content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = uri;
       input.focus();
       input.setSelectionRange(40, 40);
@@ -129,7 +140,8 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
     EventUtils.synthesizeKey("j");
     await sleep_frames(1);
     let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById("input-2").value;
+      return content.document.getElementById<HTMLInputElement>("input-2")!
+        .value;
     });
     await sleep_frames(2);
     is(
@@ -143,7 +155,8 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
     // content should now have `je`
     is(
       await SpecialPowers.spawn(browser, [], async () => {
-        return content.document.getElementById("input-2").value;
+        return content.document.getElementById<HTMLInputElement>("input-2")!
+          .value;
       }),
       "http://mochi.test:8888/browser/glide/brojewser/base/content/test/mode/input_test.html"
     );
@@ -152,7 +165,8 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
       browser,
       [],
       async () => {
-        const input = content.document.getElementById("input-2");
+        const input =
+          content.document.getElementById<HTMLInputElement>("input-2")!;
         return [input.selectionStart, input.selectionEnd];
       }
     );
@@ -164,7 +178,8 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
 add_task(async function test_j_cancel_by_escape() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input = content.document.getElementById("input-2");
+      const input =
+        content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = uri;
       input.focus();
       input.setSelectionRange(40, 40);
@@ -173,7 +188,8 @@ add_task(async function test_j_cancel_by_escape() {
     EventUtils.synthesizeKey("j");
     await sleep_frames(2);
     let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById("input-2").value;
+      return content.document.getElementById<HTMLInputElement>("input-2")!
+        .value;
     });
     is(
       value,
@@ -194,7 +210,8 @@ add_task(async function test_j_cancel_by_escape() {
       await SpecialPowers.spawn(
         browser,
         [],
-        async () => content.document.getElementById("input-2").value
+        async () =>
+          content.document.getElementById<HTMLInputElement>("input-2")!.value
       ),
       "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html",
       "Escape should keep partial j insertion"
@@ -204,7 +221,8 @@ add_task(async function test_j_cancel_by_escape() {
       browser,
       [],
       async () => {
-        const input = content.document.getElementById("input-2");
+        const input =
+          content.document.getElementById<HTMLInputElement>("input-2")!;
         return [input.selectionStart, input.selectionEnd];
       }
     );
@@ -216,7 +234,8 @@ add_task(async function test_j_cancel_by_escape() {
 add_task(async function test_jj_switching_elements() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      const input = content.document.getElementById("input-1");
+      const input =
+        content.document.getElementById<HTMLInputElement>("input-1")!;
       input.value = "foo";
       input.focus();
     });
@@ -225,7 +244,8 @@ add_task(async function test_jj_switching_elements() {
     EventUtils.synthesizeKey("j");
     await sleep_frames(5);
     let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById("input-1").value;
+      return content.document.getElementById<HTMLInputElement>("input-1")!
+        .value;
     });
     is(value, "foofj", "Partial insert mapping matches should insert the key");
 
@@ -234,7 +254,8 @@ add_task(async function test_jj_switching_elements() {
     await sleep_frames(3);
 
     await SpecialPowers.spawn(browser, [], async () => {
-      const input = content.document.getElementById("input-2");
+      const input =
+        content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = "other";
       input.focus();
     });
@@ -248,8 +269,8 @@ add_task(async function test_jj_switching_elements() {
       [],
       async () => {
         return [
-          content.document.getElementById("input-1").value,
-          content.document.getElementById("input-2").value,
+          content.document.getElementById<HTMLInputElement>("input-1")!.value,
+          content.document.getElementById<HTMLInputElement>("input-2")!.value,
         ];
       }
     );
@@ -273,10 +294,10 @@ add_task(async function test_mapped_keys_no_events() {
     let captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {
         keydown:
-          content.document.getElementById("keydown-events").children.length,
+          content.document.getElementById("keydown-events")!.children.length,
         keypress:
-          content.document.getElementById("keypress-events").children.length,
-        keyup: content.document.getElementById("keyup-events").children.length,
+          content.document.getElementById("keypress-events")!.children.length,
+        keyup: content.document.getElementById("keyup-events")!.children.length,
       };
     });
     is(captured_events.keydown, 1, "Unmapped key should trigger keydown");
@@ -290,10 +311,10 @@ add_task(async function test_mapped_keys_no_events() {
     captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {
         keydown:
-          content.document.getElementById("keydown-events").children.length,
+          content.document.getElementById("keydown-events")!.children.length,
         keypress:
-          content.document.getElementById("keypress-events").children.length,
-        keyup: content.document.getElementById("keyup-events").children.length,
+          content.document.getElementById("keypress-events")!.children.length,
+        keyup: content.document.getElementById("keyup-events")!.children.length,
       };
     });
     is(
@@ -344,7 +365,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
     is(window.fullScreen, true, "window should now be in full screen mode");
 
     await SpecialPowers.spawn(browser, [], async () =>
-      content.document.getElementById("input-1").focus()
+      content.document.getElementById("input-1")!.focus()
     );
     await sleep_frames(1);
     EventUtils.synthesizeKey("a");
@@ -356,7 +377,8 @@ add_task(async function test_Escape_to_exit_fullscreen() {
       await SpecialPowers.spawn(
         browser,
         [],
-        async () => content.document.getElementById("input-1").value
+        async () =>
+          content.document.getElementById<HTMLInputElement>("input-1")!.value
       ),
       "ab",
       "input element should have key pressed inserted"

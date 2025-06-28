@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const INPUT_TEST_FILE =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 const SCROLL_TEST_FILE =
@@ -72,15 +74,12 @@ add_task(async function test_scrolling() {
   await BrowserTestUtils.withNewTab(SCROLL_TEST_FILE, async browser => {
     async function get_scroll(): Promise<[number, number]> {
       return await SpecialPowers.spawn(browser, [], async () => {
-        return [
-          parseInt(content.window.scrollX),
-          parseInt(content.window.scrollY),
-        ];
+        return [content.window.scrollX, content.window.scrollY];
       });
     }
 
     const max_y = await SpecialPowers.spawn(browser, [], async () => {
-      return parseInt(content.window.scrollMaxY);
+      return content.window.scrollMaxY;
     });
     var min_x = 0;
     var min_y = 0;
@@ -165,7 +164,7 @@ add_task(async function test_scrolling() {
 add_task(async function test_gi_focuses_last_used_input() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(100);
 
@@ -179,7 +178,7 @@ add_task(async function test_gi_focuses_last_used_input() {
     await GlideTestUtils.synthesize_keyseq("hello");
 
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").blur();
+      content.document.getElementById("input-1")!.blur();
     });
 
     await TestUtils.waitForCondition(
@@ -202,7 +201,8 @@ add_task(async function test_gi_focuses_last_used_input() {
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.getElementById("input-1").value
+      async () =>
+        (content.document.getElementById("input-1") as HTMLInputElement).value
     );
     is(
       inputContent,

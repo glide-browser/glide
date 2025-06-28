@@ -3,6 +3,7 @@
 
 "use strict";
 
+declare var content: TestContent;
 declare var document: Document;
 
 const FILE =
@@ -11,7 +12,7 @@ const FILE =
 add_task(async function test_focus_input_element_activates_insert_mode() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById<HTMLInputElement>("input-1")!.focus();
     });
 
     await TestUtils.waitForCondition(
@@ -26,7 +27,8 @@ add_task(async function test_focus_input_element_activates_insert_mode() {
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.getElementById("input-1").value
+      async () =>
+        content.document.getElementById<HTMLInputElement>("input-1")!.value
     );
 
     is(
@@ -40,8 +42,8 @@ add_task(async function test_focus_input_element_activates_insert_mode() {
 add_task(async function test_focus_input_element_while_in_insert_mode() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
-      content.document.getElementById("input-2").focus();
+      content.document.getElementById<HTMLInputElement>("input-1")!.focus();
+      content.document.getElementById("input-2")!.focus();
     });
 
     await TestUtils.waitForCondition(
@@ -54,8 +56,9 @@ add_task(async function test_focus_input_element_while_in_insert_mode() {
     await GlideTestUtils.synthesize_keyseq("abcr");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
-      await new Promise(r => content.requestAnimationFrame(r));
-      return content.document.getElementById("input-2").value;
+      await new Promise(r => content.window.requestAnimationFrame(r));
+      return content.document.getElementById<HTMLInputElement>("input-2")!
+        .value;
     });
 
     is(
@@ -81,7 +84,8 @@ add_task(async function test_about_settings_search() {
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
-      async () => content.document.getElementById("searchInput").value
+      async () =>
+        content.document.getElementById<HTMLInputElement>("searchInput")!.value
     );
 
     is(
@@ -95,10 +99,11 @@ add_task(async function test_about_settings_search() {
 add_task(async function test_shadow_dom() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () =>
-      content.document
-        .getElementById("shadow-host")
-        .shadowRoot.getElementById("shadow-input")
-        .focus()
+      (
+        content.document
+          .getElementById("shadow-host")!
+          .shadowRoot!.getElementById("shadow-input")! as HTMLElement
+      ).focus()
     );
 
     // search should be focused after clicking on an input in a shadow dom
@@ -112,10 +117,12 @@ add_task(async function test_shadow_dom() {
     await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
-      await new Promise(r => content.requestAnimationFrame(r));
-      return content.document
-        .getElementById("shadow-host")
-        .shadowRoot.getElementById("shadow-input").value;
+      await new Promise(r => content.window.requestAnimationFrame(r));
+      return (
+        content.document
+          .getElementById("shadow-host")!
+          .shadowRoot!.getElementById("shadow-input")! as HTMLInputElement
+      ).value;
     });
 
     is(
@@ -129,11 +136,12 @@ add_task(async function test_shadow_dom() {
 add_task(async function test_direct_click_nested_shadow_dom() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () =>
-      content.document
-        .getElementById("shadow-host")
-        .shadowRoot.getElementById("shadow-host-2")
-        .shadowRoot.getElementById("shadow-input-2")
-        .focus()
+      (
+        content.document
+          .getElementById("shadow-host")!
+          .shadowRoot!.getElementById("shadow-host-2")!
+          .shadowRoot!.getElementById("shadow-input-2")! as HTMLElement
+      ).focus()
     );
 
     // search should be focused after clicking on an input in a shadow dom
@@ -147,11 +155,13 @@ add_task(async function test_direct_click_nested_shadow_dom() {
     await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
-      await new Promise(r => content.requestAnimationFrame(r));
-      return content.document
-        .getElementById("shadow-host")
-        .shadowRoot.getElementById("shadow-host-2")
-        .shadowRoot.getElementById("shadow-input-2").value;
+      await new Promise(r => content.window.requestAnimationFrame(r));
+      return (
+        content.document
+          .getElementById("shadow-host")!
+          .shadowRoot!.getElementById("shadow-host-2")!
+          .shadowRoot!.getElementById("shadow-input-2")! as HTMLInputElement
+      ).value;
     });
 
     is(
@@ -166,7 +176,7 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     await SpecialPowers.spawn(browser, [], async () =>
       content.document
-        .getElementById("contenteditable-div-with-role-textbox")
+        .getElementById("contenteditable-div-with-role-textbox")!
         .focus()
     );
 
@@ -180,10 +190,10 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
     await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(browser, [], async () => {
-      await new Promise(r => content.requestAnimationFrame(r));
+      await new Promise(r => content.window.requestAnimationFrame(r));
       return content.document
-        .getElementById("contenteditable-div-with-role-textbox")
-        .children.item(0).textContent;
+        .getElementById("contenteditable-div-with-role-textbox")!
+        .children.item(0)!.textContent!;
     });
 
     is(
@@ -200,7 +210,7 @@ add_task(async function test_focus_input_element_in_ignore_mode() {
     is(GlideBrowser.state.mode, "ignore");
 
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(5);
     is(

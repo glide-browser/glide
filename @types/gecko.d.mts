@@ -8,6 +8,13 @@
 declare var gBrowser: GlobalBrowser.GlobalBrowser;
 declare var gNotificationBox: GlobalBrowser.NotificationBox;
 
+declare type TestContent = {
+  document: Omit<Document, "getElementById"> & {
+    getElementById<E extends HTMLElement = HTMLElement>(id: string): E | null;
+  };
+  window: Window;
+};
+
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`
  *

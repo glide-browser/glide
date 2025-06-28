@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const INPUT_TEST_URI =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -619,7 +621,8 @@ add_task(async function test_keys_send_to_input_element() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      const input = content.document.getElementById("input-1");
+      const input =
+        content.document.getElementById<HTMLInputElement>("input-1")!;
       input.focus();
       input.value = "";
     });
@@ -635,7 +638,8 @@ add_task(async function test_keys_send_to_input_element() {
 
     is(
       await SpecialPowers.spawn(browser, [], async () => {
-        const input = content.document.getElementById("input-1");
+        const input =
+          content.document.getElementById<HTMLInputElement>("input-1")!;
         return input.value;
       }),
       "hello",

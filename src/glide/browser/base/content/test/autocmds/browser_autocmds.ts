@@ -3,6 +3,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 declare global {
   interface GlideGlobals {
     /** Marker that a single autocmd was triggered. */
@@ -277,7 +279,7 @@ add_task(async function test_mode_changed_autocmd() {
 
     // insert
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(5);
 
@@ -349,7 +351,7 @@ add_task(async function test_mode_changed_specific_pattern() {
 
     // insert
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(5);
 
@@ -398,7 +400,7 @@ add_task(async function test_mode_changed_multiple_callbacks() {
     await sleep_frames(5);
 
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(5);
 
@@ -421,7 +423,7 @@ add_task(async function test_mode_changed_error_handling() {
     await sleep_frames(5);
 
     await SpecialPowers.spawn(browser, [], async () => {
-      content.document.getElementById("input-1").focus();
+      content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(5);
 
