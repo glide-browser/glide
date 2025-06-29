@@ -493,6 +493,12 @@ class GlideExcmdsClass {
       }
 
       case "config_init": {
+        if (GlideBrowser.config_path) {
+          throw new Error(
+            `A config file already exists at ${GlideBrowser.config_path}`
+          );
+        }
+
         const cfg = ChromeUtils.importESModule(
           "chrome://glide/content/config-init.mjs",
           { global: "current" }
