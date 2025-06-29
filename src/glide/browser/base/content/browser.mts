@@ -1373,7 +1373,7 @@ class GlideBrowserClass {
       },
 
       {
-        path: PathUtils.profileDir,
+        path: PathUtils.join(PathUtils.profileDir, "glide"),
         description: "profile",
       },
 
