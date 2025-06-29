@@ -457,6 +457,17 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "config_edit": {
+        if (!GlideBrowser.config_path) {
+          throw new Error("There is no config file defined yet");
+        }
+
+        let file = Cc["@mozilla.org/file/local;1"]!.createInstance(Ci.nsIFile);
+        file.initWithPath(GlideBrowser.config_path);
+        file.launch();
+        break;
+      }
+
       case "map": {
         // this will render the mappings through `src/glide/browser/actors/GlideDocsChild.sys.mts`
         gBrowser.addTrustedTab("resource://glide-docs/dynamic/mappings.html", {

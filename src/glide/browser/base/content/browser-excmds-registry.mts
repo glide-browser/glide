@@ -102,6 +102,12 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: true,
   },
+  {
+    name: "config_edit",
+    description: "Open the config file in the default editor",
+    content: false,
+    repeatable: false,
+  },
 
   {
     name: "repeat",
