@@ -151,6 +151,7 @@ globalThis.ChromeUtils = {
       case "resource://gre/modules/Timer.sys.mjs":
       case "resource://gre/modules/NetUtil.sys.mjs":
       case "resource://gre/modules/Extension.sys.mjs":
+      case "resource://gre/modules/AppConstants.sys.mjs":
       case "resource://gre/modules/ExtensionParent.sys.mjs":
       case "resource://gre/modules/ConduitsParent.sys.mjs":
       case "resource://gre/modules/ExtensionCommon.sys.mjs":

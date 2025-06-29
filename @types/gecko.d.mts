@@ -222,6 +222,7 @@ declare namespace MockedExports {
       };
     };
     "resource://gre/modules/ConduitsParent.sys.mjs": typeof import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs");
+    "resource://gre/modules/AppConstants.sys.mjs": typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
 
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
