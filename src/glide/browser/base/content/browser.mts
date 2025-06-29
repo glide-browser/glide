@@ -171,24 +171,14 @@ class GlideBrowserClass {
     this.on_startup(async () => {
       await config_promise;
 
-      const { fetch_resource } = ChromeUtils.importESModule(
-        "chrome://glide/content/utils/resources.mjs"
+      const { write_d_ts } = ChromeUtils.importESModule(
+        "chrome://glide/content/config-init.mjs"
       );
 
-      for (const dir of [
-        this.profile_config_dir,
-        this.config_path ? PathUtils.parent(this.config_path) : null,
-      ]) {
-        if (!dir) {
-          continue;
-        }
+      await write_d_ts(this.profile_config_dir);
 
-        await IOUtils.writeUTF8(
-          PathUtils.join(dir, "glide-api.d.ts"),
-          await fetch_resource("chrome://glide/content/glide-api.d.ts", {
-            loadUsingSystemPrincipal: true,
-          })
-        );
+      if (this.config_path) {
+        await write_d_ts(PathUtils.parent(this.config_path)!);
       }
     });
 

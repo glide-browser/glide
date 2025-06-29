@@ -43,12 +43,7 @@ export async function init() {
     createAncestors: true,
     ignoreExisting: true,
   });
-  await IOUtils.writeUTF8(
-    PathUtils.join(config_dir, "glide-api.d.ts"),
-    await fetch_resource("chrome://glide/content/glide-api.d.ts", {
-      loadUsingSystemPrincipal: true,
-    })
-  );
+  await write_d_ts(config_dir);
   await IOUtils.writeUTF8(
     PathUtils.join(config_dir, "glide.ts"),
     dedent`
@@ -76,6 +71,15 @@ export async function init() {
       },
     ],
   });
+}
+
+export async function write_d_ts(dir: string) {
+  await IOUtils.writeUTF8(
+    PathUtils.join(dir, "glide-api.d.ts"),
+    await fetch_resource("chrome://glide/content/glide-api.d.ts", {
+      loadUsingSystemPrincipal: true,
+    })
+  );
 }
 
 const DEFAULT_TSCONFIG = dedent`
