@@ -930,7 +930,6 @@ export const WINDOW_PROPERTIES = new Set([
   "crypto",
   "customElements",
   "devicePixelRatio",
-  "document",
   "dump",
   "event",
   "external",
@@ -1148,6 +1147,5 @@ export const WINDOW_PROPERTIES = new Set([
   "top",
   "trustedTypes",
   "updateCommands",
-  "visualViewport",
-  "window"
+  "visualViewport"
 ]);

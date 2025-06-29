@@ -14,6 +14,8 @@
 import fs from "fs";
 import * as webidl2 from "webidl2";
 
+const BLACKLISTED_NAMES = ["document", "window"];
+
 // Convert Mozilla-flavor webidl into idl parsable by @w3c/webidl2.js.
 function preprocess(webidl: string): string {
   return webidl
@@ -171,6 +173,10 @@ async function extractWindowProperties(webidls: string[]) {
       const mixinProps = mixinProperties.get(inc.includes);
       mixinProps!.forEach(p => windowProperties.add(p));
     }
+  }
+
+  for (const property of BLACKLISTED_NAMES) {
+    windowProperties.delete(property);
   }
 
   return Array.from(windowProperties).sort();
