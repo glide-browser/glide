@@ -462,9 +462,20 @@ class GlideExcmdsClass {
           throw new Error("There is no config file defined yet");
         }
 
-        let file = Cc["@mozilla.org/file/local;1"]!.createInstance(Ci.nsIFile);
+        const file = Cc["@mozilla.org/file/local;1"]!.createInstance(
+          Ci.nsIFile
+        );
         file.initWithPath(GlideBrowser.config_path);
         file.launch();
+        break;
+      }
+
+      case "config_init": {
+        const cfg = ChromeUtils.importESModule(
+          "chrome://glide/content/config-init.mjs",
+          { global: "current" }
+        );
+        await cfg.init();
         break;
       }
 

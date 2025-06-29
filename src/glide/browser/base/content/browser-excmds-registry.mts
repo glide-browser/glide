@@ -108,6 +108,12 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: false,
   },
+  {
+    name: "config_init",
+    description: "Initialise a config dir with all the necessary setup",
+    content: false,
+    repeatable: false,
+  },
 
   {
     name: "repeat",

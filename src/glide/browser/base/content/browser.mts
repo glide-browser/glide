@@ -246,7 +246,7 @@ class GlideBrowserClass {
       if (!path) return;
 
       this.#config_watcher_id = setInterval(async () => {
-        if (this.get_notification_by_id(this.#config_pending_notification_id)) {
+        if (this.get_notification_by_id(this.config_pending_notification_id)) {
           // no need to do anything if we've already notified
           return;
         }
@@ -267,7 +267,7 @@ class GlideBrowserClass {
         if (stat.lastModified > this.#config_modified_timestamp) {
           this.#config_modified_timestamp = stat.lastModified;
 
-          this.add_notification(this.#config_pending_notification_id, {
+          this.add_notification(this.config_pending_notification_id, {
             label: "The config has been modified!",
             priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
             buttons: [
@@ -285,7 +285,7 @@ class GlideBrowserClass {
   }
 
   #config_watcher_id: number | undefined;
-  readonly #config_pending_notification_id: string =
+  readonly config_pending_notification_id: string =
     "glide-config-reload-notification";
   #config_modified_timestamp: number | undefined;
 
@@ -735,7 +735,7 @@ class GlideBrowserClass {
         const value = notification.getAttribute("value");
         if (
           value === this.#config_error_id ||
-          value === this.#config_pending_notification_id
+          value === this.config_pending_notification_id
         ) {
           gNotificationBox.removeNotification(notification);
         }
@@ -1364,8 +1364,6 @@ class GlideBrowserClass {
    * The directories, in order, that we'll look for a `glide.ts` file in.
    */
   get config_dirs(): { path: string; description: string }[] {
-    const xdg_dir = Services.env.get("XDG_CONFIG_HOME");
-
     const config_dirs: ({ path: string; description: string } | null)[] = [
       {
         path: Services.dirsvc.get("CurWorkD", Ci.nsIFile).path,
@@ -1377,20 +1375,29 @@ class GlideBrowserClass {
         description: "profile",
       },
 
-      xdg_dir ?
-        { path: PathUtils.join(xdg_dir, "glide"), description: "XDG config" }
+      this.xdg_config_dir ?
+        { path: this.xdg_config_dir, description: "XDG config" }
       : null,
 
       {
-        path: PathUtils.join(
-          Services.dirsvc.get("Home", Ci.nsIFile).path,
-          ".config",
-          "glide"
-        ),
+        path: this.home_config_dir,
         description: "home",
       },
     ];
     return redefine_getter(this, "config_dirs", config_dirs.filter(Boolean));
+  }
+
+  get xdg_config_dir(): string | null {
+    const xdg_dir = Services.env.get("XDG_CONFIG_HOME");
+    return xdg_dir ? PathUtils.join(xdg_dir, "glide") : null;
+  }
+
+  get home_config_dir(): string {
+    return PathUtils.join(
+      Services.dirsvc.get("Home", Ci.nsIFile).path,
+      ".config",
+      "glide"
+    );
   }
 
   async resolve_config_path(): Promise<string | null> {

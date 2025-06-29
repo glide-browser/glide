@@ -23,6 +23,7 @@ glide.jar:
   content/docs.mjs                             (content/dist/docs.mjs)
   content/please.mjs                           (content/dist/please.mjs)
   content/event-utils.mjs                      (content/dist/event-utils.mjs)
+  content/config-init.mjs                      (content/dist/config-init.mjs)
   content/utils/dom.mjs                        (content/utils/dist/dom.mjs)
   content/utils/moz.mjs                        (content/utils/dist/moz.mjs)
   content/utils/ipc.mjs                        (content/utils/dist/ipc.mjs)
