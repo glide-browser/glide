@@ -107,7 +107,7 @@ export const GLIDE_EXCOMMANDS = [
     name: "config_reload",
     description: "Reload the config file",
     content: false,
-    repeatable: true,
+    repeatable: false,
   },
   {
     name: "config_edit",
