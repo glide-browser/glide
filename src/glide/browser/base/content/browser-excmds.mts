@@ -364,6 +364,28 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "profile_dir": {
+        const id = "glide-profile-dir";
+        const profile_dir = PathUtils.profileDir;
+
+        GlideBrowser.add_notification(id, {
+          label: `Profile directory: ${profile_dir}`,
+          priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+          buttons: [
+            {
+              "l10n-id": "glide-notification-copy-to-clipboard-button",
+              callback: () => {
+                MozUtils.copy_to_clipboard(window, profile_dir);
+                GlideBrowser.remove_notification(id);
+              },
+            },
+          ],
+        });
+
+        console.log("profile dir", profile_dir);
+        break;
+      }
+
       case "config": {
         const id = "glide-config-path";
         const config_path = GlideBrowser.config_path;

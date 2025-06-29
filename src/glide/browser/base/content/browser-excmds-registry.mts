@@ -91,6 +91,13 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "profile_dir",
+    description: "Show the current profile directory",
+    content: false,
+    repeatable: false,
+  },
+
+  {
     name: "config",
     description: "Show the config file path",
     content: false,
