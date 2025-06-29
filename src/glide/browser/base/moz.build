@@ -14,6 +14,7 @@ BROWSER_CHROME_MANIFESTS += [
     "content/test/commandline/browser.toml",
     "content/test/config/browser.toml",
     "content/test/excmds/browser.toml",
+    "content/test/extension/browser.toml",
     "content/test/hints/browser.toml",
     "content/test/jumplist/browser.toml",
     "content/test/mode/browser.toml",
