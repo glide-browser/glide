@@ -165,7 +165,7 @@ class GlideBrowserClass {
       );
 
       await IOUtils.writeUTF8(
-        PathUtils.join(PathUtils.profileDir, "glide-api.d.ts"),
+        PathUtils.join(this.profile_config_dir, "glide-api.d.ts"),
         await fetch_resource("chrome://glide/content/glide-api.d.ts", {
           loadUsingSystemPrincipal: true,
         })
@@ -1371,7 +1371,7 @@ class GlideBrowserClass {
       },
 
       {
-        path: PathUtils.join(PathUtils.profileDir, "glide"),
+        path: this.profile_config_dir,
         description: "profile",
       },
 
@@ -1398,6 +1398,10 @@ class GlideBrowserClass {
       ".config",
       "glide"
     );
+  }
+
+  get profile_config_dir(): string {
+    return PathUtils.join(PathUtils.profileDir, "glide");
   }
 
   async resolve_config_path(): Promise<string | null> {
