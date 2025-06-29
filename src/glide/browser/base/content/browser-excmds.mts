@@ -373,7 +373,7 @@ class GlideExcmdsClass {
             priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
             buttons: [
               {
-                "l10n-id": "glide-config-notification-copy-button",
+                "l10n-id": "glide-notification-copy-to-clipboard-button",
                 callback: () => {
                   MozUtils.copy_to_clipboard(window, config_path);
                   GlideBrowser.remove_notification(id);

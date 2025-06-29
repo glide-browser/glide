@@ -1,5 +1,5 @@
 diff --git a/browser/locales/en-US/browser/browserContext.ftl b/browser/locales/en-US/browser/browserContext.ftl
-index 4b95b09620bee676b308d684e11efbd99a9ac6b0..e3443cd941b27b33b2cbc7ef21fa388874c84b87 100644
+index 06b4cdd3d6460a6b428240ef96b14031c3b2cb69..d181153ee2ab07b61206a9bbc53abc02dcb6fd41 100644
 --- a/browser/locales/en-US/browser/browserContext.ftl
 +++ b/browser/locales/en-US/browser/browserContext.ftl
 @@ -81,6 +81,27 @@ toolbar-button-stop =
@@ -19,7 +19,7 @@ index 4b95b09620bee676b308d684e11efbd99a9ac6b0..e3443cd941b27b33b2cbc7ef21fa3888
 +glide-error-notification-reload-config-button =
 +    .label = :config_reload
 +
-+glide-config-notification-copy-button =
++glide-notification-copy-to-clipboard-button =
 +    .label = Copy to clipboard
 +
 +glide-error-notification-clear-all-button =
