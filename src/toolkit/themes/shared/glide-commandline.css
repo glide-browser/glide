@@ -32,14 +32,16 @@ xul|glide-commandline .glide-commandline-container {
   width: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 -8px 32px hsla(0, 0%, 0%, 0.4);
 }
 
 [anonid="glide-commandline-holder"] {
   background: var(--glide-cmdl-bg);
   color: var(--glide-cmdl-fg);
   font-family: var(--glide-cmdl-font-family);
-  font-size: 9pt;
+  font-size: var(--glide-cmdl-font-size);
   padding-left: 0.125ex;
+  border-top: 1px solid hsla(0, 0%, 100%, 0.1);
 }
 
 xul|glide-commandline input {
@@ -48,7 +50,7 @@ xul|glide-commandline input {
   font-size: var(--glide-cmdl-font-size);
   line-height: var(--glide-cmdl-line-height);
   color: var(--glide-cmdl-fg);
-  background: var(--glide-cmdl-bg);
+  background: transparent;
   border: unset;
 }
 
@@ -77,15 +79,16 @@ xul|glide-commandline input:focus {
 
 [anonid="glide-commandline-completions"] > div > table {
   width: 100%;
-  font-size: 9pt;
+  font-size: var(--glide-cmplt-font-size);
   border-spacing: 0;
   table-layout: fixed;
 }
 
 [anonid="glide-commandline-completions"] table tr td.prefix {
   width: 3.2em;
-  padding-left: 0.5em;
+  padding-left: 1rem;
   text-align: center;
+  font-weight: 600;
 }
 
 [anonid="glide-commandline-completions"] table tr td.container,
@@ -102,6 +105,8 @@ xul|glide-commandline input:focus {
   width: 10em;
   padding-left: 0.5em;
   text-align: right;
+  color: #a0aec0;
+  font-size: 0.9rem;
 }
 
 [anonid="glide-commandline-completions"] table tr td.tgroup:empty {
@@ -125,6 +130,7 @@ xul|glide-commandline input:focus {
 
 [anonid="glide-commandline-completions"] table tr td {
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 [anonid="glide-commandline-completions"] img {
@@ -136,15 +142,11 @@ xul|glide-commandline input:focus {
 }
 
 [anonid="glide-commandline-completions"] .section-header {
-  background: linear-gradient(
-    var(--glide-header-first-bg),
-    var(--glide-header-second-bg),
-    var(--glide-header-third-bg)
-  );
+  background: var(--glide-header-first-bg);
   font-size: var(--glide-header-font-size);
   font-weight: var(--glide-header-font-weight);
   border-bottom: var(--glide-header-border-bottom);
-  padding-left: 0.5ex;
+  padding-left: 1rem;
 }
 
 [anonid="glide-commandline-completions"] .section-header,
@@ -152,6 +154,11 @@ xul|glide-commandline input:focus {
   /* TODO: different var */
   height: var(--option-height);
   line-height: var(--option-height);
+  padding: 0 1rem;
+}
+
+[anonid="glide-commandline-completions"] .gcl-option:not(.focused):hover {
+  background: hsla(0, 0%, 100%, 0.05);
 }
 
 .glide-commandline-url {
@@ -163,8 +170,8 @@ xul|glide-commandline input:focus {
 }
 
 .gcl-option:not(.focused) .url {
-  color: var(--glide-url-fg);
-  background: var(--glide-url-bg);
+  color: #a0aec0;
+  background: transparent;
 }
 
 [anonid="glide-commandline-completions"] a.url:hover {
@@ -181,7 +188,11 @@ xul|glide-commandline input:focus {
 }
 
 .FindCompletionOption .match {
-  font-weight: bold;
+  font-weight: 800;
+  color: #fff;
+  background: #404040;
+  padding: 0.1rem 0.2rem;
+  border-radius: 2px;
 }
 
 [anonid="glide-commandline-completions"] .hidden {
@@ -193,6 +204,7 @@ xul|glide-commandline input:focus {
 [anonid="glide-commandline-completions"] .focused .url {
   color: var(--glide-of-fg);
   background: var(--glide-of-bg);
+  font-weight: 600;
 }
 
 .gcl-option.incognito .privatewindow {
@@ -219,6 +231,7 @@ xul|glide-commandline input:focus {
 
 .ExcmdCompletionOption td.documentation {
   width: 100%;
+  color: #a0aec0;
 }
 
 .SettingsCompletionOption td.title {

@@ -55,29 +55,29 @@
 
   /*commandline*/
 
-  --glide-cmdl-bg: var(--glide-bg);
-  --glide-cmdl-fg: var(--glide-fg);
-  --glide-cmdl-line-height: 1.5;
+  --glide-cmdl-bg: rgb(26, 27, 37);
+  --glide-cmdl-fg: #fff;
+  --glide-cmdl-line-height: 1.2rem;
   --glide-cmdl-font-family: "Berkeley Mono", monospace;
-  --glide-cmdl-font-size: calc(var(--glide-font-size) * 0.75);
+  --glide-cmdl-font-size: 1rem;
 
   /*completions*/
 
-  --glide-cmplt-option-height: 1.4em;
-  --glide-cmplt-fg: var(--glide-fg);
-  --glide-cmplt-bg: var(--glide-bg);
-  --glide-cmplt-font-size: calc(var(--glide-font-size) * 10 / 12);
-  --glide-cmplt-font-family: monospace;
-  --glide-cmplt-border-top: 1px solid grey;
+  --glide-cmplt-option-height: 1.8rem;
+  --glide-cmplt-fg: #fff;
+  --glide-cmplt-bg: rgb(26, 27, 37);
+  --glide-cmplt-font-size: 1rem;
+  --glide-cmplt-font-family: "Berkeley Mono", monospace;
+  --glide-cmplt-border-top: 1px solid hsla(0, 0%, 100%, 0.1);
 
   /*sectionHeader*/
 
-  --glide-header-first-bg: LightGray;
-  --glide-header-second-bg: #ddd;
-  --glide-header-third-bg: LightGray;
-  --glide-header-font-size: inherit;
-  --glide-header-font-weight: bold;
-  --glide-header-border-bottom: 1px solid bottom;
+  --glide-header-first-bg: #111;
+  --glide-header-second-bg: #111;
+  --glide-header-third-bg: #111;
+  --glide-header-font-size: 1rem;
+  --glide-header-font-weight: 800;
+  --glide-header-border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
 
   /*url style*/
 
@@ -88,8 +88,8 @@
 
   /*option focused*/
 
-  --glide-of-fg: var(--glide-fg);
-  --glide-of-bg: #ffec8b;
+  --glide-of-fg: rgb(26, 27, 37);
+  --glide-of-bg: #fff;
 
   /*new tab spoiler box*/
   --glide-highlight-box-bg: rgba(0, 0, 0, 0.07);
@@ -133,13 +133,23 @@
     --glide-fg: white;
     --glide-url-fg: #3cff7c;
 
-    --glide-of-bg: #4c679b;
+    /* commandline dark mode */
+    --glide-cmdl-bg: rgb(26, 27, 37);
+    --glide-cmdl-fg: #fff;
+    
+    /* completions dark mode */
+    --glide-cmplt-fg: #fff;
+    --glide-cmplt-bg: rgb(26, 27, 37);
+    
+    /* option focused dark mode */
+    --glide-of-fg: rgb(26, 27, 37);
+    --glide-of-bg: #fff;
 
-    --glide-header-first-bg: #444;
-    --glide-header-second-bg: #444;
-    --glide-header-third-bg: #333;
-    --glide-header-font-size: inherit;
-    --glide-header-font-weight: bold;
-    --glide-header-border-bottom: 1px solid #555;
+    --glide-header-first-bg: #111;
+    --glide-header-second-bg: #111;
+    --glide-header-third-bg: #111;
+    --glide-header-font-size: 1rem;
+    --glide-header-font-weight: 800;
+    --glide-header-border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
   }
 }
