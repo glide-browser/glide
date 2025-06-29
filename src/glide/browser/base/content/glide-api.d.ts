@@ -513,6 +513,34 @@ declare global {
     };
   }
 
+  /**
+   * Dedent template function.
+   *
+   * Inspired by the https://www.npmjs.com/package/dedent package.
+   */
+  function dedent(arg: string): string;
+  function dedent(strings: TemplateStringsArray, ...values: unknown[]): string;
+
+  /**
+   * Dedent template function for syntax highlighting.
+   *
+   * Inspired by the https://www.npmjs.com/package/dedent package.
+   *
+   * note: we don't support passing in arguments to these functions as we would have to
+   *       support escaping them, to not make it easy to accidentally cause XSS
+   */
+  function html(arg: TemplateStringsArray): string;
+
+  /**
+   * Dedent template function for syntax highlighting.
+   *
+   * Inspired by the https://www.npmjs.com/package/dedent package.
+   *
+   * note: we don't support passing in arguments to these functions as we would have to
+   *       support escaping them, to not make it easy to accidentally cause XSS
+   */
+  function css(arg: TemplateStringsArray): string;
+
   namespace $keymapcompletions {
     /**
      * This type takes in a string literal type, e.g. `<C-`, `a`, `<leader>`

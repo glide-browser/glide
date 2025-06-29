@@ -6,6 +6,9 @@
 const { WINDOW_PROPERTIES } = ChromeUtils.importESModule(
   "chrome://glide/content/sandbox-properties.mjs"
 );
+const Dedent = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/dedent.mjs"
+);
 
 /**
  * Represents an object returned by {@link create_sandbox}.
@@ -34,6 +37,10 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     document: props.document,
     browser: props.browser,
     glide: props.glide,
+
+    dedent: Dedent.dedent,
+    css: Dedent.make_dedent_no_args("css"),
+    html: Dedent.make_dedent_no_args("html"),
 
     // helper function for asserting invariants
     assert(value: unknown, message?: string): asserts value {

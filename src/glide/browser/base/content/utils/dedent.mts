@@ -82,6 +82,20 @@ export function dedent(
   );
 }
 
+export function make_dedent_no_args(
+  name: string
+): (str: string | TemplateStringsArray) => string {
+  return function _(str) {
+    if (arguments.length > 1) {
+      throw new Error(
+        `The ${name} template function does not support interpolating arguments as escaping is not implemented.`
+      );
+    }
+
+    return dedent(str);
+  };
+}
+
 // aliases to indicate the embedded language for syntax highlighting
 export const html = dedent;
 export const markdown = dedent;

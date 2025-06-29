@@ -13,6 +13,7 @@ const CONFIG_LINE_COL_REGEX = /(?<!@glide\.ts):(\d+):(\d+)/g;
 declare global {
   interface GlideGlobals {
     value?: unknown;
+    error_message?: unknown;
   }
 }
 
@@ -757,6 +758,35 @@ add_task(async function test_ctx_mode() {
       GlideBrowser.api.g.value,
       "normal",
       "the keymap should be invoked and set the value to the current mode"
+    );
+  });
+});
+
+add_task(async function test_dedent_helpers() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>t", async () => {
+      glide.g.value = html`
+        <!---->
+        <div>foo</div>
+      `;
+
+      const arg = "foo";
+      try {
+        // @ts-expect-error
+        html`<div>${arg}</div>`;
+      } catch (err) {
+        glide.g.error_message = String(err);
+      }
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await sleep_frames(10);
+    is(GlideBrowser.api.g.value, "<!---->\n<div>foo</div>");
+    is(
+      GlideBrowser.api.g.error_message,
+      "Error: The html template function does not support interpolating arguments as escaping is not implemented."
     );
   });
 });
