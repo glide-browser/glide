@@ -9,6 +9,11 @@ declare global {
       url: string;
 
       /**
+       * The operating system Glide is running on.
+       */
+      os: "linux" | "win" | "macosx" | "ios" | "android" | "other";
+
+      /**
        * Whether or not the currently focused element is editable.
        *
        * This includes but is not limited to `<textarea>`, `<input>`, `contenteditable=true`.

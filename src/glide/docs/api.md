@@ -16,6 +16,9 @@ The currently active mode.
 ### `glide.ctx.url: string` {% id="glide.ctx.url" %}
 
 
+### `glide.ctx.os` {% id="glide.ctx.os" %}
+
+The operating system Glide is running on.
 
 {% api-heading id="glide.ctx.is_editing" %}
 glide.ctx.is_editing(): Promise<boolean>

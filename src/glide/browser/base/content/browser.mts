@@ -1475,6 +1475,13 @@ function make_glide_api(): typeof glide {
         return url;
       },
 
+      get os() {
+        const { AppConstants } = ChromeUtils.importESModule(
+          "resource://gre/modules/AppConstants.sys.mjs"
+        );
+        return AppConstants.platform;
+      },
+
       async is_editing() {
         return await GlideBrowser.get_focused_actor().send_query(
           "Glide::Query::IsEditing"

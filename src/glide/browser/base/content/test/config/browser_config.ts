@@ -790,3 +790,14 @@ add_task(async function test_dedent_helpers() {
     );
   });
 });
+
+add_task(async function test_os() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    ok(GlideBrowser.api.ctx.os, "glide.ctx.os is not empty");
+    is(
+      typeof GlideBrowser.api.ctx.os,
+      "string",
+      "glide.ctx.os should be set to a string"
+    );
+  });
+});
