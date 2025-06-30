@@ -16,10 +16,13 @@ glide.jar:
   # pages
   res/glide-docs/index.html                      (./dist/index.html)
   res/glide-docs/faq.html                        (./dist/faq.html)
+  res/glide-docs/api.html                        (./dist/api.html)
+  res/glide-docs/hints.html                      (./dist/hints.html)
   res/glide-docs/modes.html                      (./dist/modes.html)
   res/glide-docs/quickstart.html                 (./dist/quickstart.html)
   res/glide-docs/ex-commands.html                (./dist/ex-commands.html)
   res/glide-docs/key-mappings.html               (./dist/key-mappings.html)
+  res/glide-docs/contributing.html               (./dist/contributing.html)
   # TODO(glide): don't require explicitly listing all the pages
 
   # assets
