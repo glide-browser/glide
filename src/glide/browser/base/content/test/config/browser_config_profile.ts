@@ -5,9 +5,9 @@
 "use strict";
 
 add_task(async function test_glide_api_dts_exists() {
-  const path = PathUtils.join(PathUtils.profileDir, "glide-api.d.ts");
+  const path = PathUtils.join(PathUtils.profileDir, "glide", "glide-api.d.ts");
   ok(
     await IOUtils.exists(path),
-    "glide-api.d.ts file should exist in the profile directory"
+    `${path} should exist in the profile directory`
   );
 });

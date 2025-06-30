@@ -62,6 +62,7 @@ class GlideTestUtilsClass {
       "ProfD",
       Ci.nsIFile
     );
+    configFile.append("glide");
     configFile.append("glide.ts");
     try {
       configFile.remove(/* recursive */ false);
