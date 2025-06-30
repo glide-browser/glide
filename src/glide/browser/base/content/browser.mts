@@ -181,10 +181,23 @@ class GlideBrowserClass {
         await write_d_ts(PathUtils.parent(this.config_path)!);
       }
     });
+  }
+
+  async reload_config() {
+    await this.#reload_config();
 
     this.on_startup(async () => {
-      await config_promise;
+      await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
+    });
 
+    this.on_startup(async () => {
+      await this.#state_change_autocmd(this.state, {
+        mode: null,
+        operator: null,
+      });
+    });
+
+    this.on_startup(async () => {
       const results = await Promise.allSettled(
         (GlideBrowser.autocmds.Startup ?? []).map(cmd =>
           (async () => {
@@ -213,21 +226,6 @@ class GlideBrowserClass {
           buttons: [GlideBrowser.remove_all_notifications_button],
         });
       }
-    });
-  }
-
-  async reload_config() {
-    await this.#reload_config();
-
-    this.on_startup(async () => {
-      await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
-    });
-
-    this.on_startup(async () => {
-      await this.#state_change_autocmd(this.state, {
-        mode: null,
-        operator: null,
-      });
     });
 
     this.on_startup(() => {
