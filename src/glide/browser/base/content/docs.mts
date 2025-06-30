@@ -247,6 +247,7 @@ export async function markdown_to_html(
 
   const lines = source.split("\n");
   const styles: string[] = [];
+  const head: string[] = [];
 
   const content = Markdoc.transform(ast, {
     tags: {
@@ -343,6 +344,22 @@ export async function markdown_to_html(
           const last = node.lines.at(-1)! - 1;
           const content = lines.slice(first, last);
           styles.push(content.join("\n"));
+          return "";
+        },
+      },
+      head: {
+        description: "Inject custom <head> HTML",
+        transform(node) {
+          // note: this doesn't support inline usage, it must be
+          // ```md
+          // {% head %}
+          // <link rel="stylesheet" ... />
+          // {% /head %}
+          // ```
+          const first = node.lines[0]! + 1;
+          const last = node.lines.at(-1)! - 1;
+          const content = lines.slice(first, last);
+          head.push(content.join("\n"));
           return "";
         },
       },
@@ -654,6 +671,7 @@ export async function markdown_to_html(
               `
             )
             .join("\n")}
+          ${head.join("\n")}
 
           <script src="${rel_to_dist}/pagefind/pagefind-ui.js"></script>
           <script src="${rel_to_dist}/docs.js"></script>
