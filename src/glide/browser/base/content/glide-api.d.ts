@@ -506,7 +506,7 @@ declare global {
       Startup: null;
     };
     type AutocmdArgs = {
-      UrlEnter: { readonly url: string };
+      UrlEnter: { readonly url: string; readonly tab_id: number };
       ModeChanged: {
         /**
          * This may be `null` when first loading Glide or when reloading the config.

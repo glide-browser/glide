@@ -590,7 +590,15 @@ class GlideBrowserClass {
       return;
     }
 
-    const args: glide.AutocmdArgs["UrlEnter"] = { url: location.spec };
+    const args: glide.AutocmdArgs["UrlEnter"] = {
+      url: location.spec,
+      get tab_id() {
+        return assert_present(
+          GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
+          "could not resolve tab wrapper"
+        ).id;
+      },
+    };
 
     const results = await Promise.allSettled(
       cmds.map(cmd =>

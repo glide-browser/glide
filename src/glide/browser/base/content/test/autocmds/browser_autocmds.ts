@@ -464,6 +464,28 @@ add_task(async function test_urlenter_triggered_on_config_reload() {
   });
 });
 
+add_task(async function test_urlenter_tab_id() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    await GlideTestUtils.reload_config(function _() {
+      glide.g.calls = [];
+
+      glide.autocmds.create("UrlEnter", /input_test/, ({ tab_id }) => {
+        glide.g.calls!.push(`${tab_id}`);
+      });
+    });
+
+    await sleep_frames(5);
+
+    isjson(
+      GlideBrowser.api.g.calls,
+      [String((await GlideBrowser.api.tabs.active()).id)],
+      "UrlEnter autocmd should be pass tab ID that matches the active tab ID"
+    );
+  });
+});
+
 add_task(async function test_startup_triggered_on_config_reload() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await sleep_frames(5);

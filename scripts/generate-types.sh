@@ -38,6 +38,8 @@ mv "$TEMP_FILE" src/glide/generated/testing/mochitest/tests/SimpleTest/EventUtil
 mkdir -p src/glide/generated/@types
 mkdir -p src/glide/generated/@types/subs
 mkdir -p src/glide/generated/@types/generated
+mkdir -p src/glide/generated/@types/extensions
 cp engine/tools/@types/*.ts src/glide/generated/@types/
 cp engine/tools/@types/subs/AppConstants.sys.d.mts src/glide/generated/@types/subs/AppConstants.sys.d.ts
 cp engine/tools/@types/generated/*.ts src/glide/generated/@types/generated/
+cp engine/toolkit/components/extensions/types/ext-tabs-base.d.ts src/glide/generated/@types/extensions/
