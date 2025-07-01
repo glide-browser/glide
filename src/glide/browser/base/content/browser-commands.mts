@@ -15,7 +15,7 @@ const { LayoutUtils } = ChromeUtils.importESModule(
 const Hinting = ChromeUtils.importESModule(
   "chrome://glide/content/hinting.mjs"
 );
-const { assert_never } = ChromeUtils.importESModule(
+const { assert_never, assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
 
@@ -271,6 +271,10 @@ class GlideCommandsClass {
 
   get_commandline(): GlideCommandLine | null {
     return this.#get_cached_commandline(gBrowser.selectedTab);
+  }
+
+  expect_commandline(): GlideCommandLine {
+    return assert_present(this.get_commandline(), "No commandline present");
   }
 
   #get_cached_commandline(tab: BrowserTab): GlideCommandLine | null {

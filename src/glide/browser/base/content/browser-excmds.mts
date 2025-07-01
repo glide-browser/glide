@@ -280,41 +280,25 @@ class GlideExcmdsClass {
       }
 
       case "commandline_focus_next": {
-        const commandline = GlideCommands.get_commandline();
-        if (!commandline) {
-          throw new Error("No commandline present");
-        }
-
+        const commandline = GlideCommands.expect_commandline();
         commandline.focus_next();
         break;
       }
 
       case "commandline_focus_back": {
-        const commandline = GlideCommands.get_commandline();
-        if (!commandline) {
-          throw new Error("No commandline present");
-        }
-
+        const commandline = GlideCommands.expect_commandline();
         commandline.focus_back();
         break;
       }
 
       case "commandline_delete": {
-        const commandline = GlideCommands.get_commandline();
-        if (!commandline) {
-          throw new Error("No commandline present");
-        }
-
+        const commandline = GlideCommands.expect_commandline();
         commandline.remove_focused_browser_tab();
         break;
       }
 
       case "commandline_accept": {
-        const commandline = GlideCommands.get_commandline();
-        if (!commandline) {
-          throw new Error("No commandline present");
-        }
-
+        const commandline = GlideCommands.expect_commandline();
         await commandline.accept_focused();
         break;
       }
