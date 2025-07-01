@@ -33,18 +33,6 @@ class GlideCommandsClass {
   }
 
   /**
-   * If the commandline is open and in the `tab` group, remove the selected tab.
-   */
-  remove_active_commandline_browser_tab() {
-    const commandline = this.#get_active_commandline();
-    if (!commandline) {
-      return;
-    }
-
-    commandline.remove_focused_browser_tab();
-  }
-
-  /**
    * Get or create the `glide-commandline` element, showing it in the UI.
    */
   async upsert_commandline(opts: { prefill?: string } = {}) {

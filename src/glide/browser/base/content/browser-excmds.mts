@@ -299,6 +299,16 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "commandline_delete": {
+        const commandline = GlideCommands.get_commandline();
+        if (!commandline) {
+          throw new Error("No commandline present");
+        }
+
+        commandline.remove_focused_browser_tab();
+        break;
+      }
+
       case "commandline_accept": {
         const commandline = GlideCommands.get_commandline();
         if (!commandline) {

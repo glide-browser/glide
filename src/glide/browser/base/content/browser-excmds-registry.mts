@@ -240,6 +240,13 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
   {
+    name: "commandline_delete",
+    description: "Delete the focused commandline completion",
+    content: false,
+    args_schema: {},
+    repeatable: false,
+  },
+  {
     name: "commandline_accept",
     description: "Accept the focused commandline completion",
     content: false,
