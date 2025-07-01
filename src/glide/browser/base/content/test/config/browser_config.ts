@@ -682,6 +682,30 @@ add_task(async function test_keys_send_accepts_glide_key() {
   });
 });
 
+add_task(async function test_keys_send_skip_mappings() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>t", async () => {
+      glide.g.value = "from first mapping";
+      await glide.keys.send("j", { skip_mappings: true });
+    });
+
+    glide.keymaps.set("normal", "j", () => {
+      glide.g.value = "j keymap triggered";
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await sleep_frames(50);
+
+    is(
+      GlideBrowser.api.g.value,
+      "from first mapping",
+      "glide.keys.send() with skip_mappings: true should not trigger the 'j' keymap"
+    );
+  });
+});
+
 declare global {
   interface GlideModes {
     test_custom_mode: "test_custom_mode";

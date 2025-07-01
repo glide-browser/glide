@@ -13,7 +13,10 @@ const { assert_present } = ChromeUtils.importESModule(
  *
  * e.g. `ab<C-d>` will fire three different events, a, b, and ctrl+c
  */
-export async function synthesize_keyseq(keyseq: string) {
+export async function synthesize_keyseq(
+  keyseq: string,
+  opts?: glide.KeySendOptions
+) {
   for (const keyn of Keys.split(keyseq).map(Keys.normalize)) {
     // sleep one frame as Firefox cannot process key events in parallel
     // so if this was called inside a keymap callback, firefox will still
@@ -21,7 +24,7 @@ export async function synthesize_keyseq(keyseq: string) {
     await new Promise(r => requestAnimationFrame(r));
 
     const event = Keys.parse_modifiers(keyn);
-    firefox_synthesizeKey(event.key, event);
+    firefox_synthesizeKey(event.key, event, window, opts);
   }
 }
 
@@ -34,7 +37,8 @@ export async function synthesize_keyseq(keyseq: string) {
 function firefox_synthesizeKey(
   aKey: string,
   aEvent: GlideMappingEvent | undefined = undefined,
-  aWindow: Window = window
+  aWindow: Window = window,
+  opts?: glide.KeySendOptions
 ) {
   const event = aEvent === undefined || aEvent === null ? {} : aEvent;
   let dispatchKeydown =
@@ -78,6 +82,10 @@ function firefox_synthesizeKey(
     aWindow
   );
   var keyEvent = new KeyboardEvent("", keyEventDict.dictionary);
+
+  if (opts?.skip_mappings) {
+    GlideBrowser.register_keyevent_passthrough(keyEvent);
+  }
 
   try {
     if (dispatchKeydown) {

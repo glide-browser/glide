@@ -330,7 +330,8 @@ declare global {
        * ```
        */
       send<const Keys>(
-        keyseq: $keymapcompletions.T<Keys> | { glide_key: string }
+        keyseq: $keymapcompletions.T<Keys> | { glide_key: string },
+        opts?: glide.KeySendOptions
       ): Promise<void>;
 
       /**
@@ -459,6 +460,14 @@ declare global {
        * `{ ctrlKey: true, key: 's' }` -> `'<C-s>'`
        */
       glide_key: string;
+    };
+
+    export type KeySendOptions = {
+      /**
+       * Send the key event(s) directly through to the builtin Firefox
+       * input handler and skip all of the mappings defined in Glide.
+       */
+      skip_mappings?: boolean;
     };
 
     /// @docs-skip

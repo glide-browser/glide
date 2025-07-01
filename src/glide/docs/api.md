@@ -201,7 +201,7 @@ The mapping may remain defined for other modes where it applies.
 
 
 {% api-heading id="glide.keys.send" %}
-glide.keys.send(keyseq): Promise<void>
+glide.keys.send(keyseq, opts?): Promise<void>
 {% /api-heading %}
 
 

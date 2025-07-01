@@ -1136,11 +1136,45 @@ class GlideBrowserClass {
     }
   }
 
+  /**
+   * When calling `glide.keys.send(..., { skip_mappings: true })`, we can't
+   * reliably add any custom properties onto the `KeyboardEvent` that is fired
+   * as the event we pass to the TIP is reconstructed somewhere down the line.
+   *
+   * So we need some way to uniquely identify a key event, it looks like the
+   * `timeStamp` is the best bet we have as it will be the same for the key event
+   * we construct and the one that is actually fired.
+   *
+   * I think it *should* also be impossible for two unrelated key events to have
+   * the same `timeStamp`, as `[new KeyboardEvent("", {}), new KeyboardEvent("", {})]`
+   * results in unique timestamps. So the only way it could be possible is for multiple
+   * processes to construct and fire key events at the same *exact* time which seems
+   * exceedingly unlikely for a variety of reasons. From experimenting with `Promise.race()`
+   * I've only been able to get two timestamps to have a delta of ~0.07.
+   */
+  #passthrough_keyevents = new Set<number>();
+  register_keyevent_passthrough(event: KeyboardEvent): void {
+    this.#passthrough_keyevents.add(event.timeStamp);
+  }
+
+  timestamps: number[] = [];
+
   async #on_keydown(event: KeyboardEvent) {
+    this.timestamps.push(event.timeStamp);
     const keyn = Keys.event_to_key_notation(event);
 
     // remove any previous results for this key combination
     this.keydown_event_results.delete(keyn);
+
+    const should_passthrough = this.#passthrough_keyevents.has(event.timeStamp);
+    if (should_passthrough) {
+      this.#passthrough_keyevents.delete(event.timeStamp);
+      this.#display_keyseq([]);
+      this._log.debug(
+        `Ignoring \`${keyn}\` key event as it was marked with \`glide_skip_mappings\``
+      );
+      return;
+    }
 
     // Certain builting key mappings, such as `<Esc>` to exit fullscreen mode,
     // are handled internally in C++ code that dispatches an event *only* to chrome
@@ -1630,7 +1664,7 @@ function make_glide_api(): typeof glide {
       },
     },
     keys: {
-      async send(input) {
+      async send(input, opts) {
         const EventUtils = ChromeUtils.importESModule(
           "chrome://glide/content/event-utils.mjs",
           { global: "current" }
@@ -1638,7 +1672,8 @@ function make_glide_api(): typeof glide {
         await EventUtils.synthesize_keyseq(
           typeof input === "object" && input && "glide_key" in input ?
             input.glide_key
-          : (input as string)
+          : (input as string),
+          opts
         );
       },
       async next() {
