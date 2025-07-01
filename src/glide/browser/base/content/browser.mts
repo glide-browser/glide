@@ -239,6 +239,7 @@ class GlideBrowserClass {
       if (this.#config_watcher_id) {
         clearInterval(this.#config_watcher_id);
         this.#config_watcher_id = undefined;
+        this.#config_modified_timestamp = undefined;
       }
 
       const path = this.config_path;
