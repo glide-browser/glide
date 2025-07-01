@@ -89,7 +89,6 @@ export const content = {
       "details",
       "option",
       "label",
-      "svg",
       // firefox XUL elements
       "toolbarbutton",
       "richlistitem",

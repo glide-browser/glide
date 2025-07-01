@@ -14,7 +14,7 @@ You can press `<Esc>` to exit `hint` mode at any time.
 
 An element is considered "hintable" if any of the following are true:
 
-- It is one of `html:<a>`, `html:<input>`, `html:<textarea>`, `html:<button>`, `html:<details>`, `html:<option>`, `html:<svg>`, `html:<label>`, `html:<toolbarbutton>`, `html:<richlistitem>`, `html:<menulist>`, `html:<checkbox>`, or `html:<radio>`.
+- It is one of `html:<a>`, `html:<input>`, `html:<textarea>`, `html:<button>`, `html:<details>`, `html:<option>`, `html:<label>`, `html:<toolbarbutton>`, `html:<richlistitem>`, `html:<menulist>`, `html:<checkbox>`, or `html:<radio>`.
 - It has one of the following [roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles): `link`, `button`, `option`, `menuitem`, `menuitemcheckbox`, `menuitemradio`, `tab`, `checkbox`, `radio`.
 - The element is editable
 
