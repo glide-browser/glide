@@ -6,6 +6,7 @@ import {
   DOCS_DIST_DIR,
   GLIDE_BROWSER_CONTENT_DIR,
 } from "./canonical-paths.mts";
+import { queue } from "./dev.mts";
 
 async function build_docs() {
   // separate process so changes to e.g. `content/docs.mts` don't require
@@ -60,23 +61,27 @@ export async function main() {
         DOCS_FILES.add(path);
       })
       .on("ready", async () => {
-        console.time("✨ Built docs in");
+        await queue.add(async () => {
+          console.time("✨ Built docs in");
 
-        await build_docs();
+          await build_docs();
 
-        console.timeEnd("✨ Built docs in");
+          console.timeEnd("✨ Built docs in");
 
-        if (process.argv.includes("--watch")) {
-          console.log("\nWatching docs changes:");
-          return;
-        }
+          if (process.argv.includes("--watch")) {
+            console.log("\nWatching docs changes:");
+            return;
+          }
 
-        await watcher.close();
-        resolve();
+          await watcher.close();
+          resolve();
+        });
       })
       .on("change", async path => {
-        console.log(`Rebuilding docs as ${path} changed`);
-        await build_docs();
+        await queue.add(async () => {
+          console.log(`Rebuilding docs as ${path} changed`);
+          await build_docs();
+        });
       })
       .on("error", error => {
         reject(error);

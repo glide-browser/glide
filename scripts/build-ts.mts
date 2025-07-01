@@ -3,6 +3,7 @@ import chokidar from "chokidar";
 import Path from "path";
 import ts_blank_space from "ts-blank-space";
 import { SRC_DIR } from "./canonical-paths.mts";
+import { queue } from "./dev.mts";
 
 const dist_dir_cache = new Set<string>();
 
@@ -78,26 +79,30 @@ export async function main() {
         BUILD_FILES.add(path);
       })
       .on("ready", async () => {
-        console.log(`Building ${BUILD_FILES.size} TS files`);
-        console.time("✨ Built TS in");
-        for (const path of BUILD_FILES) {
-          await build(path);
-        }
+        await queue.add(async () => {
+          console.log(`Building ${BUILD_FILES.size} TS files`);
+          console.time("✨ Built TS in");
+          for (const path of BUILD_FILES) {
+            await build(path);
+          }
 
-        if (process.argv.includes("--watch")) {
+          if (process.argv.includes("--watch")) {
+            console.timeEnd("✨ Built TS in");
+            console.log("\nWatching:");
+            return;
+          }
+
           console.timeEnd("✨ Built TS in");
-          console.log("\nWatching:");
-          return;
-        }
-
-        console.timeEnd("✨ Built TS in");
-        await watcher.close();
-        resolve();
+          await watcher.close();
+          resolve();
+        });
       })
       .on("change", async path => {
-        console.time(`Built ${path}`);
-        await build(path);
-        console.timeEnd(`Built ${path}`);
+        await queue.add(async () => {
+          console.time(`Built ${path}`);
+          await build(path);
+          console.timeEnd(`Built ${path}`);
+        });
       })
       .on("error", error => {
         reject(error);

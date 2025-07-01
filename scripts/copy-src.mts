@@ -13,6 +13,7 @@ import fs from "fs/promises";
 import chokidar from "chokidar";
 import Path from "path";
 import { SRC_DIR, ENGINE_DIR } from "./canonical-paths.mts";
+import { queue } from "./dev.mts";
 
 const dir_cache = new Set<string>();
 
@@ -63,41 +64,47 @@ export async function main() {
         COPY_FILES.add(path);
       })
       .on("ready", async () => {
-        console.log(`Copying ${COPY_FILES.size} files to engine/`);
-        console.time("✨ Copied in");
-        for (const path of COPY_FILES) {
-          await copy(path);
-        }
+        await queue.add(async () => {
+          console.log(`Copying ${COPY_FILES.size} files to engine/`);
+          console.time("✨ Copied in");
+          for (const path of COPY_FILES) {
+            await copy(path);
+          }
 
-        if (process.argv.includes("--watch")) {
+          if (process.argv.includes("--watch")) {
+            console.timeEnd("✨ Copied in");
+            console.log("\nWatching:");
+            return;
+          }
+
           console.timeEnd("✨ Copied in");
-          console.log("\nWatching:");
-          return;
-        }
-
-        console.timeEnd("✨ Copied in");
-        await watcher.close();
-        resolve();
+          await watcher.close();
+          resolve();
+        });
       })
       .on("change", async path => {
-        console.time(`Copied ${path}`);
-        await copy(path);
-        console.timeEnd(`Copied ${path}`);
+        await queue.add(async () => {
+          console.time(`Copied ${path}`);
+          await copy(path);
+          console.timeEnd(`Copied ${path}`);
+        });
       })
       .on("unlink", async abs_path => {
-        try {
-          console.time(`Removed ${abs_path}`);
+        await queue.add(async () => {
+          try {
+            console.time(`Removed ${abs_path}`);
 
-          const rel_path = Path.relative(SRC_DIR, abs_path);
-          const engine_path = Path.join(ENGINE_DIR, rel_path);
+            const rel_path = Path.relative(SRC_DIR, abs_path);
+            const engine_path = Path.join(ENGINE_DIR, rel_path);
 
-          await fs.rm(engine_path);
+            await fs.rm(engine_path);
 
-          console.timeEnd(`Removed ${abs_path}`);
-        } catch (err) {
-          // can happen due to race conditions with this watcher and the docs watcher
-          console.log("ignoring error while unlinking", err);
-        }
+            console.timeEnd(`Removed ${abs_path}`);
+          } catch (err) {
+            // can happen due to race conditions with this watcher and the docs watcher
+            console.log("ignoring error while unlinking", err);
+          }
+        });
       })
       .on("error", error => {
         reject(error);
