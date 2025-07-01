@@ -1,0 +1,68 @@
+#keyboard-shortcuts {
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+#keyboard-shortcuts-note {
+  text-align: center;
+  color: grey;
+  line-height: 0.4rem;
+}
+
+.shortcuts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 1rem 0;
+}
+
+.shortcut-section {
+  border-radius: 8px;
+}
+
+.shortcut-section h3 {
+  margin: 0 0 1rem 0;
+}
+
+.shortcut-section h3:not(:first-of-type) {
+  margin: 2rem 0 1rem 0;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.shortcut-key {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  color: #343b58;
+  --shiki-dark: #c0caf5;
+}
+
+.shortcut-desc {
+  font-size: 0.9rem;
+}
+
+.mode-note {
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid white;
+  font-style: italic;
+  color: #a0aec0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .shortcut-key {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}

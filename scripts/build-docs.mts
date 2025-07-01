@@ -38,6 +38,7 @@ const MD_GLOB_EXCLUDE = /monospace-web/;
 const SYMLINKS = [
   "docs.js",
   "docs.css",
+  "index.css",
   "logo.png",
   "BerkeleyMono-Regular.woff2",
   "monospace-web/reset.css",

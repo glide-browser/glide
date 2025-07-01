@@ -64,7 +64,10 @@ class GlideBrowserDevClass {
 
     // also reload if some dependency files have changed
     const parts = file_path.split("/");
-    const paths = [[...parts.slice(0, -1), "docs.css"].join("/")];
+    const paths = [
+      [...parts.slice(0, -1), "docs.css"].join("/"),
+      [...parts.slice(0, -1), "index.css"].join("/"),
+    ];
     await this.#check_files(paths);
   }
 
