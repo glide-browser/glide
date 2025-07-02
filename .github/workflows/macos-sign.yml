@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to sign'
+        description: "Release tag to sign"
         required: true
         type: string
 
@@ -12,7 +12,7 @@ jobs:
   macos-sign:
     name: Sign
     runs-on: "macos-15"
-
+    timeout-minutes: 40
     environment: release
 
     steps:
