@@ -33,3 +33,14 @@ export async function fetch_resource(
     );
   });
 }
+
+/**
+ * Given a resource URI like `resource://glide-tutor/index.html`, returns
+ * a URI for the path on the file system for said resource.
+ */
+export function resolve_resource_path(uri: nsIURI): nsIURI {
+  const handler = Services.io.getProtocolHandler("resource").QueryInterface!(
+    Ci.nsIResProtocolHandler
+  );
+  return Services.io.newURI(handler.resolveURI(uri));
+}
