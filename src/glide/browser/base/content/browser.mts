@@ -181,6 +181,39 @@ class GlideBrowserClass {
         await write_d_ts(PathUtils.parent(this.config_path)!);
       }
     });
+
+    this.on_startup(async () => {
+      await config_promise;
+
+      const results = await Promise.allSettled(
+        (GlideBrowser.autocmds.WindowLoaded ?? []).map(cmd =>
+          (async () => {
+            const cleanup = await cmd.callback({});
+            if (typeof cleanup === "function") {
+              throw new Error(
+                "WindowLoaded autocmds cannot define cleanup functions"
+              );
+            }
+          })()
+        )
+      );
+
+      for (const result of results) {
+        if (result.status === "fulfilled") {
+          continue;
+        }
+
+        GlideBrowser._log.error(result.reason);
+        const loc =
+          GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
+        GlideBrowser.add_notification("glide-autocmd-error", {
+          label: `Error occurred in WindowLoaded autocmd \`${loc}\` - ${result.reason}`,
+          priority:
+            MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+          buttons: [GlideBrowser.remove_all_notifications_button],
+        });
+      }
+    });
   }
 
   async reload_config() {

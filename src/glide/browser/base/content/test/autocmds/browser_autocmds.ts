@@ -508,6 +508,43 @@ add_task(async function test_startup_triggered_on_config_reload() {
   });
 });
 
+add_task(async function test_window_loaded() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("WindowLoaded", () => {
+      glide.g.calls!.push("window-loaded");
+    });
+  });
+
+  const win: Window = await BrowserTestUtils.openNewBrowserWindow();
+  await sleep_frames(10);
+
+  isjson(
+    win.GlideBrowser.api.g.calls,
+    ["window-loaded"],
+    "WindowLoaded autocmd should be triggered on initial window startup"
+  );
+
+  BrowserTestUtils.closeWindow(win);
+});
+
+add_task(async function test_window_loaded_not_called_on_reload() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("WindowLoaded", () => {
+      glide.g.calls!.push("window-loaded");
+    });
+  });
+
+  isjson(
+    GlideBrowser.api.g.calls,
+    [],
+    "WindowLoaded autocmd should not be triggered on config reload"
+  );
+});
+
 function num_calls() {
   return (GlideBrowser.api.g.calls ?? []).length;
 }
