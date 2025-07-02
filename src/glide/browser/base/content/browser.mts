@@ -1190,10 +1190,7 @@ class GlideBrowserClass {
     this.#passthrough_keyevents.add(event.timeStamp);
   }
 
-  timestamps: number[] = [];
-
   async #on_keydown(event: KeyboardEvent) {
-    this.timestamps.push(event.timeStamp);
     const keyn = Keys.event_to_key_notation(event);
 
     // remove any previous results for this key combination
