@@ -493,7 +493,7 @@ add_task(async function test_startup_triggered_on_config_reload() {
     await GlideTestUtils.reload_config(function _() {
       glide.g.calls = [];
 
-      glide.autocmds.create("Startup", () => {
+      glide.autocmds.create("ConfigLoaded", () => {
         glide.g.calls!.push("reloaded-config");
       });
     });
@@ -503,7 +503,7 @@ add_task(async function test_startup_triggered_on_config_reload() {
     isjson(
       GlideBrowser.api.g.calls,
       ["reloaded-config"],
-      "Startup autocmd should be triggered on config reload after initial startup"
+      "ConfigLoaded autocmd should be triggered on config reload after initial startup"
     );
   });
 });

@@ -78,12 +78,11 @@ declare global {
       ): void;
 
       /**
-       * Create an autocmd that will be invoked when initial startup is finished.
+       * Create an autocmd that will be invoked whenever the config is loaded.
        *
-       * **note**: this command is only invoked *once*, it is *not* invoked when the config
-       *           is reloaded.
+       * Called once on initial load and again every time the config is reloaded.
        */
-      create<const Event extends "Startup">(
+      create<const Event extends "ConfigLoaded">(
         event: Event,
         callback: (args: glide.AutocmdArgs[Event]) => void
       ): void;
@@ -508,11 +507,11 @@ declare global {
 
     type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
-    type AutocmdEvent = "UrlEnter" | "ModeChanged" | "Startup";
+    type AutocmdEvent = "UrlEnter" | "ModeChanged" | "ConfigLoaded";
     type AutocmdPatterns = {
       UrlEnter: RegExp | { hostname?: string };
       ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
-      Startup: null;
+      ConfigLoaded: null;
     };
     type AutocmdArgs = {
       UrlEnter: { readonly url: string; readonly tab_id: number };
@@ -523,7 +522,7 @@ declare global {
         readonly old_mode: GlideMode | null;
         readonly new_mode: GlideMode;
       };
-      Startup: {};
+      ConfigLoaded: {};
     };
   }
 

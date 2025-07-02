@@ -76,9 +76,9 @@ glide.keymaps.set("normal", "", "help");
 // @ts-expect-error partially completed modifier
 glide.keymaps.set("normal", "<A-", "help");
 
-glide.autocmds.create("Startup", () => {});
+glide.autocmds.create("ConfigLoaded", () => {});
 // @ts-expect-error no callback provided
-glide.autocmds.create("Startup");
+glide.autocmds.create("ConfigLoaded");
 
 browser.tabs.query({});
 

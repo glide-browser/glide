@@ -199,12 +199,12 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       const results = await Promise.allSettled(
-        (GlideBrowser.autocmds.Startup ?? []).map(cmd =>
+        (GlideBrowser.autocmds.ConfigLoaded ?? []).map(cmd =>
           (async () => {
             const cleanup = await cmd.callback({});
             if (typeof cleanup === "function") {
               throw new Error(
-                "Startup autocmds cannot define cleanup functions"
+                "ConfigLoaded autocmds cannot define cleanup functions"
               );
             }
           })()
@@ -220,7 +220,7 @@ class GlideBrowserClass {
         const loc =
           GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
         GlideBrowser.add_notification("glide-autocmd-error", {
-          label: `Error occurred in Startup autocmd \`${loc}\` - ${result.reason}`,
+          label: `Error occurred in ConfigLoaded autocmd \`${loc}\` - ${result.reason}`,
           priority:
             MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
           buttons: [GlideBrowser.remove_all_notifications_button],
