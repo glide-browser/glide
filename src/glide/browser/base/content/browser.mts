@@ -1190,7 +1190,18 @@ class GlideBrowserClass {
     this.#passthrough_keyevents.add(event.timeStamp);
   }
 
+  /**
+   * Some mappings require cleanup to run after a delay, if there
+   * are no other key presses in that time.
+   */
+  #partial_mapping_waiter_id: number | null = null;
+
   async #on_keydown(event: KeyboardEvent) {
+    if (this.#partial_mapping_waiter_id) {
+      clearTimeout(this.#partial_mapping_waiter_id);
+      this.#partial_mapping_waiter_id = null;
+    }
+
     const keyn = Keys.event_to_key_notation(event);
 
     // remove any previous results for this key combination
@@ -1328,6 +1339,19 @@ class GlideBrowserClass {
         mode,
         key: event.key,
       });
+
+      if (mode === "insert") {
+        // in insert mode, for any multi-sequence mappings, e.g. `jj` to `mode_change normal`,
+        // we need to cleanup the previous state after some period of time, otherwise it's
+        // impossible to just type `jj`, you have to press another key in the middle.
+        this.#partial_mapping_waiter_id = setTimeout(async () => {
+          this.key_manager.reset_sequence();
+          this.get_focused_actor().send_async_message(
+            "Glide::KeyMappingCancel",
+            { mode }
+          );
+        }, 200) as unknown as number; // @types/node conflict
+      }
     } else if (mapping.value) {
       this.key_manager.reset_sequence();
       this.get_focused_actor().send_async_message(
