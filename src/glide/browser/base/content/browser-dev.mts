@@ -2,28 +2,28 @@
  * Contains utilities that are useful when working directly on Glide.
  */
 class GlideBrowserDevClass {
-  #docs_fs_modified_timestamps: Map<string, number> = new Map();
-  #docs_watcher_id: number | null = null;
-  #docs_pref = "glide.dev.reload_docs_files";
+  #fs_modified_timestamps: Map<string, number> = new Map();
+  #fs_watcher_id: number | null = null;
+  #fs_watcher_pref = "glide.dev.reload_files";
 
   init() {
-    GlideBrowserDev.maybe_toggle_docs_watcher();
+    GlideBrowserDev.maybe_toggle_fs_watchers();
 
-    Services.prefs.addObserver(this.#docs_pref, {
+    Services.prefs.addObserver(this.#fs_watcher_pref, {
       observe() {
-        GlideBrowserDev.maybe_toggle_docs_watcher();
+        GlideBrowserDev.maybe_toggle_fs_watchers();
       },
     });
   }
 
-  maybe_toggle_docs_watcher() {
-    if (Services.prefs.getBoolPref(this.#docs_pref)) {
-      this.#docs_watcher_id = setInterval(() => {
+  maybe_toggle_fs_watchers() {
+    if (Services.prefs.getBoolPref(this.#fs_watcher_pref)) {
+      this.#fs_watcher_id = setInterval(() => {
         this.#check_docs_change();
         this.#check_tutor_change();
       }, 200) as any as number;
-    } else if (this.#docs_watcher_id) {
-      clearInterval(this.#docs_watcher_id);
+    } else if (this.#fs_watcher_id) {
+      clearInterval(this.#fs_watcher_id);
     }
   }
 
@@ -55,9 +55,9 @@ class GlideBrowserDevClass {
       throw new Error(`couldn't stat ${file_path}`);
     }
 
-    const last_modified = this.#docs_fs_modified_timestamps.get(file_path);
+    const last_modified = this.#fs_modified_timestamps.get(file_path);
     if (last_modified === undefined || stat.lastModified > last_modified) {
-      this.#docs_fs_modified_timestamps.set(file_path, stat.lastModified);
+      this.#fs_modified_timestamps.set(file_path, stat.lastModified);
       BrowserCommands.reload();
       return;
     }
@@ -78,9 +78,9 @@ class GlideBrowserDevClass {
         throw new Error(`couldn't stat ${path}`);
       }
 
-      const last_modified = this.#docs_fs_modified_timestamps.get(path);
+      const last_modified = this.#fs_modified_timestamps.get(path);
       if (last_modified === undefined || stat.lastModified > last_modified) {
-        this.#docs_fs_modified_timestamps.set(path, stat.lastModified);
+        this.#fs_modified_timestamps.set(path, stat.lastModified);
         BrowserCommands.reload();
         return;
       }

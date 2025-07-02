@@ -152,7 +152,7 @@ Syntax highlighting is performed by [Shiki](https://shiki.style/) with a custom 
 Glide also ships with a builtin file watcher to automatically reload the rendered docs if they're opened with a `python:file://` URI, you can enable it with:
 
 ```typescript
-glide.prefs.set("glide.dev.reload_docs_files", true);
+glide.prefs.set("glide.dev.reload_files", true);
 ```
 
 And the following pref is required for the search index to work:

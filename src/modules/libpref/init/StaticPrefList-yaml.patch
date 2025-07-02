@@ -1,8 +1,8 @@
 diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
-index 2de599b33564a0d40073f1f37a95b8f3e9a3bbcb..6bc0641c9603bca0041cff9506e727681fa2cabb 100644
+index 1d04b7b50035e6aa268c5d7ac0009abbfbb06943..d572daa75df81de31fe5573e2b7c98a4a45df7cd 100644
 --- a/modules/libpref/init/StaticPrefList.yaml
 +++ b/modules/libpref/init/StaticPrefList.yaml
-@@ -7907,6 +7907,30 @@
+@@ -7964,6 +7964,30 @@
    value: 0
    mirror: always
  
@@ -24,7 +24,7 @@ index 2de599b33564a0d40073f1f37a95b8f3e9a3bbcb..6bc0641c9603bca0041cff9506e72768
 +  value: true
 +  mirror: always
 +
-+- name: glide.dev.reload_docs_files
++- name: glide.dev.reload_files
 +  type: bool
 +  value: false
 +  mirror: always
