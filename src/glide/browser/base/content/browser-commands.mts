@@ -149,6 +149,16 @@ class GlideCommandsClass {
         continue;
       }
 
+      if (y > chrome_ui_box.height) {
+        // below the viewport
+        continue;
+      }
+
+      if (x > chrome_ui_box.width) {
+        // to the right of the viewport
+        continue;
+      }
+
       hints.push({ ...hint, label: "", x, y });
     }
 
