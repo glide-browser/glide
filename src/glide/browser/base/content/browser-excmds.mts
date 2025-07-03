@@ -358,6 +358,54 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "set": {
+        const {
+          args: { name, value },
+        } = this.#parse_command_args(command_meta, command);
+
+        if (!GlideBrowser.is_option(name)) {
+          throw new Error(`:set ${name} is not a valid option`);
+        }
+
+        const existing = GlideBrowser.api.o[name];
+        const parsed = (() => {
+          const type = typeof existing;
+          switch (type) {
+            case "string": {
+              return value;
+            }
+            case "number": {
+              const float = Number.parseFloat(value);
+              if (Number.isNaN(float)) {
+                throw new Error(
+                  `[:set ${name}] ${value} is not a valid number`
+                );
+              }
+              return float;
+            }
+
+            case "bigint":
+            case "boolean":
+            case "symbol":
+            case "undefined":
+            case "object":
+            case "function":
+              throw new Error(
+                `[:set ${name}] Cannot set options of type ${type} yet`
+              );
+            default:
+              throw assert_never(type);
+          }
+        })();
+
+        // @ts-ignore TS doesn't like that we're assigning dynamically
+        //            and it doesn't understand the relationship even in
+        //            the switch above... so I don't think there's a safe
+        //            way to structure this
+        GlideBrowser.api.o[name] = parsed;
+        break;
+      }
+
       case "profile_dir": {
         const id = "glide-profile-dir";
         const profile_dir = PathUtils.profileDir;

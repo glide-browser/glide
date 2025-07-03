@@ -5,6 +5,10 @@
 
 declare var content: TestContent;
 
+add_setup(async function setup() {
+  await GlideTestUtils.reload_config(function _() {});
+});
+
 const INPUT_TEST_FILE =
   "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 const SCROLL_TEST_FILE =
@@ -210,4 +214,34 @@ add_task(async function test_gi_focuses_last_used_input() {
       "gi should focus the previously used input element"
     );
   });
+});
+
+add_task(async function test_set_string_option() {
+  await GlideTestUtils.synthesize_keyseq(":set yank_highlight #ff0000<CR>");
+  is(
+    GlideBrowser.api.o.yank_highlight,
+    "#ff0000",
+    "String option should be updated to new value"
+  );
+
+  await GlideTestUtils.synthesize_keyseq(
+    ":set yank_highlight rgb(255,0,0)<CR>"
+  );
+  is(
+    GlideBrowser.api.o.yank_highlight,
+    "rgb(255,0,0)",
+    "String option should accept complex string values"
+  );
+});
+
+add_task(async function test_set_number_option() {
+  await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 500<CR>");
+  is(
+    GlideBrowser.api.o.mapping_timeout,
+    500,
+    "Number option should be updated to new value"
+  );
+
+  await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 0<CR>");
+  is(GlideBrowser.api.o.mapping_timeout, 0, "Number option should accept zero");
 });

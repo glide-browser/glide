@@ -1014,6 +1014,10 @@ class GlideBrowserClass {
       });
   }
 
+  is_option(name: string): name is keyof glide.Options {
+    return name in this.api.o;
+  }
+
   add_state_change_listener(cb: StateChangeListener) {
     this.state_listeners.add(cb);
   }

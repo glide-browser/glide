@@ -91,6 +91,26 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "set",
+    description: "Set an option",
+    args_schema: {
+      name: {
+        type: "string",
+        position: 0,
+        required: true,
+      },
+      value: {
+        // note: this just means we allow anything and don't try to parse it
+        type: "string",
+        position: 1,
+        required: true,
+      },
+    },
+    content: false,
+    repeatable: false,
+  },
+
+  {
     name: "profile_dir",
     description: "Show the current profile directory",
     content: false,
