@@ -1706,7 +1706,15 @@ function make_glide_api(): typeof glide {
     },
     hints: {
       show(opts) {
-        GlideBrowser.get_focused_actor().send_async_message("Glide::Hint", {
+        const location =
+          opts?.location === "browser-ui" ? "browser-ui" : "content";
+
+        const actor =
+          location === "browser-ui" ? GlideBrowser.get_chrome_actor()
+          : location === "content" ? GlideBrowser.get_content_actor()
+          : assert_never(location);
+
+        actor.send_async_message("Glide::Hint", {
           action: IPC.maybe_serialise_glidefunction(opts?.action),
           selector: opts?.selector,
           location: opts?.location ?? "content",

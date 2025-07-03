@@ -652,20 +652,13 @@ class GlideExcmdsClass {
 
       case "hint": {
         const { args } = this.#parse_command_args(command_meta, command);
-        const location =
-          args["--location"] === "browser-ui" ? "browser-ui" : "content";
-        const actor =
-          location === "browser-ui" ? GlideBrowser.get_chrome_actor()
-          : location === "content" ? GlideBrowser.get_content_actor()
-          : assert_never(location);
-        actor.send_async_message("Glide::Hint", {
+        GlideBrowser.api.hints.show({
+          editable: args["-e"] ?? undefined,
           selector: args["-s"] ?? undefined,
+          action: args["--action"] ?? undefined,
           include: args["--include"] ?? undefined,
-          action: args["--action"],
-          editable_only: args["-e"] ?? undefined,
-          location,
+          location: args["--location"] ?? undefined,
           auto_activate: args["--auto"] ?? false,
-          debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
         break;
       }

@@ -284,7 +284,10 @@ declare global {
          *
          * This is executed in the content process.
          */
-        action?(target: HTMLElement): Promise<void>;
+        action?:
+          | "click"
+          | "newtab-click"
+          | ((target: HTMLElement) => Promise<void>);
 
         /**
          * Which area to generate hints for.
