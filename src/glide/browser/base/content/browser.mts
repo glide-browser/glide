@@ -1691,8 +1691,8 @@ function make_glide_api(): typeof glide {
           );
         }
 
-        const result = results[0]!;
-        if (result.error) {
+        const result = results[0];
+        if (result?.error) {
           if (
             Object.prototype.toString.call(result.error) === "[object Error]"
           ) {
@@ -1702,7 +1702,7 @@ function make_glide_api(): typeof glide {
           throw new Error(result.error as any);
         }
 
-        return result.result as any;
+        return result?.result as any;
       },
     },
     hints: {
