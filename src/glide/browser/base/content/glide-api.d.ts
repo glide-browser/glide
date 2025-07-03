@@ -442,6 +442,19 @@ declare global {
     /// @docs-skip
     export type Options = {
       /**
+       * How long to wait until cancelling a partial keymapping execution.
+       *
+       * For example, `glide.keymaps.set('insert', 'jj', 'mode_change normal')`, after
+       * pressing `j` once, this option determines how long the delay should be until
+       * the `j` key is considered fully pressed and the mapping sequence is reset.
+       *
+       * note: this only applies in insert mode.
+       *
+       * @default 200
+       */
+      mapping_timeout: number;
+
+      /**
        * Color used to briefly highlight text when it's yanked.
        *
        * @example "#ff6b35" // Orange highlight

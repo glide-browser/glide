@@ -1350,7 +1350,7 @@ class GlideBrowserClass {
             "Glide::KeyMappingCancel",
             { mode }
           );
-        }, 200) as unknown as number; // @types/node conflict
+        }, this.api.o.mapping_timeout) as unknown as number; // @types/node conflict
       }
     } else if (mapping.value) {
       this.key_manager.reset_sequence();
@@ -1554,6 +1554,7 @@ function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
     o: {
+      mapping_timeout: 200,
       yank_highlight: "#edc73b",
       yank_highlight_time: 150,
     },

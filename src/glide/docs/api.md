@@ -32,6 +32,17 @@ This includes but is not limited to `<textarea>`, `<input>`, `contenteditable=tr
 
 Set browser-wide options.
 
+### `glide.o.mapping_timeout: number` {% id="glide.o.mapping_timeout" %}
+
+How long to wait until cancelling a partial keymapping execution.
+
+For example, `glide.keymaps.set('insert', 'jj', 'mode_change normal')`, after
+pressing `j` once, this option determines how long the delay should be until
+the `j` key is considered fully pressed and the mapping sequence is reset.
+
+note: this only applies in insert mode.
+
+
 ### `glide.o.yank_highlight: glide.RGBString` {% id="glide.o.yank_highlight" %}
 
 Color used to briefly highlight text when it's yanked.
