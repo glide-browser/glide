@@ -740,7 +740,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         location: props.location,
         auto_activate: props.auto_activate,
         // strip out the `target` as we cannot / don't need to send it
-        hints: hints.map(({ target: _target, ...rest }) => rest),
+        hints: hints.map(
+          ({ target, ...rest }): GlideHintIPC =>
+            props.debug ? { ...rest, element_id: target.id || undefined } : rest
+        ),
       });
     }
 

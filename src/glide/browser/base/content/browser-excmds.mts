@@ -665,6 +665,7 @@ class GlideExcmdsClass {
           editable_only: args["-e"] ?? undefined,
           location,
           auto_activate: args["--auto"] ?? false,
+          debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
         break;
       }

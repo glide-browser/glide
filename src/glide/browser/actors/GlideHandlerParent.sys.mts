@@ -59,6 +59,7 @@ export interface ParentMessages {
     selector?: string;
     include?: string;
     editable_only?: boolean;
+    debug?: boolean;
     action?:
       | "click"
       | "newtab-click"

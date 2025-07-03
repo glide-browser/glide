@@ -1713,6 +1713,7 @@ function make_glide_api(): typeof glide {
           include: opts?.include,
           editable_only: opts?.editable ?? undefined,
           auto_activate: opts?.auto_activate ?? false,
+          debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
       },
     },

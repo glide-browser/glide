@@ -22,7 +22,12 @@ export interface GlideHint {
   height: number;
 }
 
-export type GlideHintIPC = Omit<GlideHint, "target" | "label">;
+export type GlideHintIPC = Omit<GlideHint, "target" | "label"> & {
+  /**
+   * Only included if the `debug: true` prop is passed
+   */
+  element_id?: string | undefined;
+};
 
 interface ResolveProps {
   selector?: string;
