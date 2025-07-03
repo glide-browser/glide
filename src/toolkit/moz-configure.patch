@@ -1,0 +1,14 @@
+diff --git a/toolkit/moz.configure b/toolkit/moz.configure
+index 94843062f4bc77a400cfaf2c5faa9abea6c93f97..38cca1f34990ab8fb6df7a9416d4525c1ab3ac69 100644
+--- a/toolkit/moz.configure
++++ b/toolkit/moz.configure
+@@ -87,6 +87,9 @@ option(
+ )
+ set_config("MOZ_INCLUDE_SOURCE_INFO", True, when="MOZ_INCLUDE_SOURCE_INFO")
+ 
++option(env="GLIDE_FIREFOX_VERSION", help="Set the version of firefox that Glide uses", nargs=1)
++set_config("GLIDE_FIREFOX_VERSION", depends_if("GLIDE_FIREFOX_VERSION")(lambda v: v[0]))
++
+ option(
+     "--with-distribution-id",
+     nargs=1,
