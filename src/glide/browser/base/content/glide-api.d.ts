@@ -405,7 +405,6 @@ declare global {
    * ```
    */
   interface GlideModes {
-    hint: "hint";
     normal: "normal";
     insert: "insert";
     visual: "visual";

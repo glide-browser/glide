@@ -27,6 +27,9 @@ const Keys = ChromeUtils.importESModule(
 const JumplistPlugin = ChromeUtils.importESModule(
   "chrome://glide/content/plugins/jumplist.mjs"
 );
+const HintsPlugin = ChromeUtils.importESModule(
+  "chrome://glide/content/plugins/hints.mjs"
+);
 const Promises = ChromeUtils.importESModule(
   "chrome://glide/content/utils/promises.mjs"
 );
@@ -333,7 +336,6 @@ class GlideBrowserClass {
     this.key_manager = new Keys.KeyManager();
 
     // builtin modes
-    this.api.modes.register("hint", { caret: "block" });
     this.api.modes.register("normal", { caret: "block" });
     this.api.modes.register("visual", { caret: "block" });
     this.api.modes.register("ignore", { caret: "line" });
@@ -342,6 +344,7 @@ class GlideBrowserClass {
     this.api.modes.register("op-pending", { caret: "underline" });
 
     // default plugins
+    HintsPlugin.init(this.api);
     DefaultKeymaps.init(this.api);
 
     this.jumplist = new JumplistPlugin.Jumplist(
@@ -1069,15 +1072,6 @@ class GlideBrowserClass {
 
     for (const listener of this.state_listeners) {
       listener(this.state, old_state, props?.meta);
-    }
-
-    if (
-      old_state.mode === "hint" &&
-      // browser dev toolbox pref to inspect hint styling
-      // `...` at the top-right then `Disable Popup Auto-Hide`
-      !Services.prefs.getBoolPref("ui.popup.disable_autohide")
-    ) {
-      GlideCommands.remove_hints();
     }
 
     // debounce the mode animation a couple frames to avoid
