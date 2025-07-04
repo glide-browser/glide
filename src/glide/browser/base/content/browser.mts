@@ -1860,6 +1860,75 @@ function make_glide_api(): typeof glide {
         Services.prefs.clearUserPref(name);
       },
     },
+    unstable: {
+      async include(rel_path) {
+        // TODO: disallow certain paths?
+        if (!GlideBrowser.config_path) {
+          throw new Error("hmm");
+        }
+
+        // TODO: error handling unknown path
+        const path = PathUtils.join(
+          PathUtils.parent(GlideBrowser.config_path)!,
+          rel_path
+        );
+        GlideBrowser._log.info(`Executing import at \`${path}\``);
+        const config_str = await IOUtils.readUTF8(path);
+
+        const sandbox = create_sandbox({
+          document,
+          console,
+          get glide(): Glide {
+            return {
+              ...GlideBrowser.api,
+              unstable: {
+                ...GlideBrowser.api.unstable,
+                foo: true,
+                include: async () => {
+                  throw new Error("Nested includes are not supported yet");
+                },
+              },
+            };
+          },
+          get browser() {
+            return GlideBrowser.browser_proxy_api;
+          },
+        });
+
+        try {
+          const config_js = ts_blank_space(config_str);
+          const v = Cu.evalInSandbox(
+            config_js,
+            sandbox,
+            null,
+            `chrome://glide/config/${rel_path}`,
+            1,
+            false
+          );
+          debugger;
+        } catch (err) {
+          GlideBrowser._log.error(err);
+
+          const loc = rel_path;
+          // TODO
+          // this.#clean_stack(err, this.#reload_config.name) ?? "glide.ts";
+          GlideBrowser.add_notification("todo", {
+            label: `An error occurred while evaluating \`${loc}\` - ${err}`,
+            priority:
+              MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+            buttons: [
+              {
+                "l10n-id": "glide-error-notification-reload-config-button",
+                callback: () => {
+                  GlideBrowser.reload_config();
+                },
+              },
+            ],
+          });
+        }
+        //
+      },
+    },
   };
 }
 

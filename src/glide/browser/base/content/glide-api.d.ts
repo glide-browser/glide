@@ -368,6 +368,10 @@ declare global {
       next_str(): Promise<string>;
     };
 
+    unstable: {
+      include(path: string): Promise<void>;
+    };
+
     modes: {
       /**
        * Register a custom `mode`.
