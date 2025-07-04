@@ -146,6 +146,7 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
     await sleep_frames(3);
 
     await GlideTestUtils.synthesize_keyseq("y");
+    await sleep_frames(10);
 
     const clipboardText = await navigator.clipboard.readText();
     is(clipboardText, "ello", "Selected text should be copied to clipboard");
