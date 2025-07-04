@@ -16,11 +16,6 @@
  */
 
 import type { SetNonNullable } from "type-fest";
-import type {
-  GlideCommandCallback,
-  GlideCommandString,
-  GlideCommandValue,
-} from "../browser-excmds-registry.mts";
 
 const { lastx } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/arrays.mjs"
@@ -225,7 +220,7 @@ class KeyMappingTrie {
 
 export interface KeyMapping {
   sequence: string[];
-  command: GlideCommandString | GlideCommandCallback;
+  command: glide.ExcmdValue;
   description?: string | undefined;
   retain_key_display?: boolean;
 
@@ -270,7 +265,7 @@ export class KeyManager {
   set(
     modes: GlideMode | GlideMode[],
     lhs: string,
-    rhs: GlideCommandValue,
+    rhs: glide.ExcmdValue,
     opts?: glide.KeymapOpts | undefined
   ): void {
     const mapping: KeyMapping = {

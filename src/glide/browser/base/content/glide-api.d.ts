@@ -437,6 +437,26 @@ declare global {
    */
   function todo_assert(value: unknown, message?: string): void;
 
+  /**
+   * Interface used to define types for excmds, intended for declaration merging.
+   *
+   * e.g.
+   * ```typescript
+   * const cmd = glide.excmds.create(
+   *   { name: "my_excmd", description: "..." },
+   *   () => {
+   *     // ...
+   *   }
+   * );
+   * declare global {
+   *   interface ExcmdRegistry {
+   *     my_excmd: typeof cmd;
+   *   }
+   * }
+   * ```
+   */
+  export interface ExcmdRegistry {}
+
   namespace glide {
     /**
      * Corresponds to `glide.o` or `glie.bo`.
@@ -506,7 +526,11 @@ declare global {
 
     /// @docs-skip
     export type ExcmdString =
-      import("./browser-excmds-registry.mjs").GlideCommandString;
+      // builtin
+      | import("./browser-excmds-registry.mjs").GlideCommandString
+      // custom
+      | keyof ExcmdRegistry
+      | `${keyof ExcmdRegistry} ${string}`;
 
     type HintLocation = "content" | "browser-ui";
 

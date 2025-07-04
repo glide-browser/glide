@@ -80,6 +80,28 @@ glide.autocmds.create("ConfigLoaded", () => {});
 // @ts-expect-error no callback provided
 glide.autocmds.create("ConfigLoaded");
 
+// excmds
+// @ts-expect-error no command type defined
+glide.excmds.execute("bad_command");
+
+declare global {
+  interface ExcmdRegistry {
+    my_test_command: {};
+  }
+}
+glide.excmds.execute("my_test_command");
+
+const cmd = glide.excmds.create(
+  { name: "wow_cool", description: "" },
+  () => {}
+);
+declare global {
+  interface ExcmdRegistry {
+    wow_cool: typeof cmd;
+  }
+}
+glide.excmds.execute("wow_cool");
+
 browser.tabs.query({});
 
 // @ts-expect-error missing args

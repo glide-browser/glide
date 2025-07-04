@@ -46,7 +46,7 @@ interface ExecuteProps {
 type CommandHistoryEntry =
   | {
       type: "command";
-      command: GlideCommandString;
+      command: glide.ExcmdString;
     }
   | { type: "callback"; cb: GlideCommandCallback }
   | {
@@ -108,7 +108,7 @@ class GlideExcmdsClass {
   }
 
   async execute(
-    command: GlideCommandString | GlideCommandCallback,
+    command: glide.ExcmdValue,
     props?: ExecuteProps
   ): Promise<void> {
     try {
@@ -146,7 +146,7 @@ class GlideExcmdsClass {
   }
 
   async #execute(
-    command: GlideCommandString | GlideCommandCallback,
+    command: glide.ExcmdValue,
     props?: ExecuteProps
   ): Promise<void> {
     if (typeof command === "function") {

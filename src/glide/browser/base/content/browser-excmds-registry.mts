@@ -538,13 +538,9 @@ export const GLIDE_EXCOMMANDS_MAP = GLIDE_EXCOMMANDS.reduce((acc, cmd) => {
 }, {} as GlideExcmdsMap);
 
 export type GlideExcmdName = (typeof GLIDE_EXCOMMANDS)[number]["name"];
-export type GlideCommandString =
-  | GlideExcmdName
-  | `${GlideExcmdName} ${string}`
-  // TODO(glide): support typing user commands
-  | (string & {});
+export type GlideCommandString = GlideExcmdName | `${GlideExcmdName} ${string}`;
 export type GlideCommandCallback = () => void;
-export type GlideCommandValue = GlideCommandString | GlideCommandCallback;
+export type GlideCommandValue = glide.ExcmdString | GlideCommandCallback;
 
 /**
  * Commands that can be executed directly in the browser chrome frame.

@@ -563,11 +563,16 @@ add_task(async function test_config_sandbox_properties() {
   );
 });
 
+declare global {
+  interface ExcmdRegistry {
+    my_test_command: {};
+  }
+}
 add_task(async function test_excmds_create() {
   await GlideTestUtils.reload_config(function _() {
     glide.excmds.create(
       {
-        name: "hello",
+        name: "my_test_command",
         description: "test",
       },
       () => {
@@ -575,7 +580,7 @@ add_task(async function test_excmds_create() {
       }
     );
 
-    glide.keymaps.set("normal", "<leader>0", "hello");
+    glide.keymaps.set("normal", "<leader>0", "my_test_command");
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
