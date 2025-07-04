@@ -288,7 +288,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         this.#options.push(command);
       }
 
-      for (const command of GlideExcmds.user_cmds.values()) {
+      for (const command of GlideBrowser.user_excmds.values()) {
         this.#options.push(command);
       }
     }

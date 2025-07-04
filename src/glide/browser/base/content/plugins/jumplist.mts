@@ -17,23 +17,23 @@ export class Jumplist {
   constructor(glide: Glide, browser: Browser.Browser) {
     this.#browser = browser;
 
-    glide.autocmds.create("ConfigLoaded", () => {
-      glide.excmds.create(
-        { name: "jumplist_back", description: "Jump back in the jumplist" },
-        () => {
-          this.jump_backwards();
-        }
-      );
-      glide.excmds.create(
-        {
-          name: "jumplist_forward",
-          description: "Jump forward in the jumplist",
-        },
-        () => {
-          this.jump_forwards();
-        }
-      );
+    glide.excmds.create(
+      { name: "jumplist_back", description: "Jump back in the jumplist" },
+      () => {
+        this.jump_backwards();
+      }
+    );
+    glide.excmds.create(
+      {
+        name: "jumplist_forward",
+        description: "Jump forward in the jumplist",
+      },
+      () => {
+        this.jump_forwards();
+      }
+    );
 
+    glide.autocmds.create("ConfigLoaded", () => {
       browser.tabs.onActivated.addListener(change_info => {
         if (this.#is_jumping) {
           this.#is_jumping = false;

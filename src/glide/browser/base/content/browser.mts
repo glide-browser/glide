@@ -9,6 +9,7 @@ import type { GlideDocsParent } from "../../actors/GlideDocsParent.sys.mjs";
 import type {
   GlideOperator,
   GlideCommandString,
+  GlideExcmdInfo,
 } from "./browser-excmds-registry.mts";
 import type { Jumplist } from "./plugins/jumplist.mts";
 
@@ -1017,6 +1018,25 @@ class GlideBrowserClass {
       });
   }
 
+  #user_cmds: Map<string, GlideExcmdInfo & { fn: () => void | Promise<void> }> =
+    new Map();
+
+  add_user_excmd(info: glide.ExcmdCreateProps, fn: () => void | Promise<void>) {
+    this.#user_cmds.set(info.name, {
+      ...info,
+      content: false,
+      repeatable: false,
+      fn,
+    });
+  }
+
+  get user_excmds(): ReadonlyMap<
+    string,
+    GlideExcmdInfo & { fn: () => void | Promise<void> }
+  > {
+    return this.#user_cmds;
+  }
+
   is_option(name: string): name is keyof glide.Options {
     return name in this.api.o;
   }
@@ -1669,7 +1689,7 @@ function make_glide_api(): typeof glide {
         info: Excmd,
         fn: () => void | Promise<void>
       ): Excmd {
-        GlideExcmds.add_user_cmd(info, fn);
+        GlideBrowser.add_user_excmd(info, fn);
         return info;
       },
     },
