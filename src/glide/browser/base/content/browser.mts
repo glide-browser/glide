@@ -1538,15 +1538,6 @@ class GlideBrowserClass {
 
     return null;
   }
-
-  /**
-   * Returns either a buffer-specific option, or the global version. In that order
-   */
-  get_option<Name extends keyof glide.Options>(
-    name: Name
-  ): glide.Options[Name] {
-    return this.api.bo[name] || this.api.o[name];
-  }
 }
 
 export const GlideBrowser = new GlideBrowserClass();

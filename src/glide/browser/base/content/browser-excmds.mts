@@ -650,7 +650,7 @@ class GlideExcmdsClass {
 
         glide.prefs.set(
           "ui.highlight",
-          GlideBrowser.get_option("yank_highlight")
+          GlideBrowser.api.options.get("yank_highlight")
         );
 
         setTimeout(() => {
@@ -661,7 +661,7 @@ class GlideExcmdsClass {
           }
 
           actor.send_async_message("Glide::SelectionCollapse");
-        }, GlideBrowser.get_option("yank_highlight_time"));
+        }, GlideBrowser.api.options.get("yank_highlight_time"));
 
         break;
       }
