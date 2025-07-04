@@ -308,6 +308,31 @@ export class KeyManager {
     }
   }
 
+  list(modes?: GlideMode | GlideMode[]) {
+    const output: Array<glide.Keymap> = [];
+
+    for (const [mode, trie] of Object.entries(this._mappings)) {
+      if (typeof modes === "string" && mode !== modes) {
+        continue;
+      }
+
+      if (Array.isArray(modes) && !modes.includes(mode)) {
+        continue;
+      }
+
+      for (const node of trie.recurse()) {
+        output.push({
+          lhs: node.value.sequence.join(""),
+          description: node.value.description,
+          rhs: node.value.command,
+          mode: mode as GlideMode,
+        });
+      }
+    }
+
+    return output;
+  }
+
   clear_buffer() {
     this.#buf_mappings = null;
   }

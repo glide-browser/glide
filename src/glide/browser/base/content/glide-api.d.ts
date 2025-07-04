@@ -247,6 +247,14 @@ declare global {
         lhs: string,
         opts?: glide.KeymapDeleteOpts
       ): void;
+
+      /**
+       * List all global key mappings.
+       *
+       * If a key mapping is defined for multiple modes, multiple entries
+       * will be returned for each mode.
+       */
+      list(modes?: GlideMode | GlideMode[]): glide.Keymap[];
     };
 
     hints: {
@@ -548,6 +556,13 @@ declare global {
       | `${keyof ExcmdRegistry} ${string}`;
 
     type HintLocation = "content" | "browser-ui";
+
+    type Keymap = {
+      lhs: string;
+      rhs: glide.ExcmdValue;
+      description: string | undefined;
+      mode: GlideMode;
+    };
 
     type KeymapOpts = {
       description?: string | undefined;

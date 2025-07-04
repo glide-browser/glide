@@ -1644,6 +1644,9 @@ function make_glide_api(): typeof glide {
       del(modes, lhs, opts) {
         GlideBrowser.key_manager.del(modes, lhs, opts);
       },
+      list(modes) {
+        return GlideBrowser.key_manager.list(modes);
+      },
     },
     buf: {
       keymaps: {

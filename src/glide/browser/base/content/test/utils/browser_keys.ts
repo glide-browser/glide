@@ -10,6 +10,10 @@ const { split, event_to_key_notation, KeyManager, normalize, parse_modifiers } =
     global: "current",
   });
 
+add_setup(async function setup() {
+  await GlideTestUtils.reload_config(function _() {});
+});
+
 add_task(async function test_split() {
   isjson(split("a"), ["a"]);
   isjson(split("abcdefg"), ["a", "b", "c", "d", "e", "f", "g"]);
@@ -215,4 +219,41 @@ add_task(async function test_leader() {
 
   ok(node);
   is(node.value?.command, "back");
+});
+
+add_task(async function test_keymaps_list_all() {
+  await GlideTestUtils.reload_config(function _() {
+    for (const keymap of glide.keymaps.list()) {
+      glide.keymaps.del(keymap.mode, keymap.lhs);
+    }
+  });
+
+  const keymaps = GlideBrowser.api.keymaps.list();
+  is(keymaps.length, 0, "keymaps.list() should list all keymaps");
+});
+
+add_task(async function test_keymaps_list_filter() {
+  await GlideTestUtils.reload_config(function _() {
+    for (const keymap of glide.keymaps.list("normal")) {
+      assert(keymap.mode, "normal");
+      glide.keymaps.del(keymap.mode, keymap.lhs);
+    }
+  });
+
+  const keymaps = GlideBrowser.api.keymaps.list();
+  ok(keymaps.length > 0, "Only normal keymaps should be returned");
+
+  await GlideTestUtils.reload_config(function _() {
+    for (const keymap of glide.keymaps.list(["visual", "normal"])) {
+      if (keymap.mode !== "visual" && keymap.mode !== "normal") {
+        assert(false, "only visual or normal keymaps should be returned");
+      }
+      glide.keymaps.del(keymap.mode, keymap.lhs);
+    }
+  });
+
+  ok(
+    GlideBrowser.api.keymaps.list().length < keymaps.length,
+    "Only normal/visual keymaps should be returned"
+  );
 });

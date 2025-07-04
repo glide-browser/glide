@@ -192,6 +192,16 @@ glide.keymaps.del(modes, lhs, opts?): void
 Remove the mapping of {lhs} for the {modes} where the map command applies.
 
 The mapping may remain defined for other modes where it applies.
+
+{% api-heading id="glide.keymaps.list" %}
+glide.keymaps.list(modes?): glide.Keymap[]
+{% /api-heading %}
+
+
+List all global key mappings.
+
+If a key mapping is defined for multiple modes, multiple entries
+will be returned for each mode.
 ## • `glide.hints` {% id="glide.hints" %}
 
 
