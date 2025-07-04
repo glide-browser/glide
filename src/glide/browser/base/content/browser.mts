@@ -1576,6 +1576,7 @@ function make_glide_api(): typeof glide {
       mapping_timeout: 200,
       yank_highlight: "#edc73b",
       yank_highlight_time: 150,
+      jumplist_max_entries: 100,
     },
     bo: {},
     ctx: {

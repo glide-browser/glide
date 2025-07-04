@@ -53,6 +53,12 @@ Color used to briefly highlight text when it's yanked.
 How long, in milliseconds, to highlight the selection for when it's yanked.
 
 
+### `glide.o.jumplist_max_entries: number` {% id="glide.o.jumplist_max_entries" %}
+
+The maximum number of entries to include in the jumplist, i.e.
+how far back in history will the jumplist store.
+
+
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
 Set buffer specific options.

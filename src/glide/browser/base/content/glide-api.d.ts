@@ -490,6 +490,14 @@ declare global {
        * @default 150
        */
       yank_highlight_time: number;
+
+      /**
+       * The maximum number of entries to include in the jumplist, i.e.
+       * how far back in history will the jumplist store.
+       *
+       * @default 100
+       */
+      jumplist_max_entries: number;
     };
 
     export type RGBString = `#${string}`;

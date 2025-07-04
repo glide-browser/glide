@@ -8,7 +8,6 @@ type JumplistEntry = {
 };
 
 export class Jumplist {
-  max_entries = 100;
   #entries: Array<JumplistEntry> = [];
   #index: number = -1;
   #is_jumping: boolean = false;
@@ -50,8 +49,9 @@ export class Jumplist {
         this.#entries.push({ type: "tab", tab_id: change_info.tabId });
         this.#index = this.#entries.length - 1;
 
-        if (this.#entries.length > this.max_entries) {
-          const overflow = this.#entries.length - this.max_entries;
+        const max_entries = GlideBrowser.get_option("jumplist_max_entries");
+        if (this.#entries.length > max_entries) {
+          const overflow = this.#entries.length - max_entries;
           this.#entries.splice(0, overflow);
           this.#index -= overflow;
         }
