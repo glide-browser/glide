@@ -49,7 +49,7 @@ export class Jumplist {
         this.#entries.push({ type: "tab", tab_id: change_info.tabId });
         this.#index = this.#entries.length - 1;
 
-        const max_entries = GlideBrowser.get_option("jumplist_max_entries");
+        const max_entries = glide.options.get("jumplist_max_entries");
         if (this.#entries.length > max_entries) {
           const overflow = this.#entries.length - max_entries;
           this.#entries.splice(0, overflow);
