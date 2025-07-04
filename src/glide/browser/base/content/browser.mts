@@ -330,6 +330,7 @@ class GlideBrowserClass {
     this.#api = null;
     this.config_path = null;
     this._modes = {} as any;
+    this.#user_cmds = new Map();
     this.#clear_config_error_notification();
 
     this.autocmds = {};

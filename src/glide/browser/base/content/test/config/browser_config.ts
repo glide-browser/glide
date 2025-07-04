@@ -591,6 +591,24 @@ add_task(async function test_excmds_create() {
       "from hello excmd",
       "the excmd callback should set g.value"
     );
+
+    // ensure removed after reload
+    await GlideTestUtils.reload_config(function _() {
+      glide.keymaps.set("normal", "<leader>0", "my_test_command");
+    });
+    await GlideTestUtils.synthesize_keyseq("<Space>0");
+    await sleep_frames(10);
+
+    let notification =
+      gNotificationBox.getNotificationWithValue("glide-excmd-error");
+
+    ok(notification, "Error notification should be shown");
+    is(
+      // @ts-ignore
+      notification.shadowRoot.querySelector(".message").textContent.trim(),
+      "An error occurred executing excmd `my_test_command` - Error: Unknown excmd: `my_test_command`",
+      "Notification should contain error message"
+    );
   });
 });
 
