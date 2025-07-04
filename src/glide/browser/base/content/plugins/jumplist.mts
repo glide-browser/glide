@@ -18,6 +18,22 @@ export class Jumplist {
     this.#browser = browser;
 
     glide.autocmds.create("ConfigLoaded", () => {
+      glide.excmds.create(
+        { name: "jumplist_back", description: "Jump back in the jumplist" },
+        () => {
+          this.jump_backwards();
+        }
+      );
+      glide.excmds.create(
+        {
+          name: "jumplist_forward",
+          description: "Jump forward in the jumplist",
+        },
+        () => {
+          this.jump_forwards();
+        }
+      );
+
       browser.tabs.onActivated.addListener(change_info => {
         if (this.#is_jumping) {
           this.#is_jumping = false;

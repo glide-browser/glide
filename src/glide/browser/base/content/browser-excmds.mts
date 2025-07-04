@@ -640,16 +640,6 @@ class GlideExcmdsClass {
         break;
       }
 
-      case "jumplist_back": {
-        GlideBrowser.jumplist.jump_backwards();
-        break;
-      }
-
-      case "jumplist_forward": {
-        GlideBrowser.jumplist.jump_forwards();
-        break;
-      }
-
       case "hint": {
         const { args } = this.#parse_command_args(command_meta, command);
         GlideBrowser.api.hints.show({

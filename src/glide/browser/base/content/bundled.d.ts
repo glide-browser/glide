@@ -5,4 +5,5 @@
 /// <reference path="./glide-api.d.ts" />
 /// <reference path="./extension-api.d.ts" />
 /// <reference path="./plugins/hints-types.d.ts" />
+/// <reference path="./plugins/jumplist-types.d.ts" />
 export {};
