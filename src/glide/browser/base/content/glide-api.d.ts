@@ -34,6 +34,13 @@ declare global {
      */
     bo: Partial<glide.Options>;
 
+    options: {
+      /**
+       * Returns either a buffer-specific option, or the global version. In that order
+       */
+      get<Name extends keyof glide.Options>(name: Name): glide.Options[Name];
+    };
+
     autocmds: {
       /**
        * Create an autocmd that will be invoked whenever the focused URL changes.

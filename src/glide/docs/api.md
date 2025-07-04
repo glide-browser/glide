@@ -65,6 +65,15 @@ Set buffer specific options.
 
 This has the exact same API as `glide.o`.
 
+## • `glide.options` {% id="glide.options" %}
+
+
+{% api-heading id="glide.options.get" %}
+glide.options.get(name): glide.Options[Name]
+{% /api-heading %}
+
+
+Returns either a buffer-specific option, or the global version. In that order
 ## • `glide.prefs` {% id="glide.prefs" %}
 
 

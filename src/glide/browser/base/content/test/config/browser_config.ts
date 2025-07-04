@@ -848,3 +848,28 @@ add_task(async function test_os() {
     );
   });
 });
+
+add_task(async function test_options_get() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.yank_highlight_time = 50;
+
+    glide.autocmds.create("UrlEnter", /input_test\.html/, () => {
+      glide.bo.yank_highlight_time = 100;
+    });
+  });
+
+  is(
+    GlideBrowser.api.options.get("yank_highlight_time"),
+    50,
+    "global option should be retrieved correctly"
+  );
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(10);
+    is(
+      GlideBrowser.api.options.get("yank_highlight_time"),
+      100,
+      "buffer option should be retrieved correctly"
+    );
+  });
+});

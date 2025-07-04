@@ -38,7 +38,7 @@ const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
   global: "current",
 });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
-const { assert_never, assert_present } = ChromeUtils.importESModule(
+const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
 const { default: ts_blank_space } = ChromeUtils.importESModule(
@@ -1579,6 +1579,16 @@ function make_glide_api(): typeof glide {
       jumplist_max_entries: 100,
     },
     bo: {},
+    options: {
+      get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
+        const option = GlideBrowser.api.bo[name];
+        if (is_present(option)) {
+          return option!;
+        }
+
+        return GlideBrowser.api.o[name];
+      },
+    },
     ctx: {
       get mode() {
         return GlideBrowser.state.mode;
