@@ -43,21 +43,31 @@ the `j` key is considered fully pressed and the mapping sequence is reset.
 note: this only applies in insert mode.
 
 
+`ts:@default 200`
+
 ### `glide.o.yank_highlight: glide.RGBString` {% id="glide.o.yank_highlight" %}
 
 Color used to briefly highlight text when it's yanked.
 
+
+`ts:@example "#ff6b35" // Orange highlight`
+
+`ts:@default "#edc73b"`
 
 ### `glide.o.yank_highlight_time: number` {% id="glide.o.yank_highlight_time" %}
 
 How long, in milliseconds, to highlight the selection for when it's yanked.
 
 
+`ts:@default 150`
+
 ### `glide.o.jumplist_max_entries: number` {% id="glide.o.jumplist_max_entries" %}
 
 The maximum number of entries to include in the jumplist, i.e.
 how far back in history will the jumplist store.
 
+
+`ts:@default 100`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
@@ -277,6 +287,12 @@ Returns a `Promise` that resolves to a string representation of the last input e
 
 This blocks other input events from being processed until the promise resolves.
 
+Note: there can only be one `Promise` registered at any given time.
+
+
+`ts:@example 'd'`
+
+`ts:@example '<C-l>'`
 ## • `glide.modes` {% id="glide.modes" %}
 
 

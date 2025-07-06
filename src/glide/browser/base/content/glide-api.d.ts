@@ -375,10 +375,10 @@ declare global {
        *
        * This blocks other input events from being processed until the promise resolves.
        *
-       * @example {'d'}
-       * @example {'<C-l>'}
-       *
        * Note: there can only be one `Promise` registered at any given time.
+       *
+       * @example 'd'
+       * @example '<C-l>'
        */
       next_str(): Promise<string>;
     };

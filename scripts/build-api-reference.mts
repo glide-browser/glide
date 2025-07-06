@@ -92,11 +92,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
         parents,
         id: QualifiedName,
       });
-
-      if (docs) {
-        yield docs.getDescription();
-      }
-
+      yield* Docs(docs);
       yield "\n";
       yield* traverse_children(declaration, [
         ...parents,
@@ -128,12 +124,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
     yield render_method_signature(node, { name: QualifiedName }) + "\n";
     yield "{% /api-heading %}\n";
     yield "\n";
-
-    const docs = node.getJsDocs()[0];
-    if (docs) {
-      yield docs.getDescription();
-    }
-
+    yield* Docs(node.getJsDocs()[0]);
     return;
   }
 
@@ -160,15 +151,9 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
         parents,
         id: QualifiedName,
       });
-
-      if (docs) {
-        yield docs.getDescription();
-      }
-
+      yield* Docs(docs);
       yield "\n";
-
       yield* traverse_further(inner, [...parents, { name: Name, node }]);
-
       return;
     }
 
@@ -176,10 +161,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       parents,
       id: QualifiedName,
     });
-
-    if (docs) {
-      yield docs.getDescription();
-    }
+    yield* Docs(docs);
 
     yield* traverse_further(inner, [...parents, { name: Name, node }]);
 
@@ -357,6 +339,19 @@ function children(node: Node): Node[] {
     nodes.push(child);
   });
   return nodes;
+}
+
+function* Docs(docs: TSM.JSDoc | undefined): Generator<string> {
+  if (!docs) {
+    return;
+  }
+
+  yield docs.getDescription();
+
+  // note: presumes that tags can only be defined after the description
+  for (const tag of docs.getTags()) {
+    yield "\n\n`ts:" + tag.print().replaceAll("`", "\\`") + "`";
+  }
 }
 
 main();
