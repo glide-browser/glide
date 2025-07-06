@@ -13,7 +13,10 @@ import assert from "assert";
 import { Node } from "ts-morph";
 import fs from "node:fs/promises";
 import { markdown } from "../src/glide/browser/base/content/utils/dedent.mts";
-import { Words } from "../src/glide/browser/base/content/utils/strings.mts";
+import {
+  Words,
+  replace_surrounding,
+} from "../src/glide/browser/base/content/utils/strings.mts";
 
 const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
@@ -227,20 +230,18 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
   // export type RGBString = ...
   if (Node.isTypeAliasDeclaration(node)) {
-    if (node.getName() !== "RGBString") {
-      console.warn(`skipping ${node.getName()} type for now`);
-      return;
-    }
-
     const Name = node.getName();
     const QualifiedName = [...parents.map(({ name }) => name), Name].join(".");
     const body = children(node)[2];
 
     if (body) {
-      yield* Header(`${QualifiedName}: '#\${string}'`, {
-        parents,
-        id: QualifiedName,
-      });
+      yield* Header(
+        `${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`,
+        {
+          parents,
+          id: QualifiedName,
+        }
+      );
     } else {
       console.warn(`no body for ${Name}`);
     }

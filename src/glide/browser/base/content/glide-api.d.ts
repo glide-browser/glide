@@ -520,6 +520,7 @@ declare global {
     /// @docs-skip
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
 
+    /// @docs-skip
     export type KeyEvent = KeyboardEvent & {
       /**
        * The vim notation of the KeyEvent, e.g.
@@ -529,6 +530,7 @@ declare global {
       glide_key: string;
     };
 
+    /// @docs-skip
     export type KeySendOptions = {
       /**
        * Send the key event(s) directly through to the builtin Firefox
@@ -555,7 +557,7 @@ declare global {
       | keyof ExcmdRegistry
       | `${keyof ExcmdRegistry} ${string}`;
 
-    type HintLocation = "content" | "browser-ui";
+    export type HintLocation = "content" | "browser-ui";
 
     type Keymap = {
       lhs: string;

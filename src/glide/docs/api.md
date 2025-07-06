@@ -300,3 +300,5 @@ glide.modes.register('leap', { caret: 'normal' })
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 
 ## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}
+
+## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}

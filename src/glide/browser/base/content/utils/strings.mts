@@ -111,3 +111,26 @@ export function generate_prefix_free_codes(
 export function Words(strings: (string | undefined)[]): string {
   return strings.filter(Boolean).join(" ");
 }
+
+export function replace_surrounding(
+  str: string,
+  char: string,
+  replacement: string
+): string {
+  let start_index = 0;
+  let end_index = str.length;
+
+  while (start_index < str.length && str[start_index] === char) {
+    start_index++;
+  }
+
+  while (end_index > start_index && str[end_index - 1] === char) {
+    end_index--;
+  }
+
+  return (
+    replacement.repeat(start_index) +
+    str.slice(start_index, end_index) +
+    replacement.repeat(str.length - end_index)
+  );
+}
