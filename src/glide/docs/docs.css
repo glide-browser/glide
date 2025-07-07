@@ -220,6 +220,11 @@ h3.code-heading {
   padding: 1px;
 }
 
+.go-to-def {
+  text-decoration-style: dotted;
+  text-decoration-color: grey;
+}
+
 /* Update mobile styles */
 @media screen and (max-width: 768px) {
   .topnav-links {

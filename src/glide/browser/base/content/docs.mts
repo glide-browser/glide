@@ -1,9 +1,12 @@
-import type { RenderableTreeNode } from "@markdoc/markdoc";
+import type * as M from "@markdoc/markdoc";
 import type {
   Highlighter,
   ThemeRegistrationResolved,
+  ShikiTransformer,
   CodeToHastOptions,
+  ThemedToken,
 } from "shiki";
+import type * as H from "hast";
 
 const Html = ChromeUtils.importESModule(
   "chrome://glide/content/utils/html.mjs"
@@ -20,6 +23,9 @@ const { default: Markdoc } = ChromeUtils.importESModule(
 const { markdown, html } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/dedent.mjs"
 );
+const { firstx } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/arrays.mjs"
+);
 const { Words } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/strings.mjs"
 );
@@ -29,6 +35,26 @@ const { assert_present } = ChromeUtils.importESModule(
 const { GLIDE_EXCOMMANDS } = ChromeUtils.importESModule(
   "chrome://glide/content/browser-excmds-registry.mjs"
 );
+
+interface MarkdocConfig extends M.Config {
+  /**
+   * Set when rendering nodes from inside a heading.
+   *
+   * This is used to let child transforms behave differently,
+   * e.g. for property go-to-def in API docs.
+   */
+  heading?: boolean;
+
+  /**
+   * This is very cursed but when rendering headings, we need to know if
+   * the children rendered as anchors, as nested anchors aren't allowed.
+   *
+   * We accomplish this by passing in a different config to the children and
+   * if the children would be rendered as an anchor, then the config is mutated
+   * and this property is set to `true`.
+   */
+  nested_anchors?: boolean;
+}
 
 interface SidebarEntry {
   name: string;
@@ -83,6 +109,11 @@ const SIDEBAR: SidebarEntry[] = [
   },
 ];
 
+// overrides for certain cases where we render type declarations differently
+const API_REF_TO_HREF_MAP: Record<string, string> = {
+  "glide.Options": "glide.o",
+};
+
 const tokenizer = new Markdoc.Tokenizer({ allowComments: true });
 
 /**
@@ -93,6 +124,9 @@ export async function markdown_to_html(
   highlighter: Highlighter,
   props: { nested_count: number; relative_dist_path: string }
 ): Promise<string> {
+  const code_options = {
+    include_go_to_def: props.relative_dist_path.endsWith("api.html"),
+  } as const satisfies Partial<CodeHighlightOptions>;
   const ast = Markdoc.parse(tokenizer.tokenize(source));
 
   const tokyonight = highlighter.getTheme("tokyo-night");
@@ -236,7 +270,7 @@ export async function markdown_to_html(
    * correspond to a HTML patch, then use the actual patch contents instead
    * of our magic string
    */
-  function get_node_content(children: RenderableTreeNode[]): string {
+  function get_node_content(children: M.RenderableTreeNode[]): string {
     const content = children
       .filter(child => typeof child === "string")
       .join(" ");
@@ -500,9 +534,9 @@ export async function markdown_to_html(
         /**
          * Make heading elements clickable with an anchor href.
          */
-        transform(node, config) {
+        transform(node, config: MarkdocConfig) {
           /** Key mappings -> key-mappings */
-          function generate_anchor_id(children: RenderableTreeNode[]) {
+          function generate_anchor_id(children: M.RenderableTreeNode[]) {
             return get_node_content(children)
               .replace(/[?]/g, "")
               .replace(/\s+/g, "-")
@@ -516,7 +550,11 @@ export async function markdown_to_html(
             style,
             ...attributes
           } = node.transformAttributes(config);
-          const children = node.transformChildren(config);
+          const nested_config = {
+            ...config,
+            heading: true,
+          } as MarkdocConfig;
+          const children = node.transformChildren(nested_config);
           if (!id) {
             id = generate_anchor_id(children);
           }
@@ -527,23 +565,29 @@ export async function markdown_to_html(
           );
           const has_code = node.walk().some(child => child.type === "code");
 
+          const Heading = new Markdoc.Tag(
+            `h${level}`,
+            {
+              id,
+              ...(style ? { style } : undefined),
+              ...(has_code ? { class: Words([$class, "code-heading"]) }
+              : $class ? { class: $class }
+              : undefined),
+            },
+            children
+          );
+
+          if (nested_config.nested_anchors) {
+            return Heading;
+          }
+
           return new Markdoc.Tag("a", { ...attributes, href: `#${id}` }, [
-            new Markdoc.Tag(
-              `h${level}`,
-              {
-                id,
-                ...(style ? { style } : undefined),
-                ...(has_code ? { class: Words([$class, "code-heading"]) }
-                : $class ? { class: $class }
-                : undefined),
-              },
-              children
-            ),
+            Heading,
           ]);
         },
       },
       code: {
-        transform(node) {
+        transform(node, config: MarkdocConfig) {
           const content = node.attributes["content"] as string;
 
           // support specifying the language of the inline code block
@@ -558,20 +602,26 @@ export async function markdown_to_html(
               // that generally to work quite well and looks much better than the default
               // <code> highlighting we have
               code_to_html(highlighter, code ?? content, {
+                ...code_options,
                 lang: language ?? default_language,
                 themes: inline_themes,
                 structure: "inline",
+                config,
               })
             : IGNORE_CODE_LANGS.has(language) ?
               code_to_html(highlighter, content, {
+                ...code_options,
                 lang: default_language,
                 themes: language_themes[default_language] ?? themes,
                 structure: "inline",
+                config,
               })
             : code_to_html(highlighter, code, {
+                ...code_options,
                 lang: language,
                 themes: language_themes[language] ?? themes,
                 structure: "inline",
+                config,
               });
 
           const id = patch_id();
@@ -589,14 +639,16 @@ export async function markdown_to_html(
           content: { type: String, required: true },
           caption: { type: String, required: false },
         },
-        transform(node) {
+        transform(node, config: MarkdocConfig) {
           // e.g. ```typescript {% caption="Example: key mapping to toggle CSS debugging" %}
           const caption = node.attributes["caption"];
           const content = node.attributes["content"];
           const language = node.attributes["language"];
           const highlighted = code_to_html(highlighter, content, {
+            ...code_options,
             lang: language,
             themes,
+            config,
           });
 
           const id = patch_id();
@@ -790,10 +842,154 @@ function copy_to_clipboard_button() {
   `;
 }
 
+type CodeHighlightOptions = CodeToHastOptions & {
+  include_go_to_def: boolean;
+  config: MarkdocConfig;
+};
+
 function code_to_html(
   highlighter: Highlighter,
   code: string,
-  options: CodeToHastOptions
+  options: CodeHighlightOptions
 ): string {
+  if (options.include_go_to_def && options.config.heading) {
+    for (const match of code.matchAll(/(.*): (glide\..*)/g)) {
+      var [_, pre, ref] = match;
+      ref = assert_present(ref);
+
+      options = { ...options };
+      options.transformers ??= [];
+      options.transformers.push(
+        make_heading_property_ref_transformer({
+          preceding: assert_present(pre),
+          ref,
+          href: API_REF_TO_HREF_MAP[ref] ?? ref,
+          config: options.config,
+        })
+      );
+    }
+  }
+
   return highlighter.codeToHtml(code, options);
+}
+
+/**
+ * Transformer that turns code like
+ *
+ * `foo: glide.HintLocation`
+ *
+ * into
+ *
+ * `foo: <a href="#glide.HintLocation>glide.HintLocation</a>`
+ */
+function make_heading_property_ref_transformer({
+  ref,
+  href,
+  preceding,
+  config,
+}: {
+  ref: string;
+  href: string;
+  preceding: string;
+  config: MarkdocConfig;
+}): ShikiTransformer {
+  return {
+    tokens(all_tokens) {
+      return all_tokens.map((tokens): ThemedToken[] => {
+        const property_index = tokens.findIndex(
+          token => token.content.startsWith(": ") && token.content.length > 2
+        );
+        if (property_index === -1) {
+          console.error(tokens);
+          throw new Error(`Expected to find a property index like \`: *\``);
+        }
+
+        // make sure that we'd only ever add anchors for the direct reference
+        // e.g. `glide.HintLocation`, and not `: glide.HintLocation`.
+        const token = tokens[property_index]!;
+        return [
+          ...tokens.slice(0, property_index),
+          { ...token, content: ": " },
+          { ...token, content: token.content.slice(2) },
+          ...tokens.slice(property_index + 1),
+        ];
+      });
+    },
+    root(root) {
+      const children = [...root.children] as H.ElementContent[];
+
+      // the text that we want to replace with an anchor may be split up
+      // across multiple `<span>`s, so iterate through all of them until
+      // we find a contiguous run that matches the ref we're looking for.
+
+      const runs: { start: number; end: number }[] = [];
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i]!;
+        if (!is_text_span(child)) continue;
+
+        let acc = (child.children[0] as H.Text).value;
+        if (acc === ref) {
+          runs.push({ start: i, end: i });
+          continue;
+        }
+
+        for (let j = i + 1; j < children.length; j++) {
+          const child = children[j]!;
+          if (!is_text_span(child)) {
+            // non contiguous
+            break;
+          }
+
+          acc += child.children[0].value;
+          if (acc === ref) {
+            runs.push({ start: i, end: j });
+            i = j; // Skip past the run we just processed
+            break;
+          }
+        }
+      }
+
+      if (!runs.length) {
+        return;
+      }
+
+      config.nested_anchors = true;
+
+      for (const { start, end } of runs) {
+        children.splice(start, end, {
+          type: "element",
+          tagName: "a",
+          properties: { href: `#${href}`, class: "go-to-def" },
+          children: children.slice(start, end + 1),
+        });
+      }
+
+      // you can't nest `<a>`s inside each other, and as this is for headings
+      // we need to define the heading anchor for the *rest* of the heading
+      // element.
+      const run = firstx(runs);
+      children.splice(0, run.start, {
+        type: "element",
+        tagName: "a",
+        properties: {
+          href: `#${preceding}`,
+          style: "text-decoration: none",
+        },
+        children: children.slice(0, run.start),
+      });
+
+      return { ...root, children };
+    },
+  };
+}
+
+function is_text_span(
+  node: H.RootContent | undefined
+): node is H.Element & { children: [H.Text] } {
+  return (
+    node?.type === "element" &&
+    node.tagName === "span" &&
+    node.children.length === 1 &&
+    node.children[0]!.type === "text"
+  );
 }

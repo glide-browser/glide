@@ -3,6 +3,14 @@ const { assert_present } = ChromeUtils.importESModule(
 );
 
 /**
+ * Returns the first item in the array, throws an error if
+ * the array is empty.
+ */
+export function firstx<T>(arr: T[]): T {
+  return assert_present(arr.at(0), "Expected non-empty array");
+}
+
+/**
  * Returns the last item in the array, throws an error if
  * the array is empty.
  */
