@@ -1,5 +1,9 @@
 import type { RenderableTreeNode } from "@markdoc/markdoc";
-import type { Highlighter, ThemeRegistrationResolved } from "shiki";
+import type {
+  Highlighter,
+  ThemeRegistrationResolved,
+  CodeToHastOptions,
+} from "shiki";
 
 const Html = ChromeUtils.importESModule(
   "chrome://glide/content/utils/html.mjs"
@@ -553,18 +557,18 @@ export async function markdown_to_html(
               // modified version of TypeScript syntax highlighting as I've found
               // that generally to work quite well and looks much better than the default
               // <code> highlighting we have
-              highlighter.codeToHtml(code ?? content, {
+              code_to_html(highlighter, code ?? content, {
                 lang: language ?? default_language,
                 themes: inline_themes,
                 structure: "inline",
               })
             : IGNORE_CODE_LANGS.has(language) ?
-              highlighter.codeToHtml(content, {
+              code_to_html(highlighter, content, {
                 lang: default_language,
                 themes: language_themes[default_language] ?? themes,
                 structure: "inline",
               })
-            : highlighter.codeToHtml(code, {
+            : code_to_html(highlighter, code, {
                 lang: language,
                 themes: language_themes[language] ?? themes,
                 structure: "inline",
@@ -590,7 +594,7 @@ export async function markdown_to_html(
           const caption = node.attributes["caption"];
           const content = node.attributes["content"];
           const language = node.attributes["language"];
-          const highlighted = highlighter.codeToHtml(content, {
+          const highlighted = code_to_html(highlighter, content, {
             lang: language,
             themes,
           });
@@ -784,4 +788,12 @@ function copy_to_clipboard_button() {
       </svg>
     </button>
   `;
+}
+
+function code_to_html(
+  highlighter: Highlighter,
+  code: string,
+  options: CodeToHastOptions
+): string {
+  return highlighter.codeToHtml(code, options);
 }
