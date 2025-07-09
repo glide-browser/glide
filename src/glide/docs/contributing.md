@@ -63,7 +63,7 @@ Primer on Glide specific concepts:
 You should *always* have a terminal open running our file watcher:
 
 ```bash
-pnpm dev --watch
+pnpm dev
 ```
 
 This handles:

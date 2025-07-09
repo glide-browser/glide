@@ -17,5 +17,5 @@ pnpm build:js
 
 pnpm glider set brand glide
 pnpm glider import
-pnpm dev
+pnpm dev:once
 pnpm build:types
