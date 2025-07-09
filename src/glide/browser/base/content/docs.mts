@@ -88,11 +88,11 @@ const SIDEBAR: SidebarEntry[] = [
     href: "modes.html",
   },
   {
-    name: "Ex Commands",
+    name: "Ex-commands",
     href: "ex-commands.html",
   },
   {
-    name: "Key Mappings",
+    name: "Key mappings",
     href: "key-mappings.html",
   },
   {

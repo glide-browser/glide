@@ -1,4 +1,4 @@
-# Key Mappings
+# Key mappings
 
 Glide uses the familiar Vim syntax for defining key mappings. If it can be mapped in Vim but not in Glide, that's a bug{% sup %}\[[1](#known-differences-with-vim)\]{% /sup %}.
 
