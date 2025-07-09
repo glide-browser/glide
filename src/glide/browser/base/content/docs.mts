@@ -286,6 +286,7 @@ export async function markdown_to_html(
   const lines = source.split("\n");
   const styles: string[] = [];
   const head: string[] = [];
+  let title: string | null = null;
 
   const content = Markdoc.transform(ast, {
     tags: {
@@ -563,6 +564,11 @@ export async function markdown_to_html(
             level ?? node.attributes["level"],
             "Expected level attribute to be set on headings"
           );
+          if (level === 1 && !title) {
+            // extract the first h1 and use it as the page title
+            title = get_node_content(children);
+          }
+          
           const has_code = node.walk().some(child => child.type === "code");
 
           const Heading = new Markdoc.Tag(
@@ -700,13 +706,13 @@ export async function markdown_to_html(
       <!DOCTYPE html>
       <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
         <head>
+          <title>${title ?? "Glide Docs"}</title>
           <meta charset="utf-8" />
           <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, user-scalable=yes"
           />
           <meta name="author" content="Robert Craigie" />
-          <title>Glide Docs</title>
           <link rel="icon" href="${rel_to_dist}/logo.png" />
 
           <link rel="stylesheet" href="${rel_to_dist}/docs.css" />
