@@ -26,6 +26,7 @@ async function wait_for_hints(): Promise<HTMLElement[]> {
     "waiting for hints to be shown",
     5 // ms interval
   );
+  await sleep_frames(2);
   return get_hints();
 }
 
