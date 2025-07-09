@@ -273,6 +273,7 @@ export async function markdown_to_html(
   function get_node_content(children: M.RenderableTreeNode[]): string {
     const content = children
       .filter(child => typeof child === "string")
+      .map(child => patches[child]?.content ?? child)
       .join(" ");
 
     const patch = patches[content];
