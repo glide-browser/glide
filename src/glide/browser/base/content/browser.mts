@@ -345,14 +345,21 @@ class GlideBrowserClass {
     this.api.modes.register("command", { caret: "line" });
     this.api.modes.register("op-pending", { caret: "underline" });
 
-    // default plugins
-    HintsPlugin.init(this.api);
-    DefaultKeymaps.init(this.api);
+    const sandbox = create_sandbox({
+      document,
+      console,
+      get glide() {
+        return GlideBrowser.api;
+      },
+      get browser() {
+        return GlideBrowser.browser_proxy_api;
+      },
+    });
 
-    this.jumplist = new JumplistPlugin.Jumplist(
-      this.api,
-      this.browser_proxy_api
-    );
+    // default plugins
+    HintsPlugin.init(sandbox);
+    DefaultKeymaps.init(sandbox);
+    this.jumplist = new JumplistPlugin.Jumplist(sandbox);
 
     if (this.#startup_finished) {
       // clear all registered event listeners and any custom state on the `browser` object
@@ -384,17 +391,6 @@ class GlideBrowserClass {
 
     this._log.info(`Executing config file at \`${config_path}\``);
     const config_str = await IOUtils.readUTF8(config_path);
-
-    const sandbox = create_sandbox({
-      document,
-      console,
-      get glide() {
-        return GlideBrowser.api;
-      },
-      get browser() {
-        return GlideBrowser.browser_proxy_api;
-      },
-    });
 
     try {
       const config_js = ts_blank_space(config_str);

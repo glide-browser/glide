@@ -1,3 +1,5 @@
+import type { Sandbox } from "../sandbox.mts";
+
 const { assert_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs"
 );
@@ -11,10 +13,11 @@ export class Jumplist {
   #entries: Array<JumplistEntry> = [];
   #index: number = -1;
   #is_jumping: boolean = false;
-  #browser: Browser.Browser;
+  #sandbox: Sandbox;
 
-  constructor(glide: Glide, browser: Browser.Browser) {
-    this.#browser = browser;
+  constructor(sandbox: Sandbox) {
+    const { glide, browser } = sandbox;
+    this.#sandbox = sandbox;
 
     glide.excmds.create(
       { name: "jumplist_back", description: "Jump back in the jumplist" },
@@ -60,12 +63,12 @@ export class Jumplist {
   }
 
   async #get_tab(id: number): Promise<Browser.Tabs.Tab | null> {
-    return this.#browser.tabs.get(id).catch(() => null);
+    return this.#sandbox.browser.tabs.get(id).catch(() => null);
   }
 
   async #switch_tab(entry: JumplistEntry) {
     this.#is_jumping = true;
-    await this.#browser.tabs.update(entry.tab_id, { active: true });
+    await this.#sandbox.browser.tabs.update(entry.tab_id, { active: true });
   }
 
   async jump_backwards() {

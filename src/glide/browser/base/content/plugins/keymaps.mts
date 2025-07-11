@@ -2,11 +2,15 @@
  * This file defines *all* builtin keymappings.
  */
 
+import type { Sandbox } from "../sandbox.mts";
+
 const { MOTIONS } = ChromeUtils.importESModule(
   "chrome://glide/content/motions.mjs"
 );
 
-export function init(glide: Glide) {
+export function init(sandbox: Sandbox) {
+  const { glide } = sandbox;
+
   glide.keymaps.set("normal", "<leader>r", "reload");
   glide.keymaps.set("normal", "<leader>R", "reload_hard");
   glide.keymaps.set("normal", "<leader><leader>", "commandline_show tab ");

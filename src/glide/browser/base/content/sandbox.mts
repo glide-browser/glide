@@ -16,7 +16,9 @@ const DOMUtils = ChromeUtils.importESModule(
 /**
  * Represents an object returned by {@link create_sandbox}.
  */
-export type Sandbox = {} & { readonly __brand: unique symbol };
+export type Sandbox = { glide: Glide; browser: Browser.Browser } & {
+  readonly __brand: unique symbol;
+};
 
 interface SandboxProps {
   console: typeof console;

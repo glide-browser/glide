@@ -7,7 +7,11 @@
  * **note**: any global types are in ./hints-types.d.ts
  */
 
-export function init(glide: Glide) {
+import type { Sandbox } from "../sandbox.mts";
+
+export function init(sandbox: Sandbox) {
+  const { glide } = sandbox;
+
   glide.modes.register("hint", { caret: "block" });
 
   glide.autocmds.create("ModeChanged", "hint:*", async () => {
