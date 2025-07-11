@@ -106,23 +106,6 @@ export function is_element<ElementType extends typeof Element>(
   return element.constructor?.name === of.name;
 }
 
-type CreateElementProps<K extends keyof HTMLElementTagNameMap> = Omit<
-  Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
-  "children"
-> & {
-  /**
-   * Can be an individual child or an array of children.
-   */
-  children?: (Node | string) | Array<Node | string>;
-
-  /**
-   * Set specific CSS style properties.
-   *
-   * This currently uses the JS style naming convention for properties, e.g. `zIndex`.
-   */
-  style?: Partial<CSSStyleDeclaration>;
-};
-
 /**
  * Wrapper over `document.createElement()` providing a more composable API.
  *
@@ -142,13 +125,16 @@ type CreateElementProps<K extends keyof HTMLElementTagNameMap> = Omit<
  */
 export function create_element<K extends keyof HTMLElementTagNameMap>(
   tag_name: K,
-  props?: CreateElementProps<K>
+  props?: DOM.CreateElementProps<K>,
+  a_document = document
 ): HTMLElementTagNameMap[K] {
-  if (!document) {
-    throw new Error('dom utils must be imported with { global: "current" }');
+  if (!a_document) {
+    throw new Error(
+      'dom utils must be imported with { global: "current" } or passed the document argument'
+    );
   }
 
-  const element = document.createElement(tag_name);
+  const element = a_document.createElement(tag_name);
 
   for (const [key, value] of Object.entries(props ?? {})) {
     if (key === "children" || key === "style") {

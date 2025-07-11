@@ -9,6 +9,9 @@ const { WINDOW_PROPERTIES } = ChromeUtils.importESModule(
 const Dedent = ChromeUtils.importESModule(
   "chrome://glide/content/utils/dedent.mjs"
 );
+const DOMUtils = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/dom.mjs"
+);
 
 /**
  * Represents an object returned by {@link create_sandbox}.
@@ -30,6 +33,16 @@ interface SandboxProps {
  * between the different processes where we eval functions.
  */
 export function create_sandbox(props: SandboxProps): Sandbox {
+  const document = props.document;
+  const DOM: DOM.Utils = {
+    create_element<K extends keyof HTMLElementTagNameMap>(
+      tag_name: K,
+      props?: DOM.CreateElementProps<K>
+    ): HTMLElementTagNameMap[K] {
+      return DOMUtils.create_element(tag_name, props, document);
+    },
+  };
+
   // options pass here correspond to:
   // https://github.com/mozilla-firefox/firefox/blob/0f7aa808c07a1644fb2b386113aa3a2b31befe24/js/xpconnect/idl/xpccomponents.idl#L151
   let proto = {
@@ -41,6 +54,8 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     dedent: Dedent.dedent,
     css: Dedent.make_dedent_no_args("css"),
     html: Dedent.make_dedent_no_args("html"),
+
+    DOM,
 
     // helper function for asserting invariants
     assert(value: unknown, message?: string): asserts value {
