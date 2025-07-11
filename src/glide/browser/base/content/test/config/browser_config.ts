@@ -873,3 +873,93 @@ add_task(async function test_options_get() {
     );
   });
 });
+
+add_task(async function test_keys_parse() {
+  const base: Omit<glide.KeyNotation, "key"> = {
+    alt: false,
+    ctrl: false,
+    meta: false,
+    shift: false,
+  };
+  const parse = GlideBrowser.api.keys.parse;
+  isjson(parse("a"), { key: "a", ...base });
+  isjson(parse("b"), { key: "b", ...base });
+  isjson(parse("H"), { key: "H", ...base });
+  isjson(parse("<S-h>"), {
+    key: "h",
+    ...base,
+    shift: true,
+  });
+  isjson(parse("<S-H>"), {
+    key: "H",
+    ...base,
+    shift: true,
+  });
+  isjson(parse("<C-S-h>"), {
+    key: "h",
+    ...base,
+    ctrl: true,
+    shift: true,
+  });
+  isjson(parse("<S-C-h>"), {
+    key: "h",
+    ...base,
+    ctrl: true,
+    shift: true,
+  });
+  isjson(parse("<S-A-D-C-h>"), {
+    key: "h",
+    alt: true,
+    meta: true,
+    ctrl: true,
+    shift: true,
+  });
+
+  // Special keys
+  isjson(parse("<space>"), { key: "<Space>", ...base });
+  isjson(parse("<Space>"), { key: "<Space>", ...base });
+  isjson(parse("<leader>"), { key: "<leader>", ...base });
+  isjson(parse("<Tab>"), { key: "<Tab>", ...base });
+  isjson(parse("<CR>"), { key: "<CR>", ...base });
+  isjson(parse("<Esc>"), { key: "<Esc>", ...base });
+  isjson(parse("<BS>"), { key: "<BS>", ...base });
+  isjson(parse("<Del>"), { key: "<Del>", ...base });
+  isjson(parse("<F1>"), { key: "<F1>", ...base });
+  isjson(parse("<F11>"), { key: "<F11>", ...base });
+
+  // Special aliases
+  isjson(parse("<lt>"), { key: "<lt>", ...base });
+  isjson(parse("<Bar>"), { key: "<Bar>", ...base });
+  isjson(parse("<Bslash>"), { key: "<Bslash>", ...base });
+  isjson(parse("|"), { key: "|", ...base });
+  isjson(parse("<"), { key: "<", ...base });
+  isjson(parse("\\"), { key: "\\", ...base });
+
+  // Special keys with modifiers
+  isjson(parse("<S-<>"), { key: "<", ...base, shift: true });
+  isjson(parse("<C-lt>"), { key: "<lt>", ...base, ctrl: true });
+  isjson(parse("<C-Bar>"), { key: "<Bar>", ...base, ctrl: true });
+  isjson(parse("<C-Bslash>"), { key: "<Bslash>", ...base, ctrl: true });
+
+  // Mixed case special keys
+  isjson(parse("<space>"), { key: "<Space>", ...base });
+  isjson(parse("<SPACE>"), { key: "<Space>", ...base });
+  isjson(parse("<SpAcE>"), { key: "<Space>", ...base });
+  isjson(parse("<tab>"), { key: "<Tab>", ...base });
+  isjson(parse("<TAB>"), { key: "<Tab>", ...base });
+
+  // Edge cases
+  isjson(parse(""), { key: "", ...base });
+  try {
+    parse("<>");
+    ok(false, "Should error on <>");
+  } catch (e) {
+    ok(true, "Correctly handles <>");
+  }
+  try {
+    parse("<X-a>");
+    ok(false, "Should throw on invalid modifier");
+  } catch (e) {
+    ok(true, "Correctly throws on invalid modifier");
+  }
+}).only();

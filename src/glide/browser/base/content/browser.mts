@@ -1764,6 +1764,7 @@ function make_glide_api(): typeof glide {
           opts
         );
       },
+
       async next() {
         if (GlideBrowser.next_key_waiter) {
           throw new Error(
@@ -1777,9 +1778,21 @@ function make_glide_api(): typeof glide {
           GlideBrowser.next_key_waiter = null;
         });
       },
-
       async next_str() {
         return this.next().then(event => event.glide_key);
+      },
+
+      parse(key_notation) {
+        const parsed = Keys.parse_modifiers(key_notation, {
+          use_event_repr: false,
+        });
+        return {
+          key: parsed.key,
+          alt: parsed.altKey,
+          ctrl: parsed.ctrlKey,
+          meta: parsed.metaKey,
+          shift: parsed.shiftKey,
+        };
       },
     },
     modes: {

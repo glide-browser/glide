@@ -381,6 +381,24 @@ declare global {
        * @example '<C-l>'
        */
       next_str(): Promise<string>;
+
+      /**
+       * Parse a single key notation into a structured object.
+       *
+       * This normalises special keys to be consistent but otherwise the
+       * parsed object only containers modifiers that were in the input string.
+       *
+       * Shifted keys are *not* special cased, the returned key is whatever was given
+       * in in the input.
+       *
+       * @example "<Space>" -> { key: "<Space>" }
+       * @example "H" -> { key: "H" }
+       * @example "<S-h>" -> { key: "h", shift: true }
+       * @example "<S-H>" -> { key: "H", shift: true }
+       * @example "<C-S-a>" -> { key: "A", shift: true, ctrl: true }
+       * @example "<M-a>" -> { key: "a", meta: true }
+       */
+      parse(key_notation: string): glide.KeyNotation;
     };
 
     modes: {
@@ -558,6 +576,24 @@ declare global {
       | `${keyof ExcmdRegistry} ${string}`;
 
     export type HintLocation = "content" | "browser-ui";
+
+    type KeyNotation = {
+      /**
+       * @example <leader>
+       * @example h
+       * @example j
+       * @example K
+       * @example L
+       * @example <Tab>
+       */
+      key: string;
+
+      // modifiers
+      alt: boolean;
+      ctrl: boolean;
+      meta: boolean;
+      shift: boolean;
+    };
 
     type Keymap = {
       lhs: string;

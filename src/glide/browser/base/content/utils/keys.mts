@@ -605,7 +605,10 @@ type GlideParsedMapping = Mutable<GlideMappingEvent>;
  * `parse_modifiers('<Space>') -> {key: ' '}`
  * ```
  */
-export function parse_modifiers(keyn: string): GlideParsedMapping {
+export function parse_modifiers(
+  keyn: string,
+  { use_event_repr = true }: { use_event_repr?: boolean } = {}
+): GlideParsedMapping {
   const parsed: GlideParsedMapping = {
     altKey: false,
     ctrlKey: false,
@@ -625,7 +628,16 @@ export function parse_modifiers(keyn: string): GlideParsedMapping {
   const parts = stripped.split("-");
   // [C,S,h] -> [C,S]
   const modifier_parts = parts.slice(0, -1);
-  parsed.key = keyn_to_event_repr(parts.at(-1)!);
+
+  const raw_key = parts.at(-1)!;
+  if (!raw_key) {
+    throw new Error(`Invalid key string: ${keyn}`);
+  }
+  if (use_event_repr) {
+    parsed.key = keyn_to_event_repr(raw_key);
+  } else {
+    parsed.key = to_special_key(raw_key) ?? raw_key;
+  }
 
   for (const part of modifier_parts) {
     switch (part) {
@@ -655,6 +667,25 @@ export function parse_modifiers(keyn: string): GlideParsedMapping {
   }
 
   return parsed;
+}
+
+/**
+ * Given a string like `space` or `<sPace>`, returns the special key normalized version,
+ * `<Space>`.
+ */
+function to_special_key(key: string): string | null {
+  if (key.startsWith("<") && key.endsWith(">")) {
+    key = key.slice(1, -1);
+  }
+
+  const lower_key = key.toLowerCase();
+  for (const special_key of Object.values(SPECIAL_KEY_MAP)) {
+    if (lower_key === special_key.toLowerCase()) {
+      return "<" + special_key + ">";
+    }
+  }
+
+  return null;
 }
 
 /**
