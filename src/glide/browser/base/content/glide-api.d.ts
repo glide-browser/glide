@@ -424,37 +424,6 @@ declare global {
   };
 
   /**
-   * Helper functions for interacting with the DOM.
-   *
-   * **note**: this is currently only available in the main process, for
-   *           updating the browser UI itself. it is not available in
-   *           content processes.
-   */
-  var DOM: {
-    /**
-     * Wrapper over `document.createElement()` providing a more ergonomic API.
-     *
-     * Element properties that can be assigned directly can be provided as props:
-     *
-     * ```ts
-     * DOM.create_element('img', { src: '...' });
-     * ```
-     *
-     * You can also pass a `children` property, which will use `.replaceChildren()`:
-     *
-     * ```ts
-     * DOM.create_element("div", {
-     *   children: ["text content", create_element("img", { alt: "hint" })],
-     * });
-     * ```
-     */
-    create_element<TagName extends keyof HTMLElementTagNameMap>(
-      tag_name: TagName,
-      props?: DOM.CreateElementProps<TagName>
-    ): HTMLElementTagNameMap[TagName];
-  };
-
-  /**
    * Defines all the supported modes.
    *
    * **note**: the key is what defines the list of supported modes, currently the value is
@@ -681,27 +650,6 @@ declare global {
     };
   }
 
-  namespace DOM {
-    type Utils = typeof DOM;
-
-    type CreateElementProps<K extends keyof HTMLElementTagNameMap> = Omit<
-      Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
-      "children"
-    > & {
-      /**
-       * Can be an individual child or an array of children.
-       */
-      children?: (Node | string) | Array<Node | string>;
-
-      /**
-       * Set specific CSS style properties.
-       *
-       * This uses the JS style naming convention for properties, e.g. `zIndex`.
-       */
-      style?: Partial<CSSStyleDeclaration>;
-    };
-  }
-
   /**
    * Dedent template function.
    *
@@ -729,6 +677,58 @@ declare global {
    *       support escaping them, to not make it easy to accidentally cause XSS
    */
   function css(arg: TemplateStringsArray): string;
+
+  /**
+   * Helper functions for interacting with the DOM.
+   *
+   * **note**: this is currently only available in the main process, for
+   *           updating the browser UI itself. it is not available in
+   *           content processes.
+   */
+  var DOM: {
+    /**
+     * Wrapper over `document.createElement()` providing a more ergonomic API.
+     *
+     * Element properties that can be assigned directly can be provided as props:
+     *
+     * ```ts
+     * DOM.create_element('img', { src: '...' });
+     * ```
+     *
+     * You can also pass a `children` property, which will use `.replaceChildren()`:
+     *
+     * ```ts
+     * DOM.create_element("div", {
+     *   children: ["text content", create_element("img", { alt: "hint" })],
+     * });
+     * ```
+     */
+    create_element<TagName extends keyof HTMLElementTagNameMap>(
+      tag_name: TagName,
+      props?: DOM.CreateElementProps<TagName>
+    ): HTMLElementTagNameMap[TagName];
+  };
+
+  namespace DOM {
+    type Utils = typeof DOM;
+
+    type CreateElementProps<K extends keyof HTMLElementTagNameMap> = Omit<
+      Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
+      "children"
+    > & {
+      /**
+       * Can be an individual child or an array of children.
+       */
+      children?: (Node | string) | Array<Node | string>;
+
+      /**
+       * Set specific CSS style properties.
+       *
+       * This uses the JS style naming convention for properties, e.g. `zIndex`.
+       */
+      style?: Partial<CSSStyleDeclaration>;
+    };
+  }
 
   namespace $keymapcompletions {
     /**
