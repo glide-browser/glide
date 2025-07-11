@@ -322,6 +322,7 @@ export class KeyManager {
 
       for (const node of trie.recurse()) {
         output.push({
+          sequence: node.value.sequence,
           lhs: node.value.sequence.join(""),
           description: node.value.description,
           rhs: node.value.command,

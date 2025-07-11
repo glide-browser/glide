@@ -627,6 +627,7 @@ declare global {
     };
 
     type Keymap = {
+      sequence: string[];
       lhs: string;
       rhs: glide.ExcmdValue;
       description: string | undefined;
