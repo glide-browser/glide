@@ -962,4 +962,4 @@ add_task(async function test_keys_parse() {
   } catch (e) {
     ok(true, "Correctly throws on invalid modifier");
   }
-}).only();
+});
