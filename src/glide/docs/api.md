@@ -272,27 +272,75 @@ glide.keys.next(): Promise<glide.KeyEvent>
 {% /api-heading %}
 
 
-Returns a `Promise` that resolves to a `{@link glide.KeyEvent}`.
+Returns a `Promise` that resolves to a `{@link glide.KeyEvent}` when the next key is pressed.
 
-This blocks other input events from being processed until the promise resolves.
+This also prevents the key input from being processed further and does *not* invoke any associated mappings.
+
+If you *want* to inspect keys without preventing any default behaviour, you can use `.next_passthrough()`.
 
 Note: there can only be one `Promise` registered at any given time.
+
+Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
+      until another key is pressed, e.g. `<C-a>`.
+
+{% api-heading id="glide.keys.next_passthrough" %}
+glide.keys.next_passthrough(): Promise<glide.KeyEvent>
+{% /api-heading %}
+
+
+Returns a `Promise` that resolves to a `{@link glide.KeyEvent}` when the next key is pressed.
+
+Unlike `.next()`, this does not prevent key events from passing through into their original behaviour.
+
+Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
+      until another key is pressed, e.g. `<C-a>`.
 
 {% api-heading id="glide.keys.next_str" %}
 glide.keys.next_str(): Promise<string>
 {% /api-heading %}
 
 
-Returns a `Promise` that resolves to a string representation of the last input event.
+Returns a `Promise` that resolves to a string representation of the key, when the next key is pressed.
 
-This blocks other input events from being processed until the promise resolves.
+This also prevents the key input from being processed further and does *not* invoke any associated mappings.
+
+If you *want* to inspect keys without preventing any default behaviour, you can use `.next_passthrough()`.
 
 Note: there can only be one `Promise` registered at any given time.
+
+Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
+      until another key is pressed, e.g. `<C-a>`.
 
 
 `ts:@example 'd'`
 
 `ts:@example '<C-l>'`
+
+{% api-heading id="glide.keys.parse" %}
+glide.keys.parse(key_notation): glide.KeyNotation
+{% /api-heading %}
+
+
+Parse a single key notation into a structured object.
+
+This normalises special keys to be consistent but otherwise the
+parsed object only containers modifiers that were in the input string.
+
+Shifted keys are *not* special cased, the returned key is whatever was given
+in in the input.
+
+
+`ts:@example "<Space>" -> { key: "<Space>" }`
+
+`ts:@example "H" -> { key: "H" }`
+
+`ts:@example "<S-h>" -> { key: "h", shift: true }`
+
+`ts:@example "<S-H>" -> { key: "H", shift: true }`
+
+`ts:@example "<C-S-a>" -> { key: "A", shift: true, ctrl: true }`
+
+`ts:@example "<M-a>" -> { key: "a", meta: true }`
 ## • `glide.modes` {% id="glide.modes" %}
 
 
@@ -318,3 +366,11 @@ glide.modes.register('leap', { caret: 'normal' })
 ## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
+
+# `DOM` {% id="DOM" %}
+
+Helper functions for interacting with the DOM.
+
+**note**: this is currently only available in the main process, for
+          updating the browser UI itself. it is not available in
+          content processes.

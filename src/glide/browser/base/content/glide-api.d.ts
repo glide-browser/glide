@@ -719,7 +719,7 @@ declare global {
      *
      * ```ts
      * DOM.create_element("div", {
-     *   children: ["text content", create_element("img", { alt: "hint" })],
+     *   children: ["text content", DOM.create_element("img", { alt: "hint" })],
      * });
      * ```
      */
