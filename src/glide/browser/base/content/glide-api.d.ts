@@ -362,20 +362,40 @@ declare global {
       ): Promise<void>;
 
       /**
-       * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}`.
+       * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}` when the next key is pressed.
        *
-       * This blocks other input events from being processed until the promise resolves.
+       * This also prevents the key input from being processed further and does *not* invoke any associated mappings.
+       *
+       * If you *want* to inspect keys without preventing any default behaviour, you can use `.next_passthrough()`.
        *
        * Note: there can only be one `Promise` registered at any given time.
+       *
+       * Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
+       *       until another key is pressed, e.g. `<C-a>`.
        */
       next(): Promise<glide.KeyEvent>;
 
       /**
-       * Returns a `Promise` that resolves to a string representation of the last input event.
+       * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}` when the next key is pressed.
        *
-       * This blocks other input events from being processed until the promise resolves.
+       * Unlike `.next()`, this does not prevent key events from passing through into their original behaviour.
+       *
+       * Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
+       *       until another key is pressed, e.g. `<C-a>`.
+       */
+      next_passthrough(): Promise<glide.KeyEvent>;
+
+      /**
+       * Returns a `Promise` that resolves to a string representation of the key, when the next key is pressed.
+       *
+       * This also prevents the key input from being processed further and does *not* invoke any associated mappings.
+       *
+       * If you *want* to inspect keys without preventing any default behaviour, you can use `.next_passthrough()`.
        *
        * Note: there can only be one `Promise` registered at any given time.
+       *
+       * Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
+       *       until another key is pressed, e.g. `<C-a>`.
        *
        * @example 'd'
        * @example '<C-l>'

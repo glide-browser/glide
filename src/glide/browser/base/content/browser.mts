@@ -1159,6 +1159,9 @@ class GlideBrowserClass {
   next_key_waiter: {
     resolve: (event: glide.KeyEvent) => void;
   } | null = null;
+  next_key_passthrough_waiters: Array<{
+    resolve: (event: glide.KeyEvent) => void;
+  }> = [];
 
   /**
    * This uses a different state than the *actual* key mappings so that we can
@@ -1262,16 +1265,24 @@ class GlideBrowserClass {
       return;
     }
 
+    const glide_event = event as glide.KeyEvent;
+    glide_event.glide_key = keyn;
+
     if (this.next_key_waiter !== null) {
       this.#prevent_keydown(keyn, event);
 
-      const glide_event = event as glide.KeyEvent;
-      glide_event.glide_key = keyn;
-
       this.next_key_waiter.resolve(glide_event);
       this.next_key_waiter = null;
-
       return;
+    }
+
+    if (this.next_key_passthrough_waiters.length) {
+      const waiters = this.next_key_passthrough_waiters;
+      this.next_key_passthrough_waiters = [];
+
+      for (const waiter of waiters) {
+        waiter.resolve(glide_event);
+      }
     }
 
     const mode = this.state.mode;
@@ -1776,6 +1787,12 @@ function make_glide_api(): typeof glide {
       },
       async next_str() {
         return this.next().then(event => event.glide_key);
+      },
+      async next_passthrough() {
+        return new Promise<glide.KeyEvent>(resolve => {
+          GlideBrowser.next_key_passthrough_waiters.push({ resolve });
+          // note: the array here is cleaned up inside the key input handler
+        });
       },
 
       parse(key_notation) {

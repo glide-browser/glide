@@ -355,6 +355,37 @@ add_task(async function test_keys_next_special_keys() {
   });
 });
 
+add_task(async function test_keys_next_passthrough_api() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>z", async () => {
+      const key_event = await glide.keys.next_passthrough();
+      assert(key_event instanceof KeyboardEvent);
+      glide.g.received_key = key_event.glide_key;
+    });
+
+    glide.keymaps.set("normal", "b", async () => {
+      glide.g.value = "b triggered";
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>z");
+
+    await GlideTestUtils.synthesize_keyseq("b");
+
+    await TestUtils.waitForCondition(
+      () => GlideBrowser.api.g.received_key === "b",
+      "glide.keys.next_passthrough() should capture the 'b' key correctly",
+      10
+    );
+    is(
+      GlideBrowser.api.g.value,
+      "b triggered",
+      "glide.keys.next_passthrough() should pass keys through to their original mappings"
+    );
+  });
+});
+
 add_task(async function test_glide_ctx_url() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>u", () => {
