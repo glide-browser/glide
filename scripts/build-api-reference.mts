@@ -88,10 +88,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
         declaration.getName(),
       ].join(".");
 
-      yield* Header(`${QualifiedName}`, {
-        parents,
-        id: QualifiedName,
-      });
+      yield* Header(QualifiedName, { parents, id: QualifiedName });
       yield* Docs(docs);
       yield "\n";
       yield* traverse_children(declaration, [
@@ -105,9 +102,11 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
   // e.g. `{ foo: string }`
   if (Node.isTypeLiteral(node)) {
-    const children = node.getChildrenOfKind(ts.SyntaxKind.PropertySignature);
-    for (const signature of children) {
-      yield* traverse(signature, parents);
+    for (const child of children(node)) {
+      if (!Node.isPropertySignature(child) && !Node.isMethodSignature(child)) {
+        continue;
+      }
+      yield* traverse(child, parents);
     }
 
     return;

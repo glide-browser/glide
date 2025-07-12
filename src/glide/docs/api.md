@@ -374,3 +374,25 @@ Helper functions for interacting with the DOM.
 **note**: this is currently only available in the main process, for
           updating the browser UI itself. it is not available in
           content processes.
+
+
+{% api-heading id="DOM.create_element" %}
+DOM.create_element(tag_name, props?): HTMLElementTagNameMap[TagName]
+{% /api-heading %}
+
+
+Wrapper over `document.createElement()` providing a more ergonomic API.
+
+Element properties that can be assigned directly can be provided as props:
+
+```ts
+DOM.create_element('img', { src: '...' });
+```
+
+You can also pass a `children` property, which will use `.replaceChildren()`:
+
+```ts
+DOM.create_element("div", {
+  children: ["text content", DOM.create_element("img", { alt: "hint" })],
+});
+```
