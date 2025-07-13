@@ -1,0 +1,121 @@
+name: Linux Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to upload tar to"
+        required: true
+        type: string
+
+jobs:
+  linux-build:
+    name: Build - ${{ matrix.arch }}
+
+    runs-on: depot-ubuntu-24.04-arm-32
+    permissions:
+      contents: write
+    env:
+      CARGO_TERM_COLOR: always
+      GLIDER_PLATFORM: linux
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64]
+
+    steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # needed while we have private dependencies
+      - name: Configure GitHub auth
+        run: |
+          TOKEN="${{ secrets.REPO_ACCESS_TOKEN }}"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
+            "git@github.com:glide-browser/glider.git"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/webextension-types.git".insteadOf \
+            "git@github.com:glide-browser/webextension-types.git"
+
+          git config --global \
+            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+            "git@github.com:mozilla-firefox/firefox.git"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.9
+        with:
+          disable_annotations: true
+
+      - name: Expose actions cache variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+
+      - name: Install system dependencies
+        run: |
+          set -x
+          sudo apt-get update --fix-missing
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip dos2unix yasm nasm build-essential libgtk2.0-dev libpython3-dev m4 uuid libasound2-dev libcurl4-openssl-dev libdbus-1-dev libdrm-dev libdbus-glib-1-dev libgtk-3-dev libpulse-dev libx11-xcb-dev libxt-dev xvfb lld llvm
+
+      - name: Bootstrap repo
+        run: |
+          pnpm bootstrap
+
+          cd engine
+          export PATH="$(python3 -m site --user-base)/bin":$PATH
+          ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
+          cd ..
+        env:
+          GLIDER_COMPAT: ${{ matrix.arch }}
+
+      - name: Fix Rust version
+        run: |
+          # Install a rust version compatible with LLVM 18
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.82
+          source $HOME/.cargo/env
+
+          if test "${{ matrix.arch }}" = "aarch64"; then
+            rustup target add aarch64-unknown-linux-gnu
+          else
+            rustup target add x86_64-unknown-linux-gnu
+          fi
+
+      - name: Build
+        env:
+          GLIDER_COMPAT: ${{ matrix.arch }}
+        run: |
+          pnpm build
+
+      - name: Package
+        run: |
+          pnpm package
+
+      - name: Rename artifact
+        run: |
+          mv dist/glide-*.tar.xz "dist/glide.linux-${{ matrix.arch }}.tar.xz"
+
+      - name: Upload tar to release
+        run: |
+          gh release upload ${{ inputs.tag }} ./dist/glide.linux-${{ matrix.arch }}.tar.xz --clobber
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}

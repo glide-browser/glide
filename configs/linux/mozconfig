@@ -3,6 +3,5 @@ ac_add_options --enable-pulseaudio
 ac_add_options --disable-updater
 
 ac_add_options --disable-dmd
-ac_add_options --enable-eme=widevine
 
 export VERBOSE=1
