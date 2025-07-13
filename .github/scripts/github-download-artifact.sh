@@ -27,14 +27,7 @@ GITHUB_TOKEN="${GITHUB_TOKEN}"
 OWNER="glide-browser"
 REPO="glide"
 
-# Get release data
-if [ "$TAG" = "latest" ]; then
-  RELEASE_DATA=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-    "https://api.github.com/repos/$OWNER/$REPO/releases/latest")
-else
-  RELEASE_DATA=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-    "https://api.github.com/repos/$OWNER/$REPO/releases/tags/$TAG")
-fi
+RELEASE_DATA=$(gh release view ${TAG:-latest} --json assets,body,name,tagName,url)
 
 ASSET_ID=$(echo "$RELEASE_DATA" | jq -r ".assets[] | select(.name==\"$ASSET_NAME\") | .id")
 
