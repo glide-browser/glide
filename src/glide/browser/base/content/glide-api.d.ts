@@ -179,7 +179,7 @@ declare global {
        */
       create<const Excmd extends glide.ExcmdCreateProps>(
         info: Excmd,
-        fn: () => void | Promise<void>
+        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>
       ): Excmd;
     };
 
@@ -586,6 +586,10 @@ declare global {
     /// @docs-skip
     export type ExcmdValue =
       import("./browser-excmds-registry.mjs").GlideCommandValue;
+
+    /// @docs-skip
+    export type ExcmdCallbackProps =
+      import("./browser-excmds-registry.mjs").GlideCommandCallbackProps;
 
     /// @docs-skip
     export type ExcmdString =

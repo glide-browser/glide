@@ -151,7 +151,7 @@ class GlideExcmdsClass {
 
     const meta = GlideBrowser.user_excmds.get(name);
     if (meta) {
-      return await meta.fn();
+      return await meta.fn(props.args);
     }
 
     const command_meta = GLIDE_EXCOMMANDS_MAP[name as GlideExcmdName];

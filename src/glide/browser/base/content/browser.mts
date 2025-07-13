@@ -1029,10 +1029,17 @@ class GlideBrowserClass {
       });
   }
 
-  #user_cmds: Map<string, GlideExcmdInfo & { fn: () => void | Promise<void> }> =
-    new Map();
+  #user_cmds: Map<
+    string,
+    GlideExcmdInfo & {
+      fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>;
+    }
+  > = new Map();
 
-  add_user_excmd(info: glide.ExcmdCreateProps, fn: () => void | Promise<void>) {
+  add_user_excmd(
+    info: glide.ExcmdCreateProps,
+    fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>
+  ) {
     this.#user_cmds.set(info.name, {
       ...info,
       content: false,
@@ -1043,7 +1050,9 @@ class GlideBrowserClass {
 
   get user_excmds(): ReadonlyMap<
     string,
-    GlideExcmdInfo & { fn: () => void | Promise<void> }
+    GlideExcmdInfo & {
+      fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>;
+    }
   > {
     return this.#user_cmds;
   }
@@ -1714,7 +1723,7 @@ function make_glide_api(): typeof glide {
       },
       create<const Excmd extends glide.ExcmdCreateProps>(
         info: Excmd,
-        fn: () => void | Promise<void>
+        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>
       ): Excmd {
         GlideBrowser.add_user_excmd(info, fn);
         return info;

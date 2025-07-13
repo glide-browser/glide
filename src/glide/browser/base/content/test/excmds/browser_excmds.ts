@@ -245,3 +245,35 @@ add_task(async function test_set_number_option() {
   await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 0<CR>");
   is(GlideBrowser.api.o.mapping_timeout, 0, "Number option should accept zero");
 });
+
+declare global {
+  interface ExcmdRegistry {
+    test_command: {};
+  }
+}
+
+add_task(async function test_excmd_callback_receives_tab_id() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.excmds.create(
+      {
+        name: "test_command",
+        description: "Test command to verify tab_id parameter",
+      },
+      ({ tab_id }) => {
+        glide.g.value = tab_id;
+      }
+    );
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await GlideTestUtils.synthesize_keyseq(":test_command<CR>");
+    await sleep_frames(10);
+
+    const active_tab = await GlideBrowser.api.tabs.active();
+    is(
+      GlideBrowser.api.g.value,
+      active_tab.id,
+      "Excmd callback should receive tab_id that matches the active tab ID"
+    );
+  });
+});
