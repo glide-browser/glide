@@ -1,0 +1,26 @@
+diff --git a/build/variables.py b/build/variables.py
+index 8b510b3ed9e870bcdce5fbc051157531b068c4f5..ca0621064912f374469a667b5fba469a2223e3d3 100644
+--- a/build/variables.py
++++ b/build/variables.py
+@@ -75,7 +75,11 @@ def get_info_from_sourcestamp(sourcestamp_path):
+         return None, None
+ 
+     # Return the repo and the changeset.
+-    return lines[1].split("/rev/")
++    # Try both /commit/ and /rev/ for compatibility
++    if "/commit/" in lines[1]:
++        return lines[1].split("/commit/")
++    else:
++        return lines[1].split("/rev/")
+ 
+ 
+ def source_repo_header(output):
+@@ -104,7 +108,7 @@ def source_repo_header(output):
+         output.write("#define MOZ_SOURCE_STAMP %s\n" % changeset)
+ 
+     if repo and buildconfig.substs.get("MOZ_INCLUDE_SOURCE_INFO"):
+-        source = "%s/rev/%s" % (repo, changeset)
++        source = "%s/commit/%s" % (repo, changeset)
+         output.write("#define MOZ_SOURCE_REPO %s\n" % repo)
+         output.write("#define MOZ_SOURCE_URL %s\n" % source)
+ 
