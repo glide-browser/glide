@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # needed while we have private dependencies
+      - name: Configure GitHub auth
+        run: |
+          TOKEN="${{ secrets.REPO_ACCESS_TOKEN }}"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
+            "git@github.com:glide-browser/glider.git"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/webextension-types.git".insteadOf \
+            "git@github.com:glide-browser/webextension-types.git"
+
+          git config --global \
+            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+            "git@github.com:mozilla-firefox/firefox.git"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Glider config
+        run: pnpm glider set brand glide
+
+      - name: Get version
+        id: version
+        run: |
+          version=$(pnpm glider get version)
+          echo "version=v$version" >> $GITHUB_OUTPUT
+
+  linux:
+    name: Linux build
+    uses: ./.github/workflows/linux-build.yml
+    with:
+      upload: true
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [linux, metadata]
+    environment: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Linux build (aarch64)
+        uses: actions/download-artifact@v4
+        with:
+          name: glide.linux-aarch64.tar.xz
+
+      - name: Download Linux build (x86_64)
+        uses: actions/download-artifact@v4
+        with:
+          name: glide.linux-x86_64.tar.xz
+
+      - name: Setup release
+        run: |
+          if gh release view ${{ needs.metadata.outputs.version }} > /dev/null 2>&1; then
+            gh release edit ${{ needs.metadata.outputs.version }} --prerelease --draft --title "${{ needs.metadata.outputs.version }}"
+          else
+            gh release create ${{ needs.metadata.outputs.version }} --prerelease --draft --title "${{ needs.metadata.outputs.version }}"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Upload artifacts to the release
+        run: |
+          gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-aarch64.tar.xz --clobber
+          gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-x86_64.tar.xz --clobber
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}

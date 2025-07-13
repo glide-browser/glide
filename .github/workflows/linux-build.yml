@@ -7,14 +7,18 @@ on:
         description: "Release tag to upload tar to"
         required: true
         type: string
+  workflow_call:
+    inputs:
+      upload:
+        description: "Used to distinguish dispatch and call events"
+        required: true
+        type: boolean
 
 jobs:
   linux-build:
     name: Build - ${{ matrix.arch }}
 
     runs-on: depot-ubuntu-24.04-arm-16
-    permissions:
-      contents: write
     env:
       CARGO_TERM_COLOR: always
       GLIDER_PLATFORM: linux
@@ -116,7 +120,16 @@ jobs:
           mv dist/glide-*.tar.xz "dist/glide.linux-${{ matrix.arch }}.tar.xz"
 
       - name: Upload tar to release
+        if: inputs.tag
         run: |
           gh release upload ${{ inputs.tag }} ./dist/glide.linux-${{ matrix.arch }}.tar.xz --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Upload tar
+        if: inputs.upload
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: glide.linux-${{ matrix.arch }}.tar.xz
+          path: ./dist/glide.linux-${{ matrix.arch }}.tar.xz
