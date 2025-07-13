@@ -14,7 +14,9 @@ import type {
   GlideExcmdInfo,
   GlideCommandString,
   GlideCommandCallback,
+  GlideCommandCallbackProps,
 } from "./browser-excmds-registry.mts";
+import type { SetOptional } from "type-fest";
 
 const MozUtils = ChromeUtils.importESModule(
   "chrome://glide/content/utils/moz.mjs"
@@ -35,6 +37,8 @@ const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
 });
 
 interface ExecuteProps {
+  args: GlideCommandCallbackProps;
+
   mapping?: KeyMappingTrieNode | null;
 
   /**
@@ -80,14 +84,14 @@ class GlideExcmdsClass {
 
   async #execute_function_command(
     cb: GlideCommandCallback,
-    props?: ExecuteProps
+    props: ExecuteProps
   ) {
     if (props?.save_to_history === undefined || props.save_to_history) {
       this.add_to_command_history({ type: "callback", cb });
     }
 
     // TODO(glide): sandbox in some way?
-    await (cb() as any as Promise<void>);
+    await (cb(props.args) as any as Promise<void>);
   }
 
   /**
@@ -109,10 +113,16 @@ class GlideExcmdsClass {
 
   async execute(
     command: glide.ExcmdValue,
-    props?: ExecuteProps
+    props?: SetOptional<ExecuteProps, "args">
   ): Promise<void> {
     try {
-      await this.#execute(command, props);
+      await this.#execute(command, {
+        ...props,
+        args: {
+          tab_id: GlideBrowser.active_tab_id,
+          ...props?.args,
+        },
+      });
     } catch (err) {
       GlideBrowser._log.error(err);
 
@@ -131,7 +141,7 @@ class GlideExcmdsClass {
 
   async #execute(
     command: glide.ExcmdValue,
-    props?: ExecuteProps
+    props: ExecuteProps
   ): Promise<void> {
     if (typeof command === "function") {
       return this.#execute_function_command(command, props);
@@ -581,7 +591,7 @@ class GlideExcmdsClass {
             }
           );
           if (GlideBrowser.state.mode !== "normal") {
-            await GlideExcmds.execute("mode_change normal");
+            await GlideBrowser.api.excmds.execute("mode_change normal");
           }
 
           return;

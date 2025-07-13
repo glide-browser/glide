@@ -525,7 +525,13 @@ export const GLIDE_EXCOMMANDS_MAP = GLIDE_EXCOMMANDS.reduce((acc, cmd) => {
 
 export type GlideExcmdName = (typeof GLIDE_EXCOMMANDS)[number]["name"];
 export type GlideCommandString = GlideExcmdName | `${GlideExcmdName} ${string}`;
-export type GlideCommandCallback = () => void;
+export type GlideCommandCallbackProps = {
+  /**
+   * The tab that the callback is being executed in.
+   */
+  tab_id: number;
+};
+export type GlideCommandCallback = (props: GlideCommandCallbackProps) => void;
 export type GlideCommandValue = glide.ExcmdString | GlideCommandCallback;
 
 /**

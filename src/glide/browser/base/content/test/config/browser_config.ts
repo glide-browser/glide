@@ -994,3 +994,23 @@ add_task(async function test_keys_parse() {
     ok(true, "Correctly throws on invalid modifier");
   }
 });
+
+add_task(async function test_keymap_callback_receives_tab_id() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>i", ({ tab_id }) => {
+      glide.g.value = tab_id;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>i");
+    await sleep_frames(10);
+
+    const active_tab = await GlideBrowser.api.tabs.active();
+    is(
+      GlideBrowser.api.g.value,
+      active_tab.id,
+      "Keymap callback should receive tab_id that matches the active tab ID"
+    );
+  });
+});

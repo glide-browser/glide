@@ -619,6 +619,20 @@ class GlideBrowserClass {
     });
   }
 
+  get active_tab_id(): number {
+    const tab = gBrowser?.selectedTab;
+    if (!tab) {
+      throw new Error(
+        "could not resolve tab, did you call this too early in startup?"
+      );
+    }
+
+    return assert_present(
+      GlideBrowser.extension?.tabManager?.getWrapper?.(tab),
+      "could not resolve tab, did you call this too early in startup?"
+    ).id;
+  }
+
   async #invoke_urlenter_autocmd(location: nsIURI) {
     const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
     if (!cmds.length) {
