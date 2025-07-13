@@ -12,7 +12,7 @@ jobs:
   linux-build:
     name: Build - ${{ matrix.arch }}
 
-    runs-on: depot-ubuntu-24.04-arm-32
+    runs-on: depot-ubuntu-24.04-arm-16
     permissions:
       contents: write
     env:
