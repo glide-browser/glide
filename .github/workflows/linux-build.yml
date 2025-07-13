@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64]
+        arch: [aarch64, x86_64]
 
     steps:
       - name: Free Disk Space
