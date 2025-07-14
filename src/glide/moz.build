@@ -10,3 +10,7 @@ DIRS += [
     "toolkit",
     "cpp",
 ]
+
+TESTING_JS_MODULES += [
+    "bundled/fast-check.mjs",
+]

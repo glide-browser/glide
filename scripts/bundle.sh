@@ -18,6 +18,12 @@ pnpm esbuild \
   --bundle "$(node -e 'console.log(require.resolve("@markdoc/markdoc"))')" \
   > src/glide/bundled/markdoc.mjs
 
+pnpm esbuild \
+  --format=esm \
+  --minify \
+  --bundle "$(node -e 'console.log(require.resolve("fast-check"))')" \
+  > src/glide/bundled/fast-check.mjs
+
 # TODO(glide): only bundle the themes + languages we need
 pnpm esbuild \
   --format=esm \

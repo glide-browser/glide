@@ -212,6 +212,7 @@ declare namespace MockedExports {
 
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs": typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
     "resource://testing-common/GlideTestUtils.sys.mjs": typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
+    "resource://testing-common/fast-check.mjs": typeof import("fast-check");
 
     "resource://gre/modules/Extension.sys.mjs": typeof import("../engine/toolkit/components/extensions/Extension.sys.mjs");
     "resource://gre/modules/ExtensionCommon.sys.mjs": typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs");

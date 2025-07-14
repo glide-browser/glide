@@ -50,6 +50,7 @@
     "dts-bundle-generator": "^9.5.1",
     "esbuild": "^0.25.2",
     "execa": "^9.5.2",
+    "fast-check": "^4.2.0",
     "meow": "^13.2.0",
     "p-queue": "^8.1.0",
     "prettier": "^3.5.3",
