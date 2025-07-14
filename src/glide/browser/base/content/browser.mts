@@ -1399,7 +1399,7 @@ class GlideBrowserClass {
             "Glide::KeyMappingCancel",
             { mode }
           );
-        }, this.api.o.mapping_timeout) as unknown as number; // @types/node conflict
+        }, this.api.o.mapping_timeout);
       }
     } else if (mapping.value) {
       this.key_manager.reset_sequence();

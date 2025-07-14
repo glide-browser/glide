@@ -23,10 +23,7 @@ globalThis.ChromeUtils = {
    * @param {any} module_uri
    */
   importESModule(module_uri) {
-    /** @type {keyof MockedExports.KnownModules} */
-    const mod = module_uri;
-
-    switch (mod) {
+    switch (module_uri) {
       case "chrome://glide/content/plugins/hints.mjs":
         return a_require(
           `${SRC_DIR}/glide/browser/base/content/plugins/hints.mts`
@@ -161,10 +158,10 @@ globalThis.ChromeUtils = {
       case "resource://gre/modules/ExtensionCommon.sys.mjs":
       case "resource://testing-common/GlideTestUtils.sys.mjs":
       case "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
-        throw new Error(`cannot import ${mod} in non-firefox context`);
+        throw new Error(`cannot import ${module_uri} in non-firefox context`);
 
       default:
-        throw check_never(mod);
+        throw new Error(`No import mapping defined for ${module_uri} yet`);
     }
   },
 };
@@ -173,8 +170,3 @@ globalThis.ChromeUtils = {
  * @type {typeof require}
  */
 const a_require = require;
-
-/**
- * @param {never} _x
- */
-function check_never(_x) {}

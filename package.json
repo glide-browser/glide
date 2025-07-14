@@ -26,6 +26,7 @@
     
     "tsc": "./scripts/check-types.sh",
     "tsc:browser": "tsc -p tsconfig.check.json",
+    "tsc:scripts": "tsc -p scripts/tsconfig.json",
     "tsc:config": "tsc -p src/glide/browser/base/content/test/config/types/tsconfig.json",
     "format": "prettier -w .",
     "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
