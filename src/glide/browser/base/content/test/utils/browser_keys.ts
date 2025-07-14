@@ -5,6 +5,11 @@
 
 import type { KeyMappingTrieNode } from "../../utils/keys.mjs";
 
+const fc = ChromeUtils.importESModule(
+  "resource://testing-common/fast-check.mjs",
+  { global: "current" }
+).default;
+
 const { split, event_to_key_notation, KeyManager, normalize, parse_modifiers } =
   ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", {
     global: "current",
@@ -470,4 +475,19 @@ add_task(async function test_shifted_character_normalization() {
   // on a US keyboard this would never match anything as ctrl+shift+1 would actually
   // be sent as ctrl+shift+!, but if you do this you deserve to have strange behaviour
   is(normalize("<C-S-1>"), "<C-S-1>");
+});
+
+add_task(function normalize_is_idempotent() {
+  fc.assert(
+    fc.property(fc.string(), input => {
+      const normalized = normalize(input);
+      const double_normalized = normalize(normalized);
+      return normalized === double_normalized;
+    }),
+    {
+      seed: 1,
+      numRuns: 1000,
+      verbose: true,
+    }
+  );
 });

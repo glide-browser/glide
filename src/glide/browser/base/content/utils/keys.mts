@@ -410,7 +410,7 @@ export class KeyManager {
  *
  * https://github.com/neovim/neovim/blob/3a25995f304039517b99b8c7d79654adf65c7562/src/nvim/keycodes.c#L145
  */
-const SPECIAL_KEY_MAP: Record<string, string> = {
+const SPECIAL_KEY_MAP = new Map(Object.entries({
   BS: "BS",
   Backspace: "BS",
   CR: "CR",
@@ -453,9 +453,9 @@ const SPECIAL_KEY_MAP: Record<string, string> = {
   "<": "lt",
   "|": "Bar",
   "\\": "Bslash",
-};
-const REVERSE_SPECIAL_KEY_MAP = Object.fromEntries(
-  Object.entries(SPECIAL_KEY_MAP).map(([k, v]) => [v, k])
+}));
+const REVERSE_SPECIAL_KEY_MAP = new Map(
+  Array.from(SPECIAL_KEY_MAP.entries()).map(([k, v]) => [v, k])
 );
 
 /**
@@ -464,11 +464,11 @@ const REVERSE_SPECIAL_KEY_MAP = Object.fromEntries(
  * For example, if just `|` is pressed with *no modifiers*, then we need to keep it as `|` but if there
  * are modifiers then we need to keep it as a special char, e.g. `<D-Bar>`
  */
-const DOWNCAST_SPECIAL_KEY_MAP: Record<string, string> = {
+const DOWNCAST_SPECIAL_KEY_MAP = new Map(Object.entries({
   lt: "<",
   Bar: "|",
   Bslash: "\\",
-};
+}));
 
 /**
  * Characters that are inherently "shifted" on a US keyboard and should not
@@ -514,7 +514,7 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
     modifiers.push("D");
   }
 
-  const special_key = SPECIAL_KEY_MAP[event.key] ?? null;
+  const special_key = SPECIAL_KEY_MAP.get(event.key) ?? null;
   const key = special_key ?? event.key;
 
   // We assume that, if we are given a key with a single character length then it must have
@@ -535,7 +535,7 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   // To match vim behaviour, we need to map certain would-be-special-keys into
   // their non-special form, e.g. `<`, `|`, `\\`, but only if there are *no* modifiers
   // present. If there are modifiers then these must be kept as special chars, e.g. `<D-lt>`
-  const downcast_key = DOWNCAST_SPECIAL_KEY_MAP[key];
+  const downcast_key = DOWNCAST_SPECIAL_KEY_MAP.get(key);
   if (downcast_key && !modifiers.length) {
     return downcast_key;
   }
@@ -568,7 +568,7 @@ export function normalize(keyn: string): string {
   // case-insensitive normalizing of special keys, e.g.
   // `<space>` -> `<Space>`
   const lower_key = parsed.key.toLowerCase();
-  for (const special_key of Object.values(SPECIAL_KEY_MAP)) {
+  for (const special_key of SPECIAL_KEY_MAP.values()) {
     if (lower_key === special_key.toLowerCase()) {
       parsed.key = special_key;
       break;
@@ -585,7 +585,7 @@ export function normalize(keyn: string): string {
   // the same key notation, no matter if you provide `<C-S-+>` or `<C-+>`.
   if (
     parsed.shiftKey &&
-    SHIFTED_CHARACTERS.has(REVERSE_SPECIAL_KEY_MAP[parsed.key] || parsed.key)
+    SHIFTED_CHARACTERS.has(REVERSE_SPECIAL_KEY_MAP.get(parsed.key) || parsed.key)
   ) {
     parsed.shiftKey = false;
   }
@@ -708,7 +708,7 @@ function to_special_key(key: string): string | null {
   }
 
   const lower_key = key.toLowerCase();
-  for (const special_key of Object.values(SPECIAL_KEY_MAP)) {
+  for (const special_key of SPECIAL_KEY_MAP.values()) {
     if (lower_key === special_key.toLowerCase()) {
       return "<" + special_key + ">";
     }
