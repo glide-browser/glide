@@ -3,6 +3,7 @@
   "extends": "./tsconfig.json",
   "exclude": [
     "src/glide.ts",
+    "scripts",
     // --------- from `./tsconfig.json` -----------
     "_dev",
     "engine",

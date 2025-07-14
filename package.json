@@ -24,7 +24,9 @@
 
     "lint": "./scripts/lint.sh",
     
-    "tsc": "tsc -p tsconfig.check.json",
+    "tsc": "./scripts/check-types.sh",
+    "tsc:browser": "tsc -p tsconfig.check.json",
+    "tsc:config": "tsc -p src/glide/browser/base/content/test/config/types/tsconfig.json",
     "format": "prettier -w .",
     "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
     "test": "pnpm mach test glide"
