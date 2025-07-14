@@ -79,14 +79,17 @@
       }
 
       document.addEventListener("keydown", event => {
+        console.log("keydown", event);
         addEvent(keydownEvents, event);
       });
 
       document.addEventListener("keypress", event => {
+        console.log("keypress", event);
         addEvent(keypressEvents, event);
       });
 
       document.addEventListener("keyup", event => {
+        console.log("keyup", event);
         addEvent(keyupEvents, event);
       });
     </script>

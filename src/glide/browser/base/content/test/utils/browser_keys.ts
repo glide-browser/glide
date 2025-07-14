@@ -257,3 +257,217 @@ add_task(async function test_keymaps_list_filter() {
     "Only normal/visual keymaps should be returned"
   );
 });
+
+add_task(async function test_shifted_characters() {
+  // test that inherently shifted characters don't get the S modifier,
+  // note: this currently has only been tested on a US keyboard.
+
+  // number row
+  is(to_key_notation({ key: "!", shiftKey: true }), "!");
+  is(to_key_notation({ key: "@", shiftKey: true }), "@");
+  is(to_key_notation({ key: "#", shiftKey: true }), "#");
+  is(to_key_notation({ key: "$", shiftKey: true }), "$");
+  is(to_key_notation({ key: "%", shiftKey: true }), "%");
+  is(to_key_notation({ key: "^", shiftKey: true }), "^");
+  is(to_key_notation({ key: "&", shiftKey: true }), "&");
+  is(to_key_notation({ key: "*", shiftKey: true }), "*");
+  is(to_key_notation({ key: "(", shiftKey: true }), "(");
+  is(to_key_notation({ key: ")", shiftKey: true }), ")");
+
+  // others
+  is(to_key_notation({ key: "_", shiftKey: true }), "_");
+  is(to_key_notation({ key: "+", shiftKey: true }), "+");
+  is(to_key_notation({ key: "{", shiftKey: true }), "{");
+  is(to_key_notation({ key: "}", shiftKey: true }), "}");
+  is(to_key_notation({ key: ":", shiftKey: true }), ":");
+  is(to_key_notation({ key: '"', shiftKey: true }), '"');
+  is(to_key_notation({ key: ">", shiftKey: true }), ">");
+  is(to_key_notation({ key: "?", shiftKey: true }), "?");
+  is(to_key_notation({ key: "~", shiftKey: true }), "~");
+
+  // keys with special handling
+  is(to_key_notation({ key: "<", shiftKey: true }), "<");
+  is(to_key_notation({ key: "|", shiftKey: true }), "|");
+});
+
+add_task(async function test_shifted_characters_with_modifiers() {
+  // single
+  is(to_key_notation({ key: "+", ctrlKey: true, shiftKey: true }), "<C-+>");
+  is(to_key_notation({ key: "!", ctrlKey: true, shiftKey: true }), "<C-!>");
+  is(to_key_notation({ key: "@", ctrlKey: true, shiftKey: true }), "<C-@>");
+  is(to_key_notation({ key: "#", ctrlKey: true, shiftKey: true }), "<C-#>");
+  is(to_key_notation({ key: "$", ctrlKey: true, shiftKey: true }), "<C-$>");
+  is(to_key_notation({ key: "%", ctrlKey: true, shiftKey: true }), "<C-%>");
+  is(to_key_notation({ key: "^", ctrlKey: true, shiftKey: true }), "<C-^>");
+  is(to_key_notation({ key: "&", ctrlKey: true, shiftKey: true }), "<C-&>");
+  is(to_key_notation({ key: "*", ctrlKey: true, shiftKey: true }), "<C-*>");
+  is(to_key_notation({ key: "(", ctrlKey: true, shiftKey: true }), "<C-(>");
+  is(to_key_notation({ key: ")", ctrlKey: true, shiftKey: true }), "<C-)>");
+  is(to_key_notation({ key: "_", ctrlKey: true, shiftKey: true }), "<C-_>");
+  is(to_key_notation({ key: "{", ctrlKey: true, shiftKey: true }), "<C-{>");
+  is(to_key_notation({ key: "}", ctrlKey: true, shiftKey: true }), "<C-}>");
+  is(to_key_notation({ key: ":", ctrlKey: true, shiftKey: true }), "<C-:>");
+  is(to_key_notation({ key: '"', ctrlKey: true, shiftKey: true }), '<C-">');
+  is(to_key_notation({ key: "<", ctrlKey: true, shiftKey: true }), "<C-lt>");
+  is(to_key_notation({ key: ">", ctrlKey: true, shiftKey: true }), "<C->>");
+  is(to_key_notation({ key: "?", ctrlKey: true, shiftKey: true }), "<C-?>");
+  is(to_key_notation({ key: "~", ctrlKey: true, shiftKey: true }), "<C-~>");
+
+  // multiple
+  is(
+    to_key_notation({ key: "+", ctrlKey: true, altKey: true, shiftKey: true }),
+    "<C-A-+>"
+  );
+  is(
+    to_key_notation({ key: "!", ctrlKey: true, altKey: true, shiftKey: true }),
+    "<C-A-!>"
+  );
+  is(
+    to_key_notation({ key: "@", ctrlKey: true, metaKey: true, shiftKey: true }),
+    "<C-D-@>"
+  );
+  is(
+    to_key_notation({
+      key: "#",
+      ctrlKey: true,
+      altKey: true,
+      metaKey: true,
+      shiftKey: true,
+    }),
+    "<C-A-D-#>"
+  );
+});
+
+add_task(async function test_non_shifted_versions_of_characters_with_shift() {
+  const render = to_key_notation;
+  todo_is(render({ key: "-", shiftKey: true }), "_");
+  todo_is(render({ key: "-", ctrlKey: true, shiftKey: true }), "<C-_>");
+  todo_is(render({ key: "=", ctrlKey: true, shiftKey: true }), "<C-+>");
+  todo_is(render({ key: "[", ctrlKey: true, shiftKey: true }), "<C-{>");
+  todo_is(render({ key: "]", ctrlKey: true, shiftKey: true }), "<C-}>");
+  todo_is(render({ key: ";", ctrlKey: true, shiftKey: true }), "<C-:>");
+  todo_is(render({ key: "'", ctrlKey: true, shiftKey: true }), '<C-">');
+  todo_is(render({ key: ",", ctrlKey: true, shiftKey: true }), "<C-<>");
+  todo_is(render({ key: ".", ctrlKey: true, shiftKey: true }), "<C->>");
+  todo_is(render({ key: "/", ctrlKey: true, shiftKey: true }), "<C-|>");
+  todo_is(render({ key: "`", ctrlKey: true, shiftKey: true }), "<C-~>");
+});
+
+add_task(async function test_non_shifted_characters_with_shift() {
+  is(to_key_notation({ key: "a", ctrlKey: true, shiftKey: true }), "<C-S-a>");
+  is(to_key_notation({ key: "z", ctrlKey: true, shiftKey: true }), "<C-S-z>");
+  is(to_key_notation({ key: "h", altKey: true, shiftKey: true }), "<A-S-h>");
+  is(to_key_notation({ key: "x", metaKey: true, shiftKey: true }), "<D-S-x>");
+});
+
+add_task(async function test_special_keys_with_shift() {
+  is(to_key_notation({ key: "Tab", shiftKey: true }), "<S-Tab>");
+  is(
+    to_key_notation({ key: "Tab", ctrlKey: true, shiftKey: true }),
+    "<C-S-Tab>"
+  );
+  is(to_key_notation({ key: "Enter", shiftKey: true }), "<S-CR>");
+  is(
+    to_key_notation({ key: "Enter", ctrlKey: true, shiftKey: true }),
+    "<C-S-CR>"
+  );
+  is(to_key_notation({ key: "Escape", shiftKey: true }), "<S-Esc>");
+  is(
+    to_key_notation({ key: "Escape", altKey: true, shiftKey: true }),
+    "<A-S-Esc>"
+  );
+  is(to_key_notation({ key: "Space", shiftKey: true }), "<S-Space>");
+  is(
+    to_key_notation({ key: "Space", metaKey: true, shiftKey: true }),
+    "<D-S-Space>"
+  );
+  is(to_key_notation({ key: "ArrowUp", shiftKey: true }), "<S-Up>");
+  is(
+    to_key_notation({ key: "ArrowDown", ctrlKey: true, shiftKey: true }),
+    "<C-S-Down>"
+  );
+  is(
+    to_key_notation({ key: "ArrowLeft", altKey: true, shiftKey: true }),
+    "<A-S-Left>"
+  );
+  is(
+    to_key_notation({ key: "ArrowRight", metaKey: true, shiftKey: true }),
+    "<D-S-Right>"
+  );
+  is(to_key_notation({ key: "F1", shiftKey: true }), "<S-F1>");
+  is(
+    to_key_notation({ key: "F12", ctrlKey: true, shiftKey: true }),
+    "<C-S-F12>"
+  );
+  is(to_key_notation({ key: "Backspace", shiftKey: true }), "<S-BS>");
+  is(to_key_notation({ key: "Delete", shiftKey: true }), "<S-Del>");
+  is(to_key_notation({ key: "Home", shiftKey: true }), "<S-Home>");
+  is(to_key_notation({ key: "End", shiftKey: true }), "<S-End>");
+  is(to_key_notation({ key: "PageUp", shiftKey: true }), "<S-PageUp>");
+  is(to_key_notation({ key: "PageDown", shiftKey: true }), "<S-PageDown>");
+});
+
+add_task(async function test_shift_edge_cases() {
+  // uppercase letters don't get double-shifted
+  is(to_key_notation({ key: "A", shiftKey: true }), "A");
+  is(to_key_notation({ key: "A", ctrlKey: true, shiftKey: true }), "<C-S-A>");
+  is(to_key_notation({ key: "Z", ctrlKey: true, shiftKey: true }), "<C-S-Z>");
+
+  // Test that shifted characters work without the shift key too
+  is(to_key_notation({ key: "+" }), "+");
+  is(to_key_notation({ key: "!", ctrlKey: true }), "<C-!>");
+  is(to_key_notation({ key: "@", altKey: true }), "<A-@>");
+  is(to_key_notation({ key: "#", metaKey: true }), "<D-#>");
+});
+
+add_task(async function test_shifted_character_normalization() {
+  // shifted chars without any modifiers
+  is(normalize("+"), "+");
+  is(normalize("!"), "!");
+  is(normalize("@"), "@");
+
+  // S- is stripped from shifted chars
+  is(normalize("<S-+>"), "+");
+  is(normalize("<S-!>"), "!");
+  is(normalize("<S-@>"), "@");
+  is(normalize("<C-S-+>"), normalize("<C-+>"));
+  is(normalize("<C-S-!>"), normalize("<C-!>"));
+  is(normalize("<C-S-@>"), normalize("<C-@>"));
+  is(normalize("<C-S-#>"), normalize("<C-#>"));
+  is(normalize("<C-S-$>"), normalize("<C-$>"));
+  is(normalize("<C-S-%>"), normalize("<C-%>"));
+  is(normalize("<C-S-^>"), normalize("<C-^>"));
+  is(normalize("<C-S-&>"), normalize("<C-&>"));
+  is(normalize("<C-S-*>"), normalize("<C-*>"));
+  is(normalize("<C-S-(>"), normalize("<C-(>"));
+  is(normalize("<C-S-)>"), normalize("<C-)>"));
+  is(normalize("<C-S-_>"), normalize("<C-_>"));
+  is(normalize("<C-S-{>"), normalize("<C-{>"));
+  is(normalize("<C-S-}>"), normalize("<C-}>"));
+  is(normalize("<C-S-:>"), normalize("<C-:>"));
+  is(normalize('<C-S-">'), normalize('<C-">'));
+  is(normalize("<C-S->>"), normalize("<C->>"));
+  is(normalize("<C-S-?>"), normalize("<C-?>"));
+  is(normalize("<C-S-~>"), normalize("<C-~>"));
+
+  // multiple modifiers
+  is(normalize("<C-A-S-+>"), normalize("<C-A-+>"));
+  is(normalize("<C-D-S-!>"), normalize("<C-D-!>"));
+  is(normalize("<C-A-D-S-@>"), normalize("<C-A-D-@>"));
+  is(normalize("<C-S-+>"), "<C-+>");
+  is(normalize("<C-S-!>"), "<C-!>");
+  is(normalize("<A-S-@>"), "<A-@>");
+  is(normalize("<D-S-#>"), "<D-#>");
+
+  // special keys
+  is(normalize("<C-S-lt>"), normalize("<C-lt>"));
+  is(normalize("<C-S-Bar>"), normalize("<C-Bar>"));
+
+  // non-shifted chars keep the S modifier
+  is(normalize("<C-S-a>"), "<C-S-A>");
+  is(normalize("<C-S-=>"), "<C-S-=>");
+
+  // on a US keyboard this would never match anything as ctrl+shift+1 would actually
+  // be sent as ctrl+shift+!, but if you do this you deserve to have strange behaviour
+  is(normalize("<C-S-1>"), "<C-S-1>");
+});

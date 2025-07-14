@@ -454,6 +454,9 @@ const SPECIAL_KEY_MAP: Record<string, string> = {
   "|": "Bar",
   "\\": "Bslash",
 };
+const REVERSE_SPECIAL_KEY_MAP = Object.fromEntries(
+  Object.entries(SPECIAL_KEY_MAP).map(([k, v]) => [v, k])
+);
 
 /**
  * A mapping of special keys that should be downcast to non-special keys in certain scenarios.
@@ -466,6 +469,17 @@ const DOWNCAST_SPECIAL_KEY_MAP: Record<string, string> = {
   Bar: "|",
   Bslash: "\\",
 };
+
+/**
+ * Characters that are inherently "shifted" on a US keyboard and should not
+ * include the S modifier when they appear in key combinations as they
+ * inherintly require the shift key to type.
+ */
+// prettier-ignore
+const SHIFTED_CHARACTERS = new Set([
+  "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
+  "_", "+", "{", "}", "|", ":", '"', "<", ">", "?", "~"
+]);
 
 /**
  * A minimla version of `KeyboardEvent` that only defines the properties we rely on.
@@ -506,10 +520,15 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   // We assume that, if we are given a key with a single character length then it must have
   // already been shift-ed. e.g. `{ key: 'A', shiftKey: true }`
   //
-  // TODO(glide): investigate key shifting logic more
+  // For inherently shifted characters (like +, !, @, etc.), we don't add the S modifier
+  // because the character itself already represents the shifted state
   const is_single_char = key.length === 1;
-  if (event.shiftKey && (!is_single_char || modifiers.length)) {
-    // Note: I'm not confident in this logic, it *looks* like nvim only does this for ascii alphanumeric
+  const is_shifted_char = SHIFTED_CHARACTERS.has(event.key);
+  if (
+    event.shiftKey &&
+    (!is_single_char || modifiers.length) &&
+    !is_shifted_char
+  ) {
     modifiers.push("S");
   }
 
@@ -560,6 +579,15 @@ export function normalize(keyn: string): string {
   // with `{ shiftKey: true, key: 'UPPER_CHAR'}`
   if (parsed.shiftKey && parsed.key.length === 1) {
     parsed.key = parsed.key.toLocaleUpperCase();
+  }
+
+  // For shifted characters, remove the S modifier if present so that we always normalise to
+  // the same key notation, no matter if you provide `<C-S-+>` or `<C-+>`.
+  if (
+    parsed.shiftKey &&
+    SHIFTED_CHARACTERS.has(REVERSE_SPECIAL_KEY_MAP[parsed.key] || parsed.key)
+  ) {
+    parsed.shiftKey = false;
   }
 
   return event_to_key_notation(parsed);
