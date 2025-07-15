@@ -5,3 +5,10 @@ ac_add_options --disable-updater
 ac_add_options --disable-dmd
 
 export VERBOSE=1
+
+if command -v mold >/dev/null 2>&1; then
+    export CC="clang"
+    export CXX="clang++"
+    export LDFLAGS="-fuse-ld=mold"
+    ac_add_options --enable-linker=mold
+fi
