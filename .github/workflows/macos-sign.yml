@@ -7,6 +7,12 @@ on:
         description: "Release tag to sign"
         required: true
         type: string
+  workflow_call:
+    inputs:
+      artifacts:
+        description: "Upload DMG to CI artifacts instead of the release directly"
+        required: true
+        type: boolean
 
 jobs:
   macos-sign:
@@ -57,6 +63,7 @@ jobs:
           p12-password: ${{ secrets.MACOS_P12_PASSWORD }}
 
       - name: Download built DMG
+        if: inputs.tag
         run: |
           mkdir -p dist
           ./.github/scripts/github-download-artifact.sh
@@ -65,6 +72,18 @@ jobs:
           ASSET_NAME: "glide-aarch64.mac.dmg"
           OUTPUT_FILE: "dist/glide.dmg"
           GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Download built DMG
+        if: inputs.artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: glide.macos-aarch64.dmg
+          path: dist
+
+      - name: Rename DMG
+        if: inputs.artifacts
+        run: |
+          mv dist/*.dmg dist/glide.dmg
 
       - name: Install system dependencies
         run: |
@@ -117,7 +136,15 @@ jobs:
           PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
 
       - name: Upload signed DMG to release
+        if: inputs.tag
         run: |
           gh release upload ${{ inputs.tag }} ./engine/glide.macos-aarch64.dmg#glide.macos-aarch64-signed.dmg --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: glide.macos-aarch64.signed.dmg
+          path: ./engine/glide.macos-aarch64.dmg
