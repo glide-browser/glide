@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64]
+        arch: [aarch64, x86_64]
 
     steps:
       - name: Debug
@@ -100,6 +100,7 @@ jobs:
             rustup target add aarch64-apple-darwin
           else
             rustup target add x86_64-apple-darwin
+            brew install nasm
           fi
 
       - name: Bootstrap repo
@@ -120,6 +121,8 @@ jobs:
           pnpm build
 
       - name: Package
+        env:
+          GLIDER_COMPAT: ${{ matrix.arch }}
         run: |
           pnpm package
 

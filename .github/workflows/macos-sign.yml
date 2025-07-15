@@ -21,6 +21,11 @@ jobs:
     timeout-minutes: 40
     environment: release
 
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, x86_64]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -77,7 +82,7 @@ jobs:
         if: inputs.artifacts
         uses: actions/download-artifact@v4
         with:
-          name: glide.macos-aarch64.dmg
+          name: glide.macos-${{ matrix.arch }}.dmg
           path: dist
 
       - name: Rename DMG
@@ -126,13 +131,14 @@ jobs:
         run: |
           ./.github/scripts/macos-sign.sh
         env:
+          ARCH: ${{ matrix.arch }}
           APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
           APPLE_ACCOUNT_ID: ${{ secrets.APPLE_ACCOUNT_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_APP_ID_PASSWORD: ${{ secrets.APPLE_APP_ID_PASSWORD }}
           P12_BASE64: ${{ secrets.MACOS_P12_BASE64 }}
           P12_PASSWORD: ${{ secrets.MACOS_P12_PASSWORD }}
-          AARCH64_DMG_PATH: ./dist/glide.dmg
+          DMG_PATH: ./dist/glide.dmg
           PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
 
       - name: Upload signed DMG to release
@@ -146,5 +152,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 10
-          name: glide.macos-aarch64.signed.dmg
-          path: ./engine/glide.macos-aarch64.dmg
+          name: glide.macos-${{ matrix.arch }}.signed.dmg
+          path: ./engine/glide.macos-${{ matrix.arch }}.dmg

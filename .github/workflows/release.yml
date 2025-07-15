@@ -94,6 +94,11 @@ jobs:
         with:
           name: glide.macos-aarch64.signed.dmg
 
+      - name: Download signed macOS DMG (x86_64)
+        uses: actions/download-artifact@v4
+        with:
+          name: glide.macos-x86_64.signed.dmg
+
       - name: Setup release
         run: |
           if gh release view ${{ needs.metadata.outputs.version }} > /dev/null 2>&1; then
@@ -109,5 +114,6 @@ jobs:
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-aarch64.tar.xz --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-x86_64.tar.xz --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-aarch64.dmg --clobber
+          gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-x86_64.dmg --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
