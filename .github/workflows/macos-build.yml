@@ -121,9 +121,10 @@ jobs:
         run: |
           pnpm package
 
-      - name: Rename DMG
+      - name: Rename artifacts
         run: |
           mv dist/glide-*.dmg "dist/glide.macos-${{ matrix.arch }}.dmg"
+          mv dist/output.mar "dist/macos-${{ matrix.arch }}.mar"
 
       - name: Upload DMG to release
         if: inputs.tag
@@ -138,3 +139,18 @@ jobs:
           retention-days: 10
           name: glide.macos-${{ matrix.arch }}.dmg
           path: ./dist/glide.macos-${{ matrix.arch }}.dmg
+
+      - name: Upload MAR
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: macos-${{ matrix.arch }}.mar
+          path: ./dist/macos-${{ matrix.arch }}.mar
+
+      - name: Upload browser upload manifests
+        if: inputs.upload
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: macos-${{ matrix.arch }}-updates
+          path: ./dist/update/

@@ -112,9 +112,10 @@ jobs:
         run: |
           pnpm package
 
-      - name: Rename artifact
+      - name: Rename artifacts
         run: |
           mv dist/glide-*.tar.xz "dist/glide.linux-${{ matrix.arch }}.tar.xz"
+          mv dist/output.mar "dist/linux-${{ matrix.arch }}.mar"
 
       - name: Upload tar to release
         if: inputs.tag
@@ -130,3 +131,18 @@ jobs:
           retention-days: 10
           name: glide.linux-${{ matrix.arch }}.tar.xz
           path: ./dist/glide.linux-${{ matrix.arch }}.tar.xz
+
+      - name: Upload MAR
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: linux-${{ matrix.arch }}.mar
+          path: ./dist/linux-${{ matrix.arch }}.mar
+
+      - name: Upload browser upload manifests
+        if: inputs.upload
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: linux-${{ matrix.arch }}-updates
+          path: ./dist/update/
