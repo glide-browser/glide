@@ -1,7 +1,3 @@
-.download-section {
-  margin: 2rem 0;
-}
-
 .download-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
