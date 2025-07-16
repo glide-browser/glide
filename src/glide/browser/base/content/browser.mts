@@ -400,7 +400,7 @@ class GlideBrowserClass {
 
       const loc =
         this.#clean_stack(err, this.#reload_config.name) ?? "glide.ts";
-      this.add_notification(this.#config_error_id, {
+      this.add_notification(this.config_error_id, {
         label: `An error occurred while evaluating \`${loc}\` - ${err}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
         buttons: [
@@ -491,7 +491,7 @@ class GlideBrowserClass {
 
     for (const { error, source } of [...errors]) {
       const loc = this.#clean_stack(error, source) ?? "<unknown>";
-      this.add_notification(this.#config_error_id, {
+      this.add_notification(this.config_error_id, {
         label: `An error occurred inside a Web Extension listener at ${loc} - ${error}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
         buttons: [this.remove_all_notifications_button],
@@ -783,14 +783,14 @@ class GlideBrowserClass {
       : null;
   }
 
-  #config_error_id = "glide-config-error";
+  config_error_id = "glide-config-error";
 
   #clear_config_error_notification() {
     try {
       for (const notification of gNotificationBox.allNotifications) {
         const value = notification.getAttribute("value");
         if (
-          value === this.#config_error_id ||
+          value === this.config_error_id ||
           value === this.config_pending_notification_id
         ) {
           gNotificationBox.removeNotification(notification);
@@ -1911,6 +1911,82 @@ function make_glide_api(): typeof glide {
       },
       clear(name) {
         Services.prefs.clearUserPref(name);
+      },
+    },
+    unstable: {
+      async include(rel_path) {
+        const config_path = assert_present(
+          GlideBrowser.config_path,
+          "cannot call .include() without a config path set"
+        );
+        const config_dir = assert_present(
+          PathUtils.parent(config_path),
+          `Could not resolve parent dir for config path ${config_path}`
+        );
+
+        const path = (() => {
+          try {
+            return PathUtils.join(config_dir, rel_path);
+          } catch (err) {
+            throw new Error(
+              `Could not resolve file at path ${config_dir} + ${rel_path}`
+            );
+          }
+        })();
+
+        GlideBrowser._log.info(`Including \`${path}\``);
+        const config_str = await IOUtils.readUTF8(path);
+
+        const sandbox = create_sandbox({
+          document,
+          console,
+          get glide(): Glide {
+            return {
+              ...GlideBrowser.api,
+              unstable: {
+                ...GlideBrowser.api.unstable,
+                include: async () => {
+                  throw new Error(
+                    "Nested `.include()` calls are not supported yet"
+                  );
+                },
+              },
+            };
+          },
+          get browser() {
+            return GlideBrowser.browser_proxy_api;
+          },
+        });
+
+        try {
+          const config_js = ts_blank_space(config_str);
+          Cu.evalInSandbox(
+            config_js,
+            sandbox,
+            null,
+            `chrome://glide/config/${rel_path}`,
+            1,
+            false
+          );
+        } catch (err) {
+          GlideBrowser._log.error(err);
+
+          // TODO: better stack trace
+          const loc = (err as Error).stack ?? rel_path;
+          GlideBrowser.add_notification(GlideBrowser.config_error_id, {
+            label: `An error occurred while evaluating \`${loc}\` - ${err}`,
+            priority:
+              MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+            buttons: [
+              {
+                "l10n-id": "glide-error-notification-reload-config-button",
+                callback: () => {
+                  GlideBrowser.reload_config();
+                },
+              },
+            ],
+          });
+        }
       },
     },
   };

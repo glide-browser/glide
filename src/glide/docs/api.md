@@ -341,6 +341,26 @@ in in the input.
 `ts:@example "<C-S-a>" -> { key: "A", shift: true, ctrl: true }`
 
 `ts:@example "<M-a>" -> { key: "a", meta: true }`
+## • `glide.unstable` {% id="glide.unstable" %}
+
+
+{% api-heading id="glide.unstable.include" %}
+glide.unstable.include(path): Promise<void>
+{% /api-heading %}
+
+
+Include another file as part of your config. The given file is evluated as if it
+was just another Glide config file.
+
+**note**: this only supports files that are directly relative to your config file,
+          for example, "shared.glide.ts" or "shared/glide.ts" would work but
+          "../shared/glide.ts" will not.
+
+**note**: this function cannot be called from inside a file that has been included
+          itself, i.e. nested `include()` calls are not supported.
+
+
+`ts:@example glide.unstable.include("shared.glide.ts")`
 ## • `glide.modes` {% id="glide.modes" %}
 
 

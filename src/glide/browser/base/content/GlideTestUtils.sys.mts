@@ -56,14 +56,14 @@ class GlideTestUtilsClass {
     return await GlideBrowser.reload_config();
   }
 
-  write_config(config_fn: () => void): void {
+  write_config(config_fn: () => void, filename = "glide.ts"): void {
     // get config file path & touch it
     let configFile = Services.dirsvc!.QueryInterface!(Ci.nsIProperties).get(
       "ProfD",
       Ci.nsIFile
     );
     configFile.append("glide");
-    configFile.append("glide.ts");
+    configFile.append(filename);
     try {
       configFile.remove(/* recursive */ false);
     } catch (_) {}

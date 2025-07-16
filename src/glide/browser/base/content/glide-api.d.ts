@@ -421,6 +421,23 @@ declare global {
       parse(key_notation: string): glide.KeyNotation;
     };
 
+    unstable: {
+      /**
+       * Include another file as part of your config. The given file is evluated as if it
+       * was just another Glide config file.
+       *
+       * **note**: this only supports files that are directly relative to your config file,
+       *           for example, "shared.glide.ts" or "shared/glide.ts" would work but
+       *           "../shared/glide.ts" will not.
+       *
+       * **note**: this function cannot be called from inside a file that has been included
+       *           itself, i.e. nested `include()` calls are not supported.
+       *
+       * @example glide.unstable.include("shared.glide.ts")
+       */
+      include(path: string): Promise<void>;
+    };
+
     modes: {
       /**
        * Register a custom `mode`.
