@@ -70,6 +70,13 @@
   text-align: center;
   color: grey;
   line-height: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  #keyboard-shortcuts-note {
+    line-height: 1.4rem;
+  }
 }
 
 .shortcuts-container {
