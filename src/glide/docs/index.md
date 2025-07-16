@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="./index.css" />
 {% /head %}
 
-# Glide Docs
+# Glide
 
 Glide is a fork of Firefox focused on deep customizability, keyboard navigation and bringing the best parts of Vim to the browser. See the [quickstart](./quickstart.md) for more information.
 
