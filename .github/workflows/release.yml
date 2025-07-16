@@ -47,8 +47,7 @@ jobs:
       - name: Get version
         id: version
         run: |
-          version=$(pnpm glider get version)
-          echo "version=v$version" >> $GITHUB_OUTPUT
+          echo "version=$(pnpm glider get version)" >> $GITHUB_OUTPUT
 
   linux:
     name: Linux build
