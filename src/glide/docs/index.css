@@ -1,3 +1,68 @@
+.download-section {
+  margin: 2rem 0;
+}
+
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.download-platform {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.platform-label {
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.download-link {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-align: center;
+  color: #343b58;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+  --shiki-dark: #c0caf5;
+}
+
+.download-link:hover {
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .download-link {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    border-color: #4a5568;
+  }
+
+  .download-link:hover {
+    background-color: #404040 !important;
+    border-color: #606060;
+  }
+}
+
+#download {
+  text-align: center;
+}
+
 #keyboard-shortcuts {
   text-align: center;
   margin-top: 3rem;

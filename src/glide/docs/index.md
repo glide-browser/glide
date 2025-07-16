@@ -4,21 +4,31 @@
 
 # Glide Docs
 
-Glide is a fork of Firefox focused on deep customizability, keyboard navigation and bringing the best parts of Vim to the browser.
+Glide is a fork of Firefox focused on deep customizability, keyboard navigation and bringing the best parts of Vim to the browser. See the [quickstart](./quickstart.md) for more information.
 
-<!-- TODO: compelling yet simple / easy to understand example case of something cool Glide can do -->
+## Download
 
-```typescript
-glide.keymaps.set("normal", "<leader>f", () => {
-  if (thing) {
-    await do_some_thing(bufn);
-  } else {
-    await thing.other();
-  }
-});
-```
+{% html %}
+<div class="download-section">
+  <div class="download-grid">
+    <div class="download-platform">
+      <span class="platform-label">macOS</span>
+      <div class="download-buttons">
+        <a href="https://github.com/glide-browser/glide/releases/download/v0.1.22a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
+        <a href="https://github.com/glide-browser/glide/releases/download/v0.1.22a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Silicon</a>
+      </div>
+    </div>
+    <div class="download-platform">
+      <span class="platform-label">Linux</span>
+      <div class="download-buttons">
+        <a href="https://github.com/glide-browser/glide/releases/download/v0.1.22a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank">x64.tar</a>
+        <a href="https://github.com/glide-browser/glide/releases/download/v0.1.22a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank">aarch64.tar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% /html %}
 
-See the [quickstart](./quickstart.md) for more information.
 
 ## Keyboard shortcuts
 
