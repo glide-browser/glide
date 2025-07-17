@@ -73,6 +73,14 @@ body {
   body {
     padding: var(--line-height) 1ch;
   }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  pre {
+    margin: calc(var(--line-height) * 0.5) 0;
+  }
 }
 
 h1,

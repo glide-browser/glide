@@ -75,6 +75,33 @@
     }, 1000);
   };
 
+  window.open_mobile_menu = function () {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("mobile-nav-overlay");
+    sidebar.classList.add("mobile-menu-open");
+    overlay.classList.add("show");
+    // prevent body scroll when menu is open
+    document.body.style.overflow = "hidden";
+  };
+
+  window.close_mobile_menu = function () {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("mobile-nav-overlay");
+    sidebar.classList.remove("mobile-menu-open");
+    overlay.classList.remove("show");
+    // Restore body scroll
+    document.body.style.overflow = "";
+  };
+
+  window.toggle_mobile_menu = function () {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar && sidebar.classList.contains("mobile-menu-open")) {
+      window.close_mobile_menu();
+    } else {
+      window.open_mobile_menu();
+    }
+  };
+
   window.addEventListener("DOMContentLoaded", () => {
     window.pagefind_ui = new PagefindUI({
       element: "#search",
@@ -86,6 +113,19 @@
       window.open_search();
     });
 
+    document
+      .getElementById("mobile-menu-toggle")
+      .addEventListener("click", () => {
+        window.toggle_mobile_menu();
+      });
+
+    // close menu when clicking outside
+    document
+      .getElementById("mobile-nav-overlay")
+      .addEventListener("click", () => {
+        window.close_mobile_menu();
+      });
+
     document.addEventListener("keydown", event => {
       if (event.key.toLowerCase() === "/") {
         event.preventDefault();
@@ -93,6 +133,7 @@
       } else if (event.key === "Escape") {
         event.preventDefault();
         window.close_search();
+        window.close_mobile_menu();
       }
     });
 
