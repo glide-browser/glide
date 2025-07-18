@@ -53,17 +53,12 @@ jobs:
       - name: Build docs
         run: pnpm build:docs:full
 
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0.0
-        with:
-          publish-dir: "./src/glide/docs/dist"
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: false
-          enable-commit-comment: false
-          overwrites-pull-request-comment: false
+      - name: Deploy to Cloudflare
+        working-directory: src/glide/docs
+        run: |
+          npx wrangler pages deploy dist \
+            --project-name=glide \
+            --branch=main
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
