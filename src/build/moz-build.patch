@@ -1,0 +1,13 @@
+diff --git a/build/moz.build b/build/moz.build
+index f7a912ec35dd089ea9a7e712765e954854f55cb3..228f20de31a67f8e424622ab1504e9cb9381118e 100644
+--- a/build/moz.build
++++ b/build/moz.build
+@@ -89,7 +89,7 @@ if CONFIG["MOZ_APP_BASENAME"]:
+         if CONFIG[var]:
+             appini_defines[var] = True
+ 
+-    appini_defines["MOZ_APPUPDATE_HOST"] = "aus5.mozilla.org"
++    appini_defines["MOZ_APPUPDATE_HOST"] = "updates.glide-browser.app"
+     if CONFIG["MOZ_APPUPDATE_HOST"]:
+         appini_defines["MOZ_APPUPDATE_HOST"] = CONFIG["MOZ_APPUPDATE_HOST"]
+ 
