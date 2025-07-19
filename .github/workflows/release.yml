@@ -79,11 +79,63 @@ jobs:
     with:
       artifacts: true
 
+  source:
+    runs-on: ubuntu-latest
+    needs: [metadata]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # needed while we have private dependencies
+      - name: Configure GitHub auth
+        run: |
+          TOKEN="${{ secrets.REPO_ACCESS_TOKEN }}"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
+            "git@github.com:glide-browser/glider.git"
+
+          git config --global \
+            url."https://x-access-token:${TOKEN}@github.com/glide-browser/webextension-types.git".insteadOf \
+            "git@github.com:glide-browser/webextension-types.git"
+
+          git config --global \
+            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+            "git@github.com:mozilla-firefox/firefox.git"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Bootstrap repo
+        run: |
+          pnpm bootstrap
+
+      - name: Compress
+        working-directory: engine
+        run: |
+          tar --use-compress-program=zstd -hcf ../glide.source.tar.zst *
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: glide.source.tar.zst
+          path: ./glide.source.tar.zst
+
   release:
     name: Release
     runs-on: ubuntu-latest
     # needs: [linux, macos, macos-sign, metadata]
-    needs: [macos, macos-sign, metadata]
+    needs: [metadata, macos, macos-sign, source]
     environment: release
 
     steps:
@@ -129,12 +181,18 @@ jobs:
         with:
           name: macos-x86_64.mar
 
+      - name: Download source tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: glide.source.tar.zst
+
       - name: Upload artifacts to the release
         run: |
           # gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-aarch64.tar.xz --clobber
           # gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-x86_64.tar.xz --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-aarch64.dmg --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-x86_64.dmg --clobber
+          gh release upload ${{ needs.metadata.outputs.version }} ./glide.source.tar.zst --clobber
 
           # MAR files
           # gh release upload ${{ needs.metadata.outputs.version }} ./linux-aarch64.mar --clobber
