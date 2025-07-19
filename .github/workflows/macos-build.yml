@@ -148,7 +148,6 @@ jobs:
           path: ./dist/macos-${{ matrix.arch }}.mar
 
       - name: Upload browser upload manifests
-        if: inputs.upload
         uses: actions/upload-artifact@v4
         with:
           retention-days: 10
