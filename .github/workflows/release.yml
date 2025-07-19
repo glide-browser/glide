@@ -49,11 +49,11 @@ jobs:
         run: |
           echo "version=$(pnpm glider get version)" >> $GITHUB_OUTPUT
 
-  linux:
-    name: Linux build
-    uses: ./.github/workflows/linux-build.yml
-    with:
-      upload: true
+  # linux:
+  #   name: Linux build
+  #   uses: ./.github/workflows/linux-build.yml
+  #   with:
+  #     upload: true
 
   macos:
     name: macOS build
@@ -72,31 +72,32 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [linux, macos, macos-sign, metadata]
+    # needs: [linux, macos, macos-sign, metadata]
+    needs: [macos, macos-sign, metadata]
     environment: release
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Linux build (aarch64)
-        uses: actions/download-artifact@v4
-        with:
-          name: glide.linux-aarch64.tar.xz
-
-      - name: Download Linux build (x86_64)
-        uses: actions/download-artifact@v4
-        with:
-          name: glide.linux-x86_64.tar.xz
-
-      - name: Download linux MAR (aarch64)
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-aarch64.mar
-
-      - name: Download linux MAR (x86_64)
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-x86_64.mar
+      # - name: Download Linux build (aarch64)
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: glide.linux-aarch64.tar.xz
+      #
+      # - name: Download Linux build (x86_64)
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: glide.linux-x86_64.tar.xz
+      #
+      # - name: Download linux MAR (aarch64)
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: linux-aarch64.mar
+      #
+      # - name: Download linux MAR (x86_64)
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: linux-x86_64.mar
 
       - name: Download signed macOS DMG (aarch64)
         uses: actions/download-artifact@v4
@@ -130,14 +131,14 @@ jobs:
 
       - name: Upload artifacts to the release
         run: |
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-aarch64.tar.xz --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-x86_64.tar.xz --clobber
+          # gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-aarch64.tar.xz --clobber
+          # gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-x86_64.tar.xz --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-aarch64.dmg --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-x86_64.dmg --clobber
 
           # MAR files
-          gh release upload ${{ needs.metadata.outputs.version }} ./linux-aarch64.mar --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./linux-x86_64.mar --clobber
+          # gh release upload ${{ needs.metadata.outputs.version }} ./linux-aarch64.mar --clobber
+          # gh release upload ${{ needs.metadata.outputs.version }} ./linux-x86_64.mar --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./macos-aarch64.mar --clobber
           gh release upload ${{ needs.metadata.outputs.version }} ./macos-x86_64.mar --clobber
         env:
@@ -159,17 +160,17 @@ jobs:
           path: update-server
           ref: main
 
-      - name: Download Linux updates (aarch64)
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-aarch64-updates
-          path: artifacts/linux-aarch64/
-
-      - name: Download Linux updates (x86_64)
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-x86_64-updates
-          path: artifacts/linux-x86_64/
+      # - name: Download Linux updates (aarch64)
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: linux-aarch64-updates
+      #     path: artifacts/linux-aarch64/
+      #
+      # - name: Download Linux updates (x86_64)
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: linux-x86_64-updates
+      #     path: artifacts/linux-x86_64/
 
       - name: Download macOS updates (aarch64)
         uses: actions/download-artifact@v4
@@ -197,8 +198,8 @@ jobs:
       - name: Copy update files to update-server
         run: |
           mkdir -p update-server/public/updates/
-          cp -r artifacts/linux-aarch64/* update-server/public/updates/
-          cp -r artifacts/linux-x86_64/* update-server/public/updates/
+          # cp -r artifacts/linux-aarch64/* update-server/public/updates/
+          # cp -r artifacts/linux-x86_64/* update-server/public/updates/
           cp -r artifacts/macos-aarch64/* update-server/public/updates/
           cp -r artifacts/macos-x86_64/* update-server/public/updates/
 
