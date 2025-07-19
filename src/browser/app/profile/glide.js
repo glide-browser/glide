@@ -8,7 +8,7 @@ pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 // disable automatic updates by default, as depending on what you do,
 // it can be somewhat likely that updates will break parts of your config
 // (e.g. firefox browser dom updates)
-pref("app.update.auto", false)
+pref("app.update.auto", false);
 
 // disable webauthn until apple grants us access to the entitlement
 pref("security.webauth.webauthn", false);
