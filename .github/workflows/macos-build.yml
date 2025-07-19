@@ -24,6 +24,7 @@ jobs:
       GLIDER_PLATFORM: darwin
       GLIDE_RELEASE: true
       GLIDE_DISABLE_PGO: 1
+      GLIDER_COMPAT: ${{ matrix.arch }}
 
     strategy:
       fail-fast: false
@@ -111,18 +112,12 @@ jobs:
           export PATH="$(python3 -m site --user-base)/bin":$PATH
           ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
           cd ..
-        env:
-          GLIDER_COMPAT: ${{ matrix.arch }}
 
       - name: Build
-        env:
-          GLIDER_COMPAT: ${{ matrix.arch }}
         run: |
           pnpm build
 
       - name: Package
-        env:
-          GLIDER_COMPAT: ${{ matrix.arch }}
         run: |
           pnpm package
 

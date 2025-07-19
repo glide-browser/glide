@@ -23,6 +23,7 @@ jobs:
       CARGO_TERM_COLOR: always
       GLIDER_PLATFORM: linux
       GLIDE_RELEASE: true
+      GLIDER_COMPAT: ${{ matrix.arch }}
 
     strategy:
       fail-fast: false
@@ -90,8 +91,6 @@ jobs:
           export PATH="$(python3 -m site --user-base)/bin":$PATH
           ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
           cd ..
-        env:
-          GLIDER_COMPAT: ${{ matrix.arch }}
 
       - name: Fix Rust version
         run: |
@@ -106,8 +105,6 @@ jobs:
           fi
 
       - name: Build
-        env:
-          GLIDER_COMPAT: ${{ matrix.arch }}
         run: |
           pnpm build
 
