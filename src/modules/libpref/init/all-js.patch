@@ -1,8 +1,17 @@
 diff --git a/modules/libpref/init/all.js b/modules/libpref/init/all.js
-index e2e3f8cd1c3eb3db748d8bd5ab88bc3e7176eab6..7e862e11a5b2138137b11151b4d5f881d15b9138 100644
+index 055cc4a17de08cd0b522ef518c2d0fab10c89d79..0c817ef446116e4cba4af56b122acb3ad8862918 100644
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
-@@ -4049,6 +4049,14 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
+@@ -3448,7 +3448,7 @@ pref("browser.search.rustSelector.featureGate", true);
+ pref("media.gmp-manager.allowLocalSources", true);
+ 
+ // Update service URL for GMP install/updates:
+-pref("media.gmp-manager.url", "https://aus5.mozilla.org/update/3/GMP/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
++pref("media.gmp-manager.url", "https://aus5.mozilla.org/update/3/GMP/%PLATFORM_VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%FIREFOX_CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
+ 
+ // When |media.gmp-manager.checkContentSignature| is true, then the reply
+ // containing the update xml file is expected to provide a content signature
+@@ -4054,6 +4054,14 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
  
  pref("extensions.formautofill.supportRTL", false);
  
