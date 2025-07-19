@@ -142,3 +142,83 @@ jobs:
           gh release upload ${{ needs.metadata.outputs.version }} ./macos-x86_64.mar --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+  push-update-manifests:
+    name: Push
+    runs-on: ubuntu-latest
+    needs: [release, metadata]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout update-server repository
+        uses: actions/checkout@v4
+        with:
+          repository: glide-browser/update-server
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: update-server
+          ref: main
+
+      - name: Download Linux updates (aarch64)
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-aarch64-updates
+          path: artifacts/linux-aarch64/
+
+      - name: Download Linux updates (x86_64)
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-x86_64-updates
+          path: artifacts/linux-x86_64/
+
+      - name: Download macOS updates (aarch64)
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-aarch64-updates
+          path: artifacts/macos-aarch64/
+
+      - name: Download macOS updates (x86_64)
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-x86_64-updates
+          path: artifacts/macos-x86_64/
+
+      - name: Debug
+        run: |
+          tree -Dh artifacts/
+
+      # temporary while the repo is private
+      - name: Fix update.xml URLs
+        run: |
+          .github/scripts/fix-update-urls.sh artifacts/
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Copy update files to update-server
+        run: |
+          mkdir -p update-server/public/updates/
+          cp -r artifacts/linux-aarch64/* update-server/public/updates/
+          cp -r artifacts/linux-x86_64/* update-server/public/updates/
+          cp -r artifacts/macos-aarch64/* update-server/public/updates/
+          cp -r artifacts/macos-x86_64/* update-server/public/updates/
+
+      - name: Debug
+        run: |
+          tree -Dh update-server/public/updates/
+
+      - name: Commit and push updates
+        working-directory: update-server
+        run: |
+          git config user.name "glide-updater"
+          git config user.email "updates@glide-browser.app"
+
+          git add -A .
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add update files for version ${VERSION}"
+            git push
+          fi
+        env:
+          VERSION: "${{ needs.metadata.outputs.version }}"
