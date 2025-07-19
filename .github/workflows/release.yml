@@ -49,6 +49,16 @@ jobs:
         run: |
           echo "version=$(pnpm glider get version)" >> $GITHUB_OUTPUT
 
+      - name: Create draft release
+        run: |
+          if gh release view ${{ steps.version.outputs.version }} > /dev/null 2>&1; then
+            gh release edit ${{ steps.version.outputs.version }} --prerelease --draft --title "${{ steps.version.outputs.version }}"
+          else
+            gh release create ${{ steps.version.outputs.version }} --prerelease --draft --title "${{ steps.version.outputs.version }}"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+
   # linux:
   #   name: Linux build
   #   uses: ./.github/workflows/linux-build.yml
@@ -118,16 +128,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: macos-x86_64.mar
-
-      - name: Setup release
-        run: |
-          if gh release view ${{ needs.metadata.outputs.version }} > /dev/null 2>&1; then
-            gh release edit ${{ needs.metadata.outputs.version }} --prerelease --draft --title "${{ needs.metadata.outputs.version }}"
-          else
-            gh release create ${{ needs.metadata.outputs.version }} --prerelease --draft --title "${{ needs.metadata.outputs.version }}"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
       - name: Upload artifacts to the release
         run: |
