@@ -46,3 +46,19 @@ declare type KeyMappingIPC = Omit<
   >,
   "command"
 > & { command: string };
+
+declare interface HTMLElement {
+  /**
+   * Indicates that the element was clicked using Glide's hint mode.
+   *
+   * This is a hack to workaround difficulties with setting custom properties on `Event`s.
+   *
+   * We can't just use `element.dispatchEvent()` as that sidesteps a bunch of custom handling
+   * for `click()` in particular.
+   *
+   * In the future, this could be refactored to either patch the internal C++ methods to support
+   * custom event flags, or just an entirely different solution for the specific use cases we need,
+   * e.g. check if the mouse was moved before the click.
+   */
+  $glide_hack_click_from_hint?: boolean;
+}

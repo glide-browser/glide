@@ -278,3 +278,22 @@ export function scroll_to(
     0 // options
   );
 }
+
+/**
+ * Call the given callback after `n` frames.
+ */
+export function in_frames(window: Window, n: number, func: () => void): void {
+  var frames = 0;
+
+  function wait() {
+    frames++;
+    if (frames >= n) {
+      func();
+      return;
+    }
+
+    window.requestAnimationFrame(wait);
+  }
+
+  window.requestAnimationFrame(wait);
+}

@@ -309,7 +309,13 @@ export class GlideHandlerChild extends JSWindowActorChild<
           case undefined:
           case "click": {
             hint.target.focus();
+
+            hint.target.$glide_hack_click_from_hint = true;
             hint.target.click();
+            DOM.in_frames(this.contentWindow!, 10, () => {
+              delete hint.target.$glide_hack_click_from_hint;
+            });
+
             break;
           }
 
@@ -318,7 +324,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
             try {
               hint.target.setAttribute("target", "_blank");
               hint.target.focus();
+
+              hint.target.$glide_hack_click_from_hint = true;
               hint.target.click();
+              DOM.in_frames(this.contentWindow!, 10, () => {
+                delete hint.target.$glide_hack_click_from_hint;
+              });
             } finally {
               if (previous == null) {
                 hint.target.removeAttribute("target");
