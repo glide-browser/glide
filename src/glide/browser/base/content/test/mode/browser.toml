@@ -4,6 +4,7 @@ support-files = [
   "key_test.html",
   "input_test.html",
   "fullscreen_test.html",
+  "video_test.html",
 ]
 
 ["dist/browser_mode_input.js"]
@@ -13,4 +14,7 @@ https_first_disabled = true
 https_first_disabled = true
 
 ["dist/browser_keyseq_display.js"]
+https_first_disabled = true
+
+["dist/browser_fullscreen.js"]
 https_first_disabled = true

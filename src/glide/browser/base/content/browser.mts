@@ -121,6 +121,16 @@ class GlideBrowserClass {
     document!.addEventListener("keydown", this.#on_keydown.bind(this), true);
     document!.addEventListener("keypress", this.#on_keypress.bind(this), true);
     document!.addEventListener("keyup", this.#on_keyup.bind(this), true);
+    window.addEventListener(
+      "MozDOMFullscreen:Entered",
+      this.#on_fullscreen_enter.bind(this),
+      true
+    );
+    window.addEventListener(
+      "MozDOMFullscreen:Exited",
+      this.#on_fullscreen_exit.bind(this),
+      true
+    );
 
     // As this code is ran very early in the browser startup process, we can't rely on things like
     // `gNotificationBox` working immediately as there are a couple of error states
@@ -1443,6 +1453,20 @@ class GlideBrowserClass {
     if (this.keydown_event_results.get(cache_key)?.default_prevented) {
       event.preventDefault();
       event.stopImmediatePropagation();
+    }
+  }
+
+  async #on_fullscreen_enter() {
+    if (this.state.mode !== "ignore") {
+      this._log.debug("fullscreen entered, switching to insert mode");
+      this._change_mode("insert");
+    }
+  }
+
+  async #on_fullscreen_exit() {
+    if (this.state.mode !== "ignore") {
+      this._log.debug("fullscreen exit, switching to normal mode");
+      this._change_mode("normal");
     }
   }
 

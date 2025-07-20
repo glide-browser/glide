@@ -103,6 +103,13 @@ class GlideTestUtilsClass {
     await GlideEventUtils.synthesize_keyseq(keyseq);
   }
 
+  async wait_for_mode(mode: GlideMode) {
+    await g.TestUtils.waitForCondition(
+      () => GlideBrowser.state.mode === mode,
+      `Waiting for mode to be "${mode}" mode`
+    );
+  }
+
   /**
    * Helpers for setting text inputs, applying motions and expecting caret positions / text.
    */
