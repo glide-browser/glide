@@ -1,8 +1,8 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index 2d4fe2996b43c6471e9a075c4e546acf83f6add9..a6f4abf96d9ea7ff5b0dcd347437cb79202b3f16 100644
+index 7b328bd1eea7396bd5c14802586c641d425547ab..76ae1e669e15d535c40057664430d5869af10a57 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
-@@ -84,6 +84,38 @@ let JSWINDOWACTORS = {
+@@ -84,6 +84,52 @@ let JSWINDOWACTORS = {
      enablePreference: "browser.contextual-password-manager.enabled",
    },
  
@@ -17,6 +17,20 @@ index 2d4fe2996b43c6471e9a075c4e546acf83f6add9..a6f4abf96d9ea7ff5b0dcd347437cb79
 +      },
 +    },
 +    matches: ["resource://glide-docs/dynamic/mappings.html"],
++    allFrames: false,
++    includeChrome: false,
++  },
++  GlideTutor: {
++    parent: {
++      esModuleURI: "resource:///actors/GlideTutorParent.sys.mjs",
++    },
++    child: {
++      esModuleURI: "resource:///actors/GlideTutorChild.sys.mjs",
++      events: {
++        DOMContentLoaded: {},
++      },
++    },
++    matches: ["resource://glide-tutor/*"],
 +    allFrames: false,
 +    includeChrome: false,
 +  },
