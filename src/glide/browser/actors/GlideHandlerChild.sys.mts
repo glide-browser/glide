@@ -925,6 +925,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
             return "insert";
           }
 
+          if (DOM.is_video_element(target)) {
+            return "insert";
+          }
+
           if (current_mode === "visual") {
             return "visual";
           }

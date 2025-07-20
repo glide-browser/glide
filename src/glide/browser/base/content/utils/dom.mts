@@ -86,6 +86,10 @@ function is_editable_html_input(element: HTMLInputElement): boolean | null {
   return null;
 }
 
+export function is_video_element(element: HTMLElement): boolean {
+  return element.tagName.toLowerCase() === "video";
+}
+
 /**
  * Whether or not the given element is an instance of the given element class.
  *
