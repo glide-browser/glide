@@ -1274,14 +1274,10 @@ class GlideBrowserClass {
     //
     // We don't want to interfere with these builtin mappings so we just ignore them.
     //
-    // Note: currently this only applies in `normal` mode because the only case I've
-    //       looked into is the `<Esc>` to exit full screen mode case and that only
-    //       really makes sense to apply in `normal` mode.
-    //
-    // TODO(glide): our own `.preventDefault()` implementation should be refactored to allow
-    //              commands to explicitly allow the key event to passthrough.
+    // note: this can break expectations around `<Esc>` when an input element is focused
+    //       *and* when the browser is in DOM fullscreen mode, as we would exit full screen
+    //       instead of changing to normal mode. This is left as a future TODO.
     if (
-      this.state.mode === "normal" &&
       event.defaultPrevented &&
       !event.defaultPreventedByChrome &&
       !event.defaultPreventedByContent

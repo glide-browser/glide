@@ -364,7 +364,13 @@ add_task(async function test_Escape_to_exit_fullscreen() {
       "window should not be in full screen mode after pressing Escape"
     );
 
-    // <Esc> from insert mode doesn't exit full screen
+    // <Esc> from insert mode will still exit full screen, because this is a better
+    // default for now asI think the more common case for DOM full screen will be
+    // when playing videos, where being able to press `<Esc>` once to exit full screen
+    // is much more intuitive.
+    //
+    // in the future, this should likely be updated to check if the user is focused,
+    // on an input element, as `<Esc>` *should* mean switch to normal mode in that case.
     await DOMFullscreenTestUtils.changeFullscreen(browser, true);
     is(window.fullScreen, true, "window should now be in full screen mode");
 
@@ -376,25 +382,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
     EventUtils.synthesizeKey("b");
     EventUtils.synthesizeKey("KEY_Escape");
     await sleep_frames(1);
-    is(window.fullScreen, true, "window should still be in full screen mode");
-    is(
-      await SpecialPowers.spawn(
-        browser,
-        [],
-        async () =>
-          content.document.getElementById<HTMLInputElement>("input-1")!.value
-      ),
-      "ab",
-      "input element should have key pressed inserted"
-    );
-
-    EventUtils.synthesizeKey("KEY_Escape");
-    await DOMFullscreenTestUtils.waitForFullScreenState(browser, false);
-    is(
-      window.fullScreen,
-      false,
-      "window should not be in full screen mode after pressing Escape in normal mode"
-    );
+    is(window.fullScreen, false, "window not be in full screen mode");
   });
 });
 
