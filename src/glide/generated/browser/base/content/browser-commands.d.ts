@@ -55,4 +55,5 @@ declare namespace BrowserCommands {
     function fullScreen(): void;
     function downloadsUI(): void;
     function forceEncodingDetection(): void;
+    function processCloseRequest(): void;
 }

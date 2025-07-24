@@ -1,0 +1,12 @@
+diff --git a/testing/mochitest/ignorePrefs.json b/testing/mochitest/ignorePrefs.json
+index 33d4bca53aeda2b331abef957ad6b37bcaaab284..2a6f4ab1e733430e23c911d7efc2e79050b3dcfe 100644
+--- a/testing/mochitest/ignorePrefs.json
++++ b/testing/mochitest/ignorePrefs.json
+@@ -32,6 +32,7 @@
+   "dom.security.https_only_mode_ever_enabled",
+   "extensions.databaseSchema",
+   "extensions.pendingOperations",
++  "extensions.dnr.lastStoreUpdateTag.*",
+   "extensions.ui.dictionary.hidden",
+   "extensions.ui.extension.hidden",
+   "extensions.ui.lastCategory",

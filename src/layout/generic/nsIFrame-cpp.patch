@@ -1,24 +1,18 @@
 diff --git a/layout/generic/nsIFrame.cpp b/layout/generic/nsIFrame.cpp
-index 44c32bd164138aeb13665aba1995ee12650d7fa5..493eb90d455e02415be35c7e1c31feba12565b07 100644
+index e13628eccc51f0e81fc1404b061840d816502757..87b094648e1cd3d94095cade6a4265145f31b85b 100644
 --- a/layout/generic/nsIFrame.cpp
 +++ b/layout/generic/nsIFrame.cpp
-@@ -11,6 +11,7 @@
- #include <stdarg.h>
- #include <algorithm>
+@@ -6,6 +6,9 @@
+ 
+ /* base class of all rendering objects */
  
 +#include "mozilla/Glide.h"
- #include "gfx2DGlue.h"
- #include "gfxUtils.h"
- #include "mozilla/Attributes.h"
-@@ -21,6 +22,7 @@
- #include "mozilla/EventForwards.h"
- #include "mozilla/FocusModel.h"
- #include "mozilla/StaticPrefs_dom.h"
 +#include "mozilla/StaticPrefs_glide.h"
- #include "mozilla/dom/CSSAnimation.h"
- #include "mozilla/dom/CSSTransition.h"
- #include "mozilla/dom/ContentVisibilityAutoStateChangeEvent.h"
-@@ -2657,7 +2659,19 @@ void nsIFrame::DisplayCaret(nsDisplayListBuilder* aBuilder,
++
+ #include "nsIFrame.h"
+ 
+ #include <stdarg.h>
+@@ -2642,7 +2645,19 @@ void nsIFrame::DisplayCaret(nsDisplayListBuilder* aBuilder,
  }
  
  nscolor nsIFrame::GetCaretColorAt(int32_t aOffset) {

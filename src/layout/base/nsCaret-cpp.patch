@@ -1,29 +1,19 @@
 diff --git a/layout/base/nsCaret.cpp b/layout/base/nsCaret.cpp
-index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb88ed7fa5 100644
+index b65fd4aaf8f39a29aa68660933dfe69efef1fd36..7bdde7567478a35d388e5a47dcbaf39cb80527bf 100644
 --- a/layout/base/nsCaret.cpp
 +++ b/layout/base/nsCaret.cpp
-@@ -10,13 +10,20 @@
+@@ -10,6 +10,10 @@
  
  #include <algorithm>
  
 +#include "mozilla/Glide.h"
++#include "mozilla/StaticPrefs_glide.h"
++#include "nsCoord.h"
++
+ #include "SelectionMovementUtils.h"
  #include "gfxUtils.h"
  #include "mozilla/CaretAssociationHint.h"
-+// glide-injection-start
-+#include "mozilla/StaticPrefs_glide.h"
-+// glide-injection-end
- #include "mozilla/gfx/2D.h"
- #include "mozilla/intl/BidiEmbeddingLevel.h"
- #include "mozilla/ScrollContainerFrame.h"
- #include "mozilla/StaticPrefs_bidi.h"
- #include "nsCOMPtr.h"
-+// glide-injection-start
-+#include "nsCoord.h"
-+// glide-injection-end
- #include "nsFontMetrics.h"
- #include "nsITimer.h"
- #include "nsFrameSelection.h"
-@@ -54,6 +61,23 @@ nsCaret::nsCaret() = default;
+@@ -54,6 +58,23 @@ nsCaret::nsCaret() = default;
  
  nsCaret::~nsCaret() { StopBlinking(); }
  
@@ -47,7 +37,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
  nsresult nsCaret::Init(PresShell* aPresShell) {
    NS_ENSURE_ARG(aPresShell);
  
-@@ -67,6 +91,11 @@ nsresult nsCaret::Init(PresShell* aPresShell) {
+@@ -67,6 +88,11 @@ nsresult nsCaret::Init(PresShell* aPresShell) {
      return NS_ERROR_FAILURE;
    }
  
@@ -59,7 +49,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
    selection->AddSelectionListener(this);
    mDomSelectionWeak = selection;
    UpdateCaretPositionFromSelectionIfNeeded();
-@@ -96,6 +125,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
+@@ -96,6 +122,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
        nsPresContext::CSSPixelsToAppUnits(
            LookAndFeel::GetInt(LookAndFeel::IntID::CaretWidth, 1));
  
@@ -129,7 +119,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
    if (DrawCJKCaret(aFrame, aOffset)) {
      caretWidth += nsPresContext::CSSPixelsToAppUnits(1);
    }
-@@ -123,6 +215,12 @@ void nsCaret::Terminate() {
+@@ -123,6 +212,12 @@ void nsCaret::Terminate() {
    if (mDomSelectionWeak) {
      mDomSelectionWeak->RemoveSelectionListener(this);
    }
@@ -142,7 +132,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
    mDomSelectionWeak = nullptr;
    mPresShell = nullptr;
    mCaretPosition = {};
-@@ -257,7 +355,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
+@@ -257,7 +352,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
  
  /* static */
  nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
@@ -155,7 +145,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
    nsPoint framePos(0, 0);
    nsRect rect;
    nsresult rv = aFrame->GetPointFromOffset(aFrameOffset, &framePos);
-@@ -303,6 +405,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -303,6 +402,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      }
    }
  
@@ -173,7 +163,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
    // on RTL frames the right edge of mCaretRect must be equal to framePos
    if (aFrame->StyleVisibility()->mDirection == StyleDirection::Rtl) {
      if (vertical) {
-@@ -320,10 +433,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -320,10 +430,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      framePos.y = caretBlockAxisMetrics.mOffset;
    }
  
@@ -207,7 +197,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
  
    rect.MoveBy(AdjustRectForClipping(rect, aFrame, vertical));
    if (aBidiIndicatorSize) {
-@@ -367,11 +499,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
+@@ -367,11 +496,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
  }
  
  /* static */
@@ -229,7 +219,7 @@ index 53180d86ef66e4483db4c06b68843810ce26929a..88ba01411e73d6f4e4fa96c6f297cfdb
    }
    return data.mFrame;
  }
-@@ -614,7 +754,12 @@ void nsCaret::ResetBlinking() {
+@@ -614,7 +751,12 @@ void nsCaret::ResetBlinking() {
    }
  
    const int32_t oldBlinkTime = mBlinkTime;
