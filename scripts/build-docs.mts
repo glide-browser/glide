@@ -43,6 +43,7 @@ const SYMLINKS = [
   "BerkeleyMono-Regular.woff2",
   "monospace-web/reset.css",
   "monospace-web/index.css",
+  "_headers",
 ];
 
 const highlighter = await shiki.createHighlighter({
