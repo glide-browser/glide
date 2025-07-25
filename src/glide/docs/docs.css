@@ -9,13 +9,12 @@
  * TODO(glide): fix mobile support
  */
 
-@import url("./BerkeleyMono-Regular.woff2");
-
 @font-face {
   font-family: "Berkeley Mono";
   src: url("./BerkeleyMono-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 body {
