@@ -2,9 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# TODO(glide): make this `glide/docs` instead?
-#
-# maps to `resource://glide-docs/*`
+# note: maps to `resource://glide-docs/*`
 #
 # note: this is separate from `glide/browser/base/jar.mn` so that the
 #       embedded docs don't run in the main priveledged thread as we
@@ -14,31 +12,23 @@
 glide.jar:
 % resource glide-docs %res/glide-docs/
   # pages
-  res/glide-docs/index.html                      (./dist/index.html)
-  res/glide-docs/faq.html                        (./dist/faq.html)
-  res/glide-docs/api.html                        (./dist/api.html)
-  res/glide-docs/hints.html                      (./dist/hints.html)
-  res/glide-docs/modes.html                      (./dist/modes.html)
-  res/glide-docs/quickstart.html                 (./dist/quickstart.html)
-  res/glide-docs/ex-commands.html                (./dist/ex-commands.html)
-  res/glide-docs/key-mappings.html               (./dist/key-mappings.html)
-  res/glide-docs/contributing.html               (./dist/contributing.html)
-  # TODO(glide): don't require explicitly listing all the pages
+  res/glide-docs/                         (./dist/*.html)
+
+  # scripts
+  res/glide-docs/docs.js                  (./docs.js)
 
   # assets
-  res/glide-docs/                                (./*.png)
-  res/glide-docs/                                (./*.webp)
-  res/glide-docs/docs.css                        (./docs.css)
-  res/glide-docs/index.css                       (./index.css)
-  res/glide-docs/docs.js                         (./docs.js)
-  res/glide-docs/BerkeleyMono-Regular.woff2      (./BerkeleyMono-Regular.woff2)
+  res/glide-docs/                         (./*.png)
+  res/glide-docs/                         (./*.webp)
+  res/glide-docs/                         (./*.css)
+  res/glide-docs/                         (./*.woff2)
 
   # dependencies
-  res/glide-docs/monospace-web/index.css         (./dist/monospace-web/index.css)
-  res/glide-docs/monospace-web/reset.css         (./dist/monospace-web/reset.css)
-  res/glide-docs/pagefind                        (./dist/pagefind/**/*)
+  res/glide-docs/monospace-web/index.css  (./dist/monospace-web/index.css)
+  res/glide-docs/monospace-web/reset.css  (./dist/monospace-web/reset.css)
+  res/glide-docs/pagefind                 (./dist/pagefind/**/*)
 
   # runtime-generated docs
-  res/glide-docs/dynamic/mappings.html           (./dynamic/mappings.html)
-  res/glide-docs/dynamic/mappings.css            (./dynamic/mappings.css)
-  res/glide-docs/dynamic/mappings.js             (./dynamic/dist/mappings.js)
+  res/glide-docs/dynamic/mappings.html    (./dynamic/mappings.html)
+  res/glide-docs/dynamic/mappings.css     (./dynamic/mappings.css)
+  res/glide-docs/dynamic/mappings.js      (./dynamic/dist/mappings.js)
