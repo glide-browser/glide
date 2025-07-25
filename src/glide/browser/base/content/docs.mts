@@ -721,10 +721,7 @@ export async function markdown_to_html(
           <link rel="icon" href="${rel_to_dist}/logo-32.png" />
 
           <link rel="stylesheet" href="${rel_to_dist}/docs.css" />
-          <link
-            rel="stylesheet"
-            href="${rel_to_dist}/monospace-web/reset.css"
-          />
+          <link rel="stylesheet" href="${rel_to_dist}/reset.css" />
           <link
             rel="stylesheet"
             href="${rel_to_dist}/monospace-web/index.css"
@@ -744,9 +741,18 @@ export async function markdown_to_html(
           <script src="${rel_to_dist}/docs.js"></script>
         </head>
         <body>
-          <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation menu">
+          <button
+            class="mobile-menu-toggle"
+            id="mobile-menu-toggle"
+            aria-label="Toggle navigation menu"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path
+                d="M3 12h18M3 6h18M3 18h18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
           </button>
           <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
@@ -762,7 +768,10 @@ export async function markdown_to_html(
                     >
                       <img
                         src="${rel_to_dist}/logo-20.webp"
-                        srcset="${rel_to_dist}/logo-20.webp 1x, ${rel_to_dist}/logo@2x.webp 2x"
+                        srcset="
+                          ${rel_to_dist}/logo-20.webp 1x,
+                          ${rel_to_dist}/logo@2x.webp 2x
+                        "
                         class="glide-sidenav-heading-img"
                         alt="Glide logo"
                         width="20"

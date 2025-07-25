@@ -25,7 +25,6 @@ glide.jar:
 
   # dependencies
   res/glide-docs/monospace-web/index.css  (./dist/monospace-web/index.css)
-  res/glide-docs/monospace-web/reset.css  (./dist/monospace-web/reset.css)
   res/glide-docs/pagefind                 (./dist/pagefind/**/*)
 
   # runtime-generated docs
