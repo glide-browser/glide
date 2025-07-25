@@ -34,7 +34,6 @@ const cli = meow({
   },
 });
 
-const MD_GLOB_EXCLUDE = /monospace-web/;
 const SYMLINKS = [
   "docs.js",
   "docs.css",
@@ -44,7 +43,6 @@ const SYMLINKS = [
   "logo@2x.webp",
   "logo-32.png",
   "BerkeleyMono-Regular.woff2",
-  "monospace-web/index.css",
   "_headers",
 ];
 
@@ -67,10 +65,7 @@ const highlighter = await shiki.createHighlighter({
 
 await fs.mkdir(DOCS_DIST_DIR, { recursive: true });
 
-for await (const md_file of fs.glob("**/*.md", {
-  cwd: DOCS_DIR,
-  exclude: filename => MD_GLOB_EXCLUDE.test(filename),
-})) {
+for await (const md_file of fs.glob("**/*.md", { cwd: DOCS_DIR })) {
   const relative_dist_path = md_file.replace(".md", ".html");
   const dist_file = Path.join(DOCS_DIST_DIR, relative_dist_path);
 

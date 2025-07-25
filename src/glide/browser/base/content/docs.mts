@@ -722,10 +722,6 @@ export async function markdown_to_html(
 
           <link rel="stylesheet" href="${rel_to_dist}/docs.css" />
           <link rel="stylesheet" href="${rel_to_dist}/reset.css" />
-          <link
-            rel="stylesheet"
-            href="${rel_to_dist}/monospace-web/index.css"
-          />
           ${styles
             .map(
               css => html`
