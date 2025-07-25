@@ -4,14 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-.download-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
 .download-platform {
   display: flex;
   flex-direction: column;

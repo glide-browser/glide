@@ -9,7 +9,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
 ## Download
 
 {% html %}
-<div class="download-grid">
+<div class="grid">
   <div class="download-platform">
     <span class="platform-label">macOS</span>
     <div class="download-buttons">
