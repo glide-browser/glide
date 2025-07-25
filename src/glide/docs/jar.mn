@@ -26,10 +26,11 @@ glide.jar:
   # TODO(glide): don't require explicitly listing all the pages
 
   # assets
+  res/glide-docs/                                (./*.png)
+  res/glide-docs/                                (./*.webp)
   res/glide-docs/docs.css                        (./docs.css)
   res/glide-docs/index.css                       (./index.css)
   res/glide-docs/docs.js                         (./docs.js)
-  res/glide-docs/logo.png                        (./logo.png)
   res/glide-docs/BerkeleyMono-Regular.woff2      (./BerkeleyMono-Regular.woff2)
 
   # dependencies

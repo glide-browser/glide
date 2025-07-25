@@ -718,7 +718,7 @@ export async function markdown_to_html(
             content="width=device-width, initial-scale=1.0, user-scalable=yes"
           />
           <meta name="author" content="Robert Craigie" />
-          <link rel="icon" href="${rel_to_dist}/logo.png" />
+          <link rel="icon" href="${rel_to_dist}/logo-32.png" />
 
           <link rel="stylesheet" href="${rel_to_dist}/docs.css" />
           <link
@@ -761,8 +761,12 @@ export async function markdown_to_html(
                       class="glide-sidenav-heading-link"
                     >
                       <img
-                        src="${rel_to_dist}/logo.png"
+                        src="${rel_to_dist}/logo-20.webp"
+                        srcset="${rel_to_dist}/logo-20.webp 1x, ${rel_to_dist}/logo@2x.webp 2x"
                         class="glide-sidenav-heading-img"
+                        alt="Glide logo"
+                        width="20"
+                        height="20"
                       />
                       Glide</a
                     >
