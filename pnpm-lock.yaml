@@ -48,6 +48,9 @@ importers:
       fast-check:
         specifier: ^4.2.0
         version: 4.2.0
+      html-assets-hash:
+        specifier: ^1.0.5
+        version: 1.0.5
       meow:
         specifier: ^13.2.0
         version: 13.2.0
@@ -814,6 +817,11 @@ packages:
 
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
+
+  html-assets-hash@1.0.5:
+    resolution: {integrity: sha512-jWR7tBbIdp7jtbmc3lUprwq29lcHrKfjq48JDkICdeqW447S58NJUjWPnq1Ls5w0WNYoLTGUx2csTylytl6A+Q==}
+    engines: {node: '>=16.13.0'}
+    hasBin: true
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
@@ -2201,6 +2209,8 @@ snapshots:
   hast-util-whitespace@3.0.0:
     dependencies:
       '@types/hast': 3.0.4
+
+  html-assets-hash@1.0.5: {}
 
   html-void-elements@3.0.0: {}
 

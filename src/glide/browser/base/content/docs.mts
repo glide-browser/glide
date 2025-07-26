@@ -720,8 +720,8 @@ export async function markdown_to_html(
           <meta name="author" content="Robert Craigie" />
           <link rel="icon" href="${rel_to_dist}/logo-32.png" />
 
-          <link rel="stylesheet" href="${rel_to_dist}/docs.css" />
-          <link rel="stylesheet" href="${rel_to_dist}/reset.css" />
+          <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
+          <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
           ${styles
             .map(
               css => html`
@@ -733,8 +733,8 @@ export async function markdown_to_html(
             .join("\n")}
           ${head.join("\n")}
 
-          <script src="${rel_to_dist}/pagefind/pagefind-ui.js"></script>
-          <script src="${rel_to_dist}/docs.js"></script>
+          <script src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
+          <script src="${rel_to_dist}/docs.js?v="></script>
         </head>
         <body>
           <button

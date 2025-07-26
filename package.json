@@ -18,7 +18,8 @@
     "build:docs": "pnpm tsn scripts/build-docs.mts",
     "build:docs:index": "bash ./scripts/build-docs-index.sh",
     "build:docs:api": "pnpm tsn ./scripts/build-api-reference.mts",
-    "build:docs:full": "pnpm build:docs --symlink=false && pnpm build:docs:api && pnpm build:docs:index",
+    "build:docs:assets": "pnpm tsn ./scripts/docs-asset-hashes.mts",
+    "build:docs:full": "pnpm build:docs --symlink=false && pnpm build:docs:api && pnpm build:docs:assets && pnpm build:docs:index && pnpm build:docs:assets",
     "build:types": "bash ./scripts/generate-types.sh",
     "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
 
@@ -54,6 +55,7 @@
     "esbuild": "^0.25.2",
     "execa": "^9.5.2",
     "fast-check": "^4.2.0",
+    "html-assets-hash": "^1.0.5",
     "meow": "^13.2.0",
     "p-queue": "^8.1.0",
     "prettier": "^3.5.3",
