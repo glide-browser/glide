@@ -95,6 +95,13 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "quit",
+    description: "Close all windows",
+    content: false,
+    repeatable: false,
+  },
+
+  {
     name: "set",
     description: "Set an option",
     args_schema: {

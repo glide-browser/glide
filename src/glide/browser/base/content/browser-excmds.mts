@@ -221,6 +221,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "quit": {
+        Services.startup.quit(Services.startup.eAttemptQuit!);
+        break;
+      }
+
       case "tab": {
         const {
           args: { tab_index },
