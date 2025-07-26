@@ -6,6 +6,7 @@
     "bootstrap": "bash ./scripts/bootstrap.sh",
 
     "dev": "pnpm tsn scripts/dev.mts --watch",
+    "dev:docs": "pnpm tsn scripts/watch-docs.mts --watch",
     "dev:once": "pnpm tsn scripts/dev.mts",
 
     "build": "pnpm glider build",

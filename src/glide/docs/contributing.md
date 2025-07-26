@@ -168,6 +168,8 @@ file:///path-to-glide-directory/src/glide/docs/dist/contributing.html
 
 > [!TIP]
 > You do not actually need to build Glide from scratch to update the docs!
+>
+> You can also run *just* the .md -> .html build step in watch mode with `pnpm dev:docs`.
 
 ### Debugging Hints
 
