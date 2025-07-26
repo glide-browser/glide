@@ -303,49 +303,49 @@ function _maybeEndDragSession(
  * synthesizeMouse and synthesizeKey.
  */
 function _parseModifiers(aEvent: any, aWindow = window) {
-  var nsIDOMWindowUtils = Ci.nsIDOMWindowUtils!;
+  var nsIDOMWindowUtils = Ci.nsIDOMWindowUtils;
   var mval = 0;
   if (aEvent.shiftKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_SHIFT!;
+    mval |= nsIDOMWindowUtils.MODIFIER_SHIFT;
   }
   if (aEvent.ctrlKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_CONTROL!;
+    mval |= nsIDOMWindowUtils.MODIFIER_CONTROL;
   }
   if (aEvent.altKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_ALT!;
+    mval |= nsIDOMWindowUtils.MODIFIER_ALT;
   }
   if (aEvent.metaKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_META!;
+    mval |= nsIDOMWindowUtils.MODIFIER_META;
   }
   if (aEvent.accelKey) {
     mval |=
       _EU_isMac(aWindow) ?
-        nsIDOMWindowUtils.MODIFIER_META!
-      : nsIDOMWindowUtils.MODIFIER_CONTROL!;
+        nsIDOMWindowUtils.MODIFIER_META
+      : nsIDOMWindowUtils.MODIFIER_CONTROL;
   }
   if (aEvent.altGrKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_ALTGRAPH!;
+    mval |= nsIDOMWindowUtils.MODIFIER_ALTGRAPH;
   }
   if (aEvent.capsLockKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_CAPSLOCK!;
+    mval |= nsIDOMWindowUtils.MODIFIER_CAPSLOCK;
   }
   if (aEvent.fnKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_FN!;
+    mval |= nsIDOMWindowUtils.MODIFIER_FN;
   }
   if (aEvent.fnLockKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_FNLOCK!;
+    mval |= nsIDOMWindowUtils.MODIFIER_FNLOCK;
   }
   if (aEvent.numLockKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_NUMLOCK!;
+    mval |= nsIDOMWindowUtils.MODIFIER_NUMLOCK;
   }
   if (aEvent.scrollLockKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_SCROLLLOCK!;
+    mval |= nsIDOMWindowUtils.MODIFIER_SCROLLLOCK;
   }
   if (aEvent.symbolKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_SYMBOL!;
+    mval |= nsIDOMWindowUtils.MODIFIER_SYMBOL;
   }
   if (aEvent.symbolLockKey) {
-    mval |= nsIDOMWindowUtils.MODIFIER_SYMBOLLOCK!;
+    mval |= nsIDOMWindowUtils.MODIFIER_SYMBOLLOCK;
   }
 
   return mval;
@@ -370,7 +370,7 @@ function _createKeyboardEventDictionary(
   }
   if (aKey.indexOf("KEY_") == 0) {
     keyName = aKey.substr("KEY_".length);
-    result.flags |= Ci.nsITextInputProcessor.KEY_NON_PRINTABLE_KEY!;
+    result.flags |= Ci.nsITextInputProcessor.KEY_NON_PRINTABLE_KEY;
     if (code === undefined) {
       code = aTIP.computeCodeValueOfNonPrintableKey(
         keyName,
@@ -384,7 +384,7 @@ function _createKeyboardEventDictionary(
       throw new Error("Unknown key: " + aKey);
     }
     keyName = _guessKeyNameFromKeyCode(keyCode, aWindow);
-    result.flags |= Ci.nsITextInputProcessor.KEY_NON_PRINTABLE_KEY!;
+    result.flags |= Ci.nsITextInputProcessor.KEY_NON_PRINTABLE_KEY;
     if (code === undefined) {
       code = aTIP.computeCodeValueOfNonPrintableKey(
         keyName,
@@ -400,9 +400,9 @@ function _createKeyboardEventDictionary(
       );
     }
     if (!keyCode) {
-      result.flags |= Ci.nsITextInputProcessor.KEY_KEEP_KEYCODE_ZERO!;
+      result.flags |= Ci.nsITextInputProcessor.KEY_KEEP_KEYCODE_ZERO;
     }
-    result.flags |= Ci.nsITextInputProcessor.KEY_FORCE_PRINTABLE_KEY!;
+    result.flags |= Ci.nsITextInputProcessor.KEY_FORCE_PRINTABLE_KEY;
     if (code === undefined) {
       code = aTIP.guessCodeValueOfPrintableKeyInUSEnglishKeyboardLayout(
         keyName,
@@ -412,16 +412,15 @@ function _createKeyboardEventDictionary(
   }
   var locationIsDefined = "location" in aKeyEvent;
   if (locationIsDefined && aKeyEvent.location === 0) {
-    result.flags |= Ci.nsITextInputProcessor.KEY_KEEP_KEY_LOCATION_STANDARD!;
+    result.flags |= Ci.nsITextInputProcessor.KEY_KEEP_KEY_LOCATION_STANDARD;
   }
   // @ts-ignore
   if (aKeyEvent.doNotMarkKeydownAsProcessed) {
-    result.flags |=
-      Ci.nsITextInputProcessor.KEY_DONT_MARK_KEYDOWN_AS_PROCESSED!;
+    result.flags |= Ci.nsITextInputProcessor.KEY_DONT_MARK_KEYDOWN_AS_PROCESSED;
   }
   // @ts-ignore
   if (aKeyEvent.markKeyupAsProcessed) {
-    result.flags |= Ci.nsITextInputProcessor.KEY_MARK_KEYUP_AS_PROCESSED!;
+    result.flags |= Ci.nsITextInputProcessor.KEY_MARK_KEYUP_AS_PROCESSED;
   }
   result.dictionary = {
     key: keyName,

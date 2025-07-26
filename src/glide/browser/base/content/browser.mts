@@ -604,7 +604,7 @@ class GlideBrowserClass {
         // is the same when `LOCATION_CHANGE_SAME_DOCUMENT` is set so that SPAs can still trigger new
         // events, as they are conceptually different pages.
         if (
-          flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT! &&
+          flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT &&
           this.$last_location === location.spec
         ) {
           return;
@@ -612,7 +612,7 @@ class GlideBrowserClass {
 
         this.$last_location = location.spec;
 
-        if (flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_HASHCHANGE!) {
+        if (flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_HASHCHANGE) {
           // ignore changes that are just to the `#` part of the url
           return;
         }
