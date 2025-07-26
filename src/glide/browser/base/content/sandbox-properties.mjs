@@ -5,7 +5,7 @@
 /**
  * NOTE: Do not modify this file by hand.
  * Content was generated from WebIDL sources.
- *
+ * 
  * This file contains all global properties extracted from WebIDL definitions.
  *
  * **note**: many of the identifiers listed here may not actually be present at runtime.
@@ -1159,5 +1159,5 @@ export const WINDOW_PROPERTIES = new Set([
   "top",
   "trustedTypes",
   "updateCommands",
-  "visualViewport",
+  "visualViewport"
 ]);

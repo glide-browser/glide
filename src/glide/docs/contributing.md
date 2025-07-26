@@ -42,6 +42,16 @@ pnpm launch
 > [!TIP]
 > There are lots of arguments you can pass here, run `pnpm launch --help` for the full list.
 
+## Editor setup
+
+Glide uses [dprint](https://dprint.dev/) for formatting, if you have not used dprint before, it is recommended you install and [configure](https://dprint.dev/install/#editor-extensions) it.
+
+Alternatively, you can run auto-formatting with:
+
+```bash
+pnpm fmt
+```
+
 ## Getting acclimated
 
 Glide inherits a lot of concepts from Firefox, for a quick primer:

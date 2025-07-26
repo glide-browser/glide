@@ -5,6 +5,9 @@
   "scripts": {
     "bootstrap": "bash ./scripts/bootstrap.sh",
 
+    "fmt": "dprint fmt",
+    "fmt:check": "dprint check",
+
     "dev": "pnpm tsn scripts/dev.mts --watch",
     "dev:docs": "pnpm tsn scripts/watch-docs.mts --watch",
     "dev:once": "pnpm tsn scripts/dev.mts",
@@ -28,12 +31,11 @@
 
     "check:license": "pnpm glider license-check",
     "fix:license": "pnpm glider license-check --fix",
-    
+
     "tsc": "./scripts/check-types.sh",
     "tsc:browser": "tsc -p tsconfig.check.json",
     "tsc:scripts": "tsc -p scripts/tsconfig.json",
     "tsc:config": "tsc -p src/glide/browser/base/content/test/config/types/tsconfig.json",
-    "format": "prettier -w .",
     "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
     "test": "pnpm mach test glide"
   },
@@ -52,6 +54,7 @@
     "@types/node": "^22.14.0",
     "@types/webidl2": "^24.4.3",
     "chokidar": "^4.0.3",
+    "dprint": "^0.50.1",
     "dts-bundle-generator": "^9.5.1",
     "esbuild": "^0.25.2",
     "execa": "^9.5.2",

@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
   - core-js-pure
+  - dprint
   - esbuild
   - sharp

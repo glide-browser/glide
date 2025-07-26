@@ -1,0 +1,75 @@
+{
+  "typescript": {
+    "arguments.preferSingleLine": true,
+  },
+  "json": {
+  },
+  "markdown": {
+  },
+  "toml": {
+  },
+  "ruff": {
+  },
+  "malva": {
+    "blockSelectorLinebreak": "wrap",
+  },
+  "markup": {
+    "scriptIndent": true,
+    "styleIndent": true,
+  },
+  "yaml": {
+  },
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+
+    // firefox
+    "engine/",
+
+    // bundled versions of deps
+    "src/glide/bundled/*",
+
+    // auto-generated docs
+    "src/glide/docs/dist/",
+
+    // auto-generated things
+    "src/glide/generated/",
+    "src/glide/browser/base/content/sandbox-properties.mjs",
+
+    // built JS files
+    "src/glide/browser/actors/dist/",
+    "src/glide/browser/base/content/dist/",
+    "src/glide/browser/base/content/utils/dist/",
+    "src/glide/toolkit/content/widgets/dist/",
+    "src/glide/browser/base/content/test/*/dist/",
+
+    // contains preprocesser annotations
+    "src/browser/app/profile/glide.js",
+
+    // vendored
+    "src/glide/docs/themes/tokyonight-light.json",
+    "src/browser/app/profile/betterfox.js",
+
+    // misc
+    "package.json",
+    "pnpm-lock.yaml",
+    "src/glide/browser/base/content/glide-scripts.inc",
+
+    // deps
+    ".venv/",
+    "node_modules/",
+
+    // local
+    "_dev/",
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.95.8.wasm",
+    "https://plugins.dprint.dev/json-0.20.0.wasm",
+    "https://plugins.dprint.dev/markdown-0.19.0.wasm",
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/ruff-0.4.4.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.14.1.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.23.1.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm",
+  ],
+}
