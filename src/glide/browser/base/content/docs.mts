@@ -720,8 +720,8 @@ export async function markdown_to_html(
           <meta name="author" content="Robert Craigie" />
           <link rel="icon" href="${rel_to_dist}/logo-32.png" />
 
-          <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
           <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
+          <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
           ${styles
             .map(
               css => html`
