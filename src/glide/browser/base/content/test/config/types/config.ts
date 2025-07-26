@@ -35,10 +35,7 @@ glide.content.execute((str: string, num: number) => {}, {
 });
 
 // Valid: providing all args
-glide.content.execute((str: string, num: number) => {}, {
-  args: ["str", 1],
-  tab_id: 10,
-});
+glide.content.execute((str: string, num: number) => {}, { args: ["str", 1], tab_id: 10 });
 
 // Valid: optional arguments not passed
 // TODO(glide): is it possible to make `args` not required here?
@@ -95,10 +92,7 @@ declare global {
 }
 glide.excmds.execute("my_test_command");
 
-const cmd = glide.excmds.create(
-  { name: "wow_cool", description: "" },
-  () => {}
-);
+const cmd = glide.excmds.create({ name: "wow_cool", description: "" }, () => {});
 declare global {
   interface ExcmdRegistry {
     wow_cool: typeof cmd;

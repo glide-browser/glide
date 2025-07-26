@@ -7,12 +7,9 @@
 
 "use strict";
 
-const { generate_prefix_free_codes } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/strings.mjs",
-  {
-    global: "current",
-  }
-);
+const { generate_prefix_free_codes } = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs", {
+  global: "current",
+});
 
 add_task(async function test_generate_prefix_free_codes() {
   const alphabet = ["a", "b", "c"];
@@ -45,12 +42,8 @@ add_task(async function test_generate_prefix_free_codes() {
   for (let i = 0; i < codes.length; i++) {
     for (let j = 0; j < codes.length; j++) {
       if (i !== j) {
-        ok(
-          !codes[j]!.startsWith(codes[i]!),
-          `Code "${codes[j]}" should not start with "${codes[i]}"`
-        );
+        ok(!codes[j]!.startsWith(codes[i]!), `Code "${codes[j]}" should not start with "${codes[i]}"`);
       }
     }
   }
 });
-

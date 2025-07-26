@@ -9,9 +9,7 @@
 
 "use strict";
 
-const { serialize_function_to_expression } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/ipc.mjs"
-);
+const { serialize_function_to_expression } = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 
 add_task(async function test_g_mapleader_normalizes_input() {
   is(
@@ -21,9 +19,9 @@ add_task(async function test_g_mapleader_normalizes_input() {
         a(b) {
           console.log(b);
         },
-      }.a
+      }.a,
     ),
-    "function a(b) {\n          console.log(b);\n        }; a"
+    "function a(b) {\n          console.log(b);\n        }; a",
   );
   is(
     serialize_function_to_expression(
@@ -32,37 +30,34 @@ add_task(async function test_g_mapleader_normalizes_input() {
         async a(b) {
           console.log(b);
         },
-      }.a
+      }.a,
     ),
-    "async function a(b) {\n          console.log(b);\n        }; a"
+    "async function a(b) {\n          console.log(b);\n        }; a",
   );
   is(
     serialize_function_to_expression(
       // @ts-ignore
-      function foo(x) {}
+      function foo(x) {},
     ),
-    "function foo(x) {}; foo"
+    "function foo(x) {}; foo",
   );
   is(
     serialize_function_to_expression(
       // @ts-ignore
-      async function foo(x) {}
+      async function foo(x) {},
     ),
-    "async function foo(x) {}; foo"
+    "async function foo(x) {}; foo",
   );
-  is(
-    serialize_function_to_expression(() => {}),
-    "() => {}"
-  );
+  is(serialize_function_to_expression(() => {}), "() => {}");
   is(
     // @ts-ignore
     serialize_function_to_expression(foo => {}),
-    "foo => {}"
+    "foo => {}",
   );
   is(
     // @ts-ignore
     serialize_function_to_expression((foo, bar) => {}),
-    "(foo, bar) => {}"
+    "(foo, bar) => {}",
   );
   todo_is(
     serialize_function_to_expression(
@@ -71,8 +66,8 @@ add_task(async function test_g_mapleader_normalizes_input() {
         "a.foo"(b) {
           console.log(b);
         },
-      }["a.foo"]
+      }["a.foo"],
     ),
-    '({"a.foo"(b) {\n          console.log(b);\n        }})["a.foo"]'
+    "({\"a.foo\"(b) {\n          console.log(b);\n        }})[\"a.foo\"]",
   );
 });

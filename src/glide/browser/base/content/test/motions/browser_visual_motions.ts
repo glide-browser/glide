@@ -9,13 +9,13 @@
 
 declare var content: TestContent;
 
-const INPUT_TEST_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_visual_overlapping_selections() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, set_selection, test_selection, test_motion } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, set_selection, test_selection, test_motion } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: 1,
+    });
 
     await set_text("Hello world", "multiple forwards and backwards");
     await test_selection("vllllhh", "Hel");
@@ -39,8 +39,9 @@ add_task(async function test_visual_overlapping_selections() {
 
 add_task(async function test_cancelling_visual_selections() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, set_selection, test_selection, test_motion } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, set_selection, test_selection, test_motion } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: 1,
+    });
 
     await set_text("Hello world", "going right then cancel");
     await test_selection("vllll", "Hello");
@@ -79,8 +80,9 @@ add_task(async function test_cancelling_visual_selections() {
 
 add_task(async function test_visual_forwards() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, set_selection, test_edit, test_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, set_selection, test_edit, test_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: 1,
+    });
 
     await set_text("Hello wurld", "from the start of the line");
     await test_edit("vlld", "lo wurld", 0, "l");
@@ -93,10 +95,7 @@ add_task(async function test_visual_forwards() {
     await set_selection(6);
     await test_edit("vllld", "hello world", 6, "w");
 
-    await set_text(
-      "hello bar\nworld",
-      "only crosses forward line boundary by one char"
-    );
+    await set_text("hello bar\nworld", "only crosses forward line boundary by one char");
     await set_selection(6);
     await test_edit("vllllllld", "hello world", 6, "w");
 
@@ -116,8 +115,9 @@ add_task(async function test_visual_forwards() {
 
 add_task(async function test_visual_backwards() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, test_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+    const { set_text, test_edit, test_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
 
     await set_text("Hello world", "from the end of the line");
     await test_edit("vhhd", "Hello wo", 7, "o");
@@ -139,10 +139,7 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(
-      browser,
-      { text_start: 1 }
-    );
+    const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello world", "yank selection to clipboard");
     await set_selection(1);
@@ -154,11 +151,7 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
 
     const clipboardText = await navigator.clipboard.readText();
     is(clipboardText, "ello", "Selected text should be copied to clipboard");
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Should return to normal mode after yank"
-    );
+    is(GlideBrowser.state.mode, "normal", "Should return to normal mode after yank");
   });
 });
 
@@ -173,7 +166,7 @@ add_task(async function test_visual_yank_non_editable_to_clipboard() {
       const window = content.window;
       const document = content.document;
 
-      const label = document.querySelector('label[for="user_input_1"]');
+      const label = document.querySelector("label[for=\"user_input_1\"]");
       if (!label) {
         throw new Error("Could not find label element");
       }
@@ -194,15 +187,7 @@ add_task(async function test_visual_yank_non_editable_to_clipboard() {
     await GlideTestUtils.synthesize_keyseq("vy");
     await sleep_frames(3);
 
-    is(
-      await navigator.clipboard.readText(),
-      "Enter your text:",
-      "Label text should be copied to clipboard"
-    );
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Should return to normal mode after yank"
-    );
+    is(await navigator.clipboard.readText(), "Enter your text:", "Label text should be copied to clipboard");
+    is(GlideBrowser.state.mode, "normal", "Should return to normal mode after yank");
   });
 });

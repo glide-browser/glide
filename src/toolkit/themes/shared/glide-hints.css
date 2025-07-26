@@ -12,16 +12,9 @@
  * which will mess up our UI. These declarations contain more specifiers than necessary to increase their specificity
  * (precedence).
  */
-.glide-reset,
-div.glide-reset,
-span.glide-reset,
-table.glide-reset,
-a.glide-reset,
-a:visited.glide-reset,
-a:link.glide-reset,
-a:hover.glide-reset,
-td.glide-reset,
-tr.glide-reset {
+.glide-reset, div.glide-reset, span.glide-reset, table.glide-reset,
+a.glide-reset, a:visited.glide-reset, a:link.glide-reset, a:hover.glide-reset,
+td.glide-reset, tr.glide-reset {
   background: none;
   border: none;
   bottom: auto;
@@ -60,8 +53,7 @@ tr.glide-reset {
   z-index: 2147483647;
 }
 
-thead.glide-reset,
-tbody.glide-reset {
+thead.glide-reset, tbody.glide-reset {
   display: table-header-group;
 }
 

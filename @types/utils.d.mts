@@ -10,13 +10,12 @@ type ActorReceiveMessage<
   [K in keyof Messages | keyof Queries]: {
     name: K;
     data: K extends keyof Messages ? Messages[K]
-    : K extends keyof Queries ? Queries[K]["props"]
-    : never;
+      : K extends keyof Queries ? Queries[K]["props"]
+      : never;
   };
 }[keyof Messages | keyof Queries];
 
-type Equals<X, Y> =
-  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true
+type Equals<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true
   : false;
 
 type Assert<T extends U, U> = T;

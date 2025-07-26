@@ -3,21 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
-  global: "current",
-});
-const Strings = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/strings.mjs"
-);
-const { LayoutUtils } = ChromeUtils.importESModule(
-  "resource://gre/modules/LayoutUtils.sys.mjs"
-);
-const Hinting = ChromeUtils.importESModule(
-  "chrome://glide/content/hinting.mjs"
-);
-const { assert_never, assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
+const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
+const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
+const Hinting = ChromeUtils.importESModule("chrome://glide/content/hinting.mjs");
+const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 /**
  * Collection of internal helper functions.
@@ -83,14 +73,8 @@ class GlideCommandsClass {
 
       const rest = child.textContent.slice(prefix.length);
       child.replaceChildren(
-        DOM.create_element("span", {
-          className: "glide-reset glide-matching-character",
-          children: [prefix],
-        }),
-        DOM.create_element("span", {
-          className: "glide-reset",
-          children: [rest],
-        })
+        DOM.create_element("span", { className: "glide-reset glide-matching-character", children: [prefix] }),
+        DOM.create_element("span", { className: "glide-reset", children: [rest] }),
       );
     }
   }
@@ -125,7 +109,7 @@ class GlideCommandsClass {
   show_hints(
     ipc_hints: GlideHintIPC[],
     location: glide.HintLocation,
-    auto_activate: boolean
+    auto_activate: boolean,
   ) {
     this.#clear_hints();
 
@@ -135,9 +119,7 @@ class GlideCommandsClass {
     // the hints return an x/y of the screen rect, so to position it correctly inside the browser UI
     // we need to figure out what the screen rect is for the browser itself and then subtract that
     // from the hint x/y
-    const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(
-      document!.body
-    );
+    const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(document!.body);
 
     const hints: GlideResolvedHint[] = [];
     for (const hint of ipc_hints) {
@@ -178,20 +160,17 @@ class GlideCommandsClass {
     }
 
     if (auto_activate && hints.length === 1) {
-      const actor =
-        location === "browser-ui" ? GlideBrowser.get_chrome_actor()
-        : location === "content" ? GlideBrowser.get_content_actor()
+      const actor = location === "browser-ui"
+        ? GlideBrowser.get_chrome_actor()
+        : location === "content"
+        ? GlideBrowser.get_content_actor()
         : assert_never(location);
       actor.send_async_message("Glide::ExecuteHint", { id: hints[0]!.id });
       this.remove_hints();
       return;
     }
 
-    const labels = Strings.generate_prefix_free_codes(
-      Hinting.ALPHABET,
-      hints.length,
-      Hinting.ALPHABET_COST_MAP
-    );
+    const labels = Strings.generate_prefix_free_codes(Hinting.ALPHABET, hints.length, Hinting.ALPHABET_COST_MAP);
 
     for (let i = 0; i < hints.length; i++) {
       const hint = hints[i]!;
@@ -199,11 +178,7 @@ class GlideCommandsClass {
 
       const hint_div = DOM.create_element("div", {
         className: `glide-reset glide-internal-hint-marker`,
-        style: {
-          top: `${hint.y}px`,
-          left: `${hint.x}px`,
-          zIndex: "2147483647",
-        },
+        style: { top: `${hint.y}px`, left: `${hint.x}px`, zIndex: "2147483647" },
         children: [DOM.create_element("span", { children: [hint.label] })],
       });
       container.appendChild(hint_div);
@@ -218,9 +193,7 @@ class GlideCommandsClass {
   async #create_commandline(tab: BrowserTab, opts: { prefill?: string } = {}) {
     let browser = gBrowser.getBrowserForTab(tab);
 
-    let glide_commandline = document!.createXULElement(
-      "glide-commandline"
-    ) as GlideCommandLine;
+    let glide_commandline = document!.createXULElement("glide-commandline") as GlideCommandLine;
 
     browser.parentNode.insertAdjacentElement("afterend", glide_commandline);
 

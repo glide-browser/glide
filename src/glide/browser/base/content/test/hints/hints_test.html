@@ -4,7 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/.
    -->
 
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Hints Test Page</title>
@@ -32,9 +32,7 @@
         padding: 8px 15px;
         cursor: pointer;
       }
-      input,
-      textarea,
-      select {
+      input, textarea, select {
         margin: 5px;
         padding: 5px;
       }
@@ -80,8 +78,7 @@
         <li><a href="#section3">Go to Section 3</a></li>
         <li>
           <a href="https://example.com" target="_blank"
-            >External Link (New Tab)</a
-          >
+          >External Link (New Tab)</a>
         </li>
         <li><a href="mailto:test@example.com">Email Link</a></li>
         <li>
@@ -190,13 +187,7 @@
       <div>
         <div
           onclick="alert('Clickable div!')"
-          style="
-            cursor: pointer;
-            background: #eee;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-          "
+          style="cursor: pointer; background: #eee; padding: 10px; margin: 10px 0; border: 1px solid #ccc"
         >
           Clickable Div
         </div>
@@ -216,8 +207,7 @@
       <p>This section contains additional links to test hint functionality:</p>
       <a href="#top">Back to Top</a> | <a href="#section2">Next Section</a> |
       <a href="javascript:void(0)" onclick="console.log('Console log link')"
-        >Console Log</a
-      >
+      >Console Log</a>
     </div>
 
     <div class="section" id="section2">
@@ -229,9 +219,7 @@
           style="padding: 20px; background: #f0f0f0; cursor: pointer"
         >
           Outer clickable div
-          <button
-            onclick="event.stopPropagation(); alert('Inner button clicked!')"
-          >
+          <button onclick="event.stopPropagation(); alert('Inner button clicked!')">
             Inner Button
           </button>
           <a href="#section3" onclick="event.stopPropagation()">Inner Link</a>
@@ -246,8 +234,7 @@
         <a href="#" style="visibility: hidden">Invisible Link</a>
         <a href="#" style="opacity: 0">Transparent Link</a>
         <a href="#test" style="color: white; background: white"
-          >Hard to See Link</a
-        >
+        >Hard to See Link</a>
       </div>
       <div>
         <details>
@@ -272,13 +259,13 @@
 
     <script>
       // Add some dynamic content for testing
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", function() {
         console.log("Hints test page loaded");
 
         // Add a dynamically created link
         const dynamicDiv = document.createElement("div");
         dynamicDiv.innerHTML =
-          '<p>Dynamically added: <a href="#dynamic">Dynamic Link</a></p>';
+          "<p>Dynamically added: <a href=\"#dynamic\">Dynamic Link</a></p>";
         document.body.appendChild(dynamicDiv);
       });
     </script>

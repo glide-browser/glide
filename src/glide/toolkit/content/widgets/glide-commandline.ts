@@ -17,20 +17,15 @@ export type GlideCommandlineGroup = "excmd" | "tab";
 // This is loaded into chrome windows with the subscript loader. Wrap in
 // a block to prevent accidentally leaking globals onto `window`.
 {
-  const DOM = ChromeUtils.importESModule(
-    "chrome://glide/content/utils/dom.mjs",
-    { global: "current" }
+  const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
+  const { assert_present, assert_never, is_present } = ChromeUtils.importESModule(
+    "chrome://glide/content/utils/guards.mjs",
   );
-  const { assert_present, assert_never, is_present } =
-    ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
   // placeholder function for html`...` usage for syntax highlighting
   const html = String.raw;
 
-  class GlideCommandLine
-    extends MozXULElement
-    implements GlideCommandLineInterface
-  {
+  class GlideCommandLine extends MozXULElement implements GlideCommandLineInterface {
     static get markup() {
       return html`
         <html:div
@@ -84,14 +79,10 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     constructor() {
       super();
 
-      this.#log =
-        console.createInstance ?
-          console.createInstance({
-            prefix: "glide-commandline",
-            maxLogLevelPref: "glide.logging.loglevel",
-          })
-          // `console.createInstance` doesn't seem to be available in tests...
-          // TODO(glide): is there a way to fix this?
+      this.#log = console.createInstance
+        ? console.createInstance({ prefix: "glide-commandline", maxLogLevelPref: "glide.logging.loglevel" })
+        // `console.createInstance` doesn't seem to be available in tests...
+        // TODO(glide): is there a way to fix this?
         : (console as any);
 
       this.#init_excmds();
@@ -102,24 +93,20 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         }
       });
 
-      this.addEventListener(
-        "keypress",
-        event => {
-          if (event.keyCode == event.DOM_VK_TAB) {
-            event.preventDefault();
-            this.#handle_tab(event.shiftKey);
-          } else if (event.keyCode == event.DOM_VK_RETURN) {
-            event.preventDefault();
-            this.accept_focused();
-          } else if (event.keyCode == event.DOM_VK_ESCAPE) {
-            event.preventDefault();
-            this.close();
-          } else {
-            this.#last_action = "keypress";
-          }
-        },
-        true
-      );
+      this.addEventListener("keypress", event => {
+        if (event.keyCode == event.DOM_VK_TAB) {
+          event.preventDefault();
+          this.#handle_tab(event.shiftKey);
+        } else if (event.keyCode == event.DOM_VK_RETURN) {
+          event.preventDefault();
+          this.accept_focused();
+        } else if (event.keyCode == event.DOM_VK_ESCAPE) {
+          event.preventDefault();
+          this.close();
+        } else {
+          this.#last_action = "keypress";
+        }
+      }, true);
     }
 
     get options() {
@@ -153,14 +140,8 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         const row = DOM.create_element("tr", {
           className: "ExcmdCompletionOption gcl-option",
           children: [
-            DOM.create_element("td", {
-              className: "excmd",
-              children: option.name,
-            }),
-            DOM.create_element("td", {
-              className: "documentation",
-              children: option.description,
-            }),
+            DOM.create_element("td", { className: "excmd", children: option.name }),
+            DOM.create_element("td", { className: "documentation", children: option.description }),
           ],
         });
         table.appendChild(row);
@@ -239,30 +220,25 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         return;
       }
 
-      const focused_index =
-        this.#focused_index === -1 ?
-          reverse ? rows.length
+      const focused_index = this.#focused_index === -1
+        ? reverse
+          ? rows.length
           : -1
         : this.#focused_index;
 
-      const new_index =
-        reverse ?
-          this.#previous_visible_completion(rows, focused_index)
+      const new_index = reverse
+        ? this.#previous_visible_completion(rows, focused_index)
         : this.#next_visible_completion(rows, focused_index);
 
       this._set_focused_index(new_index);
     }
 
     #get_excmds_group() {
-      return this.get_element<HTMLElement>(
-        "glide-commandline-completions-excmd"
-      )!;
+      return this.get_element<HTMLElement>("glide-commandline-completions-excmd")!;
     }
 
     #get_tabs_group() {
-      return this.get_element<HTMLElement>(
-        "glide-commandline-completions-tabs"
-      )!;
+      return this.get_element<HTMLElement>("glide-commandline-completions-tabs")!;
     }
 
     async #toggle_tabs() {
@@ -307,9 +283,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       // TODO(glide): fine grained updates
 
       for (const tab of gBrowser.tabContainer.allTabs) {
-        const row = DOM.create_element("tr", {
-          className: "TabCompletionOption gcl-option",
-        });
+        const row = DOM.create_element("tr", { className: "TabCompletionOption gcl-option" });
         row.replaceChildren(
           DOM.create_element("td", {
             className: "status",
@@ -327,17 +301,13 @@ export type GlideCommandlineGroup = "excmd" | "tab";
             className: "label",
             children: [
               DOM.create_element("img", {
-                src:
-                  tab.image || "chrome://global/skin/icons/defaultFavicon.svg",
+                src: tab.image || "chrome://global/skin/icons/defaultFavicon.svg",
                 alt: "icon",
               }),
               tab.label,
             ],
           }),
-          DOM.create_element("td", {
-            className: "url",
-            children: tab.linkedBrowser.currentURI.spec,
-          })
+          DOM.create_element("td", { className: "url", children: tab.linkedBrowser.currentURI.spec }),
         );
 
         this.#row_to_tab.set(row, tab);
@@ -398,11 +368,9 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         case "tab": {
           const tab = assert_present(
             this.#row_to_tab.get(row),
-            `No corresponding browser tab for row at ${this.#focused_index}`
+            `No corresponding browser tab for row at ${this.#focused_index}`,
           );
-          this.#log.debug(
-            `switching to tab ${gBrowser.tabContainer.allTabs.indexOf(tab)}`
-          );
+          this.#log.debug(`switching to tab ${gBrowser.tabContainer.allTabs.indexOf(tab)}`);
           gBrowser.selectedTab = tab;
           break;
         }
@@ -423,19 +391,13 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       }
 
       if (this.#focused_index === -1) {
-        this.#log.warn(
-          `exec: nothing focused - focused_index=${this.#focused_index}`
-        );
+        this.#log.warn(`exec: nothing focused - focused_index=${this.#focused_index}`);
         return null;
       }
 
       const row = rows.item(this.#focused_index);
       if (!row) {
-        this.#log.error(
-          `exec: focused index is invalid, no option for index=${
-            this.#focused_index
-          }`
-        );
+        this.#log.error(`exec: focused index is invalid, no option for index=${this.#focused_index}`);
         return null;
       }
 
@@ -459,7 +421,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
 
       const tab = assert_present(
         this.#row_to_tab.get(row),
-        `No corresponding browser tab for row at ${this.#focused_index}`
+        `No corresponding browser tab for row at ${this.#focused_index}`,
       );
       gBrowser.removeTab(tab);
 
@@ -469,18 +431,12 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       // note that there should *always* be another tab to move focus to, as if the last
       // tab is closed then the window is also closed.
 
-      const next_index = this.#next_visible_completion(
-        rows,
-        this.#focused_index
-      );
+      const next_index = this.#next_visible_completion(rows, this.#focused_index);
       const is_at_end = next_index < this.#focused_index;
 
       let new_index: number;
       if (is_at_end) {
-        new_index = this.#previous_visible_completion(
-          rows,
-          this.#focused_index
-        );
+        new_index = this.#previous_visible_completion(rows, this.#focused_index);
       } else {
         new_index = this.#focused_index;
       }
@@ -489,9 +445,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     }
 
     get_active_group(): GlideCommandlineGroup {
-      const top = assert_present(
-        this.get_element("glide-commandline-completions")
-      );
+      const top = assert_present(this.get_element("glide-commandline-completions"));
       for (const child of top.childNodes) {
         if (!child || (child as HTMLElement).hidden) {
           continue;
@@ -500,9 +454,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         return this.#get_group_name(child as HTMLElement);
       }
 
-      throw new Error(
-        "Could not resolve the active commandline group. This should never happen"
-      );
+      throw new Error("Could not resolve the active commandline group. This should never happen");
     }
 
     #get_group_name(element: HTMLElement): GlideCommandlineGroup {
@@ -518,23 +470,21 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     }
 
     #get_group_for_row(row: HTMLElement): GlideCommandlineGroup {
-      return this.#get_group_name(
-        row.parentElement!.parentElement! as HTMLElement
-      );
+      return this.#get_group_name(row.parentElement!.parentElement! as HTMLElement);
     }
 
     #next_visible_completion(
       rows: NodeListOf<HTMLElement>,
       from_index: number,
-      _guard = false
+      _guard = false,
     ): number {
       let index = from_index + 1;
       while (index < rows.length) {
         const completion = rows.item(index)!;
         if (
-          !completion.hidden &&
+          !completion.hidden
           // skip over options where the entire group is hidden
-          !(completion.parentElement?.parentElement as HTMLElement | null)
+          && !(completion.parentElement?.parentElement as HTMLElement | null)
             ?.hidden
         ) {
           return index;
@@ -553,15 +503,15 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     #previous_visible_completion(
       rows: NodeListOf<HTMLElement>,
       from_index: number,
-      _guard = false
+      _guard = false,
     ): number {
       let index = from_index - 1;
       while (index >= 0) {
         const completion = rows.item(index)!;
         if (
-          !completion.hidden &&
+          !completion.hidden
           // skip over options where the entire group is hidden
-          !(completion.parentElement?.parentElement as HTMLElement | null)
+          && !(completion.parentElement?.parentElement as HTMLElement | null)
             ?.hidden
         ) {
           return index;
@@ -591,10 +541,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
         const focused_row = rows[index]!;
         focused_row.classList.add("focused");
 
-        const scroll_opts: ScrollIntoViewOptions = {
-          block: "nearest",
-          behavior: "instant",
-        };
+        const scroll_opts: ScrollIntoViewOptions = { block: "nearest", behavior: "instant" };
 
         const step = 2;
 
@@ -602,14 +549,11 @@ export type GlideCommandlineGroup = "excmd" | "tab";
           // if we're at the top of the command line frame then we need to ensure
           // that the section headers are also in view, otherwise going down and then
           // coming back up would result in the header disappearing forever
-          this.query_selector_all(".section-header").forEach(e =>
-            e.scrollIntoView(scroll_opts)
-          );
+          this.query_selector_all(".section-header").forEach(e => e.scrollIntoView(scroll_opts));
         }
 
-        const scroll_element =
-          this.#get_scrollview_element(rows, index, previous_index, step) ??
-          focused_row;
+        const scroll_element = this.#get_scrollview_element(rows, index, previous_index, step)
+          ?? focused_row;
 
         scroll_element.scrollIntoView(scroll_opts);
       } else {
@@ -626,7 +570,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       rows: NodeListOf<HTMLElement>,
       index: number,
       previous_index: number,
-      step: number
+      step: number,
     ): Element | undefined {
       // the helper functions this is passed to will automatically dec/inc the given index
       // so for a `step: 1` input, without this we'd actually be scrolling 2 elements ahead.
@@ -657,10 +601,8 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       const filter_value = (input as HTMLInputElement).value.toLowerCase();
 
       const space_index = filter_value.indexOf(" ");
-      const command_filter =
-        space_index !== -1 ? filter_value.slice(0, space_index) : filter_value;
-      const args =
-        space_index !== -1 ? filter_value.slice(space_index + 1) : filter_value;
+      const command_filter = space_index !== -1 ? filter_value.slice(0, space_index) : filter_value;
+      const args = space_index !== -1 ? filter_value.slice(space_index + 1) : filter_value;
 
       // TODO(glide): more general support for custom completion options
       const tabs = this.#get_tabs_group();
@@ -711,9 +653,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
                 .filter(is_present);
 
               // TODO(glide): better fuzzy finding
-              return candidates.some(candidate =>
-                candidate.includes(command_filter)
-              );
+              return candidates.some(candidate => candidate.includes(command_filter));
             }
             case "tab": {
               const candidates = [
@@ -748,9 +688,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     }
 
     #get_input(): HTMLInputElement | null {
-      return this.get_element(
-        "glide-commandline-input"
-      ) as HTMLInputElement | null;
+      return this.get_element("glide-commandline-input") as HTMLInputElement | null;
     }
 
     get_element<T extends Node = Element>(anonid: string): T | null {
@@ -758,13 +696,13 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     }
 
     query_selector_first<T extends Node = Element>(
-      selectors: string
+      selectors: string,
     ): T | null {
       return this.querySelector(selectors) as any;
     }
 
     query_selector_all<T extends Node = Element>(
-      selectors: string
+      selectors: string,
     ): NodeListOf<T> {
       return this.querySelectorAll(selectors) as any;
     }

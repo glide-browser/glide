@@ -96,10 +96,11 @@ declare global {
       /**
        * Receives an activityItem for each logging event.
        */
-      interface OnExtensionActivityEvent
-        extends Events.Event<
+      interface OnExtensionActivityEvent extends
+        Events.Event<
           (details: OnExtensionActivityDetailsType) => void
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -107,7 +108,7 @@ declare global {
          */
         addListener(
           callback: (details: OnExtensionActivityDetailsType) => void,
-          id: string
+          id: string,
         ): void;
       }
 
@@ -182,7 +183,7 @@ declare global {
          */
         create(
           name: string | undefined,
-          alarmInfo: CreateAlarmInfoType
+          alarmInfo: CreateAlarmInfoType,
         ): Promise<void>;
 
         /**
@@ -470,7 +471,7 @@ declare global {
          */
         move(
           id: string,
-          destination: MoveDestinationType
+          destination: MoveDestinationType,
         ): Promise<BookmarkTreeNode>;
 
         /**
@@ -479,7 +480,7 @@ declare global {
          */
         update(
           id: string,
-          changes: UpdateChangesType
+          changes: UpdateChangesType,
         ): Promise<BookmarkTreeNode>;
 
         /**
@@ -710,7 +711,7 @@ declare global {
          * Sets the background color for the badge.
          */
         setBadgeBackgroundColor(
-          details: SetBadgeBackgroundColorDetailsType
+          details: SetBadgeBackgroundColorDetailsType,
         ): Promise<void>;
 
         /**
@@ -1054,7 +1055,7 @@ declare global {
          */
         remove(
           options: RemovalOptions,
-          dataToRemove: DataTypeSet
+          dataToRemove: DataTypeSet,
         ): Promise<void>;
 
         /**
@@ -1192,7 +1193,7 @@ declare global {
          */
         setImageData(
           imageData: ArrayBuffer,
-          imageType: SetImageDataImageTypeEnum
+          imageType: SetImageDataImageTypeEnum,
         ): Promise<void>;
       }
     }
@@ -1396,7 +1397,7 @@ declare global {
          * Register a content script programmatically
          */
         register(
-          contentScriptOptions: RegisteredContentScriptOptions
+          contentScriptOptions: RegisteredContentScriptOptions,
         ): Promise<RegisteredContentScript>;
       }
     }
@@ -1545,7 +1546,7 @@ declare global {
          */
         update(
           cookieStoreId: string,
-          details: UpdateDetailsType
+          details: UpdateDetailsType,
         ): Promise<ContextualIdentity>;
 
         /**
@@ -1556,7 +1557,7 @@ declare global {
          */
         move(
           cookieStoreIds: string | string[],
-          position: number
+          position: number,
         ): Promise<void>;
 
         /**
@@ -2016,7 +2017,7 @@ declare global {
          * @param details Information to identify the cookie to remove.
          */
         remove(
-          details: RemoveDetailsType
+          details: RemoveDetailsType,
         ): Promise<RemoveCallbackDetailsType | null>;
 
         /**
@@ -2179,7 +2180,7 @@ declare global {
          */
         getRules(
           rules?: string[],
-          callback?: (rules: Array<Rule<TCondition, TAction>>) => void
+          callback?: (rules: Array<Rule<TCondition, TAction>>) => void,
         ): void;
 
         /**
@@ -2197,15 +2198,15 @@ declare global {
 
       interface Static {
         PageStateMatcher: {
-          new (options?: PageStateMatcher): PageStateMatcher;
+          new(options?: PageStateMatcher): PageStateMatcher;
         };
 
-        ShowAction: { new (options?: ShowAction): ShowAction };
+        ShowAction: { new(options?: ShowAction): ShowAction };
 
-        SetIcon: { new (options?: SetIcon): SetIcon };
+        SetIcon: { new(options?: SetIcon): SetIcon };
 
         RequestContentScript: {
-          new (options?: RequestContentScript): RequestContentScript;
+          new(options?: RequestContentScript): RequestContentScript;
         };
 
         onPageChanged: RuleEvent<
@@ -2752,7 +2753,7 @@ declare global {
          * @returns Called when the dynamic rules have been updated
          */
         updateDynamicRules(
-          options: UpdateDynamicRulesOptionsType
+          options: UpdateDynamicRulesOptionsType,
         ): Promise<void>;
 
         /**
@@ -2763,7 +2764,7 @@ declare global {
          * @returns Called when the session rules have been updated
          */
         updateSessionRules(
-          options: UpdateSessionRulesOptionsType
+          options: UpdateSessionRulesOptionsType,
         ): Promise<void>;
 
         /**
@@ -2775,7 +2776,7 @@ declare global {
          * Modifies the static rulesets enabled/disabled state.
          */
         updateEnabledRulesets(
-          updateRulesetOptions: UpdateEnabledRulesetsUpdateRulesetOptionsType
+          updateRulesetOptions: UpdateEnabledRulesetsUpdateRulesetOptionsType,
         ): Promise<void>;
 
         /**
@@ -2793,7 +2794,7 @@ declare global {
          * Returns the list of individual disabled static rules from a given static ruleset id.
          */
         getDisabledRuleIds(
-          options: GetDisabledRuleIdsOptionsType
+          options: GetDisabledRuleIdsOptionsType,
         ): Promise<number[]>;
 
         /**
@@ -2814,7 +2815,7 @@ declare global {
          * Checks if the given regular expression will be supported as a 'regexFilter' rule condition.
          */
         isRegexSupported(
-          regexOptions: IsRegexSupportedRegexOptionsType
+          regexOptions: IsRegexSupportedRegexOptionsType,
         ): Promise<IsRegexSupportedCallbackResultType>;
 
         /**
@@ -2826,7 +2827,7 @@ declare global {
          */
         testMatchOutcome(
           request: TestMatchOutcomeRequestType,
-          options?: TestMatchOutcomeOptionsType
+          options?: TestMatchOutcomeOptionsType,
         ): Promise<TestMatchOutcomeCallbackResultType>;
 
         /**
@@ -3549,7 +3550,7 @@ declare global {
          */
         getFileIcon(
           downloadId: number,
-          options?: GetFileIconOptionsType
+          options?: GetFileIconOptionsType,
         ): Promise<string>;
 
         /**
@@ -4717,7 +4718,7 @@ declare global {
          */
         getMessage(
           messageName: string,
-          substitutions?: string[] | string
+          substitutions?: string[] | string,
         ): Promise<string>;
 
         /**
@@ -4765,7 +4766,7 @@ declare global {
          * Starts an auth flow at the specified URL.
          */
         launchWebAuthFlow(
-          details: LaunchWebAuthFlowDetailsType
+          details: LaunchWebAuthFlowDetailsType,
         ): Promise<string>;
 
         /**
@@ -5001,7 +5002,7 @@ declare global {
          * Installs and enables a theme extension from the given url.
          */
         install(
-          options: InstallOptionsType
+          options: InstallOptionsType,
         ): Promise<InstallCallbackResultType>;
 
         /**
@@ -6848,7 +6849,7 @@ declare global {
          */
         create(
           createProperties: CreateCreatePropertiesType,
-          callback?: () => void
+          callback?: () => void,
         ): number | string;
 
         /**
@@ -6860,7 +6861,7 @@ declare global {
          */
         update(
           id: number | string,
-          updateProperties: UpdateUpdatePropertiesType
+          updateProperties: UpdateUpdatePropertiesType,
         ): Promise<void>;
 
         /**
@@ -6883,7 +6884,7 @@ declare global {
          * 'contextmenu' DOM event handler, and only applies to the menu that opens after this event.
          */
         overrideContext(
-          contextOptions: OverrideContextContextOptionsType
+          contextOptions: OverrideContextContextOptionsType,
         ): void;
 
         /**
@@ -7268,7 +7269,7 @@ declare global {
          */
         create(
           notificationId: string | undefined,
-          options: CreateNotificationOptions
+          options: CreateNotificationOptions,
         ): Promise<string>;
 
         /**
@@ -7402,7 +7403,7 @@ declare global {
         onInputChanged: Events.Event<
           (
             text: string,
-            suggest: (suggestResults: SuggestResult[]) => void
+            suggest: (suggestResults: SuggestResult[]) => void,
           ) => void
         >;
 
@@ -7938,8 +7939,7 @@ declare global {
       /**
        * Fired when proxy data is needed for a request.
        */
-      interface OnRequestEvent
-        extends Events.Event<(details: OnRequestDetailsType) => void> {
+      interface OnRequestEvent extends Events.Event<(details: OnRequestDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -7950,7 +7950,7 @@ declare global {
         addListener(
           callback: (details: OnRequestDetailsType) => void,
           filter: Browser.WebRequest.RequestFilter,
-          extraInfoSpec?: string[]
+          extraInfoSpec?: string[],
         ): void;
       }
 
@@ -8256,7 +8256,7 @@ declare global {
       type OnMessageListenerCallback = (
         message: unknown,
         sender: MessageSender,
-        sendResponse: (response: unknown) => void
+        sendResponse: (response: unknown) => void,
       ) => true;
 
       /**
@@ -8265,12 +8265,12 @@ declare global {
        */
       type OnMessageListenerAsync = (
         message: unknown,
-        sender: MessageSender
+        sender: MessageSender,
       ) => Promise<unknown>;
 
       type OnMessageListenerNoResponse = (
         message: unknown,
-        sender: MessageSender
+        sender: MessageSender,
       ) => void;
 
       type OnMessageListener =
@@ -8462,7 +8462,7 @@ declare global {
          */
         connect(
           extensionId?: string,
-          connectInfo?: ConnectConnectInfoType
+          connectInfo?: ConnectConnectInfoType,
         ): Port;
 
         /**
@@ -8501,7 +8501,7 @@ declare global {
         sendMessage<TMessage = unknown, TResponse = unknown>(
           extensionId: string | undefined,
           message: TMessage,
-          options?: SendMessageOptionsType
+          options?: SendMessageOptionsType,
         ): Promise<TResponse>;
 
         /**
@@ -8516,7 +8516,7 @@ declare global {
         // eslint-disable-next-line @definitelytyped/no-unnecessary-generics
         sendMessage<TMessage = unknown, TResponse = unknown>(
           message: TMessage,
-          options?: SendMessageOptionsType
+          options?: SendMessageOptionsType,
         ): Promise<TResponse>;
 
         /**
@@ -8528,7 +8528,7 @@ declare global {
         // eslint-disable-next-line @definitelytyped/no-unnecessary-generics
         sendNativeMessage<TMessage = unknown, TResponse = unknown>(
           application: string,
-          message: TMessage
+          message: TMessage,
         ): Promise<TResponse>;
 
         /**
@@ -8889,8 +8889,7 @@ declare global {
         target: InjectionTarget;
       }
 
-      interface UpdateContentScriptsScriptsItemType
-        extends RegisteredContentScript {
+      interface UpdateContentScriptsScriptsItemType extends RegisteredContentScript {
         /**
          * Specifies if this content script will persist into future sessions.
          * Optional.
@@ -8939,7 +8938,7 @@ declare global {
          * @returns Invoked upon completion of the registration.
          */
         registerContentScripts(
-          scripts: RegisteredContentScript[]
+          scripts: RegisteredContentScript[],
         ): Promise<void>;
 
         /**
@@ -8949,7 +8948,7 @@ declare global {
          * @returns The resulting array contains the registered content scripts.
          */
         getRegisteredContentScripts(
-          filter?: ContentScriptFilter
+          filter?: ContentScriptFilter,
         ): Promise<RegisteredContentScript[]>;
 
         /**
@@ -8969,7 +8968,7 @@ declare global {
          * @returns Invoked when scripts have been updated.
          */
         updateContentScripts(
-          scripts: UpdateContentScriptsScriptsItemType[]
+          scripts: UpdateContentScriptsScriptsItemType[],
         ): Promise<void>;
       }
     }
@@ -9179,7 +9178,7 @@ declare global {
         setWindowValue(
           windowId: number,
           key: string,
-          value: unknown
+          value: unknown,
         ): Promise<void>;
 
         /**
@@ -9412,7 +9411,7 @@ declare global {
          * @returns Callback with storage items, or on failure (in which case $(ref:runtime.lastError) will be set).
          */
         get(
-          keys?: null | string | string[] | Record<string, unknown>
+          keys?: null | string | string[] | Record<string, unknown>,
         ): Promise<Record<string, unknown>>;
 
         /**
@@ -9462,7 +9461,7 @@ declare global {
          * @returns Callback with storage items, or on failure (in which case $(ref:runtime.lastError) will be set).
          */
         get(
-          keys?: null | string | string[] | Record<string, unknown>
+          keys?: null | string | string[] | Record<string, unknown>,
         ): Promise<Record<string, unknown>>;
 
         /**
@@ -9677,7 +9676,7 @@ declare global {
          */
         move(
           groupId: number,
-          moveProperties: MoveMovePropertiesType
+          moveProperties: MoveMovePropertiesType,
         ): Promise<TabGroup>;
 
         /**
@@ -9690,7 +9689,7 @@ declare global {
          */
         update(
           groupId: number,
-          updateProperties: UpdateUpdatePropertiesType
+          updateProperties: UpdateUpdatePropertiesType,
         ): Promise<TabGroup>;
 
         /**
@@ -10771,10 +10770,11 @@ declare global {
       /**
        * Fired when a tab is updated.
        */
-      interface OnUpdatedEvent
-        extends Events.Event<
+      interface OnUpdatedEvent extends
+        Events.Event<
           (tabId: number, changeInfo: OnUpdatedChangeInfoType, tab: Tab) => void
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -10785,9 +10785,9 @@ declare global {
           callback: (
             tabId: number,
             changeInfo: OnUpdatedChangeInfoType,
-            tab: Tab
+            tab: Tab,
           ) => void,
-          filter?: UpdateFilter
+          filter?: UpdateFilter,
         ): void;
       }
 
@@ -10814,7 +10814,7 @@ declare global {
          */
         connect(
           tabId: number,
-          connectInfo?: ConnectConnectInfoType
+          connectInfo?: ConnectConnectInfoType,
         ): Browser.Runtime.Port;
 
         /**
@@ -10828,7 +10828,7 @@ declare global {
         sendMessage<TMessage = unknown, TResponse = unknown>(
           tabId: number,
           message: TMessage,
-          options?: SendMessageOptionsType
+          options?: SendMessageOptionsType,
         ): Promise<TResponse>;
 
         /**
@@ -10844,7 +10844,7 @@ declare global {
          */
         duplicate(
           tabId: number,
-          duplicateProperties?: DuplicateDuplicatePropertiesType
+          duplicateProperties?: DuplicateDuplicatePropertiesType,
         ): Promise<Tab>;
 
         /**
@@ -10856,7 +10856,7 @@ declare global {
          * Highlights the given tabs.
          */
         highlight(
-          highlightInfo: HighlightHighlightInfoType
+          highlightInfo: HighlightHighlightInfoType,
         ): Promise<Browser.Windows.Window>;
 
         /**
@@ -10866,7 +10866,7 @@ declare global {
          */
         update(
           tabId: number | undefined,
-          updateProperties: UpdateUpdatePropertiesType
+          updateProperties: UpdateUpdatePropertiesType,
         ): Promise<Tab>;
 
         /**
@@ -10882,7 +10882,7 @@ declare global {
          */
         move(
           tabIds: number | number[],
-          moveProperties: MoveMovePropertiesType
+          moveProperties: MoveMovePropertiesType,
         ): Promise<Tab | Tab[]>;
 
         /**
@@ -10893,7 +10893,7 @@ declare global {
          */
         reload(
           tabId?: number,
-          reloadProperties?: ReloadReloadPropertiesType
+          reloadProperties?: ReloadReloadPropertiesType,
         ): Promise<void>;
 
         /**
@@ -10940,7 +10940,7 @@ declare global {
          */
         captureTab(
           tabId?: number,
-          options?: Browser.ExtensionTypes.ImageDetails
+          options?: Browser.ExtensionTypes.ImageDetails,
         ): Promise<string>;
 
         /**
@@ -10952,7 +10952,7 @@ declare global {
          */
         captureVisibleTab(
           windowId?: number,
-          options?: Browser.ExtensionTypes.ImageDetails
+          options?: Browser.ExtensionTypes.ImageDetails,
         ): Promise<string>;
 
         /**
@@ -10965,7 +10965,7 @@ declare global {
          */
         executeScript(
           tabId: number | undefined,
-          details: Browser.ExtensionTypes.InjectDetails
+          details: Browser.ExtensionTypes.InjectDetails,
         ): Promise<unknown[]>;
 
         /**
@@ -10976,7 +10976,7 @@ declare global {
          * @returns Called after all the JavaScript has been executed.
          */
         executeScript(
-          details: Browser.ExtensionTypes.InjectDetails
+          details: Browser.ExtensionTypes.InjectDetails,
         ): Promise<unknown[]>;
 
         /**
@@ -10989,7 +10989,7 @@ declare global {
          */
         insertCSS(
           tabId: number | undefined,
-          details: Browser.ExtensionTypes.InjectDetails
+          details: Browser.ExtensionTypes.InjectDetails,
         ): Promise<void>;
 
         /**
@@ -11012,7 +11012,7 @@ declare global {
          */
         removeCSS(
           tabId: number | undefined,
-          details: Browser.ExtensionTypes.InjectDetails
+          details: Browser.ExtensionTypes.InjectDetails,
         ): Promise<void>;
 
         /**
@@ -11063,7 +11063,7 @@ declare global {
          */
         setZoomSettings(
           tabId: number | undefined,
-          zoomSettings: ZoomSettings
+          zoomSettings: ZoomSettings,
         ): Promise<void>;
 
         /**
@@ -11135,7 +11135,7 @@ declare global {
         moveInSuccession(
           tabIds: number[],
           tabId?: number,
-          options?: MoveInSuccessionOptionsType
+          options?: MoveInSuccessionOptionsType,
         ): void;
 
         /**
@@ -11286,7 +11286,7 @@ declare global {
          */
         update(
           windowId: number | undefined,
-          details: Browser.Manifest.ThemeType
+          details: Browser.Manifest.ThemeType,
         ): Promise<void>;
 
         /**
@@ -11451,7 +11451,7 @@ declare global {
          * @param details Which setting to consider.
          */
         get(
-          details: SettingGetDetailsType
+          details: SettingGetDetailsType,
         ): Promise<SettingGetCallbackDetailsType>;
 
         /**
@@ -11769,7 +11769,7 @@ declare global {
          * and resolves to an object with the unregister() function
          */
         register(
-          userScriptOptions: UserScriptOptions
+          userScriptOptions: UserScriptOptions,
         ): Promise<RegisterCallbackLegacyRegisteredUserScriptType>;
 
         /**
@@ -12172,8 +12172,7 @@ declare global {
       /**
        * Fired when a navigation is about to occur.
        */
-      interface OnBeforeNavigateEvent
-        extends Events.Event<(details: OnBeforeNavigateDetailsType) => void> {
+      interface OnBeforeNavigateEvent extends Events.Event<(details: OnBeforeNavigateDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12183,7 +12182,7 @@ declare global {
          */
         addListener(
           callback: (details: OnBeforeNavigateDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
@@ -12192,8 +12191,7 @@ declare global {
        * might still be downloading, but at least part of the document has been received from the server and the browser has
        * decided to switch to the new document.
        */
-      interface OnCommittedEvent
-        extends Events.Event<(details: OnCommittedDetailsType) => void> {
+      interface OnCommittedEvent extends Events.Event<(details: OnCommittedDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12203,15 +12201,14 @@ declare global {
          */
         addListener(
           callback: (details: OnCommittedDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
       /**
        * Fired when the page's DOM is fully constructed, but the referenced resources may not finish loading.
        */
-      interface OnDOMContentLoadedEvent
-        extends Events.Event<(details: OnDOMContentLoadedDetailsType) => void> {
+      interface OnDOMContentLoadedEvent extends Events.Event<(details: OnDOMContentLoadedDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12221,15 +12218,14 @@ declare global {
          */
         addListener(
           callback: (details: OnDOMContentLoadedDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
       /**
        * Fired when a document, including the resources it refers to, is completely loaded and initialized.
        */
-      interface OnCompletedEvent
-        extends Events.Event<(details: OnCompletedDetailsType) => void> {
+      interface OnCompletedEvent extends Events.Event<(details: OnCompletedDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12239,7 +12235,7 @@ declare global {
          */
         addListener(
           callback: (details: OnCompletedDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
@@ -12247,8 +12243,7 @@ declare global {
        * Fired when an error occurs and the navigation is aborted. This can happen if either a network error occurred,
        * or the user aborted the navigation.
        */
-      interface OnErrorOccurredEvent
-        extends Events.Event<(details: OnErrorOccurredDetailsType) => void> {
+      interface OnErrorOccurredEvent extends Events.Event<(details: OnErrorOccurredDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12258,17 +12253,18 @@ declare global {
          */
         addListener(
           callback: (details: OnErrorOccurredDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
       /**
        * Fired when a new window, or a new tab in an existing window, is created to host a navigation.
        */
-      interface OnCreatedNavigationTargetEvent
-        extends Events.Event<
+      interface OnCreatedNavigationTargetEvent extends
+        Events.Event<
           (details: OnCreatedNavigationTargetDetailsType) => void
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12278,17 +12274,18 @@ declare global {
          */
         addListener(
           callback: (details: OnCreatedNavigationTargetDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
       /**
        * Fired when the reference fragment of a frame was updated. All future events for that frame will use the updated URL.
        */
-      interface OnReferenceFragmentUpdatedEvent
-        extends Events.Event<
+      interface OnReferenceFragmentUpdatedEvent extends
+        Events.Event<
           (details: OnReferenceFragmentUpdatedDetailsType) => void
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12298,17 +12295,18 @@ declare global {
          */
         addListener(
           callback: (details: OnReferenceFragmentUpdatedDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
       /**
        * Fired when the frame's history was updated to a new URL. All future events for that frame will use the updated URL.
        */
-      interface OnHistoryStateUpdatedEvent
-        extends Events.Event<
+      interface OnHistoryStateUpdatedEvent extends
+        Events.Event<
           (details: OnHistoryStateUpdatedDetailsType) => void
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12318,7 +12316,7 @@ declare global {
          */
         addListener(
           callback: (details: OnHistoryStateUpdatedDetailsType) => void,
-          filters?: EventUrlFilters
+          filters?: EventUrlFilters,
         ): void;
       }
 
@@ -12330,7 +12328,7 @@ declare global {
          * @param details Information about the frame to retrieve information about.
          */
         getFrame(
-          details: GetFrameDetailsType
+          details: GetFrameDetailsType,
         ): Promise<GetFrameCallbackDetailsType | null>;
 
         /**
@@ -12339,7 +12337,7 @@ declare global {
          * @param details Information about the tab to retrieve all frames from.
          */
         getAllFrames(
-          details: GetAllFramesDetailsType
+          details: GetAllFramesDetailsType,
         ): Promise<GetAllFramesCallbackDetailsItemType[] | null>;
 
         /**
@@ -13908,12 +13906,13 @@ declare global {
       /**
        * Fired when a request is about to occur.
        */
-      interface OnBeforeRequestEvent
-        extends Events.Event<
+      interface OnBeforeRequestEvent extends
+        Events.Event<
           (
-            details: OnBeforeRequestDetailsType
+            details: OnBeforeRequestDetailsType,
           ) => BlockingResponseOrPromiseOrVoid
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -13923,10 +13922,10 @@ declare global {
          */
         addListener(
           callback: (
-            details: OnBeforeRequestDetailsType
+            details: OnBeforeRequestDetailsType,
           ) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
-          extraInfoSpec?: OnBeforeRequestOptions[]
+          extraInfoSpec?: OnBeforeRequestOptions[],
         ): void;
       }
 
@@ -13934,12 +13933,13 @@ declare global {
        * Fired before sending an HTTP request, once the request headers are available. This may occur after a TCP connection is
        * made to the server, but before any HTTP data is sent.
        */
-      interface OnBeforeSendHeadersEvent
-        extends Events.Event<
+      interface OnBeforeSendHeadersEvent extends
+        Events.Event<
           (
-            details: OnBeforeSendHeadersDetailsType
+            details: OnBeforeSendHeadersDetailsType,
           ) => BlockingResponseOrPromiseOrVoid
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -13949,10 +13949,10 @@ declare global {
          */
         addListener(
           callback: (
-            details: OnBeforeSendHeadersDetailsType
+            details: OnBeforeSendHeadersDetailsType,
           ) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
-          extraInfoSpec?: OnBeforeSendHeadersOptions[]
+          extraInfoSpec?: OnBeforeSendHeadersOptions[],
         ): void;
       }
 
@@ -13960,8 +13960,7 @@ declare global {
        * Fired just before a request is going to be sent to the server (modifications of previous onBeforeSendHeaders callbacks
        * are visible by the time onSendHeaders is fired).
        */
-      interface OnSendHeadersEvent
-        extends Events.Event<(details: OnSendHeadersDetailsType) => void> {
+      interface OnSendHeadersEvent extends Events.Event<(details: OnSendHeadersDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -13972,19 +13971,20 @@ declare global {
         addListener(
           callback: (details: OnSendHeadersDetailsType) => void,
           filter: RequestFilter,
-          extraInfoSpec?: OnSendHeadersOptions[]
+          extraInfoSpec?: OnSendHeadersOptions[],
         ): void;
       }
 
       /**
        * Fired when HTTP response headers of a request have been received.
        */
-      interface OnHeadersReceivedEvent
-        extends Events.Event<
+      interface OnHeadersReceivedEvent extends
+        Events.Event<
           (
-            details: OnHeadersReceivedDetailsType
+            details: OnHeadersReceivedDetailsType,
           ) => BlockingResponseOrPromiseOrVoid
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -13994,10 +13994,10 @@ declare global {
          */
         addListener(
           callback: (
-            details: OnHeadersReceivedDetailsType
+            details: OnHeadersReceivedDetailsType,
           ) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
-          extraInfoSpec?: OnHeadersReceivedOptions[]
+          extraInfoSpec?: OnHeadersReceivedOptions[],
         ): void;
       }
 
@@ -14006,12 +14006,13 @@ declare global {
        * credentials, it can cancel the request and display the error page, or it can take no action on the challenge.
        * If bad user credentials are provided, this may be called multiple times for the same request.
        */
-      interface OnAuthRequiredEvent
-        extends Events.Event<
+      interface OnAuthRequiredEvent extends
+        Events.Event<
           (
-            details: OnAuthRequiredDetailsType
+            details: OnAuthRequiredDetailsType,
           ) => BlockingResponseOrPromiseOrVoid
-        > {
+        >
+      {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -14021,10 +14022,10 @@ declare global {
          */
         addListener(
           callback: (
-            details: OnAuthRequiredDetailsType
+            details: OnAuthRequiredDetailsType,
           ) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
-          extraInfoSpec?: OnAuthRequiredOptions[]
+          extraInfoSpec?: OnAuthRequiredOptions[],
         ): void;
       }
 
@@ -14032,8 +14033,7 @@ declare global {
        * Fired when the first byte of the response body is received. For HTTP requests, this means that the status line and
        * response headers are available.
        */
-      interface OnResponseStartedEvent
-        extends Events.Event<(details: OnResponseStartedDetailsType) => void> {
+      interface OnResponseStartedEvent extends Events.Event<(details: OnResponseStartedDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -14044,15 +14044,14 @@ declare global {
         addListener(
           callback: (details: OnResponseStartedDetailsType) => void,
           filter: RequestFilter,
-          extraInfoSpec?: OnResponseStartedOptions[]
+          extraInfoSpec?: OnResponseStartedOptions[],
         ): void;
       }
 
       /**
        * Fired when a server-initiated redirect is about to occur.
        */
-      interface OnBeforeRedirectEvent
-        extends Events.Event<(details: OnBeforeRedirectDetailsType) => void> {
+      interface OnBeforeRedirectEvent extends Events.Event<(details: OnBeforeRedirectDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -14063,15 +14062,14 @@ declare global {
         addListener(
           callback: (details: OnBeforeRedirectDetailsType) => void,
           filter: RequestFilter,
-          extraInfoSpec?: OnBeforeRedirectOptions[]
+          extraInfoSpec?: OnBeforeRedirectOptions[],
         ): void;
       }
 
       /**
        * Fired when a request is completed.
        */
-      interface OnCompletedEvent
-        extends Events.Event<(details: OnCompletedDetailsType) => void> {
+      interface OnCompletedEvent extends Events.Event<(details: OnCompletedDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -14082,15 +14080,14 @@ declare global {
         addListener(
           callback: (details: OnCompletedDetailsType) => void,
           filter: RequestFilter,
-          extraInfoSpec?: OnCompletedOptions[]
+          extraInfoSpec?: OnCompletedOptions[],
         ): void;
       }
 
       /**
        * Fired when an error occurs.
        */
-      interface OnErrorOccurredEvent
-        extends Events.Event<(details: OnErrorOccurredDetailsType) => void> {
+      interface OnErrorOccurredEvent extends Events.Event<(details: OnErrorOccurredDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -14101,7 +14098,7 @@ declare global {
         addListener(
           callback: (details: OnErrorOccurredDetailsType) => void,
           filter: RequestFilter,
-          extraInfoSpec?: OnErrorOccurredOptions[]
+          extraInfoSpec?: OnErrorOccurredOptions[],
         ): void;
       }
 
@@ -14124,7 +14121,7 @@ declare global {
          */
         getSecurityInfo(
           requestId: string,
-          options?: GetSecurityInfoOptionsType
+          options?: GetSecurityInfoOptionsType,
         ): Promise<SecurityInfo>;
 
         /**
@@ -14505,7 +14502,7 @@ declare global {
          */
         update(
           windowId: number,
-          updateInfo: UpdateUpdateInfoType
+          updateInfo: UpdateUpdateInfoType,
         ): Promise<Window>;
 
         /**
@@ -14668,7 +14665,7 @@ declare global {
            */
           eval(
             expression: string,
-            options?: EvalOptionsType
+            options?: EvalOptionsType,
           ): Promise<[unknown, EvalCallbackExceptionInfoType]>;
 
           /**
@@ -14800,7 +14797,7 @@ declare global {
            */
           setObject(
             jsonObject: string | unknown[] | Record<string, unknown>,
-            rootTitle?: string
+            rootTitle?: string,
           ): Promise<void>;
 
           /**
@@ -14845,7 +14842,7 @@ declare global {
           create(
             title: string,
             iconPath: "" | Browser.Manifest.ExtensionURL,
-            pagePath: Browser.Manifest.ExtensionURL
+            pagePath: Browser.Manifest.ExtensionURL,
           ): Promise<ExtensionPanel>;
 
           /**

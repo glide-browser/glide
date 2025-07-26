@@ -56,8 +56,8 @@ If there are too many hints for each label to have a single character from the a
 
 | Flag         | Default   | Types                      | Description                                                                                                                                                     |
 | ------------ | --------- | :------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-s`         | `ts:null` | `ts:string`                | *Only* show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors).                                |
-| `-e`         | `ts:null` | `ts:boolean`               | *Only* show hints for elements that are editable.                                                                                                               |
+| `-s`         | `ts:null` | `ts:string`                | _Only_ show hints for all elements matching this [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors).                                |
+| `-e`         | `ts:null` | `ts:boolean`               | _Only_ show hints for elements that are editable.                                                                                                               |
 | `--include`  | `ts:null` | `ts:string`                | Extend the default set of [hintable elements](#hintable-elements) with a custom [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors). |
 | `--action`   | `click`   | `ts:click \| newtab-click` | How to activate the element                                                                                                                                     |
 | `--location` | `content` | `ts:content \| browser-ui` | Where to generate hints from                                                                                                                                    |

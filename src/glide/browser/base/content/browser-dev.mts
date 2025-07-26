@@ -46,9 +46,9 @@ class GlideBrowserDevClass {
       | string
       | undefined;
     if (
-      !url ||
-      !url.startsWith("file://") ||
-      !url.match(/glide\/docs\/.*\.html(#.*)?$/)
+      !url
+      || !url.startsWith("file://")
+      || !url.match(/glide\/docs\/.*\.html(#.*)?$/)
     ) {
       return;
     }
@@ -105,7 +105,7 @@ class GlideBrowserDevClass {
       "chrome",
       "glide",
       "res",
-      "glide-tutor"
+      "glide-tutor",
     );
     await this.#check_files([
       PathUtils.join(base_path, "index.html"),

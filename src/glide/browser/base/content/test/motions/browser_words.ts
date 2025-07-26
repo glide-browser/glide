@@ -7,13 +7,13 @@
 
 "use strict";
 
-const INPUT_TEST_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_normal_diw() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
 
     await set_text("Hello world", "basic word deletion");
     await set_selection(2);
@@ -39,10 +39,7 @@ add_task(async function test_normal_diw() {
     await set_selection(5);
     await test_edit("diw", "helloworld", 5, "w");
 
-    await set_text(
-      "foo(bar: true)",
-      "parentheses and special character handling"
-    );
+    await set_text("foo(bar: true)", "parentheses and special character handling");
     await set_selection(3);
     await test_edit("diw", "foobar: true)", 3, "b");
 
@@ -50,10 +47,7 @@ add_task(async function test_normal_diw() {
     await set_selection(5);
     await test_edit("diw", "foo(: true)", 4, ":");
 
-    await set_text(
-      "foo(bar: true)",
-      "delete special character inside parentheses"
-    );
+    await set_text("foo(bar: true)", "delete special character inside parentheses");
     await set_selection(7, ":");
     await test_edit("diw", "foo(bar true)", 7, " ");
 
@@ -106,8 +100,7 @@ add_task(async function test_normal_diw() {
 
 add_task(async function test_normal_w() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello wurld", "basic whitespace between words");
     await test_motion("w", 6, "w");
@@ -122,10 +115,7 @@ add_task(async function test_normal_w() {
     await test_motion("w", 7, "w");
     await test_motion("w", 11, "d");
 
-    await set_text(
-      "hello,world",
-      "no whitespace between `,` and the next word"
-    );
+    await set_text("hello,world", "no whitespace between `,` and the next word");
     await test_motion("w", 5, ",");
     await test_motion("w", 6, "w");
     await test_motion("w", 10, "d");
@@ -228,9 +218,9 @@ add_task(async function test_normal_w() {
     await set_text("'quoted' \"double\" text", "quoted text");
     await test_motion("w", 1, "q");
     await test_motion("w", 7, "'");
-    await test_motion("w", 9, '"');
+    await test_motion("w", 9, "\"");
     await test_motion("w", 10, "d");
-    await test_motion("w", 16, '"');
+    await test_motion("w", 16, "\"");
     await test_motion("w", 18, "t");
     await test_motion("w", 21, "t");
 
@@ -272,8 +262,7 @@ add_task(async function test_normal_w() {
 
 add_task(async function test_normal_W() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello wurld", "basic whitespace between words");
     await test_motion("W", 6, "w");
@@ -287,10 +276,7 @@ add_task(async function test_normal_W() {
     await test_motion("W", 7, "w");
     await test_motion("W", 11, "d");
 
-    await set_text(
-      "hello,world",
-      "no whitespace between `,` and the next word"
-    );
+    await set_text("hello,world", "no whitespace between `,` and the next word");
     await test_motion("W", 10, "d");
 
     await set_text("foo(bar: true)", "parentheses handling");
@@ -376,7 +362,7 @@ add_task(async function test_normal_W() {
     await test_motion("W", 13, "d");
 
     await set_text("'quoted' \"double\" text", "quoted text");
-    await test_motion("W", 9, '"');
+    await test_motion("W", 9, "\"");
     await test_motion("W", 18, "t");
     await test_motion("W", 21, "t");
 
@@ -415,8 +401,9 @@ add_task(async function test_normal_W() {
 
 add_task(async function test_normal_b() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
 
     await set_text("Hello wurld", "basic whitespace between words");
     await test_motion("b", 6, "w");
@@ -436,10 +423,7 @@ add_task(async function test_normal_b() {
     await test_motion("b", 5, "?");
     await test_motion("b", 0, "h");
 
-    await set_text(
-      "hello,world",
-      "no whitespace between `,` and the next word"
-    );
+    await set_text("hello,world", "no whitespace between `,` and the next word");
     await test_motion("b", 6, "w");
     await test_motion("b", 5, ",");
     await test_motion("b", 0, "h");
@@ -536,9 +520,9 @@ add_task(async function test_normal_b() {
 
     await set_text("'quoted' \"double\" text", "quoted text");
     await test_motion("b", 18, "t");
-    await test_motion("b", 16, '"');
+    await test_motion("b", 16, "\"");
     await test_motion("b", 10, "d");
-    await test_motion("b", 9, '"');
+    await test_motion("b", 9, "\"");
     await test_motion("b", 7, "'");
     await test_motion("b", 1, "q");
     await test_motion("b", 0, "'");
@@ -580,8 +564,9 @@ add_task(async function test_normal_b() {
 
 add_task(async function test_normal_B() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
 
     await set_text("Hello wurld", "basic whitespace between words");
     await test_motion("B", 6, "w");
@@ -648,7 +633,7 @@ add_task(async function test_normal_B() {
 
     await set_text("'quoted' \"double\" text", "quoted text");
     await test_motion("B", 18, "t");
-    await test_motion("B", 9, '"');
+    await test_motion("B", 9, "\"");
     await test_motion("B", 0, "'");
 
     await set_text("foo Hello wurld", "caret in between two words");

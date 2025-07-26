@@ -13,10 +13,8 @@ add_setup(async function setup() {
   await GlideTestUtils.reload_config(function _() {});
 });
 
-const INPUT_TEST_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
-const SCROLL_TEST_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/excmds/scroll_test.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const SCROLL_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/excmds/scroll_test.html";
 
 function current_url() {
   return gBrowser.selectedBrowser?.currentURI.spec;
@@ -26,14 +24,8 @@ add_task(async function test_tab_switching() {
   const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
   BrowserTestUtils.startLoadingURIString(browser, INPUT_TEST_FILE + "?i=0");
   await BrowserTestUtils.browserLoaded(browser);
-  let second_tab = await BrowserTestUtils.openNewForegroundTab(
-    gBrowser,
-    INPUT_TEST_FILE + "?i=1"
-  );
-  let third_tab = await BrowserTestUtils.openNewForegroundTab(
-    gBrowser,
-    INPUT_TEST_FILE + "?i=2"
-  );
+  let second_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=1");
+  let third_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=2");
 
   is(current_url(), INPUT_TEST_FILE + "?i=2");
 
@@ -57,14 +49,8 @@ add_task(async function test_tab_close() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.mapleader = "<Space>";
   });
-  let second_tab = await BrowserTestUtils.openNewForegroundTab(
-    gBrowser,
-    INPUT_TEST_FILE + "?i=1"
-  );
-  let third_tab = await BrowserTestUtils.openNewForegroundTab(
-    gBrowser,
-    INPUT_TEST_FILE + "?i=2"
-  );
+  let second_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=1");
+  let third_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=2");
 
   is(current_url(), INPUT_TEST_FILE + "?i=2");
 
@@ -176,12 +162,9 @@ add_task(async function test_gi_focuses_last_used_input() {
     });
     await sleep_frames(100);
 
-    await TestUtils.waitForCondition(
-      () =>
-        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document!.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("hello");
 
@@ -189,62 +172,37 @@ add_task(async function test_gi_focuses_last_used_input() {
       content.document.getElementById("input-1")!.blur();
     });
 
-    await TestUtils.waitForCondition(
-      () =>
-        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "normal",
-      "Waiting for mode button to show `normal` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document!.getElementById("glide-toolbar-mode-button")!.textContent
+        === "normal", "Waiting for mode button to show `normal` mode");
 
     await GlideTestUtils.synthesize_keyseq("gi");
 
-    await TestUtils.waitForCondition(
-      () =>
-        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode after gi"
-    );
+    await TestUtils.waitForCondition(() =>
+      document!.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode after gi");
 
     await GlideTestUtils.synthesize_keyseq(" world");
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
-      async () =>
-        (content.document.getElementById("input-1") as HTMLInputElement).value
+      async () => (content.document.getElementById("input-1") as HTMLInputElement).value,
     );
-    is(
-      inputContent,
-      "hello world",
-      "gi should focus the previously used input element"
-    );
+    is(inputContent, "hello world", "gi should focus the previously used input element");
   });
 });
 
 add_task(async function test_set_string_option() {
   await GlideTestUtils.synthesize_keyseq(":set yank_highlight #ff0000<CR>");
-  is(
-    GlideBrowser.api.o.yank_highlight,
-    "#ff0000",
-    "String option should be updated to new value"
-  );
+  is(GlideBrowser.api.o.yank_highlight, "#ff0000", "String option should be updated to new value");
 
-  await GlideTestUtils.synthesize_keyseq(
-    ":set yank_highlight rgb(255,0,0)<CR>"
-  );
-  is(
-    GlideBrowser.api.o.yank_highlight,
-    "rgb(255,0,0)",
-    "String option should accept complex string values"
-  );
+  await GlideTestUtils.synthesize_keyseq(":set yank_highlight rgb(255,0,0)<CR>");
+  is(GlideBrowser.api.o.yank_highlight, "rgb(255,0,0)", "String option should accept complex string values");
 });
 
 add_task(async function test_set_number_option() {
   await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 500<CR>");
-  is(
-    GlideBrowser.api.o.mapping_timeout,
-    500,
-    "Number option should be updated to new value"
-  );
+  is(GlideBrowser.api.o.mapping_timeout, 500, "Number option should be updated to new value");
 
   await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 0<CR>");
   is(GlideBrowser.api.o.mapping_timeout, 0, "Number option should accept zero");
@@ -259,13 +217,10 @@ declare global {
 add_task(async function test_excmd_callback_receives_tab_id() {
   await GlideTestUtils.reload_config(function _() {
     glide.excmds.create(
-      {
-        name: "test_command",
-        description: "Test command to verify tab_id parameter",
-      },
+      { name: "test_command", description: "Test command to verify tab_id parameter" },
       ({ tab_id }) => {
         glide.g.value = tab_id;
-      }
+      },
     );
   });
 
@@ -274,10 +229,6 @@ add_task(async function test_excmd_callback_receives_tab_id() {
     await sleep_frames(10);
 
     const active_tab = await GlideBrowser.api.tabs.active();
-    is(
-      GlideBrowser.api.g.value,
-      active_tab.id,
-      "Excmd callback should receive tab_id that matches the active tab ID"
-    );
+    is(GlideBrowser.api.g.value, active_tab.id, "Excmd callback should receive tab_id that matches the active tab ID");
   });
 });

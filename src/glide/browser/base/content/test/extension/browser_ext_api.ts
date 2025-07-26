@@ -16,8 +16,7 @@ declare global {
   }
 }
 
-const INPUT_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async function setup() {
   await GlideTestUtils.reload_config(function _() {
@@ -39,13 +38,8 @@ add_task(async function test_tabs_functions() {
     });
 
     glide.keymaps.set("normal", "<Space>d", async () => {
-      assert(
-        i === 2,
-        `Expected tab creation listener to have been called twice - got ${i}`
-      );
-      const tab = (await browser.tabs.query({})).find(
-        tab => tab.url === "about:blank"
-      );
+      assert(i === 2, `Expected tab creation listener to have been called twice - got ${i}`);
+      const tab = (await browser.tabs.query({})).find(tab => tab.url === "about:blank");
       assert(tab?.id, "no tab id");
       await browser.tabs.remove(tab.id);
     });
@@ -86,9 +80,7 @@ add_task(async function test_tabs_functions() {
 
     glide.keymaps.set("normal", "<Space>n", async () => {
       if (i !== 1) {
-        throw new Error(
-          `Expected tab creation listener to have been called once - got ${i}`
-        );
+        throw new Error(`Expected tab creation listener to have been called once - got ${i}`);
       }
     });
   });
@@ -110,12 +102,7 @@ add_task(async function test_dns() {
 
 add_task(async function test_css_injection() {
   await GlideTestUtils.reload_config(function _() {
-    var css_injection = {
-      target: {
-        tabId: 1,
-      },
-      css: `body { border: 20px dotted pink; }`,
-    };
+    var css_injection = { target: { tabId: 1 }, css: `body { border: 20px dotted pink; }` };
     var has_css_injection = false;
 
     glide.keymaps.set("normal", "<Space>n", async () => {
@@ -155,9 +142,7 @@ add_task(async function test_css_injection() {
 add_task(async function test_script_injection() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
-      await browser.tabs.executeScript({
-        code: `document.body.style.border = "20px dotted pink"`,
-      });
+      await browser.tabs.executeScript({ code: `document.body.style.border = "20px dotted pink"` });
     });
   });
 
@@ -165,11 +150,7 @@ add_task(async function test_script_injection() {
     await GlideTestUtils.synthesize_keyseq("<Space>n");
     await sleep_frames(20);
 
-    const border_style = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => content.document.body!.style.border
-    );
+    const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "20px dotted pink");
   });
 });
@@ -201,10 +182,7 @@ add_task(async function test_search_engines() {
       assert(engines && engines.length, "no search engines found");
 
       const default_engine = engines.find(engine => engine.isDefault);
-      assert(
-        default_engine && default_engine.name,
-        "Default search engine missing/incomplete"
-      );
+      assert(default_engine && default_engine.name, "Default search engine missing/incomplete");
       glide.g.test_checked = true;
     });
   });
@@ -244,25 +222,14 @@ add_task(async function test_error_handling_for_unsupported_apis() {
 add_task(async function test_bookmarks_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>b", async () => {
-      const folder = await browser.bookmarks.create({
-        title: "Glide Test Folder",
-        type: "folder",
-      });
-      await browser.bookmarks.create({
-        title: "Glide Test Bookmark",
-        url: "https://example.com",
-        parentId: folder.id,
-      });
+      const folder = await browser.bookmarks.create({ title: "Glide Test Folder", type: "folder" });
+      await browser.bookmarks.create({ title: "Glide Test Bookmark", url: "https://example.com", parentId: folder.id });
 
-      const results = await browser.bookmarks.search({
-        title: "Glide Test Bookmark",
-      });
+      const results = await browser.bookmarks.search({ title: "Glide Test Bookmark" });
       assert(results.length && results[0]!.url === "https://example.com/");
 
       await browser.bookmarks.removeTree(folder.id);
-      const after_cleanup = await browser.bookmarks.search({
-        title: "Glide Test Bookmark",
-      });
+      const after_cleanup = await browser.bookmarks.search({ title: "Glide Test Bookmark" });
       assert(after_cleanup.length === 0, "Failed to remove test bookmarks");
 
       glide.g.test_checked = true;
@@ -282,17 +249,11 @@ add_task(async function test_history_api() {
       const testUrl = "https://example.com/glide-test-" + Date.now();
       await browser.history.addUrl({ url: testUrl });
 
-      const results = await browser.history.search({
-        text: testUrl,
-        maxResults: 1,
-      });
+      const results = await browser.history.search({ text: testUrl, maxResults: 1 });
       assert(results.length && results[0]!.url === testUrl);
 
       await browser.history.deleteUrl({ url: testUrl });
-      const after_cleanup = await browser.history.search({
-        text: testUrl,
-        maxResults: 1,
-      });
+      const after_cleanup = await browser.history.search({ text: testUrl, maxResults: 1 });
       assert(after_cleanup.length === 0, "Failed to remove history entries");
 
       glide.g.test_checked = true;
@@ -309,13 +270,9 @@ add_task(async function test_history_api() {
 add_task(async function test_permissions_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>p", async () => {
-      await browser.permissions.contains({
-        permissions: ["geolocation"],
-      });
+      await browser.permissions.contains({ permissions: ["geolocation"] });
 
-      const permission_status = await browser.permissions.contains({
-        permissions: ["geolocation"],
-      });
+      const permission_status = await browser.permissions.contains({ permissions: ["geolocation"] });
       assert(typeof permission_status === "boolean");
 
       glide.g.test_checked = true;
@@ -345,16 +302,11 @@ add_task(async function test_runtime_api() {
       todo_assert(browser_info.name === "Glide");
       assert(browser_info.vendor === "Glide");
 
-      await glide.content.execute(
-        (parent_runtime_id: string) => {
-          if (browser.runtime.id !== parent_runtime_id) {
-            throw new Error(
-              "runtime ID in the parent and content frames are different"
-            );
-          }
-        },
-        { tab_id: await glide.tabs.active(), args: [browser.runtime.id] }
-      );
+      await glide.content.execute((parent_runtime_id: string) => {
+        if (browser.runtime.id !== parent_runtime_id) {
+          throw new Error("runtime ID in the parent and content frames are different");
+        }
+      }, { tab_id: await glide.tabs.active(), args: [browser.runtime.id] });
 
       glide.g.test_checked = true;
     });
@@ -393,31 +345,16 @@ add_task(async function test_notifications_api() {
 add_task(async function test_storage_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
-      await browser.storage.local.set({
-        testKey: "testValue",
-        complexData: {
-          nested: true,
-          count: 42,
-        },
-      });
+      await browser.storage.local.set({ testKey: "testValue", complexData: { nested: true, count: 42 } });
 
       const result = await browser.storage.local.get([
         "testKey",
         "complexData",
       ]);
 
-      assert(
-        result["testKey"] === "testValue",
-        "Storage data doesn't match what was stored"
-      );
-      assert(
-        (result["complexData"] as any)?.nested,
-        "Nested data not stored correctly"
-      );
-      assert(
-        (result["complexData"] as any)?.count === 42,
-        "Count value not stored correctly"
-      );
+      assert(result["testKey"] === "testValue", "Storage data doesn't match what was stored");
+      assert((result["complexData"] as any)?.nested, "Nested data not stored correctly");
+      assert((result["complexData"] as any)?.count === 42, "Count value not stored correctly");
 
       await browser.storage.local.remove(["testKey", "complexData"]);
 
@@ -425,10 +362,7 @@ add_task(async function test_storage_api() {
         "testKey",
         "complexData",
       ]);
-      assert(
-        Object.keys(after_cleanup).length === 0,
-        "Failed to remove storage items"
-      );
+      assert(Object.keys(after_cleanup).length === 0, "Failed to remove storage items");
 
       glide.g.test_checked = true;
     });
@@ -451,9 +385,7 @@ add_task(async function test_downloads_api() {
       });
       assert(typeof download_id === "number", "Expected numeric download ID");
 
-      const downloads = await browser.downloads.search({
-        id: download_id,
-      });
+      const downloads = await browser.downloads.search({ id: download_id });
 
       assert(downloads.length > 0, "Could not find the download");
 
@@ -489,25 +421,13 @@ add_task(async function test_cookies_api() {
 
       await browser.cookies.set(test_cookie);
 
-      const cookie = await browser.cookies.get({
-        name: "GlideTestCookie",
-        url: "https://example.com/",
-      });
+      const cookie = await browser.cookies.get({ name: "GlideTestCookie", url: "https://example.com/" });
 
-      assert(
-        cookie && cookie.value === "TestValue",
-        "Cookie was not set correctly"
-      );
+      assert(cookie && cookie.value === "TestValue", "Cookie was not set correctly");
 
-      await browser.cookies.remove({
-        name: "GlideTestCookie",
-        url: "https://example.com/",
-      });
+      await browser.cookies.remove({ name: "GlideTestCookie", url: "https://example.com/" });
 
-      const after_remove = await browser.cookies.get({
-        name: "GlideTestCookie",
-        url: "https://example.com/",
-      });
+      const after_remove = await browser.cookies.get({ name: "GlideTestCookie", url: "https://example.com/" });
 
       assert(!after_remove, "Cookie was not properly removed");
 
@@ -526,23 +446,15 @@ add_task(async function test_windows_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>w", async () => {
       const current_window = await browser.windows.getCurrent();
-      assert(
-        current_window && typeof current_window.id === "number",
-        "Failed to get current window"
-      );
+      assert(current_window && typeof current_window.id === "number", "Failed to get current window");
 
       const all_windows = await browser.windows.getAll();
-      assert(
-        Array.isArray(all_windows) && all_windows.length,
-        "Failed to get all windows"
-      );
+      assert(Array.isArray(all_windows) && all_windows.length, "Failed to get all windows");
 
       const found_window = all_windows.find(w => w.id === current_window.id);
       assert(found_window, "Current window not found in getAll results");
 
-      await browser.windows.update(current_window.id, {
-        focused: true,
-      });
+      await browser.windows.update(current_window.id, { focused: true });
 
       const updated_window = await browser.windows.get(current_window.id);
       assert(updated_window.focused, "Window update did not work as expected");
@@ -572,10 +484,7 @@ add_task(async function test_webRequest_api() {
     }, filter);
 
     glide.keymaps.set("normal", "<Space>w", async () => {
-      const tab = await browser.tabs.create({
-        url: "https://example.com/",
-        active: true,
-      });
+      const tab = await browser.tabs.create({ url: "https://example.com/", active: true });
 
       // Wait a bit for the request to be processed
       await new Promise(resolve => setTimeout(resolve, 200));
@@ -602,10 +511,7 @@ add_task(async function test_sessions_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
       const recently_closed = await browser.sessions.getRecentlyClosed();
-      assert(
-        Array.isArray(recently_closed),
-        "Expected array of recently closed sessions"
-      );
+      assert(Array.isArray(recently_closed), "Expected array of recently closed sessions");
 
       glide.g.test_checked = true;
     });
@@ -625,20 +531,11 @@ add_task(async function test_i18n_api() {
       assert(typeof message === "string", "Expected string from getMessage");
 
       const languages = await browser.i18n.getAcceptLanguages();
-      assert(
-        Array.isArray(languages) && languages.length,
-        "Expected non-empty array from getAcceptLanguages"
-      );
+      assert(Array.isArray(languages) && languages.length, "Expected non-empty array from getAcceptLanguages");
 
       const detection = await browser.i18n.detectLanguage("Hello world");
-      assert(
-        detection?.languages?.length,
-        "Expected language detection results"
-      );
-      assert(
-        typeof detection.isReliable === "boolean",
-        "Expected boolean for isReliable property"
-      );
+      assert(detection?.languages?.length, "Expected language detection results");
+      assert(typeof detection.isReliable === "boolean", "Expected boolean for isReliable property");
 
       glide.g.test_checked = true;
     });
@@ -654,13 +551,7 @@ add_task(async function test_i18n_api() {
 add_task(async function test_theme_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>t", async () => {
-      const theme = {
-        colors: {
-          frame: "#FFFFFF",
-          toolbar: "#F0F0F0",
-          toolbar_text: "#000000",
-        },
-      };
+      const theme = { colors: { frame: "#FFFFFF", toolbar: "#F0F0F0", toolbar_text: "#000000" } };
       await browser.theme.update(theme);
 
       const current = await browser.theme.getCurrent();
@@ -668,10 +559,10 @@ add_task(async function test_theme_api() {
 
       // Check if at least one of our colors was applied
       assert(
-        current.colors.toolbar === theme.colors.toolbar ||
-          current.colors.frame === theme.colors.frame ||
-          current.colors.toolbar_text === theme.colors.toolbar_text,
-        "Theme colors don't match what was set"
+        current.colors.toolbar === theme.colors.toolbar
+          || current.colors.frame === theme.colors.frame
+          || current.colors.toolbar_text === theme.colors.toolbar_text,
+        "Theme colors don't match what was set",
       );
 
       await browser.theme.reset();
@@ -714,9 +605,7 @@ add_task(async function test_function_script_injection() {
       assert(tab?.id, "no active tab");
 
       await browser.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-        },
+        target: { tabId: tab.id },
         func: () => {
           document?.body?.style.setProperty("border", "5px solid green");
         },
@@ -727,11 +616,7 @@ add_task(async function test_function_script_injection() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await GlideTestUtils.synthesize_keyseq("<Space>n");
     await sleep_frames(20);
-    const border_style = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => content.document.body!.style.border
-    );
+    const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "method call with no args");
   });
 
@@ -744,9 +629,7 @@ add_task(async function test_function_script_injection() {
       assert(tab?.id, "no active tab");
 
       await browser.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-        },
+        target: { tabId: tab.id },
         // @ts-ignore
         func: BODY_STYLE => {
           document?.body?.style.setProperty("border", BODY_STYLE as string);
@@ -759,11 +642,7 @@ add_task(async function test_function_script_injection() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await GlideTestUtils.synthesize_keyseq("<Space>n");
     await sleep_frames(20);
-    const border_style = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => content.document.body!.style.border
-    );
+    const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
   });
 
@@ -776,23 +655,14 @@ add_task(async function test_function_script_injection() {
       function content() {
         document?.body?.style.setProperty("border", "5px solid green");
       }
-      await browser.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-        },
-        func: content,
-      });
+      await browser.scripting.executeScript({ target: { tabId: tab.id }, func: content });
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await GlideTestUtils.synthesize_keyseq("<Space>n");
     await sleep_frames(20);
-    const border_style = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => content.document.body!.style.border
-    );
+    const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "function syntax with no args");
   });
 
@@ -804,9 +674,7 @@ add_task(async function test_function_script_injection() {
       assert(tab?.id, "no active tab");
 
       await browser.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-        },
+        target: { tabId: tab.id },
         // @ts-ignore
         func: function _(BODY_STYLE) {
           document?.body?.style.setProperty("border", BODY_STYLE as string);
@@ -819,11 +687,7 @@ add_task(async function test_function_script_injection() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await GlideTestUtils.synthesize_keyseq("<Space>n");
     await sleep_frames(20);
-    const border_style = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => content.document.body!.style.border
-    );
+    const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
   });
 
@@ -835,9 +699,7 @@ add_task(async function test_function_script_injection() {
       assert(tab?.id, "no active tab");
 
       const results = await browser.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-        },
+        target: { tabId: tab.id },
         func: () => {
           throw new Error("this promise should be rejected");
         },
@@ -867,9 +729,7 @@ add_task(async function test_runtime_api() {
       });
 
       // Test sending a message to ourselves
-      const response = await browser.runtime.sendMessage({
-        greeting: "hello",
-      });
+      const response = await browser.runtime.sendMessage({ greeting: "hello" });
 
       // Either we got a response or the expected error
       if (response !== "expected error" && typeof response === "undefined") {
@@ -906,12 +766,10 @@ add_task(async function test_commands_api() {
 
         // Shortcut might be undefined if not set
         if (
-          command.shortcut !== undefined &&
-          typeof command.shortcut !== "string"
+          command.shortcut !== undefined
+          && typeof command.shortcut !== "string"
         ) {
-          throw new Error(
-            "Expected command shortcut to be a string or undefined"
-          );
+          throw new Error("Expected command shortcut to be a string or undefined");
         }
       }
 

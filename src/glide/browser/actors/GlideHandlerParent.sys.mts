@@ -3,21 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import type {
-  State,
-  StateChangeListener,
-  StateChangeMeta,
-} from "../base/content/browser.mjs";
-import type { ChildMessages, ChildQueries } from "./GlideHandlerChild.sys.mjs";
-import type {
-  ContentExcmd,
-  GlideOperator,
-} from "../base/content/browser-excmds-registry.mts";
+import type { ContentExcmd, GlideOperator } from "../base/content/browser-excmds-registry.mts";
+import type { State, StateChangeListener, StateChangeMeta } from "../base/content/browser.mjs";
 import type { GlideFunctionIPC } from "../base/content/utils/ipc.mts";
+import type { ChildMessages, ChildQueries } from "./GlideHandlerChild.sys.mjs";
 
-const { assert_never } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 export interface ParentMessages {
   "Glide::StateUpdate": { state: State; meta?: StateChangeMeta };
@@ -89,10 +80,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
   #state_change_listener: StateChangeListener = null as any;
 
   actorCreated() {
-    this.#log = console.createInstance({
-      prefix: "Glide[Parent]",
-      maxLogLevelPref: "glide.logging.loglevel",
-    });
+    this.#log = console.createInstance({ prefix: "Glide[Parent]", maxLogLevelPref: "glide.logging.loglevel" });
     this.#state_change_listener = this.on_state_change.bind(this);
 
     const glide_browser = this.glide_browser;
@@ -107,11 +95,11 @@ export class GlideHandlerParent extends JSWindowActorParent<
   send_async_message: <MessageName extends keyof ParentMessages>(
     messageName: MessageName,
     obj?: ParentMessages[MessageName] | undefined,
-    transferables?: any
+    transferables?: any,
   ) => void = this.sendAsyncMessage;
   send_query: <QueryName extends keyof ParentQueries>(
     messageName: QueryName,
-    obj?: ParentQueries[QueryName]["props"] | undefined
+    obj?: ParentQueries[QueryName]["props"] | undefined,
   ) => Promise<ParentQueries[QueryName]["result"]> = this.sendQuery;
 
   didDestroy() {
@@ -154,7 +142,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
   }
 
   async receiveMessage(
-    message: ActorReceiveMessage<ChildMessages, ChildQueries>
+    message: ActorReceiveMessage<ChildMessages, ChildQueries>,
   ) {
     this.#log.debug("receiveMessage", message.name);
 
@@ -166,10 +154,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
       }
 
       case "Glide::RecordRepeatableCommand": {
-        this.glide_excmds!.add_to_command_history({
-          type: "content-cmd",
-          props: message.data,
-        });
+        this.glide_excmds!.add_to_command_history({ type: "content-cmd", props: message.data });
         break;
       }
 
@@ -182,11 +167,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
           return;
         }
 
-        this.glide_commands!.show_hints(
-          message.data.hints,
-          message.data.location,
-          message.data.auto_activate
-        );
+        this.glide_commands!.show_hints(message.data.hints, message.data.location, message.data.auto_activate);
         break;
       }
 

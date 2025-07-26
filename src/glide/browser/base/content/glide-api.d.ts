@@ -57,7 +57,7 @@ declare global {
       create<const Event extends "UrlEnter">(
         event: Event,
         pattern: glide.AutocmdPatterns[Event],
-        callback: (args: glide.AutocmdArgs[Event]) => void
+        callback: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
 
       /**
@@ -85,7 +85,7 @@ declare global {
       create<const Event extends "ModeChanged">(
         event: Event,
         pattern: glide.AutocmdPatterns[Event],
-        callback: (args: glide.AutocmdArgs[Event]) => void
+        callback: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
 
       /**
@@ -95,7 +95,7 @@ declare global {
        */
       create<const Event extends "ConfigLoaded">(
         event: Event,
-        callback: (args: glide.AutocmdArgs[Event]) => void
+        callback: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
 
       /**
@@ -105,15 +105,14 @@ declare global {
        */
       create<const Event extends "WindowLoaded">(
         event: Event,
-        callback: (args: glide.AutocmdArgs[Event]) => void
+        callback: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
 
       create<const Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: glide.AutocmdPatterns[Event] extends never ?
-          (args: glide.AutocmdArgs[Event]) => void
-        : glide.AutocmdPatterns[Event],
-        callback?: (args: glide.AutocmdArgs[Event]) => void
+        pattern: glide.AutocmdPatterns[Event] extends never ? (args: glide.AutocmdArgs[Event]) => void
+          : glide.AutocmdPatterns[Event],
+        callback?: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
     };
 
@@ -183,7 +182,7 @@ declare global {
        */
       create<const Excmd extends glide.ExcmdCreateProps>(
         info: Excmd,
-        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>
+        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>,
       ): Excmd;
     };
 
@@ -207,29 +206,30 @@ declare global {
        */
       execute<F extends (...args: any[]) => any>(
         func: F,
-        opts: {
-          /**
-           * The ID of the tab into which to inject.
-           *
-           * Or the tab object as returned by `glide.tabs.active()`.
-           */
-          tab_id: number | glide.TabWithID;
-        } & (Parameters<F> extends [] ?
-          {
+        opts:
+          & {
             /**
-             * Note: the given function doesn't take any arguments but if
-             *       it did, you could pass them here.
-             */
-            args?: undefined;
-          }
-        : {
-            /**
-             * Arguments to pass to the given function.
+             * The ID of the tab into which to inject.
              *
-             * **Must** be JSON serialisable
+             * Or the tab object as returned by `glide.tabs.active()`.
              */
-            args: Parameters<F>;
-          })
+            tab_id: number | glide.TabWithID;
+          }
+          & (Parameters<F> extends [] ? {
+              /**
+               * Note: the given function doesn't take any arguments but if
+               *       it did, you could pass them here.
+               */
+              args?: undefined;
+            }
+            : {
+              /**
+               * Arguments to pass to the given function.
+               *
+               * **Must** be JSON serialisable
+               */
+              args: Parameters<F>;
+            }),
       ): Promise<ReturnType<F>>;
     };
 
@@ -238,7 +238,7 @@ declare global {
         modes: GlideMode | GlideMode[],
         lhs: $keymapcompletions.T<LHS>,
         rhs: glide.ExcmdValue,
-        opts?: glide.KeymapOpts | undefined
+        opts?: glide.KeymapOpts | undefined,
       ): void;
 
       /**
@@ -249,7 +249,7 @@ declare global {
       del(
         modes: GlideMode | GlideMode[],
         lhs: string,
-        opts?: glide.KeymapDeleteOpts
+        opts?: glide.KeymapDeleteOpts,
       ): void;
 
       /**
@@ -326,7 +326,7 @@ declare global {
           modes: GlideMode | GlideMode[],
           lhs: $keymapcompletions.T<LHS>,
           rhs: glide.ExcmdValue,
-          opts?: Omit<glide.KeymapOpts, "buffer"> | undefined
+          opts?: Omit<glide.KeymapOpts, "buffer"> | undefined,
         ): void;
 
         /**
@@ -337,7 +337,7 @@ declare global {
         del(
           modes: GlideMode | GlideMode[],
           lhs: string,
-          opts?: Omit<glide.KeymapDeleteOpts, "buffer"> | undefined
+          opts?: Omit<glide.KeymapDeleteOpts, "buffer"> | undefined,
         ): void;
       };
     };
@@ -362,7 +362,7 @@ declare global {
        */
       send<const Keys>(
         keyseq: $keymapcompletions.T<Keys> | { glide_key: string },
-        opts?: glide.KeySendOptions
+        opts?: glide.KeySendOptions,
       ): Promise<void>;
 
       /**
@@ -459,7 +459,7 @@ declare global {
        */
       register<Mode extends keyof GlideModes>(
         mode: Mode,
-        opts: { caret: "block" | "line" | "underline" }
+        opts: { caret: "block" | "line" | "underline" },
       ): void;
     };
   };
@@ -605,12 +605,10 @@ declare global {
     };
 
     /// @docs-skip
-    export type ExcmdValue =
-      import("./browser-excmds-registry.mjs").GlideCommandValue;
+    export type ExcmdValue = import("./browser-excmds-registry.mjs").GlideCommandValue;
 
     /// @docs-skip
-    export type ExcmdCallbackProps =
-      import("./browser-excmds-registry.mjs").GlideCommandCallbackProps;
+    export type ExcmdCallbackProps = import("./browser-excmds-registry.mjs").GlideCommandCallbackProps;
 
     /// @docs-skip
     export type ExcmdString =
@@ -750,29 +748,31 @@ declare global {
      */
     create_element<TagName extends keyof HTMLElementTagNameMap>(
       tag_name: TagName,
-      props?: DOM.CreateElementProps<TagName>
+      props?: DOM.CreateElementProps<TagName>,
     ): HTMLElementTagNameMap[TagName];
   };
 
   namespace DOM {
     type Utils = typeof DOM;
 
-    type CreateElementProps<K extends keyof HTMLElementTagNameMap> = Omit<
-      Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
-      "children"
-    > & {
-      /**
-       * Can be an individual child or an array of children.
-       */
-      children?: (Node | string) | Array<Node | string>;
+    type CreateElementProps<K extends keyof HTMLElementTagNameMap> =
+      & Omit<
+        Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
+        "children"
+      >
+      & {
+        /**
+         * Can be an individual child or an array of children.
+         */
+        children?: (Node | string) | Array<Node | string>;
 
-      /**
-       * Set specific CSS style properties.
-       *
-       * This uses the JS style naming convention for properties, e.g. `zIndex`.
-       */
-      style?: Partial<CSSStyleDeclaration>;
-    };
+        /**
+         * Set specific CSS style properties.
+         *
+         * This uses the JS style naming convention for properties, e.g. `zIndex`.
+         */
+        style?: Partial<CSSStyleDeclaration>;
+      };
   }
 
   namespace $keymapcompletions {
@@ -785,13 +785,12 @@ declare global {
      * `<leader>` -> `<leader>f` | `<leader><CR>` ...
      * `g` -> `gg` | `gj` ...
      */
-    type T<LHS> =
-      LHS extends "" ? SingleKey
+    type T<LHS> = LHS extends "" ? SingleKey
       : LHS extends "<" ? SpecialKey | `<${ModifierKey}-`
       : LHS extends `${infer S}<${infer M}-` ?
-        | `${S}<${M}-${Exclude<StripAngles<SingleKey>, ModifierKey>}>`
-        | `${S}<${M}-${ModifierKey}-`
-        | (S & {})
+          | `${S}<${M}-${Exclude<StripAngles<SingleKey>, ModifierKey>}>`
+          | `${S}<${M}-${ModifierKey}-`
+          | (S & {})
       : LHS extends `${infer S}<` ? `${S}${SpecialKey}` | S
       : LHS extends `${infer S}` ? `${S}${SingleKey}` | S
       : LHS;
@@ -843,15 +842,13 @@ declare global {
 
     type ModifierKey = "C" | "D" | "A" | "S";
 
-    type StringToUnion<S extends string> =
-      S extends `${infer First}${infer Rest}` ? First | StringToUnion<Rest>
+    type StringToUnion<S extends string> = S extends `${infer First}${infer Rest}` ? First | StringToUnion<Rest>
       : never;
 
     /**
      * `<foo>` -> `foo`
      */
-    type StripAngles<K extends SingleKey> =
-      K extends `<${infer Inner}>` ? Inner : K;
+    type StripAngles<K extends SingleKey> = K extends `<${infer Inner}>` ? Inner : K;
   }
 }
 

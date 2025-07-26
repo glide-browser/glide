@@ -25,7 +25,7 @@ export const onRequest: PagesFunction = async ctx => {
     (request.headers.get("cookie") ?? "")
       .split(/;\s*/)
       .filter(Boolean)
-      .map(c => c.split("=", 2) as [string, string])
+      .map(c => c.split("=", 2) as [string, string]),
   );
   if (cookies[COOKIE] === "1") {
     return next(); // 👉  run the rest of the pipeline
@@ -39,16 +39,13 @@ export const onRequest: PagesFunction = async ctx => {
     const pw = form.get("password")?.toString() ?? "";
 
     if (pw === PASSWORD) {
-      const inOneWeek = new Date(
-        Date.now() + COOKIE_TTL_DAYS * 86_400_000
-      ).toUTCString();
+      const inOneWeek = new Date(Date.now() + COOKIE_TTL_DAYS * 86_400_000).toUTCString();
       return new Response(null, {
         status: 302,
         headers: {
           Location: form.get("return")?.toString() || "/", // go back
-          "Set-Cookie":
-            `${COOKIE}=1; Expires=${inOneWeek}; Path=/; ` +
-            "HttpOnly; SameSite=Lax; Secure",
+          "Set-Cookie": `${COOKIE}=1; Expires=${inOneWeek}; Path=/; `
+            + "HttpOnly; SameSite=Lax; Secure",
         },
       });
     }
@@ -109,9 +106,11 @@ export const onRequest: PagesFunction = async ctx => {
       <body>
         <form method="POST" action="/_login">
           <h2 style="margin:0 0 .5rem">Password</h2>
-          ${err ?
-            '<div class="error">Incorrect password – try again.</div>'
-          : ""}
+          ${
+    err
+      ? "<div class=\"error\">Incorrect password – try again.</div>"
+      : ""
+  }
           <input
             type="password"
             name="password"
@@ -125,8 +124,5 @@ export const onRequest: PagesFunction = async ctx => {
       </body>
     </html>`;
 
-  return new Response(html, {
-    status: err ? 401 : 200,
-    headers: { "Content-Type": "text/html;charset=UTF-8" },
-  });
+  return new Response(html, { status: err ? 401 : 200, headers: { "Content-Type": "text/html;charset=UTF-8" } });
 };

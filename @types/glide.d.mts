@@ -40,12 +40,14 @@ declare type GlideCommandLine = GlideCommandLineInterface & XULElement;
 
 declare type GlideDirection = "left" | "right" | "up" | "down" | "endline";
 
-declare type KeyMappingIPC = Omit<
-  NonNullable<
-    import("../src/glide/browser/base/content/utils/keys.mts").KeyMappingTrieNode["value"]
-  >,
-  "command"
-> & { command: string };
+declare type KeyMappingIPC =
+  & Omit<
+    NonNullable<
+      import("../src/glide/browser/base/content/utils/keys.mts").KeyMappingTrieNode["value"]
+    >,
+    "command"
+  >
+  & { command: string };
 
 declare interface HTMLElement {
   /**

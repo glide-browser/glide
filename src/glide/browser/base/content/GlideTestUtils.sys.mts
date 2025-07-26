@@ -29,16 +29,9 @@ const g: {
 
 declare var content: TestContent;
 
-const { assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const { dedent } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/dedent.mjs"
-);
-const GlideEventUtils = ChromeUtils.importESModule(
-  "chrome://glide/content/event-utils.mjs",
-  { global: "current" }
-);
+const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { dedent } = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
+const GlideEventUtils = ChromeUtils.importESModule("chrome://glide/content/event-utils.mjs", { global: "current" });
 
 class GlideTestUtilsClass {
   commandline = new GlideCommandLineTestUtils();
@@ -62,10 +55,7 @@ class GlideTestUtilsClass {
 
   write_config(config_fn: () => void, filename = "glide.ts"): void {
     // get config file path & touch it
-    let configFile = Services.dirsvc!.QueryInterface!(Ci.nsIProperties).get(
-      "ProfD",
-      Ci.nsIFile
-    );
+    let configFile = Services.dirsvc!.QueryInterface!(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
     configFile.append("glide");
     configFile.append(filename);
     try {
@@ -82,7 +72,7 @@ class GlideTestUtilsClass {
       configFile,
       0x02 | 0x08 | 0x20, // write, create, truncate
       0o666,
-      0
+      0,
     );
     const config_str = this.#get_function_body(config_fn);
     outStream.write(config_str, config_str.length);
@@ -108,10 +98,7 @@ class GlideTestUtilsClass {
   }
 
   async wait_for_mode(mode: GlideMode) {
-    await g.TestUtils.waitForCondition(
-      () => GlideBrowser.state.mode === mode,
-      `Waiting for mode to be "${mode}" mode`
-    );
+    await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === mode, `Waiting for mode to be "${mode}" mode`);
   }
 
   /**
@@ -125,37 +112,26 @@ class GlideTestUtilsClass {
       async set_text(text: string, test_name: string) {
         name = test_name;
         assertion_index = 0;
-        await SpecialPowers.spawn(
-          browser,
-          [text, opts.text_start],
-          async (text, text_start) => {
-            const textarea = content.document.getElementById(
-              "textarea-1"
-            )! as HTMLTextAreaElement;
-            textarea.focus();
-            textarea.value = text;
+        await SpecialPowers.spawn(browser, [text, opts.text_start], async (text, text_start) => {
+          const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
+          textarea.focus();
+          textarea.value = text;
 
-            const pos = text_start === "end" ? textarea.value.length : 1;
-            textarea.setSelectionRange(pos, pos);
-          }
-        );
+          const pos = text_start === "end" ? textarea.value.length : 1;
+          textarea.setSelectionRange(pos, pos);
+        });
 
         await g.sleep_frames(3);
 
         if (GlideBrowser.state.mode !== "normal") {
           g.EventUtils.synthesizeKey("KEY_Escape");
-          await g.TestUtils.waitForCondition(
-            () => GlideBrowser.state.mode === "normal",
-            "Waiting for `normal` mode"
-          );
+          await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === "normal", "Waiting for `normal` mode");
         }
       },
 
       async is_text(expected_text: string) {
         const text = await SpecialPowers.spawn(browser, [], async () => {
-          const textarea = content.document.getElementById(
-            "textarea-1"
-          )! as HTMLTextAreaElement;
+          const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
           return textarea.value;
         });
         g.is(text, expected_text, `${name}/${assertion_index}`);
@@ -163,9 +139,7 @@ class GlideTestUtilsClass {
 
       async set_selection(pos: number, expected_char?: string) {
         const char = await SpecialPowers.spawn(browser, [pos], async pos => {
-          const el = content.document.getElementById(
-            "textarea-1"
-          )! as HTMLTextAreaElement;
+          const el = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
           el.setSelectionRange(pos + 1, pos + 1);
           return el.value.charAt(pos);
         });
@@ -179,47 +153,27 @@ class GlideTestUtilsClass {
         motion: string,
         expected_pos: number,
         expected_char: string,
-        state?: "todo"
+        state?: "todo",
       ) {
         await GlideTestUtils.synthesize_keyseq(motion);
         await g.sleep_frames(3);
 
-        const [position, char] = await SpecialPowers.spawn(
-          browser,
-          [],
-          async () => {
-            const textarea = content.document.getElementById(
-              "textarea-1"
-            )! as HTMLTextAreaElement;
-            const pos = textarea.selectionStart! - 1;
-            return [pos, textarea.value.charAt(pos)];
-          }
-        );
+        const [position, char] = await SpecialPowers.spawn(browser, [], async () => {
+          const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
+          const pos = textarea.selectionStart! - 1;
+          return [pos, textarea.value.charAt(pos)];
+        });
 
-        (state === "todo" ? g.todo_is : g.is)(
-          position,
-          expected_pos,
-          `${name}/${assertion_index}`
-        );
-        (state === "todo" ? g.todo_is : g.is)(
-          char,
-          expected_char,
-          `${name}/${assertion_index}`
-        );
+        (state === "todo" ? g.todo_is : g.is)(position, expected_pos, `${name}/${assertion_index}`);
+        (state === "todo" ? g.todo_is : g.is)(char, expected_char, `${name}/${assertion_index}`);
         assertion_index++;
 
         // set position to expected if this case is still todo so the next case is consistent
         if (state === "todo") {
-          await SpecialPowers.spawn(
-            browser,
-            [expected_pos],
-            async expected_pos =>
-              (
-                content.document.getElementById(
-                  "textarea-1"
-                )! as HTMLTextAreaElement
-              ).setSelectionRange(expected_pos + 1, expected_pos + 1)
-          );
+          await SpecialPowers.spawn(browser, [expected_pos], async expected_pos =>
+            (
+              content.document.getElementById("textarea-1")! as HTMLTextAreaElement
+            ).setSelectionRange(expected_pos + 1, expected_pos + 1));
         }
       },
 
@@ -227,65 +181,39 @@ class GlideTestUtilsClass {
         motion: string,
         expected_text: string,
         expected_pos: number,
-        expected_char: string
+        expected_char: string,
       ) {
         if (GlideBrowser.state.mode !== "normal") {
           g.EventUtils.synthesizeKey("KEY_Escape");
-          await g.TestUtils.waitForCondition(
-            () => GlideBrowser.state.mode === "normal",
-            "Waiting for `normal` mode"
-          );
+          await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === "normal", "Waiting for `normal` mode");
         }
 
         await GlideTestUtils.synthesize_keyseq(motion);
         await g.sleep_frames(3);
 
-        const [text, position] = await SpecialPowers.spawn(
-          browser,
-          [],
-          async () => {
-            const textarea = content.document.getElementById(
-              "textarea-1"
-            )! as HTMLTextAreaElement;
-            return [textarea.value, textarea.selectionStart! - 1];
-          }
-        );
+        const [text, position] = await SpecialPowers.spawn(browser, [], async () => {
+          const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
+          return [textarea.value, textarea.selectionStart! - 1];
+        });
         g.is(text, expected_text, `${name}/${assertion_index}`);
         g.is(position, expected_pos, `${name}/${assertion_index}`);
-        g.is(
-          text.charAt(position),
-          expected_char,
-          `${name}/${assertion_index}`
-        );
+        g.is(text.charAt(position), expected_char, `${name}/${assertion_index}`);
         assertion_index++;
       },
 
       async test_selection(
         motion: string,
         expected_selection: string,
-        state?: "todo"
+        state?: "todo",
       ) {
         await GlideTestUtils.synthesize_keyseq(motion);
         await g.sleep_frames(3);
 
-        const selected_text = await SpecialPowers.spawn(
-          browser,
-          [],
-          async () => {
-            const textarea = content.document.getElementById(
-              "textarea-1"
-            )! as HTMLTextAreaElement;
-            return textarea.value.slice(
-              textarea.selectionStart!,
-              textarea.selectionEnd!
-            );
-          }
-        );
-        (state === "todo" ? g.todo_is : g.is)(
-          selected_text,
-          expected_selection,
-          `${name}/${assertion_index}`
-        );
+        const selected_text = await SpecialPowers.spawn(browser, [], async () => {
+          const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
+          return textarea.value.slice(textarea.selectionStart!, textarea.selectionEnd!);
+        });
+        (state === "todo" ? g.todo_is : g.is)(selected_text, expected_selection, `${name}/${assertion_index}`);
         assertion_index++;
       },
     };
@@ -316,48 +244,32 @@ class GlideCommandLineTestUtils {
 
     // override the real options so tests are stable
     commandLine.set_completion_options([
-      {
-        name: "examplecmd",
-        description: "This is how you do the thing",
-      },
-      {
-        name: "anothercmd",
-        description: "This is how you do another thing",
-      },
-      {
-        name: "foo",
-        description: "This is how you do foo",
-      },
+      { name: "examplecmd", description: "This is how you do the thing" },
+      { name: "anothercmd", description: "This is how you do another thing" },
+      { name: "foo", description: "This is how you do foo" },
     ]);
 
     // opening the commandline should result in insert mode
-    await g.TestUtils.waitForCondition(
-      () =>
-        document!.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "command",
-      "Waiting for mode button to show `command` mode"
-    );
+    await g.TestUtils.waitForCondition(() =>
+      document!.getElementById("glide-toolbar-mode-button")!.textContent
+        === "command", "Waiting for mode button to show `command` mode");
   }
 
   get_input_content() {
     return (
-      document!.querySelector(
-        '[anonid="glide-commandline-input"]'
-      ) as HTMLInputElement
+      document!.querySelector("[anonid=\"glide-commandline-input\"]") as HTMLInputElement
     ).value;
   }
 
   current_source_header() {
     const sources = this.#get_commandline().querySelectorAll(".section-header");
-    return Array.from(sources.values()).find(
-      element => !(element!.parentElement! as HTMLElement).hidden
-    )?.textContent;
+    return Array.from(sources.values()).find(element => !(element!.parentElement! as HTMLElement).hidden)?.textContent;
   }
 
   visible_rows(): HTMLElement[] {
-    return Array.from(
-      this.#get_commandline().querySelectorAll(".gcl-option")
-    ).filter(row => !(row as HTMLElement).hidden) as HTMLElement[];
+    return Array.from(this.#get_commandline().querySelectorAll(".gcl-option")).filter(row =>
+      !(row as HTMLElement).hidden
+    ) as HTMLElement[];
   }
 
   focused_row() {
@@ -372,7 +284,7 @@ class GlideCommandLineTestUtils {
       document!.querySelector("glide-commandline") as
         | GlideCommandLine
         | undefined,
-      "no glide-commandline element found"
+      "no glide-commandline element found",
     );
   }
 }

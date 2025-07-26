@@ -6,74 +6,79 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Glide Mappings</title>
+    <title>Glide Mappings</title>
 
-  <link rel="stylesheet" href="../docs.css" />
-  <link rel="stylesheet" href="../reset.css" />
-  <link rel="stylesheet" href="./mappings.css">
-  <script src="./mappings.js"></script>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Key Mappings</h1>
-      <div class="search-container">
-        <input type="text" id="mappings-search" placeholder="Search mappings..." autocomplete="off">
-      </div>
-    </header>
+    <link rel="stylesheet" href="../docs.css" />
+    <link rel="stylesheet" href="../reset.css" />
+    <link rel="stylesheet" href="./mappings.css">
+    <script src="./mappings.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Key Mappings</h1>
+        <div class="search-container">
+          <input
+            type="text"
+            id="mappings-search"
+            placeholder="Search mappings..."
+            autocomplete="off"
+          >
+        </div>
+      </header>
 
       <!-- TODO: automatically populate these -->
-    <nav id="mode-tabs" class="mode-tabs">
-      <button class="tab active" data-mode="normal">Normal</button>
-      <button class="tab" data-mode="insert">Insert</button>
-      <button class="tab" data-mode="visual">Visual</button>
-      <button class="tab" data-mode="command">Command</button>
-      <button class="tab" data-mode="ignore">Ignore</button>
-      <button class="tab" data-mode="hint">Hint</button>
-      <button class="tab" data-mode="op-pending">Op-pending</button>
-      <button class="tab" data-mode="all">All</button>
-    </nav>
+      <nav id="mode-tabs" class="mode-tabs">
+        <button class="tab active" data-mode="normal">Normal</button>
+        <button class="tab" data-mode="insert">Insert</button>
+        <button class="tab" data-mode="visual">Visual</button>
+        <button class="tab" data-mode="command">Command</button>
+        <button class="tab" data-mode="ignore">Ignore</button>
+        <button class="tab" data-mode="hint">Hint</button>
+        <button class="tab" data-mode="op-pending">Op-pending</button>
+        <button class="tab" data-mode="all">All</button>
+      </nav>
 
-    <main id="mappings-container">
-      <div class="mode-section" data-mode="normal">
-        <h2>Normal Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
-      
-      <div class="mode-section" data-mode="insert" style="display: none;">
-        <h2>Insert Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
-      
-      <div class="mode-section" data-mode="visual" style="display: none;">
-        <h2>Visual Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
-      
-      <div class="mode-section" data-mode="command" style="display: none;">
-        <h2>Command Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
+      <main id="mappings-container">
+        <div class="mode-section" data-mode="normal">
+          <h2>Normal Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
 
-      <div class="mode-section" data-mode="ignore" style="display: none;">
-        <h2>Ignore Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
+        <div class="mode-section" data-mode="insert" style="display: none">
+          <h2>Insert Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
 
-      <div class="mode-section" data-mode="hint" style="display: none;">
-        <h2>Hint Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
+        <div class="mode-section" data-mode="visual" style="display: none">
+          <h2>Visual Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
 
-      <div class="mode-section" data-mode="op-pending" style="display: none;">
-        <h2>Op-pending Mode</h2>
-        <div class="mappings-grid"></div>
-      </div>
-    </main>
-  </div>
-</body>
+        <div class="mode-section" data-mode="command" style="display: none">
+          <h2>Command Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
+
+        <div class="mode-section" data-mode="ignore" style="display: none">
+          <h2>Ignore Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
+
+        <div class="mode-section" data-mode="hint" style="display: none">
+          <h2>Hint Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
+
+        <div class="mode-section" data-mode="op-pending" style="display: none">
+          <h2>Op-pending Mode</h2>
+          <div class="mappings-grid"></div>
+        </div>
+      </main>
+    </div>
+  </body>
 </html>

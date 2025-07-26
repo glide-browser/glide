@@ -12,9 +12,7 @@ export type WindowMessage = {
   mappings: Map<GlideMode, KeyMappingIPC[]>;
 };
 
-const state = {
-  mappings: new Map<GlideMode, KeyMappingIPC[]>(),
-};
+const state = { mappings: new Map<GlideMode, KeyMappingIPC[]>() };
 
 window.addEventListener("message", (event: Event & { data: WindowMessage }) => {
   console.debug("window message", event);
@@ -47,24 +45,20 @@ document.addEventListener("DOMContentLoaded", () => {
         sections.forEach(s => ((s as HTMLElement).style.display = "block"));
       } else {
         sections.forEach(s => {
-          (s as HTMLElement).style.display =
-            (s as HTMLElement).dataset["mode"] === mode ? "block" : "none";
+          (s as HTMLElement).style.display = (s as HTMLElement).dataset["mode"] === mode ? "block" : "none";
         });
       }
     });
   });
 
-  const search_input = document.getElementById(
-    "mappings-search"
-  ) as HTMLInputElement;
+  const search_input = document.getElementById("mappings-search") as HTMLInputElement;
   search_input.addEventListener("input", (e: Event) => {
     const query = (e.target as HTMLInputElement).value.toLowerCase();
     const mapping_items = document.querySelectorAll(".mapping-item");
 
     mapping_items.forEach(item => {
       const text = item.textContent?.toLowerCase() ?? "";
-      (item as HTMLElement).style.display =
-        text.includes(query) ? "flex" : "none";
+      (item as HTMLElement).style.display = text.includes(query) ? "flex" : "none";
     });
 
     // Show all mode sections when searching
@@ -72,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (query) {
       sections.forEach(s => ((s as HTMLElement).style.display = "block"));
       tabs.forEach(t => t.classList.remove("active"));
-      document.querySelector('[data-mode="all"]')?.classList.add("active");
+      document.querySelector("[data-mode=\"all\"]")?.classList.add("active");
     }
   });
 
@@ -90,25 +84,25 @@ function render_mappings() {
   console.debug("rendering mappings");
 
   for (const [mode, mappings] of state.mappings.entries()) {
-    const container = document.querySelector(
-      `[data-mode="${mode}"] .mappings-grid`
-    );
+    const container = document.querySelector(`[data-mode="${mode}"] .mappings-grid`);
     if (!container) {
       throw new Error(`no ${mode} tab`);
     }
 
     container.innerHTML = mappings
-      .map(
-        mapping => html`
+      .map(mapping =>
+        html`
           <div class="mapping-item">
             <span class="mapping-key"
               >${escape_html(mapping.sequence.join(""))}</span
             >
             <span class="mapping-arrow">→</span>
             <span class="mapping-command">${escape_html(mapping.command)}</span>
-            ${mapping.description ?
-              `<span class="mapping-description">${escape_html(mapping.description)}</span>`
-            : ""}
+            ${
+          mapping.description
+            ? `<span class="mapping-description">${escape_html(mapping.description)}</span>`
+            : ""
+        }
           </div>
         `
       )

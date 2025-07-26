@@ -7,9 +7,7 @@
 
 "use strict";
 
-const text_obj = ChromeUtils.importESModule(
-  "chrome://glide/content/text-objects.mjs"
-);
+const text_obj = ChromeUtils.importESModule("chrome://glide/content/text-objects.mjs");
 
 add_task(async function test_cls() {
   function check_cls(char: string, expected: number): void {
@@ -29,11 +27,7 @@ add_task(async function test_cls() {
       }
     }
 
-    is(
-      text_obj.cls(char),
-      expected,
-      `cls(${JSON.stringify(char)}) -> ${expected_str}`
-    );
+    is(text_obj.cls(char), expected, `cls(${JSON.stringify(char)}) -> ${expected_str}`);
   }
 
   check_cls(" ", text_obj.CLS_WHITESPACE);

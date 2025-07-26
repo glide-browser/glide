@@ -9,8 +9,7 @@
 
 declare var content: TestContent;
 
-const INPUT_TEST_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_get_column_offset() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
@@ -19,19 +18,12 @@ add_task(async function test_get_column_offset() {
         const element = content.document.querySelector("#textarea-1");
         if (!element) throw new Error("no element");
 
-        const motions = ChromeUtils.importESModule(
-          "chrome://glide/content/motions.mjs"
-        );
-        return motions.get_column_offset(
-          (element as any as MozEditableElement).editor!
-        );
+        const motions = ChromeUtils.importESModule("chrome://glide/content/motions.mjs");
+        return motions.get_column_offset((element as any as MozEditableElement).editor!);
       });
     }
 
-    const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(
-      browser,
-      { text_start: "end" }
-    );
+    const { set_text, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
 
     await set_text("Hello\nworld", "from the end of the line");
 

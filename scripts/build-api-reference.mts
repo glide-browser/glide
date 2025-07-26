@@ -1,22 +1,15 @@
 import "./polyfill-chromeutils.cjs";
+import assert from "assert";
+import fs from "node:fs/promises";
 import Path from "path";
 import TSM from "ts-morph";
 import { ts } from "ts-morph";
 import { Project } from "ts-morph";
-import {
-  GLIDE_BROWSER_CONTENT_DIR,
-  DOCS_DIR,
-  ROOT_DIR,
-} from "./canonical-paths.mts";
-import { assert_present } from "../src/glide/browser/base/content/utils/guards.mts";
-import assert from "assert";
 import { Node } from "ts-morph";
-import fs from "node:fs/promises";
 import { markdown } from "../src/glide/browser/base/content/utils/dedent.mts";
-import {
-  Words,
-  replace_surrounding,
-} from "../src/glide/browser/base/content/utils/strings.mts";
+import { assert_present } from "../src/glide/browser/base/content/utils/guards.mts";
+import { replace_surrounding, Words } from "../src/glide/browser/base/content/utils/strings.mts";
+import { DOCS_DIR, GLIDE_BROWSER_CONTENT_DIR, ROOT_DIR } from "./canonical-paths.mts";
 
 const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
@@ -24,18 +17,10 @@ const DISABLED_PROPERTIES = new Set([
 ]);
 
 async function main() {
-  const project = new Project({
-    tsConfigFilePath: Path.join(ROOT_DIR, "tsconfig.json"),
-  });
-  const file = assert_present(
-    project.getSourceFile(
-      Path.join(GLIDE_BROWSER_CONTENT_DIR, "glide-api.d.ts")
-    )
-  );
+  const project = new Project({ tsConfigFilePath: Path.join(ROOT_DIR, "tsconfig.json") });
+  const file = assert_present(project.getSourceFile(Path.join(GLIDE_BROWSER_CONTENT_DIR, "glide-api.d.ts")));
 
-  const global_decl = file.getFirstChildByKind(
-    ts.SyntaxKind.ModuleDeclaration
-  )!;
+  const global_decl = file.getFirstChildByKind(ts.SyntaxKind.ModuleDeclaration)!;
   assert.equal(global_decl?.getName(), "global");
 
   const inner = global_decl.getFirstChildByKind(ts.SyntaxKind.ModuleBlock);
@@ -146,20 +131,14 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
     // `foo: string` or `foo: undefined`
     if (is_keyword(inner) || Node.isTypeReference(inner)) {
-      yield* Header(`${QualifiedName}: ${inner.getText()}`, {
-        parents,
-        id: QualifiedName,
-      });
+      yield* Header(`${QualifiedName}: ${inner.getText()}`, { parents, id: QualifiedName });
       yield* Docs(docs);
       yield "\n";
       yield* traverse_further(inner, [...parents, { name: Name, node }]);
       return;
     }
 
-    yield* Header(`${QualifiedName}`, {
-      parents,
-      id: QualifiedName,
-    });
+    yield* Header(`${QualifiedName}`, { parents, id: QualifiedName });
     yield* Docs(docs);
 
     yield* traverse_further(inner, [...parents, { name: Name, node }]);
@@ -185,9 +164,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       return;
     }
 
-    console.warn(
-      "type reference with no TypeLiteral declaration is not supported"
-    );
+    console.warn("type reference with no TypeLiteral declaration is not supported");
     return;
   }
 
@@ -198,11 +175,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       return;
     }
 
-    yield* Header(`Types`, {
-      parents,
-      id: "types",
-      attrs: 'style="margin-top: 3em !important"',
-    });
+    yield* Header(`Types`, { parents, id: "types", attrs: "style=\"margin-top: 3em !important\"" });
 
     const block = node.getFirstChildByKindOrThrow(ts.SyntaxKind.ModuleBlock);
     yield* traverse_children(block, [...parents, { name: "glide", node }]);
@@ -216,13 +189,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
     const body = children(node)[2];
 
     if (body) {
-      yield* Header(
-        `${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`,
-        {
-          parents,
-          id: QualifiedName,
-        }
-      );
+      yield* Header(`${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`, { parents, id: QualifiedName });
     } else {
       console.warn(`no body for ${Name}`);
     }
@@ -234,7 +201,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
 function* Header(
   Code: string,
-  { parents, id, attrs }: { parents: ParentEntry[]; id: string; attrs?: string }
+  { parents, id, attrs }: { parents: ParentEntry[]; id: string; attrs?: string },
 ): Generator<string> {
   const Bullet = parents.length === 1 ? "• " : "";
 
@@ -276,31 +243,30 @@ function get_directives(node: TSM.Node): DocsDirectives {
 
 function is_keyword(node: TSM.Node): boolean {
   return (
-    Node.isAnyKeyword(node) ||
-    Node.isInferKeyword(node) ||
-    Node.isNeverKeyword(node) ||
-    Node.isNumberKeyword(node) ||
-    Node.isObjectKeyword(node) ||
-    Node.isStringKeyword(node) ||
-    Node.isSymbolKeyword(node) ||
-    Node.isBooleanKeyword(node) ||
-    Node.isUndefinedKeyword(node)
+    Node.isAnyKeyword(node)
+    || Node.isInferKeyword(node)
+    || Node.isNeverKeyword(node)
+    || Node.isNumberKeyword(node)
+    || Node.isObjectKeyword(node)
+    || Node.isStringKeyword(node)
+    || Node.isSymbolKeyword(node)
+    || Node.isBooleanKeyword(node)
+    || Node.isUndefinedKeyword(node)
   );
 }
 
 function render_method_signature(
   node: TSM.MethodSignature,
-  { name }: { name: string }
+  { name }: { name: string },
 ) {
   // TODO: render param types
   // TODO: make types clickable
   const params = node
     .getChildrenOfKind(ts.SyntaxKind.Parameter)
-    .map(
-      param =>
-        param
-          .getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.Identifier)
-          .getText() + (param.hasQuestionToken() ? "?" : "")
+    .map(param =>
+      param
+        .getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.Identifier)
+        .getText() + (param.hasQuestionToken() ? "?" : "")
     )
     .join(", ");
 
@@ -309,7 +275,7 @@ function render_method_signature(
 
 function* traverse_further(
   node: Node,
-  parents: ParentEntry[]
+  parents: ParentEntry[],
 ): Generator<string> {
   const parent = node.getParent();
   if (parent) {
@@ -325,7 +291,7 @@ function* traverse_further(
 
 function* traverse_children(
   node: Node,
-  parents: ParentEntry[]
+  parents: ParentEntry[],
 ): Generator<string> {
   for (const child of children(node)) {
     yield* traverse(child, parents);

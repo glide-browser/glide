@@ -13,9 +13,7 @@ export function assert_never(x: never, detail?: string | Error): never {
     throw detail;
   }
 
-  throw new Error(
-    detail ?? `assert_never: impossible to call: ${JSON.stringify(x)}`
-  );
+  throw new Error(detail ?? `assert_never: impossible to call: ${JSON.stringify(x)}`);
 }
 
 export function is_present<T>(x: T | null | undefined): x is T {
@@ -24,7 +22,7 @@ export function is_present<T>(x: T | null | undefined): x is T {
 
 export function assert_present<T>(
   value: T | null | undefined,
-  detail?: string | Error
+  detail?: string | Error,
 ): T {
   if (value != null) {
     return value;
@@ -34,7 +32,5 @@ export function assert_present<T>(
     throw detail;
   }
 
-  throw new Error(
-    detail ?? `assert_present: impossible to call: ${JSON.stringify(value)}`
-  );
+  throw new Error(detail ?? `assert_present: impossible to call: ${JSON.stringify(value)}`);
 }

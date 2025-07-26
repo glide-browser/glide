@@ -2,9 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-const { is_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 type AttrValue = string | undefined | null;
 
@@ -24,23 +22,25 @@ export type Attrs = Record<string, AttrValue | Array<AttrValue> | undefined>;
 export function element(
   name: string,
   attrs?: Attrs,
-  children?: string[]
+  children?: string[],
 ): string {
   return [
     "<",
     name,
-    ...(attrs && Object.keys(attrs).length ?
-      [
+    ...(attrs && Object.keys(attrs).length
+      ? [
         " ",
         ...Object.entries(attrs)
           .map(([name, value]) =>
-            is_present(value) ?
-              `${name}=${Array.isArray(value) ? JSON.stringify(value.filter(is_present).join(" ")) : JSON.stringify(value)}`
-            : null
+            is_present(value)
+              ? `${name}=${
+                Array.isArray(value) ? JSON.stringify(value.filter(is_present).join(" ")) : JSON.stringify(value)
+              }`
+              : null
           )
           .filter(is_present),
       ]
-    : []),
+      : []),
     ">",
     ...(children ?? []),
     "</",

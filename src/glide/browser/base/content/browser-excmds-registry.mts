@@ -21,16 +21,13 @@ export interface ArgumentSchema {
 
 export type ArgumentsSchema = Record<string, ArgumentSchema>;
 
-type ArgType<Arg extends ArgumentSchema> =
-  Arg["type"] extends "string" ? string
+type ArgType<Arg extends ArgumentSchema> = Arg["type"] extends "string" ? string
   : Arg["type"] extends "integer" ? number
   : Arg["type"] extends "boolean" ? boolean
-  : Arg["type"] extends { enum: ReadonlyArray<string> } ?
-    Arg["type"]["enum"][number]
+  : Arg["type"] extends { enum: ReadonlyArray<string> } ? Arg["type"]["enum"][number]
   : never;
 
-export type ParsedArg<Arg extends ArgumentSchema> =
-  Arg["required"] extends true ? ArgType<Arg> : ArgType<Arg> | null;
+export type ParsedArg<Arg extends ArgumentSchema> = Arg["required"] extends true ? ArgType<Arg> : ArgType<Arg> | null;
 
 export type ParsedArgs<Schema extends ArgumentsSchema> = {
   [K in keyof Schema]: ParsedArg<Schema[K]>;
@@ -59,9 +56,7 @@ export const MODE_SCHEMA_TYPE = {
   ] as GlideMode[],
 } as const satisfies ArgumentSchema["type"];
 
-export const OPERATOR_SCHEMA_TYPE = {
-  enum: ["d", "c", "r"],
-} as const satisfies ArgumentSchema["type"];
+export const OPERATOR_SCHEMA_TYPE = { enum: ["d", "c", "r"] } as const satisfies ArgumentSchema["type"];
 
 export type GlideOperator = ParsedArg<{
   type: typeof OPERATOR_SCHEMA_TYPE;
@@ -69,24 +64,9 @@ export type GlideOperator = ParsedArg<{
 }>;
 
 export const GLIDE_EXCOMMANDS = [
-  {
-    name: "back",
-    description: "Go back one page in history",
-    content: false,
-    repeatable: true,
-  },
-  {
-    name: "forward",
-    description: "Go forward one page in history",
-    content: false,
-    repeatable: true,
-  },
-  {
-    name: "reload",
-    description: "Reload the current page",
-    content: false,
-    repeatable: true,
-  },
+  { name: "back", description: "Go back one page in history", content: false, repeatable: true },
+  { name: "forward", description: "Go forward one page in history", content: false, repeatable: true },
+  { name: "reload", description: "Reload the current page", content: false, repeatable: true },
   {
     name: "reload_hard",
     description: "Reload the current page, bypassing the cache",
@@ -94,22 +74,13 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: true,
   },
 
-  {
-    name: "quit",
-    description: "Close all windows",
-    content: false,
-    repeatable: false,
-  },
+  { name: "quit", description: "Close all windows", content: false, repeatable: false },
 
   {
     name: "set",
     description: "Set an option",
     args_schema: {
-      name: {
-        type: "string",
-        position: 0,
-        required: true,
-      },
+      name: { type: "string", position: 0, required: true },
       value: {
         // note: this just means we allow anything and don't try to parse it
         type: "string",
@@ -121,31 +92,11 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
 
-  {
-    name: "profile_dir",
-    description: "Show the current profile directory",
-    content: false,
-    repeatable: false,
-  },
+  { name: "profile_dir", description: "Show the current profile directory", content: false, repeatable: false },
 
-  {
-    name: "config",
-    description: "Show the config file path",
-    content: false,
-    repeatable: false,
-  },
-  {
-    name: "config_reload",
-    description: "Reload the config file",
-    content: false,
-    repeatable: false,
-  },
-  {
-    name: "config_edit",
-    description: "Open the config file in the default editor",
-    content: false,
-    repeatable: false,
-  },
+  { name: "config", description: "Show the config file path", content: false, repeatable: false },
+  { name: "config_reload", description: "Reload the config file", content: false, repeatable: false },
+  { name: "config_edit", description: "Open the config file in the default editor", content: false, repeatable: false },
   {
     name: "config_init",
     description: "Initialise a config dir with all the necessary setup",
@@ -155,56 +106,32 @@ export const GLIDE_EXCOMMANDS = [
 
   {
     name: "repeat",
-    description:
-      'Repeat the last invoked command. In general only applies to "mutative" commands',
+    description: "Repeat the last invoked command. In general only applies to \"mutative\" commands",
     content: false,
     repeatable: false,
   },
 
-  {
-    name: "map",
-    description: "Show all mappings",
-    content: false,
-    repeatable: false,
-  },
+  { name: "map", description: "Show all mappings", content: false, repeatable: false },
 
   {
     // TODO(glide): this should also remove from `visual` and `operator-pending` modes when we have them
     name: "unmap",
     description: "Remove a mapping from normal mode",
-    args_schema: {
-      lhs: {
-        type: "string",
-        required: true,
-        position: 0,
-      },
-    } as const satisfies ArgumentsSchema,
+    args_schema: { lhs: { type: "string", required: true, position: 0 } } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
   {
     name: "nunmap",
     description: "Remove a mapping from normal mode",
-    args_schema: {
-      lhs: {
-        type: "string",
-        required: true,
-        position: 0,
-      },
-    } as const satisfies ArgumentsSchema,
+    args_schema: { lhs: { type: "string", required: true, position: 0 } } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
   {
     name: "iunmap",
     description: "Remove a mapping from insert mode",
-    args_schema: {
-      lhs: {
-        type: "string",
-        required: true,
-        position: 0,
-      },
-    } as const satisfies ArgumentsSchema,
+    args_schema: { lhs: { type: "string", required: true, position: 0 } } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
@@ -212,23 +139,12 @@ export const GLIDE_EXCOMMANDS = [
   {
     name: "tab",
     description: "Switch to the given tab index",
-    args_schema: {
-      tab_index: {
-        type: "integer",
-        required: true,
-        position: 0,
-      },
-    } as const satisfies ArgumentsSchema,
+    args_schema: { tab_index: { type: "integer", required: true, position: 0 } } as const satisfies ArgumentsSchema,
     content: false,
     repeatable: false,
   },
 
-  {
-    name: "tab_close",
-    description: "Close the current tab",
-    content: false,
-    repeatable: true,
-  },
+  { name: "tab_close", description: "Close the current tab", content: false, repeatable: true },
   {
     name: "tab_next",
     description: "Switch to the next tab, wrapping around if applicable",
@@ -306,15 +222,8 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: false,
     args_schema: {
-      mode: {
-        type: MODE_SCHEMA_TYPE,
-        required: true,
-        position: 0,
-      },
-      "--automove": {
-        type: { enum: ["left", "endline"] },
-        required: false,
-      },
+      mode: { type: MODE_SCHEMA_TYPE, required: true, position: 0 },
+      "--automove": { type: { enum: ["left", "endline"] }, required: false },
       "--operator": {
         type: OPERATOR_SCHEMA_TYPE,
         required: false,
@@ -329,11 +238,7 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: false,
     args_schema: {
-      direction: {
-        type: { enum: ["left", "right", "up", "down"] },
-        required: true,
-        position: 0,
-      },
+      direction: { type: { enum: ["left", "right", "up", "down"] }, required: true, position: 0 },
     } as const satisfies ArgumentsSchema,
   },
 
@@ -342,36 +247,19 @@ export const GLIDE_EXCOMMANDS = [
     description: "Replace the current character",
     content: false,
     repeatable: false,
-    args_schema: {
-      character: {
-        type: "string",
-        required: false,
-        position: 0,
-      },
-    } as const satisfies ArgumentsSchema,
+    args_schema: { character: { type: "string", required: false, position: 0 } } as const satisfies ArgumentsSchema,
   },
 
   {
     name: "visual_selection_copy",
-    description:
-      "Copy the currently selected text to the clipboard & change to normal mode",
+    description: "Copy the currently selected text to the clipboard & change to normal mode",
     content: false,
     repeatable: false,
   },
 
-  {
-    name: "help",
-    description: "Open the docs",
-    content: false,
-    repeatable: false,
-  },
+  { name: "help", description: "Open the docs", content: false, repeatable: false },
 
-  {
-    name: "tutor",
-    description: "Open the Glide tutorial",
-    content: false,
-    repeatable: false,
-  },
+  { name: "tutor", description: "Open the Glide tutorial", content: false, repeatable: false },
 
   // TODO
   // {
@@ -381,12 +269,7 @@ export const GLIDE_EXCOMMANDS = [
   // },
 
   // ------------ commands that require accessing the content frame ------------
-  {
-    name: "scroll_top",
-    description: "Scroll to the top of the window",
-    content: true,
-    repeatable: false,
-  },
+  { name: "scroll_top", description: "Scroll to the top of the window", content: true, repeatable: false },
   {
     name: "scroll_page_down",
     description: "Scroll down by 1 page (the size of the viewport)",
@@ -399,18 +282,8 @@ export const GLIDE_EXCOMMANDS = [
     content: true,
     repeatable: false,
   },
-  {
-    name: "scroll_bottom",
-    description: "Scroll to the bottom of the window",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "blur",
-    description: "Blur the active element",
-    content: true,
-    repeatable: false,
-  },
+  { name: "scroll_bottom", description: "Scroll to the bottom of the window", content: true, repeatable: false },
+  { name: "blur", description: "Blur the active element", content: true, repeatable: false },
 
   {
     name: "focusinput",
@@ -418,11 +291,7 @@ export const GLIDE_EXCOMMANDS = [
     content: true,
     repeatable: false,
     args_schema: {
-      filter: {
-        type: { enum: ["last"] },
-        required: true,
-        position: 0,
-      },
+      filter: { type: { enum: ["last"] }, required: true, position: 0 },
     } as const satisfies ArgumentsSchema,
   },
 
@@ -435,42 +304,24 @@ export const GLIDE_EXCOMMANDS = [
       "-s": {
         type: "string",
         required: false,
-        description:
-          "*Only* show hints for all elements matching this CSS selector",
+        description: "*Only* show hints for all elements matching this CSS selector",
       },
       "--include": {
         type: "string",
         required: false,
-        description:
-          "*Also* show hints for all elements matching this CSS selector",
+        description: "*Also* show hints for all elements matching this CSS selector",
       },
-      "-e": {
-        type: "boolean",
-        required: false,
-        description: "*Only* show hints for all elements that are editable",
-      },
+      "-e": { type: "boolean", required: false, description: "*Only* show hints for all elements that are editable" },
       "--auto": {
         type: "boolean",
         required: false,
-        description:
-          "If only one hint is generated, automatically activate it.",
+        description: "If only one hint is generated, automatically activate it.",
       },
-      "--action": {
-        type: { enum: ["click", "newtab-click"] },
-        required: false,
-      },
-      "--location": {
-        type: { enum: ["content", "browser-ui"] },
-        required: false,
-      },
+      "--action": { type: { enum: ["click", "newtab-click"] }, required: false },
+      "--location": { type: { enum: ["content", "browser-ui"] }, required: false },
     } as const satisfies ArgumentsSchema,
   },
-  {
-    name: "hints_remove",
-    description: "Remove all hint labels and exit hint mode",
-    content: false,
-    repeatable: false,
-  },
+  { name: "hints_remove", description: "Remove all hint labels and exit hint mode", content: false, repeatable: false },
 
   // ------------ vim motions ------------
   {
@@ -513,12 +364,7 @@ export const GLIDE_EXCOMMANDS = [
     } as const satisfies ArgumentsSchema,
   },
 
-  {
-    name: "undo",
-    description: "Undo the most recent edit",
-    content: false,
-    repeatable: false,
-  },
+  { name: "undo", description: "Undo the most recent edit", content: false, repeatable: false },
 ] as const satisfies GlideExcmdInfo[];
 
 export type GlideExcmdsMap = {

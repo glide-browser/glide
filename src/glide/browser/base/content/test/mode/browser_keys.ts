@@ -9,17 +9,13 @@
 
 declare var content: TestContent;
 
-const INPUT_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
-const KEYS_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/key_test.html";
+const KEYS_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/key_test.html";
 
-const FULLSCREEN_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/fullscreen_test.html";
+const FULLSCREEN_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/fullscreen_test.html";
 
-const CLIPBOARD_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/clipboard_test.html";
+const CLIPBOARD_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/clipboard_test.html";
 
 declare global {
   interface GlideGlobals {
@@ -42,9 +38,7 @@ add_setup(async () => {
 add_task(async function test_jj_insert_middle() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input = content.document.getElementById(
-        "input-2"
-      )! as HTMLInputElement;
+      const input = content.document.getElementById("input-2")! as HTMLInputElement;
       input.value = uri;
       input.focus();
       input.setSelectionRange(40, 40);
@@ -59,7 +53,7 @@ add_task(async function test_jj_insert_middle() {
     is(
       value,
       "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html",
-      "Partial insert mapping matches should insert the key"
+      "Partial insert mapping matches should insert the key",
     );
 
     EventUtils.synthesizeKey("j");
@@ -73,15 +67,10 @@ add_task(async function test_jj_insert_middle() {
     // content should not have `jj` now
     is(value, INPUT_TEST_URI);
 
-    const [selection_start, selection_end] = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => {
-        const input =
-          content.document.getElementById<HTMLInputElement>("input-2")!;
-        return [input.selectionStart, input.selectionEnd];
-      }
-    );
+    const [selection_start, selection_end] = await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
+      return [input.selectionStart, input.selectionEnd];
+    });
     is(selection_start, 40);
     is(selection_end, 40);
   });
@@ -92,8 +81,7 @@ add_task(async function test_jj_insert_end() {
     await sleep_frames(1);
 
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input =
-        content.document.getElementById<HTMLInputElement>("input-2")!;
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = uri;
       input.focus();
     });
@@ -113,20 +101,14 @@ add_task(async function test_jj_insert_end() {
 
     // content should be the exact same
     is(
-      await SpecialPowers.spawn(
-        browser,
-        [],
-        async () =>
-          content.document.getElementById<HTMLInputElement>("input-2")!.value
-      ),
-      INPUT_TEST_URI
+      await SpecialPowers.spawn(browser, [], async () =>
+        content.document.getElementById<HTMLInputElement>("input-2")!.value),
+      INPUT_TEST_URI,
     );
     is(
-      await SpecialPowers.spawn(browser, [], async () =>
-        content.document.getElementById("input-2")!.matches(":focus")
-      ),
+      await SpecialPowers.spawn(browser, [], async () => content.document.getElementById("input-2")!.matches(":focus")),
       true,
-      "input should still have focus"
+      "input should still have focus",
     );
   });
 });
@@ -134,8 +116,7 @@ add_task(async function test_jj_insert_end() {
 add_task(async function test_jj_partial_cancel_by_other_keypress() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input =
-        content.document.getElementById<HTMLInputElement>("input-2")!;
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = uri;
       input.focus();
       input.setSelectionRange(40, 40);
@@ -148,10 +129,7 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
         .value;
     });
     await sleep_frames(2);
-    is(
-      value,
-      "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html"
-    );
+    is(value, "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html");
 
     EventUtils.synthesizeKey("e");
     await sleep_frames(4);
@@ -162,18 +140,13 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
         return content.document.getElementById<HTMLInputElement>("input-2")!
           .value;
       }),
-      "http://mochi.test:8888/browser/glide/brojewser/base/content/test/mode/input_test.html"
+      "http://mochi.test:8888/browser/glide/brojewser/base/content/test/mode/input_test.html",
     );
 
-    const [selection_start, selection_end] = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => {
-        const input =
-          content.document.getElementById<HTMLInputElement>("input-2")!;
-        return [input.selectionStart, input.selectionEnd];
-      }
-    );
+    const [selection_start, selection_end] = await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
+      return [input.selectionStart, input.selectionEnd];
+    });
     is(selection_start, 42);
     is(selection_end, 42);
   });
@@ -182,8 +155,7 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
 add_task(async function test_j_cancel_by_escape() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [INPUT_TEST_URI], async uri => {
-      const input =
-        content.document.getElementById<HTMLInputElement>("input-2")!;
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = uri;
       input.focus();
       input.setSelectionRange(40, 40);
@@ -198,38 +170,25 @@ add_task(async function test_j_cancel_by_escape() {
     is(
       value,
       "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html",
-      "Partial insert mapping matches should insert the key"
+      "Partial insert mapping matches should insert the key",
     );
 
     EventUtils.synthesizeKey("KEY_Escape");
     await sleep_frames(3);
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Esc after a single j should go to normal mode"
-    );
+    is(GlideBrowser.state.mode, "normal", "Esc after a single j should go to normal mode");
 
     // content should be back to original
     is(
-      await SpecialPowers.spawn(
-        browser,
-        [],
-        async () =>
-          content.document.getElementById<HTMLInputElement>("input-2")!.value
-      ),
+      await SpecialPowers.spawn(browser, [], async () =>
+        content.document.getElementById<HTMLInputElement>("input-2")!.value),
       "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html",
-      "Escape should keep partial j insertion"
+      "Escape should keep partial j insertion",
     );
 
-    const [selection_start, selection_end] = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => {
-        const input =
-          content.document.getElementById<HTMLInputElement>("input-2")!;
-        return [input.selectionStart, input.selectionEnd];
-      }
-    );
+    const [selection_start, selection_end] = await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
+      return [input.selectionStart, input.selectionEnd];
+    });
     is(selection_start, 41);
     is(selection_end, 41);
   });
@@ -238,8 +197,7 @@ add_task(async function test_j_cancel_by_escape() {
 add_task(async function test_jj_switching_elements() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
-      const input =
-        content.document.getElementById<HTMLInputElement>("input-1")!;
+      const input = content.document.getElementById<HTMLInputElement>("input-1")!;
       input.value = "foo";
       input.focus();
     });
@@ -258,8 +216,7 @@ add_task(async function test_jj_switching_elements() {
     await sleep_frames(3);
 
     await SpecialPowers.spawn(browser, [], async () => {
-      const input =
-        content.document.getElementById<HTMLInputElement>("input-2")!;
+      const input = content.document.getElementById<HTMLInputElement>("input-2")!;
       input.value = "other";
       input.focus();
     });
@@ -268,16 +225,12 @@ add_task(async function test_jj_switching_elements() {
     EventUtils.synthesizeKey("j");
     await sleep_frames(4);
 
-    const [first_value, second_value] = await SpecialPowers.spawn(
-      browser,
-      [],
-      async () => {
-        return [
-          content.document.getElementById<HTMLInputElement>("input-1")!.value,
-          content.document.getElementById<HTMLInputElement>("input-2")!.value,
-        ];
-      }
-    );
+    const [first_value, second_value] = await SpecialPowers.spawn(browser, [], async () => {
+      return [
+        content.document.getElementById<HTMLInputElement>("input-1")!.value,
+        content.document.getElementById<HTMLInputElement>("input-2")!.value,
+      ];
+    });
 
     is(first_value, "foofj", "first content should be the same as before");
     is(second_value, "otherj", "second content should have j inserted");
@@ -297,10 +250,8 @@ add_task(async function test_mapped_keys_no_events() {
     await sleep_frames(2);
     let captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {
-        keydown:
-          content.document.getElementById("keydown-events")!.children.length,
-        keypress:
-          content.document.getElementById("keypress-events")!.children.length,
+        keydown: content.document.getElementById("keydown-events")!.children.length,
+        keypress: content.document.getElementById("keypress-events")!.children.length,
         keyup: content.document.getElementById("keyup-events")!.children.length,
       };
     });
@@ -314,40 +265,26 @@ add_task(async function test_mapped_keys_no_events() {
     await sleep_frames(2);
     captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {
-        keydown:
-          content.document.getElementById("keydown-events")!.children.length,
-        keypress:
-          content.document.getElementById("keypress-events")!.children.length,
+        keydown: content.document.getElementById("keydown-events")!.children.length,
+        keypress: content.document.getElementById("keypress-events")!.children.length,
         keyup: content.document.getElementById("keyup-events")!.children.length,
       };
     });
-    is(
-      captured_events.keydown,
-      1,
-      "Mapped key sequence should not trigger additional keydown"
-    );
-    is(
-      captured_events.keypress,
-      1,
-      "Mapped key sequence should not trigger additional keypress"
-    );
-    is(
-      captured_events.keyup,
-      1,
-      "Mapped key sequence should not trigger additional keyup"
-    );
+    is(captured_events.keydown, 1, "Mapped key sequence should not trigger additional keydown");
+    is(captured_events.keypress, 1, "Mapped key sequence should not trigger additional keypress");
+    is(captured_events.keyup, 1, "Mapped key sequence should not trigger additional keyup");
   });
 });
 
 add_task(async function test_Escape_to_exit_fullscreen() {
   const { DOMFullscreenTestUtils } = ChromeUtils.importESModule(
-    "resource://testing-common/DOMFullscreenTestUtils.sys.mjs"
+    "resource://testing-common/DOMFullscreenTestUtils.sys.mjs",
   );
 
   DOMFullscreenTestUtils.init(
     // @ts-ignore
     this,
-    window
+    window,
   );
 
   await BrowserTestUtils.withNewTab(FULLSCREEN_TEST_URI, async browser => {
@@ -358,11 +295,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
     EventUtils.synthesizeKey("KEY_Escape");
 
     await DOMFullscreenTestUtils.waitForFullScreenState(browser, false);
-    is(
-      window.fullScreen,
-      false,
-      "window should not be in full screen mode after pressing Escape"
-    );
+    is(window.fullScreen, false, "window should not be in full screen mode after pressing Escape");
 
     // <Esc> from insert mode will still exit full screen, because this is a better
     // default for now asI think the more common case for DOM full screen will be
@@ -374,9 +307,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
     await DOMFullscreenTestUtils.changeFullscreen(browser, true);
     is(window.fullScreen, true, "window should now be in full screen mode");
 
-    await SpecialPowers.spawn(browser, [], async () =>
-      content.document.getElementById("input-1")!.focus()
-    );
+    await SpecialPowers.spawn(browser, [], async () => content.document.getElementById("input-1")!.focus());
     await sleep_frames(1);
     EventUtils.synthesizeKey("a");
     EventUtils.synthesizeKey("b");
@@ -390,33 +321,20 @@ add_task(async function test_d_op_pending_q_normal() {
   // Test that pressing "d" enters op-pending mode and then pressing "q" goes back to normal mode because q is not mapped
   EventUtils.synthesizeKey("d");
   await sleep_frames(4);
-  is(
-    GlideBrowser.state.mode,
-    "op-pending",
-    "Pressing 'd' enters op-pending mode"
-  );
+  is(GlideBrowser.state.mode, "op-pending", "Pressing 'd' enters op-pending mode");
   EventUtils.synthesizeKey("q");
   await sleep_frames(4);
-  is(
-    GlideBrowser.state.mode,
-    "normal",
-    "Pressing 'q' in op-pending mode returns to normal mode"
-  );
+  is(GlideBrowser.state.mode, "normal", "Pressing 'q' in op-pending mode returns to normal mode");
 });
 
 add_task(async function test_mapping_user_gesture_activation() {
   await BrowserTestUtils.withNewTab(CLIPBOARD_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {
       glide.keymaps.set("normal", "yc", async () => {
-        glide.content.execute(
-          async () => {
-            const button = document!.getElementById(
-              "copy-button"
-            ) as HTMLButtonElement;
-            button.click();
-          },
-          { tab_id: await glide.tabs.active() }
-        );
+        glide.content.execute(async () => {
+          const button = document!.getElementById("copy-button") as HTMLButtonElement;
+          button.click();
+        }, { tab_id: await glide.tabs.active() });
 
         glide.g.test_checked = true;
       });
@@ -428,10 +346,7 @@ add_task(async function test_mapping_user_gesture_activation() {
 
     // clicking the button should attempt to copy the contents of a `<textarea>` to
     // the clipboard which will only work if user gestures were recently registered.
-    is(
-      await navigator.clipboard.readText(),
-      "This is the test content to copy"
-    );
+    is(await navigator.clipboard.readText(), "This is the test content to copy");
   });
 });
 
@@ -452,34 +367,19 @@ add_task(async function test_buf_local_keymaps_override_global() {
 
     EventUtils.synthesizeKey("q");
     await sleep_frames(3);
-    is(
-      GlideBrowser.api.g.invoked_buffer,
-      1,
-      "Buffer-local mapping should be executed in the originating buffer"
-    );
-    is(
-      GlideBrowser.api.g.invoked_global,
-      0,
-      "Global mapping should be shadowed by the buffer-local mapping"
-    );
+    is(GlideBrowser.api.g.invoked_buffer, 1, "Buffer-local mapping should be executed in the originating buffer");
+    is(GlideBrowser.api.g.invoked_global, 0, "Global mapping should be shadowed by the buffer-local mapping");
 
     // Open a new tab to clear buffer-local mappings.
-    const new_tab = await BrowserTestUtils.openNewForegroundTab(
-      gBrowser,
-      KEYS_TEST_URI
-    );
+    const new_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, KEYS_TEST_URI);
 
     EventUtils.synthesizeKey("q");
     await sleep_frames(3);
-    is(
-      GlideBrowser.api.g.invoked_buffer,
-      1,
-      "Buffer-local mapping should not fire in a different buffer"
-    );
+    is(GlideBrowser.api.g.invoked_buffer, 1, "Buffer-local mapping should not fire in a different buffer");
     is(
       GlideBrowser.api.g.invoked_global,
       1,
-      "Global mapping should be executed in buffers without a buffer-local override"
+      "Global mapping should be executed in buffers without a buffer-local override",
     );
 
     BrowserTestUtils.removeTab(new_tab);
@@ -502,17 +402,10 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
     EventUtils.synthesizeKey("q");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
-    is(
-      GlideBrowser.api.g.invoked_global,
-      0,
-      "Global mapping should be deleted"
-    );
+    is(GlideBrowser.api.g.invoked_global, 0, "Global mapping should be deleted");
 
     // Open a new tab to clear buffer-local mappings.
-    const new_tab = await BrowserTestUtils.openNewForegroundTab(
-      gBrowser,
-      KEYS_TEST_URI
-    );
+    const new_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, KEYS_TEST_URI);
 
     EventUtils.synthesizeKey("q");
     await sleep_frames(3);
@@ -520,7 +413,7 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
     is(
       GlideBrowser.api.g.invoked_global,
       1,
-      "Global mapping should be executed in buffers without a buffer-local deletion"
+      "Global mapping should be executed in buffers without a buffer-local deletion",
     );
 
     BrowserTestUtils.removeTab(new_tab);
@@ -549,16 +442,8 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
 
     EventUtils.synthesizeKey("t");
     await sleep_frames(3);
-    is(
-      GlideBrowser.api.g.invoked_buffer,
-      1,
-      "Initial buffer keymap should work"
-    );
-    is(
-      GlideBrowser.api.g.invoked_global,
-      0,
-      "Global keymap should be overridden"
-    );
+    is(GlideBrowser.api.g.invoked_buffer, 1, "Initial buffer keymap should work");
+    is(GlideBrowser.api.g.invoked_global, 0, "Global keymap should be overridden");
 
     // Reload config with different buffer keymaps
     await GlideTestUtils.reload_config(function _() {
@@ -583,52 +468,28 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
 
     EventUtils.synthesizeKey("t");
     await sleep_frames(3);
-    is(
-      GlideBrowser.api.g.invoked_buffer,
-      0,
-      "Old buffer keymap should not fire"
-    );
-    is(
-      GlideBrowser.api.g.invoked_global,
-      1,
-      "Global keymap should now be active"
-    );
+    is(GlideBrowser.api.g.invoked_buffer, 0, "Old buffer keymap should not fire");
+    is(GlideBrowser.api.g.invoked_global, 1, "Global keymap should now be active");
 
     // Test that new buffer keymap 'u' works
     EventUtils.synthesizeKey("u");
     await sleep_frames(3);
-    is(
-      GlideBrowser.api.g.invoked_after_reload,
-      1,
-      "New buffer keymap registered after reload should work"
-    );
+    is(GlideBrowser.api.g.invoked_after_reload, 1, "New buffer keymap registered after reload should work");
 
     // Test that kept buffer keymap 'r' still works
     EventUtils.synthesizeKey("r");
     await sleep_frames(3);
-    is(
-      GlideBrowser.api.g.invoked_buffer,
-      1,
-      "Kept buffer keymap should still work after reload"
-    );
+    is(GlideBrowser.api.g.invoked_buffer, 1, "Kept buffer keymap should still work after reload");
 
     // Open new tab to verify buffer keymaps don't leak
     await BrowserTestUtils.withNewTab(KEYS_TEST_URI, async _ => {
       EventUtils.synthesizeKey("u");
       await sleep_frames(3);
-      is(
-        GlideBrowser.api.g.invoked_after_reload,
-        1,
-        "Buffer keymap should not fire in new tab"
-      );
+      is(GlideBrowser.api.g.invoked_after_reload, 1, "Buffer keymap should not fire in new tab");
 
       EventUtils.synthesizeKey("t");
       await sleep_frames(3);
-      is(
-        GlideBrowser.api.g.invoked_global,
-        2,
-        "Global keymap should work in new tab"
-      );
+      is(GlideBrowser.api.g.invoked_global, 2, "Global keymap should work in new tab");
     });
   });
 });

@@ -3,7 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 {
-  window.open_search = function () {
+  window.open_search = function() {
     const search = document.getElementById("search");
     search.style.display = "unset";
 
@@ -14,7 +14,7 @@
     document.querySelector(".pagefind-ui__search-input").focus();
   };
 
-  window.close_search = function () {
+  window.close_search = function() {
     const search = document.getElementById("search");
     if (search) {
       search.style.display = "none";
@@ -27,7 +27,7 @@
     }
   };
 
-  window.toggle_search = function () {
+  window.toggle_search = function() {
     const search = document.getElementById("search");
     if (search.style.display === "" || search.style.display === "none") {
       console.debug("[toggle]: opening search");
@@ -50,9 +50,9 @@
     /** @type {HTMLElement} */
     const search = document.getElementById("search");
     if (
-      !search ||
-      search.style.display === "" ||
-      search.style.display === "none"
+      !search
+      || search.style.display === ""
+      || search.style.display === "none"
     ) {
       return;
     }
@@ -79,7 +79,7 @@
     }, 1000);
   };
 
-  window.open_mobile_menu = function () {
+  window.open_mobile_menu = function() {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("mobile-nav-overlay");
     sidebar.classList.add("mobile-menu-open");
@@ -88,7 +88,7 @@
     document.body.style.overflow = "hidden";
   };
 
-  window.close_mobile_menu = function () {
+  window.close_mobile_menu = function() {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("mobile-nav-overlay");
     sidebar.classList.remove("mobile-menu-open");
@@ -97,7 +97,7 @@
     document.body.style.overflow = "";
   };
 
-  window.toggle_mobile_menu = function () {
+  window.toggle_mobile_menu = function() {
     const sidebar = document.getElementById("sidebar");
     if (sidebar && sidebar.classList.contains("mobile-menu-open")) {
       window.close_mobile_menu();
@@ -107,11 +107,7 @@
   };
 
   window.addEventListener("DOMContentLoaded", () => {
-    window.pagefind_ui = new PagefindUI({
-      element: "#search",
-      showSubResults: true,
-      resetStyles: false,
-    });
+    window.pagefind_ui = new PagefindUI({ element: "#search", showSubResults: true, resetStyles: false });
 
     document.getElementById("search-button").addEventListener("click", () => {
       window.open_search();

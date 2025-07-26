@@ -11,27 +11,18 @@
 //  alternatively `pnpm bootstrap` will do that for you
 
 import "./polyfill-chromeutils.cjs";
+import fs from "fs/promises";
 import meow from "meow";
 import Path from "path";
-import fs from "fs/promises";
 import { DOCS_DIR, DOCS_DIST_DIR } from "./canonical-paths.mts";
 
-const shiki = ChromeUtils.importESModule(
-  "chrome://glide/content/bundled/shiki.mjs"
-);
-const { markdown_to_html } = ChromeUtils.importESModule(
-  "chrome://glide/content/docs.mjs"
-);
+const shiki = ChromeUtils.importESModule("chrome://glide/content/bundled/shiki.mjs");
+const { markdown_to_html } = ChromeUtils.importESModule("chrome://glide/content/docs.mjs");
 
 const cli = meow({
   importMeta: import.meta,
   allowUnknownFlags: false,
-  flags: {
-    symlink: {
-      type: "boolean",
-      default: true,
-    },
-  },
+  flags: { symlink: { type: "boolean", default: true } },
 });
 
 const SYMLINKS = [
@@ -78,11 +69,10 @@ for await (const md_file of fs.glob("**/*.md", { cwd: DOCS_DIR })) {
 
   await fs.writeFile(
     dist_file,
-    await markdown_to_html(
-      await fs.readFile(Path.join(DOCS_DIR, md_file), "utf8"),
-      highlighter,
-      { nested_count: md_file.split(Path.sep).length, relative_dist_path }
-    )
+    await markdown_to_html(await fs.readFile(Path.join(DOCS_DIR, md_file), "utf8"), highlighter, {
+      nested_count: md_file.split(Path.sep).length,
+      relative_dist_path,
+    }),
   );
 }
 

@@ -25,10 +25,10 @@
   --glide-mode-normal: #a89984;
   --glide-mode-insert: #83a598;
   --glide-mode-visual: #fe8019;
-  --glide-mode-ignore: #CC79A7;
+  --glide-mode-ignore: #cc79a7;
   --glide-mode-command: #fb4934;
   --glide-mode-op-pending: #b8bb26;
-  --glide-fallback-mode: #FFFFFF;
+  --glide-fallback-mode: #ffffff;
 
   /* Search highlight */
   --glide-search-highlight-color: yellow;
@@ -142,11 +142,11 @@
     /* commandline dark mode */
     --glide-cmdl-bg: rgb(26, 27, 37);
     --glide-cmdl-fg: #fff;
-    
+
     /* completions dark mode */
     --glide-cmplt-fg: #fff;
     --glide-cmplt-bg: rgb(26, 27, 37);
-    
+
     /* option focused dark mode */
     --glide-of-fg: rgb(26, 27, 37);
     --glide-of-bg: #fff;

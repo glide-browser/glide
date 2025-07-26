@@ -10,8 +10,7 @@
 declare var content: TestContent;
 declare var document: Document;
 
-const FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_focus_input_element_activates_insert_mode() {
   await BrowserTestUtils.withNewTab(FILE, async browser => {
@@ -19,27 +18,19 @@ add_task(async function test_focus_input_element_activates_insert_mode() {
       content.document.getElementById<HTMLInputElement>("input-1")!.focus();
     });
 
-    await TestUtils.waitForCondition(
-      () =>
-        document.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("abcr");
 
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
-      async () =>
-        content.document.getElementById<HTMLInputElement>("input-1")!.value
+      async () => content.document.getElementById<HTMLInputElement>("input-1")!.value,
     );
 
-    is(
-      inputContent,
-      "abcr",
-      "key presses should be entered into the input element"
-    );
+    is(inputContent, "abcr", "key presses should be entered into the input element");
   });
 });
 
@@ -50,12 +41,9 @@ add_task(async function test_focus_input_element_while_in_insert_mode() {
       content.document.getElementById("input-2")!.focus();
     });
 
-    await TestUtils.waitForCondition(
-      () =>
-        document.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("abcr");
 
@@ -65,38 +53,26 @@ add_task(async function test_focus_input_element_while_in_insert_mode() {
         .value;
     });
 
-    is(
-      inputContent,
-      "abcr",
-      "key presses should be entered into the input-2 element"
-    );
+    is(inputContent, "abcr", "key presses should be entered into the input-2 element");
   });
 });
 
 add_task(async function test_about_settings_search() {
   await BrowserTestUtils.withNewTab("about:settings", async browser => {
     // search should be focused by default
-    await TestUtils.waitForCondition(
-      () =>
-        document.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("rabc");
 
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
-      async () =>
-        content.document.getElementById<HTMLInputElement>("searchInput")!.value
+      async () => content.document.getElementById<HTMLInputElement>("searchInput")!.value,
     );
 
-    is(
-      inputContent,
-      "rabc",
-      "key presses should be entered into the search element"
-    );
+    is(inputContent, "rabc", "key presses should be entered into the search element");
   });
 });
 
@@ -107,16 +83,12 @@ add_task(async function test_shadow_dom() {
         content.document
           .getElementById("shadow-host")!
           .shadowRoot!.getElementById("shadow-input")! as HTMLElement
-      ).focus()
-    );
+      ).focus());
 
     // search should be focused after clicking on an input in a shadow dom
-    await TestUtils.waitForCondition(
-      () =>
-        document.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("rabc");
 
@@ -129,11 +101,7 @@ add_task(async function test_shadow_dom() {
       ).value;
     });
 
-    is(
-      inputContent,
-      "rabc",
-      "key presses should be entered into the search element"
-    );
+    is(inputContent, "rabc", "key presses should be entered into the search element");
   });
 });
 
@@ -145,16 +113,12 @@ add_task(async function test_direct_click_nested_shadow_dom() {
           .getElementById("shadow-host")!
           .shadowRoot!.getElementById("shadow-host-2")!
           .shadowRoot!.getElementById("shadow-input-2")! as HTMLElement
-      ).focus()
-    );
+      ).focus());
 
     // search should be focused after clicking on an input in a shadow dom
-    await TestUtils.waitForCondition(
-      () =>
-        document.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("rabc");
 
@@ -168,11 +132,7 @@ add_task(async function test_direct_click_nested_shadow_dom() {
       ).value;
     });
 
-    is(
-      inputContent,
-      "rabc",
-      "key presses should be entered into the search element"
-    );
+    is(inputContent, "rabc", "key presses should be entered into the search element");
   });
 });
 
@@ -181,15 +141,11 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
     await SpecialPowers.spawn(browser, [], async () =>
       content.document
         .getElementById("contenteditable-div-with-role-textbox")!
-        .focus()
-    );
+        .focus());
 
-    await TestUtils.waitForCondition(
-      () =>
-        document.getElementById("glide-toolbar-mode-button")!.textContent ===
-        "insert",
-      "Waiting for mode button to show `insert` mode"
-    );
+    await TestUtils.waitForCondition(() =>
+      document.getElementById("glide-toolbar-mode-button")!.textContent
+        === "insert", "Waiting for mode button to show `insert` mode");
 
     await GlideTestUtils.synthesize_keyseq("rabc");
 
@@ -200,11 +156,7 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
         .children.item(0)!.textContent!;
     });
 
-    is(
-      inputContent.trim().slice(0, 4),
-      "rabc",
-      "key presses should be entered into the contenteditable div element"
-    );
+    is(inputContent.trim().slice(0, 4), "rabc", "key presses should be entered into the contenteditable div element");
   });
 });
 
@@ -217,11 +169,7 @@ add_task(async function test_focus_input_element_in_ignore_mode() {
       content.document.getElementById("input-1")!.focus();
     });
     await sleep_frames(5);
-    is(
-      GlideBrowser.state.mode,
-      "ignore",
-      "mode should still be `ignore` even after focusing an element"
-    );
+    is(GlideBrowser.state.mode, "ignore", "mode should still be `ignore` even after focusing an element");
     await GlideTestUtils.synthesize_keyseq("<S-Esc>");
   });
 });

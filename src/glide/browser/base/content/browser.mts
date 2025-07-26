@@ -4,58 +4,27 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import type { SetRequired, Split } from "type-fest";
-import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
 import type { GlideDocsParent } from "../../actors/GlideDocsParent.sys.mjs";
-import type {
-  GlideOperator,
-  GlideCommandString,
-  GlideExcmdInfo,
-} from "./browser-excmds-registry.mts";
+import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
+import type { GlideCommandString, GlideExcmdInfo, GlideOperator } from "./browser-excmds-registry.mts";
 import type { Jumplist } from "./plugins/jumplist.mts";
 
-const DefaultKeymaps = ChromeUtils.importESModule(
-  "chrome://glide/content/plugins/keymaps.mjs",
-  { global: "current" }
-);
-const { GlideBrowserDev } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-dev.mjs",
-  { global: "current" }
-);
-const Keys = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/keys.mjs",
-  { global: "current" }
-);
-const JumplistPlugin = ChromeUtils.importESModule(
-  "chrome://glide/content/plugins/jumplist.mjs"
-);
-const HintsPlugin = ChromeUtils.importESModule(
-  "chrome://glide/content/plugins/hints.mjs"
-);
-const Promises = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/promises.mjs"
-);
-const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
-  global: "current",
-});
+const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
+const { GlideBrowserDev } = ChromeUtils.importESModule("chrome://glide/content/browser-dev.mjs", { global: "current" });
+const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
+const JumplistPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/jumplist.mjs");
+const HintsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/hints.mjs");
+const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
+const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
+  "chrome://glide/content/utils/guards.mjs",
 );
-const { default: ts_blank_space } = ChromeUtils.importESModule(
-  "chrome://glide/content/bundled/ts-blank-space.mjs"
-);
-const { human_join } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/arrays.mjs"
-);
-const { redefine_getter } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/objects.mjs"
-);
-const { create_sandbox } = ChromeUtils.importESModule(
-  "chrome://glide/content/sandbox.mjs"
-);
-const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-excmds-registry.mjs"
-);
+const { default: ts_blank_space } = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
+const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
+const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
+const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
+const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 
 export interface State {
   mode: GlideMode;
@@ -67,15 +36,12 @@ export interface StateChangeMeta {
   disable_auto_collapse?: boolean;
 }
 
-const _defaultState: State = {
-  mode: "normal",
-  operator: null,
-};
+const _defaultState: State = { mode: "normal", operator: null };
 
 export type StateChangeListener = (
   new_state: State,
   old_state: State,
-  meta: StateChangeMeta | undefined
+  meta: StateChangeMeta | undefined,
 ) => void;
 
 const DEBOUNCE_MODE_ANIMATION_FRAMES = 3;
@@ -87,13 +53,9 @@ class GlideBrowserClass {
   config_path: string | null = null;
 
   #api: typeof glide | null = null;
-  _log: ConsoleInstance =
-    console.createInstance ?
-      console.createInstance({
-        prefix: "Glide",
-        maxLogLevelPref: "glide.logging.loglevel",
-      })
-      // createInstance isn't defined in tests
+  _log: ConsoleInstance = console.createInstance
+    ? console.createInstance({ prefix: "Glide", maxLogLevelPref: "glide.logging.loglevel" })
+    // createInstance isn't defined in tests
     : (console as any);
 
   // added in `.reload_config()`
@@ -111,7 +73,7 @@ class GlideBrowserClass {
     [K in glide.AutocmdEvent]?: {
       pattern: glide.AutocmdPatterns[K];
       callback: (
-        args: glide.AutocmdArgs[K]
+        args: glide.AutocmdArgs[K],
       ) => (() => void | Promise<void>) | void | Promise<void>;
     }[];
   } = {};
@@ -121,16 +83,8 @@ class GlideBrowserClass {
     document!.addEventListener("keydown", this.#on_keydown.bind(this), true);
     document!.addEventListener("keypress", this.#on_keypress.bind(this), true);
     document!.addEventListener("keyup", this.#on_keyup.bind(this), true);
-    window.addEventListener(
-      "MozDOMFullscreen:Entered",
-      this.#on_fullscreen_enter.bind(this),
-      true
-    );
-    window.addEventListener(
-      "MozDOMFullscreen:Exited",
-      this.#on_fullscreen_exit.bind(this),
-      true
-    );
+    window.addEventListener("MozDOMFullscreen:Entered", this.#on_fullscreen_enter.bind(this), true);
+    window.addEventListener("MozDOMFullscreen:Exited", this.#on_fullscreen_exit.bind(this), true);
 
     // As this code is ran very early in the browser startup process, we can't rely on things like
     // `gNotificationBox` working immediately as there are a couple of error states
@@ -152,24 +106,16 @@ class GlideBrowserClass {
           listener();
         }
 
-        GlideBrowser.add_state_change_listener(
-          GlideBrowser.#state_change_autocmd
-        );
+        GlideBrowser.add_state_change_listener(GlideBrowser.#state_change_autocmd);
 
         GlideBrowserDev.init();
 
         gBrowser.addProgressListener(GlideBrowser.progress_listener);
 
-        Services.obs.removeObserver(
-          startup_observer,
-          "browser-idle-startup-tasks-finished"
-        );
+        Services.obs.removeObserver(startup_observer, "browser-idle-startup-tasks-finished");
       },
     };
-    Services.obs.addObserver(
-      startup_observer,
-      "browser-idle-startup-tasks-finished"
-    );
+    Services.obs.addObserver(startup_observer, "browser-idle-startup-tasks-finished");
 
     this.on_startup(() => {
       // check for extension errors every 500ms as there are no listeners we can register
@@ -185,9 +131,7 @@ class GlideBrowserClass {
     this.on_startup(async () => {
       await config_promise;
 
-      const { write_d_ts } = ChromeUtils.importESModule(
-        "chrome://glide/content/config-init.mjs"
-      );
+      const { write_d_ts } = ChromeUtils.importESModule("chrome://glide/content/config-init.mjs");
 
       await write_d_ts(this.profile_config_dir);
 
@@ -199,18 +143,14 @@ class GlideBrowserClass {
     this.on_startup(async () => {
       await config_promise;
 
-      const results = await Promise.allSettled(
-        (GlideBrowser.autocmds.WindowLoaded ?? []).map(cmd =>
-          (async () => {
-            const cleanup = await cmd.callback({});
-            if (typeof cleanup === "function") {
-              throw new Error(
-                "WindowLoaded autocmds cannot define cleanup functions"
-              );
-            }
-          })()
-        )
-      );
+      const results = await Promise.allSettled((GlideBrowser.autocmds.WindowLoaded ?? []).map(cmd =>
+        (async () => {
+          const cleanup = await cmd.callback({});
+          if (typeof cleanup === "function") {
+            throw new Error("WindowLoaded autocmds cannot define cleanup functions");
+          }
+        })()
+      ));
 
       for (const result of results) {
         if (result.status === "fulfilled") {
@@ -218,12 +158,10 @@ class GlideBrowserClass {
         }
 
         GlideBrowser._log.error(result.reason);
-        const loc =
-          GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
+        const loc = GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
         GlideBrowser.add_notification("glide-autocmd-error", {
           label: `Error occurred in WindowLoaded autocmd \`${loc}\` - ${result.reason}`,
-          priority:
-            MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+          priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
           buttons: [GlideBrowser.remove_all_notifications_button],
         });
       }
@@ -238,25 +176,18 @@ class GlideBrowserClass {
     });
 
     this.on_startup(async () => {
-      await this.#state_change_autocmd(this.state, {
-        mode: null,
-        operator: null,
-      });
+      await this.#state_change_autocmd(this.state, { mode: null, operator: null });
     });
 
     this.on_startup(async () => {
-      const results = await Promise.allSettled(
-        (GlideBrowser.autocmds.ConfigLoaded ?? []).map(cmd =>
-          (async () => {
-            const cleanup = await cmd.callback({});
-            if (typeof cleanup === "function") {
-              throw new Error(
-                "ConfigLoaded autocmds cannot define cleanup functions"
-              );
-            }
-          })()
-        )
-      );
+      const results = await Promise.allSettled((GlideBrowser.autocmds.ConfigLoaded ?? []).map(cmd =>
+        (async () => {
+          const cleanup = await cmd.callback({});
+          if (typeof cleanup === "function") {
+            throw new Error("ConfigLoaded autocmds cannot define cleanup functions");
+          }
+        })()
+      ));
 
       for (const result of results) {
         if (result.status === "fulfilled") {
@@ -264,21 +195,17 @@ class GlideBrowserClass {
         }
 
         GlideBrowser._log.error(result.reason);
-        const loc =
-          GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
+        const loc = GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
         GlideBrowser.add_notification("glide-autocmd-error", {
           label: `Error occurred in ConfigLoaded autocmd \`${loc}\` - ${result.reason}`,
-          priority:
-            MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+          priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
           buttons: [GlideBrowser.remove_all_notifications_button],
         });
       }
     });
 
     this.on_startup(() => {
-      const Please = ChromeUtils.importESModule(
-        "chrome://glide/content/please.mjs"
-      );
+      const Please = ChromeUtils.importESModule("chrome://glide/content/please.mjs");
       Please.pretty(this.api, this.browser_proxy_api);
     });
 
@@ -300,9 +227,7 @@ class GlideBrowserClass {
 
         const stat = await IOUtils.stat(path);
         if (!stat.lastModified) {
-          throw new Error(
-            `[config watcher]: stat of \`${path}\` does not include a \`lastModified\` value`
-          );
+          throw new Error(`[config watcher]: stat of \`${path}\` does not include a \`lastModified\` value`);
         }
 
         if (this.#config_modified_timestamp === undefined) {
@@ -332,8 +257,7 @@ class GlideBrowserClass {
   }
 
   #config_watcher_id: number | undefined;
-  readonly config_pending_notification_id: string =
-    "glide-config-reload-notification";
+  readonly config_pending_notification_id: string = "glide-config-reload-notification";
   #config_modified_timestamp: number | undefined;
 
   async #reload_config() {
@@ -373,22 +297,12 @@ class GlideBrowserClass {
 
     if (this.#startup_finished) {
       // clear all registered event listeners and any custom state on the `browser` object
-      const addon = await AddonManager.getAddonByID(
-        "glide-internal@mozilla.org"
-      );
+      const addon = await AddonManager.getAddonByID("glide-internal@mozilla.org");
       await addon.reload();
 
       // TODO(glide): only do this if we need to
-      redefine_getter(
-        this,
-        "browser_parent_api",
-        this.#create_browser_parent_api()
-      );
-      redefine_getter(
-        this,
-        "browser_proxy_api",
-        this.#create_browser_proxy_api()
-      );
+      redefine_getter(this, "browser_parent_api", this.#create_browser_parent_api());
+      redefine_getter(this, "browser_proxy_api", this.#create_browser_proxy_api());
     }
 
     const config_path = await this.resolve_config_path();
@@ -408,8 +322,7 @@ class GlideBrowserClass {
     } catch (err) {
       this._log.error(err);
 
-      const loc =
-        this.#clean_stack(err, this.#reload_config.name) ?? "glide.ts";
+      const loc = this.#clean_stack(err, this.#reload_config.name) ?? "glide.ts";
       this.add_notification(this.config_error_id, {
         label: `An error occurred while evaluating \`${loc}\` - ${err}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
@@ -427,48 +340,41 @@ class GlideBrowserClass {
 
   async #state_change_autocmd(
     new_state: State,
-    old_state: Omit<State, "mode"> & { mode: GlideMode | null }
+    old_state: Omit<State, "mode"> & { mode: GlideMode | null },
   ) {
     const cmds = GlideBrowser.autocmds.ModeChanged ?? [];
     if (!cmds.length) {
       return;
     }
 
-    const args: glide.AutocmdArgs["ModeChanged"] = {
-      new_mode: new_state.mode,
-      old_mode: old_state.mode,
-    };
+    const args: glide.AutocmdArgs["ModeChanged"] = { new_mode: new_state.mode, old_mode: old_state.mode };
 
     // TODO: display errors as they come in
-    const results = await Promise.allSettled(
-      cmds.map(cmd =>
-        (async () => {
-          if (cmd.pattern !== "*") {
-            const [left, right] = cmd.pattern.split(":") as Split<
-              typeof cmd.pattern,
-              ":"
-            >;
+    const results = await Promise.allSettled(cmds.map(cmd =>
+      (async () => {
+        if (cmd.pattern !== "*") {
+          const [left, right] = cmd.pattern.split(":") as Split<
+            typeof cmd.pattern,
+            ":"
+          >;
 
-            if (left !== "*" && left !== old_state.mode) {
-              // no match
-              return;
-            }
-
-            if (right !== "*" && right !== new_state.mode) {
-              // no match
-              return;
-            }
+          if (left !== "*" && left !== old_state.mode) {
+            // no match
+            return;
           }
 
-          const cleanup = await cmd.callback(args);
-          if (typeof cleanup === "function") {
-            throw new Error(
-              "ModeChanged autocmds cannot define cleanup functions"
-            );
+          if (right !== "*" && right !== new_state.mode) {
+            // no match
+            return;
           }
-        })()
-      )
-    );
+        }
+
+        const cleanup = await cmd.callback(args);
+        if (typeof cleanup === "function") {
+          throw new Error("ModeChanged autocmds cannot define cleanup functions");
+        }
+      })()
+    ));
 
     for (const result of results) {
       if (result.status === "fulfilled") {
@@ -480,9 +386,8 @@ class GlideBrowserClass {
       // TODO: if there are many errors this would be overwhelming...
       //       maybe limit the number of errors we display at once?
 
-      const loc =
-        GlideBrowser.#clean_stack(result.reason, "#state_change_autocmd") ??
-        "<unknown>";
+      const loc = GlideBrowser.#clean_stack(result.reason, "#state_change_autocmd")
+        ?? "<unknown>";
       GlideBrowser.add_notification("glide-autocmd-error", {
         label: `Error occurred in ModeChanged autocmd \`${loc}\` - ${result.reason}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
@@ -515,10 +420,10 @@ class GlideBrowserClass {
       priority: number;
       label: string | DocumentFragment;
       eventCallback?: (
-        parameter: "removed" | "dismissed" | "disconnected"
+        parameter: "removed" | "dismissed" | "disconnected",
       ) => void;
       buttons?: GlobalBrowser.NotificationBox.Button[];
-    }
+    },
   ) {
     this.on_startup(() => {
       const { buttons, ...data } = props;
@@ -532,7 +437,7 @@ class GlideBrowserClass {
         //
         // of course this *could* stil happen, but I think the tradeoff is worth the risk of
         // some user potentially accidentally clicking a notification button.
-        /* disable clickjacking */ true
+        /* disable clickjacking */ true,
       );
     });
   }
@@ -583,14 +488,9 @@ class GlideBrowserClass {
         web_progress: nsIWebProgress,
         _request: nsIRequest,
         location: nsIURI,
-        flags?: u32
+        flags?: u32,
       ) {
-        GlideBrowser._log.debug(
-          "onLocationChange",
-          location.spec,
-          flags,
-          `topLevel=${web_progress.isTopLevel}`
-        );
+        GlideBrowser._log.debug("onLocationChange", location.spec, flags, `topLevel=${web_progress.isTopLevel}`);
         if (!flags) {
           flags = 0;
         }
@@ -604,8 +504,8 @@ class GlideBrowserClass {
         // is the same when `LOCATION_CHANGE_SAME_DOCUMENT` is set so that SPAs can still trigger new
         // events, as they are conceptually different pages.
         if (
-          flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT &&
-          this.$last_location === location.spec
+          flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT
+          && this.$last_location === location.spec
         ) {
           return;
         }
@@ -632,14 +532,12 @@ class GlideBrowserClass {
   get active_tab_id(): number {
     const tab = gBrowser?.selectedTab;
     if (!tab) {
-      throw new Error(
-        "could not resolve tab, did you call this too early in startup?"
-      );
+      throw new Error("could not resolve tab, did you call this too early in startup?");
     }
 
     return assert_present(
       GlideBrowser.extension?.tabManager?.getWrapper?.(tab),
-      "could not resolve tab, did you call this too early in startup?"
+      "could not resolve tab, did you call this too early in startup?",
     ).id;
   }
 
@@ -654,28 +552,23 @@ class GlideBrowserClass {
       get tab_id() {
         return assert_present(
           GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
-          "could not resolve tab wrapper"
+          "could not resolve tab wrapper",
         ).id;
       },
     };
 
-    const results = await Promise.allSettled(
-      cmds.map(cmd =>
-        (async () => {
-          if (!GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)) {
-            return;
-          }
+    const results = await Promise.allSettled(cmds.map(cmd =>
+      (async () => {
+        if (!GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)) {
+          return;
+        }
 
-          const cleanup = await cmd.callback(args);
-          if (typeof cleanup === "function") {
-            GlideBrowser.#buffer_cleanups.push({
-              callback: cleanup,
-              source: "UrlEnter cleanup",
-            });
-          }
-        })()
-      )
-    );
+        const cleanup = await cmd.callback(args);
+        if (typeof cleanup === "function") {
+          GlideBrowser.#buffer_cleanups.push({ callback: cleanup, source: "UrlEnter cleanup" });
+        }
+      })()
+    ));
 
     for (const result of results) {
       if (result.status === "fulfilled") {
@@ -687,9 +580,8 @@ class GlideBrowserClass {
       // TODO: if there are many errors this would be overwhelming...
       //       maybe limit the number of errors we display at once?
 
-      const loc =
-        GlideBrowser.#clean_stack(result.reason, "#invoke_urlenter_autocmd") ??
-        "<unknown>";
+      const loc = GlideBrowser.#clean_stack(result.reason, "#invoke_urlenter_autocmd")
+        ?? "<unknown>";
       GlideBrowser.add_notification("glide-autocmd-error", {
         label: `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
@@ -700,7 +592,7 @@ class GlideBrowserClass {
 
   #test_url_autocmd_pattern(
     pattern: glide.AutocmdPatterns["UrlEnter"],
-    location: nsIURI
+    location: nsIURI,
   ): boolean {
     if ("test" in pattern) {
       // note: don't use `instanceof` to avoid cross-realm issues
@@ -732,8 +624,7 @@ class GlideBrowserClass {
     };
   }
 
-  #buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] =
-    [];
+  #buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] = [];
 
   async clear_buffer() {
     this.api.bo = {};
@@ -743,10 +634,7 @@ class GlideBrowserClass {
     this.#buffer_cleanups = [];
 
     const results = await Promises.all_settled(
-      cleanups.map(({ callback, source }) => ({
-        callback,
-        metadata: { source },
-      }))
+      cleanups.map(({ callback, source }) => ({ callback, metadata: { source } })),
     );
     for (const result of results) {
       if (result.status === "fulfilled") {
@@ -757,8 +645,7 @@ class GlideBrowserClass {
 
       // TODO: if there are many errors this would be overwhelming...
       //       maybe limit the number of errors we display at once?
-      const loc =
-        this.#clean_stack(result.reason, "all_settled") ?? "<unknown>";
+      const loc = this.#clean_stack(result.reason, "all_settled") ?? "<unknown>";
       this.add_notification("glide-buffer-cleanup-error", {
         label: `Error occurred in ${result.metadata.source} \`${loc}\` - ${result.reason}`,
         priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
@@ -782,14 +669,14 @@ class GlideBrowserClass {
    */
   #clean_stack(err: unknown, up_to_func_name: string): string | null {
     return (
-        typeof err === "object" &&
-          err != null &&
-          "stack" in err &&
-          typeof err.stack === "string"
-      ) ?
-        err.stack
-          .slice(0, err.stack.indexOf(`\n${up_to_func_name}`))
-          .replace(this.#config_uri, "glide.ts")
+        typeof err === "object"
+        && err != null
+        && "stack" in err
+        && typeof err.stack === "string"
+      )
+      ? err.stack
+        .slice(0, err.stack.indexOf(`\n${up_to_func_name}`))
+        .replace(this.#config_uri, "glide.ts")
       : null;
   }
 
@@ -800,8 +687,8 @@ class GlideBrowserClass {
       for (const notification of gNotificationBox.allNotifications) {
         const value = notification.getAttribute("value");
         if (
-          value === this.config_error_id ||
-          value === this.config_pending_notification_id
+          value === this.config_error_id
+          || value === this.config_pending_notification_id
         ) {
           gNotificationBox.removeNotification(notification);
         }
@@ -836,9 +723,7 @@ class GlideBrowserClass {
   get extension(): WebExtension {
     const policy = WebExtensionPolicy.getByID(this.#extension_id);
     if (!policy) {
-      throw new Error(
-        `Expected to find a web extension with ID: \`${this.#extension_id}\``
-      );
+      throw new Error(`Expected to find a web extension with ID: \`${this.#extension_id}\``);
     }
     return policy.extension;
   }
@@ -855,11 +740,7 @@ class GlideBrowserClass {
    * Attempting to use things like `.tabs.create()` will *NOT* work as expected.
    */
   get browser_parent_api() {
-    return redefine_getter(
-      this,
-      "browser_parent_api",
-      this.#create_browser_parent_api()
-    );
+    return redefine_getter(this, "browser_parent_api", this.#create_browser_parent_api());
   }
 
   #create_browser_parent_api(): typeof browser {
@@ -898,7 +779,7 @@ class GlideBrowserClass {
           browser,
           extension.apiManager
             .getAPI(api_name, extension)!
-            .getAPI(extension.backgroundContext)
+            .getAPI(extension.backgroundContext),
         );
       } catch (err) {
         console.error(`could not load '${api}' extension due to:`, err);
@@ -921,18 +802,14 @@ class GlideBrowserClass {
    *              it'd be better to just hard-code the object with all expected props.
    */
   get browser_proxy_api(): typeof browser {
-    return redefine_getter(
-      this,
-      "browser_proxy_api",
-      GlideBrowser.#create_browser_proxy_api()
-    );
+    return redefine_getter(this, "browser_proxy_api", GlideBrowser.#create_browser_proxy_api());
   }
 
   #create_browser_proxy_api(): typeof browser {
     function create_browser_proxy_chain(
-      previous_chain: (string | symbol)[] = []
+      previous_chain: (string | symbol)[] = [],
     ) {
-      return new Proxy(function () {}, {
+      return new Proxy(function() {}, {
         get(_: any, prop: string | symbol) {
           const path = [...previous_chain, prop].join(".");
           switch (path) {
@@ -952,12 +829,10 @@ class GlideBrowserClass {
           // needed under a typical setup.
           const listener_namespace = previous_chain[1];
           if (
-            listener_namespace &&
-            String(listener_namespace).startsWith("on")
+            listener_namespace
+            && String(listener_namespace).startsWith("on")
           ) {
-            GlideBrowser._log.debug(
-              `Handling request for \`${previous_chain}\` in the main thread`
-            );
+            GlideBrowser._log.debug(`Handling request for \`${previous_chain}\` in the main thread`);
 
             // we can't necessarily access the necessary extension context depending on how
             // early on in startup we are, so register a startup listener instead if we haven't
@@ -968,7 +843,9 @@ class GlideBrowserClass {
                 method = method[prop];
                 if (method == null) {
                   throw new Error(
-                    `Could not resolve \`browser\` property at path \`${previous_chain.join(".")}\` - \`${String(prop)}\` was not defined`
+                    `Could not resolve \`browser\` property at path \`${previous_chain.join(".")}\` - \`${
+                      String(prop)
+                    }\` was not defined`,
                   );
                 }
               }
@@ -988,9 +865,7 @@ class GlideBrowserClass {
             // it also looks like we can't even access it ourselves from the main thread
             // as it appears to only be set in the child context.
             case "runtime.getBackgroundPage": {
-              return Promise.reject(
-                new Error(`\`browser.${method_path}()\` is not supported`)
-              );
+              return Promise.reject(new Error(`\`browser.${method_path}()\` is not supported`));
             }
           }
 
@@ -1003,9 +878,7 @@ class GlideBrowserClass {
   }
 
   async send_extension_query(props: { method_path: string; args: any[] }) {
-    const { ExtensionParent } = ChromeUtils.importESModule(
-      "resource://gre/modules/ExtensionParent.sys.mjs"
-    );
+    const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
 
     const child_id = GlideBrowser.extension.backgroundContext?.childId;
     if (!child_id) {
@@ -1015,9 +888,7 @@ class GlideBrowserClass {
     }
 
     // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
-    GlideBrowser._log.debug(
-      `Sending request for \`${props.method_path}\` to extension process`
-    );
+    GlideBrowser._log.debug(`Sending request for \`${props.method_path}\` to extension process`);
     return ExtensionParent.ParentAPIManager.conduit
       .queryRunListener(child_id, {
         childId: child_id,
@@ -1030,7 +901,7 @@ class GlideBrowserClass {
             null,
             // first arg corresponds to the `browser.namespace.method` method that
             // should be invoked, the rest are forwarded to said method.
-            [props.method_path, ...IPC.serialise_args(props.args)]
+            [props.method_path, ...IPC.serialise_args(props.args)],
           );
         },
       })
@@ -1048,14 +919,9 @@ class GlideBrowserClass {
 
   add_user_excmd(
     info: glide.ExcmdCreateProps,
-    fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>
+    fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>,
   ) {
-    this.#user_cmds.set(info.name, {
-      ...info,
-      content: false,
-      repeatable: false,
-      fn,
-    });
+    this.#user_cmds.set(info.name, { ...info, content: false, repeatable: false, fn });
   }
 
   get user_excmds(): ReadonlyMap<
@@ -1079,8 +945,7 @@ class GlideBrowserClass {
     return this.state_listeners.delete(cb);
   }
 
-  _modes: { [k in GlideMode]: { caret: "block" | "line" | "underline" } } =
-    {} as any;
+  _modes: { [k in GlideMode]: { caret: "block" | "line" | "underline" } } = {} as any;
 
   get mode_names(): GlideMode[] {
     return Object.keys(this._modes) as GlideMode[];
@@ -1090,9 +955,7 @@ class GlideBrowserClass {
   #mode_to_style_enum(mode: GlideMode): number {
     const cfg = this._modes[mode];
     if (!cfg) {
-      throw new Error(
-        `Attempting to use a mode \`${mode}\` that hasn't been set with \`glide.modes.register()\` `
-      );
+      throw new Error(`Attempting to use a mode \`${mode}\` that hasn't been set with \`glide.modes.register()\` `);
     }
 
     switch (cfg.caret) {
@@ -1109,16 +972,13 @@ class GlideBrowserClass {
 
   _change_mode(
     new_mode: GlideMode,
-    props?: { operator?: GlideOperator | null; meta?: StateChangeMeta }
+    props?: { operator?: GlideOperator | null; meta?: StateChangeMeta },
   ) {
     const old_state = { ...this.state };
     this.state.mode = new_mode;
     this.state.operator = props?.operator ?? null;
 
-    Services.prefs.setIntPref(
-      "glide.caret.style",
-      this.#mode_to_style_enum(new_mode)
-    );
+    Services.prefs.setIntPref("glide.caret.style", this.#mode_to_style_enum(new_mode));
 
     for (const listener of this.state_listeners) {
       listener(this.state, old_state, props?.meta);
@@ -1160,7 +1020,7 @@ class GlideBrowserClass {
     element.childNodes[0]!.textContent = this.state.mode;
     (element as HTMLElement).style.setProperty(
       "--toolbarbutton-icon-fill-attention",
-      `var(--glide-mode-${this.state.mode})`
+      `var(--glide-mode-${this.state.mode})`,
     );
   }
 
@@ -1214,9 +1074,7 @@ class GlideBrowserClass {
     if (text_element) {
       text_element.textContent = keyseq.join("");
     } else {
-      element.appendChild(
-        DOM.create_element("span", { id, textContent: keyseq.join("") })
-      );
+      element.appendChild(DOM.create_element("span", { id, textContent: keyseq.join("") }));
     }
   }
 
@@ -1262,9 +1120,7 @@ class GlideBrowserClass {
     if (should_passthrough) {
       this.#passthrough_keyevents.delete(event.timeStamp);
       this.#display_keyseq([]);
-      this._log.debug(
-        `Ignoring \`${keyn}\` key event as it was marked with \`glide_skip_mappings\``
-      );
+      this._log.debug(`Ignoring \`${keyn}\` key event as it was marked with \`glide_skip_mappings\``);
       return;
     }
 
@@ -1278,14 +1134,12 @@ class GlideBrowserClass {
     //       *and* when the browser is in DOM fullscreen mode, as we would exit full screen
     //       instead of changing to normal mode. This is left as a future TODO.
     if (
-      event.defaultPrevented &&
-      !event.defaultPreventedByChrome &&
-      !event.defaultPreventedByContent
+      event.defaultPrevented
+      && !event.defaultPreventedByChrome
+      && !event.defaultPreventedByContent
     ) {
       this.#display_keyseq([]);
-      this._log.debug(
-        `Ignoring \`${keyn}\` key event as it was dispatched from privileged non-JS code`
-      );
+      this._log.debug(`Ignoring \`${keyn}\` key event as it was dispatched from privileged non-JS code`);
       return;
     }
 
@@ -1327,9 +1181,7 @@ class GlideBrowserClass {
 
     if (!mapping && this.state.mode === "hint") {
       const label = [...current_sequence].join("");
-      const hints = GlideCommands.get_active_hints().filter(hint =>
-        hint.label.startsWith(label)
-      );
+      const hints = GlideCommands.get_active_hints().filter(hint => hint.label.startsWith(label));
       this._log.debug({ hints, label });
 
       if (hints.length > 1) {
@@ -1344,9 +1196,10 @@ class GlideBrowserClass {
 
         const hint = hints[0]!;
         const location = GlideCommands.get_hints_location();
-        const actor =
-          location === "browser-ui" ? GlideBrowser.get_chrome_actor()
-          : location === "content" ? GlideBrowser.get_content_actor()
+        const actor = location === "browser-ui"
+          ? GlideBrowser.get_chrome_actor()
+          : location === "content"
+          ? GlideBrowser.get_content_actor()
           : assert_never(location);
         actor.send_async_message("Glide::ExecuteHint", { id: hint.id });
 
@@ -1367,9 +1220,7 @@ class GlideBrowserClass {
     // this is important because it allows you to do things like cancelling a
     // partial `jj` with an `Escape` and still have the `Escape` mapping applied.
     if (has_partial && !mapping) {
-      this.get_focused_actor().send_async_message("Glide::KeyMappingCancel", {
-        mode,
-      });
+      this.get_focused_actor().send_async_message("Glide::KeyMappingCancel", { mode });
       this.key_manager.reset_sequence();
       await this.#on_keydown(event);
       return;
@@ -1390,10 +1241,7 @@ class GlideBrowserClass {
     this.#prevent_keydown(keyn, event);
 
     if (mapping.has_children) {
-      this.get_focused_actor().send_async_message("Glide::KeyMappingPartial", {
-        mode,
-        key: event.key,
-      });
+      this.get_focused_actor().send_async_message("Glide::KeyMappingPartial", { mode, key: event.key });
 
       if (mode === "insert") {
         // in insert mode, for any multi-sequence mappings, e.g. `jj` to `mode_change normal`,
@@ -1401,21 +1249,15 @@ class GlideBrowserClass {
         // impossible to just type `jj`, you have to press another key in the middle.
         this.#partial_mapping_waiter_id = setTimeout(async () => {
           this.key_manager.reset_sequence();
-          this.get_focused_actor().send_async_message(
-            "Glide::KeyMappingCancel",
-            { mode }
-          );
+          this.get_focused_actor().send_async_message("Glide::KeyMappingCancel", { mode });
         }, this.api.o.mapping_timeout);
       }
     } else if (mapping.value) {
       this.key_manager.reset_sequence();
-      this.get_focused_actor().send_async_message(
-        "Glide::KeyMappingExecution",
-        {
-          sequence: mapping.value.sequence,
-          mode,
-        }
-      );
+      this.get_focused_actor().send_async_message("Glide::KeyMappingExecution", {
+        sequence: mapping.value.sequence,
+        mode,
+      });
       await GlideExcmds.execute(mapping.value.command, { mapping });
     }
 
@@ -1475,10 +1317,7 @@ class GlideBrowserClass {
    * https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html
    */
   get_focused_actor(): GlideHandlerParent {
-    const browser_element = assert_present(
-      customElements.get("browser"),
-      "Could not find a custom `browser` element"
-    );
+    const browser_element = assert_present(customElements.get("browser"), "Could not find a custom `browser` element");
     const active_element = document?.activeElement;
     if (!active_element) {
       this._log.debug("nothing is focused defaulting to chrome");
@@ -1501,7 +1340,7 @@ class GlideBrowserClass {
     let tab_browser = gBrowser.selectedBrowser;
     let content_wgp = assert_present(
       tab_browser.browsingContext
-        .currentWindowGlobal as typeof windowGlobalChild
+        .currentWindowGlobal as typeof windowGlobalChild,
     );
 
     // we can't use `.getExistingActor()` as the actor may not have been loaded
@@ -1514,7 +1353,7 @@ class GlideBrowserClass {
     let tab_browser = gBrowser.selectedBrowser;
     let content_wgp = assert_present(
       tab_browser.browsingContext
-        .currentWindowGlobal as typeof windowGlobalChild
+        .currentWindowGlobal as typeof windowGlobalChild,
     );
     return content_wgp.getActor("GlideDocs") as any as GlideDocsParent;
   }
@@ -1530,24 +1369,15 @@ class GlideBrowserClass {
    */
   get config_dirs(): { path: string; description: string }[] {
     const config_dirs: ({ path: string; description: string } | null)[] = [
-      {
-        path: Services.dirsvc.get("CurWorkD", Ci.nsIFile).path,
-        description: "cwd",
-      },
+      { path: Services.dirsvc.get("CurWorkD", Ci.nsIFile).path, description: "cwd" },
 
-      {
-        path: this.profile_config_dir,
-        description: "profile",
-      },
+      { path: this.profile_config_dir, description: "profile" },
 
-      this.xdg_config_dir ?
-        { path: this.xdg_config_dir, description: "XDG config" }
-      : null,
+      this.xdg_config_dir
+        ? { path: this.xdg_config_dir, description: "XDG config" }
+        : null,
 
-      {
-        path: this.home_config_dir,
-        description: "home",
-      },
+      { path: this.home_config_dir, description: "home" },
     ];
     return redefine_getter(this, "config_dirs", config_dirs.filter(Boolean));
   }
@@ -1558,11 +1388,7 @@ class GlideBrowserClass {
   }
 
   get home_config_dir(): string {
-    return PathUtils.join(
-      Services.dirsvc.get("Home", Ci.nsIFile).path,
-      ".config",
-      "glide"
-    );
+    return PathUtils.join(Services.dirsvc.get("Home", Ci.nsIFile).path, ".config", "glide");
   }
 
   get profile_config_dir(): string {
@@ -1613,12 +1439,7 @@ class GlideGlobals implements GlideG {
 function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
-    o: {
-      mapping_timeout: 200,
-      yank_highlight: "#edc73b",
-      yank_highlight_time: 150,
-      jumplist_max_entries: 100,
-    },
+    o: { mapping_timeout: 200, yank_highlight: "#edc73b", yank_highlight_time: 150, jumplist_max_entries: 100 },
     bo: {},
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
@@ -1643,30 +1464,23 @@ function make_glide_api(): typeof glide {
       },
 
       get os() {
-        const { AppConstants } = ChromeUtils.importESModule(
-          "resource://gre/modules/AppConstants.sys.mjs"
-        );
+        const { AppConstants } = ChromeUtils.importESModule("resource://gre/modules/AppConstants.sys.mjs");
         return AppConstants.platform;
       },
 
       async is_editing() {
-        return await GlideBrowser.get_focused_actor().send_query(
-          "Glide::Query::IsEditing"
-        );
+        return await GlideBrowser.get_focused_actor().send_query("Glide::Query::IsEditing");
       },
     },
     autocmds: {
       create<Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern_or_callback: glide.AutocmdPatterns[Event] extends never ?
-          (args: glide.AutocmdArgs[Event]) => void
-        : glide.AutocmdPatterns[Event],
-        callback?: (args: glide.AutocmdArgs[Event]) => void
+        pattern_or_callback: glide.AutocmdPatterns[Event] extends never ? (args: glide.AutocmdArgs[Event]) => void
+          : glide.AutocmdPatterns[Event],
+        callback?: (args: glide.AutocmdArgs[Event]) => void,
       ) {
         if (typeof pattern_or_callback === "function" && callback) {
-          throw new Error(
-            "provided a function as a pattern and a callback. only one should be provided"
-          );
+          throw new Error("provided a function as a pattern and a callback. only one should be provided");
         }
 
         let pattern: glide.AutocmdPatterns[Event] | null = null;
@@ -1701,38 +1515,25 @@ function make_glide_api(): typeof glide {
     buf: {
       keymaps: {
         set(modes, lhs, rhs, opts) {
-          GlideBrowser.key_manager.set(modes, lhs as string, rhs, {
-            ...opts,
-            buffer: true,
-          });
+          GlideBrowser.key_manager.set(modes, lhs as string, rhs, { ...opts, buffer: true });
         },
         del(modes, lhs, opts) {
-          GlideBrowser.key_manager.del(modes, lhs as string, {
-            ...opts,
-            buffer: true,
-          });
+          GlideBrowser.key_manager.del(modes, lhs as string, { ...opts, buffer: true });
         },
       },
     },
     tabs: {
       async active() {
-        const tabs = await GlideBrowser.browser_proxy_api.tabs.query({
-          active: true,
-          currentWindow: true,
-        });
+        const tabs = await GlideBrowser.browser_proxy_api.tabs.query({ active: true, currentWindow: true });
         if (tabs.length > 1) {
-          throw new Error(
-            "`glide.tabs.active()`: received multiple active tabs, expected only 1"
-          );
+          throw new Error("`glide.tabs.active()`: received multiple active tabs, expected only 1");
         }
         const tab = tabs[0];
         if (!tab) {
           throw new Error("`glide.tabs.active()`: did not receive any tabs");
         }
         if (!tab.id) {
-          throw new Error(
-            "`glide.tabs.active()`: expected `tab.id` to be defined"
-          );
+          throw new Error("`glide.tabs.active()`: expected `tab.id` to be defined");
         }
         return tab as SetRequired<typeof tab, "id">;
       },
@@ -1743,7 +1544,7 @@ function make_glide_api(): typeof glide {
       },
       create<const Excmd extends glide.ExcmdCreateProps>(
         info: Excmd,
-        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>
+        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>,
       ): Excmd {
         GlideBrowser.add_user_excmd(info, fn);
         return info;
@@ -1751,18 +1552,14 @@ function make_glide_api(): typeof glide {
     },
     content: {
       async execute(func, opts) {
-        const results =
-          await GlideBrowser.browser_proxy_api.scripting.executeScript({
-            target: {
-              tabId:
-                typeof opts.tab_id === "number" ? opts.tab_id : opts.tab_id.id,
-            },
-            func,
-            args: opts.args,
-          });
+        const results = await GlideBrowser.browser_proxy_api.scripting.executeScript({
+          target: { tabId: typeof opts.tab_id === "number" ? opts.tab_id : opts.tab_id.id },
+          func,
+          args: opts.args,
+        });
         if (results.length > 1) {
           throw new Error(
-            `unexpected - \`browser.scripting.executeScript\` returned multiple (${results.length}) results`
+            `unexpected - \`browser.scripting.executeScript\` returned multiple (${results.length}) results`,
           );
         }
 
@@ -1782,12 +1579,12 @@ function make_glide_api(): typeof glide {
     },
     hints: {
       show(opts) {
-        const location =
-          opts?.location === "browser-ui" ? "browser-ui" : "content";
+        const location = opts?.location === "browser-ui" ? "browser-ui" : "content";
 
-        const actor =
-          location === "browser-ui" ? GlideBrowser.get_chrome_actor()
-          : location === "content" ? GlideBrowser.get_content_actor()
+        const actor = location === "browser-ui"
+          ? GlideBrowser.get_chrome_actor()
+          : location === "content"
+          ? GlideBrowser.get_content_actor()
           : assert_never(location);
 
         actor.send_async_message("Glide::Hint", {
@@ -1803,23 +1600,18 @@ function make_glide_api(): typeof glide {
     },
     keys: {
       async send(input, opts) {
-        const EventUtils = ChromeUtils.importESModule(
-          "chrome://glide/content/event-utils.mjs",
-          { global: "current" }
-        );
+        const EventUtils = ChromeUtils.importESModule("chrome://glide/content/event-utils.mjs", { global: "current" });
         await EventUtils.synthesize_keyseq(
-          typeof input === "object" && input && "glide_key" in input ?
-            input.glide_key
-          : (input as string),
-          opts
+          typeof input === "object" && input && "glide_key" in input
+            ? input.glide_key
+            : (input as string),
+          opts,
         );
       },
 
       async next() {
         if (GlideBrowser.next_key_waiter) {
-          throw new Error(
-            "`glide.keys.next()` can only be registered one at a time"
-          );
+          throw new Error("`glide.keys.next()` can only be registered one at a time");
         }
 
         return new Promise<glide.KeyEvent>(resolve => {
@@ -1839,9 +1631,7 @@ function make_glide_api(): typeof glide {
       },
 
       parse(key_notation) {
-        const parsed = Keys.parse_modifiers(key_notation, {
-          use_event_repr: false,
-        });
+        const parsed = Keys.parse_modifiers(key_notation, { use_event_repr: false });
         return {
           key: parsed.key,
           alt: parsed.altKey,
@@ -1854,9 +1644,7 @@ function make_glide_api(): typeof glide {
     modes: {
       register(mode, opts) {
         if (GlideBrowser._modes[mode]) {
-          throw new Error(
-            `The \`${mode}\` mode has already been registered. Modes can only be registered once`
-          );
+          throw new Error(`The \`${mode}\` mode has already been registered. Modes can only be registered once`);
         }
 
         GlideBrowser._modes[mode] = { caret: opts.caret };
@@ -1886,22 +1674,17 @@ function make_glide_api(): typeof glide {
               case "boolean":
                 return Services.prefs.setBoolPref(name, value);
               default:
-                throw new Error(
-                  `Invalid pref type, expected string, number or boolean but got ${typeof value}`
-                );
+                throw new Error(`Invalid pref type, expected string, number or boolean but got ${typeof value}`);
             }
           default:
-            throw new Error(
-              `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
-                [
-                  Services.prefs.PREF_INT!,
-                  Services.prefs.PREF_BOOL!,
-                  Services.prefs.PREF_STRING!,
-                  Services.prefs.PREF_INVALID!,
-                ],
-                { final: "or" }
-              )}`
-            );
+            throw new Error(`Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${
+              human_join([
+                Services.prefs.PREF_INT!,
+                Services.prefs.PREF_BOOL!,
+                Services.prefs.PREF_STRING!,
+                Services.prefs.PREF_INVALID!,
+              ], { final: "or" })
+            }`);
         }
       },
       get(name) {
@@ -1916,17 +1699,14 @@ function make_glide_api(): typeof glide {
           case Services.prefs.PREF_INVALID:
             return undefined;
           default:
-            throw new Error(
-              `Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${human_join(
-                [
-                  Services.prefs.PREF_INT!,
-                  Services.prefs.PREF_BOOL!,
-                  Services.prefs.PREF_STRING!,
-                  Services.prefs.PREF_INVALID!,
-                ],
-                { final: "or" }
-              )}`
-            );
+            throw new Error(`Unexpected internal \`.getPrefType()\` value - ${type}. Expected ${
+              human_join([
+                Services.prefs.PREF_INT!,
+                Services.prefs.PREF_BOOL!,
+                Services.prefs.PREF_STRING!,
+                Services.prefs.PREF_INVALID!,
+              ], { final: "or" })
+            }`);
         }
       },
       clear(name) {
@@ -1937,20 +1717,18 @@ function make_glide_api(): typeof glide {
       async include(rel_path) {
         const config_path = assert_present(
           GlideBrowser.config_path,
-          "cannot call .include() without a config path set"
+          "cannot call .include() without a config path set",
         );
         const config_dir = assert_present(
           PathUtils.parent(config_path),
-          `Could not resolve parent dir for config path ${config_path}`
+          `Could not resolve parent dir for config path ${config_path}`,
         );
 
         const path = (() => {
           try {
             return PathUtils.join(config_dir, rel_path);
           } catch (err) {
-            throw new Error(
-              `Could not resolve file at path ${config_dir} + ${rel_path}`
-            );
+            throw new Error(`Could not resolve file at path ${config_dir} + ${rel_path}`);
           }
         })();
 
@@ -1966,9 +1744,7 @@ function make_glide_api(): typeof glide {
               unstable: {
                 ...GlideBrowser.api.unstable,
                 include: async () => {
-                  throw new Error(
-                    "Nested `.include()` calls are not supported yet"
-                  );
+                  throw new Error("Nested `.include()` calls are not supported yet");
                 },
               },
             };
@@ -1980,14 +1756,7 @@ function make_glide_api(): typeof glide {
 
         try {
           const config_js = ts_blank_space(config_str);
-          Cu.evalInSandbox(
-            config_js,
-            sandbox,
-            null,
-            `chrome://glide/config/${rel_path}`,
-            1,
-            false
-          );
+          Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${rel_path}`, 1, false);
         } catch (err) {
           GlideBrowser._log.error(err);
 
@@ -1995,8 +1764,7 @@ function make_glide_api(): typeof glide {
           const loc = (err as Error).stack ?? rel_path;
           GlideBrowser.add_notification(GlideBrowser.config_error_id, {
             label: `An error occurred while evaluating \`${loc}\` - ${err}`,
-            priority:
-              MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+            priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
             buttons: [
               {
                 "l10n-id": "glide-error-notification-reload-config-button",

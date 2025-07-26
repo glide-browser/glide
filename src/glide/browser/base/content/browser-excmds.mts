@@ -3,38 +3,29 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import type { KeyMappingTrieNode } from "./utils/keys.mts";
-import type { ParseResult } from "./utils/args.mjs";
+import type { SetOptional } from "type-fest";
 import type { ParentMessages } from "../../actors/GlideHandlerParent.sys.mjs";
 import type {
-  ContentExcmd,
-  GlideOperator,
   ArgumentSchema,
-  GlideExcmdName,
-  GlideExcmdInfo,
-  GlideCommandString,
+  ContentExcmd,
   GlideCommandCallback,
   GlideCommandCallbackProps,
+  GlideCommandString,
+  GlideExcmdInfo,
+  GlideExcmdName,
+  GlideOperator,
 } from "./browser-excmds-registry.mts";
-import type { SetOptional } from "type-fest";
+import type { ParseResult } from "./utils/args.mjs";
+import type { KeyMappingTrieNode } from "./utils/keys.mts";
 
-const MozUtils = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/moz.mjs"
+const MozUtils = ChromeUtils.importESModule("chrome://glide/content/utils/moz.mjs");
+const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs");
+const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
+const { parse_command_args: base_parse_command_args } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/args.mjs",
 );
-const Keys = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/keys.mjs"
-);
-const { assert_never } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-excmds-registry.mjs"
-);
-const { parse_command_args: base_parse_command_args } =
-  ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
-const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", {
-  global: "current",
-});
+const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 
 interface ExecuteProps {
   args: GlideCommandCallbackProps;
@@ -49,14 +40,14 @@ interface ExecuteProps {
 
 type CommandHistoryEntry =
   | {
-      type: "command";
-      command: glide.ExcmdString;
-    }
+    type: "command";
+    command: glide.ExcmdString;
+  }
   | { type: "callback"; cb: GlideCommandCallback }
   | {
-      type: "content-cmd";
-      props: ParentMessages["Glide::ExecuteContentCommand"];
-    };
+    type: "content-cmd";
+    props: ParentMessages["Glide::ExecuteContentCommand"];
+  };
 
 class GlideExcmdsClass {
   #last_command: CommandHistoryEntry | null = null;
@@ -75,16 +66,16 @@ class GlideExcmdsClass {
 
   #parse_command_args<Cmd extends GlideExcmdInfo>(
     meta: Cmd,
-    command: string
-  ): Cmd["args_schema"] extends Record<string, any> ?
-    Extract<ParseResult<Cmd["args_schema"]>, { valid: true }>
-  : null {
+    command: string,
+  ): Cmd["args_schema"] extends Record<string, any> ? Extract<ParseResult<Cmd["args_schema"]>, { valid: true }>
+    : null
+  {
     return parse_command_args(meta, command);
   }
 
   async #execute_function_command(
     cb: GlideCommandCallback,
-    props: ExecuteProps
+    props: ExecuteProps,
   ) {
     if (props?.save_to_history === undefined || props.save_to_history) {
       this.add_to_command_history({ type: "callback", cb });
@@ -113,23 +104,19 @@ class GlideExcmdsClass {
 
   async execute(
     command: glide.ExcmdValue,
-    props?: SetOptional<ExecuteProps, "args">
+    props?: SetOptional<ExecuteProps, "args">,
   ): Promise<void> {
     try {
-      await this.#execute(command, {
-        ...props,
-        args: {
-          tab_id: GlideBrowser.active_tab_id,
-          ...props?.args,
-        },
-      });
+      await this.#execute(command, { ...props, args: { tab_id: GlideBrowser.active_tab_id, ...props?.args } });
     } catch (err) {
       GlideBrowser._log.error(err);
 
       const message = `An error occurred executing ${
-        typeof command === "string" ? `excmd \`${command}\``
-        : "an excmd function" + command.name ? ` (${command.name})`
-        : ""
+        typeof command === "string"
+          ? `excmd \`${command}\``
+          : "an excmd function" + command.name
+          ? ` (${command.name})`
+          : ""
       } - ${err}`;
       GlideBrowser.add_notification("glide-excmd-error", {
         label: message,
@@ -141,7 +128,7 @@ class GlideExcmdsClass {
 
   async #execute(
     command: glide.ExcmdValue,
-    props: ExecuteProps
+    props: ExecuteProps,
   ): Promise<void> {
     if (typeof command === "function") {
       return this.#execute_function_command(command, props);
@@ -160,9 +147,9 @@ class GlideExcmdsClass {
     }
 
     if (
-      typeof props?.save_to_history === "boolean" ?
-        props.save_to_history
-      : command_meta.repeatable
+      typeof props?.save_to_history === "boolean"
+        ? props.save_to_history
+        : command_meta.repeatable
     ) {
       this.add_to_command_history({ type: "command", command });
     }
@@ -255,9 +242,7 @@ class GlideExcmdsClass {
       }
 
       case "tab_prev": {
-        gBrowser.selectedTab = gBrowser.tabContainer.allTabs.at(
-          gBrowser.tabContainer.selectedIndex - 1
-        );
+        gBrowser.selectedTab = gBrowser.tabContainer.allTabs.at(gBrowser.tabContainer.selectedIndex - 1);
         break;
       }
 
@@ -311,16 +296,12 @@ class GlideExcmdsClass {
 
         // TODO(glide): use command chaining to do this instead
         if (automove) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", {
-            direction: automove,
-          });
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction: automove });
         }
 
         if (current_mode === "normal" && mode === "normal") {
           console.log("sending blur");
-          GlideBrowser.get_focused_actor().send_async_message(
-            "Glide::BlurActiveElement"
-          );
+          GlideBrowser.get_focused_actor().send_async_message("Glide::BlurActiveElement");
         }
 
         break;
@@ -331,10 +312,7 @@ class GlideExcmdsClass {
           args: { direction },
         } = this.#parse_command_args(command_meta, command);
 
-        return GlideBrowser.get_focused_actor().send_async_message(
-          "Glide::Move",
-          { direction }
-        );
+        return GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction });
       }
 
       case "echo": {
@@ -376,9 +354,7 @@ class GlideExcmdsClass {
             case "number": {
               const float = Number.parseFloat(value);
               if (Number.isNaN(float)) {
-                throw new Error(
-                  `[:set ${name}] ${value} is not a valid number`
-                );
+                throw new Error(`[:set ${name}] ${value} is not a valid number`);
               }
               return float;
             }
@@ -389,9 +365,7 @@ class GlideExcmdsClass {
             case "undefined":
             case "object":
             case "function":
-              throw new Error(
-                `[:set ${name}] Cannot set options of type ${type} yet`
-              );
+              throw new Error(`[:set ${name}] Cannot set options of type ${type} yet`);
             default:
               throw assert_never(type);
           }
@@ -451,46 +425,27 @@ class GlideExcmdsClass {
 
         const fragment = document!.createDocumentFragment();
         fragment.appendChild(
-          DOM.create_element("div", {
-            textContent:
-              "No config file found. Create a glide.ts file at one of:",
-          })
+          DOM.create_element("div", { textContent: "No config file found. Create a glide.ts file at one of:" }),
         );
 
         const max_description_length = Math.max(
-          ...GlideBrowser.config_dirs.map(
-            ({ description }) => description.length
-          )
+          ...GlideBrowser.config_dirs.map(({ description }) => description.length),
         );
 
         const list = DOM.create_element("ul", {
-          style: {
-            margin: "8px 0",
-            paddingLeft: "20px",
-          },
+          style: { margin: "8px 0", paddingLeft: "20px" },
           children: GlideBrowser.config_dirs.map(({ path, description }) => {
             return DOM.create_element("li", {
-              style: {
-                display: "flex",
-                alignItems: "baseline",
-                gap: "12px",
-                marginBottom: "4px",
-              },
+              style: { display: "flex", alignItems: "baseline", gap: "12px", marginBottom: "4px" },
               children: [
                 DOM.create_element("span", {
                   textContent: `[${description}]`,
-                  style: {
-                    color: "#C0CAF5",
-                    fontSize: "0.85em",
-                    minWidth: `${max_description_length + 2}ch`,
-                  },
+                  style: { color: "#C0CAF5", fontSize: "0.85em", minWidth: `${max_description_length + 2}ch` },
                 }),
 
                 DOM.create_element("span", {
                   textContent: PathUtils.join(path, "glide.ts"),
-                  style: {
-                    fontFamily: "monospace",
-                  },
+                  style: { fontFamily: "monospace" },
                 }),
               ],
             });
@@ -504,10 +459,7 @@ class GlideExcmdsClass {
           buttons: GlideBrowser.config_dirs.map(({ path, description }) => ({
             label: `Copy ${description}`,
             callback: () => {
-              MozUtils.copy_to_clipboard(
-                window,
-                PathUtils.join(path, "glide.ts")
-              );
+              MozUtils.copy_to_clipboard(window, PathUtils.join(path, "glide.ts"));
               GlideBrowser.remove_notification(id);
             },
           })),
@@ -525,9 +477,7 @@ class GlideExcmdsClass {
           throw new Error("There is no config file defined yet");
         }
 
-        const file = Cc["@mozilla.org/file/local;1"]!.createInstance(
-          Ci.nsIFile
-        );
+        const file = Cc["@mozilla.org/file/local;1"]!.createInstance(Ci.nsIFile);
         file.initWithPath(GlideBrowser.config_path);
         file.launch();
         break;
@@ -535,15 +485,10 @@ class GlideExcmdsClass {
 
       case "config_init": {
         if (GlideBrowser.config_path) {
-          throw new Error(
-            `A config file already exists at ${GlideBrowser.config_path}`
-          );
+          throw new Error(`A config file already exists at ${GlideBrowser.config_path}`);
         }
 
-        const cfg = ChromeUtils.importESModule(
-          "chrome://glide/content/config-init.mjs",
-          { global: "current" }
-        );
+        const cfg = ChromeUtils.importESModule("chrome://glide/content/config-init.mjs", { global: "current" });
         await cfg.init();
         break;
       }
@@ -586,15 +531,13 @@ class GlideExcmdsClass {
         } = this.#parse_command_args(command_meta, command);
 
         if (character) {
-          GlideBrowser.get_focused_actor().send_async_message(
-            "Glide::ReplaceChar",
-            {
-              character:
-                character === "<CR>" ? "\n"
-                : character === "<Tab>" ? "\t"
-                : character,
-            }
-          );
+          GlideBrowser.get_focused_actor().send_async_message("Glide::ReplaceChar", {
+            character: character === "<CR>"
+              ? "\n"
+              : character === "<Tab>"
+              ? "\t"
+              : character,
+          });
           if (GlideBrowser.state.mode !== "normal") {
             await GlideBrowser.api.excmds.execute("mode_change normal");
           }
@@ -611,12 +554,12 @@ class GlideExcmdsClass {
 
         return await GlideExcmds.execute(
           `r ${
-            event.glide_key === "<CR>" || event.glide_key === "<Tab>" ?
-              event.glide_key
+            event.glide_key === "<CR>" || event.glide_key === "<Tab>"
+              ? event.glide_key
               // note: intentionally using `.key` here as we don't care about modifiers
-            : event.key
+              : event.key
           }`,
-          { save_to_history: true }
+          { save_to_history: true },
         );
       }
 
@@ -656,17 +599,12 @@ class GlideExcmdsClass {
         const actor = GlideBrowser.get_focused_actor();
         await actor.send_query("Glide::Query::CopySelection");
 
-        GlideBrowser._change_mode("normal", {
-          meta: { disable_auto_collapse: true },
-        });
+        GlideBrowser._change_mode("normal", { meta: { disable_auto_collapse: true } });
 
         const glide = GlideBrowser.api;
         const previous = glide.prefs.get("ui.highlight");
 
-        glide.prefs.set(
-          "ui.highlight",
-          GlideBrowser.api.options.get("yank_highlight")
-        );
+        glide.prefs.set("ui.highlight", GlideBrowser.api.options.get("yank_highlight"));
 
         setTimeout(() => {
           if (typeof previous === "undefined") {
@@ -687,10 +625,7 @@ class GlideExcmdsClass {
       }
 
       default:
-        throw assert_never(
-          command_meta,
-          `Unhandled excmd: \`${(command_meta as any).name}\``
-        );
+        throw assert_never(command_meta, `Unhandled excmd: \`${(command_meta as any).name}\``);
     }
   }
 
@@ -736,32 +671,25 @@ export function extract_command_args(command: string): string {
  */
 export function parse_command_args<Cmd extends GlideExcmdInfo>(
   meta: Cmd,
-  command: string
-): Cmd["args_schema"] extends Record<string, any> ?
-  Extract<ParseResult<Cmd["args_schema"]>, { valid: true }>
-: null {
+  command: string,
+): Cmd["args_schema"] extends Record<string, any> ? Extract<ParseResult<Cmd["args_schema"]>, { valid: true }>
+  : null
+{
   if (!meta.args_schema) {
     return null as any;
   }
 
   const args = extract_command_args(command);
-  const parse_result = base_parse_command_args({
-    schema: meta.args_schema,
-    args,
-  });
+  const parse_result = base_parse_command_args({ schema: meta.args_schema, args });
   if (!parse_result.valid) {
     // TODO(glide-notify)
-    throw new Error(
-      `Couldn't parse command arguments due to ${JSON.stringify(
-        parse_result.errors
-      )}`
-    );
+    throw new Error(`Couldn't parse command arguments due to ${JSON.stringify(parse_result.errors)}`);
   }
   return parse_result as any;
 }
 
 export function get_command_info(
-  name: string
+  name: string,
 ): GlideExcmdInfo<Record<string, ArgumentSchema>> | null {
   // @ts-ignore
   return GLIDE_EXCOMMANDS_MAP[name as GlideExcmdName] ?? null;

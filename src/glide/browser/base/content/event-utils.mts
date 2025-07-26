@@ -5,12 +5,8 @@
 import type { SetRequired } from "type-fest";
 import type { GlideMappingEvent } from "./utils/keys.mts";
 
-const Keys = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/keys.mjs"
-);
-const { assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs");
+const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 /**
  * Take a given key sequence and synthesize events for each keyn,
@@ -19,7 +15,7 @@ const { assert_present } = ChromeUtils.importESModule(
  */
 export async function synthesize_keyseq(
   keyseq: string,
-  opts?: glide.KeySendOptions
+  opts?: glide.KeySendOptions,
 ) {
   for (const keyn of Keys.split(keyseq).map(Keys.normalize)) {
     // sleep one frame as Firefox cannot process key events in parallel
@@ -42,13 +38,11 @@ function firefox_synthesizeKey(
   aKey: string,
   aEvent: GlideMappingEvent | undefined = undefined,
   aWindow: Window = window,
-  opts?: glide.KeySendOptions
+  opts?: glide.KeySendOptions,
 ) {
   const event = aEvent === undefined || aEvent === null ? {} : aEvent;
-  let dispatchKeydown =
-    !("type" in event) || event.type === "keydown" || !event.type;
-  const dispatchKeyup =
-    !("type" in event) || event.type === "keyup" || !event.type;
+  let dispatchKeydown = !("type" in event) || event.type === "keydown" || !event.type;
+  const dispatchKeyup = !("type" in event) || event.type === "keyup" || !event.type;
 
   if (dispatchKeydown && aKey == "KEY_Escape") {
     let eventForKeydown = Object.assign({}, JSON.parse(JSON.stringify(event)));
@@ -60,7 +54,7 @@ function firefox_synthesizeKey(
         0,
         0,
         eventForKeydown,
-        aWindow
+        aWindow,
       )
     ) {
       if (!dispatchKeyup) {
@@ -83,7 +77,7 @@ function firefox_synthesizeKey(
     // @ts-ignore
     event,
     TIP,
-    aWindow
+    aWindow,
   );
   var keyEvent = new KeyboardEvent("", keyEventDict.dictionary);
 
@@ -122,9 +116,7 @@ function _getTIP(aWindow: Window): nsITextInputProcessor | null {
   if (TIPMap.has(aWindow)) {
     tip = TIPMap.get(aWindow);
   } else {
-    tip = Cc["@mozilla.org/text-input-processor;1"]!.createInstance(
-      Ci.nsITextInputProcessor
-    );
+    tip = Cc["@mozilla.org/text-input-processor;1"]!.createInstance(Ci.nsITextInputProcessor);
     TIPMap.set(aWindow, tip);
   }
 
@@ -157,7 +149,7 @@ function _getKeyboardEvent(aWindow: Window = window): typeof KeyboardEvent {
 function _emulateToActivateModifiers(
   aTIP: nsITextInputProcessor,
   aKeyEvent: any,
-  aWindow = window
+  aWindow = window,
 ) {
   if (!aKeyEvent) {
     return null;
@@ -192,10 +184,7 @@ function _emulateToActivateModifiers(
       continue; // already activated.
     }
     let event = new KeyboardEvent("", { key: modifiers.normal[i]!.key });
-    aTIP.keydown(
-      event,
-      aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!
-    );
+    aTIP.keydown(event, aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!);
     // @ts-ignore
     modifiers.normal[i]!.activated = true;
   }
@@ -207,14 +196,8 @@ function _emulateToActivateModifiers(
       continue; // already activated.
     }
     let event = new KeyboardEvent("", { key: modifiers.lockable[i]!.key });
-    aTIP.keydown(
-      event,
-      aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!
-    );
-    aTIP.keyup(
-      event,
-      aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!
-    );
+    aTIP.keydown(event, aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!);
+    aTIP.keyup(event, aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!);
     // @ts-ignore
     modifiers.lockable[i]!.activated = true;
   }
@@ -224,7 +207,7 @@ function _emulateToActivateModifiers(
 function _emulateToInactivateModifiers(
   aTIP: nsITextInputProcessor,
   aModifiers: any,
-  aWindow = window
+  aWindow = window,
 ) {
   if (!aModifiers) {
     return;
@@ -235,10 +218,7 @@ function _emulateToInactivateModifiers(
       continue;
     }
     let event = new KeyboardEvent("", { key: aModifiers.normal[i].key });
-    aTIP.keyup(
-      event,
-      aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!
-    );
+    aTIP.keyup(event, aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!);
   }
   for (let i = 0; i < aModifiers.lockable.length; i++) {
     if (!aModifiers.lockable[i].activated) {
@@ -248,20 +228,14 @@ function _emulateToInactivateModifiers(
       continue; // who already inactivated this?
     }
     let event = new KeyboardEvent("", { key: aModifiers.lockable[i].key });
-    aTIP.keydown(
-      event,
-      aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!
-    );
-    aTIP.keyup(
-      event,
-      aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!
-    );
+    aTIP.keydown(event, aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!);
+    aTIP.keyup(event, aTIP.KEY_NON_PRINTABLE_KEY! | aTIP.KEY_DONT_DISPATCH_MODIFIER_KEY_EVENT!);
   }
 }
 
 const _EU_OS = ChromeUtils.importESModule(
   // @ts-ignore
-  "resource://gre/modules/AppConstants.sys.mjs"
+  "resource://gre/modules/AppConstants.sys.mjs",
   // @ts-ignore
 ).platform;
 
@@ -281,7 +255,7 @@ function _maybeEndDragSession(
   _left: any,
   _top: any,
   aEvent: any,
-  aWindow: Window
+  aWindow: Window,
 ) {
   let utils = aWindow.windowUtils;
   const dragSession = utils.dragSession;
@@ -318,9 +292,8 @@ function _parseModifiers(aEvent: any, aWindow = window) {
     mval |= nsIDOMWindowUtils.MODIFIER_META;
   }
   if (aEvent.accelKey) {
-    mval |=
-      _EU_isMac(aWindow) ?
-        nsIDOMWindowUtils.MODIFIER_META
+    mval |= _EU_isMac(aWindow)
+      ? nsIDOMWindowUtils.MODIFIER_META
       : nsIDOMWindowUtils.MODIFIER_CONTROL;
   }
   if (aEvent.altGrKey) {
@@ -355,13 +328,12 @@ function _createKeyboardEventDictionary(
   aKey: string,
   aKeyEvent: SetRequired<KeyboardEventInit, "keyCode">,
   aTIP: nsITextInputProcessor | null = null,
-  aWindow = window
+  aWindow = window,
 ) {
   var result = { dictionary: null as any, flags: 0 };
   var keyCodeIsDefined = "keyCode" in aKeyEvent;
-  var keyCode =
-    keyCodeIsDefined && aKeyEvent.keyCode >= 0 && aKeyEvent.keyCode <= 255 ?
-      aKeyEvent.keyCode
+  var keyCode = keyCodeIsDefined && aKeyEvent.keyCode >= 0 && aKeyEvent.keyCode <= 255
+    ? aKeyEvent.keyCode
     : 0;
   var keyName = "Unidentified";
   var code = aKeyEvent.code;
@@ -372,10 +344,7 @@ function _createKeyboardEventDictionary(
     keyName = aKey.substr("KEY_".length);
     result.flags |= Ci.nsITextInputProcessor.KEY_NON_PRINTABLE_KEY;
     if (code === undefined) {
-      code = aTIP.computeCodeValueOfNonPrintableKey(
-        keyName,
-        aKeyEvent.location
-      );
+      code = aTIP.computeCodeValueOfNonPrintableKey(keyName, aKeyEvent.location);
     }
   } else if (aKey.indexOf("VK_") == 0) {
     // @ts-expect-error
@@ -386,28 +355,19 @@ function _createKeyboardEventDictionary(
     keyName = _guessKeyNameFromKeyCode(keyCode, aWindow);
     result.flags |= Ci.nsITextInputProcessor.KEY_NON_PRINTABLE_KEY;
     if (code === undefined) {
-      code = aTIP.computeCodeValueOfNonPrintableKey(
-        keyName,
-        aKeyEvent.location
-      );
+      code = aTIP.computeCodeValueOfNonPrintableKey(keyName, aKeyEvent.location);
     }
   } else if (aKey != "") {
     keyName = aKey;
     if (!keyCodeIsDefined) {
-      keyCode = aTIP.guessKeyCodeValueOfPrintableKeyInUSEnglishKeyboardLayout(
-        aKey,
-        aKeyEvent.location
-      );
+      keyCode = aTIP.guessKeyCodeValueOfPrintableKeyInUSEnglishKeyboardLayout(aKey, aKeyEvent.location);
     }
     if (!keyCode) {
       result.flags |= Ci.nsITextInputProcessor.KEY_KEEP_KEYCODE_ZERO;
     }
     result.flags |= Ci.nsITextInputProcessor.KEY_FORCE_PRINTABLE_KEY;
     if (code === undefined) {
-      code = aTIP.guessCodeValueOfPrintableKeyInUSEnglishKeyboardLayout(
-        keyName,
-        aKeyEvent.location
-      );
+      code = aTIP.guessCodeValueOfPrintableKeyInUSEnglishKeyboardLayout(keyName, aKeyEvent.location);
     }
   }
   var locationIsDefined = "location" in aKeyEvent;

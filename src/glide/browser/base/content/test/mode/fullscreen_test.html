@@ -4,7 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/.
    -->
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -131,20 +131,29 @@
       });
 
       // Handle full screen change
-      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      document.addEventListener(
+        "fullscreenchange",
+        handleFullscreenChange,
+      );
       document.addEventListener(
         "webkitfullscreenchange",
-        handleFullscreenChange
+        handleFullscreenChange,
       );
-      document.addEventListener("mozfullscreenchange", handleFullscreenChange);
-      document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+      document.addEventListener(
+        "mozfullscreenchange",
+        handleFullscreenChange,
+      );
+      document.addEventListener(
+        "MSFullscreenChange",
+        handleFullscreenChange,
+      );
 
       function handleFullscreenChange() {
         if (
-          document.fullscreenElement ||
-          document.webkitFullscreenElement ||
-          document.mozFullScreenElement ||
-          document.msFullscreenElement
+          document.fullscreenElement
+          || document.webkitFullscreenElement
+          || document.mozFullScreenElement
+          || document.msFullscreenElement
         ) {
           // Full screen entered
           indicator.textContent = "Status: In full screen mode";

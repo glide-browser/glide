@@ -19,7 +19,7 @@ declare global {
   function ok(a: unknown, name?: string): asserts a;
   function notok(
     a: unknown,
-    name?: string
+    name?: string,
   ): asserts a is false | 0 | 0n | "" | null | undefined;
   function add_task(fn: (() => void) | (() => Promise<void>)): BoundTestTask;
   function add_setup(fn: (() => void) | (() => Promise<void>)): void;
@@ -31,7 +31,8 @@ declare global {
 
   var Assert: import("../engine/testing/modules/Assert.sys.mjs").Assert;
   var SpecialPowers: import("../engine/testing/specialpowers/content/SpecialPowersChild.sys.mjs").SpecialPowersChild;
-  var BrowserTestUtils: typeof import("../engine/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs").BrowserTestUtils;
+  var BrowserTestUtils:
+    typeof import("../engine/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs").BrowserTestUtils;
 }
 
 export {};

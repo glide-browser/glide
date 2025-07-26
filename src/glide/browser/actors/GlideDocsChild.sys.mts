@@ -6,9 +6,7 @@
 import type { WindowMessage } from "../../docs/dynamic/mappings.ts";
 import type { ParentMessages, ParentQueries } from "./GlideDocsParent.sys.mjs";
 
-const { assert_never } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 export interface ChildMessages {
   "Glide::RequestMappings": {};
@@ -24,23 +22,17 @@ export class GlideDocsChild extends JSWindowActorChild<
   #pending_window_messages: WindowMessage[] = [];
 
   actorCreated() {
-    this.#log = console.createInstance({
-      prefix: "GlideDocs[Child]",
-      maxLogLevelPref: "glide.logging.loglevel",
-    });
+    this.#log = console.createInstance({ prefix: "GlideDocs[Child]", maxLogLevelPref: "glide.logging.loglevel" });
   }
 
   async receiveMessage(
-    message: ActorReceiveMessage<ParentMessages, ParentQueries>
+    message: ActorReceiveMessage<ParentMessages, ParentQueries>,
   ) {
     this.#log.debug("receiveMessage[child]", message.name);
 
     switch (message.name) {
       case "Glide::SendMappings": {
-        this.#post_window_message({
-          type: "set-mappings",
-          mappings: message.data.mappings,
-        });
+        this.#post_window_message({ type: "set-mappings", mappings: message.data.mappings });
         break;
       }
 
@@ -65,8 +57,8 @@ export class GlideDocsChild extends JSWindowActorChild<
     switch (event.type) {
       case "DOMContentLoaded": {
         if (
-          this.contentWindow?.location.toString() ===
-          "resource://glide-docs/dynamic/mappings.html"
+          this.contentWindow?.location.toString()
+            === "resource://glide-docs/dynamic/mappings.html"
         ) {
           this.send_async_message("Glide::RequestMappings");
         }
@@ -90,10 +82,10 @@ export class GlideDocsChild extends JSWindowActorChild<
   send_async_message: <MessageName extends keyof ChildMessages>(
     messageName: MessageName,
     obj?: ChildMessages[MessageName] | undefined,
-    transferables?: any
+    transferables?: any,
   ) => void = this.sendAsyncMessage;
   send_query: <QueryName extends keyof ChildQueries>(
     messageName: QueryName,
-    obj?: ChildQueries[QueryName]["props"] | undefined
+    obj?: ChildQueries[QueryName]["props"] | undefined,
   ) => Promise<ChildQueries[QueryName]["result"]> = this.sendQuery;
 }

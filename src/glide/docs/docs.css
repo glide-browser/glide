@@ -48,10 +48,7 @@
     --background-color-alt: #111;
   }
 
-  .shiki,
-  .shiki span,
-  .shiki-inline,
-  .shiki-inline span {
+  .shiki, .shiki span, .shiki-inline, .shiki-inline span {
     color: var(--shiki-dark) !important;
     background-color: var(--shiki-dark-bg) !important;
     font-style: var(--shiki-dark-font-style) !important;
@@ -101,12 +98,7 @@ body {
   }
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   margin: calc(var(--line-height) * 2) 0 var(--line-height);
   line-height: var(--line-height);
@@ -146,8 +138,7 @@ a {
   text-decoration-thickness: var(--border-thickness);
 }
 
-a:link,
-a:visited {
+a:link, a:visited {
   color: var(--text-color);
 }
 
@@ -181,19 +172,17 @@ table {
   margin: 0 0 calc(var(--line-height) * 2);
 }
 
-th,
-td {
+th, td {
   border: var(--border-thickness) solid var(--text-color);
-  padding: calc((var(--line-height) / 2))
-    calc(1ch - var(--border-thickness) / 2)
-    calc((var(--line-height) / 2) - (var(--border-thickness)));
+  padding: calc(var(--line-height) / 2) calc(1ch - var(--border-thickness) / 2)
+    calc(var(--line-height) / 2 - var(--border-thickness));
   line-height: var(--line-height);
   vertical-align: top;
   text-align: left;
 }
 
 table tbody tr:first-child > * {
-  padding-top: calc((var(--line-height) / 2) - var(--border-thickness));
+  padding-top: calc(var(--line-height) / 2 - var(--border-thickness));
 }
 
 th {
@@ -267,8 +256,7 @@ pre {
   overflow-y: hidden;
 }
 
-pre,
-code {
+pre, code {
   font-family: var(--font-family);
 }
 
@@ -278,8 +266,7 @@ figcaption {
   margin-top: var(--line-height);
 }
 
-ul,
-ol {
+ul, ol {
   padding: 0;
   margin: 0 0 var(--line-height);
 }
@@ -295,10 +282,7 @@ ol {
   padding: 0;
 }
 
-ol ul,
-ol ol,
-ul ol,
-ul ul {
+ol ul, ol ol, ul ol, ul ul {
   padding: 0 0 0 3ch;
   margin: 0;
 }
@@ -321,9 +305,7 @@ li::marker {
   height: var(--line-height);
 }
 
-input,
-button,
-textarea {
+input, button, textarea {
   border: var(--border-thickness) solid var(--text-color);
   padding: calc(var(--line-height) / 2 - var(--border-thickness))
     calc(1ch - var(--border-thickness));
@@ -341,8 +323,7 @@ textarea {
   -webkit-appearance: none;
 }
 
-input[type="checkbox"],
-input[type="radio"] {
+input[type="checkbox"], input[type="radio"] {
   display: inline-grid;
   place-content: center;
   vertical-align: top;
@@ -351,21 +332,18 @@ input[type="radio"] {
   cursor: pointer;
 }
 
-input[type="checkbox"]:checked:before,
-input[type="radio"]:checked:before {
+input[type="checkbox"]:checked:before, input[type="radio"]:checked:before {
   content: "";
   width: 1ch;
   height: calc(var(--line-height) / 2);
   background: var(--text-color);
 }
 
-input[type="radio"],
-input[type="radio"]:before {
+input[type="radio"], input[type="radio"]:before {
   border-radius: 100%;
 }
 
-button:focus,
-input:focus {
+button:focus, input:focus {
   --border-thickness: 3px;
   outline: none;
 }
@@ -414,8 +392,7 @@ label input {
   width: 100%;
 }
 
-.tree,
-.tree ul {
+.tree, .tree ul {
   position: relative;
   padding-left: 0;
   list-style-type: none;
@@ -462,18 +439,17 @@ label input {
   display: flex;
   gap: 1ch;
   width: calc(
-    round(down, 100%, (1ch * var(--grid-cells)) - (1ch * var(--grid-cells) - 1))
+    round(down, 100%, 1ch * var(--grid-cells) - (1ch * var(--grid-cells) - 1))
   );
   margin-bottom: var(--line-height);
 }
 
-.grid > *,
-.grid > input {
+.grid > *, .grid > input {
   flex: 0 0
     calc(
       round(
         down,
-        (100% - (1ch * (var(--grid-cells) - 1))) / var(--grid-cells),
+        (100% - 1ch * (var(--grid-cells) - 1)) / var(--grid-cells),
         1ch
       )
     );
@@ -547,12 +523,7 @@ article h1 {
   margin-right: var(--line-height);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: "Berkeley Mono", monospace !important;
   font-size: 1rem;
   text-transform: none !important;
@@ -855,12 +826,7 @@ h3.code-heading {
   }
 
   /* Adjust heading sizes */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-size: 0.9rem;
   }
 
@@ -1048,8 +1014,7 @@ h3.code-heading {
 }
 
 /* Style for highlighted text in results */
-.pagefind-ui__result-excerpt mark,
-.pagefind-ui__result-title mark {
+.pagefind-ui__result-excerpt mark, .pagefind-ui__result-title mark {
   background: #404040;
   color: #ffffff;
   padding: 0.1rem 0.2rem;
@@ -1058,8 +1023,7 @@ h3.code-heading {
 }
 
 /* Add subtle animation for the highlights */
-.pagefind-ui__result-excerpt mark,
-.pagefind-ui__result-title mark {
+.pagefind-ui__result-excerpt mark, .pagefind-ui__result-title mark {
   animation: highlight-fade-in 0.15s ease-in;
 }
 
@@ -1148,7 +1112,6 @@ h3.code-heading {
   content: "✗ ";
 }
 
-table th,
-table td {
+table th, table td {
   border: 1px solid var(--text-color);
 }

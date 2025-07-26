@@ -4,9 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
-const { redefine_getter } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/objects.mjs"
-);
+const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 
 /**
  * Provides wrapper objects for accessing the `browser.` web extensions API
@@ -33,7 +31,7 @@ export class ExtensionsAPI {
     send_query: (props: {
       method_path: string;
       args: any[];
-    }) => Promise<unknown>
+    }) => Promise<unknown>,
   ) {
     this.#send_query = send_query;
   }
@@ -51,11 +49,7 @@ export class ExtensionsAPI {
    *              it'd be better to just hard-code the object with all expected props.
    */
   get browser_proxy_api(): typeof browser {
-    return redefine_getter(
-      this,
-      "browser_proxy_api",
-      this.#create_browser_proxy_api()
-    );
+    return redefine_getter(this, "browser_proxy_api", this.#create_browser_proxy_api());
   }
 
   #extension_id = "glide-internal@mozilla.org";
@@ -63,9 +57,7 @@ export class ExtensionsAPI {
   get extension(): WebExtension {
     const policy = WebExtensionPolicy.getByID(this.#extension_id);
     if (!policy) {
-      throw new Error(
-        `Expected to find a web extension with ID: \`${this.#extension_id}\``
-      );
+      throw new Error(`Expected to find a web extension with ID: \`${this.#extension_id}\``);
     }
     return policy.extension;
   }
@@ -74,9 +66,9 @@ export class ExtensionsAPI {
     const ext = this;
 
     function create_browser_proxy_chain(
-      previous_chain: (string | symbol)[] = []
+      previous_chain: (string | symbol)[] = [],
     ) {
-      return new Proxy(function () {}, {
+      return new Proxy(function() {}, {
         get(_: any, prop: string | symbol) {
           const path = [...previous_chain, prop].join(".");
           switch (path) {
@@ -91,12 +83,10 @@ export class ExtensionsAPI {
         apply(_, __, args) {
           const listener_namespace = previous_chain[1];
           if (
-            listener_namespace &&
-            String(listener_namespace).startsWith("on")
+            listener_namespace
+            && String(listener_namespace).startsWith("on")
           ) {
-            throw new Error(
-              "Registering Web Extensions listeners are not supported in the content frame"
-            );
+            throw new Error("Registering Web Extensions listeners are not supported in the content frame");
           }
 
           const method_path = previous_chain.join(".");
@@ -108,16 +98,11 @@ export class ExtensionsAPI {
             // it also looks like we can't even access it ourselves from the main thread
             // as it appears to only be set in the child context.
             case "runtime.getBackgroundPage": {
-              return Promise.reject(
-                new Error(`\`browser.${method_path}()\` is not supported`)
-              );
+              return Promise.reject(new Error(`\`browser.${method_path}()\` is not supported`));
             }
           }
 
-          return ext.#send_query({
-            args: IPC.serialise_args(args),
-            method_path,
-          });
+          return ext.#send_query({ args: IPC.serialise_args(args), method_path });
         },
       });
     }

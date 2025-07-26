@@ -2,9 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-const { assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 /**
  * Returns the first item in the array, throws an error if
@@ -47,7 +45,7 @@ export function* enumerate<T>(arr: T[]): IterableIterator<[number, T]> {
  */
 export function human_join(
   arr: ReadonlyArray<string | number>,
-  { final, separator }: { final: string; separator?: string }
+  { final, separator }: { final: string; separator?: string },
 ): string {
   if (!arr.length) {
     return "";

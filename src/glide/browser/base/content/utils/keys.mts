@@ -21,15 +21,9 @@
 
 import type { SetNonNullable } from "type-fest";
 
-const { lastx } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/arrays.mjs"
-);
-const { is_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const { redefine_getter } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/objects.mjs"
-);
+const { lastx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
+const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 
 type KeyMappingTrieNodeWithValue = SetNonNullable<KeyMappingTrieNode, "value">;
 
@@ -173,11 +167,11 @@ class KeyMappingTrie {
     for (const key of parents) {
       const sub = node.get(key);
       if (!sub) {
-        throw new Error(
-          `No mapping found for sequence \`${sequence
+        throw new Error(`No mapping found for sequence \`${
+          sequence
             .slice(0, i + 1)
-            .join("")}\``
-        );
+            .join("")
+        }\``);
       }
       node = sub;
       i++;
@@ -239,13 +233,9 @@ export class KeyManager {
   #buf_mappings: Record<GlideMode, KeyMappingTrie> | null = null;
 
   #current_sequence: string[] = [];
-  #log: ConsoleInstance =
-    console.createInstance ?
-      console.createInstance({
-        prefix: "Glide[Keys]",
-        maxLogLevelPref: "glide.logging.loglevel",
-      })
-      // createInstance isn't defined in tests
+  #log: ConsoleInstance = console.createInstance
+    ? console.createInstance({ prefix: "Glide[Keys]", maxLogLevelPref: "glide.logging.loglevel" })
+    // createInstance isn't defined in tests
     : (console as any);
 
   register_mode(mode: GlideMode): void {
@@ -270,7 +260,7 @@ export class KeyManager {
     modes: GlideMode | GlideMode[],
     lhs: string,
     rhs: glide.ExcmdValue,
-    opts?: glide.KeymapOpts | undefined
+    opts?: glide.KeymapOpts | undefined,
   ): void {
     const mapping: KeyMapping = {
       sequence: split(lhs).map(normalize),
@@ -293,7 +283,7 @@ export class KeyManager {
   del(
     modes: GlideMode | GlideMode[],
     lhs: string,
-    opts?: glide.KeymapDeleteOpts
+    opts?: glide.KeymapDeleteOpts,
   ) {
     const sequence = split(lhs).map(normalize);
     const is_buffer = opts?.buffer ?? false;
@@ -355,9 +345,10 @@ export class KeyManager {
   }
 
   #make_modes_tries(): Record<GlideMode, KeyMappingTrie> {
-    return Object.fromEntries(
-      GlideBrowser.mode_names.map(mode => [mode, new KeyMappingTrie()])
-    ) as Record<GlideMode, KeyMappingTrie>;
+    return Object.fromEntries(GlideBrowser.mode_names.map(mode => [mode, new KeyMappingTrie()])) as Record<
+      GlideMode,
+      KeyMappingTrie
+    >;
   }
 
   reset_sequence() {
@@ -374,7 +365,7 @@ export class KeyManager {
 
   handle_key_event(
     event: KeyboardEvent,
-    current_mode: GlideMode
+    current_mode: GlideMode,
   ): KeyMappingTrieNode | undefined {
     const keyn = event_to_key_notation(event);
     this.#current_sequence.push(keyn);
@@ -383,9 +374,8 @@ export class KeyManager {
 
     // TODO(glide): this breaks for cases where a buffer mapping shadows a longer global mapping
     //              e.g. buffer: `<leader>a`, global: `<leader>ab`.
-    const node =
-      this.#buf_mappings?.[current_mode].find(sequence) ??
-      this._mappings[current_mode].find(sequence);
+    const node = this.#buf_mappings?.[current_mode].find(sequence)
+      ?? this._mappings[current_mode].find(sequence);
     if (!node) {
       this.#log.debug(`${event.key} -> ${keyn} did not match`);
       return;
@@ -397,9 +387,7 @@ export class KeyManager {
       return;
     }
     if (node.has_only_deleted_mappings()) {
-      this.#log.debug(
-        `All continuations from ${this.#current_sequence.join("")} are deleted, skipping`
-      );
+      this.#log.debug(`All continuations from ${this.#current_sequence.join("")} are deleted, skipping`);
       return;
     }
 
@@ -458,9 +446,7 @@ const SPECIAL_KEY_MAP = new Map(Object.entries({
   "|": "Bar",
   "\\": "Bslash",
 }));
-const REVERSE_SPECIAL_KEY_MAP = new Map(
-  Array.from(SPECIAL_KEY_MAP.entries()).map(([k, v]) => [v, k])
-);
+const REVERSE_SPECIAL_KEY_MAP = new Map(Array.from(SPECIAL_KEY_MAP.entries()).map(([k, v]) => [v, k]));
 
 /**
  * A mapping of special keys that should be downcast to non-special keys in certain scenarios.
@@ -468,11 +454,7 @@ const REVERSE_SPECIAL_KEY_MAP = new Map(
  * For example, if just `|` is pressed with *no modifiers*, then we need to keep it as `|` but if there
  * are modifiers then we need to keep it as a special char, e.g. `<D-Bar>`
  */
-const DOWNCAST_SPECIAL_KEY_MAP = new Map(Object.entries({
-  lt: "<",
-  Bar: "|",
-  Bslash: "\\",
-}));
+const DOWNCAST_SPECIAL_KEY_MAP = new Map(Object.entries({ lt: "<", Bar: "|", Bslash: "\\" }));
 
 /**
  * Characters that are inherently "shifted" on a US keyboard and should not
@@ -481,8 +463,27 @@ const DOWNCAST_SPECIAL_KEY_MAP = new Map(Object.entries({
  */
 // prettier-ignore
 const SHIFTED_CHARACTERS = new Set([
-  "!", "@", "#", "$", "%", "^", "&", "*", "(", ")",
-  "_", "+", "{", "}", "|", ":", '"', "<", ">", "?", "~"
+  "!",
+  "@",
+  "#",
+  "$",
+  "%",
+  "^",
+  "&",
+  "*",
+  "(",
+  ")",
+  "_",
+  "+",
+  "{",
+  "}",
+  "|",
+  ":",
+  "\"",
+  "<",
+  ">",
+  "?",
+  "~",
 ]);
 
 /**
@@ -529,9 +530,9 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   const is_single_char = key.length === 1;
   const is_shifted_char = SHIFTED_CHARACTERS.has(event.key);
   if (
-    event.shiftKey &&
-    (!is_single_char || modifiers.length) &&
-    !is_shifted_char
+    event.shiftKey
+    && (!is_single_char || modifiers.length)
+    && !is_shifted_char
   ) {
     modifiers.push("S");
   }
@@ -588,8 +589,8 @@ export function normalize(keyn: string): string {
   // For shifted characters, remove the S modifier if present so that we always normalise to
   // the same key notation, no matter if you provide `<C-S-+>` or `<C-+>`.
   if (
-    parsed.shiftKey &&
-    SHIFTED_CHARACTERS.has(REVERSE_SPECIAL_KEY_MAP.get(parsed.key) || parsed.key)
+    parsed.shiftKey
+    && SHIFTED_CHARACTERS.has(REVERSE_SPECIAL_KEY_MAP.get(parsed.key) || parsed.key)
   ) {
     parsed.shiftKey = false;
   }
@@ -640,15 +641,9 @@ type GlideParsedMapping = Mutable<GlideMappingEvent>;
  */
 export function parse_modifiers(
   keyn: string,
-  { use_event_repr = true }: { use_event_repr?: boolean } = {}
+  { use_event_repr = true }: { use_event_repr?: boolean } = {},
 ): GlideParsedMapping {
-  const parsed: GlideParsedMapping = {
-    altKey: false,
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    key: keyn,
-  };
+  const parsed: GlideParsedMapping = { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, key: keyn };
 
   if (!keyn.startsWith("<") || !keyn.endsWith(">")) {
     // no modifiers, or not valid notation
@@ -692,9 +687,7 @@ export function parse_modifiers(
       }
       default: {
         // TODO(glide): more graceful error handling
-        throw new Error(
-          `Unexpected modifier character ${part}, expected one of C, A, D, or S`
-        );
+        throw new Error(`Unexpected modifier character ${part}, expected one of C, A, D, or S`);
       }
     }
   }
@@ -754,8 +747,8 @@ export function split(seq: string): string[] {
 
     const right_angle_bracket_index = seq.indexOf(">", i);
     if (
-      right_angle_bracket_index === -1 ||
-      right_angle_bracket_index === i + 1
+      right_angle_bracket_index === -1
+      || right_angle_bracket_index === i + 1
     ) {
       // if there is no corresponding `>` **or** if the very next char is a `>`, e.g. `<>`
       // then we need to treat the `<` as an `<lt>` directly, instead of as part of the syntax
@@ -788,15 +781,15 @@ export function is_printable(keyn: string): boolean {
   }
 
   return !(
-    keyn === "<Esc>" ||
-    keyn === "<BS>" ||
-    keyn === "<Up>" ||
-    keyn === "<Down>" ||
-    keyn === "<Left>" ||
-    keyn === "<Right>" ||
-    keyn === "<Del>" ||
-    keyn === "<Home>" ||
-    keyn === "<End>" ||
-    keyn.startsWith("<F") // fn keys
+    keyn === "<Esc>"
+    || keyn === "<BS>"
+    || keyn === "<Up>"
+    || keyn === "<Down>"
+    || keyn === "<Left>"
+    || keyn === "<Right>"
+    || keyn === "<Del>"
+    || keyn === "<Home>"
+    || keyn === "<End>"
+    || keyn.startsWith("<F") // fn keys
   );
 }

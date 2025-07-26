@@ -7,15 +7,11 @@
 
 "use strict";
 
-const INPUT_TEST_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_normal_x() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, {
-        text_start: 1,
-      });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("abcdef", "basic");
     await test_edit("x", "bcdef", 0, "b");
@@ -37,8 +33,7 @@ add_task(async function test_normal_x() {
 
 add_task(async function test_normal_dl() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 0 });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 0 });
 
     await set_text("Hello world", "basic deletion");
     await test_edit("dl", "ello world", 0, "e");
@@ -77,8 +72,7 @@ add_task(async function test_normal_dl() {
 
 add_task(async function test_normal_dd() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 0 });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 0 });
 
     await set_text("Hello world", "basic deletion");
     await test_edit("dd", "", -1, "");
@@ -94,10 +88,7 @@ add_task(async function test_normal_dd() {
     await set_selection(6, "r");
     await test_edit("dd", "woo", 2, "o");
 
-    await set_text(
-      "barracks\nfab\nalice",
-      "retains col position for multi lines"
-    );
+    await set_text("barracks\nfab\nalice", "retains col position for multi lines");
     await set_selection(7, "s");
     await test_edit("dd", "fab\nalice", 2, "b");
 
@@ -124,8 +115,9 @@ add_task(async function test_normal_dd() {
 
 add_task(async function test_normal_dh() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
 
     await set_text("Hello world", "basic deletion");
     await test_edit("dh", "Hello word", 9, "d");
@@ -164,8 +156,10 @@ add_task(async function test_normal_dh() {
 
 add_task(async function test_normal_dj() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, test_motion, is_text, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, test_edit, test_motion, is_text, set_selection } = GlideTestUtils.make_input_test_helpers(
+      browser,
+      { text_start: 1 },
+    );
 
     await set_text("Hello world", "a single line");
     await set_selection(3, "l");
@@ -189,10 +183,7 @@ add_task(async function test_normal_dj() {
     await set_selection(3, "\n");
     await test_edit("dj", "foo", 0, "f");
 
-    await set_text(
-      "short\nvery long line here\nend",
-      "lines of different lengths"
-    );
+    await set_text("short\nvery long line here\nend", "lines of different lengths");
     await set_selection(2, "o");
     await test_motion("dj", 2, "d", "todo");
     await is_text("end");
@@ -219,8 +210,7 @@ add_task(async function test_normal_dj() {
 
 add_task(async function test_normal_r() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello world", "basic character replacement");
     await test_edit("rx", "xello world", 0, "x");
@@ -280,8 +270,7 @@ add_task(async function test_normal_r() {
 
 add_task(async function test_o_mapping() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Line 1", "basic");
     await test_edit("oLine 2", "Line 1\nLine 2", 12, "2");
@@ -294,8 +283,9 @@ add_task(async function test_o_mapping() {
 
 add_task(async function test_normal_0() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
 
     await set_text("Hello wurld", "already at the start of the line");
     await test_motion("0", 0, "H");
@@ -344,8 +334,7 @@ add_task(async function test_normal_0() {
 
 add_task(async function test_normal_$() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion, set_selection } =
-      GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello wurld", "from the start of the line");
     await test_motion("$", 10, "d");
@@ -372,10 +361,7 @@ add_task(async function test_normal_$() {
 
 add_task(async function test_normal_next_para() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion } = GlideTestUtils.make_input_test_helpers(
-      browser,
-      { text_start: 1 }
-    );
+    const { set_text, test_motion } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello wurld", "single line");
     await test_motion("}", 10, "d");
@@ -393,10 +379,7 @@ add_task(async function test_normal_next_para() {
 
 add_task(async function test_normal_next_para() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_motion } = GlideTestUtils.make_input_test_helpers(
-      browser,
-      { text_start: "end" }
-    );
+    const { set_text, test_motion } = GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
 
     await set_text("Hello wurld", "single line");
     await test_motion("{", 0, "H");
@@ -414,10 +397,7 @@ add_task(async function test_normal_next_para() {
 
 add_task(async function test_normal_u() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
-    const { set_text, test_edit } = GlideTestUtils.make_input_test_helpers(
-      browser,
-      { text_start: 1 }
-    );
+    const { set_text, test_edit } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
 
     await set_text("Hello world", "basic undo after deletion");
     await test_edit("x", "ello world", 0, "e");

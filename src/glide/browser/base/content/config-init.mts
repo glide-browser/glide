@@ -3,12 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { dedent } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/dedent.mjs"
-);
-const { fetch_resource } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/resources.mjs"
-);
+const { dedent } = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
+const { fetch_resource } = ChromeUtils.importESModule("chrome://glide/content/utils/resources.mjs");
 
 export async function init() {
   const dirs = GlideBrowser.config_dirs
@@ -28,7 +24,7 @@ export async function init() {
     Services.prompt.MODAL_TYPE_TAB!,
     "title",
     "Choose a directory to define the glide config in. Use arrows to select.",
-    options
+    options,
   );
   const ok = choice.getPropertyAsBool("ok");
   if (!ok) {
@@ -39,25 +35,16 @@ export async function init() {
   const config_dir = dirs[choice.getPropertyAsInt32("selected")]!.path!;
   GlideBrowser._log.debug(`[config_init]: selected dir: ${config_dir}`);
 
-  await IOUtils.makeDirectory(config_dir, {
-    createAncestors: true,
-    ignoreExisting: true,
-  });
+  await IOUtils.makeDirectory(config_dir, { createAncestors: true, ignoreExisting: true });
   await write_d_ts(config_dir);
   await IOUtils.writeUTF8(
     PathUtils.join(config_dir, "glide.ts"),
     dedent`
       // TODO: put something in here
-    `
+    `,
   );
-  await IOUtils.writeUTF8(
-    PathUtils.join(config_dir, "tsconfig.json"),
-    DEFAULT_TSCONFIG
-  );
-  await IOUtils.writeUTF8(
-    PathUtils.join(config_dir, "package.json"),
-    DEFAULT_PACKAGE_JSON
-  );
+  await IOUtils.writeUTF8(PathUtils.join(config_dir, "tsconfig.json"), DEFAULT_TSCONFIG);
+  await IOUtils.writeUTF8(PathUtils.join(config_dir, "package.json"), DEFAULT_PACKAGE_JSON);
 
   GlideBrowser.add_notification(GlideBrowser.config_pending_notification_id, {
     label: "Reload the config to ensure the setup worked!",
@@ -76,9 +63,7 @@ export async function init() {
 export async function write_d_ts(dir: string) {
   await IOUtils.writeUTF8(
     PathUtils.join(dir, "glide-api.d.ts"),
-    await fetch_resource("chrome://glide/content/glide-api.d.ts", {
-      loadUsingSystemPrincipal: true,
-    })
+    await fetch_resource("chrome://glide/content/glide-api.d.ts", { loadUsingSystemPrincipal: true }),
   );
 }
 

@@ -6,177 +6,185 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Fullscreen Test</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-        }
-        
-        .video-container {
-            background-color: #000;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        video {
-            width: 100%;
-            max-width: 640px;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        .controls {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        button:hover {
-            background-color: #0056b3;
-        }
-        
-        .info {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
-        }
-        
-        .info h2 {
-            margin-top: 0;
-            color: #495057;
-        }
-        
-        .info p {
-            color: #6c757d;
-            line-height: 1.6;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      .video-container {
+        background-color: #000;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      video {
+        width: 100%;
+        max-width: 640px;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .controls {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .info {
+        background-color: #e9ecef;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+      }
+
+      .info h2 {
+        margin-top: 0;
+        color: #495057;
+      }
+
+      .info p {
+        color: #6c757d;
+        line-height: 1.6;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Video Fullscreen Test Page</h1>
-    
+
     <div class="video-container">
-        <!-- note: empty but that doesn't really matter for the tests we need -->
-        <video id="testVideo" controls></video>
+      <!-- note: empty but that doesn't really matter for the tests we need -->
+      <video id="testVideo" controls></video>
     </div>
-    
+
     <div class="controls">
-        <button onclick="playVideo()">Play</button>
-        <button onclick="pauseVideo()">Pause</button>
-        <button onclick="enterFullscreen()">Enter Fullscreen</button>
-        <button onclick="exitFullscreen()">Exit Fullscreen</button>
+      <button onclick="playVideo()">Play</button>
+      <button onclick="pauseVideo()">Pause</button>
+      <button onclick="enterFullscreen()">Enter Fullscreen</button>
+      <button onclick="exitFullscreen()">Exit Fullscreen</button>
     </div>
-    
+
     <div class="info">
-        <h2>Test Instructions</h2>
-        <p>Use this page to test video fullscreen functionality in Glide Browser:</p>
-        <ul>
-            <li>Click the "Enter Fullscreen" button or use the video controls to enter fullscreen mode</li>
-            <li>Test keyboard shortcuts and vim motions while in fullscreen</li>
-            <li>Try the ESC key to exit fullscreen</li>
-            <li>Test the browser's fullscreen API behavior</li>
-        </ul>
+      <h2>Test Instructions</h2>
+      <p>
+        Use this page to test video fullscreen functionality in Glide Browser:
+      </p>
+      <ul>
+        <li>
+          Click the "Enter Fullscreen" button or use the video controls to enter
+          fullscreen mode
+        </li>
+        <li>Test keyboard shortcuts and vim motions while in fullscreen</li>
+        <li>Try the ESC key to exit fullscreen</li>
+        <li>Test the browser's fullscreen API behavior</li>
+      </ul>
     </div>
-    
+
     <div class="info">
-        <h2>Fullscreen Events Log</h2>
-        <div id="eventLog" style="font-family: monospace; font-size: 14px; max-height: 200px; overflow-y: auto;">
-            <p>Events will appear here...</p>
-        </div>
+      <h2>Fullscreen Events Log</h2>
+      <div
+        id="eventLog"
+        style="font-family: monospace; font-size: 14px; max-height: 200px; overflow-y: auto"
+      >
+        <p>Events will appear here...</p>
+      </div>
     </div>
-    
+
     <script>
-        const video = document.getElementById('testVideo');
-        const eventLog = document.getElementById('eventLog');
-        
-        function logEvent(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            const entry = document.createElement('p');
-            entry.style.margin = '5px 0';
-            entry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
-            eventLog.appendChild(entry);
-            eventLog.scrollTop = eventLog.scrollHeight;
+      const video = document.getElementById("testVideo");
+      const eventLog = document.getElementById("eventLog");
+
+      function logEvent(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const entry = document.createElement("p");
+        entry.style.margin = "5px 0";
+        entry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+        eventLog.appendChild(entry);
+        eventLog.scrollTop = eventLog.scrollHeight;
+      }
+
+      function playVideo() {
+        video.play();
+        logEvent("Video play requested");
+      }
+
+      function pauseVideo() {
+        video.pause();
+        logEvent("Video pause requested");
+      }
+
+      function enterFullscreen() {
+        if (video.requestFullscreen) {
+          video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+          video.webkitRequestFullscreen();
+        } else if (video.mozRequestFullScreen) {
+          video.mozRequestFullScreen();
+        } else if (video.msRequestFullscreen) {
+          video.msRequestFullscreen();
         }
-        
-        function playVideo() {
-            video.play();
-            logEvent('Video play requested');
+        logEvent("Fullscreen requested");
+      }
+
+      function exitFullscreen() {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
         }
-        
-        function pauseVideo() {
-            video.pause();
-            logEvent('Video pause requested');
+        logEvent("Exit fullscreen requested");
+      }
+
+      // Event listeners
+      document.addEventListener("fullscreenchange", () => {
+        if (document.fullscreenElement) {
+          logEvent("Entered fullscreen mode");
+        } else {
+          logEvent("Exited fullscreen mode");
         }
-        
-        function enterFullscreen() {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
-            } else if (video.mozRequestFullScreen) {
-                video.mozRequestFullScreen();
-            } else if (video.msRequestFullscreen) {
-                video.msRequestFullscreen();
-            }
-            logEvent('Fullscreen requested');
-        }
-        
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-            logEvent('Exit fullscreen requested');
-        }
-        
-        // Event listeners
-        document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                logEvent('Entered fullscreen mode');
-            } else {
-                logEvent('Exited fullscreen mode');
-            }
-        });
-        
-        document.addEventListener('fullscreenerror', (e) => {
-            logEvent('Fullscreen error: ' + e.message);
-        });
-        
-        video.addEventListener('play', () => logEvent('Video playing'));
-        video.addEventListener('pause', () => logEvent('Video paused'));
-        video.addEventListener('ended', () => logEvent('Video ended'));
-        
-        // Log initial page load
-        logEvent('Page loaded');
+      });
+
+      document.addEventListener("fullscreenerror", (e) => {
+        logEvent("Fullscreen error: " + e.message);
+      });
+
+      video.addEventListener("play", () => logEvent("Video playing"));
+      video.addEventListener("pause", () => logEvent("Video paused"));
+      video.addEventListener("ended", () => logEvent("Video ended"));
+
+      // Log initial page load
+      logEvent("Page loaded");
     </script>
-</body>
+  </body>
 </html>

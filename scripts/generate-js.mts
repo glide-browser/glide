@@ -30,7 +30,7 @@ function preprocess(webidl: string): string {
 
 // Check if a member has Chrome-only extended attributes
 function isChromeOnly(
-  member: webidl2.IDLRootType | webidl2.IDLInterfaceMemberType
+  member: webidl2.IDLRootType | webidl2.IDLInterfaceMemberType,
 ) {
   if (!member.extAttrs) return false;
 
@@ -44,12 +44,12 @@ function isChromeOnly(
       const funcValue = attr.rhs.value;
       // Common Chrome-only function checks
       if (
-        typeof funcValue === "string" &&
-        (funcValue.includes("IsChromeOrUAWidget") ||
-          funcValue.includes("IsInChromeDocument") ||
-          funcValue.includes("IsCertifiedApp") ||
-          funcValue.includes("IsPrivilegedChromeWindow") ||
-          funcValue.includes("IsChromeWindow"))
+        typeof funcValue === "string"
+        && (funcValue.includes("IsChromeOrUAWidget")
+          || funcValue.includes("IsInChromeDocument")
+          || funcValue.includes("IsCertifiedApp")
+          || funcValue.includes("IsPrivilegedChromeWindow")
+          || funcValue.includes("IsChromeWindow"))
       ) {
         return true;
       }
@@ -59,11 +59,9 @@ function isChromeOnly(
     if (attr.name === "Pref" && attr.rhs && attr.rhs.value) {
       const prefValue = attr.rhs.value;
       if (
-        typeof prefValue === "string" &&
-        (prefValue.includes(
-          "dom.webcomponents.shadowdom.declarative.enabled"
-        ) ||
-          prefValue.includes("dom.mozBrowserFramesEnabled"))
+        typeof prefValue === "string"
+        && (prefValue.includes("dom.webcomponents.shadowdom.declarative.enabled")
+          || prefValue.includes("dom.mozBrowserFramesEnabled"))
       ) {
         return true;
       }
@@ -75,7 +73,7 @@ function isChromeOnly(
 
 // Extract properties from a parsed interface
 function extractInterfaceProperties(
-  iface: webidl2.InterfaceType | webidl2.InterfaceMixinType
+  iface: webidl2.InterfaceType | webidl2.InterfaceMixinType,
 ): Set<string> {
   const properties = new Set<string>();
 
@@ -87,12 +85,10 @@ function extractInterfaceProperties(
 
       if (member.type === "attribute" && member.name) {
         properties.add(member.name);
-      }
-      // Add methods
+      } // Add methods
       else if (member.type === "operation" && member.name) {
         properties.add(member.name);
-      }
-      // Add constants
+      } // Add constants
       else if (member.type === "const" && member.name) {
         properties.add(member.name);
       }
@@ -209,9 +205,7 @@ async function main(output_file: string) {
   const moduleContent = generateModule(properties);
 
   console.log(`[INFO] Found ${properties.length} Window properties`);
-  console.log(
-    `[INFO] ${output_file} (${moduleContent.length.toLocaleString()} bytes)`
-  );
+  console.log(`[INFO] ${output_file} (${moduleContent.length.toLocaleString()} bytes)`);
 
   fs.writeFileSync(output_file, moduleContent);
 }

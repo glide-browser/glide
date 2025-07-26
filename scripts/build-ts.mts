@@ -1,5 +1,5 @@
-import fs from "fs/promises";
 import chokidar from "chokidar";
+import fs from "fs/promises";
 import Path from "path";
 import ts_blank_space from "ts-blank-space";
 import { SRC_DIR } from "./canonical-paths.mts";
@@ -10,8 +10,8 @@ const dist_dir_cache = new Set<string>();
 async function build(abs_path: string) {
   const dist_dir = Path.join(abs_path, "..", "dist");
   if (
-    !dist_dir_cache.has(dist_dir) &&
-    !(await fs
+    !dist_dir_cache.has(dist_dir)
+    && !(await fs
       .stat(dist_dir)
       .then(() => true)
       .catch(() => false))
@@ -20,10 +20,7 @@ async function build(abs_path: string) {
     dist_dir_cache.add(dist_dir);
   }
 
-  const dist_path = Path.join(
-    dist_dir,
-    Path.basename(abs_path).replace(/ts$/, "js")
-  );
+  const dist_path = Path.join(dist_dir, Path.basename(abs_path).replace(/ts$/, "js"));
 
   const contents = await fs.readFile(abs_path, "utf8");
   await fs.writeFile(dist_path, ts_blank_space(contents), "utf8");
@@ -59,11 +56,11 @@ export async function main() {
 
           if (
             // ignore scripts as they'll never be built
-            rel_path.startsWith("glide/scripts/") ||
+            rel_path.startsWith("glide/scripts/")
             // ignore .d.ts as they'll never be built
-            rel_path.startsWith("glide/generated/") ||
-            rel_path.startsWith("glide/@types/") ||
-            rel_path.endsWith(".d.ts")
+            || rel_path.startsWith("glide/generated/")
+            || rel_path.startsWith("glide/@types/")
+            || rel_path.endsWith(".d.ts")
           ) {
             return true;
           }

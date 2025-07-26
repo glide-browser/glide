@@ -45,7 +45,7 @@ export function cls(char: string): number {
     case "<":
     case ">":
     case "'":
-    case '"':
+    case "\"":
     case "-":
     case "+":
     case "=":
@@ -93,10 +93,10 @@ export function cls(char: string): number {
 function is_word_char(code: number): boolean {
   // basic ascii characters
   if (
-    (code >= "a".charCodeAt(0) && code <= "z".charCodeAt(0)) ||
-    (code >= "A".charCodeAt(0) && code <= "Z".charCodeAt(0)) ||
-    (code >= "0".charCodeAt(0) && code <= "9".charCodeAt(0)) ||
-    code === "_".charCodeAt(0)
+    (code >= "a".charCodeAt(0) && code <= "z".charCodeAt(0))
+    || (code >= "A".charCodeAt(0) && code <= "Z".charCodeAt(0))
+    || (code >= "0".charCodeAt(0) && code <= "9".charCodeAt(0))
+    || code === "_".charCodeAt(0)
   ) {
     return true;
   }

@@ -21,9 +21,7 @@ export type ToDeserialisedIPCFunction<T> =
 export function serialise_args(args: unknown[]): unknown[] {
   function serialise(value: unknown): unknown {
     if (typeof value === "function") {
-      return {
-        $glidefunc: serialize_function_to_expression(value),
-      } as GlideFunctionIPC;
+      return { $glidefunc: serialize_function_to_expression(value) } as GlideFunctionIPC;
     }
 
     if (Array.isArray(value)) {
@@ -45,13 +43,13 @@ export function serialise_args(args: unknown[]): unknown[] {
 }
 
 export function is_glidefunction(
-  value: unknown
+  value: unknown,
 ): value is GlideFunctionIPC<any> {
   return typeof (value as any)?.$glidefunc === "string";
 }
 
 export function maybe_serialise_glidefunction<T>(
-  fn: T
+  fn: T,
 ): Exclude<T, Function> | GlideFunctionIPC<Extract<T, Function>> {
   if (typeof fn === "function") {
     return {
@@ -77,7 +75,7 @@ export function maybe_deserialise_glidefunction<
 
 export function deserialise_glidefunction<S>(
   sandbox: Sandbox,
-  fn: GlideFunctionIPC<S>
+  fn: GlideFunctionIPC<S>,
 ): S {
   // note: this shouldn't actually invoke any *real* code, instead
   //       it should just be parsing the function definition
@@ -87,7 +85,7 @@ export function deserialise_glidefunction<S>(
     null,
     `chrome://glide/config/glide-ipc-function-${hashcode(fn.$glidefunc)}.ts`,
     1,
-    false
+    false,
   );
 }
 
@@ -135,8 +133,8 @@ export function serialize_function_to_expression(func: Function): string {
     // ```
     // we need to turn it into syntax that can be evaluated
     // outside of the object
-    return str.startsWith("async ") ?
-        `async function ${str.slice(6)}; ${func.name}`
+    return str.startsWith("async ")
+      ? `async function ${str.slice(6)}; ${func.name}`
       : `function ${str}; ${func.name}`;
   }
 

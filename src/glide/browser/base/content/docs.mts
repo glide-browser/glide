@@ -3,42 +3,18 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import type * as M from "@markdoc/markdoc";
-import type {
-  Highlighter,
-  ThemeRegistrationResolved,
-  ShikiTransformer,
-  CodeToHastOptions,
-  ThemedToken,
-} from "shiki";
 import type * as H from "hast";
+import type { CodeToHastOptions, Highlighter, ShikiTransformer, ThemedToken, ThemeRegistrationResolved } from "shiki";
 
-const Html = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/html.mjs"
-);
-const { format } = ChromeUtils.importESModule(
-  "chrome://glide/content/bundled/prettier.mjs"
-);
-const prettier_html = ChromeUtils.importESModule(
-  "chrome://glide/content/bundled/prettier-html.mjs"
-);
-const { default: Markdoc } = ChromeUtils.importESModule(
-  "chrome://glide/content/bundled/markdoc.mjs"
-);
-const { markdown, html } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/dedent.mjs"
-);
-const { firstx } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/arrays.mjs"
-);
-const { Words } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/strings.mjs"
-);
-const { assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const { GLIDE_EXCOMMANDS } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-excmds-registry.mjs"
-);
+const Html = ChromeUtils.importESModule("chrome://glide/content/utils/html.mjs");
+const { format } = ChromeUtils.importESModule("chrome://glide/content/bundled/prettier.mjs");
+const prettier_html = ChromeUtils.importESModule("chrome://glide/content/bundled/prettier-html.mjs");
+const { default: Markdoc } = ChromeUtils.importESModule("chrome://glide/content/bundled/markdoc.mjs");
+const { markdown, html } = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
+const { firstx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
+const { Words } = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
+const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { GLIDE_EXCOMMANDS } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 
 interface MarkdocConfig extends M.Config {
   /**
@@ -79,44 +55,18 @@ const ADMONITION_TYPES = new Set([
 ]);
 
 const SIDEBAR: SidebarEntry[] = [
-  {
-    name: "Quickstart",
-    href: "quickstart.html",
-  },
-  {
-    name: "API",
-    href: "api.html",
-  },
-  {
-    name: "Modes",
-    href: "modes.html",
-  },
-  {
-    name: "Ex-commands",
-    href: "ex-commands.html",
-  },
-  {
-    name: "Key mappings",
-    href: "key-mappings.html",
-  },
-  {
-    name: "Hints",
-    href: "hints.html",
-  },
-  {
-    name: "FAQ",
-    href: "faq.html",
-  },
-  {
-    name: "Contributing",
-    href: "contributing.html",
-  },
+  { name: "Quickstart", href: "quickstart.html" },
+  { name: "API", href: "api.html" },
+  { name: "Modes", href: "modes.html" },
+  { name: "Ex-commands", href: "ex-commands.html" },
+  { name: "Key mappings", href: "key-mappings.html" },
+  { name: "Hints", href: "hints.html" },
+  { name: "FAQ", href: "faq.html" },
+  { name: "Contributing", href: "contributing.html" },
 ];
 
 // overrides for certain cases where we render type declarations differently
-const API_REF_TO_HREF_MAP: Record<string, string> = {
-  "glide.Options": "glide.o",
-};
+const API_REF_TO_HREF_MAP: Record<string, string> = { "glide.Options": "glide.o" };
 
 const tokenizer = new Markdoc.Tokenizer({ allowComments: true });
 
@@ -126,11 +76,11 @@ const tokenizer = new Markdoc.Tokenizer({ allowComments: true });
 export async function markdown_to_html(
   source: string,
   highlighter: Highlighter,
-  props: { nested_count: number; relative_dist_path: string }
+  props: { nested_count: number; relative_dist_path: string },
 ): Promise<string> {
-  const code_options = {
-    include_go_to_def: props.relative_dist_path.endsWith("api.html"),
-  } as const satisfies Partial<CodeHighlightOptions>;
+  const code_options = { include_go_to_def: props.relative_dist_path.endsWith("api.html") } as const satisfies Partial<
+    CodeHighlightOptions
+  >;
   const ast = Markdoc.parse(tokenizer.tokenize(source));
 
   const tokyonight = highlighter.getTheme("tokyo-night");
@@ -297,25 +247,21 @@ export async function markdown_to_html(
     tags: {
       "excmd-list": {
         transform(_, config) {
-          return Markdoc.transform(
-            Markdoc.parse(
-              GLIDE_EXCOMMANDS.map(
-                exmcd => markdown`
+          return Markdoc.transform(Markdoc.parse(
+            GLIDE_EXCOMMANDS.map(exmcd =>
+              markdown`
                   ## :${exmcd.name} {% .excmd-heading %}
 
                   ${exmcd.description}
                 `
-              ).join("\n\n"),
-              // @ts-ignore
-              config
-            )
-          );
+            ).join("\n\n"),
+            // @ts-ignore
+            config,
+          ));
         },
       },
       "api-heading": {
-        attributes: {
-          id: { type: String, required: true },
-        },
+        attributes: { id: { type: String, required: true } },
         transform(node) {
           // note: this doesn't support inline usage, it must be
           // ```md
@@ -342,16 +288,14 @@ export async function markdown_to_html(
             ],
           });
           patches[id] = {
-            html: `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
+            html:
+              `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
             content: "",
           };
           return id;
         },
       },
-      sup: {
-        render: "sup",
-        attributes: {},
-      },
+      sup: { render: "sup", attributes: {} },
       html: {
         description: "Renders raw HTML content",
         transform(node) {
@@ -366,10 +310,7 @@ export async function markdown_to_html(
           const content = lines.slice(first, last);
 
           const id = patch_id();
-          patches[id] = {
-            html: content.join("\n"),
-            content: "",
-          };
+          patches[id] = { html: content.join("\n"), content: "" };
           return id;
         },
       },
@@ -424,13 +365,13 @@ export async function markdown_to_html(
 
           const first_para = children[0];
           if (
-            !first_para ||
-            typeof first_para !== "object" ||
-            Array.isArray(first_para) ||
-            first_para.name !== "p" ||
-            !first_para.children ||
-            !Array.isArray(first_para.children) ||
-            !first_para.children.length
+            !first_para
+            || typeof first_para !== "object"
+            || Array.isArray(first_para)
+            || first_para.name !== "p"
+            || !first_para.children
+            || !Array.isArray(first_para.children)
+            || !first_para.children.length
           ) {
             return DefaultBlockquote;
           }
@@ -449,23 +390,19 @@ export async function markdown_to_html(
 
             // If the first paragraph is now empty or just whitespace, remove it
             if (
-              first_para.children.length === 1 &&
-              typeof first_para.children[0] === "string" &&
-              first_para.children[0].trim() === ""
+              first_para.children.length === 1
+              && typeof first_para.children[0] === "string"
+              && first_para.children[0].trim() === ""
             ) {
               children.shift();
             }
 
-            return new Markdoc.Tag(
-              "div",
-              { class: `admonition admonition-${type}` },
-              [
-                new Markdoc.Tag("div", { class: "admonition-title" }, [
-                  `${type}`,
-                ]),
-                ...children,
-              ]
-            );
+            return new Markdoc.Tag("div", { class: `admonition admonition-${type}` }, [
+              new Markdoc.Tag("div", { class: "admonition-title" }, [
+                `${type}`,
+              ]),
+              ...children,
+            ]);
           }
 
           return DefaultBlockquote;
@@ -480,14 +417,13 @@ export async function markdown_to_html(
         transform(node, config) {
           const href = assert_present(
             node.attributes["href"] as string | undefined,
-            "Expected <link> element to have an href"
+            "Expected <link> element to have an href",
           );
 
           const children = node.transformChildren(config);
 
-          const is_external =
-            (href as string)?.startsWith("https://") ||
-            (href as string)?.startsWith("http://");
+          const is_external = (href as string)?.startsWith("https://")
+            || (href as string)?.startsWith("http://");
           if (is_external) {
             const id = patch_id();
             patches[id] = {
@@ -503,18 +439,15 @@ export async function markdown_to_html(
           if (href.endsWith(".md") || href.startsWith("#")) {
             return new Markdoc.Tag(
               "a",
-              {
-                ...node.attributes,
-                href: href.replace(/\.md$/, ".html"),
-              },
-              node.transformChildren(config)
+              { ...node.attributes, href: href.replace(/\.md$/, ".html") },
+              node.transformChildren(config),
             );
           }
 
           // otherwise assume it's a link to a source file:
           if (!href.startsWith("/")) {
             throw new Error(
-              "non-markdown links to files in the repository must use full paths, e.g. `/src/glide/moz.build`"
+              "non-markdown links to files in the repository must use full paths, e.g. `/src/glide/moz.build`",
             );
           }
 
@@ -556,19 +489,13 @@ export async function markdown_to_html(
             style,
             ...attributes
           } = node.transformAttributes(config);
-          const nested_config = {
-            ...config,
-            heading: true,
-          } as MarkdocConfig;
+          const nested_config = { ...config, heading: true } as MarkdocConfig;
           const children = node.transformChildren(nested_config);
           if (!id) {
             id = generate_anchor_id(children);
           }
 
-          level = assert_present(
-            level ?? node.attributes["level"],
-            "Expected level attribute to be set on headings"
-          );
+          level = assert_present(level ?? node.attributes["level"], "Expected level attribute to be set on headings");
           if (level === 1 && !title) {
             // extract the first h1 and use it as the page title
             title = get_node_content(children);
@@ -576,17 +503,15 @@ export async function markdown_to_html(
 
           const has_code = node.walk().some(child => child.type === "code");
 
-          const Heading = new Markdoc.Tag(
-            `h${level}`,
-            {
-              id,
-              ...(style ? { style } : undefined),
-              ...(has_code ? { class: Words([$class, "code-heading"]) }
-              : $class ? { class: $class }
+          const Heading = new Markdoc.Tag(`h${level}`, {
+            id,
+            ...(style ? { style } : undefined),
+            ...(has_code
+              ? { class: Words([$class, "code-heading"]) }
+              : $class
+              ? { class: $class }
               : undefined),
-            },
-            children
-          );
+          }, children);
 
           if (nested_config.nested_anchors) {
             return Heading;
@@ -606,40 +531,36 @@ export async function markdown_to_html(
           const [, language, code] = content.match(/^(\w+):(.+)$/) || [];
 
           const default_language = "typescript";
-          const highlighted =
-            !language || !code ?
-              // if the language isn't explicitly configured, then default to a slightly
-              // modified version of TypeScript syntax highlighting as I've found
-              // that generally to work quite well and looks much better than the default
-              // <code> highlighting we have
-              code_to_html(highlighter, code ?? content, {
-                ...code_options,
-                lang: language ?? default_language,
-                themes: inline_themes,
-                structure: "inline",
-                config,
-              })
-            : IGNORE_CODE_LANGS.has(language) ?
-              code_to_html(highlighter, content, {
-                ...code_options,
-                lang: default_language,
-                themes: language_themes[default_language] ?? themes,
-                structure: "inline",
-                config,
-              })
+          const highlighted = !language || !code
+            // if the language isn't explicitly configured, then default to a slightly
+            // modified version of TypeScript syntax highlighting as I've found
+            // that generally to work quite well and looks much better than the default
+            // <code> highlighting we have
+            ? code_to_html(highlighter, code ?? content, {
+              ...code_options,
+              lang: language ?? default_language,
+              themes: inline_themes,
+              structure: "inline",
+              config,
+            })
+            : IGNORE_CODE_LANGS.has(language)
+            ? code_to_html(highlighter, content, {
+              ...code_options,
+              lang: default_language,
+              themes: language_themes[default_language] ?? themes,
+              structure: "inline",
+              config,
+            })
             : code_to_html(highlighter, code, {
-                ...code_options,
-                lang: language,
-                themes: language_themes[language] ?? themes,
-                structure: "inline",
-                config,
-              });
+              ...code_options,
+              lang: language,
+              themes: language_themes[language] ?? themes,
+              structure: "inline",
+              config,
+            });
 
           const id = patch_id();
-          patches[id] = {
-            html: html`<span class="shiki-inline">${highlighted}</span>`,
-            content: code ?? content,
-          };
+          patches[id] = { html: html`<span class="shiki-inline">${highlighted}</span>`, content: code ?? content };
           return id;
         },
       },
@@ -655,29 +576,20 @@ export async function markdown_to_html(
           const caption = node.attributes["caption"];
           const content = node.attributes["content"];
           const language = node.attributes["language"];
-          const highlighted = code_to_html(highlighter, content, {
-            ...code_options,
-            lang: language,
-            themes,
-            config,
-          });
+          const highlighted = code_to_html(highlighter, content, { ...code_options, lang: language, themes, config });
 
           const id = patch_id();
           patches[id] = {
-            html:
-              caption ?
-                // indenting the highlighted html results in bad whitespace
-                // prettier-ignore
-                html`
+            html: caption
+              // indenting the highlighted html results in bad whitespace
+              // prettier-ignore
+              ? html`
                   <figure>
-                  ${highlighted.replace('</pre>', `${copy_to_clipboard_button()}</pre>`)}
+                  ${highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`)}
                     <figcaption>${caption}</figcaption>
                   </figure>
                 `
-              : highlighted.replace(
-                  "</pre>",
-                  `${copy_to_clipboard_button()}</pre>`
-                ),
+              : highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`),
             content,
           };
           return id;
@@ -695,10 +607,7 @@ export async function markdown_to_html(
       did_replace = false;
       html_body = html_body.replaceAll(regex, substr => {
         did_replace = true;
-        return assert_present(
-          patches[substr]?.html,
-          `could not resolve a highlight patch for ${substr}`
-        );
+        return assert_present(patches[substr]?.html, `could not resolve a highlight patch for ${substr}`);
       });
     } while (did_replace);
   }
@@ -722,15 +631,17 @@ export async function markdown_to_html(
 
           <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
           <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-          ${styles
-            .map(
-              css => html`
+          ${
+      styles
+        .map(css =>
+          html`
                 <style>
                   ${css}
                 </style>
               `
-            )
-            .join("\n")}
+        )
+        .join("\n")
+    }
           ${head.join("\n")}
 
           <script src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
@@ -786,18 +697,17 @@ export async function markdown_to_html(
                   </li>
                   <li>
                     <ul class="sidenav">
-                      ${SIDEBAR.map(({ name, href, class: class_, target }) => {
-                        const abs = rel_to_dist + "/" + href;
-                        return Html.li(
-                          {
-                            class: [
-                              abs === current_href ? "is-active" : null,
-                              class_,
-                            ],
-                          },
-                          [Html.a({ href, target }, [name])]
-                        );
-                      }).join("")}
+                      ${
+      SIDEBAR.map(({ name, href, class: class_, target }) => {
+        const abs = rel_to_dist + "/" + href;
+        return Html.li({
+          class: [
+            abs === current_href ? "is-active" : null,
+            class_,
+          ],
+        }, [Html.a({ href, target }, [name])]);
+      }).join("")
+    }
                       <li>
                         <a
                           href="https://github.com/glide-browser/glide"
@@ -822,7 +732,7 @@ export async function markdown_to_html(
         </body>
       </html>
     `,
-    { parser: "html", plugins: [prettier_html] }
+    { parser: "html", plugins: [prettier_html] },
   );
 }
 
@@ -878,7 +788,7 @@ type CodeHighlightOptions = CodeToHastOptions & {
 function code_to_html(
   highlighter: Highlighter,
   code: string,
-  options: CodeHighlightOptions
+  options: CodeHighlightOptions,
 ): string {
   if (options.include_go_to_def && options.config.heading) {
     for (const match of code.matchAll(/(.*): (glide\..*)/g)) {
@@ -887,14 +797,12 @@ function code_to_html(
 
       options = { ...options };
       options.transformers ??= [];
-      options.transformers.push(
-        make_heading_property_ref_transformer({
-          preceding: assert_present(pre),
-          ref,
-          href: API_REF_TO_HREF_MAP[ref] ?? ref,
-          config: options.config,
-        })
-      );
+      options.transformers.push(make_heading_property_ref_transformer({
+        preceding: assert_present(pre),
+        ref,
+        href: API_REF_TO_HREF_MAP[ref] ?? ref,
+        config: options.config,
+      }));
     }
   }
 
@@ -924,9 +832,7 @@ function make_heading_property_ref_transformer({
   return {
     tokens(all_tokens) {
       return all_tokens.map((tokens): ThemedToken[] => {
-        const property_index = tokens.findIndex(
-          token => token.content.startsWith(": ") && token.content.length > 2
-        );
+        const property_index = tokens.findIndex(token => token.content.startsWith(": ") && token.content.length > 2);
         if (property_index === -1) {
           console.error(tokens);
           throw new Error(`Expected to find a property index like \`: *\``);
@@ -999,10 +905,7 @@ function make_heading_property_ref_transformer({
       children.splice(0, run.start, {
         type: "element",
         tagName: "a",
-        properties: {
-          href: `#${preceding}`,
-          style: "text-decoration: none",
-        },
+        properties: { href: `#${preceding}`, style: "text-decoration: none" },
         children: children.slice(0, run.start),
       });
 
@@ -1012,12 +915,12 @@ function make_heading_property_ref_transformer({
 }
 
 function is_text_span(
-  node: H.RootContent | undefined
+  node: H.RootContent | undefined,
 ): node is H.Element & { children: [H.Text] } {
   return (
-    node?.type === "element" &&
-    node.tagName === "span" &&
-    node.children.length === 1 &&
-    node.children[0]!.type === "text"
+    node?.type === "element"
+    && node.tagName === "span"
+    && node.children.length === 1
+    && node.children[0]!.type === "text"
   );
 }

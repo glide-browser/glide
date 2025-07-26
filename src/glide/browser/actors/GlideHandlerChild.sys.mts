@@ -3,49 +3,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import type { GlideExcmdsMap, ParsedArg } from "../base/content/browser-excmds-registry.mts";
 import type { State } from "../base/content/browser.mjs";
-import type { GlideHint } from "../base/content/hinting.mts";
-import type {
-  ParentMessages,
-  ParentQueries,
-} from "./GlideHandlerParent.sys.mjs";
-import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
 import type { ExtensionsAPI as ExtensionsAPIType } from "../base/content/extensions.mts";
+import type { GlideHint } from "../base/content/hinting.mts";
 import type { Sandbox } from "../base/content/sandbox.mts";
-import type {
-  GlideExcmdsMap,
-  ParsedArg,
-} from "../base/content/browser-excmds-registry.mts";
+import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
+import type { ParentMessages, ParentQueries } from "./GlideHandlerParent.sys.mjs";
 
-const hinting = ChromeUtils.importESModule(
-  "chrome://glide/content/hinting.mjs"
-);
-const motions = ChromeUtils.importESModule(
-  "chrome://glide/content/motions.mjs"
-);
-const MozUtils = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/moz.mjs"
-);
-const { GLIDE_COMMANDLINE_INPUT_ANONID } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-constants.mjs"
-);
+const hinting = ChromeUtils.importESModule("chrome://glide/content/hinting.mjs");
+const motions = ChromeUtils.importESModule("chrome://glide/content/motions.mjs");
+const MozUtils = ChromeUtils.importESModule("chrome://glide/content/utils/moz.mjs");
+const { GLIDE_COMMANDLINE_INPUT_ANONID } = ChromeUtils.importESModule("chrome://glide/content/browser-constants.mjs");
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
-const { assert_never, assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const { ExtensionsAPI } = ChromeUtils.importESModule(
-  "chrome://glide/content/extensions.mjs"
-);
-const { parse_command_args } = ChromeUtils.importESModule(
-  "chrome://glide/content/browser-excmds.mjs"
-);
-const { redefine_getter } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/objects.mjs"
-);
-const { create_sandbox } = ChromeUtils.importESModule(
-  "chrome://glide/content/sandbox.mjs"
-);
+const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { ExtensionsAPI } = ChromeUtils.importESModule("chrome://glide/content/extensions.mjs");
+const { parse_command_args } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds.mjs");
+const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
+const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 
 export interface ChildMessages {
   "Glide::ResolvedHints": {
@@ -112,14 +88,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
     // TODO(glide): separate logger instances for different things?
     // TODO(glide): different log prefs?
-    this._log = console.createInstance({
-      prefix: "Glide[Child]",
-      maxLogLevelPref: "glide.logging.loglevel",
-    });
+    this._log = console.createInstance({ prefix: "Glide[Child]", maxLogLevelPref: "glide.logging.loglevel" });
   }
 
   async receiveMessage(
-    message: ActorReceiveMessage<ParentMessages, ParentQueries>
+    message: ActorReceiveMessage<ParentMessages, ParentQueries>,
   ) {
     this._log.debug("receiveMessage[child]", message.name);
 
@@ -135,17 +108,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
           this.#hint_action = null;
 
           if (this.#hint_scroll_listener != null) {
-            this.contentWindow?.removeEventListener(
-              "scroll",
-              this.#hint_scroll_listener
-            );
+            this.contentWindow?.removeEventListener("scroll", this.#hint_scroll_listener);
           }
 
           if (this.#hint_scrollend_listener != null) {
-            this.contentWindow?.removeEventListener(
-              "scrollend",
-              this.#hint_scrollend_listener
-            );
+            this.contentWindow?.removeEventListener("scrollend", this.#hint_scrollend_listener);
           }
         }
 
@@ -158,20 +125,16 @@ export class GlideHandlerChild extends JSWindowActorChild<
         // moved to, the above example assumes that visual mode was entered on
         // the `o` and was extended to the `d`.
         if (
-          previous_mode === "visual" &&
-          this.state.mode === "normal" &&
-          !message.data.meta?.disable_auto_collapse
+          previous_mode === "visual"
+          && this.state.mode === "normal"
+          && !message.data.meta?.disable_auto_collapse
         ) {
           const editor = this.#get_editor(this.#get_active_element());
 
           if (editor && !editor.selection.isCollapsed) {
-            const needs_forward_adjust =
-              editor.selection.focusOffset < editor.selection.anchorOffset;
+            const needs_forward_adjust = editor.selection.focusOffset < editor.selection.anchorOffset;
 
-            editor.selection.collapse(
-              editor.selection.focusNode,
-              editor.selection.focusOffset
-            );
+            editor.selection.collapse(editor.selection.focusNode, editor.selection.focusOffset);
             if (needs_forward_adjust) {
               motions.forward_char(editor, false);
             }
@@ -191,10 +154,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "Glide::ReplaceChar": {
         const editor = this.#expect_editor("replace char");
         motions.back_char(editor, false);
-        editor.deleteSelection(
-          /* action */ editor.eNext!,
-          /* stripWrappers */ editor.eStrip!
-        );
+        editor.deleteSelection(/* action */ editor.eNext!, /* stripWrappers */ editor.eStrip!);
         editor.insertText(message.data.character);
         break;
       }
@@ -221,10 +181,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           }
 
           editor.insertText(message.data.key);
-          editor.selectionController.characterMove(
-            /* forward */ false,
-            /* extend */ false
-          );
+          editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
         }
         break;
       }
@@ -240,10 +197,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           // `foo|j` + `e` -> `fooje|`
           //
           // without this block, we'd get `foo|j` + `e` -> `fooe|j`
-          editor.selectionController.characterMove(
-            /* forward */ true,
-            /* extend */ false
-          );
+          editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
         }
         break;
       }
@@ -262,10 +216,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           //       inserted.
           const delete_length = message.data.sequence.length - 1;
           for (let i = 0; i < delete_length; i++) {
-            editor.deleteSelection(
-              /* action */ editor.eNext!,
-              /* stripWrappers */ editor.eStrip!
-            );
+            editor.deleteSelection(/* action */ editor.eNext!, /* stripWrappers */ editor.eStrip!);
           }
         }
 
@@ -281,17 +232,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "Glide::Hint": {
         this.#start_hints({
           ...message.data,
-          action: IPC.maybe_deserialise_glidefunction(
-            this.sandbox,
-            message.data.action
-          ),
+          action: IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.action),
         });
         break;
       }
       case "Glide::ExecuteHint": {
-        const hint = this.#active_hints.find(
-          hint => hint.id === message.data.id
-        );
+        const hint = this.#active_hints.find(hint => hint.id === message.data.id);
         if (!hint) {
           throw new Error(`Could not find a hint with ID: ${message.data.id}`);
         }
@@ -354,9 +300,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         const editor = this.#get_editor(this.#get_active_element());
         if (editor) {
-          this._log.debug(
-            `[Glide::Move]: editor available, using commands directly`
-          );
+          this._log.debug(`[Glide::Move]: editor available, using commands directly`);
           // if we have an editor, sending the following commands should always work
           switch (message.data.direction) {
             case "left":
@@ -377,9 +321,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         // if we don't have an editor, the above commands seem to not always
         // work. so we need to use an alternative method for scrolling, sending
         // a wheel event directly.
-        this._log.debug(
-          `[Glide::Move]: no editor available, manually scrolling`
-        );
+        this._log.debug(`[Glide::Move]: no editor available, manually scrolling`);
 
         const delta = 200;
         const window = assert_present(this.contentWindow, "no content window");
@@ -456,7 +398,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           return actor.extension_api.browser_proxy_api;
         },
         glide: null,
-      })
+      }),
     );
   }
 
@@ -466,7 +408,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       "extension_api",
       new ExtensionsAPI(props => {
         return this.send_query("Glide::Query::Extension", props);
-      })
+      }),
     );
   }
 
@@ -496,9 +438,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
       case "scroll_bottom": {
         const window = assert_present(this.contentWindow, "no contentWindow");
-        this._log.debug(
-          `[scroll_bottom]: scrolling to x=${window.scrollX} y=${window.scrollMaxY}`
-        );
+        this._log.debug(`[scroll_bottom]: scrolling to x=${window.scrollX} y=${window.scrollMaxY}`);
 
         window.scroll(window.scrollX, window.scrollMaxY);
         break;
@@ -514,12 +454,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         switch (operator) {
           case "d": {
-            const result = motions.select_motion(
-              editor,
-              sequence as any,
-              this.state?.mode ?? "normal",
-              operator
-            );
+            const result = motions.select_motion(editor, sequence as any, this.state?.mode ?? "normal", operator);
 
             // if the motion didn't actually select anything, then there's
             // nothing for us to delete
@@ -536,12 +471,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
             break;
           }
           case "c": {
-            motions.select_motion(
-              editor,
-              sequence as any,
-              this.state?.mode ?? "normal",
-              operator
-            );
+            motions.select_motion(editor, sequence as any, this.state?.mode ?? "normal", operator);
             motions.delete_selection(editor, false);
 
             this.#record_repeatable_command({ ...props, operator });
@@ -634,33 +564,24 @@ export class GlideHandlerChild extends JSWindowActorChild<
           case "x": {
             if (
               // caret is on the first line and it's empty
-              (motions.is_bof(editor) && motions.next_char(editor) === "\n") ||
+              (motions.is_bof(editor) && motions.next_char(editor) === "\n")
               // we don't want to delete newlines
-              motions.current_char(editor) === "\n"
+              || motions.current_char(editor) === "\n"
             ) {
               return;
             }
 
             // `foo █ar baz` -> `foo█ar baz`
-            editor.deleteSelection(
-              /* action */ editor.ePrevious!,
-              /* stripWrappers */ editor.eStrip!
-            );
+            editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
 
             if (motions.next_char(editor) !== "\n") {
               // `foo█ar baz` -> `foo █r baz`
-              editor.selectionController.characterMove(
-                /* forward */ true,
-                /* extend */ false
-              );
+              editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
             }
             break;
           }
           case "o": {
-            editor.selectionController.intraLineMove(
-              /* forward */ true,
-              /* extend */ false
-            );
+            editor.selectionController.intraLineMove(/* forward */ true, /* extend */ false);
             editor.insertLineBreak();
 
             this.#change_mode("insert");
@@ -705,7 +626,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
    * Whether or not `.` should be updated to repeat this motion.
    */
   #motion_is_repeatable(
-    keyseq: ParsedArg<GlideExcmdsMap["motion"]["args_schema"]["keyseq"]>
+    keyseq: ParsedArg<GlideExcmdsMap["motion"]["args_schema"]["keyseq"]>,
   ): boolean {
     switch (keyseq) {
       case "0":
@@ -751,9 +672,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         location: props.location,
         auto_activate: props.auto_activate,
         // strip out the `target` as we cannot / don't need to send it
-        hints: hints.map(
-          ({ target, ...rest }): GlideHintIPC =>
-            props.debug ? { ...rest, element_id: target.id || undefined } : rest
+        hints: hints.map(({ target, ...rest }): GlideHintIPC =>
+          props.debug ? { ...rest, element_id: target.id || undefined } : rest
         ),
       });
     }
@@ -762,8 +682,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
     const x = this.contentWindow!.scrollX;
 
     this.contentWindow!.requestAnimationFrame(() => {
-      this.#is_scrolling =
-        this.contentWindow!.scrollX !== x || this.contentWindow!.scrollY !== y;
+      this.#is_scrolling = this.contentWindow!.scrollX !== x || this.contentWindow!.scrollY !== y;
 
       // immediately render the hints if we aren't scrolling
       if (!this.#is_scrolling) {
@@ -792,10 +711,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
   }
 
   #get_active_element(): HTMLElement | null {
-    return this.document?.activeElement ?
-        this.#get_active_nested_shadow_root_elem(
-          this.document.activeElement as HTMLElement
-        )
+    return this.document?.activeElement
+      ? this.#get_active_nested_shadow_root_elem(this.document.activeElement as HTMLElement)
       : null;
   }
 
@@ -834,11 +751,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
   send_async_message: <MessageName extends keyof ChildMessages>(
     messageName: MessageName,
     obj?: ChildMessages[MessageName] | undefined,
-    transferables?: any
+    transferables?: any,
   ) => void = this.sendAsyncMessage;
   send_query: <QueryName extends keyof ChildQueries>(
     messageName: QueryName,
-    obj?: ChildQueries[QueryName]["props"] | undefined
+    obj?: ChildQueries[QueryName]["props"] | undefined,
   ) => Promise<ChildQueries[QueryName]["result"]> = this.sendQuery;
 
   #change_mode(mode: GlideMode): void {
@@ -850,7 +767,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
   }
 
   #record_repeatable_command(
-    props: ChildMessages["Glide::RecordRepeatableCommand"]
+    props: ChildMessages["Glide::RecordRepeatableCommand"],
   ): void {
     this.send_async_message("Glide::RecordRepeatableCommand", props);
   }
@@ -890,18 +807,13 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "keydown": {
-        this.#last_key_event_element =
-          this.document?.activeElement ?
-            this.#get_active_nested_shadow_root_elem(
-              this.document?.activeElement as HTMLElement
-            )
+        this.#last_key_event_element = this.document?.activeElement
+          ? this.#get_active_nested_shadow_root_elem(this.document?.activeElement as HTMLElement)
           : null;
         break;
       }
       case "focusin": {
-        const target = this.#get_active_nested_shadow_root_elem(
-          event.target as HTMLElement
-        );
+        const target = this.#get_active_nested_shadow_root_elem(event.target as HTMLElement);
         if (DOM.is_text_editable(target)) {
           this.#last_focused_input_element = target;
         }

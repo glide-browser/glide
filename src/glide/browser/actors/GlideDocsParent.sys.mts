@@ -5,9 +5,7 @@
 
 import type { ChildMessages, ChildQueries } from "./GlideDocsChild.sys.mjs";
 
-const { assert_never } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 export interface ParentMessages {
   "Glide::SendMappings": { mappings: Map<GlideMode, KeyMappingIPC[]> };
@@ -22,14 +20,11 @@ export class GlideDocsParent extends JSWindowActorParent<
   #log: ConsoleInstance = null as any;
 
   actorCreated() {
-    this.#log = console.createInstance({
-      prefix: "GlideDocs[Parent]",
-      maxLogLevelPref: "glide.logging.loglevel",
-    });
+    this.#log = console.createInstance({ prefix: "GlideDocs[Parent]", maxLogLevelPref: "glide.logging.loglevel" });
   }
 
   async receiveMessage(
-    message: ActorReceiveMessage<ChildMessages, ChildQueries>
+    message: ActorReceiveMessage<ChildMessages, ChildQueries>,
   ) {
     this.#log.debug("receiveMessage", message);
 
@@ -37,9 +32,9 @@ export class GlideDocsParent extends JSWindowActorParent<
       case "Glide::RequestMappings": {
         const mappings = new Map<GlideMode, KeyMappingIPC[]>();
 
-        for (const [mode, trie] of Object.entries(
-          this.glide_browser.key_manager.global_mappings
-        )) {
+        for (
+          const [mode, trie] of Object.entries(this.glide_browser.key_manager.global_mappings)
+        ) {
           const items: KeyMappingIPC[] = [];
           mappings.set(mode as GlideMode, items);
 
@@ -50,9 +45,8 @@ export class GlideDocsParent extends JSWindowActorParent<
 
             items.push({
               ...node.value,
-              command:
-                typeof node.value.command !== "string" ?
-                  "<function>"
+              command: typeof node.value.command !== "string"
+                ? "<function>"
                 : node.value.command,
             });
           }
@@ -76,10 +70,10 @@ export class GlideDocsParent extends JSWindowActorParent<
   send_async_message: <MessageName extends keyof ParentMessages>(
     messageName: MessageName,
     obj?: ParentMessages[MessageName] | undefined,
-    transferables?: any
+    transferables?: any,
   ) => void = this.sendAsyncMessage;
   send_query: <QueryName extends keyof ParentQueries>(
     messageName: QueryName,
-    obj?: ParentQueries[QueryName]["props"] | undefined
+    obj?: ParentQueries[QueryName]["props"] | undefined,
   ) => Promise<ParentQueries[QueryName]["result"]> = this.sendQuery;
 }

@@ -3,6 +3,7 @@
 To build Glide you must have [`pnpm`](https://pnpm.io/) installed.
 
 You must also verify that your system has the dependencies that Firefox requires:
+
 - [MacOS](https://firefox-source-docs.mozilla.org/setup/macos_build.html)
 - [Linux](https://firefox-source-docs.mozilla.org/setup/linux_build.html)
 - [Windows](https://firefox-source-docs.mozilla.org/setup/windows_build.html)
@@ -54,19 +55,22 @@ Glide inherits a lot of concepts from Firefox, for a quick primer:
 Primer on Glide specific concepts:
 
 1. TypeScript files are converted to JS by stripping all TS syntax with [ts-blank-space](https://github.com/bloomberg/ts-blank-space) and stored in a relative `./dist/` directory.
-  - Note this means you cannot use any TS syntax that has a runtime effect, e.g. `enum`
+
+- Note this means you cannot use any TS syntax that has a runtime effect, e.g. `enum`
+
 2. We use [Glider](#glider) to download & patch the Firefox sourcec code
 3. Development practically requires running an FS watcher, see below.
 
 ## Working on Glide
 
-You should *always* have a terminal open running our file watcher:
+You should _always_ have a terminal open running our file watcher:
 
 ```bash
 pnpm dev
 ```
 
 This handles:
+
 - Compiling TS files to JS
 - Rebuilding docs
 - Copying source files to the Firefox `engine/` directory
@@ -128,10 +132,10 @@ function isjson(a: unknown, b: unknown, name?: string): void;
 
 // Like `is()` but expects a truthy value
 function ok(a: unknown, name?: string): asserts a;
-function notok(a: unknown, name?: string): void
+function notok(a: unknown, name?: string): void;
 ```
 
-You can filter the test functions that are ran in a *single* file with `.only()` or `.skip()`
+You can filter the test functions that are ran in a _single_ file with `.only()` or `.skip()`
 
 ```typescript
 add_task(...).skip();
@@ -139,6 +143,7 @@ add_task(...).only();
 ```
 
 Unfortunately, you cannot yet tell mochitest to run only a specific test file, but you can filter by directory, e.g.
+
 ```bash
 pnpm mach test glide/browser/base/content/test/config/
 ```
@@ -162,6 +167,7 @@ glide.prefs.set("security.fileuri.strict_origin_policy", false);
 ```
 
 And then open a URI like this:
+
 ```
 file:///path-to-glide-directory/src/glide/docs/dist/contributing.html
 ```
@@ -169,7 +175,7 @@ file:///path-to-glide-directory/src/glide/docs/dist/contributing.html
 > [!TIP]
 > You do not actually need to build Glide from scratch to update the docs!
 >
-> You can also run *just* the .md -> .html build step in watch mode with `pnpm dev:docs`.
+> You can also run _just_ the .md -> .html build step in watch mode with `pnpm dev:docs`.
 
 ### Debugging Hints
 
@@ -185,13 +191,14 @@ Glide makes use of [Glider](https://github.com/glide-browser/glider) to download
 
 Glider is part of a long chain of forks starting from [Melon](https://github.com/pulse-browser/browser) making it easier to apply patches to Firefox.
 
-However, Glider is just one part of how we patch Firefox. The [dev watcher](#working-on-glide) will also copy files into the Firefox source tree as they're changed. We do this because Firefox has builtin security measures that, reasonably, disallow reading symlinks to files *outside* of the firefox source directory while in the content process. This means we can't rely on just setting up symlinks.
+However, Glider is just one part of how we patch Firefox. The [dev watcher](#working-on-glide) will also copy files into the Firefox source tree as they're changed. We do this because Firefox has builtin security measures that, reasonably, disallow reading symlinks to files _outside_ of the firefox source directory while in the content process. This means we can't rely on just setting up symlinks.
 
 ### TypeScript build system
 
 We take a quite non-standard approach to shipping TS files where an FS watcher strips all of the TS syntax and replaces it with spaces before writing it to a relative `./dist/$name.js` file.
 
 This is for a couple reasons:
+
 - Integrating TS directly into the Firefox build system is hard
 - A strong belief that TS should just be JS + types
 - Replacing types with spaces means we do not need sourcemaps
@@ -200,15 +207,14 @@ This is for a couple reasons:
 
 To interact with web content Glide uses a single [JSWindowActor](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html), [`GlideHandlerChild.sys.mts`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
 
-All of the code in `GlideHandlerChild.sys.mts` is ran *outside* of the main process and communicates with the main process by sending messages.
+All of the code in `GlideHandlerChild.sys.mts` is ran _outside_ of the main process and communicates with the main process by sending messages.
 
 Messages are typed and sent through the `.send_async_message(name, args?)` method on either the parent actor or the child actor. Messages that the parent actor (main process) can send to the child are defined in [`GlideHandlerParent.sys.mts::ParentMessages`](/src/glide/browser/actors/GlideHandlerParent.sys.mts), and messages that the child actor can send are defined in [`GlideHandlerChild.sys.mts::ChildMessages`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
 
 Typical usage from the main process looks like this:
 
 ```typescript
-GlideBrowser.get_focused_actor().send_async_message(
-  "Glide::ReplaceChar",
-  { character: 'a' }
-);
+GlideBrowser.get_focused_actor().send_async_message("Glide::ReplaceChar", {
+  character: "a",
+});
 ```

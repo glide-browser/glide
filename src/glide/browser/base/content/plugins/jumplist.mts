@@ -4,9 +4,7 @@
 
 import type { Sandbox } from "../sandbox.mts";
 
-const { assert_present } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
+const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 type JumplistEntry = {
   type: "tab";
@@ -23,21 +21,12 @@ export class Jumplist {
     const { glide, browser } = sandbox;
     this.#sandbox = sandbox;
 
-    glide.excmds.create(
-      { name: "jumplist_back", description: "Jump back in the jumplist" },
-      () => {
-        this.jump_backwards();
-      }
-    );
-    glide.excmds.create(
-      {
-        name: "jumplist_forward",
-        description: "Jump forward in the jumplist",
-      },
-      () => {
-        this.jump_forwards();
-      }
-    );
+    glide.excmds.create({ name: "jumplist_back", description: "Jump back in the jumplist" }, () => {
+      this.jump_backwards();
+    });
+    glide.excmds.create({ name: "jumplist_forward", description: "Jump forward in the jumplist" }, () => {
+      this.jump_forwards();
+    });
 
     glide.autocmds.create("ConfigLoaded", () => {
       browser.tabs.onActivated.addListener(change_info => {
@@ -83,10 +72,7 @@ export class Jumplist {
 
       this.#index--;
 
-      const entry = assert_present(
-        this.#entries[this.#index],
-        `no entry for jumplist index ${this.#index}`
-      );
+      const entry = assert_present(this.#entries[this.#index], `no entry for jumplist index ${this.#index}`);
       const tab = await this.#get_tab(entry.tab_id);
       if (!tab) {
         // go until we find a tab that hasn't been deleted
@@ -106,10 +92,7 @@ export class Jumplist {
 
       this.#index++;
 
-      const entry = assert_present(
-        this.#entries[this.#index],
-        `no entry for jumplist index ${this.#index}`
-      );
+      const entry = assert_present(this.#entries[this.#index], `no entry for jumplist index ${this.#index}`);
       const tab = await this.#get_tab(entry.tab_id);
       if (!tab) {
         // go until we find a tab that hasn't been deleted

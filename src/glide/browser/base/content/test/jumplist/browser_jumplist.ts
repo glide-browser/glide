@@ -7,8 +7,7 @@
 
 "use strict";
 
-const INPUT_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 function uri(i: number) {
   return `${INPUT_TEST_URI}?i=${i}`;
@@ -113,11 +112,7 @@ add_task(async function test_jumplist_max_entries_trim() {
     }
     await sleep_frames(10);
 
-    is(
-      current_url(),
-      uri(2),
-      "After overflow trim, earliest entry should be i=2"
-    );
+    is(current_url(), uri(2), "After overflow trim, earliest entry should be i=2");
 
     for (const tab of tabs) {
       BrowserTestUtils.removeTab(tab);

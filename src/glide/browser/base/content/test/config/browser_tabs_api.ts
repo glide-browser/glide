@@ -4,8 +4,7 @@
 
 "use strict";
 
-const INPUT_TEST_URI =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async function setup() {
   await GlideTestUtils.reload_config(function _() {
@@ -15,8 +14,7 @@ add_setup(async function setup() {
 
 add_task(async function test_tabs_active() {
   await GlideTestUtils.reload_config(function _() {
-    const INPUT_TEST_URI =
-      "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+    const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
     glide.keymaps.set("normal", "<Space>n", async () => {
       const tab = await glide.tabs.active();
@@ -34,9 +32,7 @@ add_task(async function test_tabs_active() {
         // active tab should still be the first one
         assert((await glide.tabs.active()).url, INPUT_TEST_URI);
 
-        const current_window = (await browser.windows.getAll()).find(
-          w => w.focused
-        )!;
+        const current_window = (await browser.windows.getAll()).find(w => w.focused)!;
         windows.push(await browser.windows.create()); // this takes focus
         await browser.windows.update(current_window.id!, { focused: true });
 

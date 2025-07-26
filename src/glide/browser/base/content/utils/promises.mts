@@ -16,16 +16,12 @@ export type PromiseResult<T, M = void> =
  * with their respective values/reasons and associated metadata.
  */
 export async function all_settled<T, M>(
-  promises: Array<{ callback: () => Promise<T> | T; metadata: M }>
+  promises: Array<{ callback: () => Promise<T> | T; metadata: M }>,
 ): Promise<Array<PromiseResult<T, M>>> {
-  return Promise.all(
-    promises.map(({ callback, metadata }) =>
-      Promise.resolve()
-        .then(() => callback())
-        .then(
-          value => ({ status: "fulfilled", value, metadata }) as const,
-          reason => ({ status: "rejected", reason, metadata }) as const
-        )
-    )
-  );
+  return Promise.all(promises.map(({ callback, metadata }) =>
+    Promise.resolve()
+      .then(() => callback())
+      .then(value => ({ status: "fulfilled", value, metadata }) as const, reason =>
+        ({ status: "rejected", reason, metadata }) as const)
+  ));
 }

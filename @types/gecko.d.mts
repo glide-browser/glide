@@ -37,7 +37,7 @@ declare namespace GlobalBrowser {
       opts: {
         relatedToCurrent?: boolean;
         inBackground?: boolean;
-      }
+      },
     ): BrowserTab;
 
     currentURI: nsIURI;
@@ -87,12 +87,12 @@ declare namespace GlobalBrowser {
         priority: number;
         label: string | DocumentFragment;
         eventCallback?: (
-          parameter: "removed" | "dismissed" | "disconnected"
+          parameter: "removed" | "dismissed" | "disconnected",
         ) => void;
       },
       buttons?: NotificationBox.Button[],
       aDisableClickJackingDelay?: boolean,
-      dismissable?: boolean
+      dismissable?: boolean,
     ): Promise<Notification>;
     removeNotification(notification: Notification): void;
 
@@ -142,8 +142,7 @@ declare type _BroadcastConduit =
 declare type _ExtensionCommon =
   typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs").ExtensionCommon;
 
-declare type GlideHintIPC =
-  import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
+declare type GlideHintIPC = import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
 
 declare type GlideResolvedHint = Omit<GlideHintIPC, "target"> & {
   x: number;
@@ -175,16 +174,21 @@ declare namespace MockedExports {
     "chrome://glide/content/utils/objects.mjs": typeof import("../src/glide/browser/base/content/utils/objects.mts");
     "chrome://glide/content/utils/strings.mjs": typeof import("../src/glide/browser/base/content/utils/strings.mts");
     "chrome://glide/content/utils/promises.mjs": typeof import("../src/glide/browser/base/content/utils/promises.mts");
-    "chrome://glide/content/utils/resources.mjs": typeof import("../src/glide/browser/base/content/utils/resources.mts");
+    "chrome://glide/content/utils/resources.mjs":
+      typeof import("../src/glide/browser/base/content/utils/resources.mts");
     "chrome://glide/content/browser.mjs": typeof import("../src/glide/browser/base/content/browser.mts");
     "chrome://glide/content/motions.mjs": typeof import("../src/glide/browser/base/content/motions.mts");
     "chrome://glide/content/sandbox.mjs": typeof import("../src/glide/browser/base/content/sandbox.mts");
-    "chrome://glide/content/sandbox-properties.mjs": typeof import("../src/glide/browser/base/content/sandbox-properties.mjs");
+    "chrome://glide/content/sandbox-properties.mjs":
+      typeof import("../src/glide/browser/base/content/sandbox-properties.mjs");
     "chrome://glide/content/extensions.mjs": typeof import("../src/glide/browser/base/content/extensions.mts");
-    "chrome://glide/content/browser-constants.mjs": typeof import("../src/glide/browser/base/content/browser-constants.mts");
+    "chrome://glide/content/browser-constants.mjs":
+      typeof import("../src/glide/browser/base/content/browser-constants.mts");
     "chrome://glide/content/browser-excmds.mjs": typeof import("../src/glide/browser/base/content/browser-excmds.mts");
-    "chrome://glide/content/browser-excmds-registry.mjs": typeof import("../src/glide/browser/base/content/browser-excmds-registry.mts");
-    "chrome://glide/content/browser-commands.mjs": typeof import("../src/glide/browser/base/content/browser-commands.mts");
+    "chrome://glide/content/browser-excmds-registry.mjs":
+      typeof import("../src/glide/browser/base/content/browser-excmds-registry.mts");
+    "chrome://glide/content/browser-commands.mjs":
+      typeof import("../src/glide/browser/base/content/browser-commands.mts");
     "chrome://glide/content/browser-dev.mjs": typeof import("../src/glide/browser/base/content/browser-dev.mts");
     "chrome://glide/content/event-utils.mjs": typeof import("../src/glide/browser/base/content/event-utils.mts");
     "chrome://glide/content/config-init.mjs": typeof import("../src/glide/browser/base/content/config-init.mts");
@@ -194,8 +198,10 @@ declare namespace MockedExports {
 
     // internal / default plugins
     "chrome://glide/content/plugins/hints.mjs": typeof import("../src/glide/browser/base/content/plugins/hints.mts");
-    "chrome://glide/content/plugins/keymaps.mjs": typeof import("../src/glide/browser/base/content/plugins/keymaps.mts");
-    "chrome://glide/content/plugins/jumplist.mjs": typeof import("../src/glide/browser/base/content/plugins/jumplist.mts");
+    "chrome://glide/content/plugins/keymaps.mjs":
+      typeof import("../src/glide/browser/base/content/plugins/keymaps.mts");
+    "chrome://glide/content/plugins/jumplist.mjs":
+      typeof import("../src/glide/browser/base/content/plugins/jumplist.mts");
 
     "chrome://glide/content/docs.mjs": typeof import("../src/glide/browser/base/content/docs.mts");
 
@@ -210,21 +216,29 @@ declare namespace MockedExports {
     "chrome://glide/content/bundled/prettier.mjs": typeof import("prettier");
     "chrome://glide/content/bundled/prettier-html.mjs": typeof import("prettier/plugins/html.d.ts");
 
-    "resource://testing-common/DOMFullscreenTestUtils.sys.mjs": typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
-    "resource://testing-common/GlideTestUtils.sys.mjs": typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
+    "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
+      typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
+    "resource://testing-common/GlideTestUtils.sys.mjs":
+      typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
     "resource://testing-common/fast-check.mjs": typeof import("fast-check");
 
-    "resource://gre/modules/Extension.sys.mjs": typeof import("../engine/toolkit/components/extensions/Extension.sys.mjs");
-    "resource://gre/modules/ExtensionCommon.sys.mjs": typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs");
-    "resource://gre/modules/ExtensionParent.sys.mjs": typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs") & {
-      ExtensionParent: {
-        ParentAPIManager: {
-          conduit: BroadcastConduit;
+    "resource://gre/modules/Extension.sys.mjs":
+      typeof import("../engine/toolkit/components/extensions/Extension.sys.mjs");
+    "resource://gre/modules/ExtensionCommon.sys.mjs":
+      typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs");
+    "resource://gre/modules/ExtensionParent.sys.mjs":
+      & typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs")
+      & {
+        ExtensionParent: {
+          ParentAPIManager: {
+            conduit: BroadcastConduit;
+          };
         };
       };
-    };
-    "resource://gre/modules/ConduitsParent.sys.mjs": typeof import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs");
-    "resource://gre/modules/AppConstants.sys.mjs": typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
+    "resource://gre/modules/ConduitsParent.sys.mjs":
+      typeof import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs");
+    "resource://gre/modules/AppConstants.sys.mjs":
+      typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
 
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
@@ -243,7 +257,7 @@ declare namespace MockedExports {
      */
     importESModule: <S extends keyof KnownModules>(
       module: S,
-      aOptions?: ImportESModuleOptionsDictionary
+      aOptions?: ImportESModuleOptionsDictionary,
     ) => KnownModules[S];
     defineModuleGetter: (target: any, variable: string, path: string) => void;
     defineESModuleGetters: (target: any, mappings: any) => void;
@@ -269,7 +283,7 @@ interface BroadcastConduit extends _BroadcastConduit {
       path: string;
       urgentSend: boolean;
       args: StructuredCloneHolder;
-    }
+    },
   ): Promise<StructuredCloneHolder | undefined>;
 }
 
@@ -284,10 +298,12 @@ interface WebExtension {
   uuid: string;
   apiManager: InstanceType<_ExtensionCommon["LazyAPIManager"]>;
   tabManager: TabManagerBase;
-  backgroundContext: InstanceType<
-    typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
-  > &
-    InstanceType<_ExtensionCommon["BaseContext"]> & {
+  backgroundContext:
+    & InstanceType<
+      typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
+    >
+    & InstanceType<_ExtensionCommon["BaseContext"]>
+    & {
       /**
        * This is set in `toolkit/components/extensions/ExtensionCommon.sys.mjs` when any registered
        * web extension listener in our internal extension (used by the config) throws an error.
@@ -321,7 +337,7 @@ declare interface NodeListOf<TNode extends Node> extends NodeList {
    */
   forEach(
     callbackfn: (value: TNode, key: number, parent: NodeListOf<TNode>) => void,
-    thisArg?: any
+    thisArg?: any,
   ): void;
   [index: number]: TNode;
 }
@@ -347,11 +363,11 @@ interface JSActor<
   sendAsyncMessage<MessageName extends keyof Messages>(
     messageName: MessageName,
     obj?: Messages[MessageName],
-    transferables?: any
+    transferables?: any,
   ): void;
   sendQuery<QueryName extends keyof Queries>(
     messageName: QueryName,
-    obj?: Queries[QueryName]["props"]
+    obj?: Queries[QueryName]["props"],
   ): Promise<Queries[QueryName]["result"]>;
 }
 
@@ -369,7 +385,7 @@ interface JSWindowActorChild<
 
 declare var JSWindowActorChild: {
   prototype: JSWindowActorChild;
-  new <
+  new<
     Messages = Record<string, any>,
     Queries = Record<string, GlideActorQuery>,
   >(): JSWindowActorChild<Messages, Queries>;
@@ -387,7 +403,7 @@ interface JSWindowActorParent<
 
 declare var JSWindowActorParent: {
   prototype: JSWindowActorParent;
-  new <
+  new<
     Messages = Record<string, any>,
     Queries = Record<string, GlideActorQuery>,
   >(): JSWindowActorParent<Messages, Queries>;
@@ -401,5 +417,5 @@ declare var JSWindowActorParent: {
 
 type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
   [Key in keyof BaseType]: Key extends Keys ? NonNullable<BaseType[Key]>
-  : BaseType[Key];
+    : BaseType[Key];
 };

@@ -8,9 +8,7 @@
 
 import type { Sandbox } from "../sandbox.mts";
 
-const { MOTIONS } = ChromeUtils.importESModule(
-  "chrome://glide/content/motions.mjs"
-);
+const { MOTIONS } = ChromeUtils.importESModule("chrome://glide/content/motions.mjs");
 
 export function init(sandbox: Sandbox) {
   const { glide } = sandbox;
@@ -25,11 +23,7 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set(["normal", "insert"], "<C-u>", "scroll_page_up");
 
   // ignore mode
-  glide.keymaps.set(
-    ["normal", "insert", "visual"],
-    "<S-Esc>",
-    "mode_change ignore"
-  );
+  glide.keymaps.set(["normal", "insert", "visual"], "<S-Esc>", "mode_change ignore");
   glide.keymaps.set("ignore", "<S-Esc>", "mode_change normal");
 
   // history
@@ -60,11 +54,7 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", ".", "repeat");
   glide.keymaps.set("normal", ":", "commandline_show");
 
-  glide.keymaps.set(
-    ["insert", "visual", "op-pending"],
-    "<Esc>",
-    "mode_change normal"
-  );
+  glide.keymaps.set(["insert", "visual", "op-pending"], "<Esc>", "mode_change normal");
 
   glide.keymaps.set("normal", "i", "mode_change insert --automove=left");
   glide.keymaps.set("normal", "a", "mode_change insert");
@@ -73,12 +63,8 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", "u", "undo");
 
   // vim motions
-  glide.keymaps.set("normal", "d", "mode_change op-pending --operator=d", {
-    retain_key_display: true,
-  });
-  glide.keymaps.set("normal", "c", "mode_change op-pending --operator=c", {
-    retain_key_display: true,
-  });
+  glide.keymaps.set("normal", "d", "mode_change op-pending --operator=d", { retain_key_display: true });
+  glide.keymaps.set("normal", "c", "mode_change op-pending --operator=c", { retain_key_display: true });
   for (const motion of MOTIONS) {
     glide.keymaps.set("op-pending", motion, "execute_motion");
   }

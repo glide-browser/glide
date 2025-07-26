@@ -3,9 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
-const { LayoutUtils } = ChromeUtils.importESModule(
-  "resource://gre/modules/LayoutUtils.sys.mjs"
-);
+const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
 export const ALPHABET = "hjklasdfgyuiopqwertnmzxcvb".split("");
 
@@ -65,47 +63,38 @@ export const content = {
       const point_element = DOM.element_at_point(
         document,
         dom_rect.left + dom_rect.width * 0.5,
-        dom_rect.top + dom_rect.height * 0.5
+        dom_rect.top + dom_rect.height * 0.5,
       );
       if (
-        point_element &&
-        point_element !== target &&
-        !(point_element.contains(target) || target.contains(point_element))
+        point_element
+        && point_element !== target
+        && !(point_element.contains(target) || target.contains(point_element))
       ) {
         continue;
       }
 
       const rect = LayoutUtils.getElementBoundingScreenRect(target);
-      hints.push({
-        id: i++,
-        target,
-        screen_x: rect.x,
-        screen_y: rect.y,
-        width: rect.width,
-        height: rect.height,
-      });
+      hints.push({ id: i++, target, screen_x: rect.x, screen_y: rect.y, width: rect.width, height: rect.height });
     }
 
     return hints;
   },
 
-  HINTABLE_ELEMENT_TAGS: new Set(
-    [
-      "a",
-      "input",
-      "textarea",
-      "button",
-      "details",
-      "option",
-      "label",
-      // firefox XUL elements
-      "toolbarbutton",
-      "richlistitem",
-      "menulist",
-      "checkbox",
-      "radio",
-    ].flatMap(str => [str, str.toUpperCase(), `html:${str}`, `xul:${str}`])
-  ),
+  HINTABLE_ELEMENT_TAGS: new Set([
+    "a",
+    "input",
+    "textarea",
+    "button",
+    "details",
+    "option",
+    "label",
+    // firefox XUL elements
+    "toolbarbutton",
+    "richlistitem",
+    "menulist",
+    "checkbox",
+    "radio",
+  ].flatMap(str => [str, str.toUpperCase(), `html:${str}`, `xul:${str}`])),
 
   HINTABLE_ROLES: new Set([
     "link",
@@ -121,7 +110,7 @@ export const content = {
 
   *hintable_targets(
     root: Document | ShadowRoot,
-    opts: ResolveProps | undefined
+    opts: ResolveProps | undefined,
   ): Generator<HTMLElement> {
     for (const el of all_elements(root)) {
       if (!el) {
@@ -133,9 +122,9 @@ export const content = {
       // filters use logical and, they must *all* return `true` for the target to be included.
       const filters = [
         opts?.selector ? target.matches(opts.selector) : null,
-        typeof opts?.editable_only !== "undefined" ?
-          DOM.is_text_editable(target)
-        : null,
+        typeof opts?.editable_only !== "undefined"
+          ? DOM.is_text_editable(target)
+          : null,
       ].filter(v => v != null);
 
       if (filters.length) {
@@ -143,10 +132,10 @@ export const content = {
           yield target;
         }
       } else if (
-        this.HINTABLE_ELEMENT_TAGS.has(target.tagName) ||
-        (target.role && this.HINTABLE_ROLES.has(target.role)) ||
-        (opts?.include && target.matches(opts?.include)) ||
-        DOM.is_text_editable(target)
+        this.HINTABLE_ELEMENT_TAGS.has(target.tagName)
+        || (target.role && this.HINTABLE_ROLES.has(target.role))
+        || (opts?.include && target.matches(opts?.include))
+        || DOM.is_text_editable(target)
       ) {
         yield target;
       }

@@ -14,9 +14,7 @@ declare global {
 }
 
 function toolbar_button(): HTMLElement {
-  const toolbar_button = document!.getElementById(
-    "glide-toolbar-keyseq-button"
-  );
+  const toolbar_button = document!.getElementById("glide-toolbar-keyseq-button");
   ok(toolbar_button, "Toolbar keyseq button should exist");
   return toolbar_button as HTMLElement;
 }
@@ -28,14 +26,9 @@ add_setup(async () => {
     glide.g.test_executed = false;
 
     // Add a test mapping that has display_keyseq
-    glide.keymaps.set(
-      "normal",
-      "t",
-      () => {
-        glide.g.test_executed = true;
-      },
-      { retain_key_display: true }
-    );
+    glide.keymaps.set("normal", "t", () => {
+      glide.g.test_executed = true;
+    }, { retain_key_display: true });
   });
 
   // Clear any existing keyseq display from previous tests
@@ -67,11 +60,7 @@ add_task(async function test_keyseq_display_multi_key_sequence() {
   await GlideTestUtils.synthesize_keyseq("g");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
-  is(
-    keyseq_span!.textContent,
-    "",
-    "Should clear display after completing 'gg' mapping"
-  );
+  is(keyseq_span!.textContent, "", "Should clear display after completing 'gg' mapping");
 });
 
 add_task(async function test_keyseq_op_pending() {
@@ -83,11 +72,7 @@ add_task(async function test_keyseq_op_pending() {
   await GlideTestUtils.synthesize_keyseq("w");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
-  is(
-    keyseq_span!.textContent,
-    "",
-    "Keyseq should be cleared after complete operation"
-  );
+  is(keyseq_span!.textContent, "", "Keyseq should be cleared after complete operation");
   is(GlideBrowser.state.mode, "normal", "Should return to normal mode");
 });
 
@@ -100,11 +85,7 @@ add_task(async function test_keyseq_display_clears_on_invalid_sequence() {
   await GlideTestUtils.synthesize_keyseq("x");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
-  is(
-    keyseq_span!.textContent,
-    "",
-    "Keyseq should be cleared after invalid key"
-  );
+  is(keyseq_span!.textContent, "", "Keyseq should be cleared after invalid key");
 });
 
 add_task(async function test_keyseq_display_with_op_pending_mode() {
@@ -127,20 +108,14 @@ add_task(async function test_keyseq_display_with_op_pending_mode() {
 
 add_task(async function test_keyseq_display_without_toolbar_button() {
   // emulate user customised toolbar and removed the element
-  const original_button = document!.getElementById(
-    "glide-toolbar-keyseq-button"
-  );
+  const original_button = document!.getElementById("glide-toolbar-keyseq-button");
   original_button!.remove();
 
   // This should not throw an error
   await GlideTestUtils.synthesize_keyseq("g");
 
   const keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
-  is(
-    keyseq_span,
-    null,
-    "No keyseq span should be created when toolbar button is missing"
-  );
+  is(keyseq_span, null, "No keyseq span should be created when toolbar button is missing");
 
   // Restore the button for other tests
   document!.body!.appendChild(original_button!);

@@ -5,15 +5,9 @@
 
 import type { GlideOperator } from "./browser-excmds-registry.mts";
 
-const text_obj = ChromeUtils.importESModule(
-  "chrome://glide/content/text-objects.mjs"
-);
-const { assert_never } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const strings = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/strings.mjs"
-);
+const text_obj = ChromeUtils.importESModule("chrome://glide/content/text-objects.mjs");
+const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 
 /**
  * A minimal representation of `nsIEditor` so that we can re-implement editors
@@ -46,13 +40,14 @@ export function select_motion(
   editor: nsIEditor,
   motion: GlideMotion,
   mode: GlideMode,
-  operator: GlideOperator
+  operator: GlideOperator,
 ):
   | {
-      // TODO(glide): figure out a different pattern for this problem
-      fixup_deletion: () => void;
-    }
-  | undefined {
+    // TODO(glide): figure out a different pattern for this problem
+    fixup_deletion: () => void;
+  }
+  | undefined
+{
   switch (motion) {
     case "iw": {
       start_of_word(editor);
@@ -63,8 +58,8 @@ export function select_motion(
       // we are at the beginning of the input or on the very first char,
       // there's nothing for us to do
       if (
-        editor.selection.focusOffset <= 1 ||
-        preceding_char(editor) === "\n"
+        editor.selection.focusOffset <= 1
+        || preceding_char(editor) === "\n"
       ) {
         return;
       }
@@ -80,26 +75,18 @@ export function select_motion(
       }
 
       // TODO(glide): clean this up
-      var left_newline_index = strings.reverse_indexof(
-        text,
-        "\n",
-        editor.selection.focusOffset - 1
-      );
+      var left_newline_index = strings.reverse_indexof(text, "\n", editor.selection.focusOffset - 1);
       if (left_newline_index === -1) {
         left_newline_index = 0;
       }
-      var right_newline_index = text.indexOf(
-        "\n",
-        editor.selection.focusOffset
-      );
+      var right_newline_index = text.indexOf("\n", editor.selection.focusOffset);
 
       if (right_newline_index === -1) {
         // there is only one line, we can't do anything
         return;
       }
 
-      const right_aligned_pos_in_line =
-        right_newline_index - editor.selection.focusOffset;
+      const right_aligned_pos_in_line = right_newline_index - editor.selection.focusOffset;
 
       right_newline_index = text.indexOf("\n", right_newline_index + 1);
       if (right_newline_index === -1) {
@@ -117,8 +104,8 @@ export function select_motion(
       }
 
       if (
-        editor.selection.anchorOffset === 0 &&
-        text.charAt(editor.selection.focusOffset)
+        editor.selection.anchorOffset === 0
+        && text.charAt(editor.selection.focusOffset)
       ) {
         editor.selectionController.characterMove(true, true);
       }
@@ -208,12 +195,12 @@ export function select_motion(
  *
  * col = 0
  * ```
- *█foo
+ * █foo
  * ---
  * █oo
  * ---
  * foo
- *█bar
+ * █bar
  * ```
  *
  * col = 2
@@ -246,10 +233,7 @@ export function start_of_word(editor: Editor) {
   const starting_cls = text_obj.cls(current_char(editor));
 
   while (text_obj.cls(current_char(editor)) === starting_cls) {
-    editor.selectionController.characterMove(
-      /* forward */ false,
-      /* extend */ false
-    );
+    editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
 
     if (is_bof(editor) || is_eol(editor)) {
       break;
@@ -257,15 +241,12 @@ export function start_of_word(editor: Editor) {
   }
 
   // correct off-by-one
-  editor.selectionController.characterMove(
-    /* forward */ true,
-    /* extend */ false
-  );
+  editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
 }
 
 export function end_of_word(
   editor: Editor,
-  props?: { extend?: boolean; inclusive?: boolean }
+  props?: { extend?: boolean; inclusive?: boolean },
 ) {
   if (is_eol(editor)) {
     // if we're at the end of the line then there's nothing more we can do
@@ -299,7 +280,7 @@ export function end_of_word(
 export function forward_word(
   editor: Editor,
   bigword: boolean,
-  mode: GlideMode | undefined
+  mode: GlideMode | undefined,
 ) {
   const extend = mode === "visual";
   const starting_cls = text_obj.cls(current_char(editor));
@@ -346,17 +327,11 @@ export function forward_word(
  */
 export function back_word(editor: Editor, bigword: boolean) {
   // we always want to move one character back no matter what
-  editor.selectionController.characterMove(
-    /* forward */ false,
-    /* extend */ false
-  );
+  editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
 
   // find the end of the previous word
   while (text_obj.cls(current_char(editor)) === text_obj.CLS_WHITESPACE) {
-    editor.selectionController.characterMove(
-      /* forward */ false,
-      /* extend */ false
-    );
+    editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
 
     if (is_bof(editor)) {
       break;
@@ -367,10 +342,7 @@ export function back_word(editor: Editor, bigword: boolean) {
   const starting_cls = text_obj.cls(current_char(editor));
   if (bigword) {
     while (text_obj.cls(current_char(editor)) !== text_obj.CLS_WHITESPACE) {
-      editor.selectionController.characterMove(
-        /* forward */ false,
-        /* extend */ false
-      );
+      editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
 
       if (is_bof(editor)) {
         break;
@@ -378,10 +350,7 @@ export function back_word(editor: Editor, bigword: boolean) {
     }
   } else {
     while (text_obj.cls(current_char(editor)) === starting_cls) {
-      editor.selectionController.characterMove(
-        /* forward */ false,
-        /* extend */ false
-      );
+      editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
 
       if (is_bof(editor)) {
         break;
@@ -391,10 +360,7 @@ export function back_word(editor: Editor, bigword: boolean) {
 
   // we moved one too far
   if (text_obj.cls(current_char(editor)) !== starting_cls || is_bof(editor)) {
-    editor.selectionController.characterMove(
-      /* forward */ true,
-      /* extend */ false
-    );
+    editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
   }
 }
 
@@ -429,9 +395,9 @@ export function back_para(editor: nsIEditor) {
  */
 export function back_char(editor: Editor, extend: boolean) {
   if (
-    (selection_direction(editor) !== "forwards" &&
-      current_char(editor) === "\n") ||
-    editor.selection.focusOffset < 1
+    (selection_direction(editor) !== "forwards"
+      && current_char(editor) === "\n")
+    || editor.selection.focusOffset < 1
   ) {
     return;
   }
@@ -456,8 +422,8 @@ export function forward_char(editor: Editor, extend: boolean) {
 
   // visual mode allows
   if (
-    selection_direction(editor) !== "backwards" &&
-    current_char(editor) === "\n"
+    selection_direction(editor) !== "backwards"
+    && current_char(editor) === "\n"
   ) {
     return;
   }
@@ -472,7 +438,7 @@ export function forward_char(editor: Editor, extend: boolean) {
 export function beginning_of_line(
   editor: Editor,
   extend: boolean,
-  inclusive: boolean = false
+  inclusive: boolean = false,
 ) {
   while (preceding_char(editor) !== "\n" && editor.selection.focusOffset > 1) {
     editor.selectionController.characterMove(false, extend);
@@ -490,7 +456,7 @@ export function beginning_of_line(
 export function end_of_line(
   editor: Editor,
   extend: boolean,
-  inclusive: boolean = false
+  inclusive: boolean = false,
 ) {
   while (next_char(editor) !== "\n" && !is_eof(editor)) {
     editor.selectionController.characterMove(true, extend);
@@ -508,10 +474,7 @@ export function delete_selection(editor: Editor, forward: boolean) {
     throw new Error("cannot delete collapsed selections");
   }
 
-  editor.deleteSelection(
-    /* action */ Ci.nsIEditor.ePrevious,
-    /* stripWrappers */ Ci.nsIEditor.eStrip
-  );
+  editor.deleteSelection(/* action */ Ci.nsIEditor.ePrevious, /* stripWrappers */ Ci.nsIEditor.eStrip);
 
   if (forward && !is_eol(editor)) {
     forward_char(editor, false);
@@ -519,7 +482,7 @@ export function delete_selection(editor: Editor, forward: boolean) {
 }
 
 function selection_direction(
-  editor: Editor
+  editor: Editor,
 ): "forwards" | "backwards" | "collapsed" {
   if (editor.selection.isCollapsed) {
     return "collapsed";
@@ -568,14 +531,14 @@ function is_empty_line(editor: Editor): boolean {
   // 1. The previous character is also a newline (empty line between text)
   // 2. The next character is also a newline (empty line between text)
   return (
-    current_char(editor) === "\n" &&
-    (preceding_char(editor) === "\n" || next_char(editor) === "\n")
+    current_char(editor) === "\n"
+    && (preceding_char(editor) === "\n" || next_char(editor) === "\n")
   );
 }
 
 export function is_bof(
   editor: Editor,
-  pos: "left" | "current" = "current"
+  pos: "left" | "current" = "current",
 ): boolean {
   switch (pos) {
     case "left":
@@ -589,8 +552,8 @@ export function is_bof(
 
 export function is_eof(editor: Editor): boolean {
   return (
-    editor.selection.focusOffset ===
-    editor.selection.focusNode?.textContent?.length
+    editor.selection.focusOffset
+      === editor.selection.focusNode?.textContent?.length
   );
 }
 

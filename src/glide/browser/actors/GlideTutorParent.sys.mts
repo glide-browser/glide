@@ -15,14 +15,11 @@ export class GlideTutorParent extends JSWindowActorParent<
   #log: ConsoleInstance = null as any;
 
   actorCreated() {
-    this.#log = console.createInstance({
-      prefix: "GlideTutor[Parent]",
-      maxLogLevelPref: "glide.logging.loglevel",
-    });
+    this.#log = console.createInstance({ prefix: "GlideTutor[Parent]", maxLogLevelPref: "glide.logging.loglevel" });
   }
 
   async receiveMessage(
-    message: ActorReceiveMessage<ChildMessages, ChildQueries>
+    message: ActorReceiveMessage<ChildMessages, ChildQueries>,
   ) {
     this.#log.debug("receiveMessage", message);
   }
@@ -33,10 +30,10 @@ export class GlideTutorParent extends JSWindowActorParent<
   send_async_message: <MessageName extends keyof ParentMessages>(
     messageName: MessageName,
     obj?: ParentMessages[MessageName] | undefined,
-    transferables?: any
+    transferables?: any,
   ) => void = this.sendAsyncMessage;
   send_query: <QueryName extends keyof ParentQueries>(
     messageName: QueryName,
-    obj?: ParentQueries[QueryName]["props"] | undefined
+    obj?: ParentQueries[QueryName]["props"] | undefined,
   ) => Promise<ParentQueries[QueryName]["result"]> = this.sendQuery;
 }

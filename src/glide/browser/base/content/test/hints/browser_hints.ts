@@ -7,10 +7,8 @@
 
 "use strict";
 
-const FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html";
-const SINGLE_HINT_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/single_hint_test.html";
+const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html";
+const SINGLE_HINT_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/single_hint_test.html";
 
 add_setup(async () => {
   await GlideTestUtils.synthesize_keyseq("<escape>");
@@ -19,16 +17,14 @@ add_setup(async () => {
 });
 
 function get_hints(): HTMLElement[] {
-  return Array.from(
-    document!.querySelectorAll(".glide-internal-hint-marker")
-  ) as HTMLElement[];
+  return Array.from(document!.querySelectorAll(".glide-internal-hint-marker")) as HTMLElement[];
 }
 
 async function wait_for_hints(): Promise<HTMLElement[]> {
   await TestUtils.waitForCondition(
     () => get_hints().length > 0,
     "waiting for hints to be shown",
-    5 // ms interval
+    5, // ms interval
   );
   await sleep_frames(2);
   return get_hints();
@@ -38,25 +34,14 @@ add_task(async function test_f_shows_hints() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("f");
     await wait_for_hints();
-    is(
-      GlideBrowser.state.mode,
-      "hint",
-      "Mode should be 'hint' after pressing 'f'"
-    );
+    is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'f'");
     ok(get_hints().length > 0, "Hints should be visible on the page");
 
     await GlideTestUtils.synthesize_keyseq("<escape>");
     await sleep_frames(5);
 
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Mode should return to 'normal' after pressing Escape"
-    );
-    ok(
-      get_hints().length === 0,
-      "Hints should be removed after exiting hint mode"
-    );
+    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after pressing Escape");
+    ok(get_hints().length === 0, "Hints should be removed after exiting hint mode");
   });
 });
 
@@ -64,11 +49,7 @@ add_task(async function test_F_shows_hints() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     await GlideTestUtils.synthesize_keyseq("F");
     await wait_for_hints();
-    is(
-      GlideBrowser.state.mode,
-      "hint",
-      "Mode should be 'hint' after pressing 'F'"
-    );
+    is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'F'");
     ok(get_hints().length > 0, "Hints should be visible on the page");
   });
 });
@@ -84,11 +65,7 @@ add_task(async function test_hints_follow_link() {
 
     await GlideTestUtils.synthesize_keyseq(first_hint.textContent);
 
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Mode should return to 'normal' after following hint"
-    );
+    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
   });
 });
 
@@ -107,17 +84,9 @@ add_task(async function test_F_opens_new_tab() {
     await sleep_frames(3);
 
     const final_tab_count = gBrowser.tabs.length;
-    is(
-      final_tab_count,
-      initial_tab_count + 1,
-      "F key should open a new tab when following hint"
-    );
+    is(final_tab_count, initial_tab_count + 1, "F key should open a new tab when following hint");
 
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Mode should return to 'normal' after following hint"
-    );
+    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
 
     // Clean up: close the new tab
     if (final_tab_count > initial_tab_count) {
@@ -136,10 +105,7 @@ add_task(async function test_partial_hint_filtering() {
     const filtered_hints = get_hints().length;
 
     ok(filtered_hints <= initial_count, "Typing should filter hints");
-    ok(
-      filtered_hints >= 0,
-      "Should have some hints remaining or none if no matches"
-    );
+    ok(filtered_hints >= 0, "Should have some hints remaining or none if no matches");
   });
 });
 
@@ -152,10 +118,7 @@ add_task(async function test_auto_activate_single_hint() {
     await GlideTestUtils.synthesize_keyseq("f");
     await sleep_frames(5);
 
-    ok(
-      GlideBrowser.state.mode === "normal",
-      "Should have entered auto-activated to normal"
-    );
+    ok(GlideBrowser.state.mode === "normal", "Should have entered auto-activated to normal");
 
     is(gBrowser.selectedBrowser?.currentURI.spec, FILE);
 
@@ -187,7 +150,7 @@ add_task(async function test_include_selector() {
     const extended_hints = get_hints();
     ok(
       extended_hints.length > standard_count,
-      `Extended hints (${extended_hints.length}) should be more than standard hints (${standard_count})`
+      `Extended hints (${extended_hints.length}) should be more than standard hints (${standard_count})`,
     );
   });
 });

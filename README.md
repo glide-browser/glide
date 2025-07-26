@@ -1,12 +1,12 @@
 <div align="center">
 
-# ░▒▓ *GLIDE* BROWSER ▓▒░
+# ░▒▓ _GLIDE_ BROWSER ▓▒░
 
 ### ⟨ Firefox, but you never leave the keyboard ⟩
 
 <hr>
 
-**A Firefox fork that brings the power of vim motions to web browsing**  
+**A Firefox fork that brings the power of vim motions to web browsing**\
 **with TypeScript-based configuration for complete customization**
 
 <div align="center">

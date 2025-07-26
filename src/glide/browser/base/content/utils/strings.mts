@@ -8,7 +8,7 @@
 export function reverse_indexof(
   str: string,
   char: string,
-  start: number = str.length - 1
+  start: number = str.length - 1,
 ) {
   for (let i = start; i > 0; i--) {
     if (str[i] === char) {
@@ -45,14 +45,13 @@ interface Candidate {
 export function generate_prefix_free_codes(
   alphabet: string[],
   n: number,
-  costMap?: { [char: string]: number }
+  costMap?: { [char: string]: number },
 ): string[] {
   // TODO(glide): review this implementation
   if (n <= 0) return [];
 
   // Returns the cost for a given character (default is 1)
-  const char_cost = (ch: string): number =>
-    costMap && costMap[ch] !== undefined ? costMap[ch] : 1;
+  const char_cost = (ch: string): number => costMap && costMap[ch] !== undefined ? costMap[ch] : 1;
 
   // Initialize a candidate pool for each branch (each letter)
   const pools: { [branch: string]: Candidate[] } = {};
@@ -78,8 +77,9 @@ export function generate_prefix_free_codes(
       if (pools[branch]!.length > 0) {
         // Sort this branch's candidates: first by length (ascending), then cost, then lexicographically.
         pools[branch]!.sort((a, b) => {
-          if (a.code.length !== b.code.length)
+          if (a.code.length !== b.code.length) {
             return a.code.length - b.code.length;
+          }
           if (a.cost !== b.cost) return a.cost - b.cost;
           return a.code.localeCompare(b.code);
         });
@@ -119,7 +119,7 @@ export function Words(strings: (string | undefined)[]): string {
 export function replace_surrounding(
   str: string,
   char: string,
-  replacement: string
+  replacement: string,
 ): string {
   let start_index = 0;
   let end_index = str.length;
@@ -133,8 +133,8 @@ export function replace_surrounding(
   }
 
   return (
-    replacement.repeat(start_index) +
-    str.slice(start_index, end_index) +
-    replacement.repeat(str.length - end_index)
+    replacement.repeat(start_index)
+    + str.slice(start_index, end_index)
+    + replacement.repeat(str.length - end_index)
   );
 }

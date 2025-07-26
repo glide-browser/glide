@@ -9,10 +9,10 @@
  * Note: this should really be managed by glider.
  */
 
-import fs from "fs/promises";
 import chokidar from "chokidar";
+import fs from "fs/promises";
 import Path from "path";
-import { SRC_DIR, ENGINE_DIR } from "./canonical-paths.mts";
+import { ENGINE_DIR, SRC_DIR } from "./canonical-paths.mts";
 import { queue } from "./dev.mts";
 
 const dir_cache = new Set<string>();
@@ -22,8 +22,8 @@ async function copy(abs_path: string) {
   const engine_path = Path.join(ENGINE_DIR, rel_path);
   const engine_dir = Path.dirname(engine_path);
   if (
-    !dir_cache.has(engine_dir) &&
-    !(await fs
+    !dir_cache.has(engine_dir)
+    && !(await fs
       .stat(engine_dir)
       .then(() => true)
       .catch(() => false))

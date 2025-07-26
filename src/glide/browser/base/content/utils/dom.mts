@@ -2,12 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-const logger: ConsoleInstance =
-  console.createInstance ?
-    console.createInstance({
-      prefix: "Glide[DOM]",
-      maxLogLevelPref: "glide.logging.loglevel",
-    })
+const logger: ConsoleInstance = console.createInstance
+  ? console.createInstance({ prefix: "Glide[DOM]", maxLogLevelPref: "glide.logging.loglevel" })
   : (console as any);
 
 const EDITABLE_NODE_NAMES = new Set(["SELECT", "TEXTAREA", "OBJECT"]);
@@ -47,9 +43,8 @@ export function is_text_editable(element: Element | null): boolean {
     return true;
   }
 
-  const role_attr =
-    typeof element.getAttribute === "function" ?
-      element.getAttribute("role")
+  const role_attr = typeof element.getAttribute === "function"
+    ? element.getAttribute("role")
     : null;
   if (role_attr === "application" || role_attr === "textbox") {
     return true;
@@ -62,8 +57,8 @@ export function is_text_editable(element: Element | null): boolean {
     for (let i = 0; i < element.attributes.length; i++) {
       const attr = element.attributes.item(i)!;
       if (
-        attr.name === "role" &&
-        (attr.value === "application" || attr.value === "textbox")
+        attr.name === "role"
+        && (attr.value === "application" || attr.value === "textbox")
       ) {
         return true;
       }
@@ -105,7 +100,7 @@ export function is_video_element(element: HTMLElement): boolean {
  */
 export function is_element<ElementType extends typeof Element>(
   element: Element | null | undefined,
-  of: ElementType
+  of: ElementType,
 ): element is ElementType["prototype"] {
   if (!element) {
     return false;
@@ -134,12 +129,10 @@ export function is_element<ElementType extends typeof Element>(
 export function create_element<K extends keyof HTMLElementTagNameMap>(
   tag_name: K,
   props?: DOM.CreateElementProps<K>,
-  a_document = document
+  a_document = document,
 ): HTMLElementTagNameMap[K] {
   if (!a_document) {
-    throw new Error(
-      'dom utils must be imported with { global: "current" } or passed the document argument'
-    );
+    throw new Error("dom utils must be imported with { global: \"current\" } or passed the document argument");
   }
 
   const element = a_document.createElement(tag_name);
@@ -197,7 +190,7 @@ export function element_at_point(
   root: Document | ShadowRoot,
   x: number,
   y: number,
-  stack: Set<Node> = new Set()
+  stack: Set<Node> = new Set(),
 ): HTMLElement | null {
   const element = root.elementFromPoint(x, y);
   if (!element) {
@@ -215,7 +208,7 @@ export function element_at_point(
 
 export async function scroll(
   window: Window,
-  delta: { type: "page" | "pixel"; x?: number; y?: number; z?: number }
+  delta: { type: "page" | "pixel"; x?: number; y?: number; z?: number },
 ): Promise<void> {
   const prev_x = window.scrollX;
   const prev_y = window.scrollY;
@@ -226,13 +219,13 @@ export async function scroll(
     delta.x ?? 0,
     delta.y ?? 0,
     delta.z ?? 0,
-    delta.type === "pixel" ?
-      WheelEvent.DOM_DELTA_PIXEL
-    : WheelEvent.DOM_DELTA_PAGE,
+    delta.type === "pixel"
+      ? WheelEvent.DOM_DELTA_PIXEL
+      : WheelEvent.DOM_DELTA_PAGE,
     0, // modifiers
     0, // line or page delta X
     0, // line or page delta Y
-    0 // options
+    0, // options
   );
 
   // For some reason, `sendWheelEvent()` doesn't always actually trigger a scroll until
@@ -262,16 +255,12 @@ export async function scroll(
   }
 
   logger.debug("using scroll fallback");
-  window.scrollTo({
-    left: prev_x + (delta.x ?? 0),
-    top: prev_y + (delta.y ?? 0),
-    behavior: "instant",
-  });
+  window.scrollTo({ left: prev_x + (delta.x ?? 0), top: prev_y + (delta.y ?? 0), behavior: "instant" });
 }
 
 export function scroll_to(
   window: Window,
-  coords: { x: number; y: number }
+  coords: { x: number; y: number },
 ): void {
   window.windowUtils.sendWheelEvent(
     coords.x,
@@ -283,7 +272,7 @@ export function scroll_to(
     0, // modifiers
     0, // line or page delta X
     0, // line or page delta Y
-    0 // options
+    0, // options
   );
 }
 

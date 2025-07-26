@@ -19,13 +19,8 @@ export function redefine_getter<O, Key extends keyof O, Value extends O[Key]>(
   object: O,
   key: Key,
   value: Value,
-  writable = false
+  writable = false,
 ) {
-  Object.defineProperty(object, key, {
-    enumerable: true,
-    configurable: true,
-    writable,
-    value,
-  });
+  Object.defineProperty(object, key, { enumerable: true, configurable: true, writable, value });
   return value;
 }

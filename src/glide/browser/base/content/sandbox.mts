@@ -3,15 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { WINDOW_PROPERTIES } = ChromeUtils.importESModule(
-  "chrome://glide/content/sandbox-properties.mjs"
-);
-const Dedent = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/dedent.mjs"
-);
-const DOMUtils = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/dom.mjs"
-);
+const { WINDOW_PROPERTIES } = ChromeUtils.importESModule("chrome://glide/content/sandbox-properties.mjs");
+const Dedent = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
+const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 
 /**
  * Represents an object returned by {@link create_sandbox}.
@@ -39,7 +33,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
   const DOM: DOM.Utils = {
     create_element<K extends keyof HTMLElementTagNameMap>(
       tag_name: K,
-      props?: DOM.CreateElementProps<K>
+      props?: DOM.CreateElementProps<K>,
     ): HTMLElementTagNameMap[K] {
       return DOMUtils.create_element(tag_name, props, document);
     },
@@ -67,30 +61,27 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     },
     todo_assert(value: unknown, message?: string): asserts value {
       if (value) {
-        throw new AssertionError({
-          message: message ?? `Expected \`${value}\` to be falsy`,
-          actual: value,
-        });
+        throw new AssertionError({ message: message ?? `Expected \`${value}\` to be falsy`, actual: value });
       }
     },
   };
 
   if (props.document) {
-    for (const [name, descriptor] of Object.entries(
-      Object.getOwnPropertyDescriptors(props.document.defaultView)
-    )) {
+    for (
+      const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(props.document.defaultView))
+    ) {
       if (!WINDOW_PROPERTIES.has(name)) {
         continue;
       }
 
       Object.defineProperty(proto, name, {
         ...descriptor,
-        ...(descriptor.get ?
-          {
+        ...(descriptor.get
+          ? {
             // rebind the getter to ensure it is called on the originating object
             get: descriptor.get.bind(props.document.defaultView),
           }
-        : undefined),
+          : undefined),
         enumerable: true,
       });
     }

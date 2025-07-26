@@ -1,4 +1,5 @@
 {% head %}
+
 <link rel="stylesheet" href="./index.css?v=" />
 {% /head %}
 
@@ -9,6 +10,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
 ## Download
 
 {% html %}
+
 <div class="grid">
   <div class="download-platform">
     <span class="platform-label">macOS</span>
@@ -27,22 +29,24 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
 </div>
 {% /html %}
 
-
 ## Keyboard shortcuts
 
 {% html %}
+
 <div id="keyboard-shortcuts-note">
 {% /html %}
 
-> *All shortcuts work in normal mode unless otherwise specified.*
+> _All shortcuts work in normal mode unless otherwise specified._
 >
-> *The default <leader> key is <space>*
+> _The default <leader> key is <space>_
 
 {% html %}
+
 </div>
 {% /html %}
 
 {% html %}
+
 <div class="shortcuts-container">
   <div class="shortcut-section">
     <h3>Navigation & Scrolling</h3>
@@ -74,7 +78,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Links & Hints</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">f</span>
@@ -101,7 +105,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Tabs</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">&lt;leader&gt;d</span>
@@ -113,7 +117,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Commandline</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">:</span>
@@ -131,7 +135,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Mode Switching</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">i</span>
@@ -149,7 +153,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Text Editing</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">d</span>
@@ -165,7 +169,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Motions</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">w</span>
@@ -187,7 +191,7 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
     </div>
   </div>
 
-  <div class="shortcut-section">
+<div class="shortcut-section">
     <h3>Visual Mode</h3>
     <div class="shortcut-grid">
       <span class="shortcut-key">h</span>

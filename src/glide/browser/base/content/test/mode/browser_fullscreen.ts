@@ -9,37 +9,26 @@
 
 declare var content: TestContent;
 
-const VIDEO_FILE =
-  "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/video_test.html";
+const VIDEO_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/video_test.html";
 
 add_task(async function test_video_fullscreen() {
   await BrowserTestUtils.withNewTab(VIDEO_FILE, async browser => {
     await GlideTestUtils.wait_for_mode("normal");
 
     await SpecialPowers.spawn(browser, [], async () => {
-      const video = content.document.getElementById(
-        "testVideo"
-      ) as HTMLVideoElement;
+      const video = content.document.getElementById("testVideo") as HTMLVideoElement;
       await video.requestFullscreen();
     });
 
     await GlideTestUtils.wait_for_mode("insert");
-    is(
-      GlideBrowser.state.mode,
-      "insert",
-      "Mode should be `insert` when video is in fullscreen"
-    );
+    is(GlideBrowser.state.mode, "insert", "Mode should be `insert` when video is in fullscreen");
 
     await SpecialPowers.spawn(browser, [], async () => {
       await content.document.exitFullscreen();
     });
 
     await GlideTestUtils.wait_for_mode("normal");
-    is(
-      GlideBrowser.state.mode,
-      "normal",
-      "Mode should be `normal` after exiting video fullscreen"
-    );
+    is(GlideBrowser.state.mode, "normal", "Mode should be `normal` after exiting video fullscreen");
   });
 });
 
@@ -49,9 +38,7 @@ add_task(async function test_video_fullscreen_does_not_switch_on_ignore_mode() {
     await GlideTestUtils.synthesize_keyseq("<S-Esc>");
 
     await SpecialPowers.spawn(browser, [], async () => {
-      const video = content.document.getElementById(
-        "testVideo"
-      ) as HTMLVideoElement;
+      const video = content.document.getElementById("testVideo") as HTMLVideoElement;
       await video.requestFullscreen();
     });
 
@@ -62,10 +49,6 @@ add_task(async function test_video_fullscreen_does_not_switch_on_ignore_mode() {
     });
 
     await sleep_frames(10);
-    is(
-      GlideBrowser.state.mode,
-      "ignore",
-      "Mode should stay as `ignore` when exiting fullscreen"
-    );
+    is(GlideBrowser.state.mode, "ignore", "Mode should stay as `ignore` when exiting fullscreen");
   });
 });

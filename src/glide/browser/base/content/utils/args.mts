@@ -3,18 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import type {
-  ArgumentsSchema,
-  ArgumentSchema,
-  ParsedArgs,
-} from "../browser-excmds-registry.mts";
+import type { ArgumentSchema, ArgumentsSchema, ParsedArgs } from "../browser-excmds-registry.mts";
 
-const { is_present, assert_never } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/guards.mjs"
-);
-const { human_join } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/arrays.mjs"
-);
+const { is_present, assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 
 /**
  * Tokenizes a command line string, respecting quoted strings.
@@ -52,7 +44,7 @@ function tokenize_args(input: string): (string | null)[] {
       continue;
     }
 
-    if (char === '"' || char === "'") {
+    if (char === "\"" || char === "'") {
       // Start of quoted string
       in_quotes = true;
       quote_char = char;
@@ -195,9 +187,9 @@ export function parse_command_args<Schema extends ArgumentsSchema>(props: {
   // check for missing required flags
   for (const [flag, schema] of Object.entries(props.schema)) {
     if (
-      schema.required &&
-      parsed[flag] === null &&
-      !attempted_flags.has(flag)
+      schema.required
+      && parsed[flag] === null
+      && !attempted_flags.has(flag)
     ) {
       errors.push(`Required flag "${flag}" is missing`);
     }
@@ -209,11 +201,7 @@ export function parse_command_args<Schema extends ArgumentsSchema>(props: {
     return { valid: false, errors };
   }
 
-  return {
-    valid: true,
-    args: parsed as ParsedArgs<Schema>,
-    remaining,
-  };
+  return { valid: true, args: parsed as ParsedArgs<Schema>, remaining };
 }
 
 const BOOLEAN_TRUE = new Set(["on", "1", "true", "t", "yes", "y"]);
@@ -222,20 +210,18 @@ const BOOLEAN_FALSE = new Set(["off", "0", "false", "f", "no", "n"]);
 function parse_arg_type(
   flag: string,
   schema: ArgumentSchema,
-  value: string
+  value: string,
 ): { valid: true; value: unknown } | { valid: false; error: string } {
   value = value.trim();
 
   if (typeof schema.type === "object") {
     if ("enum" in schema.type) {
-      return schema.type.enum.includes(value) ?
-          { valid: true, value }
+      return schema.type.enum.includes(value)
+        ? { valid: true, value }
         : {
-            valid: false,
-            error: `${flag} is not one of ${human_join(schema.type.enum, {
-              final: "or",
-            })}, got \`${value}\``,
-          };
+          valid: false,
+          error: `${flag} is not one of ${human_join(schema.type.enum, { final: "or" })}, got \`${value}\``,
+        };
     }
 
     throw assert_never(schema.type);
@@ -252,10 +238,12 @@ function parse_arg_type(
 
       return {
         valid: false,
-        error: `${flag} is not a valid boolean value; expected one of ${[
-          ...BOOLEAN_TRUE,
-          ...BOOLEAN_FALSE,
-        ].join(", ")}`,
+        error: `${flag} is not a valid boolean value; expected one of ${
+          [
+            ...BOOLEAN_TRUE,
+            ...BOOLEAN_FALSE,
+          ].join(", ")
+        }`,
       };
     }
 
@@ -266,10 +254,7 @@ function parse_arg_type(
       const n = Number.parseInt(value, 10);
       if (!Number.isNaN(n)) return { valid: true, value: n };
 
-      return {
-        valid: false,
-        error: `${flag} is not a valid integer, got \`${value}\``,
-      };
+      return { valid: false, error: `${flag} is not a valid integer, got \`${value}\`` };
     }
 
     default:
