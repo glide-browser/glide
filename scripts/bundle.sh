@@ -31,8 +31,4 @@ pnpm esbuild \
   --bundle "$(node -e 'console.log(require.resolve("shiki"))')" \
   > src/glide/bundled/shiki.mjs
 
-prettier_path=$(dirname $(node -e 'console.log(require.resolve("prettier"))'))
-cp "$prettier_path/standalone.mjs" src/glide/bundled/prettier.mjs
-cp "$prettier_path/plugins/html.mjs" src/glide/bundled/prettier-html.mjs
-
 ./scripts/bundle-types.sh

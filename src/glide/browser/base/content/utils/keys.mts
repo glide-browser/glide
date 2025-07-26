@@ -461,7 +461,6 @@ const DOWNCAST_SPECIAL_KEY_MAP = new Map(Object.entries({ lt: "<", Bar: "|", Bsl
  * include the S modifier when they appear in key combinations as they
  * inherintly require the shift key to type.
  */
-// prettier-ignore
 const SHIFTED_CHARACTERS = new Set([
   "!",
   "@",

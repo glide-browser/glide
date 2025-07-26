@@ -97,10 +97,6 @@ globalThis.ChromeUtils = {
         return a_require(`${SRC_DIR}/glide/bundled/markdoc.mjs`);
       case "chrome://glide/content/bundled/ts-blank-space.mjs":
         return a_require(`${SRC_DIR}/glide/bundled/ts-blank-space.mjs`);
-      case "chrome://glide/content/bundled/prettier.mjs":
-        return a_require(`${SRC_DIR}/glide/bundled/prettier.mjs`);
-      case "chrome://glide/content/bundled/prettier-html.mjs":
-        return a_require(`${SRC_DIR}/glide/bundled/prettier-html.mjs`);
 
       case "resource://gre/modules/LayoutUtils.sys.mjs":
       case "resource://gre/modules/Timer.sys.mjs":

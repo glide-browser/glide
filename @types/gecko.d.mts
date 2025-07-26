@@ -213,8 +213,6 @@ declare namespace MockedExports {
     "chrome://glide/content/bundled/ts-blank-space.mjs": {
       default: typeof import("ts-blank-space").default;
     };
-    "chrome://glide/content/bundled/prettier.mjs": typeof import("prettier");
-    "chrome://glide/content/bundled/prettier-html.mjs": typeof import("prettier/plugins/html.d.ts");
 
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
       typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");

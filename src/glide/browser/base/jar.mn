@@ -50,5 +50,3 @@ glide.jar:
   content/bundled/markdoc.mjs                  (../../bundled/markdoc.mjs)
   content/bundled/shiki.mjs                    (../../bundled/shiki.mjs)
   content/bundled/ts-blank-space.mjs           (../../bundled/ts-blank-space.mjs)
-  content/bundled/prettier.mjs                 (../../bundled/prettier.mjs)
-  content/bundled/prettier-html.mjs            (../../bundled/prettier-html.mjs)
