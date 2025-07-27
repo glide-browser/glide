@@ -20,7 +20,7 @@ const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs",
 );
-const { default: ts_blank_space } = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
+const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
@@ -317,7 +317,7 @@ class GlideBrowserClass {
     const config_str = await IOUtils.readUTF8(config_path);
 
     try {
-      const config_js = ts_blank_space(config_str);
+      const config_js = TSBlank.default(config_str);
       Cu.evalInSandbox(config_js, sandbox, null, this.#config_uri, 1, false);
     } catch (err) {
       this._log.error(err);
@@ -1755,7 +1755,7 @@ function make_glide_api(): typeof glide {
         });
 
         try {
-          const config_js = ts_blank_space(config_str);
+          const config_js = TSBlank.default(config_str);
           Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${rel_path}`, 1, false);
         } catch (err) {
           GlideBrowser._log.error(err);

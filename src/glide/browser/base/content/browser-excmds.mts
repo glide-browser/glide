@@ -22,9 +22,7 @@ const MozUtils = ChromeUtils.importESModule("chrome://glide/content/utils/moz.mj
 const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs");
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
-const { parse_command_args: base_parse_command_args } = ChromeUtils.importESModule(
-  "chrome://glide/content/utils/args.mjs",
-);
+const Args = ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 
 interface ExecuteProps {
@@ -680,7 +678,7 @@ export function parse_command_args<Cmd extends GlideExcmdInfo>(
   }
 
   const args = extract_command_args(command);
-  const parse_result = base_parse_command_args({ schema: meta.args_schema, args });
+  const parse_result = Args.parse_command_args({ schema: meta.args_schema, args });
   if (!parse_result.valid) {
     // TODO(glide-notify)
     throw new Error(`Couldn't parse command arguments due to ${JSON.stringify(parse_result.errors)}`);
