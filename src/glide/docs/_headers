@@ -4,3 +4,4 @@
 
 /*
   Cache-Control: public, max-age=300, s-maxage=31536000
+  Vary: Accept-Encoding
