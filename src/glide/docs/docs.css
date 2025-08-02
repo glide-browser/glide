@@ -626,14 +626,12 @@ h3.code-heading {
   display: flex;
   margin-top: unset;
   flex: 1;
-  max-height: 100vh;
-  overflow: auto;
 }
 
 .sidebar {
   position: sticky;
   top: 0px;
-  max-height: 100vh;
+  height: 100vh;
   min-width: 25ch;
   width: 20ch;
   padding: calc(var(--line-height)) 2ch;
@@ -641,6 +639,7 @@ h3.code-heading {
   --line-height: 1.2rem;
   background: var(--background-color);
   font-family: var(--font-family);
+  overflow-y: auto;
 }
 
 .glide-sidenav-heading {
