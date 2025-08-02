@@ -265,7 +265,13 @@ class GlideBrowserClass {
     this.config_path = null;
     this._modes = {} as any;
     this.#user_cmds = new Map();
-    this.#clear_config_error_notification();
+
+    try {
+      this.remove_all_notifications();
+    } catch (_) {
+      // just ignore any errors here as we may try to call this too early in
+      // startup where it also isn't even applicable yet
+    }
 
     this.autocmds = {};
 
@@ -681,23 +687,6 @@ class GlideBrowserClass {
   }
 
   config_error_id = "glide-config-error";
-
-  #clear_config_error_notification() {
-    try {
-      for (const notification of gNotificationBox.allNotifications) {
-        const value = notification.getAttribute("value");
-        if (
-          value === this.config_error_id
-          || value === this.config_pending_notification_id
-        ) {
-          gNotificationBox.removeNotification(notification);
-        }
-      }
-    } catch (_) {
-      // just ignore any errors here as we may try to call this too early in
-      // startup where it also isn't even applicable yet
-    }
-  }
 
   get api(): typeof glide {
     if (this.#api == null) {
