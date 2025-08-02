@@ -8,8 +8,6 @@ import type { ParentMessages } from "../../actors/GlideHandlerParent.sys.mjs";
 import type {
   ArgumentSchema,
   ContentExcmd,
-  GlideCommandCallback,
-  GlideCommandCallbackProps,
   GlideCommandString,
   GlideExcmdInfo,
   GlideExcmdName,
@@ -26,7 +24,7 @@ const Args = ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs")
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 
 interface ExecuteProps {
-  args: GlideCommandCallbackProps;
+  args: glide.ExcmdCallbackProps;
 
   mapping?: KeyMappingTrieNode | null;
 
@@ -41,7 +39,7 @@ type CommandHistoryEntry =
     type: "command";
     command: glide.ExcmdString;
   }
-  | { type: "callback"; cb: GlideCommandCallback }
+  | { type: "callback"; cb: glide.ExcmdCallback }
   | {
     type: "content-cmd";
     props: ParentMessages["Glide::ExecuteContentCommand"];
@@ -72,7 +70,7 @@ class GlideExcmdsClass {
   }
 
   async #execute_function_command(
-    cb: GlideCommandCallback,
+    cb: glide.ExcmdCallback,
     props: ExecuteProps,
   ) {
     if (props?.save_to_history === undefined || props.save_to_history) {

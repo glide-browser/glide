@@ -382,22 +382,6 @@ export const GLIDE_EXCOMMANDS_MAP = GLIDE_EXCOMMANDS.reduce((acc, cmd) => {
 
 export type GlideExcmdName = (typeof GLIDE_EXCOMMANDS)[number]["name"];
 export type GlideCommandString = GlideExcmdName | `${GlideExcmdName} ${string}`;
-export type GlideCommandCallbackProps = {
-  /**
-   * The tab that the callback is being executed in.
-   */
-  tab_id: number;
-
-  /**
-   * The args passed to the excmd.
-   *
-   * @example "foo -r"                      -> ["-r"]
-   * @example "foo -r 'string with spaces'" -> ["-r", "string with spaces"]
-   */
-  args_arr: string[];
-};
-export type GlideCommandCallback = (props: GlideCommandCallbackProps) => void;
-export type GlideCommandValue = glide.ExcmdString | GlideCommandCallback;
 
 /**
  * Commands that can be executed directly in the browser chrome frame.

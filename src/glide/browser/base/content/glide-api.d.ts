@@ -605,10 +605,26 @@ declare global {
     };
 
     /// @docs-skip
-    export type ExcmdValue = import("./browser-excmds-registry.mjs").GlideCommandValue;
+    export type ExcmdValue = glide.ExcmdString | glide.ExcmdCallback;
 
     /// @docs-skip
-    export type ExcmdCallbackProps = import("./browser-excmds-registry.mjs").GlideCommandCallbackProps;
+    export type ExcmdCallback = (props: glide.ExcmdCallbackProps) => void;
+
+    /// @docs-skip
+    export type ExcmdCallbackProps = {
+      /**
+       * The tab that the callback is being executed in.
+       */
+      tab_id: number;
+
+      /**
+       * The args passed to the excmd.
+       *
+       * @example "foo -r"                      -> ["-r"]
+       * @example "foo -r 'string with spaces'" -> ["-r", "string with spaces"]
+       */
+      args_arr: string[];
+    };
 
     /// @docs-skip
     export type ExcmdString =
