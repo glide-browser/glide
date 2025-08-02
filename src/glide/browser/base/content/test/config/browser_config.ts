@@ -401,8 +401,11 @@ add_task(async function test_webext_listener_error() {
   await sleep_frames(5);
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(50);
-    GlideBrowser.flush_pending_error_notifications();
+    await TestUtils.waitForCondition(() => {
+      GlideBrowser.flush_pending_error_notifications();
+      return gNotificationBox.getNotificationWithValue("glide-config-error") != null;
+    }, "an error notification should be reported");
+    await sleep_frames(100); // this seems to fix race conditions somehow
 
     let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
 
