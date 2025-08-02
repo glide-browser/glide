@@ -104,6 +104,10 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   margin: calc(var(--line-height) * 2) 0 var(--line-height);
   line-height: var(--line-height);
+  font-family: "Berkeley Mono", monospace !important;
+  font-size: 1rem;
+  text-transform: none !important;
+  font-weight: 800 !important;
 }
 
 h1 {
@@ -523,13 +527,6 @@ article h1 {
   margin-top: var(--line-height);
   margin-left: var(--line-height);
   margin-right: var(--line-height);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Berkeley Mono", monospace !important;
-  font-size: 1rem;
-  text-transform: none !important;
-  font-weight: 800 !important;
 }
 
 /* remove underlines from heading anchors */
