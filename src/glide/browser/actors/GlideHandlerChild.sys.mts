@@ -243,10 +243,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
 
         const action = this.#hint_action;
-        this._log.debug("activating hint on", hint.target, "with", action);
+        this._log.debug("activating hint on", hint.element, "with", action);
 
         if (typeof action === "function") {
-          await action(hint.target);
+          await action(hint.element);
           return;
         }
 
@@ -254,33 +254,33 @@ export class GlideHandlerChild extends JSWindowActorChild<
           case null:
           case undefined:
           case "click": {
-            hint.target.focus();
+            hint.element.focus();
 
-            hint.target.$glide_hack_click_from_hint = true;
-            hint.target.click();
+            hint.element.$glide_hack_click_from_hint = true;
+            hint.element.click();
             DOM.in_frames(this.contentWindow!, 10, () => {
-              delete hint.target.$glide_hack_click_from_hint;
+              delete hint.element.$glide_hack_click_from_hint;
             });
 
             break;
           }
 
           case "newtab-click": {
-            const previous = hint.target.getAttribute("target");
+            const previous = hint.element.getAttribute("target");
             try {
-              hint.target.setAttribute("target", "_blank");
-              hint.target.focus();
+              hint.element.setAttribute("target", "_blank");
+              hint.element.focus();
 
-              hint.target.$glide_hack_click_from_hint = true;
-              hint.target.click();
+              hint.element.$glide_hack_click_from_hint = true;
+              hint.element.click();
               DOM.in_frames(this.contentWindow!, 10, () => {
-                delete hint.target.$glide_hack_click_from_hint;
+                delete hint.element.$glide_hack_click_from_hint;
               });
             } finally {
               if (previous == null) {
-                hint.target.removeAttribute("target");
+                hint.element.removeAttribute("target");
               } else {
-                hint.target.setAttribute("target", previous);
+                hint.element.setAttribute("target", previous);
               }
             }
             break;
@@ -672,8 +672,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         location: props.location,
         auto_activate: props.auto_activate,
         // strip out the `target` as we cannot / don't need to send it
-        hints: hints.map(({ target, ...rest }): GlideHintIPC =>
-          props.debug ? { ...rest, element_id: target.id || undefined } : rest
+        hints: hints.map(({ element, ...rest }): GlideHintIPC =>
+          props.debug ? { ...rest, element_id: element.id || undefined } : rest
         ),
       });
     }

@@ -17,14 +17,14 @@ for (const char of ALPHABET) {
 
 export interface GlideHint {
   id: number;
-  target: HTMLElement;
+  element: HTMLElement;
   screen_x: number;
   screen_y: number;
   width: number;
   height: number;
 }
 
-export type GlideHintIPC = Omit<GlideHint, "target" | "label"> & {
+export type GlideHintIPC = Omit<GlideHint, "element" | "label"> & {
   /**
    * Only included if the `debug: true` prop is passed
    */
@@ -74,7 +74,14 @@ export const content = {
       }
 
       const rect = LayoutUtils.getElementBoundingScreenRect(target);
-      hints.push({ id: i++, target, screen_x: rect.x, screen_y: rect.y, width: rect.width, height: rect.height });
+      hints.push({
+        id: i++,
+        element: target,
+        screen_x: rect.x,
+        screen_y: rect.y,
+        width: rect.width,
+        height: rect.height,
+      });
     }
 
     return hints;

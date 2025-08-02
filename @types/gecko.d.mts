@@ -144,7 +144,7 @@ declare type _ExtensionCommon =
 
 declare type GlideHintIPC = import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
 
-declare type GlideResolvedHint = Omit<GlideHintIPC, "target"> & {
+declare type GlideResolvedHint = GlideHintIPC & {
   x: number;
   y: number;
   label: string;
