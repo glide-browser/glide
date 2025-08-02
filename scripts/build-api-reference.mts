@@ -1,5 +1,6 @@
 import "./polyfill-chromeutils.cjs";
 import assert from "assert";
+import { execa } from "execa";
 import fs from "node:fs/promises";
 import Path from "path";
 import TSM from "ts-morph";
@@ -15,6 +16,7 @@ const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
   "glide.autocmds",
 ]);
+const DPRINT_EXE = Path.join(ROOT_DIR, "node_modules", ".bin", "dprint");
 
 async function main() {
   const project = new Project({ tsConfigFilePath: Path.join(ROOT_DIR, "tsconfig.json") });
@@ -40,7 +42,9 @@ async function main() {
     output.push(text);
   }
   const content = output.join("");
-  await fs.writeFile(Path.join(DOCS_DIR, "api.md"), content);
+  const output_md = Path.join(DOCS_DIR, "api.md");
+  await fs.writeFile(output_md, content);
+  await execa(DPRINT_EXE, ["fmt", output_md]);
 }
 
 interface ParentEntry {
