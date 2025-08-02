@@ -232,3 +232,29 @@ add_task(async function test_excmd_callback_receives_tab_id() {
     is(GlideBrowser.api.g.value, active_tab.id, "Excmd callback should receive tab_id that matches the active tab ID");
   });
 });
+
+add_task(async function test_excmd_callback_receives_unparsed_args() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.excmds.create({ name: "test_command", description: "Test command" }, ({ args_arr }) => {
+      glide.g.value = args_arr;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await GlideBrowser.api.excmds.execute("test_command");
+    await sleep_frames(10);
+    isjson(GlideBrowser.api.g.value, [], "Excmd callback should receive empty args as none were passed");
+
+    await GlideBrowser.api.excmds.execute("test_command Hello");
+    await sleep_frames(10);
+    isjson(GlideBrowser.api.g.value, ["Hello"], "Excmd callback should receive 1 arg");
+
+    await GlideBrowser.api.excmds.execute("test_command Hello world");
+    await sleep_frames(10);
+    isjson(GlideBrowser.api.g.value, ["Hello", "world"], "Excmd callback should receive 2 args");
+
+    await GlideBrowser.api.excmds.execute("test_command \"Hello world\"");
+    await sleep_frames(10);
+    isjson(GlideBrowser.api.g.value, ["Hello world"], "Excmd callback should get quoted args");
+  });
+});

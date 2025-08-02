@@ -105,7 +105,10 @@ class GlideExcmdsClass {
     props?: SetOptional<ExecuteProps, "args">,
   ): Promise<void> {
     try {
-      await this.#execute(command, { ...props, args: { tab_id: GlideBrowser.active_tab_id, ...props?.args } });
+      await this.#execute(command, {
+        ...props,
+        args: { ...this.#parse_args(command), tab_id: GlideBrowser.active_tab_id, ...props?.args },
+      });
     } catch (err) {
       GlideBrowser._log.error(err);
 
@@ -122,6 +125,17 @@ class GlideExcmdsClass {
         buttons: [GlideBrowser.remove_all_notifications_button],
       });
     }
+  }
+
+  #parse_args(command: glide.ExcmdValue): { args_arr: string[] } {
+    if (typeof command !== "string") {
+      return { args_arr: [] };
+    }
+
+    // TODO(someday): for predefined commands we end up doing this parsing logic
+    //                twice when we should really only do it once.
+    const args_str = extract_command_args(command);
+    return { args_arr: Args.tokenize_args(args_str) };
   }
 
   async #execute(

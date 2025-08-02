@@ -15,7 +15,7 @@ const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/
  *
  * Example: `foo "bar baz" 'qux quux'` -> ["foo", "bar baz", "qux quux"]
  */
-function tokenize_args(input: string): (string | null)[] {
+export function tokenize_args(input: string): string[] {
   const tokens: string[] = [];
   let current = "";
   let in_quotes = false;
