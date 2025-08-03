@@ -7,10 +7,20 @@ import TSM from "ts-morph";
 import { ts } from "ts-morph";
 import { Project } from "ts-morph";
 import { Node } from "ts-morph";
-import { markdown } from "../src/glide/browser/base/content/utils/dedent.mts";
-import { assert_present } from "../src/glide/browser/base/content/utils/guards.mts";
+import { css, html, markdown } from "../src/glide/browser/base/content/utils/dedent.mts";
+import { assert_never, assert_present } from "../src/glide/browser/base/content/utils/guards.mts";
 import { replace_surrounding, Words } from "../src/glide/browser/base/content/utils/strings.mts";
 import { DOCS_DIR, GLIDE_BROWSER_CONTENT_DIR, ROOT_DIR } from "./canonical-paths.mts";
+
+const STYLES = css`
+  h1, h2 {
+    font-size: revert !important;
+  }
+
+  .index a {
+    text-decoration: none;
+  }
+`;
 
 const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
@@ -25,25 +35,34 @@ async function main() {
   const global_decl = file.getFirstChildByKind(ts.SyntaxKind.ModuleDeclaration)!;
   assert.equal(global_decl?.getName(), "global");
 
-  const inner = global_decl.getFirstChildByKind(ts.SyntaxKind.ModuleBlock);
+  const inner = assert_present(global_decl.getFirstChildByKind(ts.SyntaxKind.ModuleBlock));
+
+  const index: IndexEntry[] = [];
+  const content: string[] = [];
+
+  for (const part of traverse(inner)) {
+    if (typeof part === "string") {
+      content.push(part);
+    } else if (part.type === "index") {
+      index.push(part);
+    } else {
+      throw assert_never(part.type);
+    }
+  }
 
   const output: string[] = [
-    // we actually do want the headings to act as visual hierarchy here
     markdown`
       {% styles %}
-      h1, h2 {
-      font-size: revert !important;
-      }
+      ${STYLES}
       {% /styles %}
     `,
-    "\n",
+    "\n\n",
+    generate_index(index),
+    ...content,
   ];
-  for (const text of traverse(inner!)) {
-    output.push(text);
-  }
-  const content = output.join("");
+
   const output_md = Path.join(DOCS_DIR, "api.md");
-  await fs.writeFile(output_md, content);
+  await fs.writeFile(output_md, output.join(""));
   await execa(DPRINT_EXE, ["fmt", output_md]);
 }
 
@@ -52,7 +71,12 @@ interface ParentEntry {
   node: Node;
 }
 
-function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
+type TraverseEntry = string | IndexEntry;
+
+function* traverse(
+  node: Node,
+  parents: ParentEntry[] = [],
+): Generator<TraverseEntry> {
   // note: we assume everything here is exported as it should only be called
   //       for types in our `declare global`module.
 
@@ -77,7 +101,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
         declaration.getName(),
       ].join(".");
 
-      yield* Header(QualifiedName, { parents, id: QualifiedName });
+      yield* Header(QualifiedName, { parents, id: QualifiedName, index: false });
       yield* Docs(docs);
       yield "\n";
       yield* traverse_children(declaration, [
@@ -107,6 +131,8 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       node.getName(),
     ].join(".");
 
+    yield { type: "index", kind: "method", id: QualifiedName };
+
     yield "\n\n";
     yield `{% api-heading id="${QualifiedName}" %}\n`;
     yield render_method_signature(node, { name: QualifiedName }) + "\n";
@@ -135,14 +161,14 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
     // `foo: string` or `foo: undefined`
     if (is_keyword(inner) || Node.isTypeReference(inner)) {
-      yield* Header(`${QualifiedName}: ${inner.getText()}`, { parents, id: QualifiedName });
+      yield* Header(`${QualifiedName}: ${inner.getText()}`, { kind: "property", parents, id: QualifiedName });
       yield* Docs(docs);
       yield "\n";
       yield* traverse_further(inner, [...parents, { name: Name, node }]);
       return;
     }
 
-    yield* Header(`${QualifiedName}`, { parents, id: QualifiedName });
+    yield* Header(`${QualifiedName}`, { kind: "property", parents, id: QualifiedName });
     yield* Docs(docs);
 
     yield* traverse_further(inner, [...parents, { name: Name, node }]);
@@ -179,7 +205,7 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
       return;
     }
 
-    yield* Header(`Types`, { parents, id: "types", attrs: "style=\"margin-top: 3em !important\"" });
+    yield* Header(`Types`, { parents, id: "types", attrs: "style=\"margin-top: 3em !important\"", index: false });
 
     const block = node.getFirstChildByKindOrThrow(ts.SyntaxKind.ModuleBlock);
     yield* traverse_children(block, [...parents, { name: "glide", node }]);
@@ -193,7 +219,11 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
     const body = children(node)[2];
 
     if (body) {
-      yield* Header(`${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`, { parents, id: QualifiedName });
+      yield* Header(`${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`, {
+        parents,
+        id: QualifiedName,
+        kind: "type",
+      });
     } else {
       console.warn(`no body for ${Name}`);
     }
@@ -205,8 +235,14 @@ function* traverse(node: Node, parents: ParentEntry[] = []): Generator<string> {
 
 function* Header(
   Code: string,
-  { parents, id, attrs }: { parents: ParentEntry[]; id: string; attrs?: string },
-): Generator<string> {
+  { parents, id, attrs, index = true, kind }:
+    & { parents: ParentEntry[]; id: string; attrs?: string }
+    & ({ index: false; kind?: undefined } | { index?: true; kind: IndexEntry["kind"] }),
+): Generator<TraverseEntry> {
+  if (index && kind) {
+    yield { type: "index", kind, id };
+  }
+
   const Bullet = parents.length === 1 ? "• " : "";
 
   const HeaderHash = Array(parents.length + 2).join("#");
@@ -280,7 +316,7 @@ function render_method_signature(
 function* traverse_further(
   node: Node,
   parents: ParentEntry[],
-): Generator<string> {
+): Generator<TraverseEntry> {
   const parent = node.getParent();
   if (parent) {
     const directives = get_directives(parent);
@@ -296,7 +332,7 @@ function* traverse_further(
 function* traverse_children(
   node: Node,
   parents: ParentEntry[],
-): Generator<string> {
+): Generator<TraverseEntry> {
   for (const child of children(node)) {
     yield* traverse(child, parents);
   }
@@ -310,7 +346,7 @@ function children(node: Node): Node[] {
   return nodes;
 }
 
-function* Docs(docs: TSM.JSDoc | undefined): Generator<string> {
+function* Docs(docs: TSM.JSDoc | undefined): Generator<TraverseEntry> {
   if (!docs) {
     return;
   }
@@ -321,6 +357,37 @@ function* Docs(docs: TSM.JSDoc | undefined): Generator<string> {
   for (const tag of docs.getTags()) {
     yield "\n\n`ts:" + tag.print().replaceAll("`", "\\`") + "`";
   }
+}
+
+interface IndexEntry {
+  type: "index";
+  kind: "property" | "method" | "namespace" | "type";
+  id: string;
+}
+
+function generate_index(entries: IndexEntry[]): string {
+  const lines: string[] = [];
+
+  lines.push("{% html %}");
+  lines.push(html`
+    <details class="index">
+      <summary>Index</summary>
+  `);
+  lines.push("{% /html %}");
+  lines.push("");
+
+  for (const entry of entries) {
+    const symbol = entry.kind === "method" ? `${entry.id}()` : entry.id;
+    lines.push(`[\`${symbol}\`](#${entry.id})  `);
+  }
+
+  lines.push("");
+  lines.push("{% html %}");
+  lines.push(html`</details>`);
+  lines.push("{% /html %}");
+  lines.push("");
+
+  return lines.join("\n");
 }
 
 main();

@@ -92,5 +92,6 @@ export function make_dedent_no_args(
 }
 
 // aliases to indicate the embedded language for syntax highlighting
+export const css = dedent;
 export const html = dedent;
 export const markdown = dedent;

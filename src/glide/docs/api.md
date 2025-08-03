@@ -2,7 +2,71 @@
 h1, h2 {
 font-size: revert !important;
 }
+
+.index a {
+text-decoration: none;
+}
 {% /styles %}
+
+{% html %}
+
+<details class="index">
+  <summary>Index</summary>
+{% /html %}
+
+[`glide.ctx`](#glide.ctx)\
+[`glide.ctx.mode`](#glide.ctx.mode)\
+[`glide.ctx.url`](#glide.ctx.url)\
+[`glide.ctx.os`](#glide.ctx.os)\
+[`glide.ctx.is_editing()`](#glide.ctx.is_editing)\
+[`glide.o`](#glide.o)\
+[`glide.o.mapping_timeout`](#glide.o.mapping_timeout)\
+[`glide.o.yank_highlight`](#glide.o.yank_highlight)\
+[`glide.o.yank_highlight_time`](#glide.o.yank_highlight_time)\
+[`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
+[`glide.bo`](#glide.bo)\
+[`glide.options`](#glide.options)\
+[`glide.options.get()`](#glide.options.get)\
+[`glide.prefs`](#glide.prefs)\
+[`glide.prefs.set()`](#glide.prefs.set)\
+[`glide.prefs.get()`](#glide.prefs.get)\
+[`glide.prefs.clear()`](#glide.prefs.clear)\
+[`glide.g`](#glide.g)\
+[`glide.tabs`](#glide.tabs)\
+[`glide.tabs.active()`](#glide.tabs.active)\
+[`glide.excmds`](#glide.excmds)\
+[`glide.excmds.execute()`](#glide.excmds.execute)\
+[`glide.excmds.create()`](#glide.excmds.create)\
+[`glide.content`](#glide.content)\
+[`glide.content.execute()`](#glide.content.execute)\
+[`glide.keymaps`](#glide.keymaps)\
+[`glide.keymaps.set()`](#glide.keymaps.set)\
+[`glide.keymaps.del()`](#glide.keymaps.del)\
+[`glide.keymaps.list()`](#glide.keymaps.list)\
+[`glide.hints`](#glide.hints)\
+[`glide.hints.show()`](#glide.hints.show)\
+[`glide.buf`](#glide.buf)\
+[`glide.buf.keymaps`](#glide.buf.keymaps)\
+[`glide.buf.keymaps.set()`](#glide.buf.keymaps.set)\
+[`glide.buf.keymaps.del()`](#glide.buf.keymaps.del)\
+[`glide.keys`](#glide.keys)\
+[`glide.keys.send()`](#glide.keys.send)\
+[`glide.keys.next()`](#glide.keys.next)\
+[`glide.keys.next_passthrough()`](#glide.keys.next_passthrough)\
+[`glide.keys.next_str()`](#glide.keys.next_str)\
+[`glide.keys.parse()`](#glide.keys.parse)\
+[`glide.unstable`](#glide.unstable)\
+[`glide.unstable.include()`](#glide.unstable.include)\
+[`glide.modes`](#glide.modes)\
+[`glide.modes.register()`](#glide.modes.register)\
+[`glide.RGBString`](#glide.RGBString)\
+[`glide.HintLocation`](#glide.HintLocation)\
+[`DOM.create_element()`](#DOM.create_element)
+
+{% html %}
+
+</details>
+{% /html %}
 
 # `glide` {% id="glide" %}
 

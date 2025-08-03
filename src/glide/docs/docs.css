@@ -243,12 +243,12 @@ details[open] summary {
 
 details ::marker {
   display: inline-block;
-  content: "▶";
+  content: "▶ ";
   margin: 0;
 }
 
 details[open] ::marker {
-  content: "▼";
+  content: "▼ ";
 }
 
 details :last-child {
