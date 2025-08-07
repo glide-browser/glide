@@ -634,6 +634,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "redo": {
+        docShell!.doCommand("cmd_redo");
+        break;
+      }
+
       default:
         throw assert_never(command_meta, `Unhandled excmd: \`${(command_meta as any).name}\``);
     }

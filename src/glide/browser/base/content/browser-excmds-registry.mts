@@ -365,6 +365,7 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   { name: "undo", description: "Undo the most recent edit", content: false, repeatable: false },
+  { name: "redo", description: "Redo the most recent undo", content: false, repeatable: false },
 ] as const satisfies GlideExcmdInfo[];
 
 export type GlideExcmdsMap = {
