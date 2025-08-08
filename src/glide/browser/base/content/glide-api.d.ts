@@ -20,7 +20,7 @@ declare global {
       /**
        * Whether or not the currently focused element is editable.
        *
-       * This includes but is not limited to `<textarea>`, `<input>`, `contenteditable=true`.
+       * This includes but is not limited to `html:<textarea>`, `html:<input>`, `contenteditable=true`.
        */
       is_editing(): Promise<boolean>;
     };
@@ -34,7 +34,7 @@ declare global {
     /**
      * Set buffer specific options.
      *
-     * This has the exact same API as `glide.o`.
+     * This has the exact same API as {@link glide.o}.
      */
     bo: Partial<glide.Options>;
 
@@ -121,7 +121,7 @@ declare global {
        * Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so
        * that all customisation can be represented in a single `glide.ts` file.
        *
-       * **warning**: this function is expected to be called at the top-level of your config, there is no guarantee that calling `glide.pref()` in callbacks
+       * **warning**: this function is expected to be called at the top-level of your config, there is no guarantee that calling {@link glide.prefs.set} in callbacks
        *              will result in the pref being properly applied everywhere.
        *
        * **warning**: there is also no guarantee that these settings will be applied when first loaded, sometimes a restart is required.
@@ -211,7 +211,7 @@ declare global {
             /**
              * The ID of the tab into which to inject.
              *
-             * Or the tab object as returned by `glide.tabs.active()`.
+             * Or the tab object as returned by {@link glide.tabs.active}.
              */
             tab_id: number | glide.TabWithID;
           }
@@ -366,11 +366,11 @@ declare global {
       ): Promise<void>;
 
       /**
-       * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}` when the next key is pressed.
+       * Returns a `Promise` that resolves to a {@link glide.KeyEvent} when the next key is pressed.
        *
        * This also prevents the key input from being processed further and does *not* invoke any associated mappings.
        *
-       * If you *want* to inspect keys without preventing any default behaviour, you can use `.next_passthrough()`.
+       * If you *want* to inspect keys without preventing any default behaviour, you can use {@link glide.keys.next_passthrough}.
        *
        * Note: there can only be one `Promise` registered at any given time.
        *
@@ -380,9 +380,9 @@ declare global {
       next(): Promise<glide.KeyEvent>;
 
       /**
-       * Returns a `Promise` that resolves to a `{@link glide.KeyEvent}` when the next key is pressed.
+       * Returns a `Promise` that resolves to a {@link glide.KeyEvent} when the next key is pressed.
        *
-       * Unlike `.next()`, this does not prevent key events from passing through into their original behaviour.
+       * Unlike {@link glide.keys.next}, this does not prevent key events from passing through into their original behaviour.
        *
        * Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
        *       until another key is pressed, e.g. `<C-a>`.
@@ -394,7 +394,7 @@ declare global {
        *
        * This also prevents the key input from being processed further and does *not* invoke any associated mappings.
        *
-       * If you *want* to inspect keys without preventing any default behaviour, you can use `.next_passthrough()`.
+       * If you *want* to inspect keys without preventing any default behaviour, you can use {@link glide.keys.next_passthrough}.
        *
        * Note: there can only be one `Promise` registered at any given time.
        *
@@ -435,7 +435,7 @@ declare global {
        *           "../shared/glide.ts" will not.
        *
        * **note**: this function cannot be called from inside a file that has been included
-       *           itself, i.e. nested `include()` calls are not supported.
+       *           itself, i.e. nested {@link glide.unstable.include} calls are not supported.
        *
        * @example glide.unstable.include("shared.glide.ts")
        */
@@ -533,7 +533,7 @@ declare global {
 
   namespace glide {
     /**
-     * Corresponds to `glide.o` or `glie.bo`.
+     * Corresponds to {@link glide.o} or {@link glide.bo}.
      */
     /// @docs-skip
     export type Options = {
