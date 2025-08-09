@@ -351,11 +351,22 @@ function* Docs(docs: TSM.JSDoc | undefined): Generator<TraverseEntry> {
     return;
   }
 
-  yield docs.getDescription();
+  // if the docstring just contains tags like `@example`, or if there are no special annotations
+  // then there will be no text nodes and the text we need will just be on the root node
+  if (docs.getChildCount() === 0 || docs.getChildren().every((child) => Node.isJSDocTag(child))) {
+    yield docs.getDescription();
+  }
 
-  // note: presumes that tags can only be defined after the description
-  for (const tag of docs.getTags()) {
-    yield "\n\n`ts:" + tag.print().replaceAll("`", "\\`") + "`";
+  for (const child of docs.getChildren()) {
+    if (Node.isJSDocText(child)) {
+      yield child.compilerNode.text;
+    } else if (Node.isJSDocTag(child)) {
+      yield "\n\n`ts:" + child.print().replaceAll("`", "\\`") + "`";
+    } else if (Node.isJSDocLink(child)) {
+      yield child.getText();
+    } else {
+      throw new Error(`Unhandled JSDoc node kind: ${child.getKindName()}`);
+    }
   }
 }
 
