@@ -131,7 +131,7 @@ how far back in history will the jumplist store.
 
 Set buffer specific options.
 
-This has the exact same API as [`ts:glide.o`](#glide.o).
+This has the exact same API as {% link href="#glide.o" class="go-to-def" %} `ts:glide.o`{% /link %}.
 
 ## • `glide.options` {% id="glide.options" %}
 
@@ -150,7 +150,7 @@ glide.prefs.set(name, value): void
 Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so
 that all customisation can be represented in a single `glide.ts` file.
 
-**warning**: this function is expected to be called at the top-level of your config, there is no guarantee that calling [`ts:glide.prefs.set`](#glide.prefs.set) in callbacks
+**warning**: this function is expected to be called at the top-level of your config, there is no guarantee that calling {% link href="#glide.prefs.set" class="go-to-def" %} `ts:glide.prefs.set`{% /link %} in callbacks
 will result in the pref being properly applied everywhere.
 
 **warning**: there is also no guarantee that these settings will be applied when first loaded, sometimes a restart is required.
@@ -317,11 +317,11 @@ await glide.keys.send("<C-a><C-c>");
 glide.keys.next(): Promise<glide.KeyEvent>
 {% /api-heading %}
 
-Returns a `Promise` that resolves to a [`ts:glide.KeyEvent`](#glide.KeyEvent) when the next key is pressed.
+Returns a `Promise` that resolves to a {% link href="#glide.KeyEvent" class="go-to-def" %} `ts:glide.KeyEvent`{% /link %} when the next key is pressed.
 
 This also prevents the key input from being processed further and does _not_ invoke any associated mappings.
 
-If you _want_ to inspect keys without preventing any default behaviour, you can use [`ts:glide.keys.next_passthrough`](#glide.keys.next_passthrough).
+If you _want_ to inspect keys without preventing any default behaviour, you can use {% link href="#glide.keys.next_passthrough" class="go-to-def" %} `ts:glide.keys.next_passthrough`{% /link %}.
 
 Note: there can only be one `Promise` registered at any given time.
 
@@ -332,9 +332,9 @@ until another key is pressed, e.g. `<C-a>`.
 glide.keys.next_passthrough(): Promise<glide.KeyEvent>
 {% /api-heading %}
 
-Returns a `Promise` that resolves to a [`ts:glide.KeyEvent`](#glide.KeyEvent) when the next key is pressed.
+Returns a `Promise` that resolves to a {% link href="#glide.KeyEvent" class="go-to-def" %} `ts:glide.KeyEvent`{% /link %} when the next key is pressed.
 
-Unlike [`ts:glide.keys.next`](#glide.keys.next), this does not prevent key events from passing through into their original behaviour.
+Unlike {% link href="#glide.keys.next" class="go-to-def" %} `ts:glide.keys.next`{% /link %}, this does not prevent key events from passing through into their original behaviour.
 
 Note: this does not include modifier keys by themselves, e.g. just pressing ctrl will not resolve
 until another key is pressed, e.g. `<C-a>`.
@@ -347,7 +347,7 @@ Returns a `Promise` that resolves to a string representation of the key, when th
 
 This also prevents the key input from being processed further and does _not_ invoke any associated mappings.
 
-If you _want_ to inspect keys without preventing any default behaviour, you can use [`ts:glide.keys.next_passthrough`](#glide.keys.next_passthrough).
+If you _want_ to inspect keys without preventing any default behaviour, you can use {% link href="#glide.keys.next_passthrough" class="go-to-def" %} `ts:glide.keys.next_passthrough`{% /link %}.
 
 Note: there can only be one `Promise` registered at any given time.
 
@@ -396,7 +396,7 @@ for example, "shared.glide.ts" or "shared/glide.ts" would work but
 "../shared/glide.ts" will not.
 
 **note**: this function cannot be called from inside a file that has been included
-itself, i.e. nested [`ts:glide.unstable.include`](#glide.unstable.include) calls are not supported.
+itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} `ts:glide.unstable.include`{% /link %} calls are not supported.
 
 `ts:@example glide.unstable.include("shared.glide.ts")`
 

@@ -366,7 +366,7 @@ function* Docs(docs: TSM.JSDoc | undefined): Generator<TraverseEntry> {
       const name_node = child.getFirstChildIfKindOrThrow(TSM.SyntaxKind.QualifiedName);
       const Name = name_node.getText();
 
-      yield `[\`ts:${Name}\`](#${Name})`;
+      yield `{% link href="#${Name}" class="go-to-def" %} \`ts:${Name}\`{% /link %}`;
     } else {
       throw new Error(`Unhandled JSDoc node kind: ${child.getKindName()}`);
     }
