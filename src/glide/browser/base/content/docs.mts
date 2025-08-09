@@ -205,410 +205,20 @@ export async function markdown_to_html(
     },
   };
 
-  // this is required to easily support syntax highlighting with markdoc
-  //
-  // there seems to be no way to return raw HTML from a `transform()` function
-  // as it gets unconditionally escaped.
-  const patches: Record<string, { html: string; content: string }> = {};
-  var patch_counter = 0;
+  const state = new RenderState(source.split("\n"), highlighter, themes, inline_themes, language_themes, code_options);
 
-  function patch_id() {
-    const id = `GLIDE_HIGHLIGHT_PATCH_${patch_counter}\n`;
-    patch_counter++;
-    return id;
-  }
-
-  /**
-   * Return the joined raw string conents of each child, if the children
-   * correspond to a HTML patch, then use the actual patch contents instead
-   * of our magic string
-   */
-  function get_node_content(children: M.RenderableTreeNode[]): string {
-    const content = children
-      .filter(child => typeof child === "string")
-      .map(child => patches[child]?.content ?? child)
-      .join(" ");
-
-    const patch = patches[content];
-    if (patch) {
-      return patch.content;
-    }
-
-    return content;
-  }
-
-  const lines = source.split("\n");
-  const styles: string[] = [];
-  const head: string[] = [];
-  let title: string | null = null;
-
-  const content = Markdoc.transform(ast, {
-    tags: {
-      "excmd-list": {
-        transform(_, config) {
-          return Markdoc.transform(Markdoc.parse(
-            GLIDE_EXCOMMANDS.map(exmcd =>
-              markdown`
-                  ## :${exmcd.name} {% .excmd-heading %}
-
-                  ${exmcd.description}
-                `
-            ).join("\n\n"),
-            // @ts-ignore
-            config,
-          ));
-        },
-      },
-      "api-heading": {
-        attributes: { id: { type: String, required: true } },
-        transform(node) {
-          // note: this doesn't support inline usage, it must be
-          // ```md
-          // {% api-heading %}
-          // glide.prefs.set(name, value): void
-          // {% /api-heading %}
-          // ```
-          const first = node.lines[0]! + 1;
-          const last = node.lines.at(-1)! - 1;
-          const content = lines.slice(first, last).join("\n");
-
-          const html_id = node.attributes["id"];
-          const id = patch_id();
-
-          const highlighted = highlighter.codeToHtml(content, {
-            lang: "typescript",
-            themes,
-            transformers: [
-              {
-                pre(node) {
-                  this.addClassToHast(node, "shiki-no-box");
-                },
-              },
-            ],
-          });
-          patches[id] = {
-            html:
-              `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
-            content: "",
-          };
-          return id;
-        },
-      },
-      sup: { render: "sup", attributes: {} },
-      html: {
-        description: "Renders raw HTML content",
-        transform(node) {
-          // note: this doesn't support inline usage, it must be
-          // ```md
-          // {% html %}
-          // <div>content</div>
-          // {% /html %}
-          // ```
-          const first = node.lines[0]! + 1;
-          const last = node.lines.at(-1)! - 1;
-          const content = lines.slice(first, last);
-
-          const id = patch_id();
-          patches[id] = { html: content.join("\n"), content: "" };
-          return id;
-        },
-      },
-      styles: {
-        description: "Inject custom CSS",
-        transform(node) {
-          // note: this doesn't support inline usage, it must be
-          // ```md
-          // {% styles %}
-          // .foo {
-          //   /* ... */
-          // }
-          // {% /styles %}
-          // ```
-          const first = node.lines[0]! + 1;
-          const last = node.lines.at(-1)! - 1;
-          const content = lines.slice(first, last);
-          styles.push(content.join("\n"));
-          return "";
-        },
-      },
-      head: {
-        description: "Inject custom <head> HTML",
-        transform(node) {
-          // note: this doesn't support inline usage, it must be
-          // ```md
-          // {% head %}
-          // <link rel="stylesheet" ... />
-          // {% /head %}
-          // ```
-          const first = node.lines[0]! + 1;
-          const last = node.lines.at(-1)! - 1;
-          const content = lines.slice(first, last);
-          head.push(content.join("\n"));
-          return "";
-        },
-      },
-      link: {
-        attributes: { href: { type: String, required: true }, "class": { type: String, required: false } },
-        transform: render_link,
-      },
-    },
-    nodes: {
-      blockquote: {
-        /**
-         * Transform GitHub-style admonitions:
-         *
-         * > [!NOTE]
-         * > This is a note
-         *
-         * Into styled blocks.
-         */
-        transform(node, config) {
-          const children = node.transformChildren(config);
-          const DefaultBlockquote = new Markdoc.Tag("blockquote", {}, children);
-
-          const first_para = children[0];
-          if (
-            !first_para
-            || typeof first_para !== "object"
-            || Array.isArray(first_para)
-            || first_para.name !== "p"
-            || !first_para.children
-            || !Array.isArray(first_para.children)
-            || !first_para.children.length
-          ) {
-            return DefaultBlockquote;
-          }
-
-          const first_child = first_para.children[0];
-          if (typeof first_child !== "string") {
-            return DefaultBlockquote;
-          }
-
-          const match = first_child.match(/^\[!(\w+)\]\s*/);
-          if (match && ADMONITION_TYPES.has(match[1]!)) {
-            const type = match[1]!.toLowerCase();
-
-            // Remove the [!TYPE] prefix from the first child
-            first_para.children[0] = first_child.replace(/^\[!\w+\]\s*/, "");
-
-            // If the first paragraph is now empty or just whitespace, remove it
-            if (
-              first_para.children.length === 1
-              && typeof first_para.children[0] === "string"
-              && first_para.children[0].trim() === ""
-            ) {
-              children.shift();
-            }
-
-            return new Markdoc.Tag("div", { class: `admonition admonition-${type}` }, [
-              new Markdoc.Tag("div", { class: "admonition-title" }, [
-                `${type}`,
-              ]),
-              ...children,
-            ]);
-          }
-
-          return DefaultBlockquote;
-        },
-      },
-      link: {
-        /**
-         * `[...](./quickstart.md)` -> `<a href="./quickstart.html">`
-         * `[...](/src/glide/browser/base/content/browser.mts)` -> `<a href="https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser.mts" target="_blank" rel="noopener">`
-         * `[...](https://example.com)` -> `<a href="https://example.com" target="_blank" rel="noopener">`
-         */
-        transform: render_link,
-      },
-      heading: {
-        attributes: {
-          id: { type: String, required: false },
-          level: { type: Number, required: true, default: 1 },
-          class: { type: String, required: false },
-          style: { type: String, required: false },
-        },
-
-        /**
-         * Make heading elements clickable with an anchor href.
-         */
-        transform(node, config: MarkdocConfig) {
-          /** Key mappings -> key-mappings */
-          function generate_anchor_id(children: M.RenderableTreeNode[]) {
-            return get_node_content(children)
-              .replace(/[?]/g, "")
-              .replace(/\s+/g, "-")
-              .toLowerCase();
-          }
-
-          let {
-            id,
-            level,
-            class: $class,
-            style,
-            ...attributes
-          } = node.transformAttributes(config);
-          const nested_config = { ...config, heading: true } as MarkdocConfig;
-          const children = node.transformChildren(nested_config);
-          if (!id) {
-            id = generate_anchor_id(children);
-          }
-
-          level = assert_present(level ?? node.attributes["level"], "Expected level attribute to be set on headings");
-          if (level === 1 && !title) {
-            // extract the first h1 and use it as the page title
-            title = get_node_content(children);
-          }
-
-          const has_code = node.walk().some(child => child.type === "code");
-
-          const Heading = new Markdoc.Tag(`h${level}`, {
-            id,
-            ...(style ? { style } : undefined),
-            ...(has_code
-              ? { class: Words([$class, "code-heading"]) }
-              : $class
-              ? { class: $class }
-              : undefined),
-          }, children);
-
-          if (nested_config.nested_anchors) {
-            return Heading;
-          }
-
-          return new Markdoc.Tag("a", { ...attributes, href: `#${id}` }, [
-            Heading,
-          ]);
-        },
-      },
-      code: {
-        transform(node, config: MarkdocConfig) {
-          const content = node.attributes["content"] as string;
-
-          // support specifying the language of the inline code block
-          // with `$lang:$content`
-          const [, language, code] = content.match(/^(\w+):(.+)$/) || [];
-
-          const default_language = "typescript";
-          const highlighted = !language || !code
-            // if the language isn't explicitly configured, then default to a slightly
-            // modified version of TypeScript syntax highlighting as I've found
-            // that generally to work quite well and looks much better than the default
-            // <code> highlighting we have
-            ? code_to_html(highlighter, code ?? content, {
-              ...code_options,
-              lang: language ?? default_language,
-              themes: inline_themes,
-              structure: "inline",
-              config,
-            })
-            : IGNORE_CODE_LANGS.has(language)
-            ? code_to_html(highlighter, content, {
-              ...code_options,
-              lang: default_language,
-              themes: language_themes[default_language] ?? themes,
-              structure: "inline",
-              config,
-            })
-            : code_to_html(highlighter, code, {
-              ...code_options,
-              lang: language,
-              themes: language_themes[language] ?? themes,
-              structure: "inline",
-              config,
-            });
-
-          const id = patch_id();
-          patches[id] = { html: html`<span class="shiki-inline">${highlighted}</span>`, content: code ?? content };
-          return id;
-        },
-      },
-
-      fence: {
-        attributes: {
-          language: { type: String, required: true },
-          content: { type: String, required: true },
-          caption: { type: String, required: false },
-        },
-        transform(node, config: MarkdocConfig) {
-          // e.g. ```typescript {% caption="Example: key mapping to toggle CSS debugging" %}
-          const caption = node.attributes["caption"];
-          const content = node.attributes["content"];
-          const language = node.attributes["language"];
-          const highlighted = code_to_html(highlighter, content, { ...code_options, lang: language, themes, config });
-
-          const id = patch_id();
-          patches[id] = {
-            html: caption
-              ? html`
-                  <figure>
-                  ${highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`)}
-                    <figcaption>${caption}</figcaption>
-                  </figure>
-                `
-              : highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`),
-            content,
-          };
-          return id;
-        },
-      },
-    },
-  });
-
-  function render_link(node: M.Node, config: M.Config): M.RenderableTreeNode {
-    const href = assert_present(
-      node.attributes["href"] as string | undefined,
-      "Expected <link> element to have an href",
-    );
-
-    const children = node.transformChildren(config);
-
-    const is_external = (href as string)?.startsWith("https://")
-      || (href as string)?.startsWith("http://");
-    if (is_external) {
-      const id = patch_id();
-      patches[id] = {
-        html: html`<a href="${href}" target="_blank" rel="noopener"
-          >${children}</a
-        >`,
-        content: get_node_content(children),
-      };
-      return id;
-    }
-
-    // check if this is a markdown file
-    if (href.endsWith(".md") || href.startsWith("#")) {
-      return new Markdoc.Tag(
-        "a",
-        { ...node.attributes, href: href.replace(/\.md$/, ".html") },
-        node.transformChildren(config),
-      );
-    }
-
-    // otherwise assume it's a link to a source file:
-    if (!href.startsWith("/")) {
-      throw new Error(
-        `non-markdown links (${href}) to files in the repository must use full paths, e.g. \`/src/glide/moz.build\``,
-      );
-    }
-
-    const github_url = `https://github.com/glide-browser/glide/blob/main${href}`;
-    const id = patch_id();
-    patches[id] = {
-      html: html`<a href="${github_url}" target="_blank" rel="noopener">${children}</a> `,
-      content: get_node_content(children),
-    };
-    return id;
-  }
+  const content = Markdoc.transform(ast, state.config);
 
   var html_body = Markdoc.renderers.html(content);
-  if (Object.keys(patches).length) {
-    const regex = new RegExp(`(${Object.keys(patches).join("|")})`, "g");
+  if (Object.keys(state.patches).length) {
+    const regex = new RegExp(`(${Object.keys(state.patches).join("|")})`, "g");
 
     let did_replace = false;
     do {
       did_replace = false;
       html_body = html_body.replaceAll(regex, substr => {
         did_replace = true;
-        return assert_present(patches[substr]?.html, `could not resolve a highlight patch for ${substr}`);
+        return assert_present(state.patches[substr]?.html, `could not resolve a highlight patch for ${substr}`);
       });
     } while (did_replace);
   }
@@ -620,7 +230,7 @@ export async function markdown_to_html(
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
       <head>
-        <title>${title ?? "Glide Docs"}</title>
+        <title>${state.title ?? "Glide Docs"}</title>
         <meta charset="utf-8" />
         <meta
           name="viewport"
@@ -631,8 +241,7 @@ export async function markdown_to_html(
 
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-        ${
-    styles
+        ${state.styles
       .map(css =>
         html`
           <style>
@@ -641,8 +250,8 @@ export async function markdown_to_html(
         `
       )
       .join("\n")
-  }
-        ${head.join("\n")}
+    }
+        ${state.head.join("\n")}
 
         <script src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
         <script src="${rel_to_dist}/docs.js?v="></script>
@@ -697,8 +306,7 @@ export async function markdown_to_html(
                 </li>
                 <li>
                   <ul class="sidenav">
-                    ${
-    SIDEBAR.map(({ name, href, class: class_, target }) => {
+                    ${SIDEBAR.map(({ name, href, class: class_, target }) => {
       const abs = rel_to_dist + "/" + href;
       return Html.li({
         class: [
@@ -707,7 +315,7 @@ export async function markdown_to_html(
         ],
       }, [Html.a({ href, target }, [name])]);
     }).join("")
-  }
+    }
                     <li>
                       <a
                         href="https://github.com/glide-browser/glide"
@@ -731,6 +339,437 @@ export async function markdown_to_html(
       </body>
     </html>
   `;
+}
+
+class RenderState {
+  lines: string[];
+  styles: string[];
+  head: string[];
+  title: string | null = null;
+
+  // this is required to easily support syntax highlighting with markdoc
+  //
+  // there seems to be no way to return raw HTML from a `transform()` function
+  // as it gets unconditionally escaped.
+  patches: Record<string, { html: string; content: string }> = {};
+  patch_counter = 0;
+
+  highlighter: Highlighter;
+  themes: Record<string, ThemeRegistrationResolved>;
+  inline_themes: Record<string, ThemeRegistrationResolved>;
+  language_themes: Partial<Record<string, Record<string, ThemeRegistrationResolved>>>;
+  code_options: Partial<CodeHighlightOptions> & { include_go_to_def: {} };
+
+  constructor(
+    lines: string[],
+    highlighter: Highlighter,
+    themes: Record<string, ThemeRegistrationResolved>,
+    inline_themes: Record<string, ThemeRegistrationResolved>,
+    language_themes: Partial<Record<string, Record<string, ThemeRegistrationResolved>>>,
+    code_options: Partial<CodeHighlightOptions> & { include_go_to_def: {} },
+  ) {
+    this.lines = lines;
+    this.styles = [];
+    this.head = [];
+    this.highlighter = highlighter;
+    this.themes = themes;
+    this.inline_themes = inline_themes;
+    this.language_themes = language_themes;
+    this.code_options = code_options;
+  }
+
+  get config(): M.Config {
+    return {
+      tags: {
+        "excmd-list": {
+          transform(_, config) {
+            return Markdoc.transform(Markdoc.parse(
+              GLIDE_EXCOMMANDS.map(exmcd =>
+                markdown`
+                  ## :${exmcd.name} {% .excmd-heading %}
+
+                  ${exmcd.description}
+                `
+              ).join("\n\n"),
+              // @ts-ignore
+              config,
+            ));
+          },
+        },
+        "api-heading": {
+          attributes: { id: { type: String, required: true } },
+          transform: (node) => {
+            // note: this doesn't support inline usage, it must be
+            // ```md
+            // {% api-heading %}
+            // glide.prefs.set(name, value): void
+            // {% /api-heading %}
+            // ```
+            const first = node.lines[0]! + 1;
+            const last = node.lines.at(-1)! - 1;
+            const content = this.lines.slice(first, last).join("\n");
+
+            const html_id = node.attributes["id"];
+            const id = this.patch_id();
+
+            const highlighted = this.highlighter.codeToHtml(content, {
+              lang: "typescript",
+              themes: this.themes,
+              transformers: [
+                {
+                  pre(node) {
+                    this.addClassToHast(node, "shiki-no-box");
+                  },
+                },
+              ],
+            });
+            this.patches[id] = {
+              html:
+                `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
+              content: "",
+            };
+            return id;
+          },
+        },
+        sup: { render: "sup", attributes: {} },
+        html: {
+          description: "Renders raw HTML content",
+          transform: (node) => {
+            // note: this doesn't support inline usage, it must be
+            // ```md
+            // {% html %}
+            // <div>content</div>
+            // {% /html %}
+            // ```
+            const first = node.lines[0]! + 1;
+            const last = node.lines.at(-1)! - 1;
+            const content = this.lines.slice(first, last);
+
+            const id = this.patch_id();
+            this.patches[id] = { html: content.join("\n"), content: "" };
+            return id;
+          },
+        },
+        styles: {
+          description: "Inject custom CSS",
+          transform: (node) => {
+            // note: this doesn't support inline usage, it must be
+            // ```md
+            // {% styles %}
+            // .foo {
+            //   /* ... */
+            // }
+            // {% /styles %}
+            // ```
+            const first = node.lines[0]! + 1;
+            const last = node.lines.at(-1)! - 1;
+            const content = this.lines.slice(first, last);
+            this.styles.push(content.join("\n"));
+            return "";
+          },
+        },
+        head: {
+          description: "Inject custom <head> HTML",
+          transform: (node) => {
+            // note: this doesn't support inline usage, it must be
+            // ```md
+            // {% head %}
+            // <link rel="stylesheet" ... />
+            // {% /head %}
+            // ```
+            const first = node.lines[0]! + 1;
+            const last = node.lines.at(-1)! - 1;
+            const content = this.lines.slice(first, last);
+            this.head.push(content.join("\n"));
+            return "";
+          },
+        },
+        link: {
+          attributes: { href: { type: String, required: true }, "class": { type: String, required: false } },
+          transform: this.render_link.bind(this),
+        },
+      },
+      nodes: {
+        blockquote: {
+          /**
+           * Transform GitHub-style admonitions:
+           *
+           * > [!NOTE]
+           * > This is a note
+           *
+           * Into styled blocks.
+           */
+          transform(node, config) {
+            const children = node.transformChildren(config);
+            const DefaultBlockquote = new Markdoc.Tag("blockquote", {}, children);
+
+            const first_para = children[0];
+            if (
+              !first_para
+              || typeof first_para !== "object"
+              || Array.isArray(first_para)
+              || first_para.name !== "p"
+              || !first_para.children
+              || !Array.isArray(first_para.children)
+              || !first_para.children.length
+            ) {
+              return DefaultBlockquote;
+            }
+
+            const first_child = first_para.children[0];
+            if (typeof first_child !== "string") {
+              return DefaultBlockquote;
+            }
+
+            const match = first_child.match(/^\[!(\w+)\]\s*/);
+            if (match && ADMONITION_TYPES.has(match[1]!)) {
+              const type = match[1]!.toLowerCase();
+
+              // Remove the [!TYPE] prefix from the first child
+              first_para.children[0] = first_child.replace(/^\[!\w+\]\s*/, "");
+
+              // If the first paragraph is now empty or just whitespace, remove it
+              if (
+                first_para.children.length === 1
+                && typeof first_para.children[0] === "string"
+                && first_para.children[0].trim() === ""
+              ) {
+                children.shift();
+              }
+
+              return new Markdoc.Tag("div", { class: `admonition admonition-${type}` }, [
+                new Markdoc.Tag("div", { class: "admonition-title" }, [
+                  `${type}`,
+                ]),
+                ...children,
+              ]);
+            }
+
+            return DefaultBlockquote;
+          },
+        },
+        link: {
+          /**
+           * `[...](./quickstart.md)` -> `<a href="./quickstart.html">`
+           * `[...](/src/glide/browser/base/content/browser.mts)` -> `<a href="https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser.mts" target="_blank" rel="noopener">`
+           * `[...](https://example.com)` -> `<a href="https://example.com" target="_blank" rel="noopener">`
+           */
+          transform: this.render_link.bind(this),
+        },
+        heading: {
+          attributes: {
+            id: { type: String, required: false },
+            level: { type: Number, required: true, default: 1 },
+            class: { type: String, required: false },
+            style: { type: String, required: false },
+          },
+
+          /**
+           * Make heading elements clickable with an anchor href.
+           */
+          transform: (node, config: MarkdocConfig) => {
+            /** Key mappings -> key-mappings */
+            function generate_anchor_id(children: M.RenderableTreeNode[]) {
+              return state.get_node_content(children)
+                .replace(/[?]/g, "")
+                .replace(/\s+/g, "-")
+                .toLowerCase();
+            }
+
+            const state = this;
+            let {
+              id,
+              level,
+              class: $class,
+              style,
+              ...attributes
+            } = node.transformAttributes(config);
+            const nested_config = { ...config, heading: true } as MarkdocConfig;
+            const children = node.transformChildren(nested_config);
+            if (!id) {
+              id = generate_anchor_id(children);
+            }
+
+            level = assert_present(level ?? node.attributes["level"], "Expected level attribute to be set on headings");
+            if (level === 1 && !this.title) {
+              // extract the first h1 and use it as the page title
+              this.title = this.get_node_content(children);
+            }
+
+            const has_code = node.walk().some(child => child.type === "code");
+
+            const Heading = new Markdoc.Tag(`h${level}`, {
+              id,
+              ...(style ? { style } : undefined),
+              ...(has_code
+                ? { class: Words([$class, "code-heading"]) }
+                : $class
+                  ? { class: $class }
+                  : undefined),
+            }, children);
+
+            if (nested_config.nested_anchors) {
+              return Heading;
+            }
+
+            return new Markdoc.Tag("a", { ...attributes, href: `#${id}` }, [
+              Heading,
+            ]);
+          },
+        },
+        code: {
+          transform: (node, config: MarkdocConfig) => {
+            const content = node.attributes["content"] as string;
+
+            // support specifying the language of the inline code block
+            // with `$lang:$content`
+            const [, language, code] = content.match(/^(\w+):(.+)$/) || [];
+
+            const default_language = "typescript";
+            const highlighted = !language || !code
+              // if the language isn't explicitly configured, then default to a slightly
+              // modified version of TypeScript syntax highlighting as I've found
+              // that generally to work quite well and looks much better than the default
+              // <code> highlighting we have
+              ? code_to_html(this.highlighter, code ?? content, {
+                ...this.code_options,
+                lang: language ?? default_language,
+                themes: this.inline_themes,
+                structure: "inline",
+                config,
+              })
+              : IGNORE_CODE_LANGS.has(language)
+                ? code_to_html(this.highlighter, content, {
+                  ...this.code_options,
+                  lang: default_language,
+                  themes: this.language_themes[default_language] ?? this.themes,
+                  structure: "inline",
+                  config,
+                })
+                : code_to_html(this.highlighter, code, {
+                  ...this.code_options,
+                  lang: language,
+                  themes: this.language_themes[language] ?? this.themes,
+                  structure: "inline",
+                  config,
+                });
+
+            const id = this.patch_id();
+            this.patches[id] = {
+              html: html`<span class="shiki-inline">${highlighted}</span>`,
+              content: code ?? content,
+            };
+            return id;
+          },
+        },
+
+        fence: {
+          attributes: {
+            language: { type: String, required: true },
+            content: { type: String, required: true },
+            caption: { type: String, required: false },
+          },
+          transform: (node, config: MarkdocConfig) => {
+            // e.g. ```typescript {% caption="Example: key mapping to toggle CSS debugging" %}
+            const caption = node.attributes["caption"];
+            const content = node.attributes["content"];
+            const language = node.attributes["language"];
+            const highlighted = code_to_html(this.highlighter, content, {
+              ...this.code_options,
+              lang: language,
+              themes: this.themes,
+              config,
+            });
+
+            const id = this.patch_id();
+            this.patches[id] = {
+              html: caption
+                ? html`
+                  <figure>
+                  ${highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`)}
+                    <figcaption>${caption}</figcaption>
+                  </figure>
+                `
+                : highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`),
+              content,
+            };
+            return id;
+          },
+        },
+      },
+    };
+  }
+
+  patch_id() {
+    const id = `GLIDE_HIGHLIGHT_PATCH_${this.patch_counter}\n`;
+    this.patch_counter++;
+    return id;
+  }
+
+  /**
+   * Return the joined raw string conents of each child, if the children
+   * correspond to a HTML patch, then use the actual patch contents instead
+   * of our magic string
+   */
+  get_node_content(children: M.RenderableTreeNode[]): string {
+    const content = children
+      .filter(child => typeof child === "string")
+      .map(child => this.patches[child]?.content ?? child)
+      .join(" ");
+
+    const patch = this.patches[content];
+    if (patch) {
+      return patch.content;
+    }
+
+    return content;
+  }
+
+  render_link(node: M.Node, config: M.Config): M.RenderableTreeNode {
+    const href = assert_present(
+      node.attributes["href"] as string | undefined,
+      "Expected <link> element to have an href",
+    );
+
+    const children = node.transformChildren(config);
+
+    const is_external = (href as string)?.startsWith("https://")
+      || (href as string)?.startsWith("http://");
+    if (is_external) {
+      const id = this.patch_id();
+      this.patches[id] = {
+        html: html`<a href="${href}" target="_blank" rel="noopener"
+          >${children}</a
+        >`,
+        content: this.get_node_content(children),
+      };
+      return id;
+    }
+
+    // check if this is a markdown file
+    if (href.endsWith(".md") || href.startsWith("#")) {
+      return new Markdoc.Tag(
+        "a",
+        { ...node.attributes, href: href.replace(/\.md$/, ".html") },
+        node.transformChildren(config),
+      );
+    }
+
+    // otherwise assume it's a link to a source file:
+    if (!href.startsWith("/")) {
+      throw new Error(
+        `non-markdown links (${href}) to files in the repository must use full paths, e.g. \`/src/glide/moz.build\``,
+      );
+    }
+
+    const github_url = `https://github.com/glide-browser/glide/blob/main${href}`;
+    const id = this.patch_id();
+    this.patches[id] = {
+      html: html`<a href="${github_url}" target="_blank" rel="noopener">${children}</a> `,
+      content: this.get_node_content(children),
+    };
+    return id;
+  }
 }
 
 function copy_to_clipboard_button() {
