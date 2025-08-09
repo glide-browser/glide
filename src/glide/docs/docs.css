@@ -683,8 +683,9 @@ h3.code-heading {
 }
 
 .go-to-def {
-  text-decoration-style: dotted;
-  text-decoration-color: grey;
+  text-decoration-thickness: 0.05em;
+  text-decoration-style: solid;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
 }
 
 .mobile-menu-toggle {
