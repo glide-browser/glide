@@ -62,7 +62,7 @@ class GlideBrowserDevClass {
     const last_modified = this.#fs_modified_timestamps.get(file_path);
     if (last_modified === undefined || stat.lastModified > last_modified) {
       this.#fs_modified_timestamps.set(file_path, stat.lastModified);
-      BrowserCommands.reload();
+      BrowserCommands.reloadSkipCache();
       return;
     }
 
@@ -85,7 +85,7 @@ class GlideBrowserDevClass {
       const last_modified = this.#fs_modified_timestamps.get(path);
       if (last_modified === undefined || stat.lastModified > last_modified) {
         this.#fs_modified_timestamps.set(path, stat.lastModified);
-        BrowserCommands.reload();
+        BrowserCommands.reloadSkipCache();
         return;
       }
     }
