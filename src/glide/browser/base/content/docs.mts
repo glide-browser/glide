@@ -346,6 +346,10 @@ export async function markdown_to_html(
           return "";
         },
       },
+      link: {
+        attributes: { href: { type: String, required: true }, "class": { type: String, required: false } },
+        transform: render_link,
+      },
     },
     nodes: {
       blockquote: {
@@ -412,53 +416,7 @@ export async function markdown_to_html(
          * `[...](/src/glide/browser/base/content/browser.mts)` -> `<a href="https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser.mts" target="_blank" rel="noopener">`
          * `[...](https://example.com)` -> `<a href="https://example.com" target="_blank" rel="noopener">`
          */
-        transform(node, config) {
-          const href = assert_present(
-            node.attributes["href"] as string | undefined,
-            "Expected <link> element to have an href",
-          );
-
-          const children = node.transformChildren(config);
-
-          const is_external = (href as string)?.startsWith("https://")
-            || (href as string)?.startsWith("http://");
-          if (is_external) {
-            const id = patch_id();
-            patches[id] = {
-              html: html`<a href="${href}" target="_blank" rel="noopener"
-                >${children}</a
-              >`,
-              content: get_node_content(children),
-            };
-            return id;
-          }
-
-          // check if this is a markdown file
-          if (href.endsWith(".md") || href.startsWith("#")) {
-            return new Markdoc.Tag(
-              "a",
-              { ...node.attributes, href: href.replace(/\.md$/, ".html") },
-              node.transformChildren(config),
-            );
-          }
-
-          // otherwise assume it's a link to a source file:
-          if (!href.startsWith("/")) {
-            throw new Error(
-              "non-markdown links to files in the repository must use full paths, e.g. `/src/glide/moz.build`",
-            );
-          }
-
-          const github_url = `https://github.com/glide-browser/glide/blob/main${href}`;
-          const id = patch_id();
-          patches[id] = {
-            html: html`<a href="${github_url}" target="_blank" rel="noopener"
-              >${children}</a
-            >`,
-            content: get_node_content(children),
-          };
-          return id;
-        },
+        transform: render_link,
       },
       heading: {
         attributes: {
@@ -593,6 +551,52 @@ export async function markdown_to_html(
       },
     },
   });
+
+  function render_link(node: M.Node, config: M.Config): M.RenderableTreeNode {
+    const href = assert_present(
+      node.attributes["href"] as string | undefined,
+      "Expected <link> element to have an href",
+    );
+
+    const children = node.transformChildren(config);
+
+    const is_external = (href as string)?.startsWith("https://")
+      || (href as string)?.startsWith("http://");
+    if (is_external) {
+      const id = patch_id();
+      patches[id] = {
+        html: html`<a href="${href}" target="_blank" rel="noopener"
+          >${children}</a
+        >`,
+        content: get_node_content(children),
+      };
+      return id;
+    }
+
+    // check if this is a markdown file
+    if (href.endsWith(".md") || href.startsWith("#")) {
+      return new Markdoc.Tag(
+        "a",
+        { ...node.attributes, href: href.replace(/\.md$/, ".html") },
+        node.transformChildren(config),
+      );
+    }
+
+    // otherwise assume it's a link to a source file:
+    if (!href.startsWith("/")) {
+      throw new Error(
+        `non-markdown links (${href}) to files in the repository must use full paths, e.g. \`/src/glide/moz.build\``,
+      );
+    }
+
+    const github_url = `https://github.com/glide-browser/glide/blob/main${href}`;
+    const id = patch_id();
+    patches[id] = {
+      html: html`<a href="${github_url}" target="_blank" rel="noopener">${children}</a> `,
+      content: get_node_content(children),
+    };
+    return id;
+  }
 
   var html_body = Markdoc.renderers.html(content);
   if (Object.keys(patches).length) {
