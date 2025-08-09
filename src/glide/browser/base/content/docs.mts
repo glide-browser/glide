@@ -82,130 +82,7 @@ export async function markdown_to_html(
   >;
   const ast = Markdoc.parse(tokenizer.tokenize(source));
 
-  const tokyonight = highlighter.getTheme("tokyo-night");
-  const tokyonight_light = highlighter.getTheme("tokyo-night-light");
-
-  const dark_text_fg = "#c0caf5";
-  const light_text_fg = "#343B58";
-
-  const themes = {
-    dark: {
-      ...tokyonight,
-      settings: [
-        ...(tokyonight.settings ?? []),
-        {
-          // override variable declarations, the default highlighting is
-          // just slightly different from keywords which I absolutely hate
-          scope: [
-            "meta.definition.variable variable.other.constant",
-            "meta.definition.variable variable.other.readwrite",
-            "variable.declaration.hcl variable.other.readwrite.hcl",
-            "meta.mapping.key.hcl variable.other.readwrite.hcl",
-            "variable.other.declaration",
-            "variable.other.constant",
-          ],
-          settings: {
-            // same colour as `entity.name` / variable access
-            // e.g. `glide.keymaps.set()`
-            //       ^^^^^
-            foreground: dark_text_fg,
-          },
-        },
-      ],
-    },
-    light: {
-      ...tokyonight_light,
-      settings: [
-        ...(tokyonight_light.settings ?? []),
-        {
-          // override variable declarations, the default highlighting is
-          // just slightly different from keywords which I absolutely hate
-          scope: [
-            "meta.definition.variable variable.other.constant",
-            "meta.definition.variable variable.other.readwrite",
-            "variable.declaration.hcl variable.other.readwrite.hcl",
-            "meta.mapping.key.hcl variable.other.readwrite.hcl",
-            "variable.other.declaration",
-          ],
-          settings: {
-            // same colour as `entity.name` / variable access
-            // e.g. `glide.keymaps.set()`
-            //       ^^^^^
-            foreground: light_text_fg,
-          },
-        },
-      ],
-    },
-  } as const satisfies Record<string, ThemeRegistrationResolved>;
-
-  // these are *only* used for the fallback inline code case, if a language is
-  // explicitly requested in an inline block we still use the standard syntax
-  // highlighting theme defined above.
-  const inline_themes: Record<string, ThemeRegistrationResolved> = {
-    dark: {
-      ...themes.dark,
-      name: "inline-tokynight",
-      settings: [
-        ...(themes.dark.settings ?? []),
-        {
-          // don't change the `<` or `|` operators
-          scope: ["keyword.operator.relational", "keyword.operator.bitwise"],
-          settings: { foreground: dark_text_fg },
-        },
-        // change the default foreground colour to match the text as that's what we need
-        // for things like `\` which don't have specific tokens
-        { settings: { foreground: dark_text_fg } },
-      ],
-    },
-    light: {
-      ...themes.light,
-      name: "inline-tokyonight-light",
-      settings: [
-        ...(themes.light.settings ?? []),
-        {
-          // don't change the `<` or `|` operators
-          scope: ["keyword.operator.relational", "keyword.operator.bitwise"],
-          settings: { foreground: light_text_fg },
-        },
-        // change the default foreground colour to match the text as that's what we need
-        // for things like `\` which don't have specific tokens
-        { settings: { foreground: light_text_fg } },
-      ],
-    },
-  };
-
-  const language_themes: Partial<
-    Record<string, Record<string, ThemeRegistrationResolved>>
-  > = {
-    html: {
-      dark: {
-        ...themes.dark,
-        name: "html-tokyonight",
-        settings: [
-          ...(themes.dark.settings ?? []),
-          {
-            // avoid rendering unknown HTML element names differently
-            scope: ["invalid", "invalid.illegal"],
-            settings: { foreground: "#F7768E" },
-          },
-        ],
-      },
-      light: {
-        ...themes.light,
-        name: "html-tokyonight-light",
-        settings: [
-          ...(themes.light.settings ?? []),
-          {
-            // avoid rendering unknown HTML element names differently
-            scope: ["invalid", "invalid.illegal"],
-            settings: { foreground: "#8C4351" },
-          },
-        ],
-      },
-    },
-  };
-
-  const state = new RenderState(source.split("\n"), highlighter, themes, inline_themes, language_themes, code_options);
+  const state = new RenderState(source.split("\n"), highlighter, code_options);
 
   const content = Markdoc.transform(ast, state.config);
 
@@ -363,19 +240,18 @@ class RenderState {
   constructor(
     lines: string[],
     highlighter: Highlighter,
-    themes: Record<string, ThemeRegistrationResolved>,
-    inline_themes: Record<string, ThemeRegistrationResolved>,
-    language_themes: Partial<Record<string, Record<string, ThemeRegistrationResolved>>>,
     code_options: Partial<CodeHighlightOptions> & { include_go_to_def: {} },
   ) {
     this.lines = lines;
     this.styles = [];
     this.head = [];
     this.highlighter = highlighter;
-    this.themes = themes;
-    this.inline_themes = inline_themes;
-    this.language_themes = language_themes;
     this.code_options = code_options;
+
+    const resolved = resolve_themes(highlighter);
+    this.themes = resolved.themes;
+    this.inline_themes = resolved.inline_themes;
+    this.language_themes = resolved.language_themes;
   }
 
   get config(): M.Config {
@@ -770,6 +646,143 @@ class RenderState {
     };
     return id;
   }
+}
+
+interface ResolvedThemes {
+  themes: Record<string, ThemeRegistrationResolved>;
+  inline_themes: Record<string, ThemeRegistrationResolved>;
+  language_themes: Partial<Record<string, Record<string, ThemeRegistrationResolved>>>;
+}
+
+function resolve_themes(highlighter: Highlighter): ResolvedThemes {
+  const tokyonight = highlighter.getTheme("tokyo-night");
+  const tokyonight_light = highlighter.getTheme("tokyo-night-light");
+
+  const dark_text_fg = "#c0caf5";
+  const light_text_fg = "#343B58";
+
+  const themes = {
+    dark: {
+      ...tokyonight,
+      settings: [
+        ...(tokyonight.settings ?? []),
+        {
+          // override variable declarations, the default highlighting is
+          // just slightly different from keywords which I absolutely hate
+          scope: [
+            "meta.definition.variable variable.other.constant",
+            "meta.definition.variable variable.other.readwrite",
+            "variable.declaration.hcl variable.other.readwrite.hcl",
+            "meta.mapping.key.hcl variable.other.readwrite.hcl",
+            "variable.other.declaration",
+            "variable.other.constant",
+          ],
+          settings: {
+            // same colour as `entity.name` / variable access
+            // e.g. `glide.keymaps.set()`
+            //       ^^^^^
+            foreground: dark_text_fg,
+          },
+        },
+      ],
+    },
+    light: {
+      ...tokyonight_light,
+      settings: [
+        ...(tokyonight_light.settings ?? []),
+        {
+          // override variable declarations, the default highlighting is
+          // just slightly different from keywords which I absolutely hate
+          scope: [
+            "meta.definition.variable variable.other.constant",
+            "meta.definition.variable variable.other.readwrite",
+            "variable.declaration.hcl variable.other.readwrite.hcl",
+            "meta.mapping.key.hcl variable.other.readwrite.hcl",
+            "variable.other.declaration",
+          ],
+          settings: {
+            // same colour as `entity.name` / variable access
+            // e.g. `glide.keymaps.set()`
+            //       ^^^^^
+            foreground: light_text_fg,
+          },
+        },
+      ],
+    },
+  } as const satisfies Record<string, ThemeRegistrationResolved>;
+
+  // these are *only* used for the fallback inline code case, if a language is
+  // explicitly requested in an inline block we still use the standard syntax
+  // highlighting theme defined above.
+  const inline_themes: Record<string, ThemeRegistrationResolved> = {
+    dark: {
+      ...themes.dark,
+      name: "inline-tokynight",
+      settings: [
+        ...(themes.dark.settings ?? []),
+        {
+          // don't change the `<` or `|` operators
+          scope: ["keyword.operator.relational", "keyword.operator.bitwise"],
+          settings: { foreground: dark_text_fg },
+        },
+        // change the default foreground colour to match the text as that's what we need
+        // for things like `\` which don't have specific tokens
+        { settings: { foreground: dark_text_fg } },
+      ],
+    },
+    light: {
+      ...themes.light,
+      name: "inline-tokyonight-light",
+      settings: [
+        ...(themes.light.settings ?? []),
+        {
+          // don't change the `<` or `|` operators
+          scope: ["keyword.operator.relational", "keyword.operator.bitwise"],
+          settings: { foreground: light_text_fg },
+        },
+        // change the default foreground colour to match the text as that's what we need
+        // for things like `\` which don't have specific tokens
+        { settings: { foreground: light_text_fg } },
+      ],
+    },
+  };
+
+  const language_themes: Partial<
+    Record<string, Record<string, ThemeRegistrationResolved>>
+  > = {
+    html: {
+      dark: {
+        ...themes.dark,
+        name: "html-tokyonight",
+        settings: [
+          ...(themes.dark.settings ?? []),
+          {
+            // avoid rendering unknown HTML element names differently
+            scope: ["invalid", "invalid.illegal"],
+            settings: { foreground: "#F7768E" },
+          },
+        ],
+      },
+      light: {
+        ...themes.light,
+        name: "html-tokyonight-light",
+        settings: [
+          ...(themes.light.settings ?? []),
+          {
+            // avoid rendering unknown HTML element names differently
+            scope: ["invalid", "invalid.illegal"],
+            settings: { foreground: "#8C4351" },
+          },
+        ],
+      },
+    },
+  };
+
+  return {
+    themes,
+    inline_themes,
+    language_themes,
+  };
 }
 
 function copy_to_clipboard_button() {
