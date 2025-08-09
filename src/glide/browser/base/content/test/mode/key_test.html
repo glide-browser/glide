@@ -72,10 +72,9 @@
       function addEvent(element, event) {
         const entry = document.createElement("div");
         entry.className = "event-entry";
-        entry.textContent =
-          `Key: ${event.key}, Code: ${event.code}, Time: ${
-            new Date().toLocaleTimeString()
-          }`;
+        entry.textContent = `Key: ${event.key}, Code: ${event.code}, Time: ${
+          new Date().toLocaleTimeString()
+        }`;
         element.insertBefore(entry, element.firstChild);
 
         // Keep only the last 5 events

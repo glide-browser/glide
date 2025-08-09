@@ -14,6 +14,7 @@
     "blockSelectorLinebreak": "wrap",
   },
   "markup": {
+    "printWidth": 110,
     "scriptIndent": true,
     "styleIndent": true,
   },

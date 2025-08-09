@@ -131,22 +131,10 @@
       });
 
       // Handle full screen change
-      document.addEventListener(
-        "fullscreenchange",
-        handleFullscreenChange,
-      );
-      document.addEventListener(
-        "webkitfullscreenchange",
-        handleFullscreenChange,
-      );
-      document.addEventListener(
-        "mozfullscreenchange",
-        handleFullscreenChange,
-      );
-      document.addEventListener(
-        "MSFullscreenChange",
-        handleFullscreenChange,
-      );
+      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.addEventListener("MSFullscreenChange", handleFullscreenChange);
 
       function handleFullscreenChange() {
         if (

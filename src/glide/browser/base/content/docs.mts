@@ -118,7 +118,8 @@ export async function markdown_to_html(
 
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-        ${state.styles
+        ${
+    state.styles
       .map(css =>
         html`
           <style>
@@ -127,7 +128,7 @@ export async function markdown_to_html(
         `
       )
       .join("\n")
-    }
+  }
         ${state.head.join("\n")}
 
         <script src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
@@ -183,7 +184,8 @@ export async function markdown_to_html(
                 </li>
                 <li>
                   <ul class="sidenav">
-                    ${SIDEBAR.map(({ name, href, class: class_, target }) => {
+                    ${
+    SIDEBAR.map(({ name, href, class: class_, target }) => {
       const abs = rel_to_dist + "/" + href;
       return Html.li({
         class: [
@@ -192,7 +194,7 @@ export async function markdown_to_html(
         ],
       }, [Html.a({ href, target }, [name])]);
     }).join("")
-    }
+  }
                     <li>
                       <a
                         href="https://github.com/glide-browser/glide"
@@ -476,8 +478,8 @@ class RenderState {
               ...(has_code
                 ? { class: Words([$class, "code-heading"]) }
                 : $class
-                  ? { class: $class }
-                  : undefined),
+                ? { class: $class }
+                : undefined),
             }, children);
 
             if (nested_config.nested_anchors) {
@@ -511,20 +513,20 @@ class RenderState {
                 config,
               })
               : IGNORE_CODE_LANGS.has(language)
-                ? code_to_html(this.highlighter, content, {
-                  ...this.code_options,
-                  lang: default_language,
-                  themes: this.language_themes[default_language] ?? this.themes,
-                  structure: "inline",
-                  config,
-                })
-                : code_to_html(this.highlighter, code, {
-                  ...this.code_options,
-                  lang: language,
-                  themes: this.language_themes[language] ?? this.themes,
-                  structure: "inline",
-                  config,
-                });
+              ? code_to_html(this.highlighter, content, {
+                ...this.code_options,
+                lang: default_language,
+                themes: this.language_themes[default_language] ?? this.themes,
+                structure: "inline",
+                config,
+              })
+              : code_to_html(this.highlighter, code, {
+                ...this.code_options,
+                lang: language,
+                themes: this.language_themes[language] ?? this.themes,
+                structure: "inline",
+                config,
+              });
 
             return this.html({
               html: html`<span class="shiki-inline">${highlighted}</span>`,
