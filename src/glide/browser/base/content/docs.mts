@@ -286,7 +286,6 @@ class RenderState {
             const content = this.lines.slice(first, last).join("\n");
 
             const html_id = node.attributes["id"];
-            const id = this.patch_id();
 
             const highlighted = this.highlighter.codeToHtml(content, {
               lang: "typescript",
@@ -299,12 +298,11 @@ class RenderState {
                 },
               ],
             });
-            this.patches[id] = {
+            return this.html({
               html:
                 `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
               content: "",
-            };
-            return id;
+            });
           },
         },
         sup: { render: "sup", attributes: {} },
@@ -321,9 +319,7 @@ class RenderState {
             const last = node.lines.at(-1)! - 1;
             const content = this.lines.slice(first, last);
 
-            const id = this.patch_id();
-            this.patches[id] = { html: content.join("\n"), content: "" };
-            return id;
+            return this.html({ html: content.join("\n"), content: "" });
           },
         },
         styles: {
@@ -530,12 +526,10 @@ class RenderState {
                   config,
                 });
 
-            const id = this.patch_id();
-            this.patches[id] = {
+            return this.html({
               html: html`<span class="shiki-inline">${highlighted}</span>`,
               content: code ?? content,
-            };
-            return id;
+            });
           },
         },
 
@@ -557,8 +551,7 @@ class RenderState {
               config,
             });
 
-            const id = this.patch_id();
-            this.patches[id] = {
+            return this.html({
               html: caption
                 ? html`
                   <figure>
@@ -568,17 +561,17 @@ class RenderState {
                 `
                 : highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`),
               content,
-            };
-            return id;
+            });
           },
         },
       },
     };
   }
 
-  patch_id() {
+  html(patch: { html: string; content: string }) {
     const id = `GLIDE_HIGHLIGHT_PATCH_${this.patch_counter}\n`;
     this.patch_counter++;
+    this.patches[id] = patch;
     return id;
   }
 
@@ -612,14 +605,12 @@ class RenderState {
     const is_external = (href as string)?.startsWith("https://")
       || (href as string)?.startsWith("http://");
     if (is_external) {
-      const id = this.patch_id();
-      this.patches[id] = {
+      return this.html({
         html: html`<a href="${href}" target="_blank" rel="noopener"
           >${children}</a
         >`,
         content: this.get_node_content(children),
-      };
-      return id;
+      });
     }
 
     // check if this is a markdown file
@@ -639,12 +630,10 @@ class RenderState {
     }
 
     const github_url = `https://github.com/glide-browser/glide/blob/main${href}`;
-    const id = this.patch_id();
-    this.patches[id] = {
+    return this.html({
       html: html`<a href="${github_url}" target="_blank" rel="noopener">${children}</a> `,
       content: this.get_node_content(children),
-    };
-    return id;
+    });
   }
 }
 
