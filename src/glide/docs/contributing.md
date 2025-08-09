@@ -135,10 +135,18 @@ function is(a: unknown, b: unknown, name?: string): void;
 function isnot(a: unknown, b: unknown, name?: string): void;
 
 // expect the comparison to fail
-function todo_is(a: unknown, b: unknown, name?: string): void;
+function todo_is(
+  a: unknown,
+  b: unknown,
+  name?: string,
+): void;
 
 // Like `is()` but compares by stringifying to JSON first.
-function isjson(a: unknown, b: unknown, name?: string): void;
+function isjson(
+  a: unknown,
+  b: unknown,
+  name?: string,
+): void;
 
 // Like `is()` but expects a truthy value
 function ok(a: unknown, name?: string): asserts a;
@@ -173,7 +181,10 @@ glide.prefs.set("glide.dev.reload_files", true);
 And the following pref is required for the search index to work:
 
 ```typescript
-glide.prefs.set("security.fileuri.strict_origin_policy", false);
+glide.prefs.set(
+  "security.fileuri.strict_origin_policy",
+  false,
+);
 ```
 
 And then open a URI like this:
@@ -224,7 +235,10 @@ Messages are typed and sent through the `.send_async_message(name, args?)` metho
 Typical usage from the main process looks like this:
 
 ```typescript
-GlideBrowser.get_focused_actor().send_async_message("Glide::ReplaceChar", {
-  character: "a",
-});
+GlideBrowser.get_focused_actor().send_async_message(
+  "Glide::ReplaceChar",
+  {
+    character: "a",
+  },
+);
 ```

@@ -449,6 +449,9 @@ You can also pass a `children` property, which will use `.replaceChildren()`:
 
 ```ts
 DOM.create_element("div", {
-  children: ["text content", DOM.create_element("img", { alt: "hint" })],
+  children: [
+    "text content",
+    DOM.create_element("img", { alt: "hint" }),
+  ],
 });
 ```

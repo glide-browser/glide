@@ -161,10 +161,7 @@ declare global {
        *
        * This is equivalent to:
        * ```ts
-       * const tab = await browser.tabs.query({
-       *   active: true,
-       *   currentWindow: true,
-       * })[0];
+       * const tab = await browser.tabs.query({ active: true, currentWindow: true })[0];
        * ```
        * But with additional error handling for invalid states.
        */

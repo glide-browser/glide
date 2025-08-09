@@ -1,0 +1,11 @@
+{
+  "extends": "../../../dprint.jsonc",
+  "markdown": {
+    // note: this only actually effects embedded language formatting
+    "lineWidth": 60,
+  },
+  "excludes": [
+    "dist/",
+    "themes/",
+  ],
+}
