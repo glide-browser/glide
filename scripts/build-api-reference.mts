@@ -363,7 +363,10 @@ function* Docs(docs: TSM.JSDoc | undefined): Generator<TraverseEntry> {
     } else if (Node.isJSDocTag(child)) {
       yield "\n\n`ts:" + child.print().replaceAll("`", "\\`") + "`";
     } else if (Node.isJSDocLink(child)) {
-      yield child.getText();
+      const name_node = child.getFirstChildIfKindOrThrow(TSM.SyntaxKind.QualifiedName);
+      const Name = name_node.getText();
+
+      yield `[\`ts:${Name}\`](#${Name})`;
     } else {
       throw new Error(`Unhandled JSDoc node kind: ${child.getKindName()}`);
     }
