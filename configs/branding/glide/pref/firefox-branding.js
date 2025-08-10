@@ -4,8 +4,9 @@
 
 // TODO
 pref("startup.homepage_override_url", "https://glide-browser.app/whatsnew?v=%VERSION%");
-pref("startup.homepage_welcome_url", "https://glide-browser.app/welcome/");
 pref("startup.homepage_welcome_url.additional", "https://glide-browser.app/privacy-policy/");
+
+pref("startup.homepage_welcome_url", "resource://glide-tutor/index.html");
 
 // The number of days a binary is permitted to be old
 // without checking for an update.  This assumes that
