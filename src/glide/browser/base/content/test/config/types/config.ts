@@ -100,6 +100,20 @@ declare global {
 }
 glide.excmds.execute("wow_cool");
 
+// messenger
+const messenger = glide.messengers.create<{ test1: never }>((message) => {
+  // valid message
+  if (message.name === "test1") {}
+});
+messenger.content.execute((messenger) => {
+  // valid message
+  messenger.send("test1");
+
+  // invalid message
+  // @ts-expect-error
+  messenger.send("invalid");
+}, { tab_id: 1 });
+
 browser.tabs.query({});
 
 // @ts-expect-error missing args

@@ -57,6 +57,8 @@ text-decoration: none;
 [`glide.keys.parse()`](#glide.keys.parse)\
 [`glide.unstable`](#glide.unstable)\
 [`glide.unstable.include()`](#glide.unstable.include)\
+[`glide.messengers`](#glide.messengers)\
+[`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
 [`glide.modes.register()`](#glide.modes.register)\
 [`glide.RGBString`](#glide.RGBString)\
@@ -399,6 +401,47 @@ for example, "shared.glide.ts" or "shared/glide.ts" would work but
 itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} `ts:glide.unstable.include`{% /link %} calls are not supported.
 
 `ts:@example glide.unstable.include("shared.glide.ts")`
+
+## • `glide.messengers` {% id="glide.messengers" %}
+
+{% api-heading id="glide.messengers.create" %}
+glide.messengers.create(receiver): glide.ParentMessenger<Messages>
+{% /api-heading %}
+
+Create a {% link href="#glide.ParentMessenger" class="go-to-def" %} `ts:glide.ParentMessenger`{% /link %} that can be used to communicate with the content process.
+
+Communication is currently uni-directional, the content process can communicate with the main
+process, but not the other way around.
+
+Sending and receiving messages is type safe & determined from the type variable passed to this function.
+e.g. in the example below, the only message that can be sent is `my_message`.
+
+```typescript
+// create a messenger and pass in the callback that will be invoked
+// when `messenger.send()` is called below
+const messenger = glide.messengers.create<
+  { my_message: null }
+>((message) => {
+  switch (message.name) {
+    case "my_message": {
+      // ...
+      break;
+    }
+  }
+});
+
+glide.keymaps.set("normal", "gt", ({ tab_id }) => {
+  // note the `messenger.content.execute()` function intead of
+  // the typical `glide.content.execute()` function.
+  messenger.content.execute((messenger) => {
+    document.addEventListener("focusin", (event) => {
+      if (event.target.id === "my-element") {
+        messenger.send("my_message");
+      }
+    });
+  }, { tab_id });
+});
+```
 
 ## • `glide.modes` {% id="glide.modes" %}
 

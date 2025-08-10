@@ -1,8 +1,8 @@
 diff --git a/toolkit/components/extensions/ExtensionParent.sys.mjs b/toolkit/components/extensions/ExtensionParent.sys.mjs
-index 2aa583e72f279757f1087bacbb19c57b5a6b915d..3ad0b17de63376cfe1f25de053b1f77a1c7d74d6 100644
+index 962e2c779aaa74f96f0d1a2c5ac7fb97ca1b87ec..c11c549beef7e13f10473d5eb9f860f2824b3157 100644
 --- a/toolkit/components/extensions/ExtensionParent.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionParent.sys.mjs
-@@ -754,7 +754,12 @@ class ContentScriptContextParent extends ProxyContextParent {}
+@@ -749,7 +749,12 @@ class ContentScriptContextParent extends ProxyContextParent {}
   * background script, a tab page, or a popup, running in
   * ExtensionChild.sys.mjs.
   */
@@ -16,3 +16,20 @@ index 2aa583e72f279757f1087bacbb19c57b5a6b915d..3ad0b17de63376cfe1f25de053b1f77a
    constructor(envType, extension, params, browsingContext) {
      super(envType, extension, params, browsingContext, extension.principal);
  
+@@ -1185,6 +1190,16 @@ ParentAPIManager = {
+ 
+     verifyActorForContext(actor, context);
+ 
++    // -------------------- glide message overrides --------------------
++    if (data.path === 'glide.sendMessage') {
++      // used for the `glide.messengers` API
++      const messenger_id = data.args[0];
++      const message = { name: data.args[1], data: data.args[2] ?? null }
++      actor.browsingContext.topChromeWindow.GlideBrowser.call_messenger(messenger_id, message)
++      return;
++    }
++    // ------------------ end glide message overrides ------------------
++
+     let reply = result => {
+       if (target && !context.parentMessageManager) {
+         Services.console.logStringMessage(

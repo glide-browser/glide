@@ -1,0 +1,42 @@
+diff --git a/toolkit/components/extensions/ExtensionContent.sys.mjs b/toolkit/components/extensions/ExtensionContent.sys.mjs
+index 97404bb84a3fee179524c734a491b8b571477983..c7b678c2afb9b8347953765a65da6cccfb9c2f74 100644
+--- a/toolkit/components/extensions/ExtensionContent.sys.mjs
++++ b/toolkit/components/extensions/ExtensionContent.sys.mjs
+@@ -1115,6 +1115,37 @@ export class ContentScriptContextChild extends BaseContext {
+     );
+     lazy.Schemas.exportLazyGetter(this.sandbox, "chrome", () => this.chromeObj);
+ 
++    // add an internal helper to expose specific internal APIs we need.
++    //
++    // currently only used in browser-messenger.ts
++    if (extension?.id === "glide-internal@mozilla.org") {
++      lazy.Schemas.exportLazyGetter(
++        this.sandbox,
++        "$internal_glide",
++        () => {
++          let obj = Cu.createObjectIn(this.sandbox);
++          obj = ChromeUtils.waiveXrays(obj)
++
++          obj.send_message = Cu.exportFunction((messenger_id, name) => {
++            this.childManager.conduit.sendAPICall({ childId: this.childManager.conduit.id, path: 'glide.sendMessage', args: [messenger_id, name] });
++          }, obj)
++
++          obj.deserialise_glidefunction = Cu.exportFunction((source) => {
++            return Cu.evalInSandbox(
++              source,
++              this.cloneScope,
++              "latest",
++              "sandbox eval code",
++              1,
++            );
++
++          }, obj)
++
++          return obj
++        }
++      );
++    }
++
+     // Keep track if the userScript API script has been already executed in this context
+     // (e.g. because there are more then one UserScripts that match the related webpage
+     // and so the UserScript apiScript has already been executed).

@@ -439,6 +439,46 @@ declare global {
       include(path: string): Promise<void>;
     };
 
+    messengers: {
+      /**
+       * Create a {@link glide.ParentMessenger} that can be used to communicate with the content process.
+       *
+       * Communication is currently uni-directional, the content process can communicate with the main
+       * process, but not the other way around.
+       *
+       * Sending and receiving messages is type safe & determined from the type variable passed to this function.
+       * e.g. in the example below, the only message that can be sent is `my_message`.
+       *
+       * ```typescript
+       * // create a messenger and pass in the callback that will be invoked
+       * // when `messenger.send()` is called below
+       * const messenger = glide.messengers.create<{ my_message: null }>((message) => {
+       *   switch (message.name) {
+       *     case "my_message": {
+       *       // ...
+       *       break;
+       *     }
+       *   }
+       * });
+       *
+       * glide.keymaps.set("normal", "gt", ({ tab_id }) => {
+       *   // note the `messenger.content.execute()` function intead of
+       *   // the typical `glide.content.execute()` function.
+       *   messenger.content.execute((messenger) => {
+       *     document.addEventListener('focusin', (event) => {
+       *       if (event.target.id === 'my-element') {
+       *         messenger.send('my_message');
+       *       }
+       *     })
+       *   }, { tab_id });
+       * });
+       * ```
+       */
+      create<Messages extends Record<string, any>>(
+        receiver: (message: glide.Message<Messages>) => void,
+      ): glide.ParentMessenger<Messages>;
+    };
+
     modes: {
       /**
        * Register a custom `mode`.
@@ -704,6 +744,41 @@ declare global {
       ConfigLoaded: {};
       WindowLoaded: {};
     };
+
+    /// doesn't render properly right now
+    /// @docs-skip
+    type Message<Messages extends Record<string, any>> = {
+      [K in keyof Messages]: {
+        name: K;
+        data: Messages[K];
+      };
+    }[keyof Messages];
+
+    interface ParentMessenger<Messages extends Record<string, any>> {
+      content: {
+        /**
+         * The given callback is executed in the content process and is given a
+         * {@link glide.ContentMessenger} as the first argument.
+         *
+         * **note**: unlike {@link glide.content.execute} the callback cannot be passed custom arguments
+         */
+        execute: (callback: (messenger: glide.ContentMessenger<Messages>) => void, opts: {
+          /**
+           * The ID of the tab into which to inject.
+           *
+           * Or the tab object as returned by {@link glide.tabs.active}.
+           */
+          tab_id: number | glide.TabWithID;
+        }) => void;
+      };
+    }
+
+    interface ContentMessenger<Messages extends Record<string, any>> {
+      /**
+       * Send a message to the receiver in the parent process.
+       */
+      send<MessageName extends keyof Messages>(name: MessageName): void;
+    }
   }
 
   /**

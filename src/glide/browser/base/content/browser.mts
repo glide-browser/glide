@@ -7,6 +7,7 @@ import type { SetRequired, Split } from "type-fest";
 import type { GlideDocsParent } from "../../actors/GlideDocsParent.sys.mjs";
 import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs";
 import type { GlideCommandString, GlideExcmdInfo, GlideOperator } from "./browser-excmds-registry.mts";
+import type { Messenger as MessengerType } from "./browser-messenger.mts";
 import type { Jumplist } from "./plugins/jumplist.mts";
 
 const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
@@ -25,6 +26,7 @@ const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
+const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 
 export interface State {
   mode: GlideMode;
@@ -77,6 +79,9 @@ class GlideBrowserClass {
       ) => (() => void | Promise<void>) | void | Promise<void>;
     }[];
   } = {};
+
+  #messenger_id: number = 0;
+  #messengers: Map<number, MessengerType<any>> = new Map();
 
   init() {
     document!.addEventListener("blur", this.#on_blur.bind(this), true);
@@ -264,6 +269,7 @@ class GlideBrowserClass {
     this.#api = null;
     this.config_path = null;
     this._modes = {} as any;
+    this.#messengers = new Map();
     this.#user_cmds = new Map();
 
     try {
@@ -472,6 +478,22 @@ class GlideBrowserClass {
     for (const notification of gNotificationBox.allNotifications) {
       gNotificationBox.removeNotification(notification);
     }
+  }
+
+  create_messenger<Messages extends Record<string, any>>(receiver: (message: glide.Message<Messages>) => void) {
+    const id = GlideBrowser.#messenger_id++;
+    const messenger = new Messenger(id, receiver);
+    GlideBrowser.#messengers.set(id, messenger);
+    return messenger;
+  }
+
+  call_messenger(id: number, message: { name: string; data: any }) {
+    const messenger = this.#messengers.get(id);
+    if (!messenger) {
+      throw new Error(`no messenger with ID: ${id}`);
+    }
+
+    messenger._recv(message);
   }
 
   /**
@@ -1700,6 +1722,11 @@ function make_glide_api(): typeof glide {
       },
       clear(name) {
         Services.prefs.clearUserPref(name);
+      },
+    },
+    messengers: {
+      create(receiver) {
+        return GlideBrowser.create_messenger(receiver);
       },
     },
     unstable: {
