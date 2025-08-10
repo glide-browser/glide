@@ -4,6 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+body {
+  font-family: monospace;
+}
+
 p {
   line-height: 1.3rem;
 }
@@ -29,7 +33,17 @@ p {
   margin-bottom: 0.5em !important;
 }
 
+.hjkl {
+  display: flex;
+  justify-content: center;
+}
+
 .tutor-heading {
   text-align: center;
   padding: 0.5em 1em;
+  margin-top: 100px !important;
+}
+
+.tutor-heading span {
+  color: grey;
 }
