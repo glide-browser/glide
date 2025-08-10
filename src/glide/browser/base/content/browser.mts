@@ -9,6 +9,7 @@ import type { GlideHandlerParent } from "../../actors/GlideHandlerParent.sys.mjs
 import type { GlideCommandString, GlideExcmdInfo, GlideOperator } from "./browser-excmds-registry.mts";
 import type { Messenger as MessengerType } from "./browser-messenger.mts";
 import type { Jumplist } from "./plugins/jumplist.mts";
+import type { Sandbox } from "./sandbox.mts";
 
 const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
 const { GlideBrowserDev } = ChromeUtils.importESModule("chrome://glide/content/browser-dev.mjs", { global: "current" });
@@ -277,6 +278,21 @@ class GlideBrowserClass {
   readonly config_pending_notification_id: string = "glide-config-reload-notification";
   #config_modified_timestamp: number | undefined;
 
+  #sandbox: Sandbox | null = null;
+  get config_sandbox() {
+    this.#sandbox ??= create_sandbox({
+      document,
+      console,
+      get glide() {
+        return GlideBrowser.api;
+      },
+      get browser() {
+        return GlideBrowser.browser_proxy_api;
+      },
+    });
+    return this.#sandbox;
+  }
+
   async #reload_config() {
     this.#api = null;
     this.config_path = null;
@@ -303,16 +319,7 @@ class GlideBrowserClass {
     this.api.modes.register("command", { caret: "line" });
     this.api.modes.register("op-pending", { caret: "underline" });
 
-    const sandbox = create_sandbox({
-      document,
-      console,
-      get glide() {
-        return GlideBrowser.api;
-      },
-      get browser() {
-        return GlideBrowser.browser_proxy_api;
-      },
-    });
+    const sandbox = this.config_sandbox;
 
     // default plugins
     ShimsPlugin.init(sandbox);

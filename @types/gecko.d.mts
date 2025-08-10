@@ -241,6 +241,11 @@ declare namespace MockedExports {
     "resource://gre/modules/AppConstants.sys.mjs":
       typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
 
+    "resource://devtools/shared/loader/Loader.sys.mjs":
+      typeof import("../engine/devtools/shared/loader/Loader.sys.mjs");
+    "resource://devtools/client/framework/browser-toolbox/Launcher.sys.mjs":
+      typeof import("../engine/devtools/client/framework/browser-toolbox/Launcher.sys.mjs");
+
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
     "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");

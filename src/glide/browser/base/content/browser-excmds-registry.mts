@@ -75,6 +75,7 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   { name: "quit", description: "Close all windows", content: false, repeatable: false },
+  { name: "repl", description: "Start the config REPL", content: false, repeatable: false },
 
   {
     name: "set",

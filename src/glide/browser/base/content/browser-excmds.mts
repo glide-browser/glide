@@ -223,6 +223,23 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "repl": {
+        const { require } = ChromeUtils.importESModule("resource://devtools/shared/loader/Loader.sys.mjs");
+        const { BrowserConsoleManager } = require("devtools/client/webconsole/browser-console-manager");
+
+        // note: when the console loads and sets up the `webconsole` actor, we'll check if
+        //       this pref is set, and if it is, update that instance to use our config sandbox
+        //       and then delete the pref so that the next toolbox that is opened, will use
+        //       the regular window sandbox.
+        //
+        //       see devtools/server/actors/webconsole.js::evalGlobal for the corresponding
+        //       implementation.
+        Services.prefs.setBoolPref("devtools.glide.open_next_webconsole_as_repl", true);
+
+        await BrowserConsoleManager.openBrowserConsoleOrFocus();
+        break;
+      }
+
       case "tab": {
         const {
           args: { tab_index },
