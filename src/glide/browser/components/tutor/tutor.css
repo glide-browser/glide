@@ -4,6 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+p {
+  line-height: 1.3rem;
+}
+
 .content-container {
   display: flex;
   justify-content: center;
@@ -22,4 +26,10 @@
   line-height: 1.2;
   text-align: center;
   margin: 2em 0;
+  margin-bottom: 0.5em !important;
+}
+
+.tutor-heading {
+  text-align: center;
+  padding: 0.5em 1em;
 }
