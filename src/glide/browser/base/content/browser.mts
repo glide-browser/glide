@@ -103,6 +103,7 @@ class GlideBrowserClass {
     // be a more applicable event we should be waiting for.
     const startup_observer: nsIObserver = {
       observe() {
+        GlideBrowser._log.debug("browser-idle-startup-tasks-finished observer called");
         GlideBrowser.#startup_finished = true;
 
         const listeners = [...GlideBrowser.#startup_listeners];
@@ -175,17 +176,27 @@ class GlideBrowserClass {
   }
 
   async reload_config() {
+    // note: we hae to initialise this promise as early as possible so that we don't
+    //       register the listener *after* the extension has started up, therefore
+    //       resulting in the listener never firing.
+    const extension_startup = this._extension_startup_promise;
+
     await this.#reload_config();
 
     this.on_startup(async () => {
+      await extension_startup;
       await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
     });
 
     this.on_startup(async () => {
+      await extension_startup;
       await this.#state_change_autocmd(this.state, { mode: null, operator: null });
     });
 
     this.on_startup(async () => {
+      await extension_startup;
+
+      this._log.debug("[autocmds] emitting ConfigLoaded");
       const results = await Promise.allSettled((GlideBrowser.autocmds.ConfigLoaded ?? []).map(cmd =>
         (async () => {
           const cleanup = await cmd.callback({});
@@ -350,6 +361,24 @@ class GlideBrowserClass {
         ],
       });
     }
+  }
+
+  get _extension_startup_promise(): Promise<void> {
+    return redefine_getter(
+      this,
+      "_extension_startup_promise",
+      new Promise<void>((resolve) => {
+        const listener = (_: unknown, context: WebExtensionBackgroundContext) => {
+          this._log.debug(`extension-proxy-context-load called with viewType = ${context.viewType}`);
+          if (context.viewType === "background") {
+            resolve();
+            this.extension.off("extension-proxy-context-load", listener);
+          }
+        };
+
+        this.extension.on("extension-proxy-context-load", listener);
+      }),
+    );
   }
 
   async #state_change_autocmd(

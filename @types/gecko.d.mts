@@ -288,6 +288,12 @@ interface BroadcastConduit extends _BroadcastConduit {
   ): Promise<StructuredCloneHolder | undefined>;
 }
 
+type WebExtensionBackgroundContext =
+  & InstanceType<
+    typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
+  >
+  & InstanceType<_ExtensionCommon["BaseContext"]>;
+
 /**
  * A very much not-exhaustive definition for `toolkit/components/extensions/Extension.sys.mjs::Extension`
  */
@@ -300,10 +306,7 @@ interface WebExtension {
   apiManager: InstanceType<_ExtensionCommon["LazyAPIManager"]>;
   tabManager: TabManagerBase;
   backgroundContext:
-    & InstanceType<
-      typeof import("../engine/toolkit/components/extensions/ExtensionParent.sys.mjs").ExtensionPageContextParent
-    >
-    & InstanceType<_ExtensionCommon["BaseContext"]>
+    & WebExtensionBackgroundContext
     & {
       /**
        * This is set in `toolkit/components/extensions/ExtensionCommon.sys.mjs` when any registered
@@ -313,6 +316,17 @@ interface WebExtension {
        */
       $glide_errors?: Set<{ error: unknown; source: string }>;
     };
+  // taken from toolkit/components/extensions/parent/ext-backgroundPage.js::BACKGROUND_STATE
+  backgroundState: "starting" | "running" | "suspending" | "stopped";
+
+  on(
+    event: "extension-proxy-context-load",
+    callback: (event: unknown, context: WebExtensionBackgroundContext) => void,
+  ): void;
+  off(
+    event: "extension-proxy-context-load",
+    callback: (event: unknown, context: WebExtensionBackgroundContext) => void,
+  ): void;
 }
 
 interface WebExtensionPolicy {
