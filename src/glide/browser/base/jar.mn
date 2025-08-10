@@ -40,6 +40,7 @@ glide.jar:
   content/utils/resources.mjs                  (content/utils/dist/resources.mjs)
 
 # default plugins
+  content/plugins/shims.mjs                    (content/plugins/dist/shims.mjs)
   content/plugins/hints.mjs                    (content/plugins/dist/hints.mjs)
   content/plugins/keymaps.mjs                  (content/plugins/dist/keymaps.mjs)
   content/plugins/jumplist.mjs                 (content/plugins/dist/jumplist.mjs)

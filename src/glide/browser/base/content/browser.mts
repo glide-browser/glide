@@ -14,6 +14,7 @@ const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugin
 const { GlideBrowserDev } = ChromeUtils.importESModule("chrome://glide/content/browser-dev.mjs", { global: "current" });
 const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
 const JumplistPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/jumplist.mjs");
+const ShimsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/shims.mjs");
 const HintsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/hints.mjs");
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
@@ -303,6 +304,7 @@ class GlideBrowserClass {
     });
 
     // default plugins
+    ShimsPlugin.init(sandbox);
     HintsPlugin.init(sandbox);
     DefaultKeymaps.init(sandbox);
     this.jumplist = new JumplistPlugin.Jumplist(sandbox);
