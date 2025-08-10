@@ -549,6 +549,22 @@ declare global {
   function todo_assert(value: unknown, message?: string): void;
 
   /**
+   * Helper function for asserting exhaustiveness checks.
+   *
+   * You can optionally pass a second argument which will be used as the error message,
+   * if not given then the first argument will be stringified in the error message.
+   *
+   * ```typescript
+   * switch (union.type) {
+   *  case 'type1': ...
+   *  case 'type2': ...
+   *  default:
+   *    throw assert_never(union.type);
+   * }
+   */
+  function assert_never(x: never, detail?: string | Error): never;
+
+  /**
    * Interface used to define types for excmds, intended for declaration merging.
    *
    * e.g.

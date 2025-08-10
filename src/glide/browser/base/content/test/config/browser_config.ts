@@ -841,3 +841,24 @@ add_task(async function test_keymap_callback_receives_tab_id() {
     is(GlideBrowser.api.g.value, active_tab.id, "Keymap callback should receive tab_id that matches the active tab ID");
   });
 });
+
+add_task(async function test_assert_never() {
+  await GlideTestUtils.reload_config(function _() {
+    try {
+      // @ts-expect-error
+      assert_never("value");
+    } catch (err) {
+      glide.g.value = String(err);
+    }
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    is(
+      GlideBrowser.api.g.value,
+      "Error: assert_never: impossible to call: \"value\"",
+      "assert_never should throw an error",
+    );
+  });
+});

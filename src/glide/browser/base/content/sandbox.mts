@@ -64,6 +64,12 @@ export function create_sandbox(props: SandboxProps): Sandbox {
         throw new AssertionError({ message: message ?? `Expected \`${value}\` to be falsy`, actual: value });
       }
     },
+    assert_never(x: never, detail?: string | Error): never {
+      if (detail instanceof Error) {
+        throw detail;
+      }
+      throw new Error(detail ?? `assert_never: impossible to call: ${JSON.stringify(x)}`);
+    },
   };
 
   if (props.document) {
