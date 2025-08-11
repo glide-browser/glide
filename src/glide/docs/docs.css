@@ -1114,3 +1114,30 @@ h3.code-heading {
 table th, table td {
   border: 1px solid var(--text-color);
 }
+
+.alpha-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1.25rem;
+  background-color: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 0.25rem;
+  color: #92400e;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .alpha-warning {
+    background-color: rgba(245, 158, 11, 0.05);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #d69e2e;
+  }
+}
+
+.alpha-warning .alpha-warning-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
