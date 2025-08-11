@@ -299,6 +299,7 @@ class GlideBrowserClass {
     this._modes = {} as any;
     this.#messengers = new Map();
     this.#user_cmds = new Map();
+    this.#sandbox = null;
 
     try {
       this.remove_all_notifications();
