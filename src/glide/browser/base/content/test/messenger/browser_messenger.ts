@@ -38,3 +38,36 @@ add_task(async function test_basic_message_usage() {
     is(GlideBrowser.api.g.value, "my_message", "the message should be sent through to the parent config");
   });
 });
+
+add_task(async function test_recv_error_handling() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      var messenger = glide.messengers.create<{ my_message: never }>(() => {
+        throw new Error("error in recv handler");
+      });
+
+      glide.keymaps.set("normal", "gt", ({ tab_id }) => {
+        messenger.content.execute((messenger) => {
+          messenger.send("my_message");
+        }, { tab_id });
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("gt");
+    await sleep_frames(50);
+
+    let notification = gNotificationBox.getNotificationWithValue("glide-messenger-error");
+
+    ok(notification, "Error notification should be shown");
+    is(
+      // @ts-ignore
+      notification.shadowRoot
+        .querySelector(".message")
+        .textContent.trim(),
+      "Error occurred in messenger receiver `messenger<@glide.ts:2:9` - Error: error in recv handler",
+      "Notification should contain error message",
+    );
+
+    gNotificationBox.removeNotification(notification);
+  });
+});

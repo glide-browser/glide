@@ -526,13 +526,23 @@ class GlideBrowserClass {
     return messenger;
   }
 
-  call_messenger(id: number, message: { name: string; data: any }) {
+  async call_messenger(id: number, message: { name: string; data: any }) {
     const messenger = this.#messengers.get(id);
     if (!messenger) {
       throw new Error(`no messenger with ID: ${id}`);
     }
 
-    messenger._recv(message);
+    await Promise.resolve().then(() => messenger._recv(message)).catch((err) => {
+      GlideBrowser._log.error(err);
+
+      const loc = GlideBrowser.#clean_stack(err, "_recv")
+        ?? "<unknown>";
+      GlideBrowser.add_notification("glide-messenger-error", {
+        label: `Error occurred in messenger receiver \`${loc}\` - ${err}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    });
   }
 
   /**
