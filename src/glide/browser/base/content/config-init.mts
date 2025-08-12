@@ -62,8 +62,8 @@ export async function init() {
 
 export async function write_d_ts(dir: string) {
   await IOUtils.writeUTF8(
-    PathUtils.join(dir, "glide-api.d.ts"),
-    await fetch_resource("chrome://glide/content/glide-api.d.ts", { loadUsingSystemPrincipal: true }),
+    PathUtils.join(dir, "glide.d.ts"),
+    await fetch_resource("chrome://glide/content/glide.d.ts", { loadUsingSystemPrincipal: true }),
   );
 }
 
@@ -73,7 +73,7 @@ const DEFAULT_TSCONFIG = dedent`
   "typeAcquisition": {
     "enable": true,
     /* Ensures the \`glide\` variable and related types are included */
-    "include": ["./glide-api.d.ts"]
+    "include": ["./glide.d.ts"]
   },
   "exclude": [],
   "compilerOptions": {

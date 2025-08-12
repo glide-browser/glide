@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-/// <reference path="../../../dist/api-bundled.d.ts" />
+/// <reference path="../../../dist/bundled.compiled.d.ts" />
 
 // Valid: no args
 glide.content.execute(() => {}, { tab_id: 10 });

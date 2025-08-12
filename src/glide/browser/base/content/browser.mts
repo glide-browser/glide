@@ -134,7 +134,7 @@ class GlideBrowserClass {
 
     const config_promise = this.reload_config();
 
-    // copy the glide-api.d.ts file to the profile dir so it's easy to
+    // copy the glide.d.ts file to the profile dir so it's easy to
     // refer to it in the config file
     this.on_startup(async () => {
       await config_promise;

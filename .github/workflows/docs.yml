@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "src/glide/docs/**"
-      - "src/glide/browser/base/content/glide-api.d.ts"
+      - "src/glide/browser/base/content/glide.d.ts"
       - "scripts/build-docs.mts"
       - "scripts/build-api-reference.mts"
       - ".github/workflows/docs.yml"

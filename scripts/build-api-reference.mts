@@ -30,7 +30,7 @@ const DPRINT_EXE = Path.join(ROOT_DIR, "node_modules", ".bin", "dprint");
 
 async function main() {
   const project = new Project({ tsConfigFilePath: Path.join(ROOT_DIR, "tsconfig.json") });
-  const file = assert_present(project.getSourceFile(Path.join(GLIDE_BROWSER_CONTENT_DIR, "glide-api.d.ts")));
+  const file = assert_present(project.getSourceFile(Path.join(GLIDE_BROWSER_CONTENT_DIR, "glide.d.ts")));
 
   const global_decl = file.getFirstChildByKind(ts.SyntaxKind.ModuleDeclaration)!;
   assert.equal(global_decl?.getName(), "global");

@@ -43,7 +43,7 @@
     // bundled types, tested separately and excluded here so that type changes don't
     // require running bundle all the time
     "src/glide/browser/base/content/bundled.d.ts",
-    "src/glide/browser/base/content/dist/api-bundled.d.ts",
+    "src/glide/browser/base/content/dist/bundled.compiled.d.ts",
     // needs to be tested individually
     "src/glide/browser/base/content/test/config/types",
     // includes preprocessor annotations
