@@ -13,3 +13,11 @@ side note: Ladybird is very promising and I hope their project is a success!
 ## Why not X extension?
 
 TODO
+
+## Why can't I play DRM content?
+
+DRM is a walled garden and [blocked for open source browsers](https://blog.samuelmaddock.com/posts/google-widevine-blocked-my-browser/), at the least the kind not ran by a large organisation.
+
+Additionally, a widevine license would be prohibitively expensive, even if we would be accepted.
+
+This is also a matter of principle, you should reconsider if it's worth using services that require DRM and proprietary software. See [deffective by design](https://www.defectivebydesign.org/).
