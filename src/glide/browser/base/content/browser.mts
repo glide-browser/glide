@@ -642,7 +642,7 @@ class GlideBrowserClass {
 
         const cleanup = await cmd.callback(args);
         if (typeof cleanup === "function") {
-          GlideBrowser.#buffer_cleanups.push({ callback: cleanup, source: "UrlEnter cleanup" });
+          GlideBrowser.buffer_cleanups.push({ callback: cleanup, source: "UrlEnter cleanup" });
         }
       })()
     ));
@@ -701,14 +701,14 @@ class GlideBrowserClass {
     };
   }
 
-  #buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] = [];
+  buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] = [];
 
   async clear_buffer() {
     this.api.bo = {};
     this.key_manager.clear_buffer();
 
-    const cleanups = this.#buffer_cleanups;
-    this.#buffer_cleanups = [];
+    const cleanups = this.buffer_cleanups;
+    this.buffer_cleanups = [];
 
     const results = await Promises.all_settled(
       cleanups.map(({ callback, source }) => ({ callback, metadata: { source } })),
@@ -1573,6 +1573,25 @@ function make_glide_api(): typeof glide {
       },
     },
     buf: {
+      prefs: {
+        set: (name, value) => {
+          const glide = GlideBrowser.api;
+          const previous = glide.prefs.get(name);
+
+          glide.prefs.set(name, value);
+
+          GlideBrowser.buffer_cleanups.push({
+            source: "glide.buf.prefs.set",
+            callback: () => {
+              if (previous === undefined) {
+                glide.prefs.clear(name);
+              } else {
+                glide.prefs.set(name, previous);
+              }
+            },
+          });
+        },
+      },
       keymaps: {
         set(modes, lhs, rhs, opts) {
           GlideBrowser.key_manager.set(modes, lhs as string, rhs, { ...opts, buffer: true });

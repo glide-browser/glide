@@ -65,6 +65,46 @@ add_task(async function test_keymap_reloading() {
   is(GlideBrowser.state.mode, "insert");
 });
 
+add_task(async function test_buf_prefs_set() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.prefs.set("smoothscroll", false);
+
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
+      glide.buf.prefs.set("smoothscroll", true);
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(10);
+
+    is(GlideBrowser.api.prefs.get("smoothscroll"), true, "pref should be set via UrlEnter");
+  });
+
+  await sleep_frames(10);
+
+  is(GlideBrowser.api.prefs.get("smoothscroll"), false, "pref should be restored after navigating away");
+
+  GlideBrowser.api.prefs.clear("smoothscroll");
+});
+
+add_task(async function test_buf_prefs_set_new_pref() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
+      glide.buf.prefs.set("mynewpref", true);
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(10);
+
+    is(GlideBrowser.api.prefs.get("mynewpref"), true, "pref should be set via UrlEnter");
+  });
+
+  await sleep_frames(10);
+
+  is(GlideBrowser.api.prefs.get("mynewpref"), undefined, "pref should be cleared after navigating away");
+});
+
 add_task(async function test_invalid_config_notification() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {

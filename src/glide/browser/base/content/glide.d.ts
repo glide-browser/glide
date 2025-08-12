@@ -318,6 +318,16 @@ declare global {
     };
 
     buf: {
+      prefs: {
+        /**
+         * Set a preference for the current buffer. When navigating to a new buffer, the pref will be reset
+         * to the previous value.
+         *
+         * See {@link glide.prefs.set} for more information.
+         */
+        set(name: string, value: string | number | boolean): void;
+      };
+
       keymaps: {
         set<const LHS>(
           modes: GlideMode | GlideMode[],

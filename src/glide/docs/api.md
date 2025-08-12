@@ -46,6 +46,8 @@ text-decoration: none;
 [`glide.hints`](#glide.hints)\
 [`glide.hints.show()`](#glide.hints.show)\
 [`glide.buf`](#glide.buf)\
+[`glide.buf.prefs`](#glide.buf.prefs)\
+[`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
 [`glide.buf.keymaps`](#glide.buf.keymaps)\
 [`glide.buf.keymaps.set()`](#glide.buf.keymaps.set)\
 [`glide.buf.keymaps.del()`](#glide.buf.keymaps.del)\
@@ -278,6 +280,17 @@ An optional `action()` function can be passed that will be invoked when
 a hint is selected.
 
 ## • `glide.buf` {% id="glide.buf" %}
+
+### `glide.buf.prefs` {% id="glide.buf.prefs" %}
+
+{% api-heading id="glide.buf.prefs.set" %}
+glide.buf.prefs.set(name, value): void
+{% /api-heading %}
+
+Set a preference for the current buffer. When navigating to a new buffer, the pref will be reset
+to the previous value.
+
+See {% link href="#glide.prefs.set" class="go-to-def" %} `ts:glide.prefs.set`{% /link %} for more information.
 
 ### `glide.buf.keymaps` {% id="glide.buf.keymaps" %}
 
