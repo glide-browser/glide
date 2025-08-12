@@ -46,7 +46,7 @@ glide.jar:
   content/plugins/jumplist.mjs                 (content/plugins/dist/jumplist.mjs)
 
 # types
-  content/glide-api.d.ts                       (content/dist/api-bundled.d.ts)
+  content/glide.d.ts                           (content/dist/bundled.compiled.d.ts)
 
 # bundled dependencies
   content/bundled/markdoc.mjs                  (../../bundled/markdoc.mjs)
