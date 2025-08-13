@@ -1616,6 +1616,10 @@ function make_glide_api(): typeof glide {
         }
         return tab as SetRequired<typeof tab, "id">;
       },
+      async get_first(query) {
+        const tabs = await GlideBrowser.browser_proxy_api.tabs.query(query);
+        return tabs[0];
+      },
     },
     excmds: {
       async execute(cmd: GlideCommandString): Promise<void> {

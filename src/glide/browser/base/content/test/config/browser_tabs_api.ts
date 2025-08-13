@@ -58,3 +58,23 @@ add_task(async function test_tabs_active() {
     ok(GlideBrowser.api.g.test_checked);
   });
 });
+
+add_task(async function test_tabs_get_first() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "<Space>f", async () => {
+      assert(await glide.tabs.get_first({ title: "Test for auto mode switching" }));
+
+      const missing_tab = await glide.tabs.get_first({ title: "Title doesn't exist in any tab at all" });
+      assert(missing_tab === undefined);
+
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.synthesize_keyseq("<Space>f");
+    await sleep_frames(50);
+
+    ok(GlideBrowser.api.g.test_checked);
+  });
+});

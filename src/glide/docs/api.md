@@ -34,6 +34,7 @@ text-decoration: none;
 [`glide.g`](#glide.g)\
 [`glide.tabs`](#glide.tabs)\
 [`glide.tabs.active()`](#glide.tabs.active)\
+[`glide.tabs.get_first()`](#glide.tabs.get_first)\
 [`glide.excmds`](#glide.excmds)\
 [`glide.excmds.execute()`](#glide.excmds.execute)\
 [`glide.excmds.create()`](#glide.excmds.create)\
@@ -205,6 +206,15 @@ const tab = await browser.tabs.query({
 ```
 
 But with additional error handling for invalid states.
+
+{% api-heading id="glide.tabs.get_first" %}
+glide.tabs.get_first(query): Promise<Browser.Tabs.Tab | undefined>
+{% /api-heading %}
+
+Find the first tab matching the given query filter.
+
+This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/get),
+but returns the first tab instead of an Array.
 
 ## • `glide.excmds` {% id="glide.excmds" %}
 
