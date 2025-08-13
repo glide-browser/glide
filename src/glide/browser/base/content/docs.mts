@@ -221,7 +221,7 @@ export async function markdown_to_html(
                 </svg>
                 <span><strong>Alpha Software:</strong> Glide is in active development. Features may change or break.</span>
               </div>
-              ${html_body}
+${html_body}
             </article>
           </div>
         </div>
