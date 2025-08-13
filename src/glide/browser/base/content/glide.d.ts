@@ -557,6 +557,13 @@ declare global {
   }
 
   /**
+   * Throws an error if the given value is not truthy.
+   *
+   * Returns the value if it is truthy.
+   */
+  function ensure<T>(value: T, message?: string): T extends false | "" | 0 | 0n | null | undefined ? never : T;
+
+  /**
    * Assert an invariant. An \`AssertionError\` will be thrown if `value` is falsy.
    */
   function assert(value: unknown, message?: string): asserts value;

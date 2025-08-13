@@ -125,3 +125,6 @@ browser.tabs.get(1).then(tab => takes_tab(tab));
 
 // @ts-expect-error invalid arg type
 takes_tab({});
+
+// utils
+var _: string = ensure("" as any as string | undefined)

@@ -54,6 +54,12 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     DOM,
 
     // helper function for asserting invariants
+    ensure(value: unknown, message?: string) {
+      if (!value) {
+        throw new AssertionError({ message: message ?? `Expected a truthy value, got \`${value}\``, actual: value });
+      }
+      return value;
+    },
     assert(value: unknown, message?: string): asserts value {
       if (!value) {
         throw new AssertionError({ message, actual: value });

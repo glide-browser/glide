@@ -902,3 +902,25 @@ add_task(async function test_assert_never() {
     );
   });
 });
+
+add_task(async function test_ensure() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = ensure("foo");
+  });
+
+  is(GlideBrowser.api.g.value, "foo", "ensure should return the value");
+
+  await GlideTestUtils.reload_config(function _() {
+    try {
+      ensure(false);
+    } catch (err) {
+      glide.g.value = String(err);
+    }
+  });
+
+  is(
+    GlideBrowser.api.g.value,
+    "Error: Expected a truthy value, got `false`",
+    "ensure should throw an error on falsy input",
+  );
+});
