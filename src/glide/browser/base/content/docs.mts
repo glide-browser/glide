@@ -60,6 +60,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Key mappings", href: "key-mappings.html" },
   { name: "Hints", href: "hints.html" },
   { name: "FAQ", href: "faq.html" },
+  { name: "Cookbook", href: "cookbook.html" },
   { name: "Changelog", href: "changelog.html" },
   { name: "Contributing", href: "contributing.html" },
 ];
