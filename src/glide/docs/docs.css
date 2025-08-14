@@ -103,6 +103,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   margin: calc(var(--line-height) * 2) 0 var(--line-height);
+  padding: calc(var(--line-height) / 3) 0 calc(var(--line-height) / 3);
   line-height: var(--line-height);
   font-family: "Berkeley Mono", monospace !important;
   font-size: 1rem;
@@ -544,6 +545,30 @@ a:has(> :where(h1, h2, h3, h4, h5, h6)) {
 
 :where(h1, h2, h3, h4, h5, h6):hover::after {
   opacity: 1;
+}
+
+:where(h1, h2, h3, h4, h5, h6):target {
+  animation: highlight-heading 3s ease-out;
+}
+
+@keyframes highlight-heading {
+  0% {
+    background-color: rgba(255, 200, 0, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @keyframes highlight-heading {
+    0% {
+      background-color: rgba(255, 200, 0, 0.15);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
 }
 
 .invisible-header {
