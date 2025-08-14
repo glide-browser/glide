@@ -57,6 +57,7 @@ export interface ParentMessages {
       | "newtab-click"
       | GlideFunctionIPC<(target: HTMLElement) => Promise<void>>
       | null;
+    pick?: GlideFunctionIPC<(hints: glide.ContentHint[]) => glide.ContentHint[]>;
   };
   "Glide::Move": { direction: GlideDirection };
   "Glide::Debug": null;

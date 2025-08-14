@@ -138,8 +138,8 @@ class GlideCommandsClass {
     const hints: GlideResolvedHint[] = ipc_hints.map((hint) => ({
       ...hint,
       label: "",
-      x: hint.screen_x - chrome_ui_box.x,
-      y: hint.screen_y - chrome_ui_box.y,
+      x: hint.x - chrome_ui_box.x,
+      y: hint.y - chrome_ui_box.y,
     }));
 
     if (auto_activate && hints.length === 1) {

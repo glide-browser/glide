@@ -322,6 +322,17 @@ declare global {
          * @default "content"
          */
         location?: glide.HintLocation;
+
+        /**
+         * Define a callback to filter the resolved hints. It is called once with the resolved hints,
+         * and must return an array of the hints you want to include.
+         *
+         * An empty array may be returned but will result in an error notification indicating that no
+         * hints were found.
+         *
+         * @content this function is evaluated in the content process.
+         */
+        pick?: (hints: glide.ContentHint[]) => glide.ContentHint[];
       }): void;
     };
 
@@ -711,6 +722,16 @@ declare global {
       // custom
       | keyof ExcmdRegistry
       | `${keyof ExcmdRegistry} ${string}`;
+
+    /// @docs-skip
+    export type ContentHint = {
+      id: number;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      element: HTMLElement;
+    };
 
     export type HintLocation = "content" | "browser-ui";
 

@@ -15,16 +15,7 @@ for (const char of ALPHABET) {
   ALPHABET_COST_MAP[char] = cost += 0.1;
 }
 
-export interface GlideHint {
-  id: number;
-  element: HTMLElement;
-  screen_x: number;
-  screen_y: number;
-  width: number;
-  height: number;
-}
-
-export type GlideHintIPC = Omit<GlideHint, "element" | "label"> & {
+export type GlideHintIPC = Omit<glide.ContentHint, "element" | "label"> & {
   /**
    * Only included if the `debug: true` prop is passed
    */
@@ -35,12 +26,13 @@ interface ResolveProps {
   selector?: string;
   include?: string;
   editable_only?: boolean;
-  browser_ui_rect: DOMRectReadOnly
+  browser_ui_rect: DOMRectReadOnly;
+  pick?: (hints: glide.ContentHint[]) => glide.ContentHint[];
 }
 
 export const content = {
-  resolve_hints(document: Document, opts: ResolveProps): GlideHint[] {
-    const hints: GlideHint[] = [];
+  resolve_hints(document: Document, opts: ResolveProps): glide.ContentHint[] {
+    var hints: glide.ContentHint[] = [];
 
     let i = 0;
     for (const target of this.hintable_targets(document, opts)) {
@@ -97,11 +89,15 @@ export const content = {
       hints.push({
         id: i++,
         element: target,
-        screen_x: rect.x,
-        screen_y: rect.y,
+        x: rect.x,
+        y: rect.y,
         width: rect.width,
         height: rect.height,
       });
+    }
+
+    if (opts?.pick) {
+      hints = opts.pick(hints);
     }
 
     return hints;

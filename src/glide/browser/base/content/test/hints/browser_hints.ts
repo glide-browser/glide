@@ -154,3 +154,24 @@ add_task(async function test_include_selector() {
     );
   });
 });
+
+add_task(async function test_pick_basic() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", () =>
+      glide.hints.show({
+        pick: (hints) => {
+          assert(hints.length > 1);
+          return [hints[0]!];
+        },
+      }));
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _ => {
+    await GlideTestUtils.synthesize_keyseq("f");
+    const hints = await wait_for_hints();
+
+    is(hints.length, 1, "only one hint should be returned as that's what our pick function does");
+
+    await GlideTestUtils.synthesize_keyseq("<Esc>");
+  });
+});

@@ -127,4 +127,4 @@ browser.tabs.get(1).then(tab => takes_tab(tab));
 takes_tab({});
 
 // utils
-var _: string = ensure("" as any as string | undefined)
+var _: string = ensure("" as any as string | undefined);

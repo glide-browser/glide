@@ -1678,6 +1678,7 @@ function make_glide_api(): typeof glide {
           include: opts?.include,
           editable_only: opts?.editable ?? undefined,
           auto_activate: opts?.auto_activate ?? false,
+          pick: IPC.maybe_serialise_glidefunction(opts?.pick),
           browser_ui_rect: LayoutUtils.getElementBoundingScreenRect(document!.body),
           debug: Services.prefs.getBoolPref("devtools.testing", false),
         });

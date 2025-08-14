@@ -6,7 +6,6 @@
 import type { GlideExcmdsMap, ParsedArg } from "../base/content/browser-excmds-registry.mts";
 import type { State } from "../base/content/browser.mjs";
 import type { ExtensionsAPI as ExtensionsAPIType } from "../base/content/extensions.mts";
-import type { GlideHint } from "../base/content/hinting.mts";
 import type { Sandbox } from "../base/content/sandbox.mts";
 import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
 import type { ParentMessages, ParentQueries } from "./GlideHandlerParent.sys.mjs";
@@ -44,8 +43,11 @@ export interface ChildQueries {
 type HintAction = ToDeserialisedIPCFunction<
   ParentMessages["Glide::Hint"]["action"]
 >;
-type HintProps = Omit<ParentMessages["Glide::Hint"], "action"> & {
+type HintProps = Omit<ParentMessages["Glide::Hint"], "action" | "pick"> & {
   action?: HintAction;
+  pick?: ToDeserialisedIPCFunction<
+    ParentMessages["Glide::Hint"]["pick"]
+  >;
 };
 
 export class GlideHandlerChild extends JSWindowActorChild<
@@ -77,7 +79,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
   #last_focused_input_element: HTMLElement | null = null;
 
-  #active_hints: GlideHint[] = [];
+  #active_hints: glide.ContentHint[] = [];
   #hint_action: HintAction | null = null;
   #is_scrolling: boolean = false;
   #hint_scroll_listener: Function | null = null;
@@ -232,6 +234,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "Glide::Hint": {
         this.#start_hints({
           ...message.data,
+          pick: IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.pick),
           action: IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.action),
         });
         break;
