@@ -39,6 +39,7 @@ export function init(sandbox: Sandbox) {
     "normal",
     "gI",
     () => glide.hints.show({ auto_activate: true, editable: true, pick: hinting.pickers.biggest_area }),
+    { description: "Focus the largest editable element on the page" },
   );
   glide.keymaps.set("hint", "<Esc>", "hints_remove");
 

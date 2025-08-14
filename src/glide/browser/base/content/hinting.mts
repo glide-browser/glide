@@ -183,7 +183,7 @@ function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
 export const pickers = {
   biggest_area: (hints) => {
     if (!hints.length) {
-      return []
+      return [];
     }
 
     let biggest_hint = hints[0]!;

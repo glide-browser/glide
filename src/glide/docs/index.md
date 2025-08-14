@@ -89,6 +89,8 @@ Glide is a fork of Firefox focused on deep customizability, keyboard navigation 
       <span class="shortcut-desc">Hint browser UI elements</span>
       <span class="shortcut-key">gi</span>
       <span class="shortcut-desc">Focus last input field</span>
+      <span class="shortcut-key">gI</span>
+      <span class="shortcut-desc">Focus the biggest editable element</span>
     </div>
     <h3>Page Actions</h3>
     <div class="shortcut-grid">
