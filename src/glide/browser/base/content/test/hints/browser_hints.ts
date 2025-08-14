@@ -9,6 +9,7 @@
 
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html";
 const SINGLE_HINT_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/single_hint_test.html";
+const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async () => {
   await GlideTestUtils.synthesize_keyseq("<escape>");
@@ -173,5 +174,28 @@ add_task(async function test_pick_basic() {
     is(hints.length, 1, "only one hint should be returned as that's what our pick function does");
 
     await GlideTestUtils.synthesize_keyseq("<Esc>");
+  });
+});
+
+add_task(async function test_gI() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await GlideTestUtils.synthesize_keyseq("gI");
+    await sleep_frames(5);
+
+    var focument_element = await SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
+    is(focument_element, "vim-test-area", "should focus the largest editable element");
+
+    // make ^ smaller
+    await SpecialPowers.spawn(browser, [], () => {
+      const textarea = content.document.getElementById("vim-test-area");
+      textarea!.style.width = "50px";
+      textarea!.style.height = "20px";
+    });
+
+    await GlideTestUtils.synthesize_keyseq("<Escape>gI");
+    await sleep_frames(5);
+
+    var focument_element = await SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
+    is(focument_element, "contenteditable-div-with-role-textbox", "should focus the largest editable element");
   });
 });

@@ -179,3 +179,26 @@ function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
     yield element as HTMLElement;
   }
 }
+
+export const pickers = {
+  biggest_area: (hints) => {
+    if (!hints.length) {
+      return []
+    }
+
+    let biggest_hint = hints[0]!;
+    let biggest_area = hints[0]!.element.offsetWidth * hints[0]!.element.offsetHeight;
+
+    for (let i = 1; i < hints.length; i++) {
+      const hint = hints[i]!;
+      const area = hint.element.offsetWidth * hint.element.offsetHeight;
+
+      if (area > biggest_area) {
+        biggest_hint = hint;
+        biggest_area = area;
+      }
+    }
+
+    return [biggest_hint];
+  },
+} satisfies Record<string, (hints: glide.ContentHint[]) => glide.ContentHint[]>;

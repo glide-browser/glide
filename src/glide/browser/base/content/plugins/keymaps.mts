@@ -9,6 +9,7 @@
 import type { Sandbox } from "../sandbox.mts";
 
 const { MOTIONS } = ChromeUtils.importESModule("chrome://glide/content/motions.mjs");
+const hinting = ChromeUtils.importESModule("chrome://glide/content/hinting.mjs");
 
 export function init(sandbox: Sandbox) {
   const { glide } = sandbox;
@@ -34,6 +35,11 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", "f", "hint");
   glide.keymaps.set("normal", "F", "hint --action=newtab-click");
   glide.keymaps.set("normal", "<leader>f", "hint --location=browser-ui");
+  glide.keymaps.set(
+    "normal",
+    "gI",
+    () => glide.hints.show({ auto_activate: true, editable: true, pick: hinting.pickers.biggest_area }),
+  );
   glide.keymaps.set("hint", "<Esc>", "hints_remove");
 
   // page navigation
