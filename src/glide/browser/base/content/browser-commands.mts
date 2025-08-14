@@ -116,35 +116,7 @@ class GlideCommandsClass {
     const container = this.#upsert_hints_container();
     container.style.removeProperty("display");
 
-    // the hints return an x/y of the screen rect, so to position it correctly inside the browser UI
-    // we need to figure out what the screen rect is for the browser itself and then subtract that
-    // from the hint x/y
-    const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(document!.body);
-
-    const hints: GlideResolvedHint[] = [];
-    for (const hint of ipc_hints) {
-      let y = hint.screen_y - chrome_ui_box.y;
-      const x = hint.screen_x - chrome_ui_box.x;
-      if (y < 0) {
-        // TODO(glide): only do this if the hints come from the content frame
-        // TODO(glide): do this filtering in the actor instead so we get better char strings
-        continue;
-      }
-
-      if (y > chrome_ui_box.height) {
-        // below the viewport
-        continue;
-      }
-
-      if (x > chrome_ui_box.width) {
-        // to the right of the viewport
-        continue;
-      }
-
-      hints.push({ ...hint, label: "", x, y });
-    }
-
-    if (!hints.length) {
+    if (!ipc_hints.length) {
       const notification_id = "glide-no-hints-found";
 
       // remove any existing notification to avoid spamming, there should still
@@ -158,6 +130,17 @@ class GlideCommandsClass {
       GlideBrowser._change_mode("normal");
       return;
     }
+
+    // the hints return an x/y of the screen rect, so to position it correctly inside the browser UI
+    // we need to figure out what the screen rect is for the browser itself and then subtract that
+    // from the hint x/y
+    const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(document!.body);
+    const hints: GlideResolvedHint[] = ipc_hints.map((hint) => ({
+      ...hint,
+      label: "",
+      x: hint.screen_x - chrome_ui_box.x,
+      y: hint.screen_y - chrome_ui_box.y,
+    }));
 
     if (auto_activate && hints.length === 1) {
       const actor = location === "browser-ui"

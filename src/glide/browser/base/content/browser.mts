@@ -29,6 +29,7 @@ const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/u
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
+const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
 export interface State {
   mode: GlideMode;
@@ -1677,6 +1678,7 @@ function make_glide_api(): typeof glide {
           include: opts?.include,
           editable_only: opts?.editable ?? undefined,
           auto_activate: opts?.auto_activate ?? false,
+          browser_ui_rect: LayoutUtils.getElementBoundingScreenRect(document!.body),
           debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
       },

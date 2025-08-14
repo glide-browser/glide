@@ -35,10 +35,11 @@ interface ResolveProps {
   selector?: string;
   include?: string;
   editable_only?: boolean;
+  browser_ui_rect: DOMRectReadOnly
 }
 
 export const content = {
-  resolve_hints(document: Document, opts?: ResolveProps): GlideHint[] {
+  resolve_hints(document: Document, opts: ResolveProps): GlideHint[] {
     const hints: GlideHint[] = [];
 
     let i = 0;
@@ -74,6 +75,25 @@ export const content = {
       }
 
       const rect = LayoutUtils.getElementBoundingScreenRect(target);
+
+      // check if the element would be outside the current browser window
+      const y = rect.y - opts.browser_ui_rect.y;
+      const x = rect.x - opts.browser_ui_rect.x;
+      if (y < 0) {
+        // TODO(glide): only do this if the hints come from the content frame
+        continue;
+      }
+
+      if (y > opts.browser_ui_rect.height) {
+        // below the viewport
+        continue;
+      }
+
+      if (x > opts.browser_ui_rect.width) {
+        // to the right of the viewport
+        continue;
+      }
+
       hints.push({
         id: i++,
         element: target,

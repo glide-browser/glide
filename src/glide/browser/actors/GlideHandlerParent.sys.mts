@@ -47,6 +47,7 @@ export interface ParentMessages {
   "Glide::Hint": {
     location: glide.HintLocation;
     auto_activate: boolean;
+    browser_ui_rect: DOMRectReadOnly;
     selector?: string;
     include?: string;
     editable_only?: boolean;
