@@ -18,7 +18,7 @@ jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
 
-    runs-on: [self-host-2]
+    runs-on: depot-macos-14
     env:
       CARGO_TERM_COLOR: always
       GLIDER_PLATFORM: darwin
@@ -85,12 +85,11 @@ jobs:
 
           export PATH="$(python3 -m site --user-base)/bin":$PATH
 
-          # note: not needed on the self hosted runner
-          # rm '/usr/local/bin/2to3-3.11' '/usr/local/bin/2to3-3.12' '/usr/local/bin/2to3'
-          # rm '/usr/local/bin/idle3.11' '/usr/local/bin/idle3.12' '/usr/local/bin/idle3'
-          # rm '/usr/local/bin/pydoc3.11' '/usr/local/bin/pydoc3.12' '/usr/local/bin/pydoc3'
-          # rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3'
-          # rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config'
+          rm '/usr/local/bin/2to3-3.11' '/usr/local/bin/2to3-3.12' '/usr/local/bin/2to3' || true
+          rm '/usr/local/bin/idle3.11' '/usr/local/bin/idle3.12' '/usr/local/bin/idle3' || true
+          rm '/usr/local/bin/pydoc3.11' '/usr/local/bin/pydoc3.12' '/usr/local/bin/pydoc3' || true
+          rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3' || true
+          rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config' || true
 
           brew install watchman
 
