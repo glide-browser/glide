@@ -1,0 +1,15 @@
+diff --git a/devtools/client/aboutdebugging/src/actions/runtimes.js b/devtools/client/aboutdebugging/src/actions/runtimes.js
+index 52148f80b2803d75f2f1b84f8379389b68e66a65..afe97e5912d244d2fb8d80ac131ab2e19c812714 100644
+--- a/devtools/client/aboutdebugging/src/actions/runtimes.js
++++ b/devtools/client/aboutdebugging/src/actions/runtimes.js
+@@ -71,6 +71,10 @@ async function getRuntimeIcon(runtime, channel) {
+     }
+   }
+ 
++  if (channel === "glide") {
++    return "chrome://branding/content/about-logo.png";
++  }
++
+   return channel === "release" || channel === "beta" || channel === "aurora"
+     ? `chrome://devtools/skin/images/aboutdebugging-firefox-${channel}.svg`
+     : "chrome://devtools/skin/images/aboutdebugging-firefox-nightly.svg";
