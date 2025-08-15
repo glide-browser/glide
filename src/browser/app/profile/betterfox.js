@@ -5,13 +5,13 @@
 /****************************************************************************
  * Betterfox                                                                *
  * "Ad meliora"                                                             *
- * version: 137                                                             *
+ * version: 140                                                             *
  * url: https://github.com/yokoffing/Betterfox                              *
- ****************************************************************************/
+****************************************************************************/
 
 /****************************************************************************
  * SECTION: FASTFOX                                                         *
- ****************************************************************************/
+****************************************************************************/
 /** GENERAL ***/
 pref("content.notify.interval", 100000);
 
@@ -21,6 +21,9 @@ pref("gfx.content.skia-font-cache-size", 20);
 
 /** DISK CACHE ***/
 pref("browser.cache.disk.enable", false);
+
+/** MEMORY CACHE ***/
+pref("browser.sessionhistory.max_total_viewers", 4);
 
 /** MEDIA CACHE ***/
 pref("media.memory_cache_max_size", 65536);
@@ -39,18 +42,20 @@ pref("network.dnsCacheExpiration", 3600);
 pref("network.ssl_tokens_cache_capacity", 10240);
 
 /** SPECULATIVE LOADING ***/
+pref("network.http.speculative-parallel-limit", 0);
 pref("network.dns.disablePrefetch", true);
 pref("network.dns.disablePrefetchFromHTTPS", true);
+pref("browser.urlbar.speculativeConnect.enabled", false);
+pref("browser.places.speculativeConnect.enabled", false);
 pref("network.prefetch-next", false);
 pref("network.predictor.enabled", false);
-pref("network.predictor.enable-prefetch", false);
 
 /** EXPERIMENTAL ***/
 pref("layout.css.grid-template-masonry-value.enabled", true);
 
 /****************************************************************************
  * SECTION: SECUREFOX                                                       *
- ****************************************************************************/
+****************************************************************************/
 /** TRACKING PROTECTION ***/
 pref("browser.contentblocking.category", "strict");
 pref("browser.download.start_downloads_in_tmp_dir", true);
@@ -79,7 +84,6 @@ pref("privacy.history.custom", true);
 pref("browser.urlbar.trimHttps", true);
 pref("browser.urlbar.untrimOnUserInteraction.featureGate", true);
 pref("browser.search.separatePrivateDefault.ui.enabled", true);
-pref("browser.urlbar.update2.engineAliasRefresh", true);
 pref("browser.search.suggest.enabled", false);
 pref("browser.urlbar.quicksuggest.enabled", false);
 pref("browser.urlbar.groupLabels.enabled", false);
@@ -114,6 +118,7 @@ pref("permissions.default.geo", 2);
 pref("geo.provider.network.url", "https://beacondb.net/v1/geolocate");
 pref("browser.search.update", false);
 pref("permissions.manager.defaultsUrl", "");
+pref("extensions.getAddons.cache.enabled", false);
 
 /** TELEMETRY ***/
 pref("datareporting.policy.dataSubmissionEnabled", false);
@@ -132,6 +137,7 @@ pref("toolkit.coverage.opt-out", true);
 pref("toolkit.coverage.endpoint.base", "");
 pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
 pref("browser.newtabpage.activity-stream.telemetry", false);
+pref("datareporting.usage.uploadEnabled", false);
 
 /** EXPERIMENTS ***/
 pref("app.shield.optoutstudies.enabled", false);
@@ -142,15 +148,9 @@ pref("app.normandy.api_url", "");
 pref("breakpad.reportURL", "");
 pref("browser.tabs.crashReporting.sendReport", false);
 
-/** DETECTION ***/
-
-pref("captivedetect.canonicalURL", "");
-pref("network.captive-portal-service.enabled", false);
-pref("network.connectivity-service.enabled", false);
-
 /****************************************************************************
  * SECTION: PESKYFOX                                                        *
- ****************************************************************************/
+****************************************************************************/
 /** MOZILLA UI ***/
 pref("browser.privatebrowsing.vpnpromourl", "");
 pref("extensions.getAddons.showPane", false);
@@ -158,10 +158,7 @@ pref("extensions.htmlaboutaddons.recommendations.enabled", false);
 pref("browser.discovery.enabled", false);
 pref("browser.shell.checkDefaultBrowser", false);
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
-pref(
-  "browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features",
-  false
-);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
 pref("browser.preferences.moreFromMozilla", false);
 pref("browser.aboutConfig.showWarning", false);
 pref("browser.aboutwelcome.enabled", false);
@@ -180,7 +177,6 @@ pref("full-screen-api.warning.timeout", 0);
 /** URL BAR ***/
 pref("browser.urlbar.unitConversion.enabled", true);
 pref("browser.urlbar.trending.featureGate", false);
-pref("dom.text_fragments.create_text_fragment.enabled", true);
 
 /** NEW TAB PAGE ***/
 pref("browser.newtabpage.activity-stream.default.sites", "");
@@ -205,17 +201,21 @@ pref("layout.word_select.eat_space_to_next_word", false);
 
 /****************************************************************************
  * START: MY OVERRIDES                                                      *
- ****************************************************************************/
+****************************************************************************/
 // visit https://github.com/yokoffing/Betterfox/wiki/Common-Overrides
 // visit https://github.com/yokoffing/Betterfox/wiki/Optional-Hardening
 // Enter your personal overrides below this line:
 
+
+
 /****************************************************************************
  * SECTION: SMOOTHFOX                                                       *
- ****************************************************************************/
+****************************************************************************/
 // visit https://github.com/yokoffing/Betterfox/blob/main/Smoothfox.js
 // Enter your scrolling overrides below this line:
 
+
+
 /****************************************************************************
  * END: BETTERFOX                                                           *
- ****************************************************************************/
+****************************************************************************/
