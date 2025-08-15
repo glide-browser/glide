@@ -1,0 +1,12 @@
+diff --git a/toolkit/locales/en-US/toolkit/about/aboutSupport.ftl b/toolkit/locales/en-US/toolkit/about/aboutSupport.ftl
+index 9015f86076b859a0750e2a5e5f25501d2c1ffeb6..cb14f754872240ee9cf245f3415d4faacc222899 100644
+--- a/toolkit/locales/en-US/toolkit/about/aboutSupport.ftl
++++ b/toolkit/locales/en-US/toolkit/about/aboutSupport.ftl
+@@ -39,6 +39,7 @@ processes-count = Count
+ app-basics-title = Application Basics
+ app-basics-name = Name
+ app-basics-version = Version
++app-basics-firefox-version = Firefox Version
+ app-basics-build-id = Build ID
+ app-basics-distribution-id = Distribution ID
+ app-basics-update-channel = Update Channel

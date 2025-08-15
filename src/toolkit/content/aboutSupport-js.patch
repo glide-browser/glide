@@ -1,0 +1,12 @@
+diff --git a/toolkit/content/aboutSupport.js b/toolkit/content/aboutSupport.js
+index 93c02c2caa07fabd73bf159b15af989b298b3c3e..0bfdb0ab141f1c1ce14c3d8eadfb63cc61381520 100644
+--- a/toolkit/content/aboutSupport.js
++++ b/toolkit/content/aboutSupport.js
+@@ -114,6 +114,7 @@ var snapshotFormatters = {
+       version += " (" + data.vendor + ")";
+     }
+     $("version-box").textContent = version;
++    $("firefox-version-box").textContent = AppConstants.GLIDE_FIREFOX_VERSION;
+     $("buildid-box").textContent = data.buildID;
+     $("distributionid-box").textContent = data.distributionID;
+     if (data.updateChannel) {
