@@ -121,9 +121,10 @@ jobs:
       - name: Upload tar to release
         if: inputs.tag
         run: |
-          gh release upload ${{ inputs.tag }} ./dist/glide.linux-${{ matrix.arch }}.tar.xz --clobber
+          gh release upload $TAG ./dist/glide.linux-${{ matrix.arch }}.tar.xz --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          TAG: ${{ inputs.tag }}
 
       - name: Upload tar
         if: inputs.upload

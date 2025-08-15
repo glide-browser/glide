@@ -51,13 +51,14 @@ jobs:
 
       - name: Create draft release
         run: |
-          if gh release view ${{ steps.version.outputs.version }} > /dev/null 2>&1; then
-            gh release edit ${{ steps.version.outputs.version }} --prerelease --draft --title "${{ steps.version.outputs.version }}"
+          if gh release view $VERSION > /dev/null 2>&1; then
+            gh release edit $VERSION --prerelease --draft --title "$VERSION"
           else
-            gh release create ${{ steps.version.outputs.version }} --prerelease --draft --title "${{ steps.version.outputs.version }}"
+            gh release create $VERSION --prerelease --draft --title "$VERSION"
           fi
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
 
   linux:
     name: Linux build
@@ -188,19 +189,20 @@ jobs:
 
       - name: Upload artifacts to the release
         run: |
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-aarch64.tar.xz --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.linux-x86_64.tar.xz --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-aarch64.dmg --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.macos-x86_64.dmg --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./glide.source.tar.zst --clobber
+          gh release upload $VERSION ./glide.linux-aarch64.tar.xz --clobber
+          gh release upload $VERSION ./glide.linux-x86_64.tar.xz --clobber
+          gh release upload $VERSION ./glide.macos-aarch64.dmg --clobber
+          gh release upload $VERSION ./glide.macos-x86_64.dmg --clobber
+          gh release upload $VERSION ./glide.source.tar.zst --clobber
 
           # MAR files
-          gh release upload ${{ needs.metadata.outputs.version }} ./linux-aarch64.mar --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./linux-x86_64.mar --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./macos-aarch64.mar --clobber
-          gh release upload ${{ needs.metadata.outputs.version }} ./macos-x86_64.mar --clobber
+          gh release upload $VERSION ./linux-aarch64.mar --clobber
+          gh release upload $VERSION ./linux-x86_64.mar --clobber
+          gh release upload $VERSION ./macos-aarch64.mar --clobber
+          gh release upload $VERSION ./macos-x86_64.mar --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          VERSION: ${{ needs.metadata.outputs.version }}
 
   push-update-manifests:
     name: Push

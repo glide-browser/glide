@@ -144,9 +144,10 @@ jobs:
       - name: Upload signed DMG to release
         if: inputs.tag
         run: |
-          gh release upload ${{ inputs.tag }} ./engine/glide.macos-aarch64.dmg#glide.macos-aarch64-signed.dmg --clobber
+          gh release upload $TAG ./engine/glide.macos-aarch64.dmg#glide.macos-aarch64-signed.dmg --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          TAG: ${{ inputs.tag }}
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4

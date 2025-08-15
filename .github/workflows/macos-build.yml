@@ -128,9 +128,10 @@ jobs:
       - name: Upload DMG to release
         if: inputs.tag
         run: |
-          gh release upload ${{ inputs.tag }} ./dist/glide.macos-${{ matrix.arch }}.dmg --clobber
+          gh release upload $TAG ./dist/glide.macos-${{ matrix.arch }}.dmg --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          TAG: ${{ inputs.tag }}
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
