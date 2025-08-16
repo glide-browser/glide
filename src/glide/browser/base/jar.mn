@@ -45,6 +45,7 @@ glide.jar:
   content/plugins/hints.mjs                    (content/plugins/dist/hints.mjs)
   content/plugins/keymaps.mjs                  (content/plugins/dist/keymaps.mjs)
   content/plugins/jumplist.mjs                 (content/plugins/dist/jumplist.mjs)
+  content/plugins/which-key.mjs                (content/plugins/dist/which-key.mjs)
 
 # types
   content/glide.d.ts                           (content/dist/bundled.compiled.d.ts)

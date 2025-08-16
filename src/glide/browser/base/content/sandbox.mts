@@ -10,7 +10,7 @@ const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mj
 /**
  * Represents an object returned by {@link create_sandbox}.
  */
-export type Sandbox = { glide: Glide; browser: Browser.Browser } & {
+export type Sandbox = { glide: Glide; browser: Browser.Browser; document: Document } & {
   readonly __brand: unique symbol;
 };
 

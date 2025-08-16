@@ -681,6 +681,13 @@ declare global {
       yank_highlight_time: number;
 
       /**
+       * The delay, in milliseconds, before showing the which key UI.
+       *
+       * @default 300
+       */
+      which_key_delay: number;
+
+      /**
        * The maximum number of entries to include in the jumplist, i.e.
        * how far back in history will the jumplist store.
        *
