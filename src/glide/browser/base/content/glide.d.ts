@@ -89,6 +89,32 @@ declare global {
       ): void;
 
       /**
+       * Create an autocmd that will be invoked whenever the key sequence changes.
+       *
+       * This will be fired under three circumstances:
+       *
+       * 1. A key is pressed that matches a key mapping.
+       * 2. A key is pressed that is part of a key mapping.
+       * 3. A key is pressed that cancels a previous partial key mapping sequence.
+       *
+       * For example, with
+       * ```typescript
+       * glide.keymaps.set('normal', 'gt', '...');
+       * ```
+       *
+       * Pressing `g` will fire with `{ sequence: ["g"], partial: true }`, then either:
+       * - Pressing `t` would fire `{ sequence: ["g", "t"], partial: false }`
+       * - Pressing any other key would fire `{ sequence: [], partial: false }`
+       *
+       * Note that this is not fired for consecutive key presses for keys that don't correspond to mappings,
+       * as the key state has not changed.
+       */
+      create<const Event extends "KeyStateChanged">(
+        event: Event,
+        callback: (args: glide.AutocmdArgs[Event]) => void,
+      ): void;
+
+      /**
        * Create an autocmd that will be invoked whenever the config is loaded.
        *
        * Called once on initial load and again every time the config is reloaded.
@@ -787,12 +813,14 @@ declare global {
       | "UrlEnter"
       | "ModeChanged"
       | "ConfigLoaded"
-      | "WindowLoaded";
+      | "WindowLoaded"
+      | "KeyStateChanged";
     type AutocmdPatterns = {
       UrlEnter: RegExp | { hostname?: string };
       ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
       ConfigLoaded: null;
       WindowLoaded: null;
+      KeyStateChanged: null;
     };
     type AutocmdArgs = {
       UrlEnter: { readonly url: string; readonly tab_id: number };
@@ -805,6 +833,11 @@ declare global {
       };
       ConfigLoaded: {};
       WindowLoaded: {};
+      KeyStateChanged: {
+        readonly mode: GlideMode;
+        readonly sequence: string[];
+        readonly partial: boolean;
+      };
     };
 
     /// doesn't render properly right now

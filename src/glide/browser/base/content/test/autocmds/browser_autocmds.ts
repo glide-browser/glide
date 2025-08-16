@@ -16,6 +16,8 @@ declare global {
 
     /** Collects the order of multiple autocmd callbacks. */
     calls?: string[];
+
+    autocmds?: any[];
   }
 }
 
@@ -498,6 +500,39 @@ add_task(async function test_window_loaded_not_called_on_reload() {
   });
 
   isjson(GlideBrowser.api.g.calls, [], "WindowLoaded autocmd should not be triggered on config reload");
+});
+
+add_task(async function test_key_state_changed_autocmd() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.autocmds = [];
+
+    glide.autocmds.create("KeyStateChanged", args => {
+      glide.g.autocmds!.push({ ...args });
+    });
+
+    glide.keymaps.set("normal", "gt", () => {});
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await sleep_frames(5);
+
+    await GlideTestUtils.synthesize_keyseq("g");
+    await GlideTestUtils.synthesize_keyseq("t");
+    await GlideTestUtils.synthesize_keyseq("j");
+
+    is(
+      JSON.stringify(GlideBrowser.api.g.autocmds),
+      JSON.stringify([
+        { mode: "normal", sequence: ["g"], partial: true },
+        {
+          mode: "normal",
+          sequence: ["g", "t"],
+          partial: false,
+        },
+        { mode: "normal", sequence: ["j"], partial: false },
+      ]),
+    );
+  });
 });
 
 function num_calls() {
