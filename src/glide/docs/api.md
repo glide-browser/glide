@@ -23,6 +23,7 @@ text-decoration: none;
 [`glide.o.mapping_timeout`](#glide.o.mapping_timeout)\
 [`glide.o.yank_highlight`](#glide.o.yank_highlight)\
 [`glide.o.yank_highlight_time`](#glide.o.yank_highlight_time)\
+[`glide.o.which_key_delay`](#glide.o.which_key_delay)\
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
@@ -124,6 +125,12 @@ Color used to briefly highlight text when it's yanked.
 How long, in milliseconds, to highlight the selection for when it's yanked.
 
 `ts:@default 150`
+
+### `glide.o.which_key_delay: number` {% id="glide.o.which_key_delay" %}
+
+The delay, in milliseconds, before showing the which key UI.
+
+`ts:@default 300`
 
 ### `glide.o.jumplist_max_entries: number` {% id="glide.o.jumplist_max_entries" %}
 

@@ -205,6 +205,8 @@ declare namespace MockedExports {
       typeof import("../src/glide/browser/base/content/plugins/keymaps.mts");
     "chrome://glide/content/plugins/jumplist.mjs":
       typeof import("../src/glide/browser/base/content/plugins/jumplist.mts");
+    "chrome://glide/content/plugins/which-key.mjs":
+      typeof import("../src/glide/browser/base/content/plugins/which-key.mts");
 
     "chrome://glide/content/docs.mjs": typeof import("../src/glide/browser/base/content/docs.mts");
 

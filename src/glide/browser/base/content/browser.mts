@@ -17,6 +17,9 @@ const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs",
 const JumplistPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/jumplist.mjs");
 const ShimsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/shims.mjs");
 const HintsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/hints.mjs");
+const WhichKeyPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/which-key.mjs", {
+  global: "current",
+});
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
@@ -331,6 +334,7 @@ class GlideBrowserClass {
     ShimsPlugin.init(sandbox);
     HintsPlugin.init(sandbox);
     DefaultKeymaps.init(sandbox);
+    WhichKeyPlugin.init(sandbox);
     this.jumplist = new JumplistPlugin.Jumplist(sandbox);
 
     if (this.#startup_finished) {
@@ -1548,7 +1552,16 @@ class GlideGlobals implements GlideG {
 function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
-    o: { mapping_timeout: 200, yank_highlight: "#edc73b", yank_highlight_time: 150, jumplist_max_entries: 100 },
+    o: {
+      mapping_timeout: 200,
+
+      yank_highlight: "#edc73b",
+      yank_highlight_time: 150,
+
+      jumplist_max_entries: 100,
+
+      which_key_delay: 300,
+    },
     bo: {},
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
