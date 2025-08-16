@@ -1170,6 +1170,40 @@ class GlideBrowserClass {
    */
   #partial_mapping_waiter_id: number | null = null;
 
+  async #invoke_keystatechanged_autocmd(props: glide.AutocmdArgs["KeyStateChanged"]) {
+    const cmds = GlideBrowser.autocmds.KeyStateChanged ?? [];
+    if (!cmds.length) {
+      return;
+    }
+
+    const results = await Promise.allSettled(cmds.map(cmd =>
+      (async () => {
+        const cleanup = await cmd.callback({
+          ...props,
+          sequence: props.sequence.map(element => element === GlideBrowser.api.g.mapleader ? "<leader>" : element),
+        });
+        if (cleanup) {
+          throw new Error("ModeChanged autocmds cannot define cleanup functions");
+        }
+      })()
+    ));
+
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      GlideBrowser._log.error(result.reason);
+
+      const loc = GlideBrowser.#clean_stack(result.reason, "#invoke_keystatechanged_autocmd") ?? "<unknown>";
+      GlideBrowser.add_notification("glide-autocmd-error", {
+        label: `Error occurred in KeyStateChanged autocmd \`${loc}\` - ${result.reason}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    }
+  }
+
   async #on_keydown(event: KeyboardEvent) {
     if (this.#partial_mapping_waiter_id) {
       clearTimeout(this.#partial_mapping_waiter_id);
@@ -1237,7 +1271,6 @@ class GlideBrowserClass {
     const has_partial = this.key_manager.has_partial_mapping;
     const current_sequence = this.key_manager.current_sequence;
     const mapping = this.key_manager.handle_key_event(event, mode);
-
     if (mapping?.has_children || mapping?.value?.retain_key_display) {
       this.#display_keyseq([...this.#current_display_keyseq, keyn]);
     } else {
@@ -1294,6 +1327,11 @@ class GlideBrowserClass {
     if (!mapping) {
       this.key_manager.reset_sequence();
 
+      // This event only makes sense to fire if the previous state was not of length 0.
+      if (current_sequence.length !== 0) {
+        this.#invoke_keystatechanged_autocmd({ mode, sequence: [], partial: false });
+      }
+
       if (this.state.mode === "op-pending") {
         this._change_mode("normal");
         return;
@@ -1302,6 +1340,12 @@ class GlideBrowserClass {
       // if a key mapping didn't match, just let it through.
       return;
     }
+
+    this.#invoke_keystatechanged_autocmd({
+      mode,
+      sequence: [...this.key_manager.current_sequence],
+      partial: mapping.has_children,
+    });
 
     this.#prevent_keydown(keyn, event);
 
