@@ -256,8 +256,6 @@ class GlideBrowserClass {
         }
 
         if (stat.lastModified > this.#config_modified_timestamp) {
-          this.#config_modified_timestamp = stat.lastModified;
-
           this.add_notification(this.config_pending_notification_id, {
             label: "The config has been modified!",
             priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
@@ -270,6 +268,12 @@ class GlideBrowserClass {
               },
             ],
           });
+
+          // reset the timestamp so that we don't accidentally report config modifications
+          // twice, e.g. if you edit the config, then edit it again & discard the notification,
+          // then without this we'd report another notification immediately after the discard
+          // as we'd check the stat again and see a new timestamp.
+          this.#config_modified_timestamp = undefined;
         }
       }, 500);
     });
