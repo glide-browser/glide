@@ -25,7 +25,7 @@ class GlideBrowserDevClass {
       this.#fs_watcher_id = setInterval(() => {
         this.#check_docs_change();
         this.#check_tutor_change();
-      }, 200) as any as number;
+      }, 200);
     } else if (this.#fs_watcher_id) {
       clearInterval(this.#fs_watcher_id);
     }

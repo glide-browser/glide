@@ -271,7 +271,7 @@ class GlideBrowserClass {
             ],
           });
         }
-      }, 500) as any as number;
+      }, 500);
     });
   }
 
