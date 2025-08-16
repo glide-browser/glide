@@ -1,0 +1,20 @@
+diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/browser-menubar.inc
+index ad17202ee481ef9d1962e5b46e5e360d3b695b07..6d644d9b68e2da97f434d369f77039909a1aa2e0 100644
+--- a/browser/base/content/browser-menubar.inc
++++ b/browser/base/content/browser-menubar.inc
+@@ -4,6 +4,7 @@
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+        <menubar id="main-menubar">
++          <script src="chrome://glide/content/glide-menubar.js" />
+           <script src="chrome://browser/content/browser-menubar.js" />
+             <menu id="file-menu" data-l10n-id="menu-file">
+               <menupopup id="menu_FilePopup">
+@@ -459,4 +460,7 @@
+                           hidden="true"/>
+               </menupopup>
+           </menu>
++
++          <menu id="menu_glideMode" data-l10n-id="menu-glide-mode">
++          </menu>
+         </menubar>

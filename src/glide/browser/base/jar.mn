@@ -6,6 +6,7 @@ glide.jar:
 % content glide %content/ contentaccessible=yes
 
   content/glide-scripts.js                     (content/dist/glide-scripts.js)
+  content/glide-menubar.js                     (content/dist/glide-menubar.js)
 
 # ES modules
   content/browser-constants.mjs                (content/dist/browser-constants.mjs)

@@ -1,0 +1,12 @@
+diff --git a/browser/locales/en-US/browser/menubar.ftl b/browser/locales/en-US/browser/menubar.ftl
+index 2898fffe57da16096ae8fa3026568f8ecfd8180f..0bbeaace0e4b42524ce5286c279b6384ab1ab459 100644
+--- a/browser/locales/en-US/browser/menubar.ftl
++++ b/browser/locales/en-US/browser/menubar.ftl
+@@ -353,3 +353,7 @@ menu-help-not-deceptive =
+     .accesskey = D
+ menu-report-broken-site =
+   .label = Report Broken Site
++
++# Glide
++menu-glide-mode =
++    .label = Glide mode
