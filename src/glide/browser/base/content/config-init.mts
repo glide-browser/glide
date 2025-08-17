@@ -70,22 +70,19 @@ export async function write_d_ts(dir: string) {
 const DEFAULT_TSCONFIG = dedent`
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "typeAcquisition": {
-    "enable": true,
-    /* Ensures the \`glide\` variable and related types are included */
-    "include": ["./glide.d.ts"]
-  },
-  "exclude": [],
+  "exclude": [
+    "node_modules"
+  ],
   "compilerOptions": {
     "lib": ["DOM", "ES2022"],
-    "types": [],
-
+    "types": [
+      "./glide.d.ts"
+    ],
     "target": "ES2024",
     "module": "nodenext",
     "moduleDetection": "force",
     "allowJs": true,
     "noEmit": true,
-
     /**
      * Recommended type checking rules.
      *
