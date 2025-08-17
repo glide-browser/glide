@@ -845,7 +845,7 @@ h3.code-heading {
 @media screen and (max-width: 480px) {
   /* Further reduce font sizes */
   .shiki {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     padding: 0.5rem;
   }
 
