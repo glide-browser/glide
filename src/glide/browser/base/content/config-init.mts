@@ -37,12 +37,7 @@ export async function init() {
 
   await IOUtils.makeDirectory(config_dir, { createAncestors: true, ignoreExisting: true });
   await write_d_ts(config_dir);
-  await IOUtils.writeUTF8(
-    PathUtils.join(config_dir, "glide.ts"),
-    dedent`
-      // TODO: put something in here
-    `,
-  );
+  await IOUtils.writeUTF8(PathUtils.join(config_dir, "glide.ts"), DEFAULT_CONFIG);
   await IOUtils.writeUTF8(PathUtils.join(config_dir, "tsconfig.json"), DEFAULT_TSCONFIG);
   await IOUtils.writeUTF8(PathUtils.join(config_dir, "package.json"), DEFAULT_PACKAGE_JSON);
 
@@ -66,6 +61,18 @@ export async function write_d_ts(dir: string) {
     await fetch_resource("chrome://glide/content/glide.d.ts", { loadUsingSystemPrincipal: true }),
   );
 }
+
+const DEFAULT_CONFIG = dedent`
+  // Config docs:
+  //
+  //   https://glide-browser.app/config
+  //
+  // API reference:
+  //
+  //   https://glide-browser.app/api
+  //
+  // Try typing \`glide.\` and see what you can do!
+`;
 
 const DEFAULT_TSCONFIG = dedent`
 {
