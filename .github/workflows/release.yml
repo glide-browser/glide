@@ -70,6 +70,7 @@ jobs:
   macos:
     name: macOS build
     uses: ./.github/workflows/macos-build.yml
+    secrets: inherit
     with:
       artifacts: true
 
