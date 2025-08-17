@@ -46,6 +46,7 @@ or specify it in your `bash:tsconfig.json`, e.g.
 This is a minimal `bash:tsconfig.json` file with some recommended defaults for Glide usage in particular.
 
 The most important parts are
+
 - the `lib` section, as that defines the builtins that are available
 - the `types` section, as that ensures TS can [resolve](#types) the config types
 
@@ -91,10 +92,10 @@ Every other part can be more freely customised.
 
 ## Importing types
 
-Glide does not currently support importing runtime code from other (T|J)S files from within the config, but you *can* import types, e.g.
+Glide does not currently support importing runtime code from other (T|J)S files from within the config, but you _can_ import types, e.g.
 
 ```typescript
-import type { SetNonNullable } from 'type-fest';
+import type { SetNonNullable } from "type-fest";
 ```
 
 As these imports will be stripped when the config is evaluated.
