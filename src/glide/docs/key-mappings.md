@@ -1,5 +1,10 @@
 # Key mappings
 
+> [!NOTE]
+> For a mostly-complete list of the default key mappings, see [default keymappings](./index.md#default-keymappings).
+>
+> Until they're all documented, from within Glide you can execute `:map` or `:whichkey` to see the full list of mappings.
+
 Glide uses the familiar Vim syntax for defining key mappings. If it can be mapped in Vim but not in Glide, that's a bug{% sup %}\[[1](#known-differences-with-vim)\]{% /sup %}.
 
 <!-- TODO: expand more on meta keys -->
