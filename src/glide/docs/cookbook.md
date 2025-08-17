@@ -1,12 +1,14 @@
 # Cookbook
 
+Modular config examples you can copy and adapt.
+
 ## Set a pref for a specific website
 
 ```typescript
 glide.prefs.set("privacy.resistFingerprinting", true);
 
 glide.autocmds.create("UrlEnter", {
-  hostname: "www.twitch.tv",
+  hostname: "example.com",
 }, () => {
   glide.buf.prefs.set(
     "privacy.resistFingerprinting",
@@ -44,9 +46,9 @@ glide.keymaps.set("normal", "<leader>ts", async () => {
 ```typescript
 glide.keymaps.set("normal", "gt", async () => {
   const tab = await glide.tabs.get_first({
-    url: "https://tweek.so/",
+    url: "example.com",
   });
   assert(tab && tab.id);
   await browser.tabs.update(tab.id, { active: true });
-}, { description: "[g]o to [t]week.so" });
+}, { description: "[g]o to example.com" });
 ```
