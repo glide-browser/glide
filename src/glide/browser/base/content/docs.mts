@@ -121,6 +121,7 @@ export async function markdown_to_html(
 
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
+        <link rel="preload" as="image" href="./logo-20.webp" />
         ${
     state.styles
       .map(css =>
