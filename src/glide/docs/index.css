@@ -57,13 +57,13 @@
   text-align: center;
 }
 
-#keyboard-shortcuts {
+#default-keymappings {
   text-align: center;
   margin-top: 3rem;
   margin-bottom: 0.5rem;
 }
 
-#keyboard-shortcuts-note {
+#default-keymappings-note {
   text-align: center;
   color: grey;
   line-height: 0.4rem;
@@ -71,38 +71,38 @@
 }
 
 @media (max-width: 768px) {
-  #keyboard-shortcuts-note {
+  #default-keymappings-note {
     line-height: 1.4rem;
   }
 }
 
-.shortcuts-container {
+.keymaps-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin: 1rem 0;
 }
 
-.shortcut-section {
+.keymap-section {
   border-radius: 8px;
 }
 
-.shortcut-section h3 {
+.keymap-section h3 {
   margin: 0 0 1rem 0;
 }
 
-.shortcut-section h3:not(:first-of-type) {
+.keymap-section h3:not(:first-of-type) {
   margin: 2rem 0 1rem 0;
 }
 
-.shortcut-grid {
+.keymap-grid {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.5rem 1rem;
   align-items: center;
 }
 
-.shortcut-key {
+.keymap-key {
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -111,7 +111,7 @@
   --shiki-dark: #c0caf5;
 }
 
-.shortcut-desc {
+.keymap-desc {
   font-size: 0.9rem;
 }
 
@@ -124,7 +124,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .shortcut-key {
+  .keymap-key {
     color: var(--shiki-dark) !important;
     background-color: var(--shiki-dark-bg) !important;
     font-style: var(--shiki-dark-font-style) !important;
