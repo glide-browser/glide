@@ -629,10 +629,10 @@ class RenderState {
     }
 
     // check if this is a markdown file
-    if (href.endsWith(".md") || href.startsWith("#")) {
+    if (href.endsWith(".md") || href.startsWith("#") || href.replace(/\.md#.*/, ".md")) {
       return new Markdoc.Tag(
         "a",
-        { ...node.attributes, href: href.replace(/\.md$/, ".html") },
+        { ...node.attributes, href: href.replace(/\.md/, ".html") },
         node.transformChildren(config),
       );
     }
