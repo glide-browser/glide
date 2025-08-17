@@ -5,8 +5,11 @@ on:
     inputs:
       tag:
         description: "Release tag to upload tar to"
-        required: true
         type: string
+      upload:
+        description: "Upload built artifacts"
+        type: boolean
+        default: true
   workflow_call:
     inputs:
       upload:
