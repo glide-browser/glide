@@ -10,4 +10,5 @@
 /// <reference path="./extension-api.d.ts" />
 /// <reference path="./plugins/hints-types.d.ts" />
 /// <reference path="./plugins/jumplist-types.d.ts" />
+/// <reference path="./plugins/which-key-types.d.ts" />
 export {};

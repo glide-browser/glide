@@ -26,14 +26,20 @@ export function init(sandbox: Sandbox) {
     }
   });
 
-  let timeout_id: number | null = null;
+  glide.excmds.create({ name: "whichkey", description: "Show all mappings for the current mode" }, () => {
+    queue_timeout(0, () => {
+      modal.show(glide.keymaps.list(glide.ctx.mode), []);
+    });
+  });
+}
 
-  function queue_timeout(ms: number, fn: () => void) {
-    if (timeout_id) {
-      clearTimeout(timeout_id);
-    }
-    timeout_id = setTimeout(fn, ms);
+let timeout_id: number | null = null;
+
+function queue_timeout(ms: number, fn: () => void) {
+  if (timeout_id) {
+    clearTimeout(timeout_id);
   }
+  timeout_id = setTimeout(fn, ms);
 }
 
 class Modal {
@@ -113,23 +119,25 @@ class Modal {
 
     this.#element.replaceChildren(
       // header
-      DOM.create_element("div", {
-        style: {
-          padding: "0.5rem 1rem",
-          borderBottom: "var(--glide-cmplt-border-top)",
-          background: "var(--glide-header-first-bg)",
-        },
-        children: [
-          DOM.create_element("span", {
-            textContent: pretty_print_keyseq(this.#glide, sequence),
-            style: {
-              color: "var(--glide-cmplt-fg)",
-              fontWeight: "var(--glide-header-font-weight)",
-              fontSize: "var(--glide-header-font-size)",
-            },
-          }),
-        ],
-      }),
+      ...(sequence.length
+        ? [DOM.create_element("div", {
+          style: {
+            padding: "0.5rem 1rem",
+            borderBottom: "var(--glide-cmplt-border-top)",
+            background: "var(--glide-header-first-bg)",
+          },
+          children: [
+            DOM.create_element("span", {
+              textContent: pretty_print_keyseq(this.#glide, sequence),
+              style: {
+                color: "var(--glide-cmplt-fg)",
+                fontWeight: "var(--glide-header-font-weight)",
+                fontSize: "var(--glide-header-font-size)",
+              },
+            }),
+          ],
+        })]
+        : []),
       // content
       DOM.create_element("div", {
         style: {
