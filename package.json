@@ -43,8 +43,8 @@
   "author": "",
   "license": "MPL-2.0",
   "dependencies": {
-    "ts-blank-space": "^0.6.1",
-    "typescript": "^5.8.3"
+    "ts-blank-space": "^0.6.2",
+    "typescript": "^5.9.2"
   },
   "devDependencies": {
     "@glide-browser/glider": "github:glide-browser/glider",
