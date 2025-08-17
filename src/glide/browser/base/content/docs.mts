@@ -163,15 +163,9 @@ export async function markdown_to_html(
                     href="${rel_to_dist}/index.html"
                     class="glide-sidenav-heading-link"
                   >
-                    <img
-                      src="${rel_to_dist}/logo-20.webp"
-                      class="glide-sidenav-heading-img"
-                      alt="Glide logo"
-                      width="20"
-                      height="20"
-                    />
-                    Glide</a
-                  >
+                    <img src="${rel_to_dist}/logo-20.webp" class="glide-sidenav-heading-img" width="20" height="20" />
+                    Glide
+                  </a>
                   <button
                     type="button"
                     class="search-button"
