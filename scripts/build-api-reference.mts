@@ -57,6 +57,13 @@ async function main() {
       {% /styles %}
     `,
     "\n\n",
+    markdown`
+      > [!IMPORTANT]
+      > These reference docs are not complete yet, some symbols and types are missing completely.
+      >
+      > For a full reference, see the [types](./config.md#types) file that Glide generates.
+    `,
+    "\n\n",
     generate_index(index),
     ...content,
   ];
@@ -383,6 +390,8 @@ function generate_index(entries: IndexEntry[]): string {
   const lines: string[] = [];
 
   lines.push("{% html %}");
+  lines.push("");
+  lines.push("<br>");
   lines.push(html`
     <details class="index">
       <summary>Index</summary>

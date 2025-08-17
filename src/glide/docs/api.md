@@ -8,8 +8,14 @@ text-decoration: none;
 }
 {% /styles %}
 
+> [!IMPORTANT]
+> These reference docs are not complete yet, some symbols and types are missing completely.
+>
+> For a full reference, see the [types](./config.md#types) file that Glide generates.
+
 {% html %}
 
+<br>
 <details class="index">
   <summary>Index</summary>
 {% /html %}
