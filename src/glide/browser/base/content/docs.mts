@@ -53,7 +53,6 @@ const ADMONITION_TYPES = new Set([
 ]);
 
 const SIDEBAR: SidebarEntry[] = [
-  { name: "Quickstart", href: "quickstart.html" },
   { name: "Config", href: "config.html" },
   { name: "API", href: "api.html" },
   { name: "Modes", href: "modes.html" },
