@@ -15,15 +15,15 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   <div class="download-platform">
     <span class="platform-label">macOS</span>
     <div class="download-buttons">
-      <a href="https://release-assets.glide-browser.app/releases/0.1.31a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
-      <a href="https://release-assets.glide-browser.app/releases/0.1.31a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Silicon</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.32a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.32a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Silicon</a>
     </div>
   </div>
   <div class="download-platform">
     <span class="platform-label">Linux</span>
     <div class="download-buttons">
-      <a href="https://release-assets.glide-browser.app/releases/0.1.31a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank">x64.tar</a>
-      <a href="https://release-assets.glide-browser.app/releases/0.1.31a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank">aarch64.tar</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.32a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank">x64.tar</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.32a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank">aarch64.tar</a>
     </div>
   </div>
 </div>
