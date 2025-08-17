@@ -5,7 +5,7 @@
 
 # Glide
 
-Glide is a fork of Firefox focused on deep customizability, keyboard navigation and bringing the best parts of Vim to the browser. See the [quickstart](./quickstart.md) for more information.
+Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [customize](./config.md) everything with TypeScript, and browse without reaching for your mouse.
 
 ## Download
 
