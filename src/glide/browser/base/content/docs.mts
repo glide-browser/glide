@@ -165,10 +165,6 @@ export async function markdown_to_html(
                   >
                     <img
                       src="${rel_to_dist}/logo-20.webp"
-                      srcset="
-                        ${rel_to_dist}/logo-20.webp 1x,
-                        ${rel_to_dist}/logo@2x.webp 2x
-                      "
                       class="glide-sidenav-heading-img"
                       alt="Glide logo"
                       width="20"
