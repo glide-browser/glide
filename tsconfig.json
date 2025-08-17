@@ -25,6 +25,7 @@
     "allowImportingTsExtensions": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
 
     "paths": {
       "chrome://glide/content/browser.mjs": ["./src/glide/browser/base/content/browser.mts"],
