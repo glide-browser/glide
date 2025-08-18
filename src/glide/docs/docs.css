@@ -745,144 +745,6 @@ h3.code-heading {
   z-index: 199;
 }
 
-/* Update mobile styles */
-@media screen and (max-width: 768px) {
-  /* Show mobile menu toggle */
-  .mobile-menu-toggle {
-    display: flex;
-  }
-
-  /* Space for fixed menu button */
-  .main-container {
-    padding-top: 4rem;
-  }
-
-  /* Content container becomes vertical on mobile */
-  .content-container {
-    flex-direction: column;
-    max-height: none;
-  }
-
-  /* Sidebar transforms to mobile menu */
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 80%;
-    max-width: 300px;
-    height: 100vh;
-    z-index: 200;
-    transition: left 0.3s ease;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
-    overflow-y: auto;
-    padding-top: 4rem; /* Space for close button */
-  }
-
-  /* When menu is open */
-  .sidebar.mobile-menu-open {
-    left: 0;
-  }
-
-  /* Show overlay when menu is open */
-  .mobile-nav-overlay.show {
-    display: block;
-  }
-
-  /* Article content adjustments */
-  .content-container > article {
-    max-width: 100%;
-    margin: 0;
-    padding: 1rem !important;
-  }
-
-  /* Adjust code blocks for mobile */
-  .shiki {
-    font-size: 0.875rem;
-    padding: 0.75rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Make tables responsive */
-  table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-  }
-
-  /* Adjust search overlay for mobile */
-  .pagefind-ui {
-    margin: 1rem;
-    padding: 1rem;
-  }
-
-  /* Copy button adjustments */
-  .copy-button {
-    padding: 0.25rem;
-    min-width: 2rem;
-    min-height: 2rem;
-  }
-
-  .copy-button svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  /* Reduce padding on list items */
-  ol li {
-    padding-left: 2ch !important;
-  }
-
-  /* Adjust admonition spacing */
-  .admonition {
-    padding: 0.75rem;
-    margin: 0.75rem 0;
-  }
-}
-
-/* Extra small devices (phones in portrait) */
-@media screen and (max-width: 480px) {
-  /* Further reduce font sizes */
-  .shiki {
-    font-size: 0.7rem;
-    padding: 0.5rem;
-  }
-
-  /* Adjust heading sizes */
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 0.9rem;
-  }
-
-  /* Reduce article padding */
-  .content-container > article {
-    padding: 0.75rem !important;
-  }
-
-  /* Sidebar full width on very small screens */
-  .sidebar {
-    width: 90%;
-    max-width: none;
-  }
-
-  /* Smaller search button */
-  .search-button {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-  }
-
-  /* Adjust code block line height */
-  pre {
-    line-height: 1.2;
-  }
-
-  /* Make inline code smaller */
-  code:not(pre code) {
-    font-size: 0.875rem;
-    padding: 0.1rem 0.2rem;
-  }
-}
-
 .copy-button {
   position: absolute;
   top: 0.5rem;
@@ -1152,6 +1014,145 @@ table th, table td {
   color: #92400e;
   font-size: 0.8125rem;
   line-height: 1.2;
+}
+
+
+/* Update mobile styles */
+@media screen and (max-width: 768px) {
+  /* Show mobile menu toggle */
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  /* Space for fixed menu button */
+  .main-container {
+    padding-top: 4rem;
+  }
+
+  /* Content container becomes vertical on mobile */
+  .content-container {
+    flex-direction: column;
+    max-height: none;
+  }
+
+  /* Sidebar transforms to mobile menu */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    z-index: 200;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    padding-top: 4rem; /* Space for close button */
+  }
+
+  /* When menu is open */
+  .sidebar.mobile-menu-open {
+    left: 0;
+  }
+
+  /* Show overlay when menu is open */
+  .mobile-nav-overlay.show {
+    display: block;
+  }
+
+  /* Article content adjustments */
+  .content-container > article {
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem !important;
+  }
+
+  /* Adjust code blocks for mobile */
+  .shiki {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Make tables responsive */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Adjust search overlay for mobile */
+  .pagefind-ui {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  /* Copy button adjustments */
+  .copy-button {
+    padding: 0.25rem;
+    min-width: 2rem;
+    min-height: 2rem;
+  }
+
+  .copy-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Reduce padding on list items */
+  ol li {
+    padding-left: 2ch !important;
+  }
+
+  /* Adjust admonition spacing */
+  .admonition {
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+  }
+}
+
+/* Extra small devices (phones in portrait) */
+@media screen and (max-width: 480px) {
+  /* Further reduce font sizes */
+  .shiki {
+    font-size: 0.7rem;
+    padding: 0.5rem;
+  }
+
+  /* Adjust heading sizes */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 0.9rem;
+  }
+
+  /* Reduce article padding */
+  .content-container > article {
+    padding: 0.75rem !important;
+  }
+
+  /* Sidebar full width on very small screens */
+  .sidebar {
+    width: 90%;
+    max-width: none;
+  }
+
+  /* Smaller search button */
+  .search-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  /* Adjust code block line height */
+  pre {
+    line-height: 1.2;
+  }
+
+  /* Make inline code smaller */
+  code:not(pre code) {
+    font-size: 0.875rem;
+    padding: 0.1rem 0.2rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
