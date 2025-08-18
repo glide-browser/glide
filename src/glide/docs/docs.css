@@ -677,6 +677,7 @@ h3.code-heading {
   font-size: 1.2em;
   font-weight: 900;
   text-decoration: none;
+  flex-grow: 1;
 }
 
 .glide-sidenav-heading-img {
@@ -684,6 +685,14 @@ h3.code-heading {
   height: 1.25em;
   margin-bottom: -0.25em;
   margin-right: -0.25em;
+}
+
+.glide-sidenav-heading-link:hover {
+  background: linear-gradient(
+    to right,
+    var(--background-color-alt) 80%,
+    transparent 100%
+  );
 }
 
 .sidenav a {
