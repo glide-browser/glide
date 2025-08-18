@@ -1016,6 +1016,21 @@ table th, table td {
   line-height: 1.2;
 }
 
+/**
+ * only show the copy code button when the codeblock
+ * is focused on touch devices, as first of all you're less
+ * likely to need to copy the code block and it can also overlap
+ * with the content in annoying ways.
+ */
+@media (hover: none) and (pointer: coarse) {
+  .copy-button {
+    display: none;
+  }
+
+  .shiki:focus-within .copy-button {
+    display: flex !important;
+  }
+}
 
 /* Update mobile styles */
 @media screen and (max-width: 768px) {
