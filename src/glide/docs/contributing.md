@@ -22,7 +22,7 @@ pnpm install
 pnpm bootstrap
 ```
 
-This will download a copy of the Firefox source code to the `engine/` directory, bundle Glide's dependencies, build the docs, and apply all of our patches to the Firefox source code.
+This will download a copy of the Firefox source code to the `path:engine/` directory, bundle Glide's dependencies, build the docs, and apply all of our patches to the Firefox source code.
 
 To actually build Glide, you can run:
 
@@ -64,7 +64,7 @@ Glide inherits a lot of concepts from Firefox, for a quick primer:
 
 Primer on Glide specific concepts:
 
-1. TypeScript files are converted to JS by stripping all TS syntax with [ts-blank-space](https://github.com/bloomberg/ts-blank-space) and stored in a relative `./dist/` directory.
+1. TypeScript files are converted to JS by stripping all TS syntax with [ts-blank-space](https://github.com/bloomberg/ts-blank-space) and stored in a relative `path:./dist/` directory.
 
 - Note this means you cannot use any TS syntax that has a runtime effect, e.g. `enum`
 
@@ -83,13 +83,13 @@ This handles:
 
 - Compiling TS files to JS
 - Rebuilding docs
-- Copying source files to the Firefox `engine/` directory
+- Copying source files to the Firefox `path:engine/` directory
 
 If you have the watcher running, you should hardly ever have to explicitly rebuild.
 
 ### Tests
 
-Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html) and located in [`src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
+Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html) and located in [`path:src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
 
 You can run all Glide's tests with:
 
@@ -105,7 +105,7 @@ By default, tests run in a full browser window, however this means that you cann
 pnpm test --headless
 ```
 
-When adding a new test file, you must include it in the `browser.toml` file for that test directory, for example:
+When adding a new test file, you must include it in the `path:browser.toml` file for that test directory, for example:
 
 ```toml
 [DEFAULT]
@@ -114,9 +114,9 @@ support-files = []
 ["dist/browser_my_test.js"]
 ```
 
-You must point to the `dist/*.js` file instead of the `.ts` file as Firefox's test runner does not yet support directly running TS files.
+You must point to the `path:dist/*.js` file instead of the `path:.ts` file as Firefox's test runner does not yet support directly running TS files.
 
-The typical naming convention is `browser_$name.ts` but you can choose to use a different name.
+The typical naming convention is `path:browser_$name.ts` but you can choose to use a different name.
 
 A typical test file looks like this:
 
@@ -168,11 +168,11 @@ pnpm mach test glide/browser/base/content/test/config/
 
 ### Docs
 
-The docs pages are written in Markdown and located in the [`src/glide/docs/`](/src/glide/docs) directory. The markdown is then converted to HTML using a custom [Markdoc](https://markdoc.dev/) integration in [`src/glide/browser/base/content/docs.mts`](/src/glide/browser/base/content/docs.mts).
+The docs pages are written in Markdown and located in the [`path:src/glide/docs/`](/src/glide/docs) directory. The markdown is then converted to HTML using a custom [Markdoc](https://markdoc.dev/) integration in [`path:src/glide/browser/base/content/docs.mts`](/src/glide/browser/base/content/docs.mts).
 
 Syntax highlighting is performed by [Shiki](https://shiki.style/) with a custom version of the [Tokyo Night](https://github.com/shikijs/textmate-grammars-themes/blob/main/packages/tm-themes/themes/tokyo-night.json) theme.
 
-Glide also ships with a builtin file watcher to automatically reload the rendered docs if they're opened with a `python:file://` URI, you can enable it with:
+Glide also ships with a builtin file watcher to automatically reload the rendered docs if they're opened with a `path:file://` URI, you can enable it with:
 
 ```typescript
 glide.prefs.set("glide.dev.reload_files", true);
@@ -216,7 +216,7 @@ However, Glider is just one part of how we patch Firefox. The [dev watcher](#wor
 
 ### TypeScript build system
 
-We take a quite non-standard approach to shipping TS files where an FS watcher strips all of the TS syntax and replaces it with spaces before writing it to a relative `./dist/$name.js` file.
+We take a quite non-standard approach to shipping TS files where an FS watcher strips all of the TS syntax and replaces it with spaces before writing it to a relative `path:./dist/$name.js` file.
 
 This is for a couple reasons:
 
@@ -226,11 +226,11 @@ This is for a couple reasons:
 
 ### JS Actors
 
-To interact with web content Glide uses a single [JSWindowActor](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html), [`GlideHandlerChild.sys.mts`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
+To interact with web content Glide uses a single [JSWindowActor](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html), [`path:GlideHandlerChild.sys.mts`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
 
-All of the code in `GlideHandlerChild.sys.mts` is ran _outside_ of the main process and communicates with the main process by sending messages.
+All of the code in `path:GlideHandlerChild.sys.mts` is ran _outside_ of the main process and communicates with the main process by sending messages.
 
-Messages are typed and sent through the `.send_async_message(name, args?)` method on either the parent actor or the child actor. Messages that the parent actor (main process) can send to the child are defined in [`GlideHandlerParent.sys.mts::ParentMessages`](/src/glide/browser/actors/GlideHandlerParent.sys.mts), and messages that the child actor can send are defined in [`GlideHandlerChild.sys.mts::ChildMessages`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
+Messages are typed and sent through the `.send_async_message(name, args?)` method on either the parent actor or the child actor. Messages that the parent actor (main process) can send to the child are defined in [`path:GlideHandlerParent.sys.mts::ParentMessages`](/src/glide/browser/actors/GlideHandlerParent.sys.mts), and messages that the child actor can send are defined in [`path:GlideHandlerChild.sys.mts::ChildMessages`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
 
 Typical usage from the main process looks like this:
 

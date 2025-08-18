@@ -849,6 +849,11 @@ function code_to_html(
     }
   }
 
+  if (options.lang === "path") {
+    // bash does a reasonable job syntax highlighting paths
+    options.lang = "bash";
+  }
+
   return highlighter.codeToHtml(code, options);
 }
 
