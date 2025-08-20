@@ -54,10 +54,10 @@ const ADMONITION_TYPES = new Set([
 
 const SIDEBAR: SidebarEntry[] = [
   { name: "Config", href: "config.html" },
+  { name: "Keys", href: "keys.html" },
   { name: "API", href: "api.html" },
   { name: "Modes", href: "modes.html" },
   { name: "Ex-commands", href: "ex-commands.html" },
-  { name: "Key mappings", href: "key-mappings.html" },
   { name: "Hints", href: "hints.html" },
   { name: "Firefox", href: "firefox.html" },
   { name: "FAQ", href: "faq.html" },
