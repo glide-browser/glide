@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 907f272470a2da6880d722ee1dd8716ee9cc4aa4..69e1c05a9bcbf69254867bbb92c0949f074694d2 100644
+index 3c2a7955b4b2715c8788b66dfbb72caea9961886..281ae6a26f7adeebab3f7d0c5725f2c3c96d6221 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3386,3 +3386,5 @@ pref("browser.contextual-services.contextId.rust-component.enabled", true);
+@@ -3447,3 +3447,5 @@ pref("browser.ipProtection.enabled", false);
+ pref("browser.ipProtection.variant", "");
  
- // Pref to enable the IP protection feature
- pref("browser.ipProtection.enabled", false);
+ pref("browser.ipProtection.guardian.endpoint", "https://vpn.mozilla.org/");
 +
 +#include glide.js

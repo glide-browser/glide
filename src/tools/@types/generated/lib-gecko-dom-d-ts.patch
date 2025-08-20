@@ -1,12 +1,12 @@
 diff --git a/tools/@types/generated/lib.gecko.dom.d.ts b/tools/@types/generated/lib.gecko.dom.d.ts
-index 98fea9a73f231775f61c0fe5192252144d7b6914..e218d9528c99cf0399bc91ac19edd2dae1d7fe9c 100644
+index 7361392796bec5caa11de4592b8a6212682aa017..8fadd9d011666e804520b95f8d874d944bec1ffa 100644
 --- a/tools/@types/generated/lib.gecko.dom.d.ts
 +++ b/tools/@types/generated/lib.gecko.dom.d.ts
-@@ -24301,6 +24301,7 @@ declare var XULCommandEvent: {
+@@ -24682,6 +24682,7 @@ declare var XULCommandEvent: {
  };
  
  interface XULElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
 +    keypress: KeyboardEvent
  }
  
- interface XULElement extends Element, ElementCSSInlineStyle, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+ interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {

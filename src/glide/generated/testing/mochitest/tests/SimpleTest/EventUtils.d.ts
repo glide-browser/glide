@@ -946,6 +946,7 @@ function _checkDataTransferItems(aDataTransfer: any, aExpectedDragData: any): an
  *        use.
  */
 function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransferItems: any[]): boolean;
+function _synthesizeMockDndFromChild(aParams: any): Promise<void>;
 /**
  * Emulate a drag and drop by generating a dragstart from mousedown and mousemove,
  * then firing events dragover and drop (or dragleave if expectDragLeave is set).
@@ -954,19 +955,32 @@ function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransferItems: 
  * synthesizePlainDragAndDrop.  MockDragService is used in place of the native
  * nsIDragService implementation.  All coordinates are in client space.
  *
+ * This method can be called from the parent process, in which case it will
+ * perform checks of DND internals (if 'record' is set).  It can also be
+ * called from content processes, in which case the drag is over the window
+ * that is in context, and no checks of DND internals will occur.
+ *
  * @param {Object} aParams
  * @param {Window} aParams.sourceBrowsingCxt
  *                The BrowsingContext (possibly remote) that contains
- *                srcElement.
+ *                srcElement.  Only set in parent process.
  * @param {Window} aParams.targetBrowsingCxt
  *                The BrowsingContext (possibly remote) that contains
- *                targetElement.  Default is sourceBrowsingCxt.
+ *                targetElement.  Only set in parent process.
+ *                Default is sourceBrowsingCxt.
  * @param {Element} aParams.srcElement
- *                The element to drag.
+ *                ID of the element to drag.
  * @param {Element|null} aParams.targetElement
- *                The element to drop on.
+ *                ID of the element to drop on.
+ * @param {number} aParams.sourceOffset
+ *                The 2D offset from the source element at which the drag
+ *                starts.  Default is [0,0].
+ * @param {number} aParams.targetOffset
+ *                The 2D offset from the target element at which the drag ends.
+ *                Default is [0,0].
  * @param {number} aParams.step
- *                The 2D step for mousemoves
+ *                The 2D step for intermediate dragging mousemoves.
+ *                Default is [5,5].
  * @param {Boolean} aParams.expectCancelDragStart
  *                Set to true if srcElement is set up to cancel "dragstart"
  * @param {number} aParams.cancel
@@ -999,18 +1013,28 @@ function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransferItems: 
  *                Four-parameter function that logs the results of a remote
  *                assertion.  The parameters are (condition, message, ignored,
  *                stack).  This is the type of the mochitest report function.
+ *                Pass the empty function, or call this from content, to skip
+ *                testing of DND internals.
+ *                This parameter is required in the parent process and is
+ *                optional in content processes.
  * @param {Function} aParams.info
- *                One-parameter info logging function.  Default is console.log.
- *                This is the type of the mochitest info function.
+ *                One-parameter info logging function.  This is the type of
+ *                the mochitest info function.  Pass the empty function, or
+ *                call this from content, to skip testing of DND internals.
+ *                This parameter is required in the parent process and is
+ *                optional in content processes.
  * @param {Object} aParams.dragController
  *                MockDragController that the function should use.  This
  *                function will automatically generate one if none is given.
+ *                This can only be set in the parent process.
  */
 function synthesizeMockDragAndDrop(aParams: {
     sourceBrowsingCxt: Window;
     targetBrowsingCxt: Window;
     srcElement: Element;
     targetElement: Element | null;
+    sourceOffset: number;
+    targetOffset: number;
     step: number;
     expectCancelDragStart: boolean;
     cancel: number;

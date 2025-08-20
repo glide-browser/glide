@@ -1,5 +1,5 @@
 diff --git a/testing/mochitest/tests/SimpleTest/EventUtils.js b/testing/mochitest/tests/SimpleTest/EventUtils.js
-index 35fba10e3305cff711be12202499c3afbb4696f7..54a32b7050d371f3d930008c67595cea8c64ece1 100644
+index 9ab4334bde8ed8480ed1cdd5dca94cb31baa30df..fd8c7c8b1436d1b973763e24e6f43bb5237c6d64 100644
 --- a/testing/mochitest/tests/SimpleTest/EventUtils.js
 +++ b/testing/mochitest/tests/SimpleTest/EventUtils.js
 @@ -1657,22 +1657,26 @@ function synthesizeAndWaitNativeMouseMove(
@@ -33,18 +33,6 @@ index 35fba10e3305cff711be12202499c3afbb4696f7..54a32b7050d371f3d930008c67595cea
   *        Is optional and can be used to receive notifications from TIP.
   *
   * @description
-@@ -3532,9 +3536,9 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
-  * @param {Element} aParams.srcElement
-  *                The element to start dragging.  If srcSelection is
-  *                set, this is computed for element at focus node.
-- * @param {Selection|nil} aParams.srcSelection
-+ * @param {Selection|null} aParams.srcSelection
-  *                The selection to start to drag, set null if srcElement is set.
-- * @param {Element|nil} aParams.destElement
-+ * @param {Element|null} aParams.destElement
-  *                The element to drop on. Pass null to emulate a drop on an invalid target.
-  * @param {number} aParams.srcX
-  *                The initial x coordinate inside srcElement or ignored if srcSelection is set.
 @@ -3548,7 +3552,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
   *                The final x coordinate inside srcElement
   * @param {number} aParams.finalY
@@ -54,12 +42,3 @@ index 35fba10e3305cff711be12202499c3afbb4696f7..54a32b7050d371f3d930008c67595cea
   *                The pointer event id
   * @param {DOMWindow} aParams.srcWindow
   *                The DOM window for dispatching event on srcElement, defaults to the current window object.
-@@ -4161,7 +4165,7 @@ async function synthesizePlainDragAndCancel(
-  *                targetElement.  Default is sourceBrowsingCxt.
-  * @param {Element} aParams.srcElement
-  *                The element to drag.
-- * @param {Element|nil} aParams.targetElement
-+ * @param {Element|null} aParams.targetElement
-  *                The element to drop on.
-  * @param {number} aParams.step
-  *                The 2D step for mousemoves
