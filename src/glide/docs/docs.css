@@ -1004,7 +1004,7 @@ h3.code-heading {
   content: "⚠ ";
 }
 .admonition-caution .admonition-title::before {
-  content: "✗ ";
+  content: "⨯ ";
 }
 
 table th, table td {
