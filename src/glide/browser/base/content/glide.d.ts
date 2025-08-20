@@ -809,7 +809,7 @@ declare global {
       description?: string | undefined;
 
       /**
-       * If `true`, creates a buffer-local mapping for the current buffer.
+       * If `true`, applies the mapping for the current buffer instead of globally.
        *
        * @default {false}
        */
