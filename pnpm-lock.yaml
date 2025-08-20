@@ -73,8 +73,8 @@ importers:
         specifier: github:glide-browser/webextension-types
         version: webextension-polyfill-ts@git+https://git@github.com:glide-browser/webextension-types.git#5d4bc8263e3c1267f4c5c1cff44b422903d59ff6
       webidl2:
-        specifier: ^24.4.1
-        version: 24.4.1
+        specifier: ^24.5.0
+        version: 24.5.0
 
 packages:
 
@@ -1472,9 +1472,9 @@ packages:
     resolution: {commit: 5d4bc8263e3c1267f4c5c1cff44b422903d59ff6, repo: git@github.com:glide-browser/webextension-types.git, type: git}
     version: 0.26.0
 
-  webidl2@24.4.1:
-    resolution: {integrity: sha512-cPToqvZlxTAlaMucZyU28XtFLJz3XPdTdIWK/r3IaP1jfkjqne3OTniJS8DZqfzee1aBUQn80d6s2vYert50kg==}
-    engines: {node: '>= 14'}
+  webidl2@24.5.0:
+    resolution: {integrity: sha512-fxOigKkIem1iAgQ9t4cFOP+kWEA8y6Be/uh50FpJh0FijoeeT/VMrOyJzNLUgjy0rGMEcHeReKDCqj0g9dIe9A==}
+    engines: {node: '>= 18'}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -2900,7 +2900,7 @@ snapshots:
 
   webextension-polyfill-ts@git+https://git@github.com:glide-browser/webextension-types.git#5d4bc8263e3c1267f4c5c1cff44b422903d59ff6: {}
 
-  webidl2@24.4.1: {}
+  webidl2@24.5.0: {}
 
   which@2.0.2:
     dependencies:
