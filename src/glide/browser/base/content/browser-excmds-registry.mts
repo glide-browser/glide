@@ -345,6 +345,7 @@ export const GLIDE_EXCOMMANDS = [
           enum: [
             "w",
             "W",
+            "e",
             "b",
             "B",
             "0",

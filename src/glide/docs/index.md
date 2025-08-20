@@ -178,6 +178,8 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
       <span class="keymap-desc">Next word</span>
       <span class="keymap-key">W</span>
       <span class="keymap-desc">Next WORD</span>
+      <span class="keymap-key">e</span>
+      <span class="keymap-desc">End of word</span>
       <span class="keymap-key">b</span>
       <span class="keymap-desc">Previous word</span>
       <span class="keymap-key">B</span>

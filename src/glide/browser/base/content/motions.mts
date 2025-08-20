@@ -320,6 +320,32 @@ export function forward_word(
 }
 
 /**
+ * Move the selection to the end of the word.
+ */
+export function end_word(editor: Editor, mode: GlideMode | undefined) {
+  debugger;
+  const extend = mode === "visual";
+
+  do {
+    // we always want to move one character forward no matter what
+    editor.selectionController.characterMove(true, extend);
+
+    if (is_eof(editor)) {
+      return;
+    }
+  } while (text_obj.cls(current_char(editor)) === text_obj.CLS_WHITESPACE);
+
+  const starting_cls = text_obj.cls(current_char(editor));
+
+  while (text_obj.cls(next_char(editor)) === starting_cls) {
+    editor.selectionController.characterMove(true, extend);
+    if (is_eof(editor) || is_eol(editor)) {
+      break;
+    }
+  }
+}
+
+/**
  * Move the selection backward 1 word.
  *
  * `bigword=true`  -> equivalent to `B`

@@ -399,6 +399,67 @@ add_task(async function test_normal_W() {
   });
 });
 
+add_task(async function test_normal_e() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+
+    await set_text("Hello wurld", "basic whitespace between words");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 10, "d");
+
+    await set_text("Hello   world", "multiple spaces between words");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 12, "d");
+
+    await set_text("Hello, world", "whitespace between `,` and the next word");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 5, ",");
+    await test_motion("e", 11, "d");
+
+    await set_text("hello,world", "no whitespace between `,` and the next word");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 5, ",");
+    await test_motion("e", 10, "d");
+
+    await set_text("foo(bar: true)", "parentheses handling");
+    await test_motion("e", 2, "o");
+    await test_motion("e", 3, "(");
+    await test_motion("e", 6, "r");
+    await test_motion("e", 7, ":");
+    await test_motion("e", 12, "e");
+    await test_motion("e", 13, ")");
+
+    await set_text("hello\nwurld", "basic line boundaries handling");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 10, "d");
+
+    await set_text("hello\n  world", "line boundaries with post whitespace");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 12, "d");
+
+    await set_text("hello  \nworld", "line boundaries with pre whitespace");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 12, "d");
+
+    await set_text("hello\n\nworld", "empty lines");
+    await test_motion("e", 4, "o");
+    await test_motion("e", 11, "d");
+
+    await set_text("Hello wurld", "caret in the middle of a word");
+    await set_selection(3);
+    await test_motion("e", 4, "o");
+    await test_motion("e", 10, "d");
+
+    await set_text("Hello wurld", "caret in between two words");
+    await set_selection(5);
+    await test_motion("e", 10, "d");
+
+    await set_text("Hello wurld", "caret at the end of the first word");
+    await set_selection(4);
+    await test_motion("e", 10, "d");
+  });
+});
+
 add_task(async function test_normal_b() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {

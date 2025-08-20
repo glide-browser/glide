@@ -514,6 +514,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
             motions.forward_word(editor, /* bigword */ true, this.state?.mode);
             break;
           }
+          case "e": {
+            motions.end_word(editor, this.state?.mode);
+            break;
+          }
           case "b": {
             motions.back_word(editor, false);
             break;
@@ -635,6 +639,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "0":
       case "w":
       case "W":
+      case "e":
       case "b":
       case "B":
       case "$":
