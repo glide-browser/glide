@@ -1549,19 +1549,22 @@ class GlideGlobals implements GlideG {
   }
 }
 
+type GlideO = (typeof glide)["o"];
+class GlideOptions implements GlideO {
+  mapping_timeout = 200;
+
+  yank_highlight: glide.RGBString = `#edc73b`;
+  yank_highlight_time = 150;
+
+  jumplist_max_entries = 100;
+
+  which_key_delay = 300;
+}
+
 function make_glide_api(): typeof glide {
   return {
     g: new GlideGlobals(),
-    o: {
-      mapping_timeout: 200,
-
-      yank_highlight: "#edc73b",
-      yank_highlight_time: 150,
-
-      jumplist_max_entries: 100,
-
-      which_key_delay: 300,
-    },
+    o: new GlideOptions(),
     bo: {},
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
