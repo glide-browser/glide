@@ -33,7 +33,7 @@ glide.keymaps.set("normal", "<leader>r", () => {
 });
 ```
 
-You can also *delete* existing keymaps:
+You can also _delete_ existing keymaps:
 
 ```typescript
 glide.keymaps.del("normal", "f");
