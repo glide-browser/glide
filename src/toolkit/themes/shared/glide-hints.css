@@ -53,6 +53,10 @@ td.glide-reset, tr.glide-reset {
   z-index: 2147483647;
 }
 
+:root {
+  --glide-hint-font-size: 11px;
+}
+
 thead.glide-reset, tbody.glide-reset {
   display: table-header-group;
 }
@@ -83,7 +87,7 @@ div.glide-internal-hint-marker {
   left: -1px;
   white-space: nowrap;
   overflow: hidden;
-  font-size: 11px;
+  font-size: var(--glide-hint-font-size);
   padding: 1px 3px 2px 3px;
 
   background: var(--glide-hint-background);
@@ -98,7 +102,7 @@ div.glide-internal-hint-marker span {
   color: var(--glide-hint-color);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
   font-weight: bold;
-  font-size: 11px;
+  font-size: var(--glide-hint-font-size);
 }
 
 div.glide-internal-hint-marker > .glide-matching-character {

@@ -34,6 +34,8 @@ const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
+declare var document: Document & { documentElement: HTMLElement };
+
 export interface State {
   mode: GlideMode;
   operator: GlideOperator | null;
@@ -1559,6 +1561,15 @@ class GlideOptions implements GlideO {
   jumplist_max_entries = 100;
 
   which_key_delay = 300;
+
+  #hint_size = "11px";
+  get hint_size() {
+    return this.#hint_size;
+  }
+  set hint_size(value: string) {
+    this.#hint_size = value;
+    document.documentElement.style.setProperty("--glide-hint-font-size", value);
+  }
 }
 
 function make_glide_api(): typeof glide {

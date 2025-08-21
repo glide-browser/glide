@@ -31,6 +31,7 @@ text-decoration: none;
 [`glide.o.yank_highlight_time`](#glide.o.yank_highlight_time)\
 [`glide.o.which_key_delay`](#glide.o.which_key_delay)\
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
+[`glide.o.hint_size`](#glide.o.hint_size)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -144,6 +145,13 @@ The maximum number of entries to include in the jumplist, i.e.
 how far back in history will the jumplist store.
 
 `ts:@default 100`
+
+### `glide.o.hint_size: string` {% id="glide.o.hint_size" %}
+
+The font size of the hint label, directly corresponds to the
+[font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) property.
+
+`ts:@default "11px"`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 

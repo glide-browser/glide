@@ -694,6 +694,14 @@ declare global {
        * @default 100
        */
       jumplist_max_entries: number;
+
+      /**
+       * The font size of the hint label, directly corresponds to the
+       * [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) property.
+       *
+       * @default "11px"
+       */
+      hint_size: string;
     };
 
     export type RGBString = `#${string}`;
