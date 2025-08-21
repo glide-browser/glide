@@ -358,6 +358,7 @@ export const GLIDE_EXCOMMANDS = [
             "vl",
             "vd",
             "x",
+            "X",
             "o",
           ],
         },

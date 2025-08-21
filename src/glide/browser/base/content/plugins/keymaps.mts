@@ -82,6 +82,7 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", "b", "motion b");
   glide.keymaps.set("normal", "B", "motion B");
   glide.keymaps.set("normal", "x", "motion x");
+  glide.keymaps.set("normal", "X", "motion X");
   glide.keymaps.set("normal", "o", "motion o");
   glide.keymaps.set("normal", "{", "motion {");
   glide.keymaps.set("normal", "}", "motion }");

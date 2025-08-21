@@ -31,6 +31,19 @@ add_task(async function test_normal_x() {
   });
 });
 
+add_task(async function test_normal_X() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+
+    await set_text("abcdef", "basic");
+    await test_edit("X", "bcdef", -1, "");
+    await test_edit("$X", "bcde", 3, "e");
+
+    await set_text("", "should do nothing on empty input");
+    await test_edit("X", "", -1, "");
+  });
+});
+
 add_task(async function test_normal_s() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });

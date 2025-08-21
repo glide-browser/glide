@@ -598,6 +598,20 @@ export class GlideHandlerChild extends JSWindowActorChild<
             }
             break;
           }
+          case "X": {
+            if (
+              // caret is on the first line and it's empty
+              (motions.is_bof(editor) && motions.next_char(editor) === "\n")
+              // we don't want to delete newlines
+              || motions.current_char(editor) === "\n"
+            ) {
+              return;
+            }
+
+            // `foo █ar baz` -> `foo█ar baz`
+            editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
+            break;
+          }
           case "o": {
             editor.selectionController.intraLineMove(/* forward */ true, /* extend */ false);
             editor.insertLineBreak();
@@ -663,6 +677,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "vd":
         return false;
       case "x":
+      case "X":
       case "o":
         return true;
       default:
