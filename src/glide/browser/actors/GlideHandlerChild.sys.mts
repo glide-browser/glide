@@ -542,6 +542,17 @@ export class GlideHandlerChild extends JSWindowActorChild<
             motions.end_of_line(editor, false);
             break;
           }
+          case "s": {
+            // caret is on the first line and it's empty
+            if (motions.is_bof(editor) && motions.next_char(editor) === "\n") {
+              return;
+            }
+
+            // `foo █ar baz` -> `foo█ar baz`
+            editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
+            this.#change_mode("insert");
+            break;
+          }
           case "vh": {
             if (editor.selection.isCollapsed) {
               motions.back_char(editor, true);
@@ -645,6 +656,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "$":
       case "{":
       case "}":
+      case "s":
       case "v":
       case "vh":
       case "vl":

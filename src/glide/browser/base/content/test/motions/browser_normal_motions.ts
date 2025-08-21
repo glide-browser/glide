@@ -31,6 +31,17 @@ add_task(async function test_normal_x() {
   });
 });
 
+add_task(async function test_normal_s() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+
+    await set_text("abcdef", "basic");
+    await set_selection(1, "b");
+    await test_edit("s", "acdef", 0, "a");
+    await test_edit("s", "cdef", -1, "");
+  });
+});
+
 add_task(async function test_normal_dl() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 0 });

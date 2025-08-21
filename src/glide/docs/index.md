@@ -164,6 +164,8 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
       <span class="keymap-desc">Change (operator)</span>
       <span class="keymap-key">x</span>
       <span class="keymap-desc">Delete character</span>
+      <span class="keymap-key">s</span>
+      <span class="keymap-desc">Delete character & enter insert mode</span>
       <span class="keymap-key">r</span>
       <span class="keymap-desc">Replace character</span>
       <span class="keymap-key">o</span>
