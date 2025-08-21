@@ -303,6 +303,12 @@ class GlideBrowserClass {
     return this.#sandbox;
   }
 
+  #reload_config_clear_properties: Set<string> = new Set();
+  set_css_property(name: string, value: string) {
+    document.documentElement.style.setProperty(name, value);
+    this.#reload_config_clear_properties.add(name);
+  }
+
   async #reload_config() {
     this.#api = null;
     this.config_path = null;
@@ -310,6 +316,13 @@ class GlideBrowserClass {
     this.#messengers = new Map();
     this.#user_cmds = new Map();
     this.#sandbox = null;
+
+    const css_properties = this.#reload_config_clear_properties;
+    this.#reload_config_clear_properties = new Set();
+
+    for (const property of css_properties) {
+      document.documentElement.style.removeProperty(property);
+    }
 
     try {
       this.remove_all_notifications();
@@ -1568,7 +1581,7 @@ class GlideOptions implements GlideO {
   }
   set hint_size(value: string) {
     this.#hint_size = value;
-    document.documentElement.style.setProperty("--glide-hint-font-size", value);
+    GlideBrowser.set_css_property("--glide-hint-font-size", value);
   }
 }
 

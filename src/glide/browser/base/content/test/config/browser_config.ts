@@ -8,6 +8,7 @@
 "use strict";
 
 declare var content: TestContent;
+declare var document: Document & { documentElement: HTMLElement };
 
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -922,5 +923,27 @@ add_task(async function test_ensure() {
     GlideBrowser.api.g.value,
     "Error: Expected a truthy value, got `false`",
     "ensure should throw an error on falsy input",
+  );
+});
+
+add_task(async function test_hint_css_property_cleared_on_reload() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.hint_size = "30px";
+  });
+
+  is(GlideBrowser.api.o.hint_size, "30px");
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "30px",
+    "setting hint_size should set a css variable",
+  );
+
+  await GlideTestUtils.reload_config(function _() {});
+
+  is(GlideBrowser.api.o.hint_size, "11px");
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "",
+    "css var should be unset after config reload",
   );
 });
