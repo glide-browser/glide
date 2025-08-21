@@ -144,6 +144,13 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: false,
   },
+  {
+    name: "tab_new",
+    description: "Create a new tab with the given URL or the default new tab page if not provided",
+    args_schema: { url: { type: "string", required: false, position: 0 } } as const satisfies ArgumentsSchema,
+    content: false,
+    repeatable: false,
+  },
 
   { name: "tab_close", description: "Close the current tab", content: false, repeatable: true },
   {

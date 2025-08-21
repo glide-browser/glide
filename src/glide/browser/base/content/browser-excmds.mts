@@ -252,6 +252,15 @@ class GlideExcmdsClass {
         gBrowser.selectedTab = tab;
         break;
       }
+
+      case "tab_new": {
+        const {
+          args: { url },
+        } = this.#parse_command_args(command_meta, command);
+        BrowserCommands.openTab({ url });
+        break;
+      }
+
       case "tab_close": {
         BrowserCommands.closeTabOrWindow(null);
         break;

@@ -258,3 +258,33 @@ add_task(async function test_excmd_callback_receives_unparsed_args() {
     isjson(GlideBrowser.api.g.value, ["Hello world"], "Excmd callback should get quoted args");
   });
 });
+
+add_task(async function test_tab_new() {
+  const initial_tab_count = gBrowser.tabs.length;
+
+  await GlideTestUtils.synthesize_keyseq(":tab_new<CR>");
+  await TestUtils.waitForCondition(
+    () => gBrowser.tabs.length === initial_tab_count + 1,
+    "Waiting for new tab to be created",
+  );
+
+  is(gBrowser.tabs.length, initial_tab_count + 1, "tab_new should create a new tab");
+  is(gBrowser.selectedTab, gBrowser.tabs[gBrowser.tabs.length - 1], "New tab should be focused");
+  is(gBrowser.selectedBrowser.currentURI.spec, "about:newtab", "New tab should open with blank or newtab page");
+
+  BrowserTestUtils.removeTab(gBrowser.selectedTab);
+
+  // with url
+  await GlideTestUtils.synthesize_keyseq(`:tab_new "${INPUT_TEST_FILE}"<CR>`);
+  await TestUtils.waitForCondition(
+    () => gBrowser.tabs.length === initial_tab_count + 1,
+    "Waiting for new tab with URL to be created",
+  );
+  await BrowserTestUtils.browserLoaded(gBrowser.selectedBrowser);
+
+  is(gBrowser.tabs.length, initial_tab_count + 1, "tab_new with URL should create a new tab");
+  is(gBrowser.selectedTab, gBrowser.tabs[gBrowser.tabs.length - 1], "New tab with URL should be focused");
+  is(gBrowser.selectedBrowser.currentURI.spec, INPUT_TEST_FILE, "New tab should load the specified URL");
+
+  BrowserTestUtils.removeTab(gBrowser.selectedTab);
+});
