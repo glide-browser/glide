@@ -75,7 +75,6 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   { name: "quit", description: "Close all windows", content: false, repeatable: false },
-  { name: "repl", description: "Start the config REPL", content: false, repeatable: false },
 
   {
     name: "set",
@@ -268,6 +267,8 @@ export const GLIDE_EXCOMMANDS = [
   { name: "help", description: "Open the docs", content: false, repeatable: false },
 
   { name: "tutor", description: "Open the Glide tutorial", content: false, repeatable: false },
+
+  { name: "repl", description: "Start the config REPL", content: false, repeatable: false },
 
   // TODO
   // {
