@@ -94,9 +94,9 @@ export const GLIDE_EXCOMMANDS = [
 
   { name: "profile_dir", description: "Show the current profile directory", content: false, repeatable: false },
 
-  { name: "config", description: "Show the config file path", content: false, repeatable: false },
-  { name: "config_reload", description: "Reload the config file", content: false, repeatable: false },
   { name: "config_edit", description: "Open the config file in the default editor", content: false, repeatable: false },
+  { name: "config_path", description: "Show the config file path", content: false, repeatable: false },
+  { name: "config_reload", description: "Reload the config file", content: false, repeatable: false },
   {
     name: "config_init",
     description: "Initialise a config dir with all the necessary setup",

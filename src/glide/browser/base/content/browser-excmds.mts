@@ -437,7 +437,7 @@ class GlideExcmdsClass {
         break;
       }
 
-      case "config": {
+      case "config_path": {
         const id = "glide-config-path";
         const config_path = GlideBrowser.config_path;
         if (config_path) {
