@@ -17,6 +17,12 @@ const STYLES = css`
     font-size: revert !important;
   }
 
+  .index {
+    border: var(--border-thickness) solid var(--text-color);
+    padding: calc(var(--line-height) - var(--border-thickness)) 1ch;
+    margin-bottom: var(--line-height);
+  }
+
   .index a {
     text-decoration: none;
   }
