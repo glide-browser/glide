@@ -600,7 +600,7 @@ class GlideExcmdsClass {
       }
 
       case "help": {
-        gBrowser.addTrustedTab("resource://glide-docs/index.html", {
+        gBrowser.addTrustedTab("resource://glide-docs/index.html#default-keymappings", {
           inBackground: false, // ensure active/selected
         });
         break;
