@@ -199,3 +199,32 @@ add_task(async function test_gI() {
     is(focument_element, "contenteditable-div-with-role-textbox", "should focus the largest editable element");
   });
 });
+
+add_task(async function test_expandable_content_can_be_hinted() {
+  await BrowserTestUtils.withNewTab(FILE, async browser => {
+    var is_open = await SpecialPowers.spawn(browser, [], () => {
+      const summary = content.document.getElementById("summary-1");
+      summary.scrollIntoView();
+      return summary.parentElement.open;
+    });
+    await sleep_frames(10);
+    is(is_open, false, "<details> content should be hidden by default");
+
+    await GlideTestUtils.synthesize_keyseq("f");
+    await wait_for_hints();
+
+    const hints = GlideCommands.get_active_hints();
+    const summary_hint = hints.find((hint) => hint.element_id === "summary-1");
+    ok(summary_hint);
+
+    await GlideTestUtils.synthesize_keyseq(summary_hint.label);
+    await GlideTestUtils.wait_for_mode("normal");
+
+    var is_open = await SpecialPowers.spawn(
+      browser,
+      [],
+      () => content.document.getElementById("summary-1").parentElement.open,
+    );
+    is(is_open, true, "<details> content should be open after activating the hint");
+  });
+});

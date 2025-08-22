@@ -109,6 +109,7 @@ export const content = {
     "textarea",
     "button",
     "details",
+    "summary",
     "option",
     "label",
     // firefox XUL elements
