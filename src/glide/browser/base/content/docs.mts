@@ -83,7 +83,7 @@ export async function markdown_to_html(
   const code_options = { include_go_to_def: props.relative_dist_path.endsWith("api.html") } as const satisfies Partial<
     CodeHighlightOptions
   >;
-  const ast = Markdoc.parse(tokenizer.tokenize(source));
+  const ast = Markdoc.parse(tokenizer.tokenize(source), { slots: true });
 
   const state = new RenderState(source.split("\n"), highlighter, code_options);
 
@@ -309,6 +309,31 @@ class RenderState {
                 `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
               content: "",
             });
+          },
+        },
+        details: {
+          description: "Renders a <details> tag",
+          slots: {
+            summary: { required: false },
+          },
+          transform: (node, config) => {
+            const Children = node.transformChildren(config);
+            const summary = node.slots["summary"];
+            if (!summary) {
+              return new Markdoc.Tag("details", {}, Children);
+            }
+
+            return new Markdoc.Tag("details", {}, [
+              new Markdoc.Tag(
+                "summary",
+                {},
+                // the return type of .transform() is a little funky here, according to the docs
+                // https://github.com/markdoc/markdoc/discussions/342
+                // it should not return an array
+                [summary.transform(config) as any],
+              ),
+              ...Children,
+            ]);
           },
         },
         sup: { render: "sup", attributes: {} },
