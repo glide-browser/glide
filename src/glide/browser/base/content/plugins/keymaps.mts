@@ -50,6 +50,8 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("command", "<Esc>", "commandline_toggle");
   glide.keymaps.set("command", "<Tab>", "commandline_focus_next");
   glide.keymaps.set("command", "<S-Tab>", "commandline_focus_back");
+  glide.keymaps.set("command", "<Down>", "commandline_focus_next");
+  glide.keymaps.set("command", "<Up>", "commandline_focus_back");
   glide.keymaps.set("command", "<Enter>", "commandline_accept");
   glide.keymaps.set("command", "<C-d>", "commandline_delete");
 
