@@ -151,6 +151,7 @@ a:link, a:visited {
 
 p {
   margin-bottom: var(--line-height);
+  text-wrap: balance;
 }
 
 strong {
@@ -214,12 +215,6 @@ th {
 
 .header tr td:last-child {
   text-align: right;
-}
-
-p {
-  word-break: break-word;
-  word-wrap: break-word;
-  hyphens: auto;
 }
 
 img {
@@ -508,6 +503,10 @@ label input {
 .shiki-no-box {
   padding: 0 !important;
   border: none !important;
+}
+
+.shiki-inline {
+  white-space: nowrap;
 }
 
 .excmd-heading {
