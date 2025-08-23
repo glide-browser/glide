@@ -5,7 +5,7 @@
 
 # Glide
 
-Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [customize](./config.md) everything with TypeScript, and browse without reaching for your mouse.
+An extensible, keyboard [focused](hints.md) & extremely [customisable](config.md) web browser.
 
 ## Download
 
