@@ -524,8 +524,10 @@ class GlideExcmdsClass {
           throw new Error(`A config file already exists at ${GlideBrowser.config_path}`);
         }
 
+        const { args } = this.#parse_command_args(command_meta, command);
+
         const cfg = ChromeUtils.importESModule("chrome://glide/content/config-init.mjs", { global: "current" });
-        await cfg.init();
+        await cfg.init(args);
         break;
       }
 

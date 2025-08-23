@@ -1497,7 +1497,7 @@ class GlideBrowserClass {
    */
   get config_dirs(): { path: string; description: string }[] {
     const config_dirs: ({ path: string; description: string } | null)[] = [
-      { path: Services.dirsvc.get("CurWorkD", Ci.nsIFile).path, description: "cwd" },
+      { path: this.cwd_config_dir, description: "cwd" },
 
       { path: this.profile_config_dir, description: "profile" },
 
@@ -1508,6 +1508,10 @@ class GlideBrowserClass {
       { path: this.home_config_dir, description: "home" },
     ];
     return redefine_getter(this, "config_dirs", config_dirs.filter(Boolean));
+  }
+
+  get cwd_config_dir(): string {
+    return Services.dirsvc.get("CurWorkD", Ci.nsIFile).path;
   }
 
   get xdg_config_dir(): string | null {

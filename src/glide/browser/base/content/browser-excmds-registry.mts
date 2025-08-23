@@ -100,6 +100,13 @@ export const GLIDE_EXCOMMANDS = [
   {
     name: "config_init",
     description: "Initialise a config dir with all the necessary setup",
+    args_schema: {
+      location: {
+        type: { enum: ["home", "xdg", "profile", "cwd"] },
+        required: false,
+        position: 0,
+      },
+    },
     content: false,
     repeatable: false,
   },
@@ -386,6 +393,10 @@ export type GlideExcmdsMap = {
     { name: K }
   >;
 };
+
+export type ExcmdArgs<Name extends keyof GlideExcmdsMap> = GlideExcmdsMap[Name] extends { args_schema: any }
+  ? ParsedArgs<GlideExcmdsMap[Name]["args_schema"]>
+  : never;
 
 export const GLIDE_EXCOMMANDS_MAP = GLIDE_EXCOMMANDS.reduce((acc, cmd) => {
   // @ts-expect-error TS doesn't narrow types correctly
