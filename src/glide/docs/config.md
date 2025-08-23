@@ -1,6 +1,14 @@
 # Config
 
-Glide supports configuration through a [TypeScript](https://www.typescriptlang.org/) file that is type stripped with [ts-blank-space](https://github.com/bloomberg/ts-blank-space). Note this means you can only use syntax that is [erasable](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-8.html#the---erasablesyntaxonly-option).
+Glide supports configuration through a [TypeScript](#config-evaluation) file.
+
+You can setup the config file with `:config_init home`, which will create a config file at `path:~/.config/glide/glide.ts` and some boilerplate files so that the TypeScript LSP will work.
+
+Then you can run `:config_reload` and `:config_edit` to open the config file in your default editor.
+
+See the [API reference](api.md) for all of the available APIs in the config file or the [Cookbook](cookbook.md) for examples of common things you might want to do.
+
+## File resolution
 
 Glide will resolve the config file by searching for a `path:glide.ts` file in the following directories in order:
 
@@ -11,10 +19,21 @@ Glide will resolve the config file by searching for a `path:glide.ts` file in th
 
 Glide will only consider the _first_ config file that matches and will not load any further.
 
-See the [API reference](api.md) for all of the available APIs in the config file.
+## Config evaluation
 
-> [!TIP]
-> You can initialise a config directory with `:config_init`.
+The config file source is converted to JS through type stripping with [ts-blank-space](https://bloomberg.github.io/ts-blank-space/).
+
+This means you can only use syntax that is [erasable](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-8.html#the---erasablesyntaxonly-option).
+
+## Importing types
+
+Glide does not currently support importing runtime code from other `path:.ts` / `path:.js` files from within the config, but you _can_ import types, e.g.
+
+```typescript
+import type { SetNonNullable } from "type-fest";
+```
+
+As these imports will be stripped when the config is evaluated.
 
 ## Types
 
@@ -89,13 +108,3 @@ Every other part can be more freely customised.
   }
 }
 ```
-
-## Importing types
-
-Glide does not currently support importing runtime code from other (T|J)S files from within the config, but you _can_ import types, e.g.
-
-```typescript
-import type { SetNonNullable } from "type-fest";
-```
-
-As these imports will be stripped when the config is evaluated.
