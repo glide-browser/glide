@@ -49,7 +49,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
 
 <div class="keymaps-container">
   <div class="keymap-section">
-    <h3>Navigation & Scrolling</h3>
+    <a href="#navigation"><h3 id="navigation">Navigation & Scrolling</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">h</span>
       <span class="keymap-desc">Move caret left</span>
@@ -79,7 +79,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Links & Hints</h3>
+    <a href="#links"><h3 id="links">Links & Hints</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">f</span>
       <span class="keymap-desc">Follow link (hint mode)</span>
@@ -108,7 +108,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Tabs</h3>
+    <a href="#tabs"><h3 id="tabs">Tabs</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">&lt;leader&gt;d</span>
       <span class="keymap-desc">Close tab</span>
@@ -120,7 +120,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Commandline</h3>
+    <a href="#commandline"><h3 id="commandline">Commandline</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">:</span>
       <span class="keymap-desc">Open command line</span>
@@ -138,7 +138,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Mode Switching</h3>
+    <a href="#modes"><h3 id="modes">Mode Switching</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">i</span>
       <span class="keymap-desc">Enter insert mode (cursor left)</span>
@@ -156,7 +156,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Text Editing</h3>
+    <a href="#text-editing"><h3 id="text-editing">Text Editing</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">d</span>
       <span class="keymap-desc">Delete (operator)</span>
@@ -176,7 +176,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Motions</h3>
+    <a href="#motions"><h3 id="motions">Motions</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">w</span>
       <span class="keymap-desc">Next word</span>
@@ -200,7 +200,7 @@ Glide is Firefox with Vim. [Navigate](./hints.md) the web with your keyboard, [c
   </div>
 
 <div class="keymap-section">
-    <h3>Visual Mode</h3>
+    <a href="#visual-mode"><h3 id="visual-mode">Visual Mode</h3></a>
     <div class="keymap-grid">
       <span class="keymap-key">h</span>
       <span class="keymap-desc">Extend selection left</span>
