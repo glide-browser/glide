@@ -1010,7 +1010,12 @@ table th, table td {
 }
 
 .alpha-warning {
-  width: 50em;
+  /* constrain width to a specific width so that
+   * it doesn't change when content is expanded.
+   *
+   * but this solution feels very hacky...
+   */
+  width: min(100vw - 5em, 50em);
   display: flex;
   align-items: center;
   gap: 0.5rem;
