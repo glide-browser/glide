@@ -87,7 +87,7 @@ export async function markdown_to_html(
 
   const state = new RenderState(source.split("\n"), highlighter, code_options);
 
-  const content = Markdoc.transform(ast, state.config);
+  const content = state.transform(ast);
 
   var html_body = Markdoc.renderers.html(content);
   if (Object.keys(state.patches).length) {
@@ -595,6 +595,26 @@ class RenderState {
         },
       },
     };
+  }
+
+  transform(ast: M.Node): M.RenderableTreeNode {
+    return this.#transform(Markdoc.transform(ast, this.config));
+  }
+
+  #transform(node: M.RenderableTreeNode): M.RenderableTreeNode {
+    if (node instanceof Markdoc.Tag) {
+      // markdoc renders our {% details %} by wrapping it in a <p> for some reason which affects the output
+      // so we just switch it to a <div>, ideally we'd not render the parent element at all but that's more
+      // tricky, so deferring that for later.
+      const first_child = node.children[0]!;
+      if (node.name === "p" && first_child instanceof Markdoc.Tag && first_child.name === "details") {
+        node.name = "div";
+      }
+
+      node.children = node.children.map((child) => this.#transform(child));
+    }
+
+    return node;
   }
 
   html(patch: { html: string; content: string }) {
