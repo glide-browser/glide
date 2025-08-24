@@ -19,3 +19,7 @@ are some differences:
 
 - all method calls return a `ts:Promise<T>`.
 - some APIs are not supported, e.g. `browser.runtime.connect()` and any other `Port` API.
+
+## Availability
+
+Currently, the `browser` API has similar restrictions to standard web extensions where it will not function on certain protected pages such as `about:config` or `addons.mozilla.org`. This will be fixed in the future.
