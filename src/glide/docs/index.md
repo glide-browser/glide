@@ -7,6 +7,15 @@
 
 An [extensible](config.md) and [keyboard-focused](hints.md) web browser.
 
+Features:
+
+- TypeScript based [config](config.md)
+- Web extensions API support
+- Follow links and click elements with [hint mode](https://glide-browser.app/hints)
+- Fuzzy tab manager
+- Site specific settings / keymaps
+- ... and more
+
 ## Download
 
 {% html %}
