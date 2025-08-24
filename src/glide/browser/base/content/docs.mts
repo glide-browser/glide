@@ -326,10 +326,12 @@ class RenderState {
             const id = node.attributes["id"] ?? (node.attributes["heading"] ? this.generate_anchor_id(Summary) : null);
 
             return new Markdoc.Tag("details", {}, [
-              new Markdoc.Tag("summary", {}, Summary),
+              new Markdoc.Tag("summary", {}, [
+                ...Summary,
+                ...(id ? [" ", new Markdoc.Tag("a", { href: `#${id}`, class: "summary-anchor" }, ["#"])] : []),
+              ]),
               ...(id ? [new Markdoc.Tag("div", { id })] : []),
               ...Children,
-              ...(id ? [new Markdoc.Tag("a", { href: `#${id}` }, ["~"])] : []),
             ]);
           },
         },

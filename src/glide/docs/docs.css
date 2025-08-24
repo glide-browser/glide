@@ -226,6 +226,16 @@ details {
   margin-bottom: 0;
 }
 
+.summary-anchor {
+  color: var(--text-color-alt) !important;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+summary:hover .summary-anchor {
+  opacity: 1;
+}
+
 summary {
   font-weight: var(--font-weight-medium);
   cursor: pointer;
