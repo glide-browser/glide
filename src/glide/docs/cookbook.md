@@ -37,6 +37,28 @@ glide.autocmds.create("UrlEnter", {
 
 {% /details %}
 
+{% details heading=true %} {% slot "summary" %}Delete a keymap for a specific website
+{% /slot %}
+
+```typescript
+glide.autocmds.create("UrlEnter", {
+  hostname: "example.com",
+}, async () => {
+  glide.buf.keymaps.del("normal", "f");
+});
+```
+
+{% /details %}
+
+{% details heading=true %} {% slot "summary" %}Map one key to another key
+{% /slot %}
+
+```typescript
+glide.keymaps.set("normal", ";", "keys :");
+```
+
+{% /details %}
+
 {% details heading=true %} {% slot "summary" %}Text macros
 {% /slot %}
 
