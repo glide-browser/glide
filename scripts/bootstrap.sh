@@ -11,6 +11,7 @@ pnpm glider download
 ./scripts/bundle.sh
 ./scripts/generate-types.sh
 
+pnpm build:ts
 pnpm build:docs
 pnpm build:docs:index
 pnpm build:js

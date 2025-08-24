@@ -50,6 +50,9 @@ jobs:
       - name: Bundle vendored dependencies
         run: pnpm bundle
 
+      - name: Compile TS
+        run: pnpm build:ts
+
       - name: Build docs
         run: pnpm build:docs:full
 

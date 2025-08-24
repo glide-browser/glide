@@ -25,6 +25,7 @@
     "build:docs:assets": "pnpm tsn ./scripts/docs-asset-hashes.mts",
     "build:docs:full": "pnpm build:docs --symlink=false && pnpm build:docs:api && pnpm build:docs:assets && pnpm build:docs:index && pnpm build:docs:assets",
     "build:types": "bash ./scripts/generate-types.sh",
+    "build:ts": "pnpm tsn scripts/build-ts.mts",
     "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
 
     "lint": "./scripts/lint.sh",
