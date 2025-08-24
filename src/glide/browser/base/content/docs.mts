@@ -313,25 +313,32 @@ class RenderState {
         },
         details: {
           description: "Renders a <details> tag",
+          attributes: {
+            heading: { required: false, type: Boolean },
+          },
           slots: {
             summary: { required: false },
           },
           transform: (node, config) => {
-            const Children = node.transformChildren(config);
             const summary = node.slots["summary"];
+
+            const Children = [
+              ...(node.attributes["id"] ? [new Markdoc.Tag("div", { id: node.attributes["id"] })] : []),
+              ...node.transformChildren(config),
+            ];
             if (!summary) {
               return new Markdoc.Tag("details", {}, Children);
             }
 
+            // the return type of .transform() is a little funky here, according to the docs
+            // https://github.com/markdoc/markdoc/discussions/342 it should not return an array
+            const Summary = summary.transform(config) as M.RenderableTreeNode[];
+
             return new Markdoc.Tag("details", {}, [
-              new Markdoc.Tag(
-                "summary",
-                {},
-                // the return type of .transform() is a little funky here, according to the docs
-                // https://github.com/markdoc/markdoc/discussions/342
-                // it should not return an array
-                [summary.transform(config) as any],
-              ),
+              new Markdoc.Tag("summary", {}, Summary),
+              ...(node.attributes["heading"]
+                ? [new Markdoc.Tag("div", { id: this.generate_anchor_id(Summary) })]
+                : []),
               ...Children,
             ]);
           },
@@ -471,15 +478,6 @@ class RenderState {
            * Make heading elements clickable with an anchor href.
            */
           transform: (node, config: MarkdocConfig) => {
-            /** Key mappings -> key-mappings */
-            function generate_anchor_id(children: M.RenderableTreeNode[]) {
-              return state.get_node_content(children)
-                .replace(/[?]/g, "")
-                .replace(/\s+/g, "-")
-                .toLowerCase();
-            }
-
-            const state = this;
             let {
               id,
               level,
@@ -490,7 +488,7 @@ class RenderState {
             const nested_config = { ...config, heading: true } as MarkdocConfig;
             const children = node.transformChildren(nested_config);
             if (!id) {
-              id = generate_anchor_id(children);
+              id = this.generate_anchor_id(children);
             }
 
             level = assert_present(level ?? node.attributes["level"], "Expected level attribute to be set on headings");
@@ -604,6 +602,14 @@ class RenderState {
     this.patch_counter++;
     this.patches[id] = patch;
     return id;
+  }
+
+  /** Key mappings -> key-mappings */
+  generate_anchor_id(children: M.RenderableTreeNode[]) {
+    return this.get_node_content(children)
+      .replace(/[?]/g, "")
+      .replace(/\s+/g, "-")
+      .toLowerCase();
   }
 
   /**
