@@ -59,6 +59,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "API", href: "api.html" },
   { name: "Excmds", href: "excmds.html" },
   { name: "Hints", href: "hints.html" },
+  { name: "Extensions API", href: "extensions-api.html" },
   { name: "Firefox", href: "firefox.html" },
   { name: "Vim", href: "vim.html" },
   { name: "FAQ", href: "faq.html" },
