@@ -1010,6 +1010,7 @@ table th, table td {
 }
 
 .alpha-warning {
+  width: 50em;
   display: flex;
   align-items: center;
   gap: 0.5rem;
