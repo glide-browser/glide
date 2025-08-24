@@ -20,7 +20,7 @@ Existing extensions do cover a lot of Glide's features - for example, [Tridactyl
 
 However any extension that wants to offer the same level of flexibility that Glide does will always be fighting an uphill [battle](https://github.com/tridactyl/tridactyl/issues/1800) and won't always have access to all the APIs needed as Firefox restricts the kinds of documents extensions can operate on, e.g. extensions cannot run on addons.mozilla.org without hacky workarounds.
 
-While these restrictions are generally reasonable (you wouldn't want a malicious extension to disable deletion of itself) it makes it impossible to deliver a consistent, deeply integrated experience. Building a Firefox fork means we control the full stack and removes the extension constraints while retaining Firefox’s security model. 
+While these restrictions are generally reasonable (you wouldn't want a malicious extension to disable deletion of itself) it makes it impossible to deliver a consistent, deeply integrated experience. Building a Firefox fork means we control the full stack and removes the extension constraints while retaining Firefox’s security model.
 
 Additionally, an example of a feature that Glide has that is infeasible to implement within a web extension is custom caret styles where we render a block (█) caret in `normal` mode and a standard (|) caret in `insert` mode.
 

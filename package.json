@@ -29,6 +29,7 @@
     "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
 
     "lint": "./scripts/lint.sh",
+    "fix": "pnpm fmt",
 
     "check:license": "pnpm glider license-check",
     "fix:license": "pnpm glider license-check --fix",
