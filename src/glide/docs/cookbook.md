@@ -17,6 +17,7 @@ glide.autocmds.create("UrlEnter", {
   );
 });
 ```
+
 {% /details %}
 
 {% details heading=true %} {% slot "summary" %}Override a keymap for a specific website
@@ -33,6 +34,7 @@ glide.autocmds.create("UrlEnter", {
   );
 });
 ```
+
 {% /details %}
 
 {% details heading=true %} {% slot "summary" %}Text macros
@@ -45,6 +47,7 @@ glide.keymaps.set("normal", "<leader>ts", async () => {
   await glide.keys.send("<esc>"); // exit insert mode
 });
 ```
+
 {% /details %}
 
 {% details heading=true %} {% slot "summary" %}Keymap for switching to a tab
@@ -59,4 +62,5 @@ glide.keymaps.set("normal", "gt", async () => {
   await browser.tabs.update(tab.id, { active: true });
 }, { description: "[g]o to example.com" });
 ```
+
 {% /details %}

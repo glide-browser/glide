@@ -14,7 +14,7 @@ import "./polyfill-chromeutils.cjs";
 import fs from "fs/promises";
 import meow from "meow";
 import Path from "path";
-import { DOCS_DIR, DOCS_DIST_DIR } from "./canonical-paths.mts";
+import { DOCS_DIR, DOCS_DIST_DIR, TUTOR_DIR } from "./canonical-paths.mts";
 
 const shiki = ChromeUtils.importESModule("chrome://glide/content/bundled/shiki.mjs");
 const { markdown_to_html } = ChromeUtils.importESModule("chrome://glide/content/docs.mjs");
@@ -35,6 +35,10 @@ const SYMLINKS = [
   "logo-32.png",
   "BerkeleyMono-Regular.woff2",
   "_headers",
+];
+const TUTOR_FILES = [
+  "index.html",
+  "tutor.css",
 ];
 
 const highlighter = await shiki.createHighlighter({
@@ -101,3 +105,20 @@ for (const file of SYMLINKS) {
     await fs.copyFile(source_file, dist_file);
   }
 }
+
+const tutor_docs_dist_dir = Path.join(DOCS_DIST_DIR, "tutorial");
+await fs.mkdir(tutor_docs_dist_dir, { recursive: true });
+
+for (const file of TUTOR_FILES) {
+  const abs = Path.join(TUTOR_DIR, file);
+  await fs.writeFile(
+    Path.join(tutor_docs_dist_dir, file),
+    await fs.readFile(abs, "utf8").then((contents) => contents.replaceAll("resource://glide-docs/", "../")),
+  );
+}
+await fs.writeFile(
+  Path.join(tutor_docs_dist_dir, "tutor.js"),
+  await fs.readFile(Path.join(TUTOR_DIR, "dist", "tutor.js"), "utf8").then((contents) =>
+    contents.replaceAll("resource://glide-docs/", "../")
+  ),
+);

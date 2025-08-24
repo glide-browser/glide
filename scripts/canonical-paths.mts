@@ -12,3 +12,5 @@ export const GLIDE_BROWSER_CONTENT_DIR = Path.join(GLIDE_BROWSER_DIR, "base", "c
 
 export const DOCS_DIR = Path.join(SRC_DIR, "glide", "docs");
 export const DOCS_DIST_DIR = Path.join(DOCS_DIR, "dist");
+
+export const TUTOR_DIR = Path.join(GLIDE_BROWSER_DIR, "components", "tutor");
