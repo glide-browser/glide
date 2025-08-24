@@ -151,7 +151,6 @@ a:link, a:visited {
 
 p {
   margin-bottom: var(--line-height);
-  text-wrap: balance;
 }
 
 strong {
