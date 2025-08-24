@@ -323,13 +323,13 @@ class RenderState {
             // the return type of .transform() is a little funky here, according to the docs
             // https://github.com/markdoc/markdoc/discussions/342 it should not return an array
             const Summary = summary.transform(config) as M.RenderableTreeNode[];
+            const id = node.attributes["id"] ?? (node.attributes['heading'] ? this.generate_anchor_id(Summary) : null);
 
             return new Markdoc.Tag("details", {}, [
               new Markdoc.Tag("summary", {}, Summary),
-              ...(node.attributes["heading"]
-                ? [new Markdoc.Tag("div", { id: this.generate_anchor_id(Summary) })]
-                : []),
+              ...(id ? [new Markdoc.Tag("div", { id })] : []),
               ...Children,
+              ...(id ? [new Markdoc.Tag("a", { href: `#${id}` }, ['~'])] : []),
             ]);
           },
         },
