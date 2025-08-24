@@ -9,9 +9,10 @@ An [extensible](config.md) and [keyboard-focused](hints.md) web browser.
 
 Features:
 
+- [Navigate](hints.md) the web with just a keyboard
+- Modal based [keymaps](keys.md)
 - TypeScript based [config](config.md)
 - Web extensions API support
-- Follow links and click elements with [hint mode](https://glide-browser.app/hints)
 - Fuzzy tab manager
 - Site specific settings / keymaps
 - ... and more
