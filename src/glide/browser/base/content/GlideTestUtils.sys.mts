@@ -240,7 +240,7 @@ class GlideCommandLineTestUtils {
 
     await new Promise(r => requestAnimationFrame(r));
 
-    const commandLine = this.#get_commandline();
+    const commandLine = this.#expect_commandline();
 
     // override the real options so tests are stable
     commandLine.set_completion_options([
@@ -262,30 +262,31 @@ class GlideCommandLineTestUtils {
   }
 
   current_source_header() {
-    const sources = this.#get_commandline().querySelectorAll(".section-header");
+    const sources = this.#expect_commandline().querySelectorAll(".section-header");
     return Array.from(sources.values()).find(element => !(element!.parentElement! as HTMLElement).hidden)?.textContent;
   }
 
   visible_rows(): HTMLElement[] {
-    return Array.from(this.#get_commandline().querySelectorAll(".gcl-option")).filter(row =>
+    return Array.from(this.#expect_commandline().querySelectorAll(".gcl-option")).filter(row =>
       !(row as HTMLElement).hidden
     ) as HTMLElement[];
   }
 
   focused_row() {
-    const focused_rows = this.#get_commandline().querySelectorAll(".focused");
+    const focused_rows = this.#expect_commandline().querySelectorAll(".focused");
     g.is(focused_rows.length, 1, "Only one command should be selected");
 
     return focused_rows[0];
   }
 
-  #get_commandline(): GlideCommandLine {
-    return assert_present(
-      document!.querySelector("glide-commandline") as
-        | GlideCommandLine
-        | undefined,
-      "no glide-commandline element found",
-    );
+  get_element(): GlideCommandLine | undefined {
+    return document!.querySelector("glide-commandline") as
+      | GlideCommandLine
+      | undefined;
+  }
+
+  #expect_commandline(): GlideCommandLine {
+    return assert_present(this.get_element(), "no glide-commandline element found");
   }
 }
 

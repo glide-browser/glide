@@ -20,6 +20,7 @@ type Browser = typeof browser;
 declare interface GlideCommandLineInterface {
   prefill: string;
 
+  close(): void;
   show({ prefill }?: { prefill?: string }): void;
   toggle(): void;
   refresh_data(): void;

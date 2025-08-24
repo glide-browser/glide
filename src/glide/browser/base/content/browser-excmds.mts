@@ -240,6 +240,14 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "keys": {
+        const {
+          args: { keyseq },
+        } = this.#parse_command_args(command_meta, command);
+        await GlideBrowser.api.keys.send(keyseq);
+        break;
+      }
+
       case "tab": {
         const {
           args: { tab_index },

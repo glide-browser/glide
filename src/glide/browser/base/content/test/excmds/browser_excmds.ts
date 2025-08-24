@@ -288,3 +288,15 @@ add_task(async function test_tab_new() {
 
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
 });
+
+add_task(async function test_keys() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", ";", "keys :");
+  });
+
+  ok(GlideTestUtils.commandline.get_element()?.hidden, "commandline should be hidden at the start");
+  await GlideTestUtils.synthesize_keyseq(";");
+  ok(GlideTestUtils.commandline.get_element()!.hidden, "commandline should be shown after pressing ;");
+
+  GlideTestUtils.commandline.get_element()!.close();
+});

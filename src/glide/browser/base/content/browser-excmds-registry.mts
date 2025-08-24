@@ -277,6 +277,16 @@ export const GLIDE_EXCOMMANDS = [
 
   { name: "repl", description: "Start the config REPL", content: false, repeatable: false },
 
+  {
+    name: "keys",
+    description: "Synthesize the given key sequence as if they were actually pressed",
+    args_schema: {
+      keyseq: { type: "string", required: true, position: 0 },
+    },
+    content: false,
+    repeatable: false,
+  },
+
   // TODO
   // {
   //   name: "bookmark",
