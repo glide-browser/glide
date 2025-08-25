@@ -1,0 +1,68 @@
+name: Linux Package
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ci/void-packaging
+
+jobs:
+  void:
+    name: Void Linux - ${{ matrix.arch }}
+
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/void-linux/void-glibc-full:latest
+      options: --privileged
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # arch: [aarch64, x86_64]
+        arch: [x86_64]
+
+    steps:
+      - name: Install deps
+        shell: sh
+        run: |
+          xbps-install -Syu xbps
+          xbps-install -Sy git make gcc bash sudo
+
+      - uses: actions/checkout@v4
+
+      - name: Clone void-packages
+        run: |
+          git clone --depth=1 https://github.com/void-linux/void-packages ../void-packages/
+
+      - name: Configure xbps-src chroot (uchroot)
+        working-directory: ../void-packages
+        run: |
+          # Tell xbps-src to use uchroot
+          echo XBPS_CHROOT_CMD=uchroot >> etc/conf
+
+          # Ensure the helper is correctly owned/mode'd and the group exists
+          groupadd -f xbuilder
+          chown root:xbuilder /usr/bin/xbps-uchroot
+          chmod 4750 /usr/bin/xbps-uchroot
+
+      - name: Copy package template
+        run: |
+          mkdir ../void-packages/srcpkgs/glide-browser/
+          cp packaging/void-linux/template ../void-packages/srcpkgs/glide-browser/
+
+      - name: Build XBPS
+        working-directory: ../void-packages/
+        run: |
+          useradd -m builder
+          usermod -aG xbuilder builder
+          chown -R builder:builder .
+          sudo -u builder ./xbps-src pkg glide-browser
+          ls -la hostdir/binpkgs
+
+      - name: Upload XBPS
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 10
+          name: void-${{ matrix.arch }}-xbps
+          path: ../void-packages/hostdir/binpkgs/glide-browser*.xbps
+
