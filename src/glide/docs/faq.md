@@ -44,6 +44,6 @@ The [cookbook](cookbook.md) has some example snippets for common operations.
 
 The [API reference](api.md) includes all of the Glide APIs available in the config.
 
-The [Extensions API](extensions-api.md) documents the available web extensions APIs.
+The [Extensions API](extensions.md) documents the available web extensions APIs.
 
 {% /details %}

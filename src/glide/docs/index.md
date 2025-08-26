@@ -12,7 +12,7 @@ Features:
 - [Navigate](hints.md) the web with just a keyboard
 - Modal based [keymaps](keys.md)
 - TypeScript based [config](config.md)
-- Web extensions [API](extensions-api.md) support
+- Web extensions [API](extensions.md) support
 - Fuzzy tab manager (try it with `<space><space>`)
 - Site specific [settings](cookbook.md#set-a-pref-for-a-specific-website) / [keymaps](cookbook.md#override-a-keymap-for-a-specific-website)
 - ... and more

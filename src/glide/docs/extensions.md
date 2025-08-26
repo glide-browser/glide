@@ -1,4 +1,4 @@
-# Extensions API
+# Extensions
 
 Glide lets you access the [web extensions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Browser_support_for_JavaScript_APIs) `browser` API directly in the [config](config.md) file.
 
