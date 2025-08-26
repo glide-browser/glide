@@ -257,14 +257,6 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
-    name: "r",
-    description: "Replace the current character",
-    content: false,
-    repeatable: false,
-    args_schema: { character: { type: "string", required: false, position: 0 } } as const satisfies ArgumentsSchema,
-  },
-
-  {
     name: "visual_selection_copy",
     description: "Copy the currently selected text to the clipboard & change to normal mode",
     content: false,
@@ -285,6 +277,14 @@ export const GLIDE_EXCOMMANDS = [
     },
     content: false,
     repeatable: false,
+  },
+
+  {
+    name: "r",
+    description: "Replace the current character",
+    content: false,
+    repeatable: false,
+    args_schema: { character: { type: "string", required: false, position: 0 } } as const satisfies ArgumentsSchema,
   },
 
   // TODO
