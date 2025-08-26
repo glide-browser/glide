@@ -1496,30 +1496,23 @@ class GlideBrowserClass {
    * The directories, in order, that we'll look for a `glide.ts` file in.
    */
   get config_dirs(): { path: string; description: string }[] {
-    const config_dirs: ({ path: string; description: string } | null)[] = [
+    return redefine_getter(this, "config_dirs", [
       { path: this.cwd_config_dir, description: "cwd" },
-
       { path: this.profile_config_dir, description: "profile" },
-
-      this.xdg_config_dir
-        ? { path: this.xdg_config_dir, description: "XDG config" }
-        : null,
-
       { path: this.home_config_dir, description: "home" },
-    ];
-    return redefine_getter(this, "config_dirs", config_dirs.filter(Boolean));
+    ]);
   }
 
   get cwd_config_dir(): string {
     return Services.dirsvc.get("CurWorkD", Ci.nsIFile).path;
   }
 
-  get xdg_config_dir(): string | null {
-    const xdg_dir = Services.env.get("XDG_CONFIG_HOME");
-    return xdg_dir ? PathUtils.join(xdg_dir, "glide") : null;
-  }
-
   get home_config_dir(): string {
+    const xdg_dir = Services.env.get("XDG_CONFIG_HOME");
+    if (xdg_dir) {
+      return PathUtils.join(xdg_dir, "glide");
+    }
+
     return PathUtils.join(Services.dirsvc.get("Home", Ci.nsIFile).path, ".config", "glide");
   }
 

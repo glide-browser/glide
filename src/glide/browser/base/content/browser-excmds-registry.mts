@@ -102,7 +102,7 @@ export const GLIDE_EXCOMMANDS = [
     description: "Initialise a config dir with all the necessary setup",
     args_schema: {
       location: {
-        type: { enum: ["home", "xdg", "profile", "cwd"] },
+        type: { enum: ["home", "profile", "cwd"] },
         required: false,
         position: 0,
       },

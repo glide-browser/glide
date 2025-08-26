@@ -40,13 +40,6 @@ export async function init(args: ExcmdArgs<"config_init">) {
 async function get_dir(args: ExcmdArgs<"config_init">): Promise<string | null> {
   if (args.location) {
     switch (args.location) {
-      case "xdg": {
-        if (!GlideBrowser.xdg_config_dir) {
-          throw new Error("XDG_CONFIG_HOME environment variable not set");
-        }
-
-        return GlideBrowser.xdg_config_dir;
-      }
       case "cwd": {
         return GlideBrowser.cwd_config_dir;
       }
