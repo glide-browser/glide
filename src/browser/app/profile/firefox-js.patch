@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 3c2a7955b4b2715c8788b66dfbb72caea9961886..281ae6a26f7adeebab3f7d0c5725f2c3c96d6221 100644
+index 53b6ab87b9b21caaecfc4fca2caa44e79ab1fdf3..eb0d62b44965f19f9d54d3747c1cb1ffa4331038 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3447,3 +3447,5 @@ pref("browser.ipProtection.enabled", false);
+@@ -3461,3 +3461,5 @@ pref("browser.ipProtection.enabled", false);
  pref("browser.ipProtection.variant", "");
- 
+ pref("browser.ipProtection.log", false);
  pref("browser.ipProtection.guardian.endpoint", "https://vpn.mozilla.org/");
 +
 +#include glide.js
