@@ -64,6 +64,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Vim", href: "vim.html" },
   { name: "FAQ", href: "faq.html" },
   { name: "Cookbook", href: "cookbook.html" },
+  { name: "Privacy", href: "privacy.html" },
   { name: "Changelog", href: "changelog.html" },
   { name: "Contributing", href: "contributing.html" },
 ];
