@@ -1,5 +1,17 @@
 # Frequently asked questions
 
+{% details heading=true %} {% slot "summary" %}Who is Glide for?
+{% /slot %}
+
+Glide is for you if:
+
+- You like keyboard focused applications
+- You enjoy tinkering with software and going deep with customisation
+- You're happy to configure software through TypeScript code
+- You like Firefox
+
+{% /details %}
+
 {% details heading=true %} {% slot "summary" %}Who is Glide not for?
 {% /slot %}
 
@@ -100,7 +112,7 @@ glide.autocmds.create("UrlEnter", {
 
 The easiest way to see the logs is to execute `:repl`, which will spawn a [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html) window with just the console.
 
-Right now, this will also include *all* the logs from the main browser process, so if you have a lot of tabs open it will be quite noisy.
+Right now, this will also include _all_ the logs from the main browser process, so if you have a lot of tabs open it will be quite noisy.
 
 You can filter the logs down to just the config by clicking on `Filter output` (or pressing `<C-f>` on Linux or `<M-f>` on MacOS) and entering `path:glide.ts` or `path:.ts` (as there are currently no other TS files in the firefox build).
 
