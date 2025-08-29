@@ -201,6 +201,8 @@ add_task(async function test_gI() {
 });
 
 add_task(async function test_expandable_content_can_be_hinted() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     var is_open = await SpecialPowers.spawn(browser, [], () => {
       const summary = content.document.getElementById("summary-1");
