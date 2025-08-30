@@ -31,8 +31,8 @@ class GlideCommandsClass {
     const tab = gBrowser.selectedTab;
     const cached = this.#get_cached_commandline(tab);
     if (cached) {
-      cached.show(opts);
       cached.refresh_data();
+      cached.show(opts);
       return cached;
     }
 

@@ -273,6 +273,9 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       this.#init_excmds();
       // TODO(glide): only if tabs active
       this.refresh_tabs({ new_index: null });
+
+      // force a re-render
+      this.set_completion_options(this.#options);
     }
 
     refresh_tabs({ new_index }: { new_index: number | null }) {

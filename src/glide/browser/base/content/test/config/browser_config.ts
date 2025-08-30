@@ -947,3 +947,22 @@ add_task(async function test_hint_css_property_cleared_on_reload() {
     "css var should be unset after config reload",
   );
 });
+
+add_task(async function test_add_excmd_while_commandline_is_cached() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    // open commandline so it is cached
+    await GlideTestUtils.commandline.open();
+    await sleep_frames(2);
+    await GlideTestUtils.synthesize_keyseq("<esc>");
+    await TestUtils.waitForCondition(() =>
+      document!.getElementById("glide-toolbar-mode-button")!.textContent
+        === "normal", "Waiting for mode button to show `normal` mode");
+
+    await GlideTestUtils.reload_config(function _() {
+      glide.excmds.create({ name: "hello" }, () => {});
+    });
+
+    await GlideTestUtils.synthesize_keyseq(":hello");
+    is(GlideTestUtils.commandline.focused_row()?.textContent, "hello", "commandline should show the newly added excmd");
+  });
+});
