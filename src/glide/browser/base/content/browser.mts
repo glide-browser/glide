@@ -1005,7 +1005,13 @@ class GlideBrowserClass {
     info: glide.ExcmdCreateProps,
     fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>,
   ) {
-    this.#user_cmds.set(info.name, { ...info, content: false, repeatable: false, fn });
+    this.#user_cmds.set(info.name, {
+      ...info,
+      description: info.description ?? "",
+      content: false,
+      repeatable: false,
+      fn,
+    });
   }
 
   get user_excmds(): ReadonlyMap<

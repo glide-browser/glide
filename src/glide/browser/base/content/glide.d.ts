@@ -742,7 +742,7 @@ declare global {
     /// @docs-skip
     export type ExcmdCreateProps = {
       name: string;
-      description: string;
+      description?: string | undefined;
     };
 
     /// @docs-skip
