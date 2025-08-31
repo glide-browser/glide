@@ -61,7 +61,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Hints", href: "hints.html" },
   { name: "Extensions", href: "extensions.html" },
   { name: "Firefox", href: "firefox.html" },
-  { name: "Vim", href: "vim.html" },
+  { name: "Editor", href: "editor.html" },
   { name: "FAQ", href: "faq.html" },
   { name: "Cookbook", href: "cookbook.html" },
   { name: "Privacy", href: "privacy.html" },
