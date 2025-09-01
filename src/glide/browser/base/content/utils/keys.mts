@@ -667,25 +667,24 @@ export function parse_modifiers(
   }
 
   for (const part of modifier_parts) {
-    switch (part) {
-      case "C": {
+    switch (part.toLowerCase()) {
+      case "c": {
         parsed.ctrlKey = true;
         break;
       }
-      case "A": {
+      case "a": {
         parsed.altKey = true;
         break;
       }
-      case "D": {
+      case "d": {
         parsed.metaKey = true;
         break;
       }
-      case "S": {
+      case "s": {
         parsed.shiftKey = true;
         break;
       }
       default: {
-        // TODO(glide): more graceful error handling
         throw new Error(`Unexpected modifier character ${part}, expected one of C, A, D, or S`);
       }
     }

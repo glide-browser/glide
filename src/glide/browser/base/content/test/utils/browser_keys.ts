@@ -156,6 +156,11 @@ add_task(async function test_parse_modifiers() {
   isjson(parse_modifiers("<C-S-h>"), { ...base_modifiers, ctrlKey: true, shiftKey: true, key: "h" });
   isjson(parse_modifiers("<S-C-h>"), { ...base_modifiers, ctrlKey: true, shiftKey: true, key: "h" });
   isjson(parse_modifiers("<S-A-D-C-h>"), { altKey: true, metaKey: true, ctrlKey: true, shiftKey: true, key: "h" });
+
+  // lowercase
+  isjson(parse_modifiers("<s-h>"), { ...base_modifiers, shiftKey: true, key: "h" });
+  isjson(parse_modifiers("<s-H>"), { ...base_modifiers, shiftKey: true, key: "H" });
+  isjson(parse_modifiers("<c-s-h>"), { ...base_modifiers, ctrlKey: true, shiftKey: true, key: "h" });
 });
 
 add_task(async function test_leader() {
