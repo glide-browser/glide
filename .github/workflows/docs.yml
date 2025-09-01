@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     branches:
-      - main
+      - docs
     paths:
       - "src/glide/docs/**"
       - "src/glide/browser/base/content/glide.d.ts"

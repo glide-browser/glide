@@ -1,0 +1,27 @@
+name: Post release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    name: Update docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      # will trigger another deploy
+      - name: Reset docs branch
+        run: |
+          git fetch
+          git checkout -b docs origin/docs
+          git reset --hard main
+          git push --force-with-lease
