@@ -13,6 +13,7 @@ glide.jar:
 % resource glide-docs %res/glide-docs/
   # pages
   res/glide-docs/                         (./dist/*.html)
+  res/glide-docs/tutorial                 (./dist/tutorial/**/*)
 
   # scripts
   res/glide-docs/docs.js                  (./docs.js)
