@@ -1057,23 +1057,24 @@ table th, table td {
 
 /* Update mobile styles */
 @media screen and (max-width: 768px) {
-  /* Show mobile menu toggle */
+  /* ensure anchors don't overlap with the menu toggle */
+  [id] {
+    scroll-margin-top: 4em;
+  }
+
   .mobile-menu-toggle {
     display: flex;
   }
 
-  /* Space for fixed menu button */
   .main-container {
     padding-top: 4rem;
   }
 
-  /* Content container becomes vertical on mobile */
   .content-container {
     flex-direction: column;
     max-height: none;
   }
 
-  /* Sidebar transforms to mobile menu */
   .sidebar {
     position: fixed;
     top: 0;
@@ -1088,24 +1089,20 @@ table th, table td {
     padding-top: 4rem; /* Space for close button */
   }
 
-  /* When menu is open */
   .sidebar.mobile-menu-open {
     left: 0;
   }
 
-  /* Show overlay when menu is open */
   .mobile-nav-overlay.show {
     display: block;
   }
 
-  /* Article content adjustments */
   .content-container > article {
     max-width: 100%;
     margin: 0;
     padding: 1rem !important;
   }
 
-  /* Adjust code blocks for mobile */
   .shiki {
     font-size: 0.875rem;
     padding: 0.75rem;
@@ -1113,7 +1110,6 @@ table th, table td {
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Make tables responsive */
   table {
     display: block;
     overflow-x: auto;
@@ -1121,13 +1117,11 @@ table th, table td {
     white-space: nowrap;
   }
 
-  /* Adjust search overlay for mobile */
   .pagefind-ui {
     margin: 1rem;
     padding: 1rem;
   }
 
-  /* Copy button adjustments */
   .copy-button {
     padding: 0.25rem;
     min-width: 2rem;
@@ -1139,12 +1133,10 @@ table th, table td {
     height: 1.25rem;
   }
 
-  /* Reduce padding on list items */
   ol li {
     padding-left: 2ch !important;
   }
 
-  /* Adjust admonition spacing */
   .admonition {
     padding: 0.75rem;
     margin: 0.75rem 0;
@@ -1153,40 +1145,33 @@ table th, table td {
 
 /* Extra small devices (phones in portrait) */
 @media screen and (max-width: 480px) {
-  /* Further reduce font sizes */
   .shiki {
     font-size: 0.7rem;
     padding: 0.5rem;
   }
 
-  /* Adjust heading sizes */
   h1, h2, h3, h4, h5, h6 {
     font-size: 0.9rem;
   }
 
-  /* Reduce article padding */
   .content-container > article {
     padding: 0.75rem !important;
   }
 
-  /* Sidebar full width on very small screens */
   .sidebar {
     width: 90%;
     max-width: none;
   }
 
-  /* Smaller search button */
   .search-button {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
   }
 
-  /* Adjust code block line height */
   pre {
     line-height: 1.2;
   }
 
-  /* Make inline code smaller */
   code:not(pre code) {
     font-size: 0.875rem;
     padding: 0.1rem 0.2rem;
