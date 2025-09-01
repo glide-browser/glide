@@ -57,6 +57,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Config", href: "config.html" },
   { name: "Keys", href: "keys.html" },
   { name: "API", href: "api.html" },
+  { name: "Autocmds", href: "autocmds.html" },
   { name: "Excmds", href: "excmds.html" },
   { name: "Hints", href: "hints.html" },
   { name: "Extensions", href: "extensions.html" },
