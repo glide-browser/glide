@@ -6,6 +6,7 @@ Glide extends and heavily builds on top of Firefox but for the most part Glide i
 2. `path:userChrome.css` & `path:userContent.css` customisation is enabled by default
 3. Newtab shortcuts are disabled by default (`path:browser.newtabpage.activity-stream.feeds.topsites`)
 4. All AI features are disabled by default
+5. `<space>` is mapped to the `<leader>` key, not scroll down - [`glide.g.mapleader`](api.md#glide.g.mapleader)
 
 ## Version
 
