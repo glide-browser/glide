@@ -1,31 +1,35 @@
 <div align="center">
-
-# ░▒▓ _GLIDE_ BROWSER ▓▒░
-
-### ⟨ Firefox, but you never leave the keyboard ⟩
-
-<hr>
-
-**A Firefox fork that brings the power of vim motions to web browsing**\
-**with TypeScript-based configuration for complete customization**
-
-<div align="center">
-  <h3>
-    <a href="https://glide-browser.app">
-      Documentation
-    </a>
-    <span> | </span>
-    <a href="https://github.com/glide-browser/glide/releases">
-      Download
-    </a>
-  </h3>
+  <picture>
+    <img src="src/glide/docs/logo.png" alt="Glide" width="96" height="96">
+  </picture>
+  
+  <h1>Glide Browser</h1>
+  
+  <p>An extensible and keyboard-focused web browser built on Firefox</p>
+  
+  <p>
+    <a href="https://glide-browser.app">Documentation</a>
+    ·
+    <a href="https://glide-browser.app/#download">Download</a>
+  </p>
+  
+  <br>
 </div>
 
-</div>
+## Features
 
-## Key Features
+- [Navigate](https://glide-browser.app/hints) the web with just a keyboard
+- Modal based [keymaps](https://glide-browser.app/keys)
+- TypeScript based [config](https://glide-browser.app/config)
+- Web extensions [API](https://glide-browser.app/extensions) support
+- Fuzzy tab manager (try it with `<space><space>`)
+- Site specific [settings](https://glide-browser.app/cookbook#set-a-pref-for-a-specific-website) / [keymaps](https://glide-browser.app/cookbook#override-a-keymap-for-a-specific-website)
+- ... and more
 
-- **Vim-style editing** - Partial re-implementation of vim motions for text manipulation
-- **Keyboard-based navigation** - Follow links and click elements with `f` in [hint mode](https://glide-browser.app/hints)
-- **Vim-style navigation** - `hjkl` scrolling, `gg`/`G` jumps, and more
-- **TypeScript config** - Define key mappings, auto commands and access the [`Web Extensions API`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Browser_support_for_JavaScript_APIs)
+### Contributing
+
+See [Contributing](https://glide-browser.app/contributing).
+
+## License
+
+This project is licensed under the Mozilla Public License Version 2.0. See [LICENSE](LICENSE) for details.
