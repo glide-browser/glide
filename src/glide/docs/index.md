@@ -25,8 +25,8 @@ Features:
   <div class="download-platform">
     <span class="platform-label">macOS</span>
     <div class="download-buttons">
+      <a href="https://release-assets.glide-browser.app/releases/0.1.36a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Apple Silicon</a>
       <a href="https://release-assets.glide-browser.app/releases/0.1.36a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
-      <a href="https://release-assets.glide-browser.app/releases/0.1.36a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Silicon</a>
     </div>
   </div>
   <div class="download-platform">
