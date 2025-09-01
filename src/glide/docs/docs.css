@@ -143,6 +143,7 @@ hr:after {
 
 a {
   text-decoration-thickness: var(--border-thickness);
+  text-decoration-color: var(--text-color-alt);
 }
 
 a:link, a:visited {
