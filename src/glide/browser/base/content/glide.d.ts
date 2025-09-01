@@ -177,8 +177,10 @@ declare global {
      *     my_prop?: boolean;
      *   }
      * }
+     * glide.g.my_prop = true;
      * ```
      */
+    /// @docs-expand-type-reference
     g: GlideGlobals;
 
     tabs: {
@@ -590,6 +592,13 @@ declare global {
   type GlideMode = keyof GlideModes;
 
   interface GlideGlobals {
+    /**
+     * The key notation that any `<leader>` mapping matches against.
+     *
+     * For example, a mapping defined with `<leader>r` would be matched when Space + r is pressed.
+     *
+     * @default "<Space>"
+     */
     mapleader: string;
   }
 

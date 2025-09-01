@@ -46,6 +46,7 @@ text-decoration: none;
 [`glide.prefs.get()`](#glide.prefs.get)\
 [`glide.prefs.clear()`](#glide.prefs.clear)\
 [`glide.g`](#glide.g)\
+[`glide.g.mapleader`](#glide.g.mapleader)\
 [`glide.tabs`](#glide.tabs)\
 [`glide.tabs.active()`](#glide.tabs.active)\
 [`glide.tabs.get_first()`](#glide.tabs.get_first)\
@@ -213,7 +214,16 @@ declare global {
     my_prop?: boolean;
   }
 }
+glide.g.my_prop = true;
 ```
+
+### `glide.g.mapleader: string` {% id="glide.g.mapleader" %}
+
+The key notation that any `<leader>` mapping matches against.
+
+For example, a mapping defined with `<leader>r` would be matched when Space + r is pressed.
+
+`ts:@default "<Space>"`
 
 ## • `glide.tabs` {% id="glide.tabs" %}
 

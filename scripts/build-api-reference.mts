@@ -201,13 +201,20 @@ function* traverse(
 
     const symbol = node.getTypeName().getSymbol();
     const declaration = symbol?.getDeclarations()[0];
+    if (Node.isInterfaceDeclaration(declaration)) {
+      // direct interface definition, e.g. `GlideGlobals`
+      yield* traverse_children(declaration, parents);
+      return;
+    }
+
     const defn = declaration?.getFirstChildByKind(ts.SyntaxKind.TypeLiteral);
     if (defn) {
+      // type definition, e.g. `glide.Options`
       yield* traverse_children(defn, parents);
       return;
     }
 
-    console.warn("type reference with no TypeLiteral declaration is not supported");
+    console.warn("type reference with no TypeLiteral or InterfaceDeclaration is not supported");
     return;
   }
 
