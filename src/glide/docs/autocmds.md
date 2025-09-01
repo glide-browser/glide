@@ -92,7 +92,7 @@ glide.autocmds.create("UrlEnter", {
 
 Callback arguments:
 
-```typescript
+```typescript {% highlight_prefix="interface x " %}
 {
   tab_id: number;
   url: string;
@@ -126,7 +126,7 @@ glide.autocmds.create(
 
 Callback arguments:
 
-```typescript
+```typescript {% highlight_prefix="interface x " %}
 {
   readonly old_mode: GlideMode | null;
   readonly new_mode: GlideMode;
@@ -166,7 +166,7 @@ glide.autocmds.create(
 
 Callback arguments:
 
-```typescript
+```typescript {% highlight_prefix="interface x " %}
 {
   readonly mode: GlideMode;
   readonly sequence: string[];

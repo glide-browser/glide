@@ -565,14 +565,15 @@ class RenderState {
           },
           transform: (node, config: MarkdocConfig) => {
             // e.g. ```typescript {% caption="Example: key mapping to toggle CSS debugging" %}
-            const caption = node.attributes["caption"];
-            const content = node.attributes["content"];
-            const language = node.attributes["language"];
+            const caption = node.attributes["caption"] as string | undefined;
+            const content = node.attributes["content"] as string;
+            const language = node.attributes["language"] as string;
             const highlighted = code_to_html(this.highlighter, content, {
               ...this.code_options,
               lang: language,
               themes: this.themes,
               config,
+              grammarContextCode: node.attributes["highlight_prefix"],
             });
 
             return this.html({
