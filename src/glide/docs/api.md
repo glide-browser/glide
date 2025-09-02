@@ -454,8 +454,8 @@ Include another file as part of your config. The given file is evluated as if it
 was just another Glide config file.
 
 **note**: this only supports files that are directly relative to your config file,
-for example, "shared.glide.ts" or "shared/glide.ts" would work but
-"../shared/glide.ts" will not.
+for example, `ts:"shared.glide.ts"` or `ts:"shared/glide.ts"` would work but
+`ts:"../shared/glide.ts"` will not.
 
 **note**: this function cannot be called from inside a file that has been included
 itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} `ts:glide.unstable.include`{% /link %} calls are not supported.
@@ -537,7 +537,7 @@ updating the browser UI itself. it is not available in
 content processes.
 
 {% api-heading id="DOM.create_element" %}
-DOM.create_element(tag_name, props?): HTMLElementTagNameMap[TagName]
+DOM.create_element(tag_name, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement
 {% /api-heading %}
 
 Wrapper over `document.createElement()` providing a more ergonomic API.
