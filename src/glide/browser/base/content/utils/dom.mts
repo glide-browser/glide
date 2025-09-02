@@ -126,11 +126,11 @@ export function is_element<ElementType extends typeof Element>(
  * });
  * ```
  */
-export function create_element<K extends keyof HTMLElementTagNameMap>(
+export function create_element<K extends keyof HTMLElementTagNameMap | (string & {})>(
   tag_name: K,
-  props?: DOM.CreateElementProps<K>,
+  props?: DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">,
   a_document = document,
-): HTMLElementTagNameMap[K] {
+): K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement {
   if (!a_document) {
     throw new Error("dom utils must be imported with { global: \"current\" } or passed the document argument");
   }

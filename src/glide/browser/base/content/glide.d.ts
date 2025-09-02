@@ -964,10 +964,10 @@ declare global {
      * });
      * ```
      */
-    create_element<TagName extends keyof HTMLElementTagNameMap>(
+    create_element<TagName extends keyof HTMLElementTagNameMap | (string & {})>(
       tag_name: TagName,
-      props?: DOM.CreateElementProps<TagName>,
-    ): HTMLElementTagNameMap[TagName];
+      props?: DOM.CreateElementProps<TagName extends keyof HTMLElementTagNameMap ? TagName : "div">,
+    ): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement;
   };
 
   namespace DOM {

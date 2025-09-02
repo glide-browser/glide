@@ -31,10 +31,10 @@ interface SandboxProps {
 export function create_sandbox(props: SandboxProps): Sandbox {
   const document = props.document;
   const DOM: DOM.Utils = {
-    create_element<K extends keyof HTMLElementTagNameMap>(
+    create_element<K extends keyof HTMLElementTagNameMap | (string & {})>(
       tag_name: K,
-      props?: DOM.CreateElementProps<K>,
-    ): HTMLElementTagNameMap[K] {
+      props?: DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">,
+    ): K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement {
       return DOMUtils.create_element(tag_name, props, document);
     },
   };
