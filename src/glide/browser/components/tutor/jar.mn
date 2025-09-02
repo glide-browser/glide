@@ -4,6 +4,6 @@
 
 glide.jar:
 % resource glide-tutor %res/glide-tutor/
-  res/glide-tutor/index.html  (./index.html)
+  res/glide-tutor/index.html  (./dist/index.html)
   res/glide-tutor/tutor.js    (./dist/tutor.js)
   res/glide-tutor/tutor.css   (./tutor.css)

@@ -87,7 +87,64 @@
           </p>
 
           <a href="#lesson-1"><h1 id="lesson-1" class="tutor-heading">
-              <span>~~~~~</span> lesson 1: moving around <span>~~~~~</span>
+              <span>~~~~~</span> lesson 1: hints <span>~~~~~</span>
+            </h1></a>
+          <p>TODO</p>
+
+          <a href="#lesson-2"><h1 id="lesson-2" class="tutor-heading">
+              <span>~~~~~</span> lesson 2: config <span>~~~~~</span>
+            </h1></a>
+          <p>
+            Setup the <a href="resource://glide-docs/config.html#config-evaluation">TypeScript</a>
+            config file by executing <highlight>:config_init home</highlight>, which will create a config file
+            at <config-path-home>~/.config/glide/glide.ts</config-path-home> plus some boilerplate files so
+            that the TypeScript LSP will work.
+          </p>
+          <p>
+            Then execute <highlight>:config_reload</highlight> so that Glide will detect the new config file.
+          </p>
+
+          <p id="config-detected">
+            Config file detected? <span>⨯</span>
+          </p>
+
+          <a href="#lesson-2-1"><h1 id="lesson-2-1" class="tutor-heading">
+              <span>~~~~~</span> lesson 2.1: config editing <span>~~~~~</span>
+            </h1></a>
+          <p>Let's customise the hint label size so that it's a bit bigger.</p>
+          <p>
+            Open the config file by running <highlight>:config_edit</highlight> or opening your editor and
+            navigating to <config-path></config-path>.
+          </p>
+          <p>Then <em>type</em> this in:</p>
+          <fence language="typescript">
+            glide.o.hint_size = "30px";</fence>
+          <p>
+            After saving the file, you should see a notification below the URL bar telling you that the config
+            has been modified, click the reload button or execute <highlight>:config_reload</highlight>.
+          </p>
+
+          <p>
+            Now press <highlight>f</highlight> to enter <highlight>hint</highlight> mode and you should see
+            some <em>very</em> large hint labels! Then press <highlight>Escape</highlight> to exit
+            <highlight>hint</highlight> mode.
+          </p>
+
+          <p>
+            Let's revert the hint size back to a reasonable value, open the config file in your editor again
+            and either delete the code we just added or adjust the value. For reference, the default hint size
+            is 11px.
+          </p>
+
+          <p>
+            For more information on what you can do with the config file, see the <a
+              href="resource://glide-docs/api.html"
+            >API reference</a> for all the APIs or the <a href="resource://glide-docs/cookbook.html"
+            >Cookbook</a> for examples of common things you might want to do.
+          </p>
+
+          <a href="#lesson-3"><h1 id="lesson-3" class="tutor-heading">
+              <span>~~~~~</span> lesson 3: moving around <span>~~~~~</span>
             </h1></a>
           <p>
             In <highlight>normal</highlight> mode if an input element is focused then <highlight
@@ -118,11 +175,11 @@
 └──────────────────────────────────────────┘
           </pre>
           <input value="click this then press escape to enter normal mode and use h + l to navigate">
-          <a href="#lesson-2"><h1 id="lesson-2" class="tutor-heading">
-              <span>~~~~~</span> lesson 2: insert mode <span>~~~~~</span>
+          <a href="#lesson-4"><h1 id="lesson-4" class="tutor-heading">
+              <span>~~~~~</span> lesson 4: insert mode <span>~~~~~</span>
             </h1></a>
           <p>
-            As you may have noticed in lesson 1, when you clicked on the input element, Glide switched to
+            As you may have noticed in lesson 2, when you clicked on the input element, Glide switched to
             <highlight>insert</highlight> mode. This mode has very few builtin key mappings as it's primary
             purpose, like the name implies, is to enter text.
           </p>

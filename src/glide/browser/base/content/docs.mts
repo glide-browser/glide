@@ -715,7 +715,7 @@ interface ResolvedThemes {
   language_themes: Partial<Record<string, Record<string, ThemeRegistrationResolved>>>;
 }
 
-function resolve_themes(highlighter: Highlighter): ResolvedThemes {
+export function resolve_themes(highlighter: Highlighter): ResolvedThemes {
   const tokyonight = highlighter.getTheme("tokyo-night");
   const tokyonight_light = highlighter.getTheme("tokyo-night-light");
 
@@ -891,16 +891,16 @@ function copy_to_clipboard_button() {
 }
 
 type CodeHighlightOptions = CodeToHastOptions & {
-  include_go_to_def: boolean;
-  config: MarkdocConfig;
+  include_go_to_def: boolean | undefined;
+  config: MarkdocConfig | undefined;
 };
 
-function code_to_html(
+export function code_to_html(
   highlighter: Highlighter,
   code: string,
   options: CodeHighlightOptions,
 ): string {
-  if (options.include_go_to_def && options.config.heading) {
+  if (options.include_go_to_def && options.config && options.config?.heading) {
     for (const match of code.matchAll(/(.*): (glide\..*)/g)) {
       var [_, pre, ref] = match;
       ref = assert_present(ref);
@@ -911,7 +911,7 @@ function code_to_html(
         preceding: assert_present(pre),
         ref,
         href: API_REF_TO_HREF_MAP[ref] ?? ref,
-        config: options.config,
+        config: options.config!,
       }));
     }
   }

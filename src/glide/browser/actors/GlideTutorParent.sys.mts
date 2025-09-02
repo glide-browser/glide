@@ -5,7 +5,16 @@
 
 import type { ChildMessages, ChildQueries } from "./GlideTutorChild.sys.mjs";
 
-export interface ParentMessages {}
+export interface ParentMessages {
+  "Glide::Config::Loaded": {
+    path: string | null;
+
+    /**
+     * The home path we would use, e.g. `~/.config/glide/glide.ts`.
+     */
+    home_path: string;
+  };
+}
 export interface ParentQueries {}
 
 export class GlideTutorParent extends JSWindowActorParent<
@@ -16,12 +25,36 @@ export class GlideTutorParent extends JSWindowActorParent<
 
   actorCreated() {
     this.#log = console.createInstance({ prefix: "GlideTutor[Parent]", maxLogLevelPref: "glide.logging.loglevel" });
+
+    const actor = this;
+    this.glide_browser!.on_startup(() => {
+      this.glide_browser!.api.autocmds.create("ConfigLoaded", () => {
+        send_config_loaded();
+      });
+
+      send_config_loaded();
+
+      function send_config_loaded() {
+        actor.send_async_message("Glide::Config::Loaded", {
+          path: actor.glide_browser!.config_path,
+          home_path: actor.path_utils.join(actor.glide_browser!.home_config_dir, "glide.ts"),
+        });
+      }
+    });
   }
 
   async receiveMessage(
     message: ActorReceiveMessage<ChildMessages, ChildQueries>,
   ) {
     this.#log.debug("receiveMessage", message);
+  }
+
+  get glide_browser() {
+    return this.browsingContext?.topChromeWindow?.GlideBrowser;
+  }
+
+  get path_utils(): typeof PathUtils {
+    return (this.browsingContext?.topChromeWindow as any as typeof globalThis)?.PathUtils;
   }
 
   // typed alias to `.sendAsyncMessage` as we can't type `.sendAsyncMessage`

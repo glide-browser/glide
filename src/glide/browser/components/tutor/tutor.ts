@@ -9,11 +9,24 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body!.focus();
   }, 1000);
 
-  // replace all `<highlight>` elements with the fake shiki highlight'd version
   const template = document.getElementById("highlight-template") as HTMLTemplateElement;
-  document.querySelectorAll("highlight").forEach(element => {
-    const fragment = template.content.cloneNode(true) as HTMLElement;
-    fragment.querySelector("span span")!.textContent = element.textContent;
-    element.replaceWith(fragment);
+
+  const observer = new MutationObserver((mutations) => {
+    const has_new_nodes = mutations.some((mutation) => mutation.addedNodes.length > 0);
+    if (has_new_nodes) {
+      replace_highlight_templates();
+    }
   });
+  observer.observe(document.body!, { childList: true, subtree: true });
+
+  replace_highlight_templates();
+
+  function replace_highlight_templates() {
+    // replace all `<highlight>` elements with the fake shiki highlight'd version
+    document.querySelectorAll("highlight").forEach(element => {
+      const fragment = template.content.cloneNode(true) as HTMLElement;
+      fragment.querySelector("span span")!.textContent = element.textContent;
+      element.replaceWith(fragment);
+    });
+  }
 });

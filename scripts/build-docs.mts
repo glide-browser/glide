@@ -4,6 +4,8 @@
  * Globs the `glide/docs` dir for `.md` files and converts them to HTML using markdoc.
  *
  * Additionally symlinks other files.
+ *
+ * Additionally builds the `tutor/dist/index.html` file.
  */
 
 // note: search requires manually running
@@ -14,10 +16,12 @@ import "./polyfill-chromeutils.cjs";
 import fs from "fs/promises";
 import meow from "meow";
 import Path from "path";
-import { DOCS_DIR, DOCS_DIST_DIR, TUTOR_DIR } from "./canonical-paths.mts";
+import { DOCS_DIR, DOCS_DIST_DIR, TUTOR_DIR, TUTOR_DIST_DIR } from "./canonical-paths.mts";
 
 const shiki = ChromeUtils.importESModule("chrome://glide/content/bundled/shiki.mjs");
-const { markdown_to_html } = ChromeUtils.importESModule("chrome://glide/content/docs.mjs");
+const { markdown_to_html, code_to_html, resolve_themes } = ChromeUtils.importESModule(
+  "chrome://glide/content/docs.mjs",
+);
 
 const cli = meow({
   importMeta: import.meta,
@@ -106,19 +110,49 @@ for (const file of SYMLINKS) {
   }
 }
 
-const tutor_docs_dist_dir = Path.join(DOCS_DIST_DIR, "tutorial");
-await fs.mkdir(tutor_docs_dist_dir, { recursive: true });
+async function build_tutor_docs() {
+  const tutor_docs_dist_dir = Path.join(DOCS_DIST_DIR, "tutorial");
+  await fs.mkdir(tutor_docs_dist_dir, { recursive: true });
 
-for (const file of TUTOR_FILES) {
-  const abs = Path.join(TUTOR_DIR, file);
+  const FENCE_RE = /<fence(.*)>(.*)<\/fence>/gis;
+  const FENCE_LANGUAGE_RE = /language="(?<language>.*)"/i;
+  const themes = resolve_themes(highlighter).themes;
+
+  for (const file of TUTOR_FILES) {
+    await fs.writeFile(
+      Path.join(tutor_docs_dist_dir, file),
+      await transform_tutor_file(Path.join(TUTOR_DIR, file), true),
+    );
+    await fs.writeFile(Path.join(TUTOR_DIST_DIR, file), await transform_tutor_file(Path.join(TUTOR_DIR, file), false));
+  }
   await fs.writeFile(
-    Path.join(tutor_docs_dist_dir, file),
-    await fs.readFile(abs, "utf8").then((contents) => contents.replaceAll("resource://glide-docs/", "../")),
+    Path.join(tutor_docs_dist_dir, "tutor.js"),
+    await fs.readFile(Path.join(TUTOR_DIR, "dist", "tutor.js"), "utf8").then((contents) =>
+      contents.replaceAll("resource://glide-docs/", "../")
+    ),
   );
+
+  async function transform_tutor_file(abs_path: string, for_docs: boolean) {
+    let content = await fs.readFile(abs_path, "utf8");
+
+    if (for_docs) {
+      content = content.replaceAll("resource://glide-docs/", "../");
+    }
+
+    // highlight code blocks
+    if (abs_path.endsWith(".html")) {
+      content = content.replaceAll(FENCE_RE, (substring, attrs: string, code: string) => {
+        const language = attrs.match(FENCE_LANGUAGE_RE)?.groups?.["language"];
+        if (!language) {
+          console.log(substring);
+          throw new Error("missing language attr");
+        }
+        return code_to_html(highlighter, code.trimStart(), { lang: language, themes });
+      });
+    }
+
+    return content;
+  }
 }
-await fs.writeFile(
-  Path.join(tutor_docs_dist_dir, "tutor.js"),
-  await fs.readFile(Path.join(TUTOR_DIR, "dist", "tutor.js"), "utf8").then((contents) =>
-    contents.replaceAll("resource://glide-docs/", "../")
-  ),
-);
+
+await build_tutor_docs();
