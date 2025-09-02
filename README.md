@@ -2,18 +2,18 @@
   <picture>
     <img src="src/glide/docs/logo.png" alt="Glide" width="96" height="96">
   </picture>
-  
-  <h1>Glide Browser</h1>
-  
-  <p>An extensible and keyboard-focused web browser built on Firefox</p>
-  
-  <p>
+
+<h1>Glide Browser</h1>
+
+<p>An extensible and keyboard-focused web browser built on Firefox</p>
+
+<p>
     <a href="https://glide-browser.app">Documentation</a>
     ·
     <a href="https://glide-browser.app/#download">Download</a>
   </p>
-  
-  <br>
+
+<br>
 </div>
 
 ## Features
