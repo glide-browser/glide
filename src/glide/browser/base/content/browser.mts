@@ -833,7 +833,9 @@ class GlideBrowserClass {
     if (!browser) {
       // TODO(glide): define an easy way to register a listener for when
       //              this would be possible and recommend it here.
-      throw new Error("Tried to access `browser` too early in startup");
+      throw new Error(
+        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
+      );
     }
 
     // TODO(glide): some APIs need special casing
@@ -968,7 +970,9 @@ class GlideBrowserClass {
     if (!child_id) {
       // TODO(glide): define an easy way to register a listener for when
       //              this would be possible and recommend it here.
-      throw new Error("Tried to access `browser` too early in startup");
+      throw new Error(
+        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
+      );
     }
 
     // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
