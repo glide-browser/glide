@@ -1,7 +1,14 @@
 import chokidar from "chokidar";
 import { execa } from "execa";
 import Path from "path";
-import { DOCS_DIR, DOCS_DIST_DIR, GLIDE_BROWSER_CONTENT_DIR } from "./canonical-paths.mts";
+import {
+  DOCS_DIR,
+  DOCS_DIST_DIR,
+  GLIDE_BROWSER_CONTENT_DIR,
+  SCRIPTS_DIR,
+  TUTOR_DIR,
+  TUTOR_DIST_DIR,
+} from "./canonical-paths.mts";
 import { queue } from "./dev.mts";
 
 async function build_docs() {
@@ -18,8 +25,9 @@ export async function main() {
     const watcher = chokidar
       .watch([
         DOCS_DIR,
+        TUTOR_DIR,
         GLIDE_BROWSER_CONTENT_DIR,
-        //
+        Path.join(SCRIPTS_DIR, "build-docs.mts"),
       ], {
         ignored: (abs_path, stats) => {
           if (
@@ -42,7 +50,7 @@ export async function main() {
             return false;
           }
 
-          if (abs_path.startsWith(DOCS_DIST_DIR)) {
+          if (abs_path.startsWith(DOCS_DIST_DIR) || abs_path.startsWith(TUTOR_DIST_DIR)) {
             // avoid infinite loop
             return true;
           }

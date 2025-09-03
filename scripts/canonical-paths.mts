@@ -7,6 +7,8 @@ export const ENGINE_DIR = Path.join(ROOT_DIR, "engine");
 
 export const SRC_DIR = Path.join(ROOT_DIR, "src");
 
+export const SCRIPTS_DIR = Path.join(ROOT_DIR, "scripts");
+
 export const GLIDE_BROWSER_DIR = Path.join(SRC_DIR, "glide", "browser");
 export const GLIDE_BROWSER_CONTENT_DIR = Path.join(GLIDE_BROWSER_DIR, "base", "content");
 
