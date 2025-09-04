@@ -1,5 +1,5 @@
 diff --git a/browser/locales/en-US/browser/browserContext.ftl b/browser/locales/en-US/browser/browserContext.ftl
-index 06b4cdd3d6460a6b428240ef96b14031c3b2cb69..d181153ee2ab07b61206a9bbc53abc02dcb6fd41 100644
+index 51ed054ea5b75d86da9c329842bcd2eb285a0424..7af1f3067e48a061e2866408ed1147e9116af262 100644
 --- a/browser/locales/en-US/browser/browserContext.ftl
 +++ b/browser/locales/en-US/browser/browserContext.ftl
 @@ -81,6 +81,27 @@ toolbar-button-stop =
@@ -23,7 +23,7 @@ index 06b4cdd3d6460a6b428240ef96b14031c3b2cb69..d181153ee2ab07b61206a9bbc53abc02
 +    .label = Copy to clipboard
 +
 +glide-error-notification-clear-all-button =
-+    .label = Clear all
++    .label = :clear
 +
 +########### glide-injection-end
 +

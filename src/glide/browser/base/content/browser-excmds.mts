@@ -223,6 +223,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "clear": {
+        GlideBrowser.remove_all_notifications();
+        break;
+      }
+
       case "repl": {
         const { require } = ChromeUtils.importESModule("resource://devtools/shared/loader/Loader.sys.mjs");
         const { BrowserConsoleManager } = require("devtools/client/webconsole/browser-console-manager");

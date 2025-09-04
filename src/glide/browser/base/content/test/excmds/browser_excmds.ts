@@ -300,3 +300,33 @@ add_task(async function test_keys() {
 
   GlideTestUtils.commandline.get_element()!.close();
 });
+
+add_task(async function test_clear_removes_notifications() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    GlideBrowser.add_notification("test-notification", {
+      label: "Test notification that should be cleared",
+      priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+    });
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("test-notification") !== null,
+      "Waiting for notification to appear",
+    );
+
+    is(gNotificationBox.allNotifications.length, 1, "notification should be added");
+
+    await GlideTestUtils.synthesize_keyseq(":clear<CR>");
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("test-notification") === null,
+      "Waiting for notification to disappear",
+    );
+
+    is(gNotificationBox.allNotifications.length, 0, ":clear should remove all notifications");
+    is(
+      gNotificationBox.getNotificationWithValue("test-notification"),
+      null,
+      "Test notification should be removed after :clear",
+    );
+  });
+});

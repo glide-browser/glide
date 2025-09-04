@@ -75,6 +75,7 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   { name: "quit", description: "Close all windows", content: false, repeatable: false },
+  { name: "clear", description: "Clear all notifications", content: false, repeatable: false },
 
   {
     name: "set",
