@@ -383,6 +383,7 @@ export const GLIDE_EXCOMMANDS = [
             "vh",
             "vl",
             "vd",
+            "vc",
             "x",
             "X",
             "o",

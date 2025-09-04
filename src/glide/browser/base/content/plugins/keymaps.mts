@@ -105,6 +105,7 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("visual", "h", "motion vh");
   glide.keymaps.set("visual", "l", "motion vl");
   glide.keymaps.set("visual", "d", "motion vd");
+  glide.keymaps.set("visual", "c", "motion vc");
   glide.keymaps.set("visual", "y", "visual_selection_copy");
 
   // jumplist

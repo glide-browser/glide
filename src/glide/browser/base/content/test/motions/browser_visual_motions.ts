@@ -132,6 +132,21 @@ add_task(async function test_visual_backwards() {
   });
 });
 
+add_task(async function test_visual_c() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit } = GlideTestUtils.make_input_test_helpers(browser, { text_start: "end" });
+
+    await set_text("Hello world", "from the end of the line");
+    await test_edit("vhhc", "Hello wo", 7, "o");
+
+    await set_text("Hello world", "edit not at the eof");
+    await test_edit("hhvhhc", "Hello ld", 5, " ");
+
+    await set_text("Hello world", "edit at the bof");
+    await test_edit("hhhhhhhhhhhhhhlvllc", "lo world", -1, "");
+  });
+});
+
 add_task(async function test_visual_yank_editable_to_clipboard() {
   await GlideTestUtils.reload_config(function _() {
     // lower the highlight time so our tests can be fast

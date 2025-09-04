@@ -579,6 +579,13 @@ export class GlideHandlerChild extends JSWindowActorChild<
             this.#change_mode("normal");
             break;
           }
+          case "vc": {
+            // `foo ██r` -> `foo |r`
+            editor.deleteSelection(editor.ePrevious!, editor.eStrip!);
+
+            this.#change_mode("insert");
+            break;
+          }
           case "x": {
             if (
               // caret is on the first line and it's empty
@@ -675,6 +682,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "vh":
       case "vl":
       case "vd":
+      case "vc":
         return false;
       case "x":
       case "X":
