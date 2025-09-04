@@ -2,10 +2,10 @@
 
 Glide extends and heavily builds on top of Firefox but for the most part Glide is purely additional; however there are some key changes that have been made to the base Firefox build:
 
-1. [Betterfox](https://github.com/yokoffing/Betterfox) is included by default
-2. `path:userChrome.css` & `path:userContent.css` customisation is enabled by default
-3. Newtab shortcuts are disabled by default (`path:browser.newtabpage.activity-stream.feeds.topsites`)
-4. All AI features are disabled by default
+1. All AI features are disabled by default
+2. [Betterfox](https://github.com/yokoffing/Betterfox) is included by default
+3. `path:userChrome.css` & `path:userContent.css` customisation is enabled by default
+4. Newtab shortcuts are disabled by default (`path:browser.newtabpage.activity-stream.feeds.topsites`)
 5. `<space>` is mapped to the `<leader>` key, not scroll down - [`glide.g.mapleader`](api.md#glide.g.mapleader)
 
 ## Version
