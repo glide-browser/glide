@@ -12,6 +12,10 @@ p {
   line-height: 1.3rem;
 }
 
+[id] {
+  scroll-margin-top: 2em;
+}
+
 .content-container {
   display: flex;
   justify-content: center;
@@ -47,3 +51,12 @@ p {
 .tutor-heading span {
   color: grey;
 }
+
+.pad-to-viewport-end {
+  margin-bottom: calc(100svh - 50px);
+}
+
+#hint-next-section-button {
+  margin-top: 1em;
+}
+

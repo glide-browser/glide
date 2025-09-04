@@ -1,8 +1,8 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index 7b328bd1eea7396bd5c14802586c641d425547ab..76ae1e669e15d535c40057664430d5869af10a57 100644
+index d974112aa90bb5e5e72151de354a2e1ab382e32f..c52546d1a7a743db3def86608e18118758e467a3 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
-@@ -84,6 +84,52 @@ let JSWINDOWACTORS = {
+@@ -92,6 +92,53 @@ let JSWINDOWACTORS = {
      enablePreference: "browser.contextual-password-manager.enabled",
    },
  
@@ -28,6 +28,7 @@ index 7b328bd1eea7396bd5c14802586c641d425547ab..76ae1e669e15d535c40057664430d586
 +      esModuleURI: "resource:///actors/GlideTutorChild.sys.mjs",
 +      events: {
 +        DOMContentLoaded: {},
++        click: {},
 +      },
 +    },
 +    matches: ["resource://glide-tutor/*"],

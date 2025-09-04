@@ -44,7 +44,7 @@ export class GlideTutorChild extends JSWindowActorChild<
       return;
     }
 
-    const target = event.target as Element | null;
+    const target = event.target as HTMLElement | null;
     this.#log.debug("Event:", {
       type: event.type,
       target: {
@@ -61,6 +61,19 @@ export class GlideTutorChild extends JSWindowActorChild<
     switch (event.type) {
       case "DOMContentLoaded": {
         this.send_async_message("Glide::DOMContentLoaded");
+        break;
+      }
+
+      case "click": {
+        if (target?.id === "hint-next-section-button") {
+          const error = this.document!.getElementById("hint-next-section-error") as HTMLElement;
+          if (target.$glide_hack_click_from_hint) {
+            error.hidden = true;
+            this.document!.getElementById("lesson-2")!.scrollIntoView();
+          } else {
+            error.hidden = false;
+          }
+        }
         break;
       }
     }
