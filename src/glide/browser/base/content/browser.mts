@@ -1387,6 +1387,7 @@ class GlideBrowserClass {
         // impossible to just type `jj`, you have to press another key in the middle.
         this.#partial_mapping_waiter_id = setTimeout(async () => {
           this.key_manager.reset_sequence();
+          this.#display_keyseq([]);
           this.get_focused_actor().send_async_message("Glide::KeyMappingCancel", { mode });
           this.#invoke_keystatechanged_autocmd({ mode, sequence: [], partial: false });
         }, this.api.o.mapping_timeout);
