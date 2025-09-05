@@ -803,6 +803,16 @@ function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragDa
  */
 function synthesizeDropAfterDragOver(aResult: any, aDataTransfer: DataTransfer, aDestElement: Element, aDestWindow?: DOMWindow, aDragEvent?: any): string;
 /**
+ * Calls `nsIDragService.startDragSessionForTests`, which is required before
+ * any other code can use `nsIDOMWindowUtils.dragSession`. Most notably,
+ * a drag session is required before populating a drag-drop event's
+ * `dataTransfer` property.
+ *
+ * @param {Window} aWindow
+ * @param {typeof DataTransfer.prototype.dropEffect} aDropEffect
+ */
+function startDragSession(aWindow: Window, aDropEffect: typeof DataTransfer.prototype.dropEffect): void;
+/**
  * Emulate a drag and drop by emulating a dragstart and firing events dragenter,
  * dragover, and drop.
  *
