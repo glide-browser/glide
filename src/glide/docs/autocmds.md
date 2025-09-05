@@ -135,11 +135,12 @@ Callback arguments:
 
 ## KeyStateChanged
 
-Fired whenever the key sequence changes, which can happen under three circumstances:
+Fired whenever the key sequence changes, which can happen under four circumstances:
 
 1. A key is pressed that matches a key mapping.
 2. A key is pressed that is _part_ of a key mapping.
 3. A key is pressed that cancels a previous partial key mapping sequence.
+4. A partial key mapping is cancelled (see [glide.o.mapping_timeout](api.md#glide.o.mapping_timeout))
 
 For example, with
 

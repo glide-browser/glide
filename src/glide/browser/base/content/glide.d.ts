@@ -91,11 +91,12 @@ declare global {
       /**
        * Create an autocmd that will be invoked whenever the key sequence changes.
        *
-       * This will be fired under three circumstances:
+       * This will be fired under four circumstances:
        *
        * 1. A key is pressed that matches a key mapping.
        * 2. A key is pressed that is part of a key mapping.
        * 3. A key is pressed that cancels a previous partial key mapping sequence.
+       * 4. A partial key mapping is cancelled (see {@link glide.o.mapping_timeout})
        *
        * For example, with
        * ```typescript
