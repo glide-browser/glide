@@ -28,6 +28,7 @@ pref("browser.ml.chat.shortcuts", false);
 pref("browser.ml.chat.shortcuts.custom", false);
 pref("browser.ml.chat.sidebar", false);
 pref("browser.ml.enable", false);
+pref("browser.tabs.groups.smart.enabled", false)
 
 #include remove-mozilla.js
 #include betterfox.js
