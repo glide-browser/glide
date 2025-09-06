@@ -1,0 +1,32 @@
+diff --git a/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs b/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs
+index 5b7b10a7641c57e1f5206fb57030c8c2afb60971..880a743279f838ca56c09a6e709288a27d6f1bff 100644
+--- a/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs
++++ b/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs
+@@ -21,6 +21,7 @@ ChromeUtils.defineESModuleGetters(lazy, {
+   ServiceRequest: "resource://gre/modules/ServiceRequest.sys.mjs",
+ });
+ 
++import { AppConstants } from "resource://gre/modules/AppConstants.sys.mjs";
+ import { Log } from "resource://gre/modules/Log.sys.mjs";
+ 
+ const LOGGER_ID = "addons.update-checker";
+@@ -501,7 +502,8 @@ export var AddonUpdateChecker = {
+     aIgnoreStrictCompat
+   ) {
+     if (!aAppVersion) {
+-      aAppVersion = Services.appinfo.version;
++      aAppVersion =
++        AppConstants.GLIDE_FIREFOX_VERSION ?? Services.appinfo.version;
+     }
+     if (!aPlatformVersion) {
+       aPlatformVersion = Services.appinfo.platformVersion;
+@@ -558,7 +560,8 @@ export var AddonUpdateChecker = {
+     aIgnoreStrictCompat
+   ) {
+     if (!aAppVersion) {
+-      aAppVersion = Services.appinfo.version;
++      aAppVersion =
++        AppConstants.GLIDE_FIREFOX_VERSION ?? Services.appinfo.version;
+     }
+     if (!aPlatformVersion) {
+       aPlatformVersion = Services.appinfo.platformVersion;
