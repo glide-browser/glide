@@ -107,7 +107,7 @@ const DEFAULT_CONFIG = dedent`
   //   https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/plugins/keymaps.mts
   //
   // Try typing \`glide.\` and see what you can do!
-`;
+` + "\n\n";
 
 const DEFAULT_TSCONFIG = dedent`
 {
