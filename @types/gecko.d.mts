@@ -20,10 +20,12 @@ interface mozIDOMWindowProxy {
 }
 
 interface WindowGlobalParent {
+  getActor(name: "GlideDocs"): import("../src/glide/browser/actors/GlideDocsParent.sys.mts").GlideDocsParent;
   getActor(name: "GlideHandler"): import("../src/glide/browser/actors/GlideHandlerParent.sys.mts").GlideHandlerParent;
 }
 
 interface WindowGlobalChild {
+  getActor(name: "GlideDocs"): import("../src/glide/browser/actors/GlideDocsChild.sys.mts").GlideDocsChild;
   getActor(name: "GlideHandler"): import("../src/glide/browser/actors/GlideHandlerChild.sys.mts").GlideHandlerChild;
 }
 

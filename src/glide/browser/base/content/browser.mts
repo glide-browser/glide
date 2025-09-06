@@ -1463,40 +1463,27 @@ class GlideBrowserClass {
     const out: { value?: mozIDOMWindowProxy } = {};
     Services.focus.getFocusedElementForWindow(window as mozIDOMWindowProxy, true, out);
 
-    if (!out.value) {
-      throw new Error("Unexpected, getFocusedElementForWindow() returned no window");
-    }
-
-    const browsingContext = out.value.browsingContext as CanonicalBrowsingContext;
+    const focused_window = assert_present(out.value, "Unexpected, getFocusedElementForWindow() returned no window");
+    const browsingContext = focused_window.browsingContext as CanonicalBrowsingContext;
     return browsingContext.currentWindowGlobal!.getActor("GlideHandler")!;
   }
 
   get_content_actor(): GlideHandlerParent {
-    let tab_browser = gBrowser.selectedBrowser;
-    let content_wgp = assert_present(
-      tab_browser.browsingContext
-        .currentWindowGlobal as typeof windowGlobalChild,
-    );
+    const browsingContext = gBrowser.selectedBrowser.browsingContext as CanonicalBrowsingContext;
 
     // we can't use `.getExistingActor()` as the actor may not have been loaded
     // in certain cases, I'm not sure exactly *when* that can happen but `.getExistingActor()`
     // breaks our tests.
-    return content_wgp.getActor("GlideHandler") as any as GlideHandlerParent;
+    return browsingContext.currentWindowGlobal!.getActor("GlideHandler");
   }
 
   get_docs_actor(): GlideDocsParent {
-    let tab_browser = gBrowser.selectedBrowser;
-    let content_wgp = assert_present(
-      tab_browser.browsingContext
-        .currentWindowGlobal as typeof windowGlobalChild,
-    );
-    return content_wgp.getActor("GlideDocs") as any as GlideDocsParent;
+    const browsingContext = gBrowser.selectedTab.browsingContext as CanonicalBrowsingContext;
+    return browsingContext.currentWindowGlobal!.getActor("GlideDocs");
   }
 
   get_chrome_actor(): GlideHandlerParent {
-    return (
-      (browsingContext as any)?.currentWindowGlobal as typeof windowGlobalChild
-    )?.getActor("GlideHandler") as any as GlideHandlerParent;
+    return (browsingContext as CanonicalBrowsingContext).currentWindowGlobal?.getActor("GlideHandler")!;
   }
 
   /**
