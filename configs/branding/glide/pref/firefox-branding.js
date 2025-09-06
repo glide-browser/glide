@@ -2,10 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-// TODO
-pref("startup.homepage_override_url", "https://glide-browser.app/whatsnew?v=%VERSION%");
-pref("startup.homepage_welcome_url.additional", "https://glide-browser.app/privacy-policy/");
-
+pref("startup.homepage_override_url", "https://glide-browser.app/changelog#%VERSION%");
+pref("startup.homepage_welcome_url.additional", "https://glide-browser.app/privacy/");
 pref("startup.homepage_welcome_url", "resource://glide-tutor/index.html");
 
 // The number of days a binary is permitted to be old

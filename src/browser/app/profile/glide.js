@@ -37,3 +37,5 @@ pref("extensions.update.background.url", "https://versioncheck-bg.addons.mozilla
 
 #include remove-mozilla.js
 #include betterfox.js
+
+pref("browser.aboutwelcome.enabled", true);
