@@ -1451,29 +1451,24 @@ class GlideBrowserClass {
   /**
    * Returns the Glide JSActor for the currently focused frame.
    *
-   * This determines if the browser content is focused or if the browser UI
-   * is focused and returns the corresponding `GlideHandler` actor.
-   *
    * https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html
    */
   get_focused_actor(): GlideHandlerParent {
-    const browser_element = assert_present(customElements.get("browser"), "Could not find a custom `browser` element");
-    const active_element = document?.activeElement;
-    if (!active_element) {
-      this._log.debug("nothing is focused defaulting to chrome");
-      return this.get_chrome_actor();
+    // note: this appears to not fully work for extension popup frames
+    //       which currently require a workaround, see
+    //       `GlideHandlerChild::#forward_to_sub_actor()`.
+    //
+    //       needs more investigation.
+
+    const out: { value?: mozIDOMWindowProxy } = {};
+    Services.focus.getFocusedElementForWindow(window as mozIDOMWindowProxy, true, out);
+
+    if (!out.value) {
+      throw new Error("Unexpected, getFocusedElementForWindow() returned no window");
     }
 
-    // the custom `<browser>` element appears to be the lowest part of the content frame
-    // that chrome code can access
-    const is_content_focused = active_element instanceof browser_element;
-    if (is_content_focused) {
-      this._log.debug("content is focused");
-      return this.get_content_actor();
-    }
-
-    this._log.debug("chrome is focused");
-    return this.get_chrome_actor();
+    const browsingContext = out.value.browsingContext as CanonicalBrowsingContext;
+    return browsingContext.currentWindowGlobal!.getActor("GlideHandler")!;
   }
 
   get_content_actor(): GlideHandlerParent {

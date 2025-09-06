@@ -15,6 +15,18 @@ declare type TestContent = {
   window: Window;
 };
 
+interface mozIDOMWindowProxy {
+  browsingContext?: BrowsingContext | null;
+}
+
+interface WindowGlobalParent {
+  getActor(name: "GlideHandler"): import("../src/glide/browser/actors/GlideHandlerParent.sys.mts").GlideHandlerParent;
+}
+
+interface WindowGlobalChild {
+  getActor(name: "GlideHandler"): import("../src/glide/browser/actors/GlideHandlerChild.sys.mts").GlideHandlerChild;
+}
+
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`
  *

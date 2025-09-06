@@ -143,6 +143,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
           }
         }
 
+        // note: no need to `this.#forward_to_sub_actor(message)` because this
+        //       message should be sent to each actor individually through the
+        //       GlideHandlerParent class registering a state listener directly,
+        //       instead of being invoked through `.get_focused_actor()` like
+        //       all other emssages.
+
         break;
       }
       case "Glide::Debug": {
@@ -150,10 +156,18 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::ExecuteContentCommand": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         this.#handle_excmd(message.data);
         break;
       }
       case "Glide::ReplaceChar": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         const editor = this.#expect_editor("replace char");
         motions.back_char(editor, false);
         editor.deleteSelection(/* action */ editor.eNext!, /* stripWrappers */ editor.eStrip!);
@@ -166,6 +180,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         // keydown event does not get through to us in this context.
         const target = this.#get_active_element();
         this.#last_key_event_element = target;
+
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
 
         const editor = this.#get_editor(target);
 
@@ -188,6 +206,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::KeyMappingCancel": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         const target = this.#get_key_event_target();
         const editor = this.#get_editor(target);
 
@@ -204,6 +226,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::KeyMappingExecution": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         const target = this.#get_key_event_target();
         const editor = this.#get_editor(target);
 
@@ -225,6 +251,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::BlurActiveElement": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         const target = this.document?.activeElement;
         if (target && "blur" in target) {
           (target as HTMLElement).blur();
@@ -232,6 +262,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::Hint": {
+        // TODO: support this.#forward_to_sub_actor(message)
         this.#start_hints({
           ...message.data,
           pick: IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.pick),
@@ -240,6 +271,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "Glide::ExecuteHint": {
+        // TODO: support this.#forward_to_sub_actor(message)
         const hint = this.#active_hints.find(hint => hint.id === message.data.id);
         if (!hint) {
           throw new Error(`Could not find a hint with ID: ${message.data.id}`);
@@ -296,9 +328,14 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
       case "Glide::RegisterUserActivation": {
         this.document?.notifyUserGestureActivation();
+        this.#forward_to_sub_actor(message);
         break;
       }
       case "Glide::Move": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         const doc_shell = assert_present(this.docShell);
 
         const editor = this.#get_editor(this.#get_active_element());
@@ -346,6 +383,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
       }
 
       case "Glide::SelectionCollapse": {
+        if (this.#forward_to_sub_actor(message)) {
+          return;
+        }
+
         const editor = this.#expect_editor("selection_collapse");
         editor.selection.collapseToEnd();
         break;
@@ -383,6 +424,30 @@ export class GlideHandlerChild extends JSWindowActorChild<
       default:
         throw assert_never(message);
     }
+  }
+
+  /**
+   * Potentially forward the given message to another actor instance, if the
+   * focused element actually contains a nested browsing context.
+   *
+   * This is needed due to a limitation of `GlideBrowser.get_focused_actor()`
+   * where it appears to not work for extension popups. If that can be fixed,
+   * then this method should be removed.
+   *
+   * @returns if the message was forwarded to another actor or not.
+   */
+  #forward_to_sub_actor(message: ActorReceiveMessage<ParentMessages, ParentQueries>): boolean {
+    const maybe_window = this.#get_active_element() as any as WindowProxy;
+    if (!maybe_window.browsingContext) {
+      return false;
+    }
+
+    // TODO: support queries
+    const actor = (maybe_window.browsingContext as CanonicalBrowsingContext).currentWindowGlobal!.getActor(
+      "GlideHandler",
+    )!;
+    actor.send_async_message(message.name as any, message.data);
+    return true;
   }
 
   #get_key_event_target(): Element | null | undefined {
