@@ -25,15 +25,15 @@ Features:
   <div class="download-platform">
     <span class="platform-label">macOS</span>
     <div class="download-buttons">
-      <a href="https://release-assets.glide-browser.app/releases/0.1.37a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Apple Silicon</a>
-      <a href="https://release-assets.glide-browser.app/releases/0.1.37a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.38a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Apple Silicon</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.38a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
     </div>
   </div>
   <div class="download-platform">
     <span class="platform-label">Linux</span>
     <div class="download-buttons">
-      <a href="https://release-assets.glide-browser.app/releases/0.1.37a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank">x64.tar</a>
-      <a href="https://release-assets.glide-browser.app/releases/0.1.37a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank">aarch64.tar</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.38a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank">x64.tar</a>
+      <a href="https://release-assets.glide-browser.app/releases/0.1.38a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank">aarch64.tar</a>
     </div>
   </div>
 </div>
