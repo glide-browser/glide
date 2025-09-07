@@ -8,6 +8,8 @@
 declare var gBrowser: GlobalBrowser.GlobalBrowser;
 declare var gNotificationBox: GlobalBrowser.NotificationBox;
 
+declare var FileUtils: MockedExports.KnownModules["resource://gre/modules/FileUtils.sys.mjs"]["FileUtils"];
+
 declare type TestContent = {
   document: Omit<Document, "getElementById"> & {
     getElementById<E extends HTMLElement = HTMLElement>(id: string): E | null;
@@ -225,6 +227,7 @@ declare namespace MockedExports {
       typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
     "resource://testing-common/fast-check.mjs": typeof import("fast-check");
 
+    "resource://gre/modules/FileUtils.sys.mjs": typeof import("../engine/toolkit/modules/FileUtils.sys.mjs");
     "resource://gre/modules/Extension.sys.mjs":
       typeof import("../engine/toolkit/components/extensions/Extension.sys.mjs");
     "resource://gre/modules/ExtensionCommon.sys.mjs":

@@ -113,6 +113,13 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "css_edit",
+    description: "Open the userChrome.css file in the default editor",
+    content: false,
+    repeatable: false,
+  },
+
+  {
     name: "repeat",
     description: "Repeat the last invoked command. In general only applies to \"mutative\" commands",
     content: false,

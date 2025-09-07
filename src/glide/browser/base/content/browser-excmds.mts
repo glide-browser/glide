@@ -544,6 +544,21 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "css_edit": {
+        const chrome_dir = PathUtils.join(PathUtils.profileDir, "chrome");
+        await IOUtils.makeDirectory(chrome_dir, { ignoreExisting: true });
+
+        const file = Cc["@mozilla.org/file/local;1"]!.createInstance(Ci.nsIFile);
+        file.initWithPath(PathUtils.join(chrome_dir, "userChrome.css"));
+
+        if (!(await IOUtils.exists(file.path))) {
+          file.create(Ci.nsIFile.NORMAL_FILE_TYPE, FileUtils.PERMS_FILE);
+        }
+
+        file.launch();
+        break;
+      }
+
       case "map": {
         // this will render the mappings through `src/glide/browser/actors/GlideDocsChild.sys.mts`
         gBrowser.addTrustedTab("resource://glide-docs/dynamic/mappings.html", {
