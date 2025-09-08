@@ -31,6 +31,7 @@
     "lint": "./scripts/lint.sh",
     "fix": "pnpm fmt",
 
+    "firefox:download": "pnpm tsn scripts/firefox/download.mts",
     "firefox:version": "pnpm tsn scripts/firefox/version.mts",
 
     "check:license": "pnpm tsn scripts/firefox/license-check.mts",

@@ -68,7 +68,7 @@ Primer on Glide specific concepts:
 
 - Note this means you cannot use any TS syntax that has a runtime effect, e.g. `enum`
 
-2. We use [Glider](#glider) to download & patch the Firefox sourcec code
+2. We use [Glider](#glider) to patch the Firefox source code
 3. Development practically requires running an FS watcher, see below.
 
 ## Working on Glide
@@ -208,7 +208,7 @@ Now, hints will only be cleared once activated or when `<Esc>` is pressed.
 
 ### Glider
 
-Glide makes use of [Glider](https://github.com/glide-browser/glider) to download the Firefox source and apply patches to it.
+Glide makes use of [Glider](https://github.com/glide-browser/glider) to apply patches to the Firefox source code.
 
 Glider is part of a long chain of forks starting from [Melon](https://github.com/pulse-browser/browser) making it easier to apply patches to Firefox.
 

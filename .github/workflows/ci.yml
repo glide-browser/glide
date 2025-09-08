@@ -43,7 +43,7 @@ jobs:
 
       - name: Download Firefox source
         run: |
-          pnpm glider download
+          pnpm firefox:download
 
       - name: Bootstrap repo
         run: |

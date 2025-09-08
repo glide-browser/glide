@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 
 pnpm i
 
-pnpm glider download
+pnpm firefox:download
 
 ./scripts/bundle.sh
 ./scripts/generate-types.sh
