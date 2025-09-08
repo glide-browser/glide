@@ -8,6 +8,7 @@ Glide extends and heavily builds on top of Firefox but for the most part Glide i
 4. Newtab shortcuts are disabled by default (`path:browser.newtabpage.activity-stream.feeds.topsites`)
 5. `<space>` is mapped to the `<leader>` key, not scroll down - [`glide.g.mapleader`](api.md#glide.g.mapleader)
 6. Updates are not automatically installed, when new versions are available - you will be _prompted_ to install them
+7. Taskbar [badges](connect.mozilla.org/t5/ideas/disable-profile-badge/idc-p/101744) are disabled by default, you can re-enable them with the `path:glide.firefox.taskbar.badge.enabled` pref.
 
 ## Version
 

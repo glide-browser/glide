@@ -1,8 +1,8 @@
 diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
-index 1d04b7b50035e6aa268c5d7ac0009abbfbb06943..d572daa75df81de31fe5573e2b7c98a4a45df7cd 100644
+index a6c49438aaf3464e70bf9c75c2849a6062bd096a..c3876e665fdf048360b1c6ab45288ec61f850b59 100644
 --- a/modules/libpref/init/StaticPrefList.yaml
 +++ b/modules/libpref/init/StaticPrefList.yaml
-@@ -7964,6 +7964,30 @@
+@@ -8086,6 +8086,35 @@
    value: 0
    mirror: always
  
@@ -25,6 +25,11 @@ index 1d04b7b50035e6aa268c5d7ac0009abbfbb06943..d572daa75df81de31fe5573e2b7c98a4
 +  mirror: always
 +
 +- name: glide.dev.reload_files
++  type: bool
++  value: false
++  mirror: always
++
++- name: glide.firefox.taskbar.badge.enabled
 +  type: bool
 +  value: false
 +  mirror: always

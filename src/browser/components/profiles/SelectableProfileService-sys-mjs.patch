@@ -1,0 +1,44 @@
+diff --git a/browser/components/profiles/SelectableProfileService.sys.mjs b/browser/components/profiles/SelectableProfileService.sys.mjs
+index 4f0a261fa61a04f7bf37ed724aa4392489b6473f..ae7dcb9d40fa135318d00054b0e7c64a53bb8628 100644
+--- a/browser/components/profiles/SelectableProfileService.sys.mjs
++++ b/browser/components/profiles/SelectableProfileService.sys.mjs
+@@ -225,6 +225,9 @@ class SelectableProfileServiceClass extends EventEmitter {
+       () => this.updateEnabledState(),
+       "profile-after-change"
+     );
++    Services.prefs.addObserver("glide.firefox.taskbar.badge.enabled", () =>
++      this.#updateTaskbar()
++    );
+   }
+ 
+   // Migrate any early users who created profiles before the datastore service
+@@ -650,6 +653,29 @@ class SelectableProfileServiceClass extends EventEmitter {
+   }
+ 
+   async #updateTaskbar() {
++    if (
++      !Services.prefs.getBoolPref("glide.firefox.taskbar.badge.enabled", false)
++    ) {
++      if (!this.#badge) {
++        return;
++      }
++
++      // clear current badge
++      this.#badge = null;
++      if ("nsIMacDockSupport" in Ci) {
++        Cc["@mozilla.org/widget/macdocksupport;1"]
++          .getService(Ci.nsIMacDockSupport)
++          .setBadgeImage(null);
++      } else if ("nsIWinTaskbar" in Ci) {
++        for (let win of lazy.EveryWindow.readyWindows) {
++          let iconController = TASKBAR_ICON_CONTROLLERS.get(win);
++          iconController?.setOverlayIcon(null, null);
++        }
++      }
++
++      return;
++    }
++
+     try {
+       // We don't want the startup profile selector to badge the dock icon.
+       if (!gSupportsBadging || Services.startup.startingUp) {
