@@ -31,8 +31,8 @@
     "lint": "./scripts/lint.sh",
     "fix": "pnpm fmt",
 
-    "check:license": "pnpm glider license-check",
-    "fix:license": "pnpm glider license-check --fix",
+    "check:license": "pnpm tsn scripts/firefox/license-check.mts",
+    "fix:license": "pnpm tsn scripts/firefox/license-check.mts --fix",
 
     "tsc": "./scripts/check-types.sh",
     "tsc:browser": "tsc -p tsconfig.check.json",
@@ -55,6 +55,7 @@
     "@types/hast": "^3.0.4",
     "@types/node": "^24.3.0",
     "@types/webidl2": "^24.4.3",
+    "chalk": "^5.6.0",
     "chokidar": "^4.0.3",
     "dprint": "^0.50.1",
     "dts-bundle-generator": "^9.5.1",
