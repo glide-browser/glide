@@ -74,7 +74,7 @@ jobs:
           ./.github/scripts/github-download-artifact.sh
         env:
           TAG: ${{ inputs.tag }}
-          ASSET_NAME: "glide-aarch64.mac.dmg"
+          ASSET_NAME: "glide.macos-${{ matrix.arch }}.dmg"
           OUTPUT_FILE: "dist/glide.dmg"
           GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
@@ -144,7 +144,7 @@ jobs:
       - name: Upload signed DMG to release
         if: inputs.tag
         run: |
-          gh release upload $TAG ./engine/glide.macos-aarch64.dmg#glide.macos-aarch64-signed.dmg --clobber
+          gh release upload $TAG ./engine/glide.macos-${{ matrix.arch }}.dmg#glide.macos-${{ matrix.arch }}-signed.dmg --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
           TAG: ${{ inputs.tag }}
