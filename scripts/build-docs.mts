@@ -39,6 +39,9 @@ const SYMLINKS = [
   "logo-32.png",
   "BerkeleyMono-Regular.woff2",
   "_headers",
+  "demo.mp4",
+  "demo.webm",
+  "demo-thumb.webp",
 ];
 const TUTOR_FILES = [
   "index.html",

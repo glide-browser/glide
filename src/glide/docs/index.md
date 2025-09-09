@@ -17,6 +17,21 @@ Features:
 - Site specific [settings](cookbook.md#set-a-pref-for-a-specific-website) / [keymaps](cookbook.md#override-a-keymap-for-a-specific-website)
 - ... and more
 
+{% html %}
+<video
+id="demo-video"
+width="690"
+height="497"
+thumb="./demo-thumb.webp"
+controls
+autoplay
+loop
+
+<source src="./demo.webm" type="video/webm" />
+<source src="./demo.mp4" type="video/mp4" />
+</video>
+{% /html %}
+
 ## Download
 
 {% html %}

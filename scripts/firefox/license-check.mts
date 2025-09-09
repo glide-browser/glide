@@ -9,7 +9,9 @@ import Path from "path";
 import { assert_never } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { SCRIPTS_DIR, SRC_DIR } from "../canonical-paths.mts";
 
-const FILE_IGNORE_REGEXP = new RegExp(".*\\.(json|patch|md|jpeg|png|gif|webp|tiff|ico|woff2|DS_Store|gitignore)");
+const FILE_IGNORE_REGEXP = new RegExp(
+  ".*\\.(json|patch|md|jpeg|mp4|webm|png|gif|webp|tiff|ico|woff2|DS_Store|gitignore)",
+);
 const LICENSE_IGNORE_STRING = "license-ignore-file";
 
 const FIXABLE_FILES = [

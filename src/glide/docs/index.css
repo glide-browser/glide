@@ -53,6 +53,17 @@
   }
 }
 
+#demo-video {
+  border: 2px solid #7f7474;
+  border-radius: 8px;
+}
+@media screen and (max-width: 768px) {
+  #demo-video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 #download, #glide {
   text-align: center;
 }
