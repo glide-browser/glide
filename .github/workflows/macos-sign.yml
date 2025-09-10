@@ -93,7 +93,7 @@ jobs:
       - name: Install system dependencies
         run: |
           brew update
-          brew install cairo gnu-tar mercurial
+          brew install cairo@1.18.4 gnu-tar@1.35 mercurial@7.1
           sudo pip install setuptools
 
           brew uninstall --ignore-dependencies python3.12 -f
@@ -107,7 +107,7 @@ jobs:
           rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3'
           rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config'
 
-          brew install watchman cargo-binstall
+          brew install watchman@2025.09.08.00 cargo-binstall@1.15.4
 
           cargo binstall apple-codesign
 

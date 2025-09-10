@@ -82,7 +82,7 @@ jobs:
       - name: Install system dependencies
         run: |
           brew update
-          brew install cairo gnu-tar mercurial
+          brew install cairo@1.18.4 gnu-tar@1.35 mercurial@7.1
 
           brew uninstall --ignore-dependencies python3.12 -f
 
@@ -94,7 +94,7 @@ jobs:
           rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3' || true
           rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config' || true
 
-          brew install watchman
+          brew install watchman@2025.09.08.00
 
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.82
           source $HOME/.cargo/env
@@ -103,7 +103,7 @@ jobs:
             rustup target add aarch64-apple-darwin
           else
             rustup target add x86_64-apple-darwin
-            brew install nasm
+            brew install nasm@2.16.03
           fi
 
       - name: Bootstrap repo
