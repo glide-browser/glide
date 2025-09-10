@@ -19,19 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # needed while we have private dependencies
-      - name: Configure GitHub auth
+      - name: Configure git
         run: |
-          TOKEN="${{ secrets.REPO_ACCESS_TOKEN }}"
-
-          git config --global \
-            url."https://x-access-token:${TOKEN}@github.com/glide-browser/glider.git".insteadOf \
-            "git@github.com:glide-browser/glider.git"
-
-          git config --global \
-            url."https://x-access-token:${TOKEN}@github.com/glide-browser/webextension-types.git".insteadOf \
-            "git@github.com:glide-browser/webextension-types.git"
-
           git config --global \
             url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
             "git@github.com:mozilla-firefox/firefox.git"
