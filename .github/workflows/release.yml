@@ -52,14 +52,12 @@ jobs:
   linux:
     name: Linux build
     uses: ./.github/workflows/linux-build.yml
-    secrets: inherit
     with:
       upload: true
 
   macos:
     name: macOS build
     uses: ./.github/workflows/macos-build.yml
-    secrets: inherit
     with:
       artifacts: true
 
