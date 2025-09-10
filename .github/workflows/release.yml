@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       # needed while we have private dependencies
       - name: Configure GitHub auth
@@ -89,6 +91,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       # needed while we have private dependencies
       - name: Configure GitHub auth
@@ -142,6 +146,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Download Linux build (aarch64)
         uses: actions/download-artifact@v4
@@ -212,9 +218,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
+      # we explicitly do want to persist credentials because we push changes
       - name: Checkout update-server repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # zizmor: ignore[artipacked]
         with:
           repository: glide-browser/update-server
           token: ${{ secrets.REPO_ACCESS_TOKEN }}

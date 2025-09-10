@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # we explicitly do want to persist credentials because we push a branch
+      - uses: actions/checkout@v4  # zizmor: ignore[artipacked]
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
 

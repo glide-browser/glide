@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       # needed while we have private dependencies
       - name: Configure GitHub auth
