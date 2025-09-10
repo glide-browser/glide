@@ -98,7 +98,11 @@ jobs:
 
           brew install watchman cargo-binstall
 
-          cargo binstall apple-codesign
+      - name: Install apple-codesign
+        run: |
+          cargo binstall -y apple-codesign
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Force usage of gnu-tar
         run: |
