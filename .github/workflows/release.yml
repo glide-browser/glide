@@ -227,13 +227,6 @@ jobs:
         run: |
           tree -Dh artifacts/
 
-      # temporary while the repo is private
-      - name: Fix update.xml URLs
-        run: |
-          .github/scripts/fix-update-urls.sh artifacts/
-        env:
-          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-
       - name: Copy update files to update-server
         run: |
           mkdir -p update-server/public/updates/
