@@ -14,12 +14,6 @@ margin-bottom: revert !important;
 
 # Changelog
 
-# 0.1.29a
+# 0.1.40a
 
-- Test entry 1
-- Test entry 2
-
-# 0.1.28a
-
-- Test entry 1
-- Test entry 2
+Initial public release!
