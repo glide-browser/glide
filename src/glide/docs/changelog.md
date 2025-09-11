@@ -14,6 +14,6 @@ margin-bottom: revert !important;
 
 # Changelog
 
-# 0.1.40a
+# 0.1.42a
 
 Initial public release!
