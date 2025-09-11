@@ -12,7 +12,7 @@ pnpm firefox:download
 ./scripts/generate-types.sh
 
 pnpm build:ts
-pnpm build:docs
+pnpm build:docs:html
 pnpm build:docs:index
 pnpm build:js
 

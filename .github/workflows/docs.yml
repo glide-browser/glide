@@ -43,7 +43,7 @@ jobs:
         run: pnpm build:ts
 
       - name: Build docs
-        run: pnpm build:docs:full
+        run: pnpm build:docs
 
       - name: Deploy to Cloudflare
         working-directory: src/glide/docs

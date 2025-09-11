@@ -14,7 +14,7 @@ import { queue } from "./dev.mts";
 async function build_docs() {
   // separate process so changes to e.g. `content/docs.mts` don't require
   // restarting the dev watcher
-  await execa("pnpm", ["--silent", "build:docs"], { stdio: "inherit" });
+  await execa("pnpm", ["--silent", "build:docs:html"], { stdio: "inherit" });
 }
 
 const DOCS_FILES = new Set<string>();

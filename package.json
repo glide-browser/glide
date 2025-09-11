@@ -19,11 +19,12 @@
     "mach": "./engine/mach",
 
     "bundle": "bash ./scripts/bundle.sh",
-    "build:docs": "pnpm tsn scripts/build-docs.mts",
+
+    "build:docs": "pnpm build:docs:html --symlink=false && pnpm build:docs:api && pnpm build:docs:assets && pnpm build:docs:index && pnpm build:docs:assets",
+    "build:docs:html": "pnpm tsn scripts/build-docs.mts",
     "build:docs:index": "bash ./scripts/build-docs-index.sh",
     "build:docs:api": "pnpm tsn ./scripts/build-api-reference.mts",
     "build:docs:assets": "pnpm tsn ./scripts/docs-asset-hashes.mts",
-    "build:docs:full": "pnpm build:docs --symlink=false && pnpm build:docs:api && pnpm build:docs:assets && pnpm build:docs:index && pnpm build:docs:assets",
     "build:types": "bash ./scripts/generate-types.sh",
     "build:ts": "pnpm tsn scripts/build-ts.mts",
     "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
