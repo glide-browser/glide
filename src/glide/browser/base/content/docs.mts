@@ -122,7 +122,9 @@ export async function markdown_to_html(
         <meta name="author" content="Robert Craigie" />
         <meta
           name="description"
-          content="Glide Browser is an extensible and keyboard-focused web browser built on top of Firefox." />
+          content="${
+    state.description ?? " Glide Browser is an extensible and keyboard-focused web browser built on top of Firefox."
+  }" />
 
         <link rel="icon" href="${rel_to_dist}/logo.png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
@@ -253,6 +255,7 @@ class RenderState {
   styles: string[];
   head: string[];
   title: string | null = null;
+  description: string | null = null;
 
   // this is required to easily support syntax highlighting with markdoc
   //
@@ -417,6 +420,15 @@ class RenderState {
             const last = node.lines.at(-1)! - 1;
             const content = this.lines.slice(first, last);
             this.head.push(content.join("\n"));
+            return "";
+          },
+        },
+        meta: {
+          description: "Set custom meta tags for this page, only description is supported.",
+          attributes: { description: { type: String, required: false } },
+          transform: (node, config) => {
+            const attributes = node.transformAttributes(config);
+            this.description = attributes["description"] ?? null;
             return "";
           },
         },
