@@ -2,6 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+/robots.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain
+
 /*
   Cache-Control: public, max-age=300, s-maxage=31536000
   Vary: Accept-Encoding
