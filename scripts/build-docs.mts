@@ -39,6 +39,7 @@ const SYMLINKS = [
   "logo-32.png",
   "BerkeleyMono-Regular.woff2",
   "_headers",
+  "robots.txt",
   "demo.mp4",
   "demo.webm",
   "demo-thumb.webp",
