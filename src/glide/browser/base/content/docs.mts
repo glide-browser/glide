@@ -149,7 +149,7 @@ export async function markdown_to_html(
         ${state.head.join("\n")}
 
         <script async src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
-        <script defer src="${rel_to_dist}/docs.js?v="></script>
+        <script src="${rel_to_dist}/docs.js?v="></script>
       </head>
       <body>
         <!-- copy icons -->
