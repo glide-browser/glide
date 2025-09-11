@@ -124,7 +124,14 @@ export async function markdown_to_html(
 
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-        <link rel="preload" as="image" href="./logo-20.webp" />
+        <link rel="preload" as="image" href="${rel_to_dist}/logo-20.webp" />
+        <link
+          rel="preload"
+          href="${rel_to_dist}/BerkeleyMono-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossorigin="anonymous" />
+
         ${
     state.styles
       .map(css =>
