@@ -124,7 +124,7 @@ export async function markdown_to_html(
 
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-        <link rel="preload" as="image" href="${rel_to_dist}/logo-20.webp" />
+        <link rel="preload" as="image" href="${rel_to_dist}/logo.webp" />
         <link
           rel="preload"
           href="${rel_to_dist}/BerkeleyMono-Regular.woff2"
@@ -192,7 +192,7 @@ export async function markdown_to_html(
                     href="${rel_to_dist}/index.html"
                     class="glide-sidenav-heading-link"
                   >
-                    <img src="${rel_to_dist}/logo-20.webp" class="glide-sidenav-heading-img" width="20" height="20" />
+                    <img src="${rel_to_dist}/logo.webp" class="glide-sidenav-heading-img" width="20" height="20" />
                     Glide
                   </a>
                   <button

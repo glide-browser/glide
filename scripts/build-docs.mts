@@ -34,7 +34,7 @@ const SYMLINKS = [
   "docs.css",
   "reset.css",
   "index.css",
-  "logo-20.webp",
+  "logo.webp",
   "logo@2x.webp",
   "logo-32.png",
   "BerkeleyMono-Regular.woff2",
