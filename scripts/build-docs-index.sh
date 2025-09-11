@@ -4,4 +4,4 @@ set -eux
 
 cd "$(dirname "$0")/.."
 
-npx -y pagefind --site src/glide/docs/dist
+pnpm pagefind --site src/glide/docs/dist

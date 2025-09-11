@@ -69,6 +69,7 @@
     "html-assets-hash": "^1.0.5",
     "meow": "^13.2.0",
     "p-queue": "^8.1.0",
+    "pagefind": "^1.4.0",
     "shiki": "^3.12.2",
     "ts-morph": "^26.0.0",
     "type-fest": "^4.41.0",
