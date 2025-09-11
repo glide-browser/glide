@@ -4,12 +4,15 @@
 
 {
   window.open_search = function() {
+    // error early if pagefind hasn't been loaded yet
+    window.get_pagefind_ui();
+
     const search = document.getElementById("search");
     search.style.display = "unset";
 
     document.querySelector(".pagefind-ui__search-clear").style.display = "none";
 
-    window.pagefind_ui.triggerSearch("");
+    window.get_pagefind_ui().triggerSearch("");
 
     document.querySelector(".pagefind-ui__search-input").focus();
   };
@@ -106,9 +109,21 @@
     }
   };
 
-  window.addEventListener("DOMContentLoaded", () => {
-    window.pagefind_ui = new PagefindUI({ element: "#search", showSubResults: true, resetStyles: false });
+  window.get_pagefind_ui = function() {
+    if (window.pagefind_ui) {
+      return window.pagefind_ui;
+    }
 
+    if (typeof PagefindUI === "undefined") {
+      // TODO(someday): display this error in the dom somewhere
+      throw new Error("The pagefind script has not loaded yet");
+    }
+
+    window.pagefind_ui = new PagefindUI({ element: "#search", showSubResults: true, resetStyles: false });
+    return window.pagefind_ui;
+  };
+
+  window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("search-button").addEventListener("click", () => {
       window.open_search();
     });

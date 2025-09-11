@@ -145,7 +145,7 @@ export async function markdown_to_html(
   }
         ${state.head.join("\n")}
 
-        <script src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
+        <script async src="${rel_to_dist}/pagefind/pagefind-ui.js?v="></script>
         <script src="${rel_to_dist}/docs.js?v="></script>
       </head>
       <body>
