@@ -1,0 +1,14 @@
+{
+  "name": "infra",
+  "version": "1.0.0",
+  "description": "Separate to the top-level package.json to avoid cluttering deps",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MPL-2.0",
+  "packageManager": "pnpm@10.11.0",
+  "private": true,
+  "dependencies": {
+    "wrangler": "^4.35.0"
+  }
+}

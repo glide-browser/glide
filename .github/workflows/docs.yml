@@ -35,7 +35,9 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          cd infra && pnpm --ignore-workspace install --frozen-lockfile
 
       - name: Bundle vendored dependencies
         run: pnpm bundle
@@ -47,9 +49,10 @@ jobs:
         run: pnpm build:docs
 
       - name: Deploy to Cloudflare
-        working-directory: src/glide/docs
+        working-directory: infra
         run: |
-          npx wrangler pages deploy dist \
+          pnpm wrangler pages deploy --cwd=../src/glide/docs \
+            dist \
             --project-name=glide \
             --branch=main
         env:
