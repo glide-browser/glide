@@ -26,6 +26,7 @@ thumb="./demo-thumb.webp"
 controls
 autoplay
 loop
+title="Demo video showing Glide features including keyboard navigation and config editing"
 
 <source src="./demo.webm" type="video/webm" />
 <source src="./demo.mp4" type="video/mp4" />
@@ -40,15 +41,15 @@ loop
   <div class="download-platform">
     <span class="platform-label">macOS</span>
     <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.macos-aarch64.dmg" class="download-link" target="_blank">Apple Silicon</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.macos-x86_64.dmg" class="download-link" target="_blank">Intel</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel</a>
     </div>
   </div>
   <div class="download-platform">
     <span class="platform-label">Linux</span>
     <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank">x64.tar</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank">aarch64.tar</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank" rel="noopener">x64.tar</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.42a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank" rel="noopener">aarch64.tar</a>
     </div>
   </div>
 </div>

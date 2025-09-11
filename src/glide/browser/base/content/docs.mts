@@ -113,15 +113,18 @@ export async function markdown_to_html(
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
       <head>
-        <title>${state.title ?? "Glide Docs"}</title>
         <meta charset="utf-8" />
+        <title>${state.title ?? "Glide Docs"}</title>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=yes"
         />
         <meta name="author" content="Robert Craigie" />
-        <link rel="icon" href="${rel_to_dist}/logo-32.png" />
+        <meta
+          name="description"
+          content="Glide Browser is an extensible and keyboard-focused web browser built on top of Firefox." />
 
+        <link rel="icon" href="${rel_to_dist}/logo-32.png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
         <link rel="preload" as="image" href="${rel_to_dist}/logo.webp" />
@@ -171,6 +174,7 @@ export async function markdown_to_html(
           class="mobile-menu-toggle"
           id="mobile-menu-toggle"
           aria-label="Toggle navigation menu"
+          type="button"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
@@ -223,7 +227,9 @@ export async function markdown_to_html(
                         rel="me"
                         class="github-logo"
                         target="_blank"
-                        ><svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17">
+                        rel="noopener"
+                        aria-label="GitHub"
+                        ><svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17" aria-hidden="true">
                           <path
                             d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.08 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3Z"
                           ></path>
