@@ -23,5 +23,5 @@ jobs:
         run: |
           git fetch
           git checkout -b docs origin/docs
-          git reset --hard main
+          git reset --hard origin/main
           git push --force-with-lease
