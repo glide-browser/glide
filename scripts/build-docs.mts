@@ -40,6 +40,7 @@ const SYMLINKS = [
   "BerkeleyMono-Regular.woff2",
   "_headers",
   "robots.txt",
+  "sitemap.xml",
   "demo.mp4",
   "demo.webm",
   "demo-thumb.webp",

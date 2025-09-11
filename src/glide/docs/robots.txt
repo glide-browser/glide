@@ -1,2 +1,3 @@
 # license-ignore-file
-# placeholder
+
+Sitemap: https://glide-browser.app/sitemap.xml

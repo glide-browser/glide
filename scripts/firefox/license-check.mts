@@ -127,6 +127,7 @@ async function main() {
 async function check_license(relative_path: string): Promise<"skip" | "success" | "fix"> {
   if (
     FILE_IGNORE_REGEXP.test(relative_path)
+    || relative_path.endsWith("sitemap.xml")
     // compiled files
     || relative_path.startsWith("glide/docs/dist")
     || relative_path.startsWith("glide/bundled")
