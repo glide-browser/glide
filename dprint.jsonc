@@ -23,6 +23,7 @@
   "excludes": [
     "**/node_modules",
     "**/*-lock.json",
+    "**/.wrangler",
 
     // firefox
     "engine/",
