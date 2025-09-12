@@ -11,6 +11,8 @@ on:
     branches:
       - docs-production
 
+permissions: {}
+
 jobs:
   deploy:
     name: deploy

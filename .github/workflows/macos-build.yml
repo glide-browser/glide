@@ -22,6 +22,8 @@ on:
         default: ""
         description: "Set the build id"
 
+permissions: {}
+
 jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
