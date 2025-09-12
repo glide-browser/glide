@@ -124,7 +124,7 @@ export async function markdown_to_html(
           name="description"
           content="Glide Browser is an extensible and keyboard-focused web browser built on top of Firefox." />
 
-        <link rel="icon" href="${rel_to_dist}/logo-32.png" />
+        <link rel="icon" href="${rel_to_dist}/logo.png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
         <link rel="preload" as="image" href="${rel_to_dist}/logo.webp" />
