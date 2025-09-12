@@ -122,9 +122,7 @@ export async function markdown_to_html(
         <meta name="author" content="Robert Craigie" />
         <meta
           name="description"
-          content="${
-    state.description ?? " Glide Browser is an extensible and keyboard-focused web browser built on top of Firefox."
-  }" />
+          content="${state.description ?? "an extensible and keyboard-focused web browser."}" />
 
         <link rel="icon" href="${rel_to_dist}/logo.png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
