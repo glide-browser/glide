@@ -40,7 +40,7 @@ jobs:
           xcrun --show-sdk-version
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: Configure git
         run: |
@@ -48,21 +48,21 @@ jobs:
             url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
             "git@github.com:mozilla-firefox/firefox.git"
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "24"
           cache: "pnpm"
 
       - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
         with:
           disable_annotations: true
 
       - name: Expose actions cache variables
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6.4.1
         with:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
@@ -126,21 +126,21 @@ jobs:
           TAG: ${{ inputs.tag }}
 
       - name: Upload DMG
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           retention-days: 10
           name: glide.macos-${{ matrix.arch }}.dmg
           path: ./dist/glide.macos-${{ matrix.arch }}.dmg
 
       - name: Upload MAR
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           retention-days: 10
           name: macos-${{ matrix.arch }}.mar
           path: ./dist/macos-${{ matrix.arch }}.mar
 
       - name: Upload browser upload manifests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           retention-days: 10
           name: macos-${{ matrix.arch }}-updates
