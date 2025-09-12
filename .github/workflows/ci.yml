@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
+      - ci/permissions
   pull_request:
+
+permissions: {}
 
 jobs:
   lint:

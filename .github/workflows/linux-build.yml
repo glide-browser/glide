@@ -17,6 +17,8 @@ on:
         required: true
         type: boolean
 
+permissions: {}
+
 jobs:
   linux-build:
     name: Build - ${{ matrix.arch }}

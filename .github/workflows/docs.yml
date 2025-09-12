@@ -6,6 +6,8 @@ on:
     branches:
       - docs
 
+permissions: {}
+
 jobs:
   deploy:
     environment: docs
