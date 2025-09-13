@@ -6,7 +6,7 @@ on:
     types: [published]
 
 permissions:
-  contents: write
+  contents: write # we're pushing a branch
 
 jobs:
   docs:
@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          persist-credentials: false
 
       # will trigger another deploy
       - name: Reset docs branch

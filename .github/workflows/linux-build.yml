@@ -93,7 +93,7 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.82
           source $HOME/.cargo/env
 
-          if test "${{ matrix.arch }}" = "aarch64"; then
+          if test "$GLIDE_COMPAT" = "aarch64"; then
             rustup target add aarch64-unknown-linux-gnu
           else
             rustup target add x86_64-unknown-linux-gnu
@@ -109,13 +109,13 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          mv dist/glide-*.tar.xz "dist/glide.linux-${{ matrix.arch }}.tar.xz"
-          mv dist/output.mar "dist/linux-${{ matrix.arch }}.mar"
+          mv dist/glide-*.tar.xz "dist/glide.linux-$GLIDE_COMPAT.tar.xz"
+          mv dist/output.mar "dist/linux-$GLIDE_COMPAT.mar"
 
       - name: Upload tar to release
         if: inputs.tag
         run: |
-          gh release upload $TAG ./dist/glide.linux-${{ matrix.arch }}.tar.xz --clobber
+          gh release upload $TAG ./dist/glide.linux-$GLIDE_COMPAT.tar.xz --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
           TAG: ${{ inputs.tag }}

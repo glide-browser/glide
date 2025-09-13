@@ -18,6 +18,9 @@ jobs:
   macos-sign:
     name: Sign
     runs-on: "macos-15"
+    env:
+      GLIDE_COMPAT: ${{ matrix.arch }}
+
     timeout-minutes: 40
     environment: release
 
@@ -139,7 +142,7 @@ jobs:
       - name: Upload signed DMG to release
         if: inputs.tag
         run: |
-          gh release upload $TAG ./engine/glide.macos-${{ matrix.arch }}.dmg#glide.macos-${{ matrix.arch }}-signed.dmg --clobber
+          gh release upload $TAG ./engine/glide.macos-$GLIDE_COMPAT.dmg#glide.macos-$GLIDE_COMPAT-signed.dmg --clobber
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
           TAG: ${{ inputs.tag }}

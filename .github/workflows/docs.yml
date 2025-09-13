@@ -8,6 +8,7 @@ on:
 
 jobs:
   deploy:
+    name: deploy
     environment: docs
 
     runs-on: ubuntu-latest
