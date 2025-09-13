@@ -40,9 +40,9 @@ jobs:
       - name: Create draft release
         run: |
           if gh release view $VERSION > /dev/null 2>&1; then
-            gh release edit $VERSION --prerelease --draft --title "$VERSION" --target "${{ github.sha }}"
+            gh release edit $VERSION --draft --title "$VERSION" --target "${{ github.sha }}"
           else
-            gh release create $VERSION --prerelease --draft --title "$VERSION" --target "${{ github.sha }}"
+            gh release create $VERSION --draft --title "$VERSION" --target "${{ github.sha }}"
           fi
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
