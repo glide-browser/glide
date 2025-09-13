@@ -24,7 +24,7 @@ jobs:
     runs-on: depot-macos-14
     env:
       CARGO_TERM_COLOR: always
-      GLIDE_PLATFORM: darwin
+      GLIDE_PLATFORM: macos
       GLIDE_RELEASE: true
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
