@@ -14,6 +14,10 @@ margin-bottom: revert !important;
 
 # Changelog
 
+# 0.1.43a
+
+This release is mostly minor docs changes and an internal rehaul of the build system.
+
 # 0.1.42a
 
 Initial public release!
