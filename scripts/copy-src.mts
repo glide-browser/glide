@@ -5,8 +5,6 @@
  *
  * So we workaround this by emulating symlinks using a file system watcher that copies files when they're
  * modified.
- *
- * Note: this should really be managed by glider.
  */
 
 import chokidar from "chokidar";
@@ -53,7 +51,7 @@ export async function main() {
           }
 
           if (abs_path.endsWith(".patch")) {
-            // these are managed by glider
+            // these are managed by `pnpm firefox:patch`
             return true;
           }
 

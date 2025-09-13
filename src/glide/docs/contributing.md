@@ -68,7 +68,7 @@ Primer on Glide specific concepts:
 
 - Note this means you cannot use any TS syntax that has a runtime effect, e.g. `enum`
 
-2. We use [Glider](#glider) to patch the Firefox source code
+2. We have an internal script `pnpm firefox:patch` to [patch](https://github.com/glide-browser/glide/blob/main/scripts/firefox/patch.mts) the Firefox source code
 3. Development practically requires running an FS watcher, see below.
 
 ## Working on Glide

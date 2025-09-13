@@ -1,6 +1,8 @@
 import * as execa from "execa";
 import { ENGINE_DIR } from "../canonical-paths.mts";
 
+export const GLOB_ALL_FILES = ["**/*", "**/.*", ".*"];
+
 export async function run(file: string, args: string[], options?: execa.Options): Promise<execa.Result> {
   console.log("+", file, ...args);
   return execa.execa(file, args, {
