@@ -16,7 +16,6 @@ pnpm build:docs:html
 pnpm build:docs:index
 pnpm build:js
 
-pnpm glider set brand glide
 pnpm firefox:patch
 pnpm dev:once
 pnpm build:types

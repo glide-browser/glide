@@ -1,3 +1,3 @@
-import config from "../glider.json" with { type: "json" };
+import config from "../firefox.json" with { type: "json" };
 
 process.stdout.write(config.brands.glide.release.displayVersion);

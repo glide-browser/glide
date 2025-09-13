@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import ini from "ini";
 import Path from "node:path";
 import xml from "xmlbuilder2";
-import config from "../../glider.json" with { type: "json" };
+import config from "../../firefox.json" with { type: "json" };
 import { assert_never } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { DIST_DIR } from "../canonical-paths.mts";
 import {

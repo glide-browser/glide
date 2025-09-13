@@ -3,7 +3,7 @@ import { execa, ExecaError } from "execa";
 import { ensureSymlink, exists } from "fs-extra";
 import fs from "fs/promises";
 import Path from "node:path";
-import config from "../../glider.json" with { type: "json" };
+import config from "../../firefox.json" with { type: "json" };
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
 import { get_platform, GLOB_ALL_FILES } from "./util.mts";
 

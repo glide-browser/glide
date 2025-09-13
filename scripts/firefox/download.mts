@@ -1,7 +1,7 @@
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import meow from "meow";
-import config from "../../glider.json" with { type: "json" };
+import config from "../../firefox.json" with { type: "json" };
 import { ENGINE_DIR, ROOT_DIR } from "../canonical-paths.mts";
 import { engine_run, run } from "./util.mts";
 

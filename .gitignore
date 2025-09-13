@@ -1,5 +1,4 @@
 .dotbuild/
-.glider/
 engine/
 firefox-*/
 node_modules/

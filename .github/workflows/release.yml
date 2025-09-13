@@ -32,9 +32,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Glider config
-        run: pnpm glider set brand glide
-
       - name: Get version
         id: version
         run: |

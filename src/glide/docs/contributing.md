@@ -206,14 +206,6 @@ Now, hints will only be cleared once activated or when `<Esc>` is pressed.
 
 ## Concepts
 
-### Glider
-
-Glide makes use of [Glider](https://github.com/glide-browser/glider) to apply patches to the Firefox source code.
-
-Glider is part of a long chain of forks starting from [Melon](https://github.com/pulse-browser/browser) making it easier to apply patches to Firefox.
-
-However, Glider is just one part of how we patch Firefox. The [dev watcher](#working-on-glide) will also copy files into the Firefox source tree as they're changed. We do this because Firefox has builtin security measures that, reasonably, disallow reading symlinks to files _outside_ of the firefox source directory while in the content process. This means we can't rely on just setting up symlinks.
-
 ### TypeScript build system
 
 We take a quite non-standard approach to shipping TS files where an FS watcher strips all of the TS syntax and replaces it with spaces before writing it to a relative `path:./dist/$name.js` file.
