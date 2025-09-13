@@ -4,9 +4,10 @@ set -eux
 
 cd "$(dirname "$0")/.."
 
-pnpm i
-
-pnpm firefox:download
+if [[ ! " $* " =~ " --offline " ]]; then
+  pnpm i
+  pnpm firefox:download
+fi
 
 ./scripts/bundle.sh
 ./scripts/generate-types.sh
