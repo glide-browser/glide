@@ -31,14 +31,14 @@ export async function engine_run(
 export type Platform = "macos" | "linux";
 
 export function get_platform(): Platform {
-  const env = process.env["GLIDER_PLATFORM"];
+  const env = process.env["GLIDE_PLATFORM"];
   if (env) {
     switch (env) {
       case "macos":
       case "linux":
         return env;
       default:
-        throw new Error(`Unexpected GLIDER_PLATFORM value: ${env}; expected 'macos' | 'linux'`);
+        throw new Error(`Unexpected GLIDE_PLATFORM value: ${env}; expected 'macos' | 'linux'`);
     }
   }
 
@@ -53,14 +53,14 @@ export function get_platform(): Platform {
 }
 
 export function get_compat_mode(): "aarch64" | "x86_64" | null {
-  const env = process.env["GLIDER_COMPAT"];
+  const env = process.env["GLIDE_COMPAT"];
   if (env) {
     switch (env) {
       case "aarch64":
       case "x86_64":
         return env;
       default:
-        throw new Error(`Unexpected GLIDER_COMPAT value: ${env}; expected 'aarch64' | 'x86_64'`);
+        throw new Error(`Unexpected GLIDE_COMPAT value: ${env}; expected 'aarch64' | 'x86_64'`);
     }
   }
 

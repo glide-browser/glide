@@ -31,7 +31,7 @@ export RUSTFLAGS="-C target-feature=+v8.3a -Ctarget-cpu=apple-m1"
 
 export VERBOSE=1
 
-if test "$GLIDER_COMPAT" = "x86_64"; then
+if test "$GLIDE_COMPAT" = "x86_64"; then
     ac_add_options --target=x86_64-apple-darwin
 
     ac_add_options --enable-wasm-avx
@@ -44,7 +44,7 @@ if test "$GLIDER_COMPAT" = "x86_64"; then
     export RUSTFLAGS="-Ctarget-cpu=nehalem"
 fi
 
-if test "$GLIDER_COMPAT" = "aarch64"; then
+if test "$GLIDE_COMPAT" = "aarch64"; then
     ac_add_options --enable-clang-plugin
     ac_add_options --target=aarch64-apple-darwin
     ac_add_options --enable-optimize="-O3 -mcpu=apple-m1 -march=armv8.3-a+simd"

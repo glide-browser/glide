@@ -24,10 +24,10 @@ jobs:
     runs-on: depot-macos-14
     env:
       CARGO_TERM_COLOR: always
-      GLIDER_PLATFORM: darwin
+      GLIDE_PLATFORM: darwin
       GLIDE_RELEASE: true
       GLIDE_DISABLE_PGO: 1
-      GLIDER_COMPAT: ${{ matrix.arch }}
+      GLIDE_COMPAT: ${{ matrix.arch }}
 
     strategy:
       fail-fast: false

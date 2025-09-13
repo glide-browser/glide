@@ -117,7 +117,7 @@ jobs:
           pnpm bootstrap
 
           cd engine
-          export GLIDER_PLATFORM="darwin"
+          export GLIDE_PLATFORM="darwin"
           export PATH="$(python3 -m site --user-base)/bin":$PATH
           ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
           cd ..

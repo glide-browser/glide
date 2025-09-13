@@ -24,10 +24,10 @@ jobs:
     runs-on: ${{ matrix.arch == 'x86_64' && 'depot-ubuntu-24.04-16' || 'depot-ubuntu-24.04-arm-16' }}
     env:
       CARGO_TERM_COLOR: always
-      GLIDER_PLATFORM: linux
+      GLIDE_PLATFORM: linux
       GLIDE_RELEASE: true
       GLIDE_DISABLE_PGO: 1
-      GLIDER_COMPAT: ${{ matrix.arch }}
+      GLIDE_COMPAT: ${{ matrix.arch }}
 
     strategy:
       fail-fast: false
