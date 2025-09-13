@@ -13,9 +13,9 @@
     "dev:once": "pnpm tsn scripts/dev.mts",
 
     "build": "pnpm tsn scripts/firefox/build.mts",
-    "package": "pnpm glider package",
+    "package": "pnpm tsn scripts/firefox/package.mts",
 
-    "launch": "pnpm glider run",
+    "launch": "./engine/mach run",
     "mach": "./engine/mach",
 
     "bundle": "bash ./scripts/bundle.sh",
@@ -59,6 +59,7 @@
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/fs-extra": "^11.0.4",
     "@types/hast": "^3.0.4",
+    "@types/ini": "^4.1.1",
     "@types/node": "^24.3.0",
     "@types/webidl2": "^24.4.3",
     "chalk": "^5.6.0",
@@ -70,6 +71,7 @@
     "fast-check": "^4.3.0",
     "fs-extra": "^11.3.1",
     "html-assets-hash": "^1.0.5",
+    "ini": "^5.0.0",
     "meow": "^13.2.0",
     "p-queue": "^8.1.0",
     "pagefind": "^1.4.0",
@@ -77,7 +79,8 @@
     "ts-morph": "^26.0.0",
     "type-fest": "^4.41.0",
     "webextension-polyfill": "github:glide-browser/webextension-types",
-    "webidl2": "^24.5.0"
+    "webidl2": "^24.5.0",
+    "xmlbuilder2": "^3.1.1"
   },
   "packageManager": "pnpm@10.11.0",
   "private": true

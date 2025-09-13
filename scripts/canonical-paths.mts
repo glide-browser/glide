@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 
 export const ROOT_DIR = Path.join(Path.dirname(fileURLToPath(import.meta.url)), "..");
 
+export const DIST_DIR = Path.join(ROOT_DIR, "dist");
 export const ENGINE_DIR = Path.join(ROOT_DIR, "engine");
 
 export const SRC_DIR = Path.join(ROOT_DIR, "src");
