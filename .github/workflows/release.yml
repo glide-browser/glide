@@ -38,7 +38,7 @@ jobs:
       - name: Get version
         id: version
         run: |
-          echo "version=$(pnpm glider get version)" >> $GITHUB_OUTPUT
+          echo "version=$(pnpm tsn scripts/version.mts)" >> $GITHUB_OUTPUT
 
       - name: Create draft release
         run: |
