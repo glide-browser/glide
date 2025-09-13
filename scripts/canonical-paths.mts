@@ -18,4 +18,5 @@ export const DOCS_DIST_DIR = Path.join(DOCS_DIR, "dist");
 export const TUTOR_DIR = Path.join(GLIDE_BROWSER_DIR, "components", "tutor");
 export const TUTOR_DIST_DIR = Path.join(TUTOR_DIR, "dist");
 
-export const BRANDING_DIR = Path.join(ROOT_DIR, "configs", "branding");
+export const CONFIGS_DIR = Path.join(ROOT_DIR, "configs");
+export const BRANDING_DIR = Path.join(CONFIGS_DIR, "branding");

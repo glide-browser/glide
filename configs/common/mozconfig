@@ -1,13 +1,23 @@
 # Browser branding
-ac_add_options --with-app-name=${binName}
+ac_add_options --with-app-name=glide
 ac_add_options --with-app-basename=glide
+ac_add_options --with-branding=browser/branding/glide
 
-export MOZ_USER_DIR="${name}"
+export MOZ_USER_DIR="Glide Browser"
 export MOZ_APP_BASENAME=glide
-export MOZ_BRANDING_DIRECTORY=${brandingDir}
-export MOZ_OFFICIAL_BRANDING_DIRECTORY=${brandingDir}
+export MOZ_BRANDING_DIRECTORY=browser/branding/glide
+export MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/glide
+# macos only
+export MOZ_MACBUNDLE_NAME="Glide.app"
 
 ac_add_options --with-distribution-id=app.glide-browser
+
+export GLIDE_FIREFOX_VERSION=${firefox_version}
+export MOZ_APPUPDATE_HOST=updates.glide-browser.app
+
+# updates
+ac_add_options --enable-unverified-updates
+ac_add_options --enable-update-channel=glide
 
 # Uncomment if builds are too resource hungry
 # mk_add_options MOZ_MAKE_FLAGS="-j4"
@@ -50,3 +60,6 @@ if test "$GLIDE_RELEASE"; then
   ac_add_options --enable-hardening
   ac_add_options --enable-proxy-bypass-protection
 fi
+
+# change this if you need to
+ac_add_options --disable-debug
