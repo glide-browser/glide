@@ -726,8 +726,11 @@ class RenderState {
       });
     }
 
-    // check if this is a markdown file
-    if (href.endsWith(".md") || href.startsWith("#") || href.replace(/\.md#.*/, ".md")) {
+    // check if this is a markdown / html file
+    if (
+      href.endsWith(".html") || href.endsWith(".md") || href.startsWith("#")
+      || href.replace(/\.md#.*/, ".md").endsWith(".md")
+    ) {
       return new Markdoc.Tag(
         "a",
         { ...node.attributes, href: href.replace(/\.md/, ".html") },
@@ -738,7 +741,7 @@ class RenderState {
     // otherwise assume it's a link to a source file:
     if (!href.startsWith("/")) {
       throw new Error(
-        `non-markdown links (${href}) to files in the repository must use full paths, e.g. \`/src/glide/moz.build\``,
+        `non-markdown links (${href}) to source files in the repository must use full paths, e.g. \`/src/glide/moz.build\``,
       );
     }
 
