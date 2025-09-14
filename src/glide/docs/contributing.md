@@ -6,8 +6,7 @@ You must also verify that your system has the dependencies that Firefox requires
 
 - [MacOS](https://firefox-source-docs.mozilla.org/setup/macos_build.html)
 - [Linux](https://firefox-source-docs.mozilla.org/setup/linux_build.html)
-- [Windows](https://firefox-source-docs.mozilla.org/setup/windows_build.html)
-- [Windows WSL](https://firefox-source-docs.mozilla.org/setup/windows_wsl_build.html)
+- Windows is not officially supported, but [WSL](https://firefox-source-docs.mozilla.org/setup/windows_wsl_build.html) may work
 
 After cloning the repository
 
