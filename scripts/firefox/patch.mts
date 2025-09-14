@@ -153,7 +153,11 @@ async function branding_patch(ctx: Context) {
 }
 
 export async function patch_mozconfig() {
-  const changeset = await execa("git", ["rev-parse", "HEAD"]).then((res) => res.stdout.trim());
+  const changeset = process.env["GLIDE_REVISION"]
+    ?? await execa("git", ["rev-parse", "HEAD"]).then((res) => res.stdout.trim()).catch((err) => {
+      console.warn("Could not resolve changeset due to error", err);
+      return "";
+    });
 
   const common_config = await fs.readFile(Path.join(CONFIGS_DIR, "common", "mozconfig"), "utf8").then((contents) =>
     contents
