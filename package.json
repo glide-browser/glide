@@ -32,6 +32,8 @@
     "lint": "./scripts/lint.sh",
     "fix": "pnpm fmt",
 
+    "export": "pnpm tsn scripts/firefox/export.mts",
+    "firefox:export": "pnpm tsn scripts/firefox/export.mts",
     "firefox:patch": "pnpm tsn scripts/firefox/patch.mts",
     "firefox:download": "pnpm tsn scripts/firefox/download.mts",
     "firefox:version": "pnpm tsn scripts/firefox/version.mts",
