@@ -34,3 +34,34 @@ export function assert_present<T>(
 
   throw new Error(detail ?? `assert_present: impossible to call: ${JSON.stringify(value)}`);
 }
+
+/**
+ * Assert an invariant. An \`AssertionError\` will be thrown if `value` is falsy.
+ */
+export function assert(value: unknown, message?: string): asserts value {
+  if (!value) {
+    throw new AssertionError({ message, actual: value });
+  }
+}
+
+/**
+ * Throws an error if the given value is not truthy.
+ *
+ * Returns the value if it is truthy.
+ */
+export function ensure<T>(value: T, message?: string): T extends false | "" | 0 | 0n | null | undefined ? never : T {
+  if (!value) {
+    throw new AssertionError({ message: message ?? `Expected a truthy value, got \`${value}\``, actual: value });
+  }
+
+  // @ts-ignore
+  return value;
+}
+
+export class AssertionError extends Error {
+  actual: unknown;
+
+  constructor(props: { message: string | undefined; actual: unknown }) {
+    super(props.message ?? `Expected \`${props.actual}\` to be truthy`);
+  }
+}

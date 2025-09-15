@@ -6,6 +6,7 @@
 const { WINDOW_PROPERTIES } = ChromeUtils.importESModule("chrome://glide/content/sandbox-properties.mjs");
 const Dedent = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
 const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
+const { AssertionError } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 /**
  * Represents an object returned by {@link create_sandbox}.
@@ -104,12 +105,4 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     wantComponents: false,
     sandboxPrototype: proto,
   }) as any;
-}
-
-class AssertionError extends Error {
-  actual: unknown;
-
-  constructor(props: { message: string | undefined; actual: unknown }) {
-    super(props.message ?? `Expected \`${props.actual}\` to be truthy`);
-  }
 }
