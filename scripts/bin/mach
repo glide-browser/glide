@@ -2,7 +2,7 @@
 
 set -e
 
-cd "$(dirname "$0")/../engine/"
+cd "$(dirname "$0")/../../engine/"
 
 # turn `src/` paths into relative `engine/` paths, this is helpful for
 # auto-completions, e.g. `mach test src/glide/browser/base/content/test/config`
