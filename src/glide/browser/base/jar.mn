@@ -18,6 +18,7 @@ glide.jar:
   content/extensions.mjs                       (content/dist/extensions.mjs)
   content/sandbox.mjs                          (content/dist/sandbox.mjs)
   content/sandbox-properties.mjs               (content/sandbox-properties.mjs)
+  content/document-mirror.mjs                  (content/dist/document-mirror.mjs)
   content/browser.mjs                          (content/dist/browser.mjs)
   content/motions.mjs                          (content/dist/motions.mjs)
   content/hinting.mjs                          (content/dist/hinting.mjs)
