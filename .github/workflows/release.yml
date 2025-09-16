@@ -75,7 +75,6 @@ jobs:
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       APPLE_APP_ID_PASSWORD: ${{ secrets.APPLE_APP_ID_PASSWORD }}
       PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       artifacts: true
 

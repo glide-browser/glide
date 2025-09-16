@@ -13,6 +13,23 @@ on:
         description: "Upload DMG to CI artifacts instead of the release directly"
         required: true
         type: boolean
+    secrets:
+      MACOS_P12_BASE64:
+        required: true
+      MACOS_P12_PASSWORD:
+        required: true
+      REPO_ACCESS_TOKEN:
+        required: true
+      APPLE_DEVELOPER_ID:
+        required: true
+      APPLE_ACCOUNT_ID:
+        required: true
+      APPLE_TEAM_ID:
+        required: true
+      APPLE_APP_ID_PASSWORD:
+        required: true
+      PROVISIONING_PROFILE_BASE64:
+        required: true
 
 jobs:
   macos-sign:
