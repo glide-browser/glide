@@ -20,6 +20,7 @@ const HintsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/h
 const WhichKeyPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/which-key.mjs", {
   global: "current",
 });
+const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
@@ -291,7 +292,8 @@ class GlideBrowserClass {
   #sandbox: Sandbox | null = null;
   get config_sandbox() {
     this.#sandbox ??= create_sandbox({
-      document,
+      window: this._hidden_window,
+      document: this._mirrored_document,
       console,
       get glide() {
         return GlideBrowser.api;
@@ -301,6 +303,27 @@ class GlideBrowserClass {
       },
     });
     return this.#sandbox;
+  }
+
+  /**
+   * Used for exposing DOM APIs that are unrelated to the top chrome window.
+   */
+  get _hidden_browser(): nsIWindowlessBrowser {
+    // note: this needs to be defined as a standalone property so that it is never GC'd
+    return redefine_getter(this, "_hidden_browser", Services.appShell.createWindowlessBrowser(/* isChrome */ false));
+  }
+
+  get _hidden_window(): HiddenWindow {
+    return assert_present(this._hidden_browser.browsingContext.window) as HiddenWindow;
+  }
+
+  /**
+   * A mirror of the chrome `Document` so it can be mutated / accessed without giving
+   * full access to the underlying `ChromeWindow`.
+   */
+  get _mirrored_document(): MirroredDocument {
+    const target = this._hidden_browser.browsingContext.window!.document!;
+    return redefine_getter(this, "_mirrored_document", DocumentMirror.mirror_into_document(document, target));
   }
 
   #reload_config_clear_properties: Set<string> = new Set();
@@ -1924,7 +1947,8 @@ function make_glide_api(): typeof glide {
         const config_str = await IOUtils.readUTF8(path);
 
         const sandbox = create_sandbox({
-          document,
+          document: GlideBrowser._mirrored_document,
+          window: GlideBrowser._hidden_window,
           console,
           get glide(): Glide {
             return {

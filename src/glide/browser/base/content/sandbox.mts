@@ -3,6 +3,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+/**
+ * When invoked in the main thread, our sandbox is constructed from two primitives:
+ *
+ * 1. An `nsIWindowlessBrowser`[1] created through `nsIAppShellService.createWindowlessBrowser()`[2] so that we can expose the DOM APIs safely
+ *    without allowing access to a window defined in a chrome context.
+ * 2. A `Document` that mirrors[3] the chrome UI by constructing bi-directional `MutationObserver`s, so that the UI can be modified directly without
+ *    exposing anything from the actual `Document` that renders the UI so that no chrome properties can be leaked, e.g. if we gave direct access
+ *    to the chrome `Document` then `document.defaultView` could be used to directly access the `ChromeWindow` powering everything.
+ *
+ * These two properties should mean that breaking the sandbox through the DOM APIs is impossible.
+ *
+ * [1]: https://searchfox.org/firefox-main/rev/d0ff31da7cb418d2d86b0d83fecd7114395e5d46/xpfe/appshell/nsIWindowlessBrowser.idl
+ * [2]: https://searchfox.org/firefox-main/rev/d0ff31da7cb418d2d86b0d83fecd7114395e5d46/xpfe/appshell/nsIAppShellService.idl#55
+ * [3]: https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/document-mirror.mts
+ */
+
 const { WINDOW_PROPERTIES } = ChromeUtils.importESModule("chrome://glide/content/sandbox-properties.mjs");
 const Dedent = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
 const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
@@ -17,9 +33,9 @@ export type Sandbox = { glide: Glide; browser: Browser.Browser; document: Docume
 
 interface SandboxProps {
   console: typeof console;
-  document: Document | null;
+  document: MirroredDocument | null;
+  window: HiddenWindow | null;
   browser: typeof browser;
-  // TODO(glide): support accessing the glide API from the content process
   glide: typeof glide | null;
 }
 
@@ -79,10 +95,8 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     },
   };
 
-  if (props.document) {
-    for (
-      const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(props.document.defaultView))
-    ) {
+  if (props.window) {
+    for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(props.window))) {
       if (!WINDOW_PROPERTIES.has(name)) {
         continue;
       }
@@ -92,7 +106,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
         ...(descriptor.get
           ? {
             // rebind the getter to ensure it is called on the originating object
-            get: descriptor.get.bind(props.document.defaultView),
+            get: descriptor.get.bind(props.window),
           }
           : undefined),
         enumerable: true,

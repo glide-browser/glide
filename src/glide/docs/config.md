@@ -20,9 +20,9 @@ Glide will only consider the _first_ config file that matches and will not load 
 
 ## Config evaluation
 
-The config file source is converted to JS through type stripping with [ts-blank-space](https://bloomberg.github.io/ts-blank-space/).
+The config file source is converted to JS through type stripping with [ts-blank-space](https://bloomberg.github.io/ts-blank-space/). This means you can only use syntax that is [erasable](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-8.html#the---erasablesyntaxonly-option).
 
-This means you can only use syntax that is [erasable](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-8.html#the---erasablesyntaxonly-option).
+It is also executed in the main browser process inside a sandbox with its own [Realm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model#realms).
 
 ## Importing types
 
