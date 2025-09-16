@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 53b6ab87b9b21caaecfc4fca2caa44e79ab1fdf3..eb0d62b44965f19f9d54d3747c1cb1ffa4331038 100644
+index dd170f73438017cc7f2d89033f387c9f49d2eab4..bf28d72e4205ef5702b016e251808ac1bd34eb31 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3461,3 +3461,5 @@ pref("browser.ipProtection.enabled", false);
- pref("browser.ipProtection.variant", "");
- pref("browser.ipProtection.log", false);
- pref("browser.ipProtection.guardian.endpoint", "https://vpn.mozilla.org/");
+@@ -3478,3 +3478,5 @@ pref("toolkit.rust-components.logging.crates", "");
+ 
+ // Log level for the internal logs in `AppServicesTracing.sys.mjs`
+ pref("toolkit.rust-components.logging.internal-level", "Warn");
 +
 +#include glide.js

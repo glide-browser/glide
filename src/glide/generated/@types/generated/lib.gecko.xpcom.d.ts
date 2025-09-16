@@ -1295,6 +1295,7 @@ interface nsIScriptSecurityManager extends nsISupports {
   activateDomainPolicy(): nsIDomainPolicy;
   readonly domainPolicyActive: boolean;
   policyAllowsScript(aDomain: nsIURI): boolean;
+  readonly firstUnexpectedJavaScriptLoad: string;
 }
 
 // https://searchfox.org/mozilla-central/source/toolkit/components/captivedetect/nsICaptivePortalDetector.idl
@@ -2577,7 +2578,6 @@ interface nsIDOMWindowUtils extends nsISupports, Enums<typeof nsIDOMWindowUtils_
   readonly MOUSE_BUTTONS_MIDDLE_BUTTON?: 4;
   readonly MOUSE_BUTTONS_4TH_BUTTON?: 8;
   readonly MOUSE_BUTTONS_5TH_BUTTON?: 16;
-  readonly MOUSE_BUTTONS_NOT_SPECIFIED?: -1;
   readonly DIRECTION_LTR?: 0;
   readonly DIRECTION_RTL?: 1;
   readonly DIRECTION_NOT_SET?: 2;
@@ -2603,10 +2603,8 @@ interface nsIDOMWindowUtils extends nsISupports, Enums<typeof nsIDOMWindowUtils_
   isFirstPaint: boolean;
   getPresShellId(): u32;
   isCORSSafelistedRequestHeader(name: string, value: string): boolean;
-  sendMouseEvent(aType: string, aX: float, aY: float, aButton: i32, aClickCount: i32, aModifiers: i32, aIgnoreRootScrollFrame?: boolean, aPressure?: float, aInputSourceArg?: u16, aIsDOMEventSynthesized?: boolean, aIsWidgetEventSynthesized?: boolean, aButtons?: i32, aIdentifier?: u32): boolean;
   sendTouchEvent(aType: string, aIdentifiers: u32[], aXs: i32[], aYs: i32[], aRxs: u32[], aRys: u32[], aRotationAngles: float[], aForces: float[], aTiltXs: i32[], aTiltYs: i32[], aTwists: i32[], aModifiers: i32, aAsyncEnabled?: nsIDOMWindowUtils.AsyncEnabledOption): boolean;
   sendTouchEventAsPen(aType: string, aIdentifier: u32, aX: i32, aY: i32, aRx: u32, aRy: u32, aRotationAngle: float, aForce: float, aTiltX: i32, aTiltY: i32, aTwist: i32, aModifier: i32, aAsyncEnabled?: nsIDOMWindowUtils.AsyncEnabledOption): boolean;
-  sendMouseEventToWindow(aType: string, aX: float, aY: float, aButton: i32, aClickCount: i32, aModifiers: i32, aIgnoreRootScrollFrame?: boolean, aPressure?: float, aInputSourceArg?: u16, aIsDOMEventSynthesized?: boolean, aIsWidgetEventSynthesized?: boolean, aButtons?: i32, aIdentifier?: u32): void;
   sendTouchEventToWindow(aType: string, aIdentifiers: u32[], aXs: i32[], aYs: i32[], aRxs: u32[], aRys: u32[], aRotationAngles: float[], aForces: float[], aTiltXs: i32[], aTiltYs: i32[], aTwists: i32[], aModifiers: i32): boolean;
   sendWheelEvent(aX: float, aY: float, aDeltaX: double, aDeltaY: double, aDeltaZ: double, aDeltaMode: u32, aModifiers: i32, aLineOrPageDeltaX: i32, aLineOrPageDeltaY: i32, aOptions: u32, aCallback?: nsISynthesizedEventCallback): void;
   sendNativeKeyEvent(aNativeKeyboardLayout: i32, aNativeKeyCode: i32, aModifierFlags: u32, aCharacters: string, aUnmodifiedCharacters: string, aCallback?: nsISynthesizedEventCallback): void;
@@ -3716,9 +3714,15 @@ interface nsIQuotaFullOriginMetadataResult extends nsISupports {
   readonly group: string;
   readonly origin: string;
   readonly storageOrigin: string;
+  readonly private: boolean;
   readonly persistenceType: string;
-  readonly persisted: boolean;
   readonly lastAccessTime: i64;
+  readonly lastMaintenanceDate: i32;
+  readonly accessed: boolean;
+  readonly persisted: boolean;
+  readonly clientUsages: string;
+  readonly originUsage: u64;
+  readonly quotaVersion: u32;
 }
 
 interface nsIQuotaUsageResult extends nsISupports {
@@ -4466,7 +4470,6 @@ interface nsIHTMLEditor extends nsISupports {
   removeInlineProperty(aProperty: string, aAttribute: string): void;
   nodeIsBlock(aNode: Node): boolean;
   insertHTML(aInputString: string): void;
-  rebuildDocumentFromSource(aSourceString: string): void;
   insertElementAtSelection(aElement: Element, aDeleteSelection: boolean): void;
   updateBaseURL(): void;
   selectElement(aElement: Element): void;
@@ -9599,10 +9602,6 @@ type nsIOpenSignedAppFileCallback = Callable<{
   openSignedAppFileFinished(rv: nsresult, aZipReader: nsIZipReader, aSignatureInfos: nsIAppSignatureInfo[]): void;
 }>
 
-type nsIAsyncBoolCallback = Callable<{
-  onResult(result: boolean): void;
-}>
-
 type nsICertVerificationCallback = Callable<{
   verifyCertFinished(aPRErrorCode: i32, aVerifiedChain: nsIX509Cert[], aHasEVPolicy: boolean): void;
 }>
@@ -9664,7 +9663,6 @@ interface nsIX509CertDB extends nsISupports, Enums<typeof nsIX509CertDB_VerifyUs
   addCertFromBase64(base64: string, trust: string): nsIX509Cert;
   getCerts(): nsIX509Cert[];
   asPKCS7Blob(certList: nsIX509Cert[]): string;
-  asyncHasThirdPartyRoots(callback: nsIAsyncBoolCallback): void;
   getAndroidCertificateFromAlias(alias: string): nsIX509Cert;
 }
 
@@ -16072,7 +16070,6 @@ interface nsIXPCComponents_Interfaces {
   nsIX509Cert: nsJSIID<nsIX509Cert>;
   nsIAppSignatureInfo: nsJSIID<nsIAppSignatureInfo, typeof nsIAppSignatureInfo_SignatureAlgorithm>;
   nsIOpenSignedAppFileCallback: nsJSIID<nsIOpenSignedAppFileCallback>;
-  nsIAsyncBoolCallback: nsJSIID<nsIAsyncBoolCallback>;
   nsICertVerificationCallback: nsJSIID<nsICertVerificationCallback>;
   nsIX509CertDB: nsJSIID<nsIX509CertDB, typeof nsIX509CertDB_VerifyUsage>;
   nsIX509CertValidity: nsJSIID<nsIX509CertValidity>;

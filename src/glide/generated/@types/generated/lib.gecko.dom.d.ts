@@ -355,6 +355,10 @@ interface CSSCustomPropertyRegisteredEventInit extends EventInit {
     propertyDefinition: InspectorCSSPropertyDefinition;
 }
 
+interface CSSMatrixComponentOptions {
+    is2D?: boolean;
+}
+
 interface CSSNumericType {
     angle?: number;
     flex?: number;
@@ -1148,6 +1152,11 @@ interface GPUExtent3DDict {
 interface GPUExternalTextureBindingLayout {
 }
 
+interface GPUExternalTextureDescriptor extends GPUObjectDescriptorBase {
+    colorSpace?: PredefinedColorSpace;
+    source: HTMLVideoElement | VideoFrame;
+}
+
 interface GPUFragmentState extends GPUProgrammableStage {
     targets: GPUColorTargetState[];
 }
@@ -1640,6 +1649,11 @@ interface InspectorFontFeature {
     languageSystem: string;
     script: string;
     tag: string;
+}
+
+interface InspectorNearestColor {
+    colorName: string;
+    exact: boolean;
 }
 
 interface InspectorRGBATuple {
@@ -2872,7 +2886,7 @@ interface ProfilerMarkerOptions {
     captureStack?: boolean;
     category?: string;
     innerWindowId?: number;
-    startTime?: DOMHighResTimeStamp;
+    startTime?: number;
 }
 
 interface ProgressEventInit extends EventInit {
@@ -3812,6 +3826,23 @@ interface SupportsOptions {
 
 interface SvcOutputMetadata {
     temporalLayerId?: number;
+}
+
+interface SynthesizeMouseEventData {
+    button?: number;
+    buttons?: number;
+    clickCount?: number;
+    identifier?: number;
+    inputSource?: number;
+    modifiers?: number;
+    pressure?: number;
+}
+
+interface SynthesizeMouseEventOptions {
+    ignoreRootScrollFrame?: boolean;
+    isDOMEventSynthesized?: boolean;
+    isWidgetEventSynthesized?: boolean;
+    toWindow?: boolean;
 }
 
 interface TCPServerSocketEventInit extends EventInit {
@@ -5522,6 +5553,28 @@ declare var CSSAnimation: {
     isInstance: IsInstance<CSSAnimation>;
 };
 
+interface CSSColor extends CSSColorValue {
+    alpha: CSSNumberish;
+    channels: CSSNumericValue[];
+    colorSpace: CSSKeywordish;
+}
+
+declare var CSSColor: {
+    prototype: CSSColor;
+    new(colorSpace: CSSKeywordish, channels: CSSColorPercent[], alpha?: CSSNumberish): CSSColor;
+    isInstance: IsInstance<CSSColor>;
+};
+
+interface CSSColorValue extends CSSStyleValue {
+}
+
+declare var CSSColorValue: {
+    prototype: CSSColorValue;
+    new(): CSSColorValue;
+    isInstance: IsInstance<CSSColorValue>;
+    parse(cssText: string): CSSColorValue | CSSStyleValue;
+};
+
 interface CSSConditionRule extends CSSGroupingRule {
     readonly conditionText: string;
 }
@@ -5620,6 +5673,41 @@ declare var CSSGroupingRule: {
     isInstance: IsInstance<CSSGroupingRule>;
 };
 
+interface CSSHSL extends CSSColorValue {
+    alpha: CSSColorPercent;
+    h: CSSColorAngle;
+    l: CSSColorPercent;
+    s: CSSColorPercent;
+}
+
+declare var CSSHSL: {
+    prototype: CSSHSL;
+    new(h: CSSColorAngle, s: CSSColorPercent, l: CSSColorPercent, alpha?: CSSColorPercent): CSSHSL;
+    isInstance: IsInstance<CSSHSL>;
+};
+
+interface CSSHWB extends CSSColorValue {
+    alpha: CSSNumberish;
+    b: CSSNumberish;
+    h: CSSNumericValue;
+    w: CSSNumberish;
+}
+
+declare var CSSHWB: {
+    prototype: CSSHWB;
+    new(h: CSSNumericValue, w: CSSNumberish, b: CSSNumberish, alpha?: CSSNumberish): CSSHWB;
+    isInstance: IsInstance<CSSHWB>;
+};
+
+interface CSSImageValue extends CSSStyleValue {
+}
+
+declare var CSSImageValue: {
+    prototype: CSSImageValue;
+    new(): CSSImageValue;
+    isInstance: IsInstance<CSSImageValue>;
+};
+
 interface CSSImportRule extends CSSRule {
     readonly href: string;
     readonly layerName: string | null;
@@ -5669,6 +5757,32 @@ declare var CSSKeywordValue: {
     prototype: CSSKeywordValue;
     new(value: string): CSSKeywordValue;
     isInstance: IsInstance<CSSKeywordValue>;
+};
+
+interface CSSLCH extends CSSColorValue {
+    alpha: CSSColorPercent;
+    c: CSSColorPercent;
+    h: CSSColorAngle;
+    l: CSSColorPercent;
+}
+
+declare var CSSLCH: {
+    prototype: CSSLCH;
+    new(l: CSSColorPercent, c: CSSColorPercent, h: CSSColorAngle, alpha?: CSSColorPercent): CSSLCH;
+    isInstance: IsInstance<CSSLCH>;
+};
+
+interface CSSLab extends CSSColorValue {
+    a: CSSColorNumber;
+    alpha: CSSColorPercent;
+    b: CSSColorNumber;
+    l: CSSColorPercent;
+}
+
+declare var CSSLab: {
+    prototype: CSSLab;
+    new(l: CSSColorPercent, a: CSSColorNumber, b: CSSColorNumber, alpha?: CSSColorPercent): CSSLab;
+    isInstance: IsInstance<CSSLab>;
 };
 
 interface CSSLayerBlockRule extends CSSGroupingRule {
@@ -5784,6 +5898,16 @@ declare var CSSMathValue: {
     isInstance: IsInstance<CSSMathValue>;
 };
 
+interface CSSMatrixComponent extends CSSTransformComponent {
+    matrix: DOMMatrix;
+}
+
+declare var CSSMatrixComponent: {
+    prototype: CSSMatrixComponent;
+    new(matrix: DOMMatrixReadOnly, options?: CSSMatrixComponentOptions): CSSMatrixComponent;
+    isInstance: IsInstance<CSSMatrixComponent>;
+};
+
 interface CSSMediaRule extends CSSConditionRule {
     readonly media: MediaList;
 }
@@ -5856,6 +5980,32 @@ declare var CSSNumericValue: {
     parse(cssText: string): CSSNumericValue;
 };
 
+interface CSSOKLCH extends CSSColorValue {
+    alpha: CSSColorPercent;
+    c: CSSColorPercent;
+    h: CSSColorAngle;
+    l: CSSColorPercent;
+}
+
+declare var CSSOKLCH: {
+    prototype: CSSOKLCH;
+    new(l: CSSColorPercent, c: CSSColorPercent, h: CSSColorAngle, alpha?: CSSColorPercent): CSSOKLCH;
+    isInstance: IsInstance<CSSOKLCH>;
+};
+
+interface CSSOKLab extends CSSColorValue {
+    a: CSSColorNumber;
+    alpha: CSSColorPercent;
+    b: CSSColorNumber;
+    l: CSSColorPercent;
+}
+
+declare var CSSOKLab: {
+    prototype: CSSOKLab;
+    new(l: CSSColorPercent, a: CSSColorNumber, b: CSSColorNumber, alpha?: CSSColorPercent): CSSOKLab;
+    isInstance: IsInstance<CSSOKLab>;
+};
+
 interface CSSPageDescriptors {
 }
 
@@ -5868,6 +6018,16 @@ declare var CSSPageRule: {
     prototype: CSSPageRule;
     new(): CSSPageRule;
     isInstance: IsInstance<CSSPageRule>;
+};
+
+interface CSSPerspective extends CSSTransformComponent {
+    length: CSSPerspectiveValue;
+}
+
+declare var CSSPerspective: {
+    prototype: CSSPerspective;
+    new(length: CSSPerspectiveValue): CSSPerspective;
+    isInstance: IsInstance<CSSPerspective>;
 };
 
 interface CSSPositionTryDescriptors {
@@ -5906,6 +6066,33 @@ declare var CSSPseudoElement: {
     prototype: CSSPseudoElement;
     new(): CSSPseudoElement;
     isInstance: IsInstance<CSSPseudoElement>;
+};
+
+interface CSSRGB extends CSSColorValue {
+    alpha: CSSColorPercent;
+    b: CSSColorRGBComp;
+    g: CSSColorRGBComp;
+    r: CSSColorRGBComp;
+}
+
+declare var CSSRGB: {
+    prototype: CSSRGB;
+    new(r: CSSColorRGBComp, g: CSSColorRGBComp, b: CSSColorRGBComp, alpha?: CSSColorPercent): CSSRGB;
+    isInstance: IsInstance<CSSRGB>;
+};
+
+interface CSSRotate extends CSSTransformComponent {
+    angle: CSSNumericValue;
+    x: CSSNumberish;
+    y: CSSNumberish;
+    z: CSSNumberish;
+}
+
+declare var CSSRotate: {
+    prototype: CSSRotate;
+    new(angle: CSSNumericValue): CSSRotate;
+    new(x: CSSNumberish, y: CSSNumberish, z: CSSNumberish, angle: CSSNumericValue): CSSRotate;
+    isInstance: IsInstance<CSSRotate>;
 };
 
 interface CSSRule {
@@ -5959,6 +6146,18 @@ declare var CSSRuleList: {
     isInstance: IsInstance<CSSRuleList>;
 };
 
+interface CSSScale extends CSSTransformComponent {
+    x: CSSNumberish;
+    y: CSSNumberish;
+    z: CSSNumberish;
+}
+
+declare var CSSScale: {
+    prototype: CSSScale;
+    new(x: CSSNumberish, y: CSSNumberish, z?: CSSNumberish): CSSScale;
+    isInstance: IsInstance<CSSScale>;
+};
+
 interface CSSScopeRule extends CSSGroupingRule {
     readonly end: string | null;
     readonly start: string | null;
@@ -5968,6 +6167,37 @@ declare var CSSScopeRule: {
     prototype: CSSScopeRule;
     new(): CSSScopeRule;
     isInstance: IsInstance<CSSScopeRule>;
+};
+
+interface CSSSkew extends CSSTransformComponent {
+    ax: CSSNumericValue;
+    ay: CSSNumericValue;
+}
+
+declare var CSSSkew: {
+    prototype: CSSSkew;
+    new(ax: CSSNumericValue, ay: CSSNumericValue): CSSSkew;
+    isInstance: IsInstance<CSSSkew>;
+};
+
+interface CSSSkewX extends CSSTransformComponent {
+    ax: CSSNumericValue;
+}
+
+declare var CSSSkewX: {
+    prototype: CSSSkewX;
+    new(ax: CSSNumericValue): CSSSkewX;
+    isInstance: IsInstance<CSSSkewX>;
+};
+
+interface CSSSkewY extends CSSTransformComponent {
+    ay: CSSNumericValue;
+}
+
+declare var CSSSkewY: {
+    prototype: CSSSkewY;
+    new(ay: CSSNumericValue): CSSSkewY;
+    isInstance: IsInstance<CSSSkewY>;
 };
 
 interface CSSStartingStyleRule extends CSSGroupingRule {
@@ -6004,6 +6234,7 @@ interface CSSStyleRule extends CSSGroupingRule {
     selectorText: string;
     readonly style: CSSStyleDeclaration;
     readonly styleMap: StylePropertyMap;
+    getScopeRootFor(selectorIndex: number, element: Element, pseudo?: string, includeVisitedStyle?: boolean): Element | null;
     getSelectorWarnings(): SelectorWarning[];
     selectorMatchesElement(selectorIndex: number, element: Element, pseudo?: string, includeVisitedStyle?: boolean): boolean;
     selectorSpecificityAt(index: number, desugared?: boolean): number;
@@ -6056,6 +6287,32 @@ declare var CSSSupportsRule: {
     isInstance: IsInstance<CSSSupportsRule>;
 };
 
+interface CSSTransformComponent {
+    is2D: boolean;
+    toMatrix(): DOMMatrix;
+    toString(): string;
+}
+
+declare var CSSTransformComponent: {
+    prototype: CSSTransformComponent;
+    new(): CSSTransformComponent;
+    isInstance: IsInstance<CSSTransformComponent>;
+};
+
+interface CSSTransformValue extends CSSStyleValue {
+    readonly is2D: boolean;
+    readonly length: number;
+    toMatrix(): DOMMatrix;
+    forEach(callbackfn: (value: CSSTransformComponent, key: number, parent: CSSTransformValue) => void, thisArg?: any): void;
+    [index: number]: CSSTransformComponent;
+}
+
+declare var CSSTransformValue: {
+    prototype: CSSTransformValue;
+    new(transforms: CSSTransformComponent[]): CSSTransformValue;
+    isInstance: IsInstance<CSSTransformValue>;
+};
+
 interface CSSTransition extends Animation {
     readonly transitionProperty: string;
     addEventListener<K extends keyof AnimationEventMap>(type: K, listener: (this: CSSTransition, ev: AnimationEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6068,6 +6325,18 @@ declare var CSSTransition: {
     prototype: CSSTransition;
     new(): CSSTransition;
     isInstance: IsInstance<CSSTransition>;
+};
+
+interface CSSTranslate extends CSSTransformComponent {
+    x: CSSNumericValue;
+    y: CSSNumericValue;
+    z: CSSNumericValue;
+}
+
+declare var CSSTranslate: {
+    prototype: CSSTranslate;
+    new(x: CSSNumericValue, y: CSSNumericValue, z?: CSSNumericValue): CSSTranslate;
+    isInstance: IsInstance<CSSTranslate>;
 };
 
 interface CSSUnitValue extends CSSNumericValue {
@@ -8770,7 +9039,7 @@ declare var FormDataEvent: {
 };
 
 interface FragmentDirective {
-    createTextDirectiveForSelection(): Promise<string>;
+    createTextDirectiveForRanges(ranges: Range[]): Promise<string>;
     getTextDirectiveRanges(): Range[];
     removeAllTextDirectives(): void;
 }
@@ -9049,6 +9318,7 @@ interface GPUDevice extends EventTarget, GPUObjectBase {
     createShaderModule(descriptor: GPUShaderModuleDescriptor): GPUShaderModule;
     createTexture(descriptor: GPUTextureDescriptor): GPUTexture;
     destroy(): void;
+    importExternalTexture(descriptor: GPUExternalTextureDescriptor): GPUExternalTexture;
     popErrorScope(): Promise<GPUError | null>;
     pushErrorScope(filter: GPUErrorFilter): void;
     addEventListener<K extends keyof GPUDeviceEventMap>(type: K, listener: (this: GPUDevice, ev: GPUDeviceEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -23886,6 +24156,7 @@ interface Window extends EventTarget, AnimationFrameProvider, GlobalCrypto, Glob
     shouldReportForServiceWorkerScope(aScope: string): boolean;
     sizeToContent(constraints?: SizeToContentConstraints): void;
     stop(): void;
+    synthesizeMouseEvent(type: string, offsetX: number, offsetY: number, mouseEventData?: SynthesizeMouseEventData, options?: SynthesizeMouseEventOptions): boolean;
     updateCommands(action: string): void;
     readonly STATE_MAXIMIZED: 1;
     readonly STATE_MINIMIZED: 2;
@@ -24810,6 +25081,8 @@ interface XULTreeElement extends XULElement {
     focused: boolean;
     readonly rowHeight: number;
     readonly rowWidth: number;
+    readonly scrollbarMaxPosition: number;
+    readonly scrollbarPosition: number;
     readonly treeBody: Element | null;
     view: MozTreeView | null;
     beginUpdateBatch(): void;
@@ -24929,7 +25202,7 @@ declare namespace ChromeUtils {
     var domProcessChild: nsIDOMProcessChild | null;
     var recentJSDevError: any;
     function CreateOriginAttributesFromOriginSuffix(suffix: string): OriginAttributesDictionary;
-    function addProfilerMarker(name: string, options?: ProfilerMarkerOptions | DOMHighResTimeStamp, text?: string): void;
+    function addProfilerMarker(name: string, options?: ProfilerMarkerOptions | number, text?: string): void;
     function androidMoveTaskToBack(): void;
     function base64URLDecode(string: string, options: Base64URLDecodeOptions): ArrayBuffer;
     function base64URLEncode(source: BufferSource, options: Base64URLEncodeOptions): string;
@@ -24983,6 +25256,7 @@ declare namespace ChromeUtils {
     function nondeterministicGetWeakSetKeys(aSet: any): any;
     function notifyDevToolsClosed(): void;
     function notifyDevToolsOpened(): void;
+    function now(): number;
     function originAttributesMatchPattern(originAttrs?: OriginAttributesDictionary, pattern?: OriginAttributesPatternDictionary): boolean;
     function originAttributesToSuffix(originAttrs?: OriginAttributesDictionary): string;
     function privateNoteIntentionalCrash(): void;
@@ -25096,6 +25370,7 @@ declare namespace InspectorUtils {
     function getUsedFontFaces(range: Range, maxRanges?: number, skipCollapsedWhitespace?: boolean): InspectorFontFace[];
     function hasPseudoClassLock(element: Element, pseudoClass: string): boolean;
     function hasRulesModifiedByCSSOM(sheet: CSSStyleSheet): boolean;
+    function hsvToRgb(r: number, g: number, b: number): number[] | Float32Array;
     function isCustomElementName(name: string | null, namespaceURI: string | null): boolean;
     function isElementThemed(element: Element): boolean;
     function isIgnorableWhitespace(dataNode: CharacterData): boolean;
@@ -25103,10 +25378,13 @@ declare namespace InspectorUtils {
     function isUsedColorSchemeDark(element: Element): boolean;
     function isValidCSSColor(colorString: string): boolean;
     function parseStyleSheet(sheet: CSSStyleSheet, input: string): void;
+    function relativeLuminance(r: number, g: number, b: number): number;
     function removeContentState(element: Element, state: number, clearActiveDocument?: boolean): boolean;
     function removePseudoClassLock(element: Element, pseudoClass: string): void;
     function replaceBlockRuleBodyTextInStylesheet(styleSheetText: string, line: number, column: number, newBodyText: string): string | null;
     function rgbToColorName(r: number, g: number, b: number): string;
+    function rgbToHsv(r: number, g: number, b: number): number[] | Float32Array;
+    function rgbToNearestColorName(r: number, g: number, b: number): InspectorNearestColor;
     function setContentState(element: Element, state: number): boolean;
     function setDynamicToolbarMaxHeight(aContext: BrowsingContext | null, aHeight: number): void;
     function setVerticalClipping(aContext: BrowsingContext | null, aOffset: number): void;
@@ -25829,6 +26107,7 @@ declare function setScrollMarks(marks: number[], onHorizontalScrollbar?: boolean
 declare function shouldReportForServiceWorkerScope(aScope: string): boolean;
 declare function sizeToContent(constraints?: SizeToContentConstraints): void;
 declare function stop(): void;
+declare function synthesizeMouseEvent(type: string, offsetX: number, offsetY: number, mouseEventData?: SynthesizeMouseEventData, options?: SynthesizeMouseEventOptions): boolean;
 declare function updateCommands(action: string): void;
 declare function toString(): string;
 declare var ownerGlobal: WindowProxy | null;
@@ -25996,7 +26275,13 @@ type BlobPart = BufferSource | Blob | string;
 type BodyInit = XMLHttpRequestBodyInit;
 type BufferSource = ArrayBufferView | ArrayBuffer;
 type COSEAlgorithmIdentifier = number;
+type CSSColorAngle = CSSNumberish | CSSKeywordish;
+type CSSColorNumber = CSSNumberish | CSSKeywordish;
+type CSSColorPercent = CSSNumberish | CSSKeywordish;
+type CSSColorRGBComp = CSSNumberish | CSSKeywordish;
+type CSSKeywordish = string | CSSKeywordValue;
 type CSSNumberish = number | CSSNumericValue;
+type CSSPerspectiveValue = CSSNumericValue | CSSKeywordish;
 type CSSUnparsedSegment = string | CSSVariableReferenceValue;
 type CanvasImageSource = HTMLOrSVGImageElement | HTMLCanvasElement | HTMLVideoElement | OffscreenCanvas | ImageBitmap | VideoFrame;
 type CanvasSource = HTMLCanvasElement | OffscreenCanvas;
@@ -26030,7 +26315,7 @@ type GLsizei = number;
 type GLsizeiptr = number;
 type GLuint = number;
 type GLuint64 = number;
-type GPUBindingResource = GPUSampler | GPUTexture | GPUTextureView | GPUBuffer | GPUBufferBinding;
+type GPUBindingResource = GPUSampler | GPUTexture | GPUTextureView | GPUBuffer | GPUBufferBinding | GPUExternalTexture;
 type GPUBufferDynamicOffset = number;
 type GPUBufferUsageFlags = number;
 type GPUColor = number[] | GPUColorDict;
@@ -26444,6 +26729,13 @@ interface CSSStyleDeclaration {
     [Symbol.iterator](): IterableIterator<string>;
 }
 
+interface CSSTransformValue {
+    [Symbol.iterator](): IterableIterator<CSSTransformComponent>;
+    entries(): IterableIterator<[number, CSSTransformComponent]>;
+    keys(): IterableIterator<number>;
+    values(): IterableIterator<CSSTransformComponent>;
+}
+
 interface CSSUnparsedValue {
     [Symbol.iterator](): IterableIterator<CSSUnparsedSegment>;
     entries(): IterableIterator<[number, CSSUnparsedSegment]>;
@@ -26514,6 +26806,10 @@ interface FormData {
     entries(): IterableIterator<[string, FormDataEntryValue]>;
     keys(): IterableIterator<string>;
     values(): IterableIterator<FormDataEntryValue>;
+}
+
+interface FragmentDirective {
+    createTextDirectiveForRanges(ranges: Iterable<Range>): Promise<string>;
 }
 
 interface GPUBindingCommandsMixin {

@@ -409,18 +409,16 @@ interface GleanImpl {
     enabled: GleanBoolean;
     experimentCheckboxClick: GleanEventWithExtras<{ enabled?: string }>;
     keyboardShortcut: GleanEventWithExtras<{ enabled?: string, sidebar?: string }>;
-    lengthDisclaimer: GleanEventWithExtras<{ type?: string, length?: string, provider?: string }>;
-    lengthDisclaimerDismissed: GleanEventWithExtras<{ type?: string, provider?: string }>;
+    lengthDisclaimer: GleanEventWithExtras<{ length?: string, provider?: string, type?: string }>;
+    lengthDisclaimerDismissed: GleanEventWithExtras<{ provider?: string, type?: string }>;
     menu: GleanBoolean;
     onboardingClose: GleanEventWithExtras<{ provider?: string, step?: string }>;
-    onboardingContinue: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingFinish: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingLearnMore: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderChoiceDisplayed: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderLearn: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderSelection: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderTerms: GleanEventWithExtras<{ provider?: string, step?: string, text?: string }>;
-    onboardingTextHighlightDisplayed: GleanEventWithExtras<{ provider?: string, step?: string }>;
     page: GleanBoolean;
     promptClick: GleanEventWithExtras<{ content_type?: string, prompt?: string, provider?: string, reader_mode?: string, selection?: string, source?: string }>;
     provider: GleanString;
@@ -458,8 +456,11 @@ interface GleanImpl {
   }
 
   ipprotection: {
+    clickUpgradeButton: GleanEventNoExtras;
     enabled: GleanBoolean;
-    toggled: GleanEventWithExtras<{ enabled?: string }>;
+    toggled: GleanEventWithExtras<{ duration?: string, enabled?: string, userAction?: string }>;
+    usageRx: GleanMemoryDistribution;
+    usageTx: GleanMemoryDistribution;
   }
 
   backgroundUpdate: {
@@ -553,7 +554,7 @@ interface GleanImpl {
     evalUsageSystemContext: GleanEventWithExtras<{ fileinfo?: string, value?: string }>;
     httpsOnlyModeUpgradeTime: Record<"sub_f_aborted"|"sub_f_cxnrefused"|"sub_f_other"|"sub_f_redirectloop"|"sub_f_ssl_badcertdm"|"sub_f_ssl_other"|"sub_f_ssl_selfsignd"|"sub_f_ssl_unkwnissr"|"sub_f_timeout"|"sub_successful"|"top_f_aborted"|"top_f_cxnrefused"|"top_f_other"|"top_f_redirectloop"|"top_f_ssl_badcertdm"|"top_f_ssl_other"|"top_f_ssl_selfsignd"|"top_f_ssl_unkwnissr"|"top_f_timeout"|"top_successful", GleanTimingDistribution>;
     httpsOnlyModeUpgradeType: GleanDualLabeledCounter;
-    javascriptLoadParentProcess: GleanEventWithExtras<{ fileinfo?: string, value?: string }>;
+    javascriptLoadParentProcess: GleanEventWithExtras<{ blocked?: string, fileinfo?: string, value?: string }>;
     referrerPolicyCount: GleanCustomDistribution;
     unexpectedLoad: GleanEventWithExtras<{ contenttype?: string, filedetails?: string, redirects?: string, remotetype?: string, value?: string }>;
     prefUsageContentProcess: GleanEventWithExtras<{ value?: string }>;
@@ -703,6 +704,9 @@ interface GleanImpl {
     newtabCategory: GleanString;
     opened: GleanEventWithExtras<{ newtab_visit_id?: string, source?: string, window_inner_height?: string, window_inner_width?: string }>;
     pingRegistered: Record<string, GleanBoolean>;
+    promoCardClick: GleanEventWithExtras<{ newtab_visit_id?: string }>;
+    promoCardDismiss: GleanEventWithExtras<{ newtab_visit_id?: string }>;
+    promoCardImpression: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     sectionsBlockSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     sectionsFollowSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     sectionsImpression: GleanEventWithExtras<{ content_redacted?: string, is_section_followed?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
@@ -710,6 +714,8 @@ interface GleanImpl {
     sectionsUnfollowSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     selectedTopics: GleanStringList;
     sovAllocation: GleanStringList;
+    sponsNavTrafficRecvd: GleanMemoryDistribution;
+    sponsNavTrafficSent: GleanMemoryDistribution;
     tooltipClick: GleanEventWithExtras<{ feature?: string, newtab_visit_id?: string }>;
     topicSelectionDismiss: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     topicSelectionOpen: GleanEventWithExtras<{ newtab_visit_id?: string }>;
@@ -727,6 +733,13 @@ interface GleanImpl {
     weatherLoadError: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     weatherLocationSelected: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     weatherOpenProviderUrl: GleanEventWithExtras<{ newtab_visit_id?: string }>;
+    widgetsListsChangeDisplay: GleanEventWithExtras<{ display_status?: string, newtab_visit_id?: string }>;
+    widgetsListsImpression: GleanEventWithExtras<{ newtab_visit_id?: string }>;
+    widgetsListsUserEvent: GleanEventWithExtras<{ newtab_visit_id?: string, user_action?: string }>;
+    widgetsTimerChangeDisplay: GleanEventWithExtras<{ display_status?: string, newtab_visit_id?: string }>;
+    widgetsTimerImpression: GleanEventWithExtras<{ newtab_visit_id?: string }>;
+    widgetsTimerToggleNotification: GleanEventWithExtras<{ display_status?: string, newtab_visit_id?: string }>;
+    widgetsTimerUserEvent: GleanEventWithExtras<{ newtab_visit_id?: string, user_action?: string }>;
   }
 
   newtabHandoffPreference: {
@@ -1278,9 +1291,9 @@ interface GleanImpl {
   }
 
   suggest: {
-    ingestDownloadTime: Record<"amo-suggestions"|"amp"|"configuration"|"fakespot-suggestions"|"icon"|"mdn-suggestions"|"weather"|"wikipedia"|"yelp-suggestions", GleanTimingDistribution>;
-    ingestTime: Record<"amo-suggestions"|"amp"|"configuration"|"fakespot-suggestions"|"icon"|"mdn-suggestions"|"weather"|"wikipedia"|"yelp-suggestions", GleanTimingDistribution>;
-    queryTime: Record<"amo"|"amp"|"fakespot"|"mdn"|"weather"|"wikipedia"|"yelp", GleanTimingDistribution>;
+    ingestDownloadTime: Record<"amo-suggestions"|"amp"|"configuration"|"icon"|"mdn-suggestions"|"weather"|"wikipedia"|"yelp-suggestions", GleanTimingDistribution>;
+    ingestTime: Record<"amo-suggestions"|"amp"|"configuration"|"icon"|"mdn-suggestions"|"weather"|"wikipedia"|"yelp-suggestions", GleanTimingDistribution>;
+    queryTime: Record<"amo"|"amp"|"mdn"|"weather"|"wikipedia"|"yelp", GleanTimingDistribution>;
   }
 
   suggestRelevance: {
@@ -1297,7 +1310,6 @@ interface GleanImpl {
     disable: GleanEventWithExtras<{ feature?: string, interaction?: string, n_chars?: string, n_results?: string, n_words?: string, results?: string, sap?: string, search_engine_default_id?: string, search_mode?: string, selected_result?: string }>;
     engagement: GleanEventWithExtras<{ actions?: string, available_semantic_sources?: string, engagement_type?: string, groups?: string, interaction?: string, n_chars?: string, n_results?: string, n_words?: string, provider?: string, results?: string, sap?: string, search_engine_default_id?: string, search_mode?: string, selected_position?: string, selected_result?: string }>;
     exposure: GleanEventWithExtras<{ results?: string, terminal?: string }>;
-    fakespotEngagement: GleanEventWithExtras<{ grade?: string, provider?: string, rating?: string }>;
     heuristicResultMissing: GleanRate;
     keywordExposure: GleanEventWithExtras<{ keyword?: string, result?: string, terminal?: string }>;
     prefMaxResults: GleanQuantity;
@@ -1956,6 +1968,7 @@ interface GleanImpl {
     cssMaskType: GleanCounter;
     cssMasonryAutoFlow: GleanCounter;
     cssMathDepth: GleanCounter;
+    cssMathShift: GleanCounter;
     cssMathStyle: GleanCounter;
     cssMaxBlockSize: GleanCounter;
     cssMaxHeight: GleanCounter;
@@ -2158,6 +2171,7 @@ interface GleanImpl {
     cssTextAlign: GleanCounter;
     cssTextAlignLast: GleanCounter;
     cssTextAnchor: GleanCounter;
+    cssTextAutospace: GleanCounter;
     cssTextCombineUpright: GleanCounter;
     cssTextDecoration: GleanCounter;
     cssTextDecorationColor: GleanCounter;
@@ -2165,6 +2179,7 @@ interface GleanImpl {
     cssTextDecorationSkipInk: GleanCounter;
     cssTextDecorationStyle: GleanCounter;
     cssTextDecorationThickness: GleanCounter;
+    cssTextDecorationTrim: GleanCounter;
     cssTextEmphasis: GleanCounter;
     cssTextEmphasisColor: GleanCounter;
     cssTextEmphasisPosition: GleanCounter;
@@ -2663,6 +2678,7 @@ interface GleanImpl {
     cssMaskType: GleanCounter;
     cssMasonryAutoFlow: GleanCounter;
     cssMathDepth: GleanCounter;
+    cssMathShift: GleanCounter;
     cssMathStyle: GleanCounter;
     cssMaxBlockSize: GleanCounter;
     cssMaxHeight: GleanCounter;
@@ -2865,6 +2881,7 @@ interface GleanImpl {
     cssTextAlign: GleanCounter;
     cssTextAlignLast: GleanCounter;
     cssTextAnchor: GleanCounter;
+    cssTextAutospace: GleanCounter;
     cssTextCombineUpright: GleanCounter;
     cssTextDecoration: GleanCounter;
     cssTextDecorationColor: GleanCounter;
@@ -2872,6 +2889,7 @@ interface GleanImpl {
     cssTextDecorationSkipInk: GleanCounter;
     cssTextDecorationStyle: GleanCounter;
     cssTextDecorationThickness: GleanCounter;
+    cssTextDecorationTrim: GleanCounter;
     cssTextEmphasis: GleanCounter;
     cssTextEmphasisColor: GleanCounter;
     cssTextEmphasisPosition: GleanCounter;
@@ -3345,6 +3363,7 @@ interface GleanImpl {
     jsThenableObjectProto: GleanCounter;
     jsThenableProto: GleanCounter;
     jsThenableStandardProto: GleanCounter;
+    jsUseAsm: GleanCounter;
     jsWasm: GleanCounter;
     jsWasmLegacyExceptions: GleanCounter;
     locationAncestororigins: GleanCounter;
@@ -3705,6 +3724,7 @@ interface GleanImpl {
     jsThenableObjectProto: GleanCounter;
     jsThenableProto: GleanCounter;
     jsThenableStandardProto: GleanCounter;
+    jsUseAsm: GleanCounter;
     jsWasm: GleanCounter;
     jsWasmLegacyExceptions: GleanCounter;
     locationAncestororigins: GleanCounter;
@@ -4127,6 +4147,12 @@ interface GleanImpl {
     requestResult: Record<"permission_denied"|"position_unavailable"|"success"|"timeout", GleanCounter>;
   }
 
+  idbMaintenance: {
+    fallbackFullrestoreMetadata: GleanCounter;
+    metadataRestored: GleanCounter;
+    unknownMetadata: GleanCounter;
+  }
+
   localstorageDatabase: {
     newObjectSetupTime: GleanTimingDistribution;
     requestAllowToCloseResponseTime: GleanTimingDistribution;
@@ -4336,7 +4362,7 @@ interface GleanImpl {
     http3PageLoadTime: Record<string, GleanTimingDistribution>;
     largestContentfulPaint: GleanTimingDistribution;
     largestContentfulPaintFromResponseStart: GleanTimingDistribution;
-    pageLoad: GleanEventWithExtras<{ cache_disposition?: string, delazify_time?: string, dns_lookup_time?: string, document_features?: string, fcp_time?: string, has_ssd?: string, http_ver?: string, js_exec_time?: string, lcp_time?: string, load_time?: string, load_type?: string, redirect_count?: string, redirect_time?: string, response_time?: string, same_origin_nav?: string, time_to_request_start?: string, tls_handshake_time?: string, trr_domain?: string, user_features?: string, using_webdriver?: string }>;
+    pageLoad: GleanEventWithExtras<{ cache_disposition?: string, delazify_time?: string, dns_lookup_time?: string, document_features?: string, fcp_time?: string, has_ssd?: string, http_ver?: string, js_exec_time?: string, lcp_time?: string, load_time?: string, load_type?: string, network_type?: string, redirect_count?: string, redirect_time?: string, response_time?: string, same_origin_nav?: string, time_to_request_start?: string, tls_handshake_time?: string, trr_domain?: string, user_features?: string, using_webdriver?: string }>;
     pageLoadDomain: GleanEventWithExtras<{ document_features?: string, domain?: string, http_ver?: string, lcp_time?: string, load_type?: string, same_origin_nav?: string }>;
   }
 
@@ -4432,6 +4458,18 @@ interface GleanImpl {
 
   securityUi: {
     events: GleanCustomDistribution;
+  }
+
+  unexpectedScriptLoad: {
+    dialogDismissed: GleanEventNoExtras;
+    infobarDismissed: GleanEventNoExtras;
+    infobarShown: GleanEventNoExtras;
+    moreInfoOpened: GleanEventNoExtras;
+    scriptAllowed: GleanEventNoExtras;
+    scriptAllowedOpened: GleanEventNoExtras;
+    scriptBlocked: GleanEventNoExtras;
+    scriptBlockedOpened: GleanEventNoExtras;
+    scriptReported: GleanEventWithExtras<{ script_url?: string, user_email?: string }>;
   }
 
   serviceWorker: {
@@ -4956,13 +4994,6 @@ interface GleanImpl {
     waitTime: GleanTimingDistribution;
   }
 
-  sts: {
-    pollAndEventTheLastCycle: GleanTimingDistribution;
-    pollAndEventsCycle: GleanTimingDistribution;
-    pollBlockTime: GleanTimingDistribution;
-    pollCycle: GleanTimingDistribution;
-  }
-
   hpack: {
     bytesEvictedCompressor: GleanMemoryDistribution;
     bytesEvictedDecompressor: GleanMemoryDistribution;
@@ -5146,6 +5177,10 @@ interface GleanImpl {
     cancel: GleanTimingDistribution;
     failure: GleanTimingDistribution;
     success: GleanTimingDistribution;
+  }
+
+  oskeystore: {
+    returnCodes: GleanEventWithExtras<{ function?: string, result?: string }>;
   }
 
   pkcs11: {
@@ -5752,8 +5787,9 @@ interface GleanImpl {
   }
 
   fog: {
+    dataDirectoryInfo: GleanObject;
     failedIdleRegistration: GleanBoolean;
-    initialization: GleanTimespan;
+    initializations: GleanTimingDistribution;
     initsDuringShutdown: GleanCounter;
     maxPingsPerMinute: GleanQuantity;
   }
@@ -5767,6 +5803,7 @@ interface GleanImpl {
   }
 
   testOnly: {
+    anEvent: GleanEventNoExtras;
     badCode: GleanCounter;
     balloons: GleanObject;
     buttonJars: Record<string, GleanQuantity>;
@@ -7332,6 +7369,7 @@ interface GleanPingsImpl {
   pageload: GleanPingWithReason<"startup"|"threshold">;
   pageloadBaseDomain: GleanPingWithReason<"pageload">;
   useCounters: GleanPingWithReason<"app_shutdown_confirmed"|"idle_startup">;
+  unexpectedScriptLoad: GleanPingNoReason;
   fxAccounts: GleanPingWithReason<"active"|"dirty_startup"|"inactive">;
   sync: GleanPingWithReason<"idchanged"|"schedule"|"shutdown">;
   bounceTrackingProtection: GleanPingNoReason;
@@ -7340,6 +7378,7 @@ interface GleanPingsImpl {
   captchaDetection: GleanPingNoReason;
   crash: GleanPingWithReason<"crash"|"event_found">;
   dauReporting: GleanPingWithReason<"active"|"dirty_startup"|"inactive">;
+  tempFogInitialState: GleanPingWithReason<"startup">;
   collectionDisabledPing: GleanPingNoReason;
   disabledPing: GleanPingNoReason;
   onePingOnly: GleanPingNoReason;

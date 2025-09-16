@@ -1,5 +1,5 @@
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index 3bf3e12062a208fe64921d208ad1bb60457dbd0f..baa047c02a1cd052a8188974ee8bb9619eafdbeb 100644
+index 7423ce4535277abc9009d41aa9869ac96dfdf70d..55f20724241b6b8e9d7b3a4fb8c29f6a31bfced3 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 @@ -60,6 +60,7 @@ const isMSIX =
@@ -10,8 +10,8 @@ index 3bf3e12062a208fe64921d208ad1bb60457dbd0f..baa047c02a1cd052a8188974ee8bb961
  const BASE_MESSAGES = () => [
    {
      id: "FXA_ACCOUNTS_BADGE",
-@@ -1800,7 +1801,7 @@ const BASE_MESSAGES = () => [
-       id: "messagesLoaded",
+@@ -1826,7 +1827,7 @@ const BASE_MESSAGES = () => [
+       id: "selectableProfilesUpdated",
      },
    },
 -];
