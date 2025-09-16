@@ -8,6 +8,9 @@ support-files = []
 ["browser_ipc.js"]
 https_first_disabled = true
 
+["dist/browser_document_mirror.js"]
+https_first_disabled = true
+
 ["dist/browser_tabs_api.js"]
 https_first_disabled = true
 

@@ -10,6 +10,15 @@ declare var gNotificationBox: GlobalBrowser.NotificationBox;
 
 declare var FileUtils: MockedExports.KnownModules["resource://gre/modules/FileUtils.sys.mjs"]["FileUtils"];
 
+declare interface MirroredDocument extends Document {
+  readonly $brand: "mirror";
+}
+
+declare interface HiddenWindow extends Window {
+  /* note: this is a type-level only property */
+  readonly $brand: "hidden";
+}
+
 declare type TestContent = {
   document: Omit<Document, "getElementById"> & {
     getElementById<E extends HTMLElement = HTMLElement>(id: string): E | null;
@@ -183,6 +192,8 @@ declare namespace MockedExports {
     "chrome://glide/content/sandbox.mjs": typeof import("../src/glide/browser/base/content/sandbox.mts");
     "chrome://glide/content/sandbox-properties.mjs":
       typeof import("../src/glide/browser/base/content/sandbox-properties.mjs");
+    "chrome://glide/content/document-mirror.mjs":
+      typeof import("../src/glide/browser/base/content/document-mirror.mts");
     "chrome://glide/content/extensions.mjs": typeof import("../src/glide/browser/base/content/extensions.mts");
     "chrome://glide/content/browser-constants.mjs":
       typeof import("../src/glide/browser/base/content/browser-constants.mts");
