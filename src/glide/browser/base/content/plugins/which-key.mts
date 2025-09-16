@@ -4,8 +4,6 @@
 
 import type { Sandbox } from "../sandbox.mts";
 
-const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
-
 export function init(sandbox: Sandbox) {
   const { glide } = sandbox;
 
@@ -45,10 +43,12 @@ function queue_timeout(ms: number, fn: () => void) {
 class Modal {
   #element: HTMLDivElement;
   #glide: Glide;
+  #dom: Sandbox["DOM"];
 
   constructor(sandbox: Sandbox) {
+    this.#dom = sandbox.DOM;
     this.#glide = sandbox.glide;
-    this.#element = DOM.create_element("div", {
+    this.#element = sandbox.DOM.create_element("div", {
       id: "which-key",
       style: {
         display: "none",
@@ -87,12 +87,12 @@ class Modal {
     const rows = relevant_maps.map(map => {
       const remaining = map.sequence.slice(sequence.length);
 
-      return DOM.create_element("tr", {
+      return this.#dom.create_element("tr", {
         style: {
           height: "var(--glide-cmplt-option-height)",
         },
         children: [
-          DOM.create_element("td", {
+          this.#dom.create_element("td", {
             textContent: pretty_print_keyseq(this.#glide, remaining),
             style: {
               paddingLeft: "1rem",
@@ -102,7 +102,7 @@ class Modal {
               minWidth: "3rem",
             },
           }),
-          DOM.create_element("td", {
+          this.#dom.create_element("td", {
             textContent: get_map_description(map),
             style: {
               paddingRight: "1rem",
@@ -120,14 +120,14 @@ class Modal {
     this.#element.replaceChildren(
       // header
       ...(sequence.length
-        ? [DOM.create_element("div", {
+        ? [this.#dom.create_element("div", {
           style: {
             padding: "0.5rem 1rem",
             borderBottom: "var(--glide-cmplt-border-top)",
             background: "var(--glide-header-first-bg)",
           },
           children: [
-            DOM.create_element("span", {
+            this.#dom.create_element("span", {
               textContent: pretty_print_keyseq(this.#glide, sequence),
               style: {
                 color: "var(--glide-cmplt-fg)",
@@ -139,21 +139,21 @@ class Modal {
         })]
         : []),
       // content
-      DOM.create_element("div", {
+      this.#dom.create_element("div", {
         style: {
           maxHeight: "calc(60vh - 3rem)",
           overflowY: "auto",
           overflowX: "hidden",
         },
         children: [
-          DOM.create_element("table", {
+          this.#dom.create_element("table", {
             style: {
               width: "100%",
               borderSpacing: "0",
               fontSize: "var(--glide-cmplt-font-size)",
             },
             children: [
-              DOM.create_element("tbody", { children: rows }),
+              this.#dom.create_element("tbody", { children: rows }),
             ],
           }),
         ],

@@ -11,7 +11,7 @@ const { AssertionError } = ChromeUtils.importESModule("chrome://glide/content/ut
 /**
  * Represents an object returned by {@link create_sandbox}.
  */
-export type Sandbox = { glide: Glide; browser: Browser.Browser; document: Document } & {
+export type Sandbox = { glide: Glide; browser: Browser.Browser; document: Document; DOM: DOM.Utils } & {
   readonly __brand: unique symbol;
 };
 
