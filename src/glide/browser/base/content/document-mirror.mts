@@ -38,7 +38,7 @@ export function mirror_into_document(source: Document, target: Document): Mirror
     throw new Error("alreading mirroring, call stop_mirroring() first");
   }
 
-  const imported = target.importNode(ensure(source.documentElement), true) as HTMLElement;
+  const imported = import_node(target, ensure(source.documentElement)) as HTMLElement;
   target.replaceChild(imported, ensure(target.documentElement));
 
   // store weak mappings between nodes on each side of the tree, so we know what node each mutation corresponds to
@@ -144,7 +144,7 @@ function apply_mutations(
             }
           } else {
             // new node
-            const clone = to_document.importNode(node, true);
+            const clone = import_node(to_document, node);
             to_parent.insertBefore(clone, before_node);
             store_node_mappings(node, clone, from_to_map, to_from_map);
           }
@@ -206,4 +206,33 @@ function store_node_mappings(
       stack_b.push(children_b[i]!);
     }
   }
+}
+
+/**
+ * This function behaves similarly to `document.importNode(node, true)` but it handles the case
+ * where the given `Node` or any of its children are `XULElement`s, which cannot be safely imported
+ * normally using `document.importNode()` as it may cause a full browser crash due to bad memory access.
+ *
+ * This is a very naive implementation, as it's just intended to result in a node tree that
+ * generally follows the structure of the original, i.e. printing the original tree and the new
+ * tree to a string, should be as close as possible. State on the nodes themselves are not transferred.
+ */
+function import_node(document: Document, node: Node): Node {
+  const imported = node instanceof XULElement ? xul_to_element(document, node) : document.importNode(node);
+
+  for (const child of node.childNodes) {
+    imported.appendChild(import_node(document, child!));
+  }
+
+  return imported;
+}
+
+function xul_to_element(document: Document, element: XULElement): Node {
+  const imported = document.createElement(element.localName);
+
+  for (const attr of element.attributes) {
+    imported.setAttribute(attr.name, attr.value);
+  }
+
+  return imported;
 }

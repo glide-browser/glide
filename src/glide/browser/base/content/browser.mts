@@ -305,31 +305,12 @@ class GlideBrowserClass {
     return this.#sandbox;
   }
 
-  *#iter_chrome_windows(): IterableIterator<ChromeWindow> {
-    const windows = Services.wm.getEnumerator("navigator:browser");
-    for (const window of windows) {
-      yield window as ChromeWindow;
-    }
-  }
-
   /**
    * Used for exposing DOM APIs that are unrelated to the top chrome window.
    */
   get _hidden_browser(): nsIWindowlessBrowser {
-    for (const other_window of this.#iter_chrome_windows()) {
-      if (other_window.$glide_cached_hidden_browser) {
-        return other_window.$glide_cached_hidden_browser;
-      }
-    }
-
     // note: this needs to be defined as a standalone property so that it is never GC'd
-    const browser = redefine_getter(
-      this,
-      "_hidden_browser",
-      Services.appShell.createWindowlessBrowser(/* isChrome */ false),
-    );
-    (window as ChromeWindow).$glide_cached_hidden_browser = browser;
-    return browser;
+    return redefine_getter(this, "_hidden_browser", Services.appShell.createWindowlessBrowser(/* isChrome */ false));
   }
 
   get _hidden_window(): HiddenWindow {
@@ -341,16 +322,8 @@ class GlideBrowserClass {
    * full access to the underlying `ChromeWindow`.
    */
   get _mirrored_document(): MirroredDocument {
-    for (const other_window of this.#iter_chrome_windows()) {
-      if (other_window.$glide_cached_mirror_document) {
-        return other_window.$glide_cached_mirror_document;
-      }
-    }
-
-    const target = this._hidden_browser.browsingContext.window!.document!;
-    const mirror = DocumentMirror.mirror_into_document(document, target);
-    (window as ChromeWindow).$glide_cached_mirror_document = mirror;
-    return redefine_getter(this, "_mirrored_document", mirror);
+    const target = GlideBrowser._hidden_browser.browsingContext.window!.document!;
+    return redefine_getter(this, "_mirrored_document", DocumentMirror.mirror_into_document(document, target));
   }
 
   #reload_config_clear_properties: Set<string> = new Set();

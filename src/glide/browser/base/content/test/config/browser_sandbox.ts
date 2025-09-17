@@ -51,3 +51,12 @@ add_task(async function test_chrome_window_not_accessible() {
     ok(test.success, test.message);
   }
 });
+
+add_task(async function test_basic_elements_are_copied() {
+  const mirror = GlideBrowser.config_sandbox.document;
+
+  // TODO
+  notok(mirror.getElementById("glide-toolbar-mode-button"), "glide mode indicator should be copied");
+  ok(mirror.getElementById("main-window"), "top-level element should be copied");
+  ok(mirror.getElementById("cmd_closeWindow"), "commands should be copied");
+});
