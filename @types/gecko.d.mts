@@ -26,6 +26,11 @@ declare type TestContent = {
   window: Window;
 };
 
+interface ChromeWindow extends Window {
+  $glide_cached_hidden_browser: nsIWindowlessBrowser | undefined;
+  $glide_cached_mirror_document: MirroredDocument | undefined;
+}
+
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`
  *
