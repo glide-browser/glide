@@ -14,6 +14,10 @@ margin-bottom: revert !important;
 
 # Changelog
 
+# 0.1.45a
+
+This release fixes a regression with the document mirror causing a crash when multiple windows are opened.
+
 # 0.1.44a
 
 This release restructures how the config sandbox is evaluated. Previously, it was possible to access the internal `Document` and `ChromeWindow` that Firefox uses to render the browser UI itself.
