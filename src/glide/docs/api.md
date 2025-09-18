@@ -75,6 +75,11 @@ text-decoration: none;
 [`glide.keys.parse()`](#glide.keys.parse)\
 [`glide.unstable`](#glide.unstable)\
 [`glide.unstable.include()`](#glide.unstable.include)\
+[`glide.path`](#glide.path)\
+[`glide.path.cwd`](#glide.path.cwd)\
+[`glide.path.home_dir`](#glide.path.home_dir)\
+[`glide.path.profile_dir`](#glide.path.profile_dir)\
+[`glide.path.join()`](#glide.path.join)\
 [`glide.fs`](#glide.fs)\
 [`glide.fs.read()`](#glide.fs.read)\
 [`glide.messengers`](#glide.messengers)\
@@ -463,6 +468,22 @@ for example, `ts:"shared.glide.ts"` or `ts:"shared/glide.ts"` would work but
 itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} `ts:glide.unstable.include`{% /link %} calls are not supported.
 
 `ts:@example glide.unstable.include("shared.glide.ts")`
+
+## • `glide.path` {% id="glide.path" %}
+
+### `glide.path.cwd` {% id="glide.path.cwd" %}
+
+### `glide.path.home_dir` {% id="glide.path.home_dir" %}
+
+### `glide.path.profile_dir` {% id="glide.path.profile_dir" %}
+
+{% api-heading id="glide.path.join" %}
+glide.path.join(...parts): string
+{% /api-heading %}
+
+Join all arguments together and normalize the resulting path.
+
+Throws an error on non-relative paths.
 
 ## • `glide.fs` {% id="glide.fs" %}
 

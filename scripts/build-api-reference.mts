@@ -323,11 +323,19 @@ function render_method_signature(
   // TODO: make types clickable
   const params = node
     .getChildrenOfKind(ts.SyntaxKind.Parameter)
-    .map(param =>
-      param
-        .getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.Identifier)
-        .getText() + (param.hasQuestionToken() ? "?" : "")
-    )
+    .map(param => {
+      let prefix = "";
+      let index = 0;
+      if (param.getChildAtIndexIfKind(0, ts.SyntaxKind.DotDotDotToken)) {
+        prefix = "...";
+        index++;
+      }
+
+      return prefix + param
+        .getChildAtIndexIfKindOrThrow(index, ts.SyntaxKind.Identifier)
+        .getText()
+        + (param.hasQuestionToken() ? "?" : "");
+    })
     .join(", ");
 
   return `${name}(${params}): ${node.getReturnTypeNode()?.getText() ?? "void"}`;

@@ -1002,3 +1002,39 @@ add_task(async function test_fs_read_file_not_found() {
     is(GlideBrowser.api.g.value.name, "FileNotFoundError");
   });
 });
+
+add_task(async function test_path_cwd() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.path.cwd;
+  });
+  const value = GlideBrowser.api.g.value;
+  ok((value as string).length > 0, "glide.path.cwd should not be empty");
+});
+
+add_task(async function test_path_home_dir() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.path.home_dir;
+  });
+  const value = GlideBrowser.api.g.value;
+  ok((value as string).length > 0, "glide.path.home_dir should not be empty");
+});
+
+add_task(async function test_path_profile_dir() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.path.profile_dir;
+  });
+  const value = GlideBrowser.api.g.value;
+  ok((value as string).length > 0, "glide.path.profile_dir should not be empty");
+});
+
+add_task(async function test_path_join() {
+  await IOUtils.makeDirectory(PathUtils.join("/tmp", "foo", "bar"), { createAncestors: true, ignoreExisting: true });
+  await IOUtils.writeUTF8(PathUtils.join("/tmp", "foo", "bar", "baz.txt"), "");
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.path.join("/tmp", "foo", "bar", "baz.txt");
+  });
+  is(GlideBrowser.api.g.value, "/tmp/foo/bar/baz.txt");
+
+  await IOUtils.remove(PathUtils.join("/tmp", "foo", "bar", "baz.txt"));
+});

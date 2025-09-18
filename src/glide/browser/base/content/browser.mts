@@ -1852,6 +1852,21 @@ function make_glide_api(): typeof glide {
         };
       },
     },
+    path: {
+      get cwd() {
+        return Services.dirsvc.get("CurWorkD", Ci.nsIFile).path;
+      },
+      get profile_dir() {
+        return PathUtils.profileDir;
+      },
+      get home_dir() {
+        return Services.dirsvc.get("Home", Ci.nsIFile).path;
+      },
+
+      join(...parts) {
+        return PathUtils.join(...parts);
+      },
+    },
     fs: {
       async read(path, encoding): Promise<string> {
         if (encoding !== "utf8") {

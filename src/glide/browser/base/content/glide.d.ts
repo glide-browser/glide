@@ -497,6 +497,19 @@ declare global {
       include(path: string): Promise<void>;
     };
 
+    path: {
+      readonly cwd: string;
+      readonly home_dir: string;
+      readonly profile_dir: string;
+
+      /**
+       * Join all arguments together and normalize the resulting path.
+       *
+       * Throws an error on non-relative paths.
+       */
+      join(...parts: string[]): string;
+    };
+
     fs: {
       /**
        * Read the file at the given path.
