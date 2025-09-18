@@ -75,6 +75,8 @@ text-decoration: none;
 [`glide.keys.parse()`](#glide.keys.parse)\
 [`glide.unstable`](#glide.unstable)\
 [`glide.unstable.include()`](#glide.unstable.include)\
+[`glide.fs`](#glide.fs)\
+[`glide.fs.read()`](#glide.fs.read)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
@@ -461,6 +463,21 @@ for example, `ts:"shared.glide.ts"` or `ts:"shared/glide.ts"` would work but
 itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} `ts:glide.unstable.include`{% /link %} calls are not supported.
 
 `ts:@example glide.unstable.include("shared.glide.ts")`
+
+## • `glide.fs` {% id="glide.fs" %}
+
+{% api-heading id="glide.fs.read" %}
+glide.fs.read(path, encoding): Promise<string>
+{% /api-heading %}
+
+Read the file at the given path.
+
+Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+paths are not allowed.
+
+The `encoding` must currently be set to `"utf8"` as that is the only supported encoding.
+
+`ts:@example await glide.fs.read("github.css", "utf8");`
 
 ## • `glide.messengers` {% id="glide.messengers" %}
 

@@ -27,7 +27,13 @@ const { AssertionError } = ChromeUtils.importESModule("chrome://glide/content/ut
 /**
  * Represents an object returned by {@link create_sandbox}.
  */
-export type Sandbox = { glide: Glide; browser: Browser.Browser; document: Document; DOM: DOM.Utils } & {
+export type Sandbox = {
+  glide: Glide;
+  browser: Browser.Browser;
+  document: Document;
+  DOM: DOM.Utils;
+  FileNotFoundError: typeof Error;
+} & {
   readonly __brand: unique symbol;
 };
 
@@ -69,6 +75,8 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     html: Dedent.make_dedent_no_args("html"),
 
     DOM,
+
+    FileNotFoundError,
 
     // helper function for asserting invariants
     ensure(value: unknown, message?: string) {
@@ -119,4 +127,14 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     wantComponents: false,
     sandboxPrototype: proto,
   }) as any;
+}
+
+export class FileNotFoundError extends Error {
+  path: string;
+
+  constructor(message: string, props: { path: string }) {
+    super(message);
+    this.path = props.path;
+    this.name = "FileNotFoundError";
+  }
 }

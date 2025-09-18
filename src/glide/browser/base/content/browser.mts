@@ -30,7 +30,7 @@ const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
-const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
+const { create_sandbox, FileNotFoundError } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
@@ -1852,6 +1852,22 @@ function make_glide_api(): typeof glide {
         };
       },
     },
+    fs: {
+      async read(path, encoding): Promise<string> {
+        if (encoding !== "utf8") {
+          throw new Error("Only utf8 is supported for now");
+        }
+
+        const absolute = resolve_path(path);
+        return await IOUtils.readUTF8(absolute).catch((err) => {
+          if (err instanceof DOMException && err.name === "NotFoundError") {
+            throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
+          }
+
+          throw err;
+        });
+      },
+    },
     modes: {
       register(mode, opts) {
         if (GlideBrowser._modes[mode]) {
@@ -1995,6 +2011,18 @@ function make_glide_api(): typeof glide {
       },
     },
   };
+}
+
+function resolve_path(path: string): string {
+  if (PathUtils.isAbsolute(path)) {
+    return path;
+  }
+
+  if (!GlideBrowser.config_path) {
+    throw new Error("Non absolute paths can only be used when there is a config file defined.");
+  }
+
+  return PathUtils.joinRelative(PathUtils.parent(GlideBrowser.config_path) ?? "/", path);
 }
 
 // only call `.init()` here so that we can ensure `GlideBrowser` is accessible inside `make_glide_api()`

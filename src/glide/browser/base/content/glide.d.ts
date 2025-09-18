@@ -497,6 +497,20 @@ declare global {
       include(path: string): Promise<void>;
     };
 
+    fs: {
+      /**
+       * Read the file at the given path.
+       *
+       * Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+       * paths are not allowed.
+       *
+       * The `encoding` must currently be set to `"utf8"` as that is the only supported encoding.
+       *
+       * @example await glide.fs.read("github.css", "utf8");
+       */
+      read(path: string, encoding: "utf8"): Promise<string>;
+    };
+
     messengers: {
       /**
        * Create a {@link glide.ParentMessenger} that can be used to communicate with the content process.
@@ -635,6 +649,12 @@ declare global {
    * }
    */
   function assert_never(x: never, detail?: string | Error): never;
+
+  class FileNotFoundError extends Error {
+    path: string;
+
+    constructor(message: string, props: { path: string });
+  }
 
   /**
    * Interface used to define types for excmds, intended for declaration merging.

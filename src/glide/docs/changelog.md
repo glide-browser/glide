@@ -14,6 +14,10 @@ margin-bottom: revert !important;
 
 # Changelog
 
+# 0.1.46a
+
+- Added `glide.fs.read(path, encoding)`
+
 # 0.1.45a
 
 This release fixes a regression with the document mirror causing a crash when multiple windows are opened.

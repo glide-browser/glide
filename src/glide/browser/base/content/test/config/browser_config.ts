@@ -966,3 +966,39 @@ add_task(async function test_add_excmd_while_commandline_is_cached() {
     is(GlideTestUtils.commandline.focused_row()?.textContent, "hello", "commandline should show the newly added excmd");
   });
 });
+
+add_task(async function test_fs_read() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    await IOUtils.writeUTF8(PathUtils.join(PathUtils.profileDir, "glide", "thing.css"), ".contents {}");
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        glide.g.value = await glide.fs.read("thing.css", "utf8");
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    is(GlideBrowser.api.g.value, ".contents {}");
+  });
+});
+
+add_task(async function test_fs_read_file_not_found() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        glide.g.value = await glide.fs.read("notfound.css", "utf8").catch((e) => e);
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    ok(
+      GlideBrowser.api.g.value instanceof GlideBrowser.config_sandbox.FileNotFoundError,
+      "reading an undefined file results in a FileNotFoundError",
+    );
+    is(GlideBrowser.api.g.value.name, "FileNotFoundError");
+  });
+});
