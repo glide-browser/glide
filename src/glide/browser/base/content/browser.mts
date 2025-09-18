@@ -292,7 +292,7 @@ class GlideBrowserClass {
   #sandbox: Sandbox | null = null;
   get config_sandbox() {
     this.#sandbox ??= create_sandbox({
-      window: this._hidden_window,
+      window: this._sandbox_window,
       document: this._mirrored_document,
       console,
       get glide() {
@@ -313,7 +313,7 @@ class GlideBrowserClass {
     return redefine_getter(this, "_hidden_browser", Services.appShell.createWindowlessBrowser(/* isChrome */ false));
   }
 
-  get _hidden_window(): HiddenWindow {
+  get _sandbox_window(): HiddenWindow {
     return assert_present(this._hidden_browser.browsingContext.window) as HiddenWindow;
   }
 
@@ -1299,13 +1299,10 @@ class GlideBrowserClass {
       return;
     }
 
-    const glide_event = event as glide.KeyEvent;
-    glide_event.glide_key = keyn;
-
     if (this.next_key_waiter !== null) {
       this.#prevent_keydown(keyn, event);
 
-      this.next_key_waiter.resolve(glide_event);
+      this.next_key_waiter.resolve(this.#keyboard_event_to_glide(event, keyn));
       this.next_key_waiter = null;
       return;
     }
@@ -1314,8 +1311,9 @@ class GlideBrowserClass {
       const waiters = this.next_key_passthrough_waiters;
       this.next_key_passthrough_waiters = [];
 
+      const sandbox_event = this.#keyboard_event_to_glide(event, keyn);
       for (const waiter of waiters) {
-        waiter.resolve(glide_event);
+        waiter.resolve(sandbox_event);
       }
     }
 
@@ -1455,6 +1453,13 @@ class GlideBrowserClass {
       event.preventDefault();
       event.stopImmediatePropagation();
     }
+  }
+
+  #keyboard_event_to_glide(event: KeyboardEvent, keyn: string): glide.KeyEvent {
+    const init = Cu.cloneInto(event.initDict, this._sandbox_window);
+    const sandbox_event = (new this._sandbox_window.KeyboardEvent(event.type, init)) as glide.KeyEvent;
+    sandbox_event.glide_key = keyn;
+    return sandbox_event;
   }
 
   async #on_fullscreen_enter() {
@@ -1948,7 +1953,7 @@ function make_glide_api(): typeof glide {
 
         const sandbox = create_sandbox({
           document: GlideBrowser._mirrored_document,
-          window: GlideBrowser._hidden_window,
+          window: GlideBrowser._sandbox_window,
           console,
           get glide(): Glide {
             return {

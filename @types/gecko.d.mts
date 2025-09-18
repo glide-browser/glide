@@ -14,10 +14,10 @@ declare interface MirroredDocument extends Document {
   readonly $brand: "mirror";
 }
 
-declare interface HiddenWindow extends Window {
+declare type HiddenWindow = Window & typeof globalThis & {
   /* note: this is a type-level only property */
   readonly $brand: "hidden";
-}
+};
 
 declare type TestContent = {
   document: Omit<Document, "getElementById"> & {
