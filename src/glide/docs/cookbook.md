@@ -86,3 +86,21 @@ glide.keymaps.set("normal", "gt", async () => {
 ```
 
 {% /details %}
+
+{% details heading=true %} {% slot "summary" %}Custom keymappings for navigating the command line
+{% /slot %}
+
+```typescript
+glide.keymaps.set(
+  "command",
+  "<c-j>",
+  "commandline_focus_next",
+);
+glide.keymaps.set(
+  "command",
+  "<c-k>",
+  "commandline_focus_back",
+);
+```
+
+{% /details %}
