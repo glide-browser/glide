@@ -1,4 +1,3 @@
-import { exists } from "fs-extra";
 import fs from "fs/promises";
 import ini from "ini";
 import Path from "node:path";
@@ -6,14 +5,8 @@ import xml from "xmlbuilder2";
 import config from "../../firefox.json" with { type: "json" };
 import { assert_never } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { DIST_DIR } from "../canonical-paths.mts";
-import {
-  does_not_exist,
-  engine_run,
-  generate_file_hash,
-  get_compat_mode,
-  get_platform,
-  resolve_obj_dir,
-} from "./util.mts";
+import { does_not_exist, exists } from "../util.mts";
+import { engine_run, generate_file_hash, get_compat_mode, get_platform, resolve_obj_dir } from "./util.mts";
 
 interface ReleaseInfo {
   displayVersion: string;

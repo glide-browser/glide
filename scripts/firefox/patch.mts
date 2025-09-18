@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import { execa, ExecaError } from "execa";
-import { ensureSymlink, exists } from "fs-extra";
 import fs from "fs/promises";
 import Path from "node:path";
 import config from "../../firefox.json" with { type: "json" };
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
+import { ensure_symlink, exists } from "../util.mts";
 import { get_platform, GLOB_ALL_FILES } from "./util.mts";
 
 const PATCH_ARGS = [
@@ -110,7 +110,7 @@ async function setup_symlinks(ctx: Context) {
         await fs.rm(output_path, { force: true });
         await fs.symlink(linked_to, output_path);
       } else {
-        await ensureSymlink(src_path, output_path);
+        await ensure_symlink(src_path, output_path);
       }
     } catch (e) {
       ctx.errors.push(relative_root_path);

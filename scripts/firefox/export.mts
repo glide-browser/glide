@@ -2,7 +2,8 @@ import fs from "fs/promises";
 import meow from "meow";
 import * as Path from "path";
 import { ENGINE_DIR, SRC_DIR } from "../canonical-paths.mts";
-import { does_not_exist, engine_run } from "./util.mts";
+import { does_not_exist } from "../util.mts";
+import { engine_run } from "./util.mts";
 
 const cli = meow({
   importMeta: import.meta,

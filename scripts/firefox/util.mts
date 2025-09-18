@@ -1,5 +1,4 @@
 import * as execa from "execa";
-import { exists } from "fs-extra";
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import { ENGINE_DIR } from "../canonical-paths.mts";
@@ -93,8 +92,4 @@ function assert(value: unknown, message?: string): asserts value {
   if (!value) {
     throw new Error(message ?? `Expected \`${value}\` to be truthy`);
   }
-}
-
-export async function does_not_exist(path: string) {
-  return !(await exists(path));
 }
