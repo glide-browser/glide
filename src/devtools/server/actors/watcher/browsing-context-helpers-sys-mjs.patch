@@ -1,0 +1,15 @@
+diff --git a/devtools/server/actors/watcher/browsing-context-helpers.sys.mjs b/devtools/server/actors/watcher/browsing-context-helpers.sys.mjs
+index d40057a8b9beea5d2794c5a155a858dab4946e33..8ef7826bd2fe2d6f5adedf020a638b3b793293d5 100644
+--- a/devtools/server/actors/watcher/browsing-context-helpers.sys.mjs
++++ b/devtools/server/actors/watcher/browsing-context-helpers.sys.mjs
+@@ -338,7 +338,9 @@ export function getAllBrowsingContextsForContext(sessionContext) {
+       for (const browser of browsingContext.window.document.querySelectorAll(
+         `browser[type="content"]`
+       )) {
+-        walk(browser.browsingContext);
++        if (browser.browsingContext) {
++          walk(browser.browsingContext);
++        }
+       }
+     }
+   }
