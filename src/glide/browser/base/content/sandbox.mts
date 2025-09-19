@@ -111,6 +111,9 @@ export function create_sandbox(props: SandboxProps): Sandbox {
 
       Object.defineProperty(proto, name, {
         ...descriptor,
+        ...(descriptor.value && typeof descriptor.value === "function"
+          ? { value: descriptor.value.bind(props.window) }
+          : undefined),
         ...(descriptor.get
           ? {
             // rebind the getter to ensure it is called on the originating object
