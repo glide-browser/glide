@@ -1862,6 +1862,9 @@ function make_glide_api(): typeof glide {
       get home_dir() {
         return Services.dirsvc.get("Home", Ci.nsIFile).path;
       },
+      get temp_dir() {
+        return PathUtils.tempDir;
+      },
 
       join(...parts) {
         return PathUtils.join(...parts);

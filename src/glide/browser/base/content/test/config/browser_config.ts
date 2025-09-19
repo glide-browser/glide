@@ -16,7 +16,7 @@ const CONFIG_LINE_COL_REGEX = /(?<!@glide\.ts):(\d+):(\d+)/g;
 
 declare global {
   interface GlideGlobals {
-    value?: unknown;
+    value?: any;
     error_message?: unknown;
   }
 }
@@ -1007,24 +1007,28 @@ add_task(async function test_path_cwd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.cwd;
   });
-  const value = GlideBrowser.api.g.value;
-  ok((value as string).length > 0, "glide.path.cwd should not be empty");
+  ok(GlideBrowser.api.g.value.length > 0, "glide.path.cwd should not be empty");
 });
 
 add_task(async function test_path_home_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.home_dir;
   });
-  const value = GlideBrowser.api.g.value;
-  ok((value as string).length > 0, "glide.path.home_dir should not be empty");
+  ok(GlideBrowser.api.g.value.length > 0, "glide.path.home_dir should not be empty");
 });
 
 add_task(async function test_path_profile_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.profile_dir;
   });
-  const value = GlideBrowser.api.g.value;
-  ok((value as string).length > 0, "glide.path.profile_dir should not be empty");
+  ok(GlideBrowser.api.g.value.length > 0, "glide.path.profile_dir should not be empty");
+});
+
+add_task(async function test_path_temp_dir() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.path.temp_dir;
+  });
+  ok(GlideBrowser.api.g.value.length > 0, "glide.path.temp_dir should not be empty");
 });
 
 add_task(async function test_path_join() {

@@ -500,6 +500,7 @@ declare global {
     path: {
       readonly cwd: string;
       readonly home_dir: string;
+      readonly temp_dir: string;
       readonly profile_dir: string;
 
       /**
