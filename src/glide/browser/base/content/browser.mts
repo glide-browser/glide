@@ -30,7 +30,9 @@ const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
-const { create_sandbox, FileNotFoundError } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
+const { create_sandbox, FileNotFoundError, GlideProcessError } = ChromeUtils.importESModule(
+  "chrome://glide/content/sandbox.mjs",
+);
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
@@ -1961,6 +1963,87 @@ function make_glide_api(): typeof glide {
     messengers: {
       create(receiver) {
         return GlideBrowser.create_messenger(receiver);
+      },
+    },
+    process: {
+      async spawn(command, args, opts) {
+        const { Subprocess } = ChromeUtils.importESModule("resource://gre/modules/Subprocess.sys.mjs");
+
+        const stderr = opts?.stderr ?? "pipe";
+        const success_codes = opts?.success_codes ?? [0];
+        const check_exit_code = opts?.check_exit_code ?? true;
+
+        const subprocess = await Subprocess.call({
+          command: await Subprocess.pathSearch(command),
+          arguments: args ?? [],
+          stderr,
+          workdir: opts?.cwd,
+          environment: opts?.env,
+          environmentAppend: opts?.extend_env ?? true,
+        }) as BaseProcess;
+
+        const proc: glide.Process = {
+          exit_code: null,
+          pid: subprocess.pid,
+
+          stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
+          stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
+
+          async wait() {
+            return await exit_promise;
+          },
+
+          async kill(timeout) {
+            await subprocess.kill(timeout);
+            return proc as glide.CompletedProcess;
+          },
+        };
+
+        const exit_promise = subprocess.exitPromise.then(({ exitCode }): glide.CompletedProcess => {
+          const exit_code = exitCode as number;
+
+          proc.exit_code = exit_code;
+
+          if (check_exit_code && !success_codes.includes(exit_code)) {
+            throw new GlideProcessError(
+              `Process exited with a non-zero code ${exit_code}`,
+              proc as glide.CompletedProcess,
+            );
+          }
+
+          return proc as glide.Process & { exit_code: number };
+        });
+
+        return proc;
+
+        function inputpipe_to_readablestream(input_pipe: ProcessInputPipe, name: string): ReadableStream {
+          const stream = new ReadableStream({
+            async pull(controller: ReadableStreamDefaultController) {
+              const text = await input_pipe.readString().catch((err) => {
+                GlideBrowser._log.debug(`error encountered while reading ${name} pipe`, err);
+                return "";
+              });
+
+              if (text === "") {
+                GlideBrowser._log.debug(`closing ${name} pipe`);
+                controller.close();
+              } else {
+                controller.enqueue(text);
+              }
+            },
+
+            cancel() {
+              GlideBrowser._log.debug(`cancelling ${name} pipe`);
+              return input_pipe.close();
+            },
+          });
+
+          return stream;
+        }
+      },
+      async execute(command, args, opts) {
+        const process = await this.spawn(command, args, opts);
+        return await process.wait();
       },
     },
     unstable: {

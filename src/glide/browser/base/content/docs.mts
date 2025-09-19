@@ -41,7 +41,7 @@ interface SidebarEntry {
   target?: string;
 }
 
-const IGNORE_CODE_LANGS = new Set(["glide", "about", "file"]);
+const IGNORE_CODE_LANGS = new Set(["glide", "about", "file", "stderr"]);
 
 // GitHub-style admonition types
 const ADMONITION_TYPES = new Set([

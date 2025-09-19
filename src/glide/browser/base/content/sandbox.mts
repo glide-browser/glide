@@ -138,3 +138,16 @@ export class FileNotFoundError extends Error {
     this.name = "FileNotFoundError";
   }
 }
+
+export class GlideProcessError extends Error {
+  process: glide.CompletedProcess;
+
+  exit_code: number;
+
+  constructor(message: string, process: glide.CompletedProcess) {
+    super(message);
+    this.process = process;
+    this.exit_code = process.exit_code;
+    this.name = "GlideProcessError";
+  }
+}

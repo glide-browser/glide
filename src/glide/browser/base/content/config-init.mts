@@ -116,7 +116,7 @@ const DEFAULT_TSCONFIG = dedent`
     "node_modules"
   ],
   "compilerOptions": {
-    "lib": ["DOM", "ES2022"],
+    "lib": ["ES2024", "DOM", "DOM.AsyncIterable"],
     "types": [
       "./glide.d.ts"
     ],

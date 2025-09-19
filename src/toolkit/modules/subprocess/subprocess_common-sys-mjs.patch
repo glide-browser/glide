@@ -1,0 +1,13 @@
+diff --git a/toolkit/modules/subprocess/subprocess_common.sys.mjs b/toolkit/modules/subprocess/subprocess_common.sys.mjs
+index b50d396b067e258e75bf16f4c45956b888b0d3e4..cef255f28cacf23191ea9645f05687a46d6563cc 100644
+--- a/toolkit/modules/subprocess/subprocess_common.sys.mjs
++++ b/toolkit/modules/subprocess/subprocess_common.sys.mjs
+@@ -275,7 +275,7 @@ class OutputPipe extends Pipe {
+ /**
+  * Represents an input-only pipe, from which data may be read.
+  */
+-class InputPipe extends Pipe {
++export class InputPipe extends Pipe {
+   constructor(...args) {
+     super(...args);
+ 

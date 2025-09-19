@@ -128,3 +128,12 @@ takes_tab({});
 
 // utils
 var _: string = ensure("" as any as string | undefined);
+
+// process API
+
+async function stream_is_iterable() {
+  const proc = await glide.process.spawn("printenv");
+  for await (const chunk of proc.stdout) {
+    var _: string = chunk;
+  }
+}

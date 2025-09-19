@@ -41,6 +41,9 @@ text-decoration: none;
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
+[`glide.process`](#glide.process)\
+[`glide.process.spawn()`](#glide.process.spawn)\
+[`glide.process.execute()`](#glide.process.execute)\
 [`glide.prefs`](#glide.prefs)\
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
@@ -78,6 +81,7 @@ text-decoration: none;
 [`glide.path`](#glide.path)\
 [`glide.path.cwd`](#glide.path.cwd)\
 [`glide.path.home_dir`](#glide.path.home_dir)\
+[`glide.path.temp_dir`](#glide.path.temp_dir)\
 [`glide.path.profile_dir`](#glide.path.profile_dir)\
 [`glide.path.join()`](#glide.path.join)\
 [`glide.fs`](#glide.fs)\
@@ -180,6 +184,33 @@ glide.options.get(name): glide.Options[Name]
 {% /api-heading %}
 
 Returns either a buffer-specific option, or the global version. In that order
+
+## • `glide.process` {% id="glide.process" %}
+
+{% api-heading id="glide.process.spawn" %}
+glide.process.spawn(command, args?, opts?): Promise<glide.Process>
+{% /api-heading %}
+
+Spawn a new process. The given `command` can either be the name of a binary in the `PATH`
+or an absolute path to a binary file.
+
+If the process exits with a non-zero code, an error will be thrown, you can disable this check with `{ check_exit_code: false }`.
+
+```ts
+const proc = await glide.process.spawn("kitty", [
+  "nvim",
+  "glide.ts",
+], { cwd: "~/.dotfiles/glide" });
+console.log("opened kitty with pid", proc.pid);
+```
+
+{% api-heading id="glide.process.execute" %}
+glide.process.execute(command, args?, opts?): Promise<glide.CompletedProcess>
+{% /api-heading %}
+
+Spawn a new process and wait for it to exit.
+
+See {% link href="#glide.process.spawn" class="go-to-def" %} `ts:glide.process.spawn`{% /link %} for more information.
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 
@@ -474,6 +505,8 @@ itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} 
 ### `glide.path.cwd` {% id="glide.path.cwd" %}
 
 ### `glide.path.home_dir` {% id="glide.path.home_dir" %}
+
+### `glide.path.temp_dir` {% id="glide.path.temp_dir" %}
 
 ### `glide.path.profile_dir` {% id="glide.path.profile_dir" %}
 

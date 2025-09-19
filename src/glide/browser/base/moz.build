@@ -20,5 +20,6 @@ BROWSER_CHROME_MANIFESTS += [
     "content/test/messenger/browser.toml",
     "content/test/mode/browser.toml",
     "content/test/motions/browser.toml",
+    "content/test/process/browser.toml",
     "content/test/utils/browser.toml",
 ]

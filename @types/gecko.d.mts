@@ -31,6 +31,9 @@ interface ChromeWindow extends Window {
   $glide_cached_mirror_document: MirroredDocument | undefined;
 }
 
+declare type BaseProcess = import("../engine/toolkit/modules/subprocess/subprocess_common.sys.mjs").BaseProcess;
+declare type ProcessInputPipe = import("../engine/toolkit/modules/subprocess/subprocess_common.sys.mjs").InputPipe;
+
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`
  *
@@ -267,6 +270,8 @@ declare namespace MockedExports {
     "resource://devtools/client/framework/browser-toolbox/Launcher.sys.mjs":
       typeof import("../engine/devtools/client/framework/browser-toolbox/Launcher.sys.mjs");
 
+    "resource://gre/modules/Subprocess.sys.mjs":
+      typeof import("../engine/toolkit/modules/subprocess/Subprocess.sys.mjs");
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
     "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");

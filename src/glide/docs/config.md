@@ -77,7 +77,7 @@ Every other part can be more freely customised.
     "node_modules"
   ],
   "compilerOptions": {
-    "lib": ["DOM", "ES2022"],
+    "lib": ["ES2024", "DOM", "DOM.AsyncIterable"],
     "types": ["./glide.d.ts"],
     "target": "ES2024",
     "module": "nodenext",

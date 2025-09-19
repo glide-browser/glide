@@ -6,7 +6,7 @@
     "moduleDetection": "force",
     "allowJs": true,
     "noEmit": true,
-    "lib": ["dom"],
+    "lib": ["ES2024", "DOM", "DOM.AsyncIterable"],
     /* Type Checking */
     "strict": true,
     "noImplicitAny": true,

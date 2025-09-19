@@ -45,6 +45,32 @@ declare global {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name];
     };
 
+    process: {
+      /**
+       * Spawn a new process. The given `command` can either be the name of a binary in the `PATH`
+       * or an absolute path to a binary file.
+       *
+       * If the process exits with a non-zero code, an error will be thrown, you can disable this check with `{ check_exit_code: false }`.
+       *
+       * ```ts
+       * const proc = await glide.process.spawn('kitty', ['nvim', 'glide.ts'], { cwd: '~/.dotfiles/glide' });
+       * console.log('opened kitty with pid', proc.pid);
+       * ```
+       */
+      spawn(command: string, args?: string[] | null | undefined, opts?: glide.SpawnOptions): Promise<glide.Process>;
+
+      /**
+       * Spawn a new process and wait for it to exit.
+       *
+       * See {@link glide.process.spawn} for more information.
+       */
+      execute(
+        command: string,
+        args?: string[] | null | undefined,
+        opts?: glide.SpawnOptions,
+      ): Promise<glide.CompletedProcess>;
+    };
+
     autocmds: {
       /**
        * Create an autocmd that will be invoked whenever the focused URL changes.
@@ -670,6 +696,12 @@ declare global {
     constructor(message: string, props: { path: string });
   }
 
+  class GlideProcessError extends Error {
+    process: glide.CompletedProcess;
+    exit_code: number;
+    constructor(message: string, process: glide.CompletedProcess);
+  }
+
   /**
    * Interface used to define types for excmds, intended for declaration merging.
    *
@@ -747,6 +779,81 @@ declare global {
        */
       hint_size: string;
     };
+
+    /// @docs-skip
+    export type SpawnOptions = {
+      cwd?: string;
+
+      env?: Record<string, string | null>;
+      extend_env?: boolean;
+
+      success_codes?: number[];
+
+      /**
+       * If `false`, do not throw an error for non-zero exit codes.
+       *
+       * @default true
+       */
+      check_exit_code?: boolean;
+
+      /**
+       * Control where the stderr output is sent.
+       *
+       * If `"pipe"` then sterr is accessible through `process.stderr`.
+       * If `"stdout"` then sterr is mixed with stdout and accessible through `process.stdout`.
+       *
+       * @default "pipe"
+       */
+      stderr?: "pipe" | "stdout";
+    };
+
+    /// @docs-skip
+    export type Process = {
+      pid: number;
+
+      /**
+       * The process exit code.
+       *
+       * `null` if it has not exited yet.
+       */
+      exit_code: number | null;
+
+      /**
+       * A `ReadableStream` of `string`s from the stdout pipe.
+       */
+      stdout: ReadableStream<string>;
+
+      /**
+       * A `ReadableStream` of `string`s from the stderr pipe.
+       *
+       * This is `null` if the `stderr: 'stdout'` option was set as the pipe will be forwarded
+       * to `stdout` instead.
+       */
+      stderr: ReadableStream<string> | null;
+
+      /**
+       * Wait for the process to exit.
+       */
+      wait(): Promise<glide.CompletedProcess>;
+
+      /**
+       * Kill the process.
+       *
+       * On platforms which support it, the process will be sent a `SIGTERM` signal immediately,
+       * so that it has a chance to terminate gracefully, and a `SIGKILL` signal if it hasn't exited
+       * within `timeout` milliseconds.
+       *
+       * @param {integer} [timeout=300]
+       *        A timeout, in milliseconds, after which the process will be forcibly killed.
+       */
+      kill(timeout?: number): Promise<glide.CompletedProcess>;
+    };
+
+    /**
+     * Represents a process that has exited.
+     */
+    /// @docs-skip
+    export type CompletedProcess = glide.Process & { exit_code: number };
 
     export type RGBString = `#${string}`;
 
