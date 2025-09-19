@@ -17,6 +17,8 @@ margin-bottom: revert !important;
 # 0.1.46a
 
 - Added `glide.fs.read(path, encoding)`
+- Added `glide.process.spawn(command, args, opts)`
+- Added `glide.process.execute(command, args, opts)`
 
 # 0.1.45a
 
