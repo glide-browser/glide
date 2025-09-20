@@ -14,11 +14,20 @@ margin-bottom: revert !important;
 
 # Changelog
 
+# 0.1.47a
+
+- Fixed a case where the browser toolbox devtools could crash
+- Fixed issues with certain functions not being callable in the config, e.g. `ts:setTimeout()`
+- Prevented timers from being throttled, namely `ts:setTimeout()`, `ts:setInterval()` and `ts:requestIdleCallback()`
+- Fixed `ts:requestAnimationFrame()` never firing
+- Added `ts:glide.fs.exists(path)`
+- Upated Firefox from `path:144.0b1` to `path:144.0b3`
+
 # 0.1.46a
 
-- Added `glide.fs.read(path, encoding)`
-- Added `glide.process.spawn(command, args, opts)`
-- Added `glide.process.execute(command, args, opts)`
+- Added `ts:glide.fs.read(path, encoding)`
+- Added `ts:glide.process.spawn(command, args, opts)`
+- Added `ts:glide.process.execute(command, args, opts)`
 
 # 0.1.45a
 
