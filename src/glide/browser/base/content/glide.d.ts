@@ -239,6 +239,21 @@ declare global {
 
       /**
        * Create a new excmd.
+       *
+       * e.g.
+       * ```typescript
+       * const cmd = glide.excmds.create(
+       *   { name: "my_excmd", description: "..." },
+       *   () => {
+       *     // ...
+       *   }
+       * );
+       * declare global {
+       *   interface ExcmdRegistry {
+       *     my_excmd: typeof cmd;
+       *   }
+       * }
+       * ```
        */
       create<const Excmd extends glide.ExcmdCreateProps>(
         info: Excmd,

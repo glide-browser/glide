@@ -305,6 +305,22 @@ glide.excmds.create(info, fn): Excmd
 
 Create a new excmd.
 
+e.g.
+
+```typescript
+const cmd = glide.excmds.create({
+  name: "my_excmd",
+  description: "...",
+}, () => {
+  // ...
+});
+declare global {
+  interface ExcmdRegistry {
+    my_excmd: typeof cmd;
+  }
+}
+```
+
 ## • `glide.content` {% id="glide.content" %}
 
 {% api-heading id="glide.content.execute" %}
