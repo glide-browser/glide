@@ -4,5 +4,6 @@
   "compilerOptions": {
     "lib": ["ES2024"],
     "types": ["node"]
-  }
+  },
+  "exclude": []
 }
