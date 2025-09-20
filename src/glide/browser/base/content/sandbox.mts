@@ -24,6 +24,32 @@ const Dedent = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.m
 const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { AssertionError } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
+// note: do ***not*** add an entry to this Set without first checking if the API can be used to
+//       access the bound window, if this is the case then you *cannot* add it here.
+//
+//       there is *theoretical* potential for the chrome window to leak through these bindings,
+//       at the time of writing it appears to be impossible to access the value a function is bound
+//       to if just given the function. if this ever changes, or if the mere potential for exploitation
+//       is deemed bad then we can look into patching the internal c++ implementation to remove the constraints
+//       for the sandbox window.
+//
+//       I actually did manage to patch the internals for the `setTimeout` case by setting a flag on
+//       the browsing context to mark it as always active, but that touched too many files and the maintenance
+//       burden of those patches seemed too high, so I went with this approach instead.
+const BIND_TO_ORIGINAL_WINDOW = new Set([
+  // by default, these functions are throttled to a minimum delay of 1s in background contexts.
+  // the sandbox window counts as a background context, so we instead bind it to the original
+  // chrome window, which is never treated as a background context.
+  "setTimeout",
+  "setInterval",
+  "clearInterval",
+  "requestIdleCallback",
+
+  // requestAnimationFrame() appears to not work at all in our sandbox window, so we instead
+  // bind it to the original window so that firefox calls it appropriately.
+  "requestAnimationFrame",
+]);
+
 /**
  * Represents an object returned by {@link create_sandbox}.
  */
@@ -41,6 +67,7 @@ interface SandboxProps {
   console: typeof console;
   document: MirroredDocument | null;
   window: HiddenWindow | null;
+  original_window: Window | null;
   browser: typeof browser;
   glide: typeof glide | null;
 }
@@ -109,15 +136,17 @@ export function create_sandbox(props: SandboxProps): Sandbox {
         continue;
       }
 
+      const binder = BIND_TO_ORIGINAL_WINDOW.has(name) ? props.original_window ?? props.window : props.window;
+
       Object.defineProperty(proto, name, {
         ...descriptor,
         ...(descriptor.value && typeof descriptor.value === "function"
-          ? { value: descriptor.value.bind(props.window) }
+          ? { value: descriptor.value.bind(binder) }
           : undefined),
         ...(descriptor.get
           ? {
             // rebind the getter to ensure it is called on the originating object
-            get: descriptor.get.bind(props.window),
+            get: descriptor.get.bind(binder),
           }
           : undefined),
         enumerable: true,

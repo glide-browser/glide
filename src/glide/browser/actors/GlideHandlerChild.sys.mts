@@ -398,6 +398,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         // TODO: figure out a safer strategy for creating this content sandbox.
         document: this.document as MirroredDocument,
         window: this.contentWindow as HiddenWindow,
+        original_window: null,
         console,
         get browser() {
           return actor.extension_api.browser_proxy_api;

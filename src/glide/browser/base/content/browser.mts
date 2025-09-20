@@ -295,6 +295,7 @@ class GlideBrowserClass {
   get config_sandbox() {
     this.#sandbox ??= create_sandbox({
       window: this._sandbox_window,
+      original_window: window,
       document: this._mirrored_document,
       console,
       get glide() {
@@ -2075,6 +2076,7 @@ function make_glide_api(): typeof glide {
         const sandbox = create_sandbox({
           document: GlideBrowser._mirrored_document,
           window: GlideBrowser._sandbox_window,
+          original_window: window,
           console,
           get glide(): Glide {
             return {
