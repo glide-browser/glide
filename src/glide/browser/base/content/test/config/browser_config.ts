@@ -1015,11 +1015,13 @@ add_task(async function test_fs_exists() {
     });
 
     await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(5);
     is(GlideBrowser.api.g.value, true);
 
     await IOUtils.remove(test_path);
 
     await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(5);
     is(GlideBrowser.api.g.value, false);
   });
 });
