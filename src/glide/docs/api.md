@@ -86,6 +86,7 @@ text-decoration: none;
 [`glide.path.join()`](#glide.path.join)\
 [`glide.fs`](#glide.fs)\
 [`glide.fs.read()`](#glide.fs.read)\
+[`glide.fs.exists()`](#glide.fs.exists)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
@@ -548,6 +549,17 @@ paths are not allowed.
 The `encoding` must currently be set to `"utf8"` as that is the only supported encoding.
 
 `ts:@example await glide.fs.read("github.css", "utf8");`
+
+{% api-heading id="glide.fs.exists" %}
+glide.fs.exists(path): Promise<boolean>
+{% /api-heading %}
+
+Determine if the given path exists.
+
+Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+paths are not allowed.
+
+`ts:@example await glide.fs.exists(\`${glide.path.home_dir}/.config/foo\`);`
 
 ## • `glide.messengers` {% id="glide.messengers" %}
 

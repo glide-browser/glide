@@ -564,6 +564,16 @@ declare global {
        * @example await glide.fs.read("github.css", "utf8");
        */
       read(path: string, encoding: "utf8"): Promise<string>;
+
+      /**
+       * Determine if the given path exists.
+       *
+       * Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+       * paths are not allowed.
+       *
+       * @example await glide.fs.exists(`${glide.path.home_dir}/.config/foo`);
+       */
+      exists(path: string): Promise<boolean>;
     };
 
     messengers: {

@@ -1003,6 +1003,27 @@ add_task(async function test_fs_read_file_not_found() {
   });
 });
 
+add_task(async function test_fs_exists() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    const test_path = PathUtils.join(PathUtils.profileDir, "glide", "thing.css");
+    await IOUtils.writeUTF8(test_path, ".contents {}");
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        glide.g.value = await glide.fs.exists("thing.css");
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    is(GlideBrowser.api.g.value, true);
+
+    await IOUtils.remove(test_path);
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    is(GlideBrowser.api.g.value, false);
+  });
+});
+
 add_task(async function test_path_cwd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.cwd;

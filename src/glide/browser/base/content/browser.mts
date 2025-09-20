@@ -1887,6 +1887,10 @@ function make_glide_api(): typeof glide {
           throw err;
         });
       },
+      async exists(path) {
+        const absolute = resolve_path(path);
+        return await IOUtils.exists(absolute);
+      },
     },
     modes: {
       register(mode, opts) {
