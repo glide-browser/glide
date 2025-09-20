@@ -312,7 +312,16 @@ class GlideBrowserClass {
    */
   get _hidden_browser(): nsIWindowlessBrowser {
     // note: this needs to be defined as a standalone property so that it is never GC'd
-    return redefine_getter(this, "_hidden_browser", Services.appShell.createWindowlessBrowser(/* isChrome */ false));
+    return redefine_getter(
+      this,
+      "_hidden_browser",
+      Services.appShell.createWindowlessBrowser(
+        /* isChrome */ false,
+        /* chromeFlags */ 0,
+        // @ts-expect-error this is a flag we added and the types haven't been updated yet
+        /* forceActive */ true,
+      ),
+    );
   }
 
   get _sandbox_window(): HiddenWindow {

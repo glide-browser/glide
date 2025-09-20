@@ -1,0 +1,18 @@
+diff --git a/xpfe/appshell/nsIAppShellService.idl b/xpfe/appshell/nsIAppShellService.idl
+index 3b1173935baf34fcf4d87130c7463bc0096f3872..d9004ccc3545b86c8b1d3749aa79c7bff22cfb7c 100644
+--- a/xpfe/appshell/nsIAppShellService.idl
++++ b/xpfe/appshell/nsIAppShellService.idl
+@@ -51,9 +51,12 @@ interface nsIAppShellService : nsISupports
+    * @param aIsChrome Set true if you want to use it for chrome content.
+    * @param aChromeMask Used to specify chrome flags that should be set on the
+    *                    window. See nsIWebBrowserChrome for flag definitions.
++   * @param aForceActive whether or not to forcefully mark the window as active.
++                         useful for removing timer throttling.
+    */
+   nsIWindowlessBrowser createWindowlessBrowser([optional] in boolean aIsChrome,
+-                                               [optional] in uint32_t aChromeMask);
++                                               [optional] in uint32_t aChromeMask,
++                                               [optional] in boolean aForceActive);
+ 
+   [noscript]
+   void createHiddenWindow();

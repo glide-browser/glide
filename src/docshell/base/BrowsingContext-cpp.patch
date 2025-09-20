@@ -1,0 +1,42 @@
+diff --git a/docshell/base/BrowsingContext.cpp b/docshell/base/BrowsingContext.cpp
+index 20ee69e2ebcc4387107def3539f0f377d0eeb4b5..6c0dabd3246c0b5c14588e34b255197e07e5e7cb 100644
+--- a/docshell/base/BrowsingContext.cpp
++++ b/docshell/base/BrowsingContext.cpp
+@@ -633,6 +633,7 @@ BrowsingContext::BrowsingContext(WindowContext* aParentWindow,
+       mEverAttached(false),
+       mIsInProcess(false),
+       mIsDiscarded(false),
++      mIsForcedActive(false),
+       mWindowless(false),
+       mDanglingRemoteOuterProxies(false),
+       mEmbeddedByThisProcess(false),
+@@ -709,6 +710,18 @@ void BrowsingContext::CleanUpDanglingRemoteOuterWindowProxies(
+ 
+ bool BrowsingContext::IsActive() const {
+   const BrowsingContext* current = this;
++
++  if (current->mIsForcedActive) {
++    // for some browsing contexts, e.g. the hidden window, we want to
++    // mark it as active so that there is no bad behaviour for timers
++    // or anything else that branches on being active.
++    //
++    // e.g. `setTimeout(..., 1)` in the glide config would actually
++    // fire 1s later as that is the default throttle for background
++    // contexts.
++    return true;
++  }
++
+   do {
+     auto explicit_ = current->GetExplicitActive();
+     if (explicit_ != ExplicitActiveStatus::None) {
+@@ -735,6 +748,10 @@ bool BrowsingContext::GetIsActiveBrowserWindow() {
+       ->GetIsActiveBrowserWindowInternal();
+ }
+ 
++void BrowsingContext::SetForcedActive(bool aActive) {
++  mIsForcedActive = aActive;
++}
++
+ void BrowsingContext::SetIsActiveBrowserWindow(bool aActive) {
+   Unused << SetIsActiveBrowserWindowInternal(aActive);
+ }

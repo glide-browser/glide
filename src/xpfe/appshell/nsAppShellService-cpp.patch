@@ -1,0 +1,27 @@
+diff --git a/xpfe/appshell/nsAppShellService.cpp b/xpfe/appshell/nsAppShellService.cpp
+index 8493eccd9e11b7d6031e2e7be58db0b1759fe689..a936805d09c4316afb3c2ba7dfb584ce45417a62 100644
+--- a/xpfe/appshell/nsAppShellService.cpp
++++ b/xpfe/appshell/nsAppShellService.cpp
+@@ -373,6 +373,7 @@ WindowlessBrowser::GetDocShell(nsIDocShell** aDocShell) {
+ 
+ NS_IMETHODIMP
+ nsAppShellService::CreateWindowlessBrowser(bool aIsChrome, uint32_t aChromeMask,
++                                           bool aForceActive,
+                                            nsIWindowlessBrowser** aResult) {
+   if (aChromeMask) {
+     MOZ_DIAGNOSTIC_ASSERT(aIsChrome, "Got chrome flags for non-chrome browser");
+@@ -444,7 +445,13 @@ nsAppShellService::CreateWindowlessBrowser(bool aIsChrome, uint32_t aChromeMask,
+   nsISupports* isstub = NS_ISUPPORTS_CAST(nsIWebBrowserChrome*, stub);
+   RefPtr<nsIWindowlessBrowser> result = new WindowlessBrowser(browser, isstub);
+   nsCOMPtr<nsIDocShell> docshell = do_GetInterface(result);
+-  docshell->SetInvisible(true);
++
++  if (aForceActive) {
++    docshell->SetInvisible(false);
++    browsingContext->SetForcedActive(true);
++  } else {
++    docshell->SetInvisible(true);
++  }
+ 
+   result.forget(aResult);
+   return NS_OK;

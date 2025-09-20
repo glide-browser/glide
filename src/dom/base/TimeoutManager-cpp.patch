@@ -1,0 +1,27 @@
+diff --git a/dom/base/TimeoutManager.cpp b/dom/base/TimeoutManager.cpp
+index b02c13991fcba76713d74e27521ececd3fb00052..ae5dfab804e647b1e16c14e798a47991245a39e9 100644
+--- a/dom/base/TimeoutManager.cpp
++++ b/dom/base/TimeoutManager.cpp
+@@ -100,6 +100,7 @@ bool TimeoutManager::IsActive() const {
+   // A window/worker is considered active if:
+   // * It is a chrome window
+   // * It is playing audio
++  // * It is the hidden window used for the Glide config
+   //
+   // Note that a window/worker can be considered active if it is either in the
+   // foreground or in the background.
+@@ -109,6 +110,14 @@ bool TimeoutManager::IsActive() const {
+     return true;
+   }
+ 
++  // glide config window
++  if (window) {
++    BrowsingContext* browsingContext = window->GetBrowsingContext();
++    if (browsingContext && browsingContext->GetIsForcedActive()) {
++      return true;
++    }
++  }
++
+   // Check if we're playing audio
+   if (mGlobalObject.IsPlayingAudio()) {
+     return true;

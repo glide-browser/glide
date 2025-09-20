@@ -1,0 +1,23 @@
+diff --git a/docshell/base/BrowsingContext.h b/docshell/base/BrowsingContext.h
+index 331d7a5a0f0956ff35c8a5a703b1e089b19bd7fe..824c60f472235d2447a3776877efc5806f1f5bef 100644
+--- a/docshell/base/BrowsingContext.h
++++ b/docshell/base/BrowsingContext.h
+@@ -680,6 +680,8 @@ class BrowsingContext : public nsILoadContext, public nsWrapperCache {
+ 
+   bool GetIsActiveBrowserWindow();
+ 
++  void SetForcedActive(bool aActive);
++
+   void SetIsActiveBrowserWindow(bool aActive);
+ 
+   uint64_t BrowserId() const { return GetBrowserId(); }
+@@ -1498,6 +1500,9 @@ class BrowsingContext : public nsILoadContext, public nsWrapperCache {
+   // only be discarded once.
+   bool mIsDiscarded : 1;
+ 
++  // Should this browsing context always be marked as active no matter what?
++  bool mIsForcedActive : 1;
++
+   // True if this BrowsingContext has no associated visible window, and is owned
+   // by whichever process created it, even if top-level.
+   bool mWindowless : 1;
