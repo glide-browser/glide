@@ -6,7 +6,7 @@ ac_add_options --disable-dmd
 ac_add_options --enable-eme=widevine
 
 # override LTO settings
-if test "GLIDE_LTO"; then
+if test "$GLIDE_LTO"; then
   export MOZ_LTO=cross,thin
   ac_add_options --enable-lto=cross,thin
 else
