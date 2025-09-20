@@ -5,9 +5,9 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox-dev",
-    "tag": "FIREFOX_144_0b1_RELEASE",
-    "version": "144.0b1",
-    "candidate": "144.0b1"
+    "tag": "FIREFOX_144_0b3_RELEASE",
+    "version": "144.0b3",
+    "candidate": "144.0b3"
   },
   "buildOptions": {
     "useGitFetch": true,
