@@ -30,7 +30,10 @@ function youtube(sandbox: Sandbox) {
   }>((message) => {
     switch (message.name) {
       case "yt.video_focused": {
-        glide.excmds.execute("mode_change insert");
+        if (glide.ctx.mode !== "ignore") {
+          glide.excmds.execute("mode_change insert");
+        }
+
         break;
       }
       default: {
