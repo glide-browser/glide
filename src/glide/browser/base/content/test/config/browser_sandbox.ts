@@ -13,6 +13,19 @@ declare var performance: Performance;
 declare global {
   interface GlideGlobals {
     sandbox_tests?: ({ message: string; success: boolean })[];
+    sandbox_pollution_test?: {
+      sandbox_object_polluted: boolean;
+      sandbox_array_polluted: boolean;
+      sandbox_string_polluted: boolean;
+      sandbox_number_polluted: boolean;
+      sandbox_date_polluted: boolean;
+      sandbox_function_polluted: boolean;
+      sandbox_map_polluted: boolean;
+      sandbox_set_polluted: boolean;
+      sandbox_proto_chain_polluted: boolean;
+      sandbox_constructor_polluted: boolean;
+    };
+    value?: any;
   }
 }
 
@@ -51,6 +64,134 @@ add_task(async function test_chrome_window_not_accessible() {
   for (const test of GlideBrowser.api.g.sandbox_tests!) {
     ok(test.success, test.message);
   }
+});
+
+add_task(async function test_config_cannot_pollute_browser_prototypes() {
+  const original_object_to_string = Object.prototype.toString;
+  const original_array_push = Array.prototype.push;
+  const original_string_includes = String.prototype.includes;
+  const original_number_to_fixed = Number.prototype.toFixed;
+  const original_date_get_time = Date.prototype.getTime;
+  const original_function_call = Function.prototype.call;
+  const original_map_set = Map.prototype.set;
+  const original_set_add = Set.prototype.add;
+
+  await GlideTestUtils.reload_config(function _() {
+    // Attempt various prototype pollution attacks
+    // @ts-expect-error
+    Object.prototype.polluted = "polluted";
+    Object.prototype.toString = function() {
+      return "polluted";
+    };
+
+    // @ts-expect-error
+    Array.prototype.polluted = "polluted";
+    // @ts-expect-error
+    Array.prototype.push = function() {
+      return "polluted";
+    };
+
+    // @ts-expect-error
+    String.prototype.polluted = "polluted";
+    String.prototype.includes = function() {
+      return true;
+    };
+
+    // @ts-expect-error
+    Number.prototype.polluted = "polluted";
+    Number.prototype.toFixed = function() {
+      return "polluted";
+    };
+
+    // @ts-expect-error
+    Date.prototype.polluted = "polluted";
+    Date.prototype.getTime = function() {
+      return 0;
+    };
+
+    // @ts-expect-error
+    Function.prototype.polluted = "polluted";
+    Function.prototype.call = function() {
+      return "polluted";
+    };
+
+    // @ts-expect-error
+    Map.prototype.polluted = "polluted";
+    // @ts-expect-error
+    Map.prototype.set = function() {
+      return "polluted";
+    };
+
+    // @ts-expect-error
+    Set.prototype.polluted = "polluted";
+    // @ts-expect-error
+    Set.prototype.add = function() {
+      return "polluted";
+    };
+
+    const obj: any = {};
+    obj.__proto__.proto_chain_polluted = "polluted";
+    obj.constructor.prototype.constructor_polluted = "polluted";
+
+    glide.g.sandbox_pollution_test = {
+      sandbox_object_polluted: Object.prototype.hasOwnProperty("polluted"),
+      sandbox_array_polluted: Array.prototype.hasOwnProperty("polluted"),
+      sandbox_string_polluted: String.prototype.hasOwnProperty("polluted"),
+      sandbox_number_polluted: Number.prototype.hasOwnProperty("polluted"),
+      sandbox_date_polluted: Date.prototype.hasOwnProperty("polluted"),
+      sandbox_function_polluted: Function.prototype.hasOwnProperty("polluted"),
+      sandbox_map_polluted: Map.prototype.hasOwnProperty("polluted"),
+      sandbox_set_polluted: Set.prototype.hasOwnProperty("polluted"),
+      sandbox_proto_chain_polluted: (obj as any).__proto__.hasOwnProperty("proto_chain_polluted"),
+      sandbox_constructor_polluted: obj.constructor.prototype.hasOwnProperty("constructor_polluted"),
+    };
+  });
+
+  // Verify prototypes in main browser process remain unpolluted
+  ok(!Object.prototype.hasOwnProperty("polluted"), "Object.prototype should not be polluted");
+  ok(!Array.prototype.hasOwnProperty("polluted"), "Array.prototype should not be polluted");
+  ok(!String.prototype.hasOwnProperty("polluted"), "String.prototype should not be polluted");
+  ok(!Number.prototype.hasOwnProperty("polluted"), "Number.prototype should not be polluted");
+  ok(!Date.prototype.hasOwnProperty("polluted"), "Date.prototype should not be polluted");
+  ok(!Function.prototype.hasOwnProperty("polluted"), "Function.prototype should not be polluted");
+  ok(!Map.prototype.hasOwnProperty("polluted"), "Map.prototype should not be polluted");
+  ok(!Set.prototype.hasOwnProperty("polluted"), "Set.prototype should not be polluted");
+
+  // Verify prototype methods remain unchanged
+  is(Object.prototype.toString, original_object_to_string, "Object.prototype.toString should be original");
+  is(Array.prototype.push, original_array_push, "Array.prototype.push should be original");
+  is(String.prototype.includes, original_string_includes, "String.prototype.includes should be original");
+  is(Number.prototype.toFixed, original_number_to_fixed, "Number.prototype.toFixed should be original");
+  is(Date.prototype.getTime, original_date_get_time, "Date.prototype.getTime should be original");
+  is(Function.prototype.call, original_function_call, "Function.prototype.call should be original");
+  is(Map.prototype.set, original_map_set, "Map.prototype.set should be original");
+  is(Set.prototype.add, original_set_add, "Set.prototype.add should be original");
+
+  // Verify __proto__ and constructor pollution doesn't leak
+  const test_obj: any = {};
+  ok(!test_obj.__proto__.hasOwnProperty("proto_chain_polluted"), "Prototype chain pollution should not leak");
+  ok(!test_obj.constructor.prototype.hasOwnProperty("constructor_polluted"), "Constructor pollution should not leak");
+
+  // Test that built-in functionality still works correctly
+  is({}.toString(), "[object Object]", "Object toString should work normally");
+  is([1, 2].push(3), 3, "Array push should work normally");
+  is("hello".includes("ell"), true, "String includes should work normally");
+  is((3.14159).toFixed(2), "3.14", "Number toFixed should work normally");
+  ok(new Date().getTime() > 0, "Date getTime should work normally");
+  is(Function.prototype.call.call(() => "test", undefined), "test", "Function call should work normally");
+
+  // Verify pollution occurred within the sandbox (demonstrating isolation)
+  const sandbox_tests = GlideBrowser.api.g.sandbox_pollution_test!;
+  ok(sandbox_tests.sandbox_object_polluted, "Object.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_array_polluted, "Array.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_string_polluted, "String.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_number_polluted, "Number.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_date_polluted, "Date.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_function_polluted, "Function.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_map_polluted, "Map.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_set_polluted, "Set.prototype was polluted in sandbox");
+  ok(sandbox_tests.sandbox_proto_chain_polluted, "Proto chain was polluted in sandbox");
+  ok(sandbox_tests.sandbox_constructor_polluted, "Constructor was polluted in sandbox");
 });
 
 add_task(async function test_basic_elements_are_copied_to_the_sandbox() {
