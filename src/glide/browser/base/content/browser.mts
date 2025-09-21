@@ -114,6 +114,10 @@ class GlideBrowserClass {
     const startup_observer: nsIObserver = {
       observe() {
         GlideBrowser._log.debug("browser-idle-startup-tasks-finished observer called");
+
+        GlideBrowser.#_check_mirrored_document_mutations();
+        DocumentMirror.mirror_into_document(document, GlideBrowser._hidden_browser.browsingContext.window!.document!);
+
         GlideBrowser.#startup_finished = true;
 
         const listeners = [...GlideBrowser.#startup_listeners];
@@ -320,13 +324,49 @@ class GlideBrowserClass {
     return assert_present(this._hidden_browser.browsingContext.window) as HiddenWindow;
   }
 
+  #_mirrored_document_observer?: MutationObserver;
+  #_mirrored_document_observer_pending: MutationRecord[] = [];
+
   /**
    * A mirror of the chrome `Document` so it can be mutated / accessed without giving
    * full access to the underlying `ChromeWindow`.
    */
   get _mirrored_document(): MirroredDocument {
     const target = GlideBrowser._hidden_browser.browsingContext.window!.document!;
-    return redefine_getter(this, "_mirrored_document", DocumentMirror.mirror_into_document(document, target));
+
+    this.#_mirrored_document_observer = new MutationObserver((mutations) => {
+      this.#_mirrored_document_observer_pending.push(...mutations);
+    });
+    this.#_mirrored_document_observer.observe(target, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      characterData: true,
+    });
+
+    return redefine_getter(this, "_mirrored_document", target as MirroredDocument);
+  }
+
+  #_check_mirrored_document_mutations() {
+    const pending = GlideBrowser.#_mirrored_document_observer_pending;
+    const observer = GlideBrowser.#_mirrored_document_observer;
+    if (observer) {
+      pending.push(...observer.takeRecords());
+      observer.disconnect();
+      GlideBrowser.#_mirrored_document_observer = undefined;
+    }
+
+    if (pending.length) {
+      console.error("pre load mutations", pending);
+      this.add_notification("document-pre-load-mutations", {
+        label: `Detected ${pending.length} mutation${
+          pending.length !== 1 ? "s" : ""
+        } to the document before it was fully loaded. Mutations should only be performed within the WindowLoaded autocmd.`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+      });
+    }
+
+    GlideBrowser.#_mirrored_document_observer_pending = [];
   }
 
   #reload_config_clear_properties: Set<string> = new Set();

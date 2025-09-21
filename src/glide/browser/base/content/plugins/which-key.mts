@@ -71,7 +71,9 @@ class Modal {
       },
     });
 
-    sandbox.document.children[0]!.appendChild(this.#element);
+    sandbox.glide.autocmds.create("WindowLoaded", () => {
+      sandbox.document.children[0]!.appendChild(this.#element);
+    });
   }
 
   is_visible(): boolean {

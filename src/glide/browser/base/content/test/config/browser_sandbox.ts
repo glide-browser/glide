@@ -53,13 +53,18 @@ add_task(async function test_chrome_window_not_accessible() {
   }
 });
 
-add_task(async function test_basic_elements_are_copied() {
+add_task(async function test_basic_elements_are_copied_to_the_sandbox() {
   const mirror = GlideBrowser.config_sandbox.document;
 
-  // TODO
-  notok(mirror.getElementById("glide-toolbar-mode-button"), "glide mode indicator should be copied");
+  ok(mirror.getElementById("glide-toolbar-mode-button"), "glide mode indicator should be copied");
   ok(mirror.getElementById("main-window"), "top-level element should be copied");
   ok(mirror.getElementById("cmd_closeWindow"), "commands should be copied");
+});
+
+add_task(async function test_basic_elements_are_copied_to_the_browser() {
+  const mirror = GlideBrowser.config_sandbox.document;
+
+  ok(mirror.getElementById("which-key"), "glide which key ui should be copied");
 });
 
 add_task(async function test_page_visibility_signal_exists() {
@@ -174,3 +179,44 @@ add_task(async function test_performance_now_monotonicity() {
   ok(t1 >= t0, "monotonic, non-decreasing");
   ok(inc >= 0, "non-negative delta");
 });
+
+add_task(async function test_all_elements_are_copied() {
+  const mirror = GlideBrowser.config_sandbox.document;
+
+  const missing: string[] = [];
+
+  // intentionally not mirrored
+  const exclude = new Set(["script", "browser"]);
+
+  for (const element of all_elements(document)) {
+    const node_name = element.nodeName.toLowerCase();
+    if (exclude.has(node_name)) {
+      continue;
+    }
+
+    const xpath = element.generateXPath().replaceAll("xhtml:", "").replaceAll("xul:", "");
+    const parent_missing = missing.some((prefix) => xpath.startsWith(prefix));
+    if (parent_missing) {
+      continue;
+    }
+
+    const result = mirror.evaluate(xpath, mirror.documentElement!, null, XPathResult.FIRST_ORDERED_NODE_TYPE);
+
+    if (element.id === "swipe-nav-icon") {
+      // for some reason just this particular svg is not included, not sure why
+      todo_is(Boolean(result.singleNodeValue), true, xpath);
+    } else {
+      ok(result.singleNodeValue, xpath);
+    }
+
+    if (!result.singleNodeValue) {
+      missing.push(xpath);
+    }
+  }
+});
+
+function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
+  for (const element of root.querySelectorAll("*")) {
+    yield element as HTMLElement;
+  }
+}
