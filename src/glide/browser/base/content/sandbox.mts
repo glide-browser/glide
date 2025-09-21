@@ -94,6 +94,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
   let proto = {
     console: props.console,
     document: props.document,
+    window: props.window,
     browser: props.browser,
     glide: props.glide,
 
