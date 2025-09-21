@@ -1152,6 +1152,11 @@ declare global {
         children?: (Node | string) | Array<Node | string>;
 
         /**
+         * Set arbitrary attributes on the element.
+         */
+        attributes?: Record<string, string>;
+
+        /**
          * Set specific CSS style properties.
          *
          * This uses the JS style naming convention for properties, e.g. `zIndex`.

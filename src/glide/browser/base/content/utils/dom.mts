@@ -138,7 +138,7 @@ export function create_element<K extends keyof HTMLElementTagNameMap | (string &
   const element = a_document.createElement(tag_name);
 
   for (const [key, value] of Object.entries(props ?? {})) {
-    if (key === "children" || key === "style") {
+    if (key === "children" || key === "style" || key === "attributes") {
       // custom properties that require custom handling and can't be directly assigned
       continue;
     }
@@ -158,6 +158,12 @@ export function create_element<K extends keyof HTMLElementTagNameMap | (string &
   for (const [prop, value] of Object.entries(props?.style ?? {})) {
     // @ts-ignore
     element.style[prop] = value;
+  }
+
+  if (props?.attributes) {
+    for (const [name, value] of Object.entries(props.attributes)) {
+      element.setAttribute(name, value);
+    }
   }
 
   // @ts-ignore
