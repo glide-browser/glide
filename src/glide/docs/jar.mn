@@ -23,6 +23,7 @@ glide.jar:
   res/glide-docs/                         (./*.webp)
   res/glide-docs/                         (./*.css)
   res/glide-docs/                         (./*.woff2)
+  res/glide-docs/                         (./*.webm)
 
   # dependencies
   res/glide-docs/pagefind                 (./dist/pagefind/**/*)
