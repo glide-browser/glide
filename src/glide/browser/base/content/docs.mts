@@ -715,8 +715,7 @@ class RenderState {
 
     const children = node.transformChildren(config);
 
-    const is_external = (href as string)?.startsWith("https://")
-      || (href as string)?.startsWith("http://");
+    const is_external = href.startsWith("https://") || href.startsWith("http://") || href.startsWith("mailto:");
     if (is_external) {
       return this.html({
         html: html`<a href="${href}" target="_blank" rel="noopener"
