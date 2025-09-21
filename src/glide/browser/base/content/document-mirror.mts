@@ -23,6 +23,7 @@
  */
 
 const { ensure } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 
 const REGISTRY = new WeakMap<Document, MirrorState>();
 
@@ -218,6 +219,13 @@ function store_node_mappings(
  * tree to a string, should be as close as possible. State on the nodes themselves are not transferred.
  */
 function import_node(document: Document, node: Node): Node {
+  if (node.nodeName.toLowerCase() === "browser") {
+    // to avoid any weird issues with firefox code that assumes any `<browser>` element has a `browsingContext`
+    // we do not copy `<browser>` elements over to the sandbox. e.g. devtools does a `querySelectorAll('browser')`
+    // which caused it to crash.
+    return DOM.create_element("div", { attributes: { "glide-original-node-name": node.nodeName } }, document);
+  }
+
   const imported = node instanceof XULElement ? xul_to_element(document, node) : document.importNode(node);
 
   for (const child of node.childNodes) {
