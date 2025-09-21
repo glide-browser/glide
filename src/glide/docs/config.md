@@ -77,16 +77,17 @@ Every other part can be more freely customised.
     "node_modules"
   ],
   "compilerOptions": {
-    "lib": ["ES2024", "DOM", "DOM.AsyncIterable"],
+    "lib": ["DOM", "DOM.Iterable", "DOM.AsyncIterable", "ESNext"],
     "types": ["./glide.d.ts"],
-    "target": "ES2024",
-    "module": "nodenext",
+    "target": "esnext",
+    "module": "esnext",
     "moduleDetection": "force",
     "allowJs": true,
     "noEmit": true,
-
     /**
-     * type checking rules.
+     * Recommended type checking rules.
+     *
+     * Feel free to modify these.
      */
     "strict": true,
     "noImplicitAny": true,
@@ -101,7 +102,7 @@ Every other part can be more freely customised.
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true,
     "noErrorTruncation": true,
-    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   }

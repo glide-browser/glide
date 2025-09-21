@@ -4,6 +4,9 @@
 
 /// <reference path="../../../dist/bundled.compiled.d.ts" />
 
+// ensure node types are not loaded
+const x: number = setTimeout(() => {}, 1);
+
 // Valid: no args
 glide.content.execute(() => {}, { tab_id: 10 });
 

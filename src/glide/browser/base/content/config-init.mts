@@ -116,12 +116,12 @@ const DEFAULT_TSCONFIG = dedent`
     "node_modules"
   ],
   "compilerOptions": {
-    "lib": ["ES2024", "DOM", "DOM.AsyncIterable"],
+    "lib": ["DOM", "DOM.Iterable", "DOM.AsyncIterable", "ESNext"],
     "types": [
       "./glide.d.ts"
     ],
-    "target": "ES2024",
-    "module": "nodenext",
+    "target": "esnext",
+    "module": "esnext",
     "moduleDetection": "force",
     "allowJs": true,
     "noEmit": true,
@@ -143,7 +143,7 @@ const DEFAULT_TSCONFIG = dedent`
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true,
     "noErrorTruncation": true,
-    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   }
@@ -163,7 +163,7 @@ const DEFAULT_PACKAGE_JSON = dedent`
   "author": "",
   "license": "",
   "dependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "devDependencies": {}
 }

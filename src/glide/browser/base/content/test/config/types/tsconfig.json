@@ -1,13 +1,18 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "ES2024",
-    "module": "nodenext",
+    "lib": ["DOM", "DOM.Iterable", "DOM.AsyncIterable", "ESNext"],
+    "types": [],
+    "target": "esnext",
+    "module": "esnext",
     "moduleDetection": "force",
     "allowJs": true,
     "noEmit": true,
-    "lib": ["ES2024", "DOM", "DOM.AsyncIterable"],
-    /* Type Checking */
+    /**
+     * Recommended type checking rules.
+     *
+     * Feel free to modify these.
+     */
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
