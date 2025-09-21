@@ -65,6 +65,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Editor", href: "editor.html" },
   { name: "FAQ", href: "faq.html" },
   { name: "Cookbook", href: "cookbook.html" },
+  { name: "Security", href: "security.html" },
   { name: "Privacy", href: "privacy.html" },
   { name: "Changelog", href: "changelog.html" },
   { name: "Contributing", href: "contributing.html" },

@@ -22,7 +22,27 @@ Glide will only consider the _first_ config file that matches and will not load 
 
 The config file source is converted to JS through type stripping with [ts-blank-space](https://bloomberg.github.io/ts-blank-space/). This means you can only use syntax that is [erasable](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-8.html#the---erasablesyntaxonly-option).
 
-It is also executed in the main browser process inside a sandbox with its own [Realm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model#realms).
+It is also executed in the main browser process inside a sandbox with its own [realm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model#realms).
+
+The config sandbox is _very_ similar to a standard browser page context. However, there are some differences, `document` is a mirror of the `document` that renders the _browser UI_ itself, not a content document.
+
+## Browser UI
+
+The browser UI itself can be customised through the `document` variable, however it doesn't quite work like a standard `Document`.
+
+The `document` is a _mirror_ of the internal `document` that renders the browser UI for security reasons. This means only a subset of `Document` operations are supported:
+
+- Setting [attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes)
+- Adding / removing nodes
+- Upating character data
+
+Notably you **cannot**:
+
+- Add event listeners
+- Fire events
+
+> [!TIP]
+> You can inspect the browser DOM using the [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html).
 
 ## Importing types
 
