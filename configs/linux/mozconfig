@@ -3,4 +3,6 @@ ac_add_options --enable-pulseaudio
 
 ac_add_options --disable-dmd
 
+ac_add_options --disable-updater
+
 export VERBOSE=1
