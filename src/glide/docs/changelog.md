@@ -14,6 +14,17 @@ margin-bottom: revert !important;
 
 # Changelog
 
+# 0.1.48a
+
+- Updated the recommended tsconfig to more accurately reflect reality
+- Added support for setting attributes using `DOM.create_element()`
+- Added `ts:glide.fs.write(path, contents)`
+- Added `window` to the config sandbox
+- Cleaned up the `document` mirror in the config sandbox
+  - `html:<browser>` and `html:<scripts>` elements are no longer included
+  - Fixed race conditions when mutating the `document`
+  - Added many missing elements
+
 # 0.1.47a
 
 - Fixed a case where the browser toolbox devtools could crash
