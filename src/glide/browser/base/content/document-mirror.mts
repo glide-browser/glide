@@ -239,10 +239,16 @@ function store_node_mappings(
  * tree to a string, should be as close as possible. State on the nodes themselves are not transferred.
  */
 function import_node(document: Document, node: Node): Node {
-  if (node.nodeName.toLowerCase() === "browser") {
+  const node_name = node.nodeName.toLowerCase();
+  if (node_name === "browser") {
     // to avoid any weird issues with firefox code that assumes any `<browser>` element has a `browsingContext`
     // we do not copy `<browser>` elements over to the sandbox. e.g. devtools does a `querySelectorAll('browser')`
     // which caused it to crash.
+    return DOM.create_element("div", { attributes: { "glide-original-node-name": node.nodeName } }, document);
+  }
+
+  if (node_name === "script") {
+    // there's no point in loading scripts in the fake document, and they could cause weird behaviour.
     return DOM.create_element("div", { attributes: { "glide-original-node-name": node.nodeName } }, document);
   }
 
