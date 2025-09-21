@@ -86,6 +86,7 @@ text-decoration: none;
 [`glide.path.join()`](#glide.path.join)\
 [`glide.fs`](#glide.fs)\
 [`glide.fs.read()`](#glide.fs.read)\
+[`glide.fs.write()`](#glide.fs.write)\
 [`glide.fs.exists()`](#glide.fs.exists)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
@@ -549,6 +550,21 @@ paths are not allowed.
 The `encoding` must currently be set to `"utf8"` as that is the only supported encoding.
 
 `ts:@example await glide.fs.read("github.css", "utf8");`
+
+{% api-heading id="glide.fs.write" %}
+glide.fs.write(path, contents): Promise<void>
+{% /api-heading %}
+
+Write to the file at the given path.
+
+Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+paths are not allowed.
+
+If the path has parent directories that do not exist, they will be created.
+
+The `contents` are written in utf8.
+
+`ts:@example await glide.fs.write("github.css", ".copilot { display: none !important }");`
 
 {% api-heading id="glide.fs.exists" %}
 glide.fs.exists(path): Promise<boolean>

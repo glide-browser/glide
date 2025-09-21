@@ -1888,6 +1888,10 @@ function make_glide_api(): typeof glide {
           throw err;
         });
       },
+      async write(path, contents): Promise<void> {
+        const absolute = resolve_path(path);
+        await IOUtils.writeUTF8(absolute, contents);
+      },
       async exists(path) {
         const absolute = resolve_path(path);
         return await IOUtils.exists(absolute);

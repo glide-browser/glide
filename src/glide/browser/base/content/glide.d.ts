@@ -566,6 +566,20 @@ declare global {
       read(path: string, encoding: "utf8"): Promise<string>;
 
       /**
+       * Write to the file at the given path.
+       *
+       * Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+       * paths are not allowed.
+       *
+       * If the path has parent directories that do not exist, they will be created.
+       *
+       * The `contents` are written in utf8.
+       *
+       * @example await glide.fs.write("github.css", ".copilot { display: none !important }");
+       */
+      write(path: string, contents: string): Promise<void>;
+
+      /**
        * Determine if the given path exists.
        *
        * Relative paths are resolved relative to the config directory, if no config directory is defined then relative

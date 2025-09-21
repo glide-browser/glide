@@ -1003,6 +1003,38 @@ add_task(async function test_fs_read_file_not_found() {
   });
 });
 
+add_task(async function test_fs_write() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        await glide.fs.write("my.css", ".contents {}");
+        glide.g.value = await glide.fs.read("my.css", "utf8");
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    is(GlideBrowser.api.g.value, ".contents {}");
+  });
+});
+
+add_task(async function test_fs_write_new_dir() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        await glide.fs.write("missing-dir/nested/new.css", "#id {}");
+        glide.g.value = await glide.fs.read("missing-dir/nested/new.css", "utf8");
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    is(GlideBrowser.api.g.value, "#id {}");
+  });
+});
+
 add_task(async function test_fs_exists() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
     const test_path = PathUtils.join(PathUtils.profileDir, "glide", "thing.css");
