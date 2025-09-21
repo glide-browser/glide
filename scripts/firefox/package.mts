@@ -63,7 +63,9 @@ async function main() {
   }
 
   const mar_path = await create_mar_file({ obj_dir, version, channel });
-  await generate_browser_update_files({ obj_dir, mar_path, channel });
+  if (mar_path) {
+    await generate_browser_update_files({ obj_dir, mar_path, channel });
+  }
 
   console.log();
   console.log(`Output written to ${DIST_DIR}`);
@@ -80,7 +82,12 @@ async function get_locales() {
 
 async function create_mar_file(
   { obj_dir, version, channel }: { obj_dir: string; version: string; channel: string },
-): Promise<string> {
+): Promise<string | null> {
+  if (get_platform() === "linux") {
+    // updates are disabled
+    return null;
+  }
+
   const mar_binary = Path.join(obj_dir, "dist/host/bin", "mar");
   const binary = get_platform() == "macos"
     ? Path.join(obj_dir, "dist", config.binaryName, "Glide.app")

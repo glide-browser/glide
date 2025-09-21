@@ -110,7 +110,6 @@ jobs:
       - name: Rename artifacts
         run: |
           mv dist/glide-*.tar.xz "dist/glide.linux-$GLIDE_COMPAT.tar.xz"
-          mv dist/output.mar "dist/linux-$GLIDE_COMPAT.mar"
 
       - name: Upload tar to release
         if: inputs.tag
@@ -127,18 +126,3 @@ jobs:
           retention-days: 10
           name: glide.linux-${{ matrix.arch }}.tar.xz
           path: ./dist/glide.linux-${{ matrix.arch }}.tar.xz
-
-      - name: Upload MAR
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          retention-days: 10
-          name: linux-${{ matrix.arch }}.mar
-          path: ./dist/linux-${{ matrix.arch }}.mar
-
-      - name: Upload browser upload manifests
-        if: inputs.upload
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          retention-days: 10
-          name: linux-${{ matrix.arch }}-updates
-          path: ./dist/update/
