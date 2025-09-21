@@ -54,31 +54,51 @@ export function mirror_into_document(source: Document, target: Document): Mirror
     characterData: true,
   };
 
+  function source_observer_callback(mutations: MutationRecord[]) {
+    // prevent infinite recursion by cleaning up the other observer
+    {
+      const pending = state.mirror_observer.takeRecords();
+      if (pending.length) {
+        // make sure we don't drop mutations
+        mirror_observer_callback(pending);
+      }
+
+      state.mirror_observer.disconnect();
+    }
+
+    try {
+      apply_mutations(target, mutations, source_to_mirror, mirror_to_source);
+    } finally {
+      state.mirror_observer.observe(target, opts);
+    }
+  }
+
+  function mirror_observer_callback(mutations: MutationRecord[]) {
+    // prevent infinite recursion by cleaning up the other observer
+    {
+      const pending = state.source_observer.takeRecords();
+      if (pending.length) {
+        // make sure we don't drop mutations
+        source_observer_callback(pending);
+      }
+
+      state.source_observer.disconnect();
+    }
+
+    try {
+      apply_mutations(source, mutations, mirror_to_source, source_to_mirror);
+    } finally {
+      state.source_observer.observe(source, opts);
+    }
+  }
+
   const state: MirrorState = {
     source,
     mirror: target,
     source_to_mirror,
     mirror_to_source,
-    source_observer: new MutationObserver((mutations) => {
-      // disconnect while we're applying mutations so we don't recurse forever
-      state.mirror_observer.disconnect();
-
-      try {
-        apply_mutations(target, mutations, source_to_mirror, mirror_to_source);
-      } finally {
-        state.mirror_observer.observe(target, opts);
-      }
-    }),
-    mirror_observer: new MutationObserver((mutations) => {
-      // disconnect while we're applying mutations so we don't recurse forever
-      state.source_observer.disconnect();
-
-      try {
-        apply_mutations(source, mutations, mirror_to_source, source_to_mirror);
-      } finally {
-        state.source_observer.observe(source, opts);
-      }
-    }),
+    source_observer: new MutationObserver(source_observer_callback),
+    mirror_observer: new MutationObserver(mirror_observer_callback),
   };
 
   state.source_observer.observe(source, opts);
