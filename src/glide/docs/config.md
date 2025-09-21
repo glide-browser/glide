@@ -77,7 +77,12 @@ Every other part can be more freely customised.
     "node_modules"
   ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "DOM.AsyncIterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "DOM.AsyncIterable",
+      "ESNext"
+    ],
     "types": ["./glide.d.ts"],
     "target": "esnext",
     "module": "esnext",
