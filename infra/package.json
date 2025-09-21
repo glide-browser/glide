@@ -6,7 +6,7 @@
   "keywords": [],
   "author": "",
   "license": "MPL-2.0",
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.17.0",
   "private": true,
   "dependencies": {
     "wrangler": "^4.35.0"
