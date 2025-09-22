@@ -1,8 +1,8 @@
 diff --git a/devtools/server/actors/webconsole.js b/devtools/server/actors/webconsole.js
-index 4e6e6ed0f811d0c9d8436902fe58a8355e8b1d4d..90d0ec2813e12d13a2860e79eb90a1e45d9746ce 100644
+index 4e6e6ed0f811d0c9d8436902fe58a8355e8b1d4d..1239263ca9afcc344765d5de3f36adc26a8b1b82 100644
 --- a/devtools/server/actors/webconsole.js
 +++ b/devtools/server/actors/webconsole.js
-@@ -271,6 +271,26 @@ class WebConsoleActor extends Actor {
+@@ -271,6 +271,39 @@ class WebConsoleActor extends Actor {
    // The evalGlobal is used at the scope for JS evaluation.
    _evalGlobal = null;
    get evalGlobal() {
@@ -12,17 +12,30 @@ index 4e6e6ed0f811d0c9d8436902fe58a8355e8b1d4d..90d0ec2813e12d13a2860e79eb90a1e4
 +    // eventually calls this property to get the sandbox / window to evaluate queries in, so
 +    // we just point it to our config sandbox instead of the default chrome window.
 +    //
-+    if (Services.prefs.getBoolPref("devtools.glide.open_next_webconsole_as_repl", false)) {
-+      Services.prefs.setBoolPref("devtools.glide.open_next_webconsole_as_repl", false);
-+
-+      let win = Services.wm.getMostRecentWindow("navigator:browser")
-+      if (win?.GlideBrowser) {
-+        this._evalGlobal = win.GlideBrowser.config_sandbox;
-+      } else {
-+        Services.console.logStringMessage(
-+          `devtools.glide.open_next_webconsole_as_repl set but GlideBrowser is not accessible - is chrome = ${this._hadChromeWindow}; win defined = ${win != null}`
++    try {
++      const hasPref = Services.prefs.getBoolPref(
++        "devtools.glide.open_next_webconsole_as_repl",
++        false
++      );
++      if (hasPref) {
++        Services.prefs.setBoolPref(
++          "devtools.glide.open_next_webconsole_as_repl",
++          false
 +        );
++
++        let win = Services.wm.getMostRecentWindow("navigator:browser");
++        if (win?.GlideBrowser) {
++          this._evalGlobal = win.GlideBrowser.config_sandbox;
++        } else {
++          Services.console.logStringMessage(
++            `devtools.glide.open_next_webconsole_as_repl set but GlideBrowser is not accessible - is chrome = ${this._hadChromeWindow}; win defined = ${win != null}`
++          );
++        }
 +      }
++    } catch (err) {
++      Services.console.logStringMessage(
++        `[glide]: error while checking for devtools.glide.open_next_webconsole_as_repl pref: ${err}`
++      );
 +    }
 +    // --- end glide hack override ---
 +
