@@ -32,8 +32,11 @@ add_task(async function test_tabs_active() {
         // active tab should still be the first one
         assert((await glide.tabs.active()).url, INPUT_TEST_URI);
 
-        const current_window = (await browser.windows.getAll()).find(w => w.focused)!;
-        windows.push(await browser.windows.create()); // this takes focus
+        const all_windows = await browser.windows.getAll();
+        const current_window = all_windows.find(w => w.focused)!;
+
+        windows.push(await browser.windows.create());
+
         await browser.windows.update(current_window.id!, { focused: true });
 
         // active tab should still be the first one
