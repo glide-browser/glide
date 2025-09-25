@@ -14,6 +14,12 @@ margin-bottom: revert !important;
 
 # Changelog
 
+# 0.1.49a
+
+- Fixed a case where dev tools autocomplete could stop working
+- Changed `glide.ctx.url` from a `string` to a `URL`
+- Bumped Firefox from 144.0b3 to 144.0b5
+
 # 0.1.48a
 
 - Updated the recommended tsconfig to more accurately reflect reality
