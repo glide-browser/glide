@@ -1685,11 +1685,11 @@ function make_glide_api(): typeof glide {
         return GlideBrowser.state.mode;
       },
       get url() {
-        const url = gBrowser?.selectedBrowser?.currentURI?.spec;
+        const url = (gBrowser?.selectedBrowser?.currentURI as nsIURI)?.spec;
         if (!url) {
           throw new Error("Could not resolve the current URL.");
         }
-        return url;
+        return new URL(url);
       },
 
       get os() {

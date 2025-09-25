@@ -10,7 +10,7 @@ declare global {
        */
       mode: GlideMode;
 
-      url: string;
+      url: URL;
 
       /**
        * The operating system Glide is running on.

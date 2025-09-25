@@ -404,7 +404,7 @@ add_task(async function test_keys_next_passthrough_api() {
 add_task(async function test_glide_ctx_url() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>u", () => {
-      glide.g.value = glide.ctx.url;
+      glide.g.value = glide.ctx.url.toString();
     });
   });
 
