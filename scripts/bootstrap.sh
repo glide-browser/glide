@@ -6,7 +6,12 @@ cd "$(dirname "$0")/.."
 
 if [[ ! " $* " =~ " --offline " ]]; then
   pnpm i
-  pnpm firefox:download
+
+  if [[ " $* " =~ " --tar " ]]; then
+    pnpm firefox:download --tar
+  else
+    pnpm firefox:download
+  fi
 fi
 
 ./scripts/bundle.sh

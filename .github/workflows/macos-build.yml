@@ -100,7 +100,7 @@ jobs:
 
       - name: Bootstrap repo
         run: |
-          pnpm bootstrap
+          pnpm bootstrap --tar
 
           cd engine
           export PATH="$(python3 -m site --user-base)/bin":$PATH

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ci/faster-download
   pull_request:
 
 jobs:
@@ -33,13 +34,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Download Firefox source
-        run: |
-          pnpm firefox:download
-
       - name: Bootstrap repo
         run: |
-          pnpm bootstrap
+          pnpm bootstrap --tar
 
       - name: Run lint
         run: |

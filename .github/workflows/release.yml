@@ -108,7 +108,7 @@ jobs:
 
       - name: Bootstrap repo
         run: |
-          pnpm bootstrap
+          pnpm bootstrap --tar
 
       - name: Compress
         working-directory: engine
