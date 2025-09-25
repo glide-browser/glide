@@ -1058,6 +1058,77 @@ add_task(async function test_fs_exists() {
   });
 });
 
+add_task(async function test_fs_stat() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    const test_path = PathUtils.join(PathUtils.profileDir, "glide", "test_file.txt");
+    await IOUtils.writeUTF8(test_path, "test content");
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        glide.g.value = await glide.fs.stat("test_file.txt");
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    const result = GlideBrowser.api.g.value as glide.FileInfo;
+    is(result.type, "file");
+    is(typeof result.size, "number");
+    is(typeof result.creation_time, "number");
+    is(typeof result.last_accessed, "number");
+    is(typeof result.last_modified, "number");
+    is(typeof result.path, "string");
+
+    await IOUtils.remove(test_path);
+  });
+});
+
+add_task(async function test_fs_stat_directory() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    const test_path = PathUtils.join(PathUtils.profileDir, "glide", "test_file.txt");
+    await IOUtils.writeUTF8(test_path, "test content");
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        glide.g.value = await glide.fs.stat(glide.path.profile_dir);
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    const result = GlideBrowser.api.g.value as glide.FileInfo;
+    is(result.type, "directory");
+    is(typeof result.size, "number");
+    is(typeof result.creation_time, "number");
+    is(typeof result.last_accessed, "number");
+    is(typeof result.last_modified, "number");
+    is(typeof result.path, "string");
+
+    await IOUtils.remove(test_path);
+  });
+});
+
+add_task(async function test_fs_stat_not_found() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        await glide.fs.stat("nonexistent_file.txt").catch((err) => {
+          glide.g.value = err;
+        });
+      });
+    });
+
+    await GlideTestUtils.synthesize_keyseq("~");
+    await sleep_frames(10);
+
+    const result = GlideBrowser.api.g.value as FileNotFoundError;
+    is(result.name, "FileNotFoundError");
+    ok(result.path.endsWith("nonexistent_file.txt"), "Error should include the path");
+  });
+});
+
 add_task(async function test_path_cwd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.cwd;

@@ -1936,6 +1936,27 @@ function make_glide_api(): typeof glide {
         const absolute = resolve_path(path);
         return await IOUtils.exists(absolute);
       },
+      async stat(path) {
+        const absolute = resolve_path(path);
+
+        const stat = await IOUtils.stat(absolute).catch((err) => {
+          if (err instanceof DOMException && err.name === "NotFoundError") {
+            throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
+          }
+
+          throw err;
+        });
+
+        return {
+          type: stat.type === "directory" ? "directory" : stat.type === "regular" ? "file" : null,
+          permissions: stat.permissions,
+          last_accessed: stat.lastAccessed,
+          last_modified: stat.lastModified,
+          creation_time: stat.creationTime,
+          path: stat.path,
+          size: stat.size,
+        };
+      },
     },
     modes: {
       register(mode, opts) {

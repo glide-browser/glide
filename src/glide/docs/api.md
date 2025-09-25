@@ -88,6 +88,7 @@ text-decoration: none;
 [`glide.fs.read()`](#glide.fs.read)\
 [`glide.fs.write()`](#glide.fs.write)\
 [`glide.fs.exists()`](#glide.fs.exists)\
+[`glide.fs.stat()`](#glide.fs.stat)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
@@ -109,7 +110,7 @@ text-decoration: none;
 
 The currently active mode.
 
-### `glide.ctx.url: string` {% id="glide.ctx.url" %}
+### `glide.ctx.url: URL` {% id="glide.ctx.url" %}
 
 ### `glide.ctx.os` {% id="glide.ctx.os" %}
 
@@ -576,6 +577,21 @@ Relative paths are resolved relative to the config directory, if no config direc
 paths are not allowed.
 
 `ts:@example await glide.fs.exists(\`${glide.path.home_dir}/.config/foo\`);`
+
+{% api-heading id="glide.fs.stat" %}
+glide.fs.stat(path): Promise<glide.FileInfo>
+{% /api-heading %}
+
+Obtain information about a file, such as size, modification dates, etc.
+
+Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+paths are not allowed.
+
+```ts
+const stat = await glide.fs.stat("userChrome.css");
+stat.last_modified; // 1758835015092
+stat.type; // "file"
+```
 
 ## • `glide.messengers` {% id="glide.messengers" %}
 

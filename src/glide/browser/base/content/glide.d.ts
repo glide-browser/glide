@@ -588,6 +588,20 @@ declare global {
        * @example await glide.fs.exists(`${glide.path.home_dir}/.config/foo`);
        */
       exists(path: string): Promise<boolean>;
+
+      /**
+       * Obtain information about a file, such as size, modification dates, etc.
+       *
+       * Relative paths are resolved relative to the config directory, if no config directory is defined then relative
+       * paths are not allowed.
+       *
+       * ```ts
+       * const stat = await glide.fs.stat('userChrome.css');
+       * stat.last_modified // 1758835015092
+       * stat.type // "file"
+       * ```
+       */
+      stat(path: string): Promise<glide.FileInfo>;
     };
 
     messengers: {
@@ -1090,6 +1104,16 @@ declare global {
        */
       send<MessageName extends keyof Messages>(name: MessageName): void;
     }
+
+    type FileInfo = {
+      type: "file" | "directory" | null;
+      permissions: number | undefined;
+      last_accessed: number | undefined;
+      last_modified: number | undefined;
+      creation_time: number | undefined;
+      path: string | undefined;
+      size: number | undefined;
+    };
   }
 
   /**
