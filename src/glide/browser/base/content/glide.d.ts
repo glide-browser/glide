@@ -1010,7 +1010,7 @@ declare global {
 
     export type HintLocation = "content" | "browser-ui";
 
-    type KeyNotation = {
+    export type KeyNotation = {
       /**
        * @example <leader>
        * @example h
@@ -1028,7 +1028,7 @@ declare global {
       shift: boolean;
     };
 
-    type Keymap = {
+    export type Keymap = {
       sequence: string[];
       lhs: string;
       rhs: glide.ExcmdValue;
@@ -1036,7 +1036,7 @@ declare global {
       mode: GlideMode;
     };
 
-    type KeymapOpts = {
+    export type KeymapOpts = {
       description?: string | undefined;
 
       /**
@@ -1056,7 +1056,7 @@ declare global {
       retain_key_display?: boolean;
     };
 
-    type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
+    export type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
 
     type AutocmdEvent =
       | "UrlEnter"
@@ -1124,7 +1124,7 @@ declare global {
       send<MessageName extends keyof Messages>(name: MessageName): void;
     }
 
-    type FileInfo = {
+    export type FileInfo = {
       type: "file" | "directory" | null;
       permissions: number | undefined;
       last_accessed: number | undefined;

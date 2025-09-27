@@ -107,6 +107,11 @@ text-decoration: none;
 [`glide.KeymapCallback`](#glide.KeymapCallback)\
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLocation`](#glide.HintLocation)\
+[`glide.KeyNotation`](#glide.KeyNotation)\
+[`glide.Keymap`](#glide.Keymap)\
+[`glide.KeymapOpts`](#glide.KeymapOpts)\
+[`glide.KeymapDeleteOpts`](#glide.KeymapDeleteOpts)\
+[`glide.FileInfo`](#glide.FileInfo)\
 [`DOM.create_element()`](#DOM.create_element)
 
 {% html %}
@@ -818,6 +823,74 @@ tab_id: number;
 ```
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
+
+## • `glide.KeyNotation` {% id="glide.KeyNotation" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * @example <leader>
+ * @example h
+ * @example j
+ * @example K
+ * @example L
+ * @example <Tab>
+ */
+key: string;
+
+// modifiers
+alt: boolean;
+ctrl: boolean;
+meta: boolean;
+shift: boolean;
+```
+
+## • `glide.Keymap` {% id="glide.Keymap" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+sequence: string[];
+lhs: string;
+rhs: glide.ExcmdValue;
+description: string | undefined;
+mode: GlideMode;
+```
+
+## • `glide.KeymapOpts` {% id="glide.KeymapOpts" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+description?: string | undefined;
+/**
+ * If `true`, applies the mapping for the current buffer instead of globally.
+ *
+ * @default {false}
+ */
+buffer?: boolean;
+/**
+ * If true, the key sequence will be displayed even after the mapping is executed.
+ *
+ * This is useful for mappings that are conceptually chained but are not *actually*, e.g. `diw`.
+ *
+ * @default false
+ */
+retain_key_display?: boolean;
+```
+
+## • `glide.KeymapDeleteOpts` {% id="glide.KeymapDeleteOpts" %}
+
+```typescript {% highlight_prefix="type x = " %}
+Pick<KeymapOpts, "buffer">;
+```
+
+## • `glide.FileInfo` {% id="glide.FileInfo" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+type: "file" | "directory" | null;
+permissions: number | undefined;
+last_accessed: number | undefined;
+last_modified: number | undefined;
+creation_time: number | undefined;
+path: string | undefined;
+size: number | undefined;
+```
 
 # `DOM` {% id="DOM" %}
 
