@@ -1168,3 +1168,30 @@ add_task(async function test_path_join() {
 
   await IOUtils.remove(PathUtils.join("/tmp", "foo", "bar", "baz.txt"));
 });
+
+add_task(async function test_env() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.env.set("TEST_VAR", "test_value");
+    glide.g.value = glide.env.get("TEST_VAR");
+  });
+  is(GlideBrowser.api.g.value, "test_value");
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.env.get("NONEXISTENT_VAR_XYZ123");
+  });
+  is(GlideBrowser.api.g.value, null, "env.get() should return null for nonexistent variables");
+});
+
+add_task(async function test_env_delete() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.env.set("DELETE_TEST_VAR", "to_be_deleted");
+    glide.env.delete("DELETE_TEST_VAR");
+    glide.g.value = glide.env.get("DELETE_TEST_VAR");
+  });
+  is(GlideBrowser.api.g.value, null, "env.delete() should remove the environment variable");
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.env.delete("NONEXISTENT_VAR_ABC789");
+  });
+  is(GlideBrowser.api.g.value, null, "env.delete() should return null for nonexistent variables");
+});

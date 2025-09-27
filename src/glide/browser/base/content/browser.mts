@@ -2035,6 +2035,24 @@ function make_glide_api(): typeof glide {
         return GlideBrowser.create_messenger(receiver);
       },
     },
+    env: {
+      get(name) {
+        if (!Services.env.exists(name)) {
+          return null;
+        }
+        return Services.env.get(name);
+      },
+
+      set(name, value) {
+        Services.env.set(name, value);
+      },
+
+      delete(name) {
+        const previous = this.get(name);
+        Services.env.set(name, "");
+        return previous;
+      },
+    },
     process: {
       async spawn(command, args, opts) {
         const { Subprocess } = ChromeUtils.importESModule("resource://gre/modules/Subprocess.sys.mjs");

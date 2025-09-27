@@ -41,6 +41,10 @@ text-decoration: none;
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
+[`glide.env`](#glide.env)\
+[`glide.env.get()`](#glide.env.get)\
+[`glide.env.set()`](#glide.env.set)\
+[`glide.env.delete()`](#glide.env.delete)\
 [`glide.process`](#glide.process)\
 [`glide.process.spawn()`](#glide.process.spawn)\
 [`glide.process.execute()`](#glide.process.execute)\
@@ -111,6 +115,8 @@ text-decoration: none;
 The currently active mode.
 
 ### `glide.ctx.url: URL` {% id="glide.ctx.url" %}
+
+The URL of the currently focused tab.
 
 ### `glide.ctx.os` {% id="glide.ctx.os" %}
 
@@ -187,6 +193,32 @@ glide.options.get(name): glide.Options[Name]
 {% /api-heading %}
 
 Returns either a buffer-specific option, or the global version. In that order
+
+## • `glide.env` {% id="glide.env" %}
+
+{% api-heading id="glide.env.get" %}
+glide.env.get(name): string | null
+{% /api-heading %}
+
+Get the value of an environment variable.
+
+If it does not exist `null` is returned.
+
+{% api-heading id="glide.env.set" %}
+glide.env.set(name, value): void
+{% /api-heading %}
+
+Set the value of an environment variable.
+
+{% api-heading id="glide.env.delete" %}
+glide.env.delete(name): string | null
+{% /api-heading %}
+
+Remove an environment variable.
+
+Does _not_ error if the environment variable did not already exist.
+
+Returns the value of the deleted environment variable, if it did not exist `null` is returned.
 
 ## • `glide.process` {% id="glide.process" %}
 

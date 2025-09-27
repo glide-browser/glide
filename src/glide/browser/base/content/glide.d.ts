@@ -10,6 +10,9 @@ declare global {
        */
       mode: GlideMode;
 
+      /**
+       * The URL of the currently focused tab.
+       */
       url: URL;
 
       /**
@@ -43,6 +46,29 @@ declare global {
        * Returns either a buffer-specific option, or the global version. In that order
        */
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name];
+    };
+
+    env: {
+      /**
+       * Get the value of an environment variable.
+       *
+       * If it does not exist `null` is returned.
+       */
+      get(name: string): string | null;
+
+      /**
+       * Set the value of an environment variable.
+       */
+      set(name: string, value: string): void;
+
+      /**
+       * Remove an environment variable.
+       *
+       * Does *not* error if the environment variable did not already exist.
+       *
+       * Returns the value of the deleted environment variable, if it did not exist `null` is returned.
+       */
+      delete(name: string): string | null;
     };
 
     process: {
