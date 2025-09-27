@@ -20,6 +20,18 @@ glide.autocmds.create("UrlEnter", {
 
 {% /details %}
 
+{% details heading=true %} {% slot "summary" %}Ignore keymappings for a specific website
+{% /slot %}
+
+```typescript
+glide.autocmds.create("UrlEnter", {
+  hostname: "example.com",
+}, async () => {
+  await glide.excmds.execute("mode_change ignore");
+  return () => glide.excmds.execute("mode_change normal");
+});
+```
+
 {% details heading=true %} {% slot "summary" %}Override a keymap for a specific website
 {% /slot %}
 
