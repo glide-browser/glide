@@ -295,7 +295,7 @@ class RenderState {
         },
         "api-heading": {
           attributes: { id: { type: String, required: true } },
-          transform: (node) => {
+          transform: (node, config) => {
             // note: this doesn't support inline usage, it must be
             // ```md
             // {% api-heading %}
@@ -308,7 +308,9 @@ class RenderState {
 
             const html_id = node.attributes["id"];
 
-            const highlighted = this.highlighter.codeToHtml(content, {
+            const highlighted = code_to_html(this.highlighter, content, {
+              ...this.code_options,
+              config,
               lang: "typescript",
               themes: this.themes,
               transformers: [
@@ -998,56 +1000,65 @@ function make_heading_property_ref_transformer({
         ];
       });
     },
+
     root(root) {
-      const children = [...root.children] as H.ElementContent[];
+      return { ...root, children: add_go_to_def([...root.children] as H.ElementContent[]) };
 
-      // the text that we want to replace with an anchor may be split up
-      // across multiple `<span>`s, so iterate through all of them until
-      // we find a contiguous run that matches the ref we're looking for.
+      function add_go_to_def(children: H.ElementContent[]): H.ElementContent[] {
+        // the text that we want to replace with an anchor may be split up
+        // across multiple `<span>`s, so iterate through all of them until
+        // we find a contiguous run that matches the ref we're looking for.
 
-      const runs: { start: number; end: number }[] = [];
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i]!;
+        const runs: { start: number; end: number }[] = [];
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i]!;
 
-        if (!is_text_span(child)) continue;
-
-        let acc = (child.children[0] as H.Text).value;
-        if (acc === ref) {
-          runs.push({ start: i, end: i });
-          continue;
-        }
-
-        for (let j = i + 1; j < children.length; j++) {
-          const child = children[j]!;
           if (!is_text_span(child)) {
-            // non contiguous
-            break;
+            if (child.type === "element") {
+              // if we have an element child, it may include nested children that can be turned into go-to-defs
+              children.splice(i, 1, { ...child, children: add_go_to_def([...child.children]) });
+            }
+            continue;
           }
 
-          acc += child.children[0].value;
+          let acc = (child.children[0] as H.Text).value;
           if (acc === ref) {
-            runs.push({ start: i, end: j });
-            i = j; // Skip past the run we just processed
-            break;
+            runs.push({ start: i, end: i });
+            continue;
+          }
+
+          for (let j = i + 1; j < children.length; j++) {
+            const child = children[j]!;
+            if (!is_text_span(child)) {
+              // non contiguous
+              break;
+            }
+
+            acc += child.children[0].value;
+            if (acc === ref) {
+              runs.push({ start: i, end: j });
+              i = j; // Skip past the run we just processed
+              break;
+            }
           }
         }
-      }
 
-      if (!runs.length) {
-        return;
-      }
+        if (!runs.length) {
+          return children;
+        }
 
-      // TODO: this is probably broken if there are multiple runs
-      for (const { start, end } of runs) {
-        children.splice(start, end - start + 1, {
-          type: "element",
-          tagName: "a",
-          properties: { href: `#${href}`, class: "go-to-def" },
-          children: children.slice(start, end + 1),
-        });
-      }
+        // TODO: this is probably broken if there are multiple runs
+        for (const { start, end } of runs) {
+          children.splice(start, end - start + 1, {
+            type: "element",
+            tagName: "a",
+            properties: { href: `#${href}`, class: "go-to-def" },
+            children: children.slice(start, end + 1),
+          });
+        }
 
-      return { ...root, children };
+        return children;
+      }
     },
   };
 }
