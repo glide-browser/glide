@@ -1,7 +1,5 @@
 {
   "name": "Glide Browser",
-  "vendor": "Glide",
-  "appId": "glide",
   "binaryName": "glide",
   "version": {
     "product": "firefox-dev",
@@ -9,37 +7,14 @@
     "version": "144.0b5",
     "candidate": "144.0b5"
   },
-  "buildOptions": {
-    "useGitFetch": true,
-    "windowsUseSymbolicLinks": false,
-    "generateBranding": true
-  },
-  "addons": {},
   "brands": {
     "glide": {
-      "backgroundColor": "#1A1B25",
-      "brandShorterName": "Glide",
-      "brandShortName": "Glide",
-      "brandFullName": "Glide Browser",
       "release": {
         "displayVersion": "0.1.49a",
         "github": {
           "repo": "glide-browser/glide"
-        },
-        "archives": {
-          "macos-aarch64": "macos-aarch64.mar",
-          "linux": "linux-x86_64.mar",
-          "macos-x64": "macos-x86_64.mar",
-          "linux-aarch64": "linux-aarch64.mar",
-          "windows": "windows.mar",
-          "windows-arm64": "windows-arm64.mar"
         }
       }
     }
-  },
-  "license": {
-    "ignoredFiles": [".*\\.json"],
-    "licenseType": "MPL-2.0"
-  },
-  "updateHostname": "updates.glide-browser.app"
+  }
 }
