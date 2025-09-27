@@ -646,6 +646,9 @@ h2.code-heading {
 h3.code-heading {
   margin-top: 2em !important;
 }
+.code-heading::after {
+  display: none !important;
+}
 
 .main-container {
   display: flex;
