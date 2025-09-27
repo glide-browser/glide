@@ -926,7 +926,7 @@ export function code_to_html(
   options: CodeHighlightOptions,
 ): string {
   if (options.include_go_to_def) {
-    for (const match of code.matchAll(/(.*)(: |<)(glide\.[^>]*)(>)?/g)) {
+    for (const match of code.matchAll(/(.*)(: |<|\[)(glide\.[^\<\>\]\[]*)(>)?/g)) {
       var [_, __, ___, ref] = match;
       ref = assert_present(ref);
 
