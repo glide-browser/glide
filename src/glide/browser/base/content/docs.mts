@@ -923,9 +923,9 @@ export function code_to_html(
   code: string,
   options: CodeHighlightOptions,
 ): string {
-  if (options.include_go_to_def && options.config && options.config?.heading) {
-    for (const match of code.matchAll(/(.*): (glide\..*)/g)) {
-      var [_, __, ref] = match;
+  if (options.include_go_to_def) {
+    for (const match of code.matchAll(/(.*)(: |<)(glide\.[^>]*)(>)?/g)) {
+      var [_, __, ___, ref] = match;
       ref = assert_present(ref);
 
       options = { ...options };
@@ -966,8 +966,7 @@ function make_heading_property_ref_transformer({
       return all_tokens.map((tokens): ThemedToken[] => {
         const property_index = tokens.findIndex(token => token.content.startsWith(": ") && token.content.length > 2);
         if (property_index === -1) {
-          console.error(tokens);
-          throw new Error(`Expected to find a property index like \`: *\``);
+          return tokens;
         }
 
         // make sure that we'd only ever add anchors for the direct reference
@@ -978,6 +977,24 @@ function make_heading_property_ref_transformer({
           { ...token, content: ": " },
           { ...token, content: token.content.slice(2) },
           ...tokens.slice(property_index + 1),
+        ];
+      }).map((tokens): ThemedToken[] => {
+        const start_index = tokens.findIndex((token) =>
+          token.content.includes("<") && ref.startsWith(token.content.slice(token.content.indexOf("<") + 1))
+        );
+        if (start_index === -1) {
+          return tokens;
+        }
+
+        const start_token = tokens[start_index]!;
+        const left_content_index = start_token.content.indexOf("<");
+
+        return [
+          ...tokens.slice(0, start_index),
+          { ...start_token, content: start_token.content.slice(0, left_content_index) },
+          { ...start_token, content: "<" },
+          { ...start_token, content: start_token.content.slice(left_content_index + 1) },
+          ...tokens.slice(start_index + 1),
         ];
       });
     },
@@ -991,6 +1008,7 @@ function make_heading_property_ref_transformer({
       const runs: { start: number; end: number }[] = [];
       for (let i = 0; i < children.length; i++) {
         const child = children[i]!;
+
         if (!is_text_span(child)) continue;
 
         let acc = (child.children[0] as H.Text).value;
@@ -1019,8 +1037,9 @@ function make_heading_property_ref_transformer({
         return;
       }
 
+      // TODO: this is probably broken if there are multiple runs
       for (const { start, end } of runs) {
-        children.splice(start, end, {
+        children.splice(start, end - start + 1, {
           type: "element",
           tagName: "a",
           properties: { href: `#${href}`, class: "go-to-def" },
