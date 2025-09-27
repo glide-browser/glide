@@ -364,7 +364,7 @@ class RenderState {
             return new Markdoc.Tag("details", {}, [
               new Markdoc.Tag("summary", {}, [
                 ...Summary,
-                ...(id ? [" ", new Markdoc.Tag("a", { href: `#${id}`, class: "summary-anchor" }, ["#"])] : []),
+                ...(id ? [" ", new Markdoc.Tag("a", { href: `#${id}`, class: "heading-anchor" }, ["#"])] : []),
               ]),
               ...(id ? [new Markdoc.Tag("div", { id })] : []),
               ...Children,

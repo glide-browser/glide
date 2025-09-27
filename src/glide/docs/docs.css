@@ -225,13 +225,13 @@ details {
   margin-bottom: 0;
 }
 
-.summary-anchor {
+.heading-anchor {
   color: var(--text-color-alt) !important;
   opacity: 0;
   transition: opacity 250ms ease;
 }
 
-summary:hover .summary-anchor {
+*:hover > .heading-anchor {
   opacity: 1;
 }
 
