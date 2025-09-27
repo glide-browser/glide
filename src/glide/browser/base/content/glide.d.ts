@@ -859,7 +859,6 @@ declare global {
       hint_size: string;
     };
 
-    /// @docs-skip
     export type SpawnOptions = {
       cwd?: string;
 
@@ -886,7 +885,6 @@ declare global {
       stderr?: "pipe" | "stdout";
     };
 
-    /// @docs-skip
     export type Process = {
       pid: number;
 
@@ -931,15 +929,13 @@ declare global {
     /**
      * Represents a process that has exited.
      */
-    /// @docs-skip
     export type CompletedProcess = glide.Process & { exit_code: number };
 
     export type RGBString = `#${string}`;
 
-    /// @docs-skip
+    /** A web extension tab that is guaranteed to have the `ts:id` property present. */
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
 
-    /// @docs-skip
     export type KeyEvent = KeyboardEvent & {
       /**
        * The vim notation of the KeyEvent, e.g.
@@ -949,7 +945,6 @@ declare global {
       glide_key: string;
     };
 
-    /// @docs-skip
     export type KeySendOptions = {
       /**
        * Send the key event(s) directly through to the builtin Firefox
@@ -958,10 +953,8 @@ declare global {
       skip_mappings?: boolean;
     };
 
-    /// @docs-skip
     export type KeymapCallback = (props: glide.KeymapCallbackProps) => void;
 
-    /// @docs-skip
     export type KeymapCallbackProps = {
       /**
        * The tab that the callback is being executed in.

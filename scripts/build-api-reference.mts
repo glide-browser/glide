@@ -239,11 +239,32 @@ function* traverse(
     const body = children(node)[2];
 
     if (body) {
-      yield* Header(`${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`, {
-        parents,
-        id: QualifiedName,
-        kind: "type",
-      });
+      // makes more sense to show these types inline in the header as they're short
+      if (Node.isTemplateLiteralTypeNode(body) || Node.isUnionTypeNode(body)) {
+        yield* Header(`${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`, {
+          parents,
+          id: QualifiedName,
+          kind: "type",
+        });
+        return;
+      }
+
+      yield* Header(`${QualifiedName}`, { parents, id: QualifiedName, kind: "type" });
+      yield* Docs(node.getJsDocs()[0]);
+
+      if (Node.isTypeLiteral(body)) {
+        yield "\n```typescript {% highlight_prefix=\"type x = {\" %}\n";
+
+        // expand properties / methods for type literals like `glide.Process` to avoid
+        // incessant indentation and redundant surrounding `{}`
+        for (const child of body.getChildSyntaxListOrThrow().getChildren()) {
+          yield child.print() + "\n";
+        }
+      } else {
+        yield "\n```typescript {% highlight_prefix=\"type x = \" %}\n";
+        yield body.print();
+      }
+      yield "\n```";
     } else {
       console.warn(`no body for ${Name}`);
     }

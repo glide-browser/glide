@@ -97,7 +97,15 @@ text-decoration: none;
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
 [`glide.modes.register()`](#glide.modes.register)\
+[`glide.SpawnOptions`](#glide.SpawnOptions)\
+[`glide.Process`](#glide.Process)\
+[`glide.CompletedProcess`](#glide.CompletedProcess)\
 [`glide.RGBString`](#glide.RGBString)\
+[`glide.TabWithID`](#glide.TabWithID)\
+[`glide.KeyEvent`](#glide.KeyEvent)\
+[`glide.KeySendOptions`](#glide.KeySendOptions)\
+[`glide.KeymapCallback`](#glide.KeymapCallback)\
+[`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLocation`](#glide.HintLocation)\
 [`DOM.create_element()`](#DOM.create_element)
 
@@ -687,7 +695,127 @@ glide.modes.register("leap", { caret: "normal" });
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 
+## • `glide.SpawnOptions` {% id="glide.SpawnOptions" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+cwd?: string;
+env?: Record<string, string | null>;
+extend_env?: boolean;
+success_codes?: number[];
+/**
+ * If `false`, do not throw an error for non-zero exit codes.
+ *
+ * @default true
+ */
+check_exit_code?: boolean;
+/**
+ * Control where the stderr output is sent.
+ *
+ * If `"pipe"` then sterr is accessible through `process.stderr`.
+ * If `"stdout"` then sterr is mixed with stdout and accessible through `process.stdout`.
+ *
+ * @default "pipe"
+ */
+stderr?: "pipe" | "stdout";
+```
+
+## • `glide.Process` {% id="glide.Process" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+pid: number;
+/**
+ * The process exit code.
+ *
+ * `null` if it has not exited yet.
+ */
+exit_code: number | null;
+/**
+ * A `ReadableStream` of `string`s from the stdout pipe.
+ */
+stdout: ReadableStream<string>;
+/**
+ * A `ReadableStream` of `string`s from the stderr pipe.
+ *
+ * This is `null` if the `stderr: 'stdout'` option was set as the pipe will be forwarded
+ * to `stdout` instead.
+ */
+stderr: ReadableStream<string> | null;
+/**
+ * Wait for the process to exit.
+ */
+wait(): Promise<glide.CompletedProcess>;
+/**
+ * Kill the process.
+ *
+ * On platforms which support it, the process will be sent a `SIGTERM` signal immediately,
+ * so that it has a chance to terminate gracefully, and a `SIGKILL` signal if it hasn't exited
+ * within `timeout` milliseconds.
+ *
+ * @param {integer} [timeout=300]
+ *        A timeout, in milliseconds, after which the process will be forcibly killed.
+ */
+kill(timeout?: number): Promise<glide.CompletedProcess>;
+```
+
+## • `glide.CompletedProcess` {% id="glide.CompletedProcess" %}
+
+Represents a process that has exited.
+
+```typescript {% highlight_prefix="type x = " %}
+glide.Process & {
+    exit_code: number;
+}
+```
+
 ## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}
+
+## • `glide.TabWithID` {% id="glide.TabWithID" %}
+
+A web extension tab that is guaranteed to have the `ts:id` property present.
+
+```typescript {% highlight_prefix="type x = " %}
+Omit<Browser.Tabs.Tab, "id"> & {
+    id: number;
+}
+```
+
+## • `glide.KeyEvent` {% id="glide.KeyEvent" %}
+
+```typescript {% highlight_prefix="type x = " %}
+KeyboardEvent & {
+    /**
+     * The vim notation of the KeyEvent, e.g.
+     *
+     * `{ ctrlKey: true, key: 's' }` -> `'<C-s>'`
+     */
+    glide_key: string;
+}
+```
+
+## • `glide.KeySendOptions` {% id="glide.KeySendOptions" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * Send the key event(s) directly through to the builtin Firefox
+ * input handler and skip all of the mappings defined in Glide.
+ */
+skip_mappings?: boolean;
+```
+
+## • `glide.KeymapCallback` {% id="glide.KeymapCallback" %}
+
+```typescript {% highlight_prefix="type x = " %}
+(props: glide.KeymapCallbackProps) => void
+```
+
+## • `glide.KeymapCallbackProps` {% id="glide.KeymapCallbackProps" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * The tab that the callback is being executed in.
+ */
+tab_id: number;
+```
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
 
