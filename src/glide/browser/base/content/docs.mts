@@ -9,7 +9,6 @@ import type { CodeToHastOptions, Highlighter, ShikiTransformer, ThemedToken, The
 const Html = ChromeUtils.importESModule("chrome://glide/content/utils/html.mjs");
 const { default: Markdoc } = ChromeUtils.importESModule("chrome://glide/content/bundled/markdoc.mjs");
 const { markdown, html } = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
-const { firstx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { Words } = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { GLIDE_EXCOMMANDS } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
@@ -22,16 +21,6 @@ interface MarkdocConfig extends M.Config {
    * e.g. for property go-to-def in API docs.
    */
   heading?: boolean;
-
-  /**
-   * This is very cursed but when rendering headings, we need to know if
-   * the children rendered as anchors, as nested anchors aren't allowed.
-   *
-   * We accomplish this by passing in a different config to the children and
-   * if the children would be rendered as an anchor, then the config is mutated
-   * and this property is set to `true`.
-   */
-  nested_anchors?: boolean;
 }
 
 interface SidebarEntry {
@@ -326,15 +315,21 @@ class RenderState {
                 {
                   pre(node) {
                     this.addClassToHast(node, "shiki-no-box");
+                    node.children.push({ type: "text", value: " " });
+                    node.children.push({
+                      type: "element",
+                      tagName: "a",
+                      properties: { "class": "heading-anchor", href: `#${html_id}` },
+                      children: [{ type: "text", value: "#" }],
+                    });
                   },
                 },
               ],
             });
-            return this.html({
-              html:
-                `<a href="#${html_id}"><h3 id="${html_id}" class="code-heading invisible-header">${highlighted}</h3></a>`,
-              content: "",
-            });
+
+            return new Markdoc.Tag(`h3`, { id: html_id, class: "code-heading invisible-header" }, [
+              this.html({ html: highlighted, content: "" }),
+            ]);
           },
         },
         details: {
@@ -544,9 +539,20 @@ class RenderState {
                 : $class
                 ? { class: $class }
                 : undefined),
-            }, children);
+            }, [
+              ...children,
 
-            if (nested_config.nested_anchors) {
+              // in some cases we add a clickable anchor to the right of the heading instead of the heading
+              // itself as the heading may contain anchor, and nesting anchors inside anchors is invalid
+              ...(this.code_options.include_go_to_def
+                ? [
+                  " ",
+                  new Markdoc.Tag("a", { href: `#${id}`, class: "heading-anchor" }, ["#"]),
+                ]
+                : []),
+            ]);
+
+            if (this.code_options.include_go_to_def) {
               return Heading;
             }
 
@@ -919,16 +925,14 @@ export function code_to_html(
 ): string {
   if (options.include_go_to_def && options.config && options.config?.heading) {
     for (const match of code.matchAll(/(.*): (glide\..*)/g)) {
-      var [_, pre, ref] = match;
+      var [_, __, ref] = match;
       ref = assert_present(ref);
 
       options = { ...options };
       options.transformers ??= [];
       options.transformers.push(make_heading_property_ref_transformer({
-        preceding: assert_present(pre),
         ref,
         href: API_REF_TO_HREF_MAP[ref] ?? ref,
-        config: options.config!,
       }));
     }
   }
@@ -953,13 +957,9 @@ export function code_to_html(
 function make_heading_property_ref_transformer({
   ref,
   href,
-  preceding,
-  config,
 }: {
   ref: string;
   href: string;
-  preceding: string;
-  config: MarkdocConfig;
 }): ShikiTransformer {
   return {
     tokens(all_tokens) {
@@ -1019,8 +1019,6 @@ function make_heading_property_ref_transformer({
         return;
       }
 
-      config.nested_anchors = true;
-
       for (const { start, end } of runs) {
         children.splice(start, end, {
           type: "element",
@@ -1029,17 +1027,6 @@ function make_heading_property_ref_transformer({
           children: children.slice(start, end + 1),
         });
       }
-
-      // you can't nest `<a>`s inside each other, and as this is for headings
-      // we need to define the heading anchor for the *rest* of the heading
-      // element.
-      const run = firstx(runs);
-      children.splice(0, run.start, {
-        type: "element",
-        tagName: "a",
-        properties: { href: `#${preceding}`, style: "text-decoration: none" },
-        children: children.slice(0, run.start),
-      });
 
       return { ...root, children };
     },
