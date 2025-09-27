@@ -6697,10 +6697,8 @@ interface GleanImpl {
   }
 
   searchSuggestionsOhttp: {
-    abortedRequests: Record<string, GleanCounter>;
-    failedRequests: Record<string, GleanCounter>;
     latency: Record<string, GleanTimingDistribution>;
-    successfulRequests: Record<string, GleanCounter>;
+    requestCounter: GleanDualLabeledCounter;
   }
 
   legacyTelemetry: {
