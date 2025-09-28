@@ -32,6 +32,8 @@ glide.autocmds.create("UrlEnter", {
 });
 ```
 
+{% /details %}
+
 {% details heading=true %} {% slot "summary" %}Override a keymap for a specific website
 {% /slot %}
 
