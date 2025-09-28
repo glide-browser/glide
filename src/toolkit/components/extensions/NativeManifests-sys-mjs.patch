@@ -1,0 +1,13 @@
+diff --git a/toolkit/components/extensions/NativeManifests.sys.mjs b/toolkit/components/extensions/NativeManifests.sys.mjs
+index 5c9cee1b700d3cfb365fd426b0b5f9d1fc330904..ce3098ef689f0864b386f0d83309b7f7dadcd4e0 100644
+--- a/toolkit/components/extensions/NativeManifests.sys.mjs
++++ b/toolkit/components/extensions/NativeManifests.sys.mjs
+@@ -24,7 +24,7 @@ const TYPES = {
+ const NATIVE_MANIFEST_SCHEMA =
+   "chrome://extensions/content/schemas/native_manifest.json";
+ 
+-const REGPATH = "Software\\Mozilla";
++const REGPATH = "Software\\Glide Browser";
+ 
+ export var NativeManifests = {
+   _initializePromise: null,
