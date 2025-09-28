@@ -26,7 +26,7 @@
 - Site specific [settings](https://glide-browser.app/cookbook#set-a-pref-for-a-specific-website) / [keymaps](https://glide-browser.app/cookbook#override-a-keymap-for-a-specific-website)
 - ... and more
 
-https://github.com/user-attachments/assets/73d03e75-f0c8-42eb-8aab-566feea345fd
+https://github.com/user-attachments/assets/610e8121-8e25-484b-bf1c-8f9f3efd8605
 
 ### Contributing
 
