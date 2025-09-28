@@ -8,6 +8,19 @@ Then you can run `:config_reload` and `:config_edit` to open the config file in 
 
 See the [API reference](api.md) for all of the available APIs in the config file or the [Cookbook](cookbook.md) for examples of common things you might want to do.
 
+Here's a short snippet that adds a `gt` keymapping to switch to a tab with `path:example.com` open.
+
+```typescript
+// ~/.config/glide/glide.ts
+glide.keymaps.set("normal", "gt", async () => {
+  const tab = await glide.tabs.get_first({
+    url: "example.com",
+  });
+  assert(tab && tab.id);
+  await browser.tabs.update(tab.id, { active: true });
+}, { description: "[g]o to example.com" });
+```
+
 ## File resolution
 
 Glide will resolve the config file by searching for a `path:glide.ts` file in the following directories in order:
