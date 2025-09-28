@@ -10,7 +10,7 @@
   "brands": {
     "glide": {
       "release": {
-        "displayVersion": "0.1.49a",
+        "displayVersion": "0.1.50a",
         "github": {
           "repo": "glide-browser/glide"
         }

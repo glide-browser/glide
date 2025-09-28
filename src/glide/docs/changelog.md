@@ -10,9 +10,28 @@ padding-top: revert !important;
 margin-top: 30px !important;
 margin-bottom: revert !important;
 }
+article li {
+padding: 0.3em;
+}
 {% /styles %}
 
 # Changelog
+
+# 0.1.50a
+
+- Added `glide.fs.stat()`.
+- Added `glide.env.get()`, `glide.env.set()`, and `glide.env.delete()`. This is particularly useful for configuring your `PATH` on macOS.
+- Added some missing types to the API docs.
+- Bumped Firefox from 144.0b5 to 144.0b6.
+- Fixed mappings with shift and multiiple modifiers, e.g. `cmd+shift+c` now works.
+- Fixed the native messaging runtime path, previously the paths were the Firefox defaults now:
+  - macOS system: `/Library/Application Support/Glide Browser`
+  - macOS user: `~/Library/Application Support/Glide Browser`
+  - Linux system: `/usr/lib64/glide-browser` (or `/usr/lib/glide-browser`)
+  - Linux user: `path:~/.glide-browser`
+- Removed support for the `browser` API inside the hints content callbacks, e.g. `glide.hints.show({ pick: () => ... })`.
+  This was the only place it was accessible and allowing access to the `browser` API from the content frame has security implications
+  that need to be investigated further.
 
 # 0.1.49a
 
