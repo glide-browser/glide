@@ -493,3 +493,22 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
     });
   });
 });
+
+add_task(async function test_shift_with_another_modifier() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.keymaps.set("normal", "<D-S-c>", () => {
+        glide.g.value = true;
+      });
+    });
+
+    EventUtils.synthesizeKey("KEY_Shift", { type: "keydown" });
+    EventUtils.synthesizeKey("KEY_Meta", { type: "keydown" });
+    EventUtils.synthesizeKey("c");
+
+    is(GlideBrowser.api.g.value, true);
+
+    EventUtils.synthesizeKey("KEY_Shift", { type: "keyup" });
+    EventUtils.synthesizeKey("KEY_Meta", { type: "keyup" });
+  });
+});

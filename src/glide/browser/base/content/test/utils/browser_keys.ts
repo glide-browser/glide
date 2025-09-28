@@ -113,8 +113,9 @@ function to_key_notation(
 add_task(async function test_event_to_ident() {
   is(to_key_notation({ key: "a" }), "a");
   is(to_key_notation({ key: "A", shiftKey: true }), "A");
+  is(to_key_notation({ key: "a", shiftKey: true }), "A");
   is(to_key_notation({ key: "c", ctrlKey: true }), "<C-c>");
-  is(to_key_notation({ key: "c", ctrlKey: true, shiftKey: true }), "<C-S-c>");
+  is(to_key_notation({ key: "c", ctrlKey: true, shiftKey: true }), "<C-S-C>");
   is(to_key_notation({ key: "Escape" }), "<Esc>");
   is(to_key_notation({ key: "Escape", ctrlKey: true }), "<C-Esc>");
   is(to_key_notation({ key: "<", ctrlKey: true }), "<C-lt>");
@@ -125,6 +126,7 @@ add_task(async function test_event_to_ident() {
   is(to_key_notation({ key: "P", ctrlKey: true, shiftKey: true }), "<C-S-P>");
   is(to_key_notation({ key: "S", ctrlKey: true, shiftKey: true, altKey: true }), "<C-A-S-S>");
   is(to_key_notation({ key: "l", ctrlKey: true, altKey: true, metaKey: true }), "<C-A-D-l>");
+  is(to_key_notation({ key: "P", metaKey: true, shiftKey: true }), "<D-S-P>");
 
   // Special keys
   is(to_key_notation({ key: "Tab" }), "<Tab>");
@@ -293,10 +295,10 @@ add_task(async function test_non_shifted_versions_of_characters_with_shift() {
 });
 
 add_task(async function test_non_shifted_characters_with_shift() {
-  is(to_key_notation({ key: "a", ctrlKey: true, shiftKey: true }), "<C-S-a>");
-  is(to_key_notation({ key: "z", ctrlKey: true, shiftKey: true }), "<C-S-z>");
-  is(to_key_notation({ key: "h", altKey: true, shiftKey: true }), "<A-S-h>");
-  is(to_key_notation({ key: "x", metaKey: true, shiftKey: true }), "<D-S-x>");
+  is(to_key_notation({ key: "a", ctrlKey: true, shiftKey: true }), "<C-S-A>");
+  is(to_key_notation({ key: "z", ctrlKey: true, shiftKey: true }), "<C-S-Z>");
+  is(to_key_notation({ key: "h", altKey: true, shiftKey: true }), "<A-S-H>");
+  is(to_key_notation({ key: "x", metaKey: true, shiftKey: true }), "<D-S-X>");
 });
 
 add_task(async function test_special_keys_with_shift() {
