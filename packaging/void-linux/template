@@ -1,0 +1,42 @@
+# Template file for 'glide-browser'
+pkgname=glide-browser
+version=0.1.35a
+revision=2
+archs="x86_64 aarch64"
+#build_wrksrc=
+#build_style=gnu-configure
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends=""
+makedepends=""
+depends=""
+short_desc="An extensible and keyboard-focused web browser"
+maintainer="Robert Craigie <robert@craigie.dev>"
+license="MPL-2.0"
+homepage="https://glide-browser.app"
+#changelog=""
+# distfiles="https://release-assets.glide-browser.app/releases/${version}/glide.linux-aarch64.tar.xz"
+# checksum=4e1ffb0b417126adfb7adb26ea73d8222ce9b211795243ef7ae61044d31e5136
+distfiles="https://github.com/glide-browser/glide/releases/download/${version}/glide.linux-x86_64.tar.xz"
+checksum=cf918af17257e9c7238a8ffd2a8e7c51c4e7ccf464b933aa516b4fba070a5935
+
+do_install() {
+	local package_location="usr/lib/$pkgname" item
+
+	vmkdir usr/share/applications
+	# TODO
+	# vcopy glide-browser.desktop /usr/share/applications/
+
+	vmkdir ${package_location}
+
+	for item in *; do
+	  vcopy "${item}" "${package_location}"
+	done
+
+	vmkdir usr/bin
+	# TODO: should it be glide-browser?
+	ln -sfr $DESTDIR/${package_location}/glide $DESTDIR/usr/bin/glide
+}
