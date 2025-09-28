@@ -178,10 +178,6 @@ export class GlideHandlerParent extends JSWindowActorParent<
         break;
       }
 
-      case "Glide::Query::Extension": {
-        return this.glide_browser!.send_extension_query(message.data);
-      }
-
       default:
         throw assert_never(message);
     }

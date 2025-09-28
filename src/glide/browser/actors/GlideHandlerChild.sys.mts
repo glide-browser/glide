@@ -5,7 +5,6 @@
 
 import type { GlideExcmdsMap, ParsedArg } from "../base/content/browser-excmds-registry.mts";
 import type { State } from "../base/content/browser.mjs";
-import type { ExtensionsAPI as ExtensionsAPIType } from "../base/content/extensions.mts";
 import type { Sandbox } from "../base/content/sandbox.mts";
 import type { ToDeserialisedIPCFunction } from "../base/content/utils/ipc.mts";
 import type { ParentMessages, ParentQueries } from "./GlideHandlerParent.sys.mjs";
@@ -17,7 +16,6 @@ const { GLIDE_COMMANDLINE_INPUT_ANONID } = ChromeUtils.importESModule("chrome://
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
-const { ExtensionsAPI } = ChromeUtils.importESModule("chrome://glide/content/extensions.mjs");
 const { parse_command_args } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds.mjs");
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
@@ -33,12 +31,7 @@ export interface ChildMessages {
   "Glide::RecordRepeatableCommand": ParentMessages["Glide::ExecuteContentCommand"];
 }
 
-export interface ChildQueries {
-  "Glide::Query::Extension": {
-    props: { method_path: string; args: any[] };
-    result: unknown;
-  };
-}
+export interface ChildQueries {}
 
 type HintAction = ToDeserialisedIPCFunction<
   ParentMessages["Glide::Hint"]["action"]
@@ -390,7 +383,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
   }
 
   get sandbox(): Sandbox {
-    const actor = this;
     return redefine_getter(
       this,
       "sandbox",
@@ -400,20 +392,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         window: this.contentWindow as HiddenWindow,
         original_window: null,
         console,
-        get browser() {
-          return actor.extension_api.browser_proxy_api;
-        },
+        browser: null,
         glide: null,
-      }),
-    );
-  }
-
-  get extension_api(): ExtensionsAPIType {
-    return redefine_getter(
-      this,
-      "extension_api",
-      new ExtensionsAPI(props => {
-        return this.send_query("Glide::Query::Extension", props);
       }),
     );
   }

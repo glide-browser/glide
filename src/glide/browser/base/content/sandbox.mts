@@ -68,7 +68,7 @@ interface SandboxProps {
   document: MirroredDocument | null;
   window: HiddenWindow | null;
   original_window: Window | null;
-  browser: typeof browser;
+  browser: typeof browser | null;
   glide: typeof glide | null;
 }
 
@@ -91,11 +91,10 @@ export function create_sandbox(props: SandboxProps): Sandbox {
 
   // options pass here correspond to:
   // https://github.com/mozilla-firefox/firefox/blob/0f7aa808c07a1644fb2b386113aa3a2b31befe24/js/xpconnect/idl/xpccomponents.idl#L151
-  let proto = {
+  let proto: any = {
     console: props.console,
     document: props.document,
     window: props.window,
-    browser: props.browser,
     glide: props.glide,
 
     dedent: Dedent.dedent,
@@ -130,6 +129,10 @@ export function create_sandbox(props: SandboxProps): Sandbox {
       throw new Error(detail ?? `assert_never: impossible to call: ${JSON.stringify(x)}`);
     },
   };
+
+  if (props.browser) {
+    proto.browser = props.browser;
+  }
 
   if (props.window) {
     for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(props.window))) {
