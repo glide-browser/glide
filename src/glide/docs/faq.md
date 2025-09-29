@@ -79,6 +79,15 @@ The [Extensions API](extensions.md) documents the available web extensions APIs.
 
 {% /details %}
 
+{% details heading=true %} {% slot "summary" %}Why does the Glide API use snake_case?
+{% /slot %}
+
+Because snake_case is better.
+
+It's more readable, easier to scan, and doesn't have awkward initialisms like `tabID` / `tabId`.
+
+{% /details %}
+
 {% details heading=true %} {% slot "summary" %}A Glide keymapping conflicts with a keymapping on a website, what do I do?
 {% /slot %}
 
