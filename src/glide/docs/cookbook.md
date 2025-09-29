@@ -64,6 +64,20 @@ glide.autocmds.create("UrlEnter", {
 
 {% /details %}
 
+{% details heading=true %} {% slot "summary" %}Split the config into multiple files
+{% /slot %}
+
+```typescript
+// glide.ts
+glide.unstable.include("opts.glide.ts");
+
+// opts.glide.ts
+glide.g.mapleader = "~";
+glide.o.which_key_delay = 500;
+```
+
+{% /details %}
+
 {% details heading=true %} {% slot "summary" %}Map one key to another key
 {% /slot %}
 
