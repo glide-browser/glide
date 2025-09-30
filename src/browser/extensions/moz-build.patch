@@ -1,5 +1,5 @@
 diff --git a/browser/extensions/moz.build b/browser/extensions/moz.build
-index 6c3149a995ff432c310d8f996c1b76901ea057fc..da0362bd08db24baf89b314e12072124b93a0eed 100644
+index 1d90db803e83e0dbf6da08b98e04e8511f861ba6..7ba46274dc501cdddb56ef8c5686c8b0827c958b 100644
 --- a/browser/extensions/moz.build
 +++ b/browser/extensions/moz.build
 @@ -7,6 +7,7 @@
@@ -7,6 +7,6 @@ index 6c3149a995ff432c310d8f996c1b76901ea057fc..da0362bd08db24baf89b314e12072124
      "data-leak-blocker",
      "formautofill",
 +    "glide",
+     "ipp-activator",
      "webcompat",
      "pictureinpicture",
-     "search-detection",
