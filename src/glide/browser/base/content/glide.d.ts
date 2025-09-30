@@ -682,7 +682,7 @@ declare global {
        *     leap: "leap";
        *   }
        * }
-       * glide.modes.register('leap', { caret: 'normal' })
+       * glide.modes.register('leap', { caret: 'block' })
        * ```
        */
       register<Mode extends keyof GlideModes>(
@@ -706,7 +706,7 @@ declare global {
    *     leap: "leap";
    *   }
    * }
-   * glide.modes.register('leap', { caret: 'normal' })
+   * glide.modes.register('leap', { caret: 'block' })
    * ```
    */
   interface GlideModes {
@@ -805,6 +805,8 @@ declare global {
     /**
      * Corresponds to {@link glide.o} or {@link glide.bo}.
      */
+    // note: this is skipped in docs generation because we expand `glide.o`, so rendering
+    //       the `Options` type as well would be redundant.
     /// @docs-skip
     export type Options = {
       /**
@@ -1056,7 +1058,7 @@ declare global {
       retain_key_display?: boolean;
     };
 
-    export type KeymapDeleteOpts = Pick<KeymapOpts, "buffer">;
+    export type KeymapDeleteOpts = Pick<glide.KeymapOpts, "buffer">;
 
     type AutocmdEvent =
       | "UrlEnter"

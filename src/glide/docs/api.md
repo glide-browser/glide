@@ -695,7 +695,7 @@ declare global {
     leap: "leap";
   }
 }
-glide.modes.register("leap", { caret: "normal" });
+glide.modes.register("leap", { caret: "block" });
 ```
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
@@ -877,7 +877,7 @@ retain_key_display?: boolean;
 ## • `glide.KeymapDeleteOpts` {% id="glide.KeymapDeleteOpts" %}
 
 ```typescript {% highlight_prefix="type x = " %}
-Pick<KeymapOpts, "buffer">;
+Pick<glide.KeymapOpts, "buffer">;
 ```
 
 ## • `glide.FileInfo` {% id="glide.FileInfo" %}
