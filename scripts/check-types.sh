@@ -14,3 +14,6 @@ pnpm tsc:scripts
 
 (set +x; echo "============ checking bundled config types ============")
 pnpm tsc:config
+
+(set +x; echo "============ checking docs example types   ============")
+pnpm tsc:docs

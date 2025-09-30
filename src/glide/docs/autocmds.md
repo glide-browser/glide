@@ -22,7 +22,7 @@ async function github_go_to_issues() {
 
 And then define an autocmd that sets a keymap for the current buffer
 
-```typescript
+```typescript {% check="false" %}
 glide.autocmds.create("UrlEnter", {
   hostname: "github.com",
 }, async () => {
@@ -40,13 +40,13 @@ There are many other [things](cookbook.md) you can accomplish with autocmds.
 
 Autocmds can be created with:
 
-```typescript
+```typescript {% check="false" %}
 glide.autocmds.create(event, pattern, callback);
 ```
 
 Some autocmds do not require a pattern and can be called with just:
 
-```typescript
+```typescript {% check="false" %}
 glide.autocmds.create(event, callback);
 ```
 
@@ -144,7 +144,7 @@ Fired whenever the key sequence changes, which can happen under four circumstanc
 
 For example, with
 
-```typescript
+```typescript {% check="false" %}
 glide.keymaps.set("normal", "gt", "...");
 ```
 

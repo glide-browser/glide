@@ -39,3 +39,11 @@ function are_identical(src_stat: Stats, dest_stat: Stats) {
   return dest_stat.ino !== undefined && dest_stat.dev !== undefined && dest_stat.ino === src_stat.ino
     && dest_stat.dev === src_stat.dev;
 }
+
+export function indent(text: string, spaces: number = 2): string {
+  const indentation = " ".repeat(spaces);
+  return text
+    .split("\n")
+    .map(line => indentation + line)
+    .join("\n");
+}

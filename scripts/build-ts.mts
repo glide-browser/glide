@@ -57,6 +57,8 @@ export async function main() {
           if (
             // ignore scripts as they'll never be built
             rel_path.startsWith("glide/scripts/")
+            // these are just used internally in-tree for checking docs types
+            || rel_path.includes("/docs/dist/snippets/")
             // ignore .d.ts as they'll never be built
             || rel_path.startsWith("glide/generated/")
             || rel_path.startsWith("glide/@types/")

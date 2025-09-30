@@ -45,6 +45,7 @@
     "tsc:browser": "tsc -p tsconfig.check.json",
     "tsc:scripts": "tsc -p scripts/tsconfig.json",
     "tsc:config": "tsc -p src/glide/browser/base/content/test/config/types/tsconfig.json",
+    "tsc:docs": "pnpm tsn scripts/check-docs-types.mts",
     "tsn": "node --no-warnings --experimental-strip-types \"$@\"",
     "test": "pnpm mach test glide"
   },

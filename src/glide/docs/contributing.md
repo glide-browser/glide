@@ -119,7 +119,7 @@ The typical naming convention is `path:browser_$name.ts` but you can choose to u
 
 A typical test file looks like this:
 
-```typescript
+```typescript {% check="false" %}
 "use strict";
 
 add_task(async function test_my_test_name() {
@@ -129,7 +129,7 @@ add_task(async function test_my_test_name() {
 
 If you're familiar with Jest, or anything like it, mochitest works a little differently as there is no `expect()` API, instead the following assertion functions are provided:
 
-```typescript
+```typescript {% check="false" %}
 function is(a: unknown, b: unknown, name?: string): void;
 function isnot(a: unknown, b: unknown, name?: string): void;
 
@@ -154,10 +154,12 @@ function notok(a: unknown, name?: string): void;
 
 You can filter the test functions that are ran in a _single_ file with `.only()` or `.skip()`
 
-```typescript
+```typescript {% check="false" %}
 add_task(...).skip();
 add_task(...).only();
 ```
+
+TODO: mention docs type checking
 
 Unfortunately, you cannot yet tell mochitest to run only a specific test file, but you can filter by directory, e.g.
 
@@ -225,7 +227,7 @@ Messages are typed and sent through the `.send_async_message(name, args?)` metho
 
 Typical usage from the main process looks like this:
 
-```typescript
+```typescript {% check="false" %}
 GlideBrowser.get_focused_actor().send_async_message(
   "Glide::ReplaceChar",
   {

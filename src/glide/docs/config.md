@@ -73,7 +73,7 @@ If a config directory is resolved, Glide will automatically create & update a `p
 
 To make sure TypeScript can recognise these types, you can either include a [reference](https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html) to it in the config file itself, e.g.
 
-```typescript
+```typescript {% check="false" %}
 /// <reference path="./glide.d.ts" />
 ```
 

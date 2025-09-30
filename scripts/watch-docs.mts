@@ -55,6 +55,12 @@ export async function main() {
             return true;
           }
 
+          const rel_path = Path.relative(DOCS_DIR, abs_path);
+          if (rel_path.includes("dist/snippets/")) {
+            // these are just used internally in-tree for checking docs types
+            return true;
+          }
+
           return false;
         },
       })

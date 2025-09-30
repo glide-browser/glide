@@ -21,7 +21,7 @@ Here, each argument corresponds to:
 
 You can also specify multiple modes at once using an array:
 
-```typescript
+```typescript {% check="false" %}
 glide.keymaps.set(["normal", "visual"], "<leader>r", "...");
 ```
 
