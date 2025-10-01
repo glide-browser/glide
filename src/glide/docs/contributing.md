@@ -14,7 +14,7 @@ After cloning the repository
 git clone https://github.com/glide-browser/glide
 ```
 
-you can setup your local repo with:
+you can set up your local repo with:
 
 ```bash
 pnpm install

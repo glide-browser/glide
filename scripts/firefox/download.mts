@@ -49,8 +49,8 @@ async function main() {
     const tag_sha = await engine_run("git", ["rev-parse", tag]).then((result) => result.stdout);
 
     // if we're converting from a shallow clone to a non-shallow clone
-    // then we also need to setup the repo so that the branch history
-    // is correctly setup
+    // then we also need to set up the repo so that the branch history
+    // is correctly set up
     if (was_shallow || head_sha !== tag_sha) {
       await setupGitRepo(tag);
     } else {
