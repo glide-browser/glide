@@ -1735,7 +1735,7 @@ function make_glide_api(): typeof glide {
         GlideBrowser.key_manager.set(modes, lhs as string, rhs, opts);
       },
       del(modes, lhs, opts) {
-        GlideBrowser.key_manager.del(modes, lhs, opts);
+        GlideBrowser.key_manager.del(modes, lhs as string, opts);
       },
       list(modes) {
         return GlideBrowser.key_manager.list(modes);

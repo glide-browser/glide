@@ -347,9 +347,9 @@ declare global {
        *
        * The mapping may remain defined for other modes where it applies.
        */
-      del(
+      del<const LHS>(
         modes: GlideMode | GlideMode[],
-        lhs: string,
+        lhs: $keymapcompletions.T<LHS>,
         opts?: glide.KeymapDeleteOpts,
       ): void;
 
