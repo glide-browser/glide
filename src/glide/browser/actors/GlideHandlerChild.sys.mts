@@ -829,7 +829,9 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
     switch (event.type) {
       case "DOMContentLoaded": {
-        this.#add_focus_listeners(event.target as any);
+        if (event.target) {
+          this.#add_focus_listeners(event.target as HTMLElement);
+        }
         break;
       }
       case "keydown": {
@@ -839,6 +841,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "focusin": {
+        if (!event.target) {
+          // no target for a focusin event? just ignore it
+          return;
+        }
+
         const target = this.#get_active_nested_shadow_root_elem(event.target as HTMLElement);
         if (DOM.is_text_editable(target)) {
           this.#last_focused_input_element = target;
