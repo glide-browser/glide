@@ -2,7 +2,7 @@
 
 Glide supports configuration through a [TypeScript](#config-evaluation) file.
 
-You can setup the config file with `:config_init home`, which will create a config file at `path:~/.config/glide/glide.ts` and some boilerplate files so that the TypeScript LSP will work.
+You can set up the config file with `:config_init home`, which will create a config file at `path:~/.config/glide/glide.ts` and some boilerplate files so that the TypeScript LSP will work.
 
 Then you can run `:config_reload` and `:config_edit` to open the config file in your default editor.
 

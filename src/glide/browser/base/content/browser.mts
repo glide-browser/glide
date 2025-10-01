@@ -1405,7 +1405,7 @@ class GlideBrowserClass {
     }
 
     // if we were in a partial mapping and the current key does not match
-    // a mapping, then we need to cleanup the partial mapping state and
+    // a mapping, then we need to clean up the partial mapping state and
     // then crucially, *rerun* the event handling.
     //
     // this is important because it allows you to do things like cancelling a
@@ -1447,7 +1447,7 @@ class GlideBrowserClass {
 
       if (mode === "insert") {
         // in insert mode, for any multi-sequence mappings, e.g. `jj` to `mode_change normal`,
-        // we need to cleanup the previous state after some period of time, otherwise it's
+        // we need to clean up the previous state after some period of time, otherwise it's
         // impossible to just type `jj`, you have to press another key in the middle.
         this.#partial_mapping_waiter_id = setTimeout(async () => {
           this.key_manager.reset_sequence();
