@@ -28,8 +28,14 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("ignore", "<S-Esc>", "mode_change normal");
 
   // history
-  glide.keymaps.set(["normal", "insert"], "<C-h>", "back");
-  glide.keymaps.set(["normal", "insert"], "<C-l>", "forward");
+  if (glide.ctx.os === "macosx") {
+    glide.keymaps.set(["normal", "insert"], "<C-h>", "back");
+    glide.keymaps.set(["normal", "insert"], "<C-l>", "forward");
+  } else {
+    // we don't use <C-l> on linux as it would conflict with a builtin keymap
+    glide.keymaps.set(["normal", "insert"], "<A-h>", "back");
+    glide.keymaps.set(["normal", "insert"], "<A-l>", "forward");
+  }
 
   // hint mode
   glide.keymaps.set("normal", "f", "hint");
