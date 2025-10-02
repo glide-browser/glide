@@ -132,3 +132,15 @@ glide.keymaps.set(
 ```
 
 {% /details %}
+
+{% details heading=true %} {% slot "summary" %}Set a custom homepage
+{% /slot %}
+
+```typescript
+glide.prefs.set(
+  "browser.startup.homepage",
+  "https://example.com",
+);
+```
+
+{% /details %}
