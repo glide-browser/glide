@@ -64,6 +64,7 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", ":", "commandline_show");
 
   glide.keymaps.set(["insert", "visual", "op-pending"], "<Esc>", "mode_change normal");
+  glide.keymaps.set(["insert", "visual", "op-pending"], "<C-[>", "mode_change normal");
 
   glide.keymaps.set("normal", "i", "mode_change insert --automove=left");
   glide.keymaps.set("normal", "a", "mode_change insert");
