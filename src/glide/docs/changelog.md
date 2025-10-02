@@ -17,6 +17,21 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.51a
+
+### Breaking changes {% id="0.1.51a-breaking-changes" %}
+
+On Linux, the `<C-l>` and `<C-h>` mappings, to go backwards and forwards in history, have been changed to `<A-l>` and `<A-h>` respectively.
+
+This change was made to prevent a conflict with the default `<C-l>` keymap in Firefox that focuses the address bar.
+
+### Changes {% id="0.1.51a-changes" %}
+
+- Bumped Firefox from 144.0b5 to 144.0b8.
+- Fixed keymap autocompletion for `glide.keymaps.del()`.
+- Fixed bad handling of invalid `focusin` events.
+- Added `<C-[>` in `insert`, `visual`, and `op-pending` mode to switch back to `normal` mode.
+
 # 0.1.50a
 
 - Added `glide.fs.stat()`.
