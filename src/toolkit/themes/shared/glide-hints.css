@@ -23,7 +23,7 @@ td.glide-reset, tr.glide-reset {
   cursor: auto;
   display: inline;
   float: none;
-  font-family: "Berkeley Mono" !important;
+  font-family: "Berkeley Mono", monospace !important;
   font-size: inherit;
   font-style: normal;
   font-variant: normal;
