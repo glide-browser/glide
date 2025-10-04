@@ -91,10 +91,12 @@ class GlideTestUtilsClass {
    *
    * e.g. `ab<C-d>` will fire three different events, a, b, and ctrl+c
    */
-  async synthesize_keyseq(keyseq: string) {
+  async synthesize_keyseq<const Keys>(
+    keyseq: $keymapcompletions.T<Keys>,
+  ): Promise<void> {
     // note: we intentionally do *not* use the available `EventUtils.synthesizeKey` function
     //       so that we can test our modified version of it in `src/glide/browser/base/content/event-utils.mts`
-    await GlideEventUtils.synthesize_keyseq(keyseq);
+    await GlideEventUtils.synthesize_keyseq(keyseq as string);
   }
 
   async wait_for_mode(mode: GlideMode) {

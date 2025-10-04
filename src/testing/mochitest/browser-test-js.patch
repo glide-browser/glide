@@ -1,8 +1,8 @@
 diff --git a/testing/mochitest/browser-test.js b/testing/mochitest/browser-test.js
-index ef29179988bb37e7ea441aa051b692e3ccc90f21..e4e2db83dbc327dbd8d09a8146c9b4e2ba1b22f0 100644
+index 979c6a0960cb8c490b612649d0fac55cd7b7d0f7..f6653d7d66cd96b4947829a97db09bdf24bab6ab 100644
 --- a/testing/mochitest/browser-test.js
 +++ b/testing/mochitest/browser-test.js
-@@ -248,6 +248,12 @@ function Tester(aTests, structuredLogger, aCallback) {
+@@ -244,6 +244,12 @@ function Tester(aTests, structuredLogger, aCallback) {
    this.PerTestCoverageUtils = ChromeUtils.importESModule(
      "resource://testing-common/PerTestCoverageUtils.sys.mjs"
    ).PerTestCoverageUtils;
@@ -15,18 +15,22 @@ index ef29179988bb37e7ea441aa051b692e3ccc90f21..e4e2db83dbc327dbd8d09a8146c9b4e2
  
    this.PromiseTestUtils.init();
  
-@@ -1285,6 +1291,10 @@ Tester.prototype = {
+@@ -1372,6 +1378,14 @@ Tester.prototype = {
      scope.BrowserTestUtils = this.BrowserTestUtils;
      scope.TestUtils = this.TestUtils;
      scope.ExtensionTestUtils = this.ExtensionTestUtils;
++
 +    // glide-injection-start
 +    scope.GlideTestUtils = this.GlideTestUtils;
 +    this.GlideTestUtils.__load_globals(scope);
++
++    scope.keys = scope.GlideTestUtils.synthesize_keyseq;
 +    // glide-injection-end
++
      // Pass a custom report function for mochitest style reporting.
      scope.Assert = new this.Assert(function (err, message, stack) {
        currentTest.addResult(
-@@ -1626,6 +1636,16 @@ function testScope(aTester, aTest, expected) {
+@@ -1722,6 +1736,16 @@ function testScope(aTester, aTest, expected) {
        self.record(condition, name);
      }
    };
@@ -43,7 +47,7 @@ index ef29179988bb37e7ea441aa051b692e3ccc90f21..e4e2db83dbc327dbd8d09a8146c9b4e2
    this.record = function test_record(condition, name, ex, stack, expected) {
      if (expected == "fail") {
        aTest.addResult(
-@@ -1659,6 +1679,15 @@ function testScope(aTester, aTest, expected) {
+@@ -1755,6 +1779,18 @@ function testScope(aTester, aTest, expected) {
        Components.stack.caller
      );
    };
@@ -55,11 +59,14 @@ index ef29179988bb37e7ea441aa051b692e3ccc90f21..e4e2db83dbc327dbd8d09a8146c9b4e2
 +      name
 +    );
 +  };
++  // this.keys = async keyseq => {
++  //   await this.GlideTestUtils(keyseq);
++  // };
 +  // glide-injection-start
    this.isfuzzy = function test_isfuzzy(a, b, epsilon, name) {
      self.record(
        a >= b - epsilon && a <= b + epsilon,
-@@ -1843,6 +1872,17 @@ function testScope(aTester, aTest, expected) {
+@@ -1939,6 +1975,17 @@ function testScope(aTester, aTest, expected) {
      }
    };
  
@@ -77,7 +84,7 @@ index ef29179988bb37e7ea441aa051b692e3ccc90f21..e4e2db83dbc327dbd8d09a8146c9b4e2
    this.requestCompleteLog = function test_requestCompleteLog() {
      self.__tester.structuredLogger.deactivateBuffering();
      self.registerCleanupFunction(function () {
-@@ -1879,6 +1919,9 @@ testScope.prototype = {
+@@ -1977,6 +2024,9 @@ testScope.prototype = {
    TestUtils: null,
    ExtensionTestUtils: null,
    Assert: null,

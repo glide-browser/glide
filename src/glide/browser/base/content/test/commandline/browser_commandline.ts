@@ -14,10 +14,7 @@ add_task(async function test_basic_commandline() {
     await GlideTestUtils.commandline.open();
     await new Promise(r => requestAnimationFrame(r));
 
-    EventUtils.synthesizeKey("f");
-    EventUtils.synthesizeKey("o");
-    EventUtils.synthesizeKey("o");
-
+    await keys("foo");
     is(GlideTestUtils.commandline.get_input_content(), "foo", "key presses should be entered into the input element");
 
     EventUtils.synthesizeKey("KEY_Escape");
@@ -93,9 +90,7 @@ add_task(async function test_basic_tabbing() {
     // filtering maintains selection when possible
     const focused_row = GlideTestUtils.commandline.focused_row();
 
-    EventUtils.synthesizeKey("f");
-    EventUtils.synthesizeKey("o");
-    EventUtils.synthesizeKey("o");
+    await keys("foo");
 
     ok(focused_row!.classList.contains("focused"), "Selection should be maintained when filtered item remains visible");
   });

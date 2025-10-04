@@ -516,9 +516,7 @@ add_task(async function test_key_state_changed_autocmd() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await sleep_frames(5);
 
-    await GlideTestUtils.synthesize_keyseq("g");
-    await GlideTestUtils.synthesize_keyseq("t");
-    await GlideTestUtils.synthesize_keyseq("j");
+    await keys("gtj");
 
     is(
       JSON.stringify(GlideBrowser.api.g.autocmds),

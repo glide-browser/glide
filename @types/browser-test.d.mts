@@ -9,6 +9,13 @@ declare global {
 
   function info(message: string): void;
 
+  /**
+   * Synthesize a key event sequence.
+   *
+   * This is the same as `glide.keys.send()`.
+   */
+  function keys<const Keys>(keyseq: $keymapcompletions.T<Keys>): Promise<void>;
+
   function is(a: unknown, b: unknown, name?: string): void;
   function todo_is(a: unknown, b: unknown, name?: string): void;
   /**
