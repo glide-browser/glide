@@ -155,7 +155,12 @@ async function branding_patch(ctx: Context) {
 export async function patch_mozconfig() {
   const changeset = process.env["GLIDE_REVISION"]
     ?? await execa("git", ["rev-parse", "HEAD"]).then((res) => res.stdout.trim()).catch((err) => {
-      console.warn("Could not resolve changeset due to error", err);
+      console.warn(chalk.red("Could not resolve changeset due to error"), err);
+      console.warn();
+      console.warn(
+        "If you're building glide outside of a git repository, set the `GLIDE_REVISION` environment variable to short-circuit this check.",
+      );
+      console.warn();
       return "";
     });
 
