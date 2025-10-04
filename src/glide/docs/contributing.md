@@ -32,7 +32,7 @@ pnpm build
 > [!IMPORTANT]
 > This can take quite a long time, a fresh build takes ~30 mins on an M4 Max.
 
-Once you have Glide compiled, you can luanch it with:
+Once you have Glide compiled, you can launch it with:
 
 ```bash
 pnpm launch
