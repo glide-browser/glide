@@ -15,8 +15,8 @@
     "build": "pnpm tsn scripts/firefox/build.mts",
     "package": "pnpm tsn scripts/firefox/package.mts",
 
-    "launch": "./engine/mach run",
-    "mach": "./engine/mach",
+    "launch": "./scripts/bin/mach run",
+    "mach": "./scripts/bin/mach",
 
     "bundle": "bash ./scripts/bundle.sh",
 
