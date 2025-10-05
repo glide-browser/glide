@@ -7,6 +7,14 @@ on:
         description: "dry run"
         type: boolean
         default: true
+      linux:
+        description: "linux"
+        type: boolean
+        default: true
+      macos:
+        description: "macos"
+        type: boolean
+        default: true
 
 jobs:
   metadata:
@@ -57,23 +65,27 @@ jobs:
           RELEASE_SHA: ${{ github.sha }}
 
   linux:
+    if: ${{ inputs.linux }}
+
     name: Linux build
     uses: ./.github/workflows/linux-build.yml
     with:
       upload: true
 
   macos:
+    if: ${{ inputs.macos }}
+
     name: macOS build
     uses: ./.github/workflows/macos-build.yml
     with:
       artifacts: true
 
   macos-sign:
+    if: ${{ !inputs.dry_run && inputs.macos }}
+
     name: macOS sign
     needs: [macos]
     uses: ./.github/workflows/macos-sign.yml
-
-    if: ${{ !inputs.dry_run }}
 
     secrets:
       MACOS_P12_BASE64: ${{ secrets.MACOS_P12_BASE64 }}
@@ -132,12 +144,12 @@ jobs:
           path: ./glide.source.tar.zst
 
   release:
+    if: ${{ !inputs.dry_run }}
+
     name: Release
     runs-on: ubuntu-latest
     needs: [metadata, linux, macos, macos-sign, source]
     environment: release
-
-    if: ${{ !inputs.dry_run }}
 
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
@@ -195,11 +207,11 @@ jobs:
           VERSION: ${{ needs.metadata.outputs.version }}
 
   push-update-manifests:
+    if: ${{ !inputs.dry_run }}
+
     name: Push update manifests
     runs-on: ubuntu-latest
     needs: [release, metadata]
-
-    if: ${{ !inputs.dry_run }}
 
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
