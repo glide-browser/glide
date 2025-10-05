@@ -67,17 +67,17 @@ jobs:
           node-version: "24"
           cache: "pnpm"
 
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
-        with:
-          disable_annotations: true
-
-      - name: Expose actions cache variables
-        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6.4.1
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+      # - name: Run sccache-cache
+      #   uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
+      #   with:
+      #     disable_annotations: true
+      #
+      # - name: Expose actions cache variables
+      #   uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6.4.1
+      #   with:
+      #     script: |
+      #       core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
+      #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
 
       - name: Setup moz environment variables
         run: |
