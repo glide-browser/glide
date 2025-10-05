@@ -10,12 +10,20 @@ on:
         description: "Upload built artifacts"
         type: boolean
         default: true
+      MOZ_BUILD_DATE:
+        type: string
+        default: ""
+        description: "Corresponds to the build id"
   workflow_call:
     inputs:
       upload:
         description: "Used to distinguish dispatch and call events"
         required: true
         type: boolean
+      MOZ_BUILD_DATE:
+        type: string
+        default: ""
+        description: "Corresponds to the build id"
 
 jobs:
   linux-build:
@@ -28,6 +36,7 @@ jobs:
       GLIDE_RELEASE: true
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
+      MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
 
     strategy:
       fail-fast: false
