@@ -35,6 +35,10 @@ if test -x "$(command -v sccache)"; then
   ac_add_options --with-ccache=sccache
 fi
 
+# allow loading unsigned extensions
+export MOZ_REQUIRE_SIGNING=
+mk_add_options MOZ_REQUIRE_SIGNING=
+
 # features
 ac_add_options --enable-raw
 ac_add_options --enable-webrtc
