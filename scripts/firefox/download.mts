@@ -1,8 +1,8 @@
-import { existsSync } from "fs";
 import fs from "fs/promises";
 import meow from "meow";
 import config from "../../firefox.json" with { type: "json" };
 import { ENGINE_DIR, ROOT_DIR } from "../canonical-paths.mts";
+import { exists } from "../util.mts";
 import { engine_run, run } from "./util.mts";
 
 const cli = meow({
@@ -24,7 +24,7 @@ async function main() {
   const force = cli.flags.force;
   const full_history = cli.flags.fullHistory;
 
-  if (force && existsSync(ENGINE_DIR)) {
+  if (force && await exists(ENGINE_DIR)) {
     log.info("Removing existing workspace");
     await fs.rm(ENGINE_DIR, { recursive: true });
   }
@@ -34,11 +34,11 @@ async function main() {
     .catch(() => false);
   if (is_empty) {
     log.info("'engine/' is empty, removing it...");
-    fs.rmdir(ENGINE_DIR, { recursive: true });
+    await fs.rmdir(ENGINE_DIR, { recursive: true });
   }
 
   // if it exists, fetch the latest changes
-  if (existsSync(ENGINE_DIR)) {
+  if (await exists(ENGINE_DIR)) {
     const was_shallow = await engine_run("git", ["rev-parse", "--is-shallow-repository"])
       .then((result) => result.stdout === "true");
 
@@ -60,15 +60,22 @@ async function main() {
     return;
   }
 
-  log.info(`Performing a ${full_history ? "full depth" : "shallow"} clone, this may take a while...`);
+  let url = "git@github.com:mozilla-firefox/firefox.git";
+
+  const can_use_ssh = await run("git", ["ls-remote", url], { stdout: "ignore", stderr: "ignore" }).then(() => true)
+    .catch(() => false);
+  if (!can_use_ssh) {
+    log.info("ssh not available, using git over https");
+    url = "https://github.com/mozilla-firefox/firefox.git";
+  }
+
+  log.info(`Performing a ${full_history ? "full depth" : "shallow"} clone from ${url}, this may take a while...`);
   await run("git", [
     "clone",
     ...(full_history ? [] : ["--depth=1", `--branch=${tag}`]),
-    "git@github.com:mozilla-firefox/firefox.git",
+    url,
     ENGINE_DIR,
-  ], {
-    cwd: ROOT_DIR,
-  });
+  ], { cwd: ROOT_DIR });
   await setupGitRepo(tag);
 }
 
