@@ -36,6 +36,7 @@ jobs:
       GLIDE_RELEASE: true
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
+      MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
 
     strategy:
       fail-fast: false
@@ -79,12 +80,12 @@ jobs:
       #       core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
       #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
 
-      - name: Setup moz environment variables
-        run: |
-          if [[ -n "${{ inputs.MOZ_BUILD_DATE }}" ]]; then
-            echo "setting build env"
-            export MOZ_BUILD_DATE=${{ inputs.MOZ_BUILD_DATE }}
-          fi
+      # - name: Setup moz environment variables
+      #   run: |
+      #     if [[ -n "${{ inputs.MOZ_BUILD_DATE }}" ]]; then
+      #       echo "setting build env"
+      #       export MOZ_BUILD_DATE=${{ inputs.MOZ_BUILD_DATE }}
+      #     fi
 
       - name: Install system dependencies
         run: |
