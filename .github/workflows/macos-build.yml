@@ -10,12 +10,20 @@ on:
         description: "Upload built artifacts"
         type: boolean
         default: true
+      MOZ_BUILD_DATE:
+        type: string
+        default: ''
+        description: "Corresponds to the build id"
   workflow_call:
     inputs:
       artifacts:
         description: "Used to distinguish dispatch and call events"
         required: true
         type: boolean
+      MOZ_BUILD_DATE:
+        type: string
+        default: ''
+        description: "Corresponds to the build id"
 
 jobs:
   macos-build:
@@ -70,6 +78,13 @@ jobs:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+
+      - name: Setup moz environment variables
+        run: |
+          if [[ -n "${{ inputs.MOZ_BUILD_DATE }}" ]]; then
+            echo "setting build env"
+            export MOZ_BUILD_DATE=${{ inputs.MOZ_BUILD_DATE }}
+          fi
 
       - name: Install system dependencies
         run: |

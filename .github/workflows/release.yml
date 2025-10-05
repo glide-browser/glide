@@ -23,6 +23,7 @@ jobs:
 
     outputs:
       version: ${{ steps.version.outputs.version }}
+      build_id: ${{ steps.get_build_id.outputs.build_id }}
 
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
@@ -51,6 +52,11 @@ jobs:
         run: |
           echo "version=$(pnpm --silent tsn scripts/version.mts)" >> $GITHUB_OUTPUT
 
+      - id: get_build_id
+        run: |
+          build_date=`date +"%Y%m%d%I%M%S"`
+          echo "build_id=${build_date}" >> $GITHUB_OUTPUT
+
       - name: Create draft release
         if: ${{ !inputs.dry_run }}
         run: |
@@ -69,16 +75,20 @@ jobs:
 
     name: Linux build
     uses: ./.github/workflows/linux-build.yml
+    needs: [metadata]
     with:
       upload: true
+      MOZ_BUILD_DATE: ${{ needs.metadata.outputs.build_id }}
 
   macos:
     if: ${{ inputs.macos }}
 
     name: macOS build
     uses: ./.github/workflows/macos-build.yml
+    needs: [metadata]
     with:
       artifacts: true
+      MOZ_BUILD_DATE: ${{ needs.metadata.outputs.build_id }}
 
   macos-sign:
     if: ${{ !inputs.dry_run && inputs.macos }}
