@@ -1,6 +1,6 @@
 # Contributing
 
-To build Glide you must have [`pnpm`](https://pnpm.io/) installed.
+To build Glide you must have [`Node`](https://nodejs.org/en/blog/release/v24.0.0) v24 and [`pnpm`](https://pnpm.io/installation) installed.
 
 You must also verify that your system has the dependencies that Firefox requires:
 
