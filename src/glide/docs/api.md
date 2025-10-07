@@ -57,6 +57,7 @@ text-decoration: none;
 [`glide.tabs`](#glide.tabs)\
 [`glide.tabs.active()`](#glide.tabs.active)\
 [`glide.tabs.get_first()`](#glide.tabs.get_first)\
+[`glide.tabs.query()`](#glide.tabs.query)\
 [`glide.excmds`](#glide.excmds)\
 [`glide.excmds.execute()`](#glide.excmds.execute)\
 [`glide.excmds.create()`](#glide.excmds.create)\
@@ -338,6 +339,12 @@ Find the first tab matching the given query filter.
 
 This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/get),
 but returns the first tab instead of an Array.
+
+{% api-heading id="glide.tabs.query" %}
+glide.tabs.query(query): Promise<Browser.Tabs.Tab[]>
+{% /api-heading %}
+
+This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
 
 ## • `glide.excmds` {% id="glide.excmds" %}
 

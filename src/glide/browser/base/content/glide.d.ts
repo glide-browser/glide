@@ -255,8 +255,12 @@ declare global {
        * but returns the first tab instead of an Array.
        */
       get_first(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab | undefined>;
-    };
 
+      /**
+       * This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
+       */
+      query(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab[]>;
+    };
     excmds: {
       /**
        * Execute an excmd, this is the same as typing `:cmd --args`.
