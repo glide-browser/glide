@@ -31,6 +31,8 @@ pnpm build
 
 > [!IMPORTANT]
 > This can take quite a long time, a fresh build takes ~30 mins on an M4 Max.
+>
+> If you run into any build errors, you may also have to run `pnpm bootstrap:mach`, which invokes the Firefox system bootstrap.
 
 Once you have Glide compiled, you can launch it with:
 

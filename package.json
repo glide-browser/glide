@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "bootstrap": "bash ./scripts/bootstrap.sh",
+    "bootstrap:mach": "pnpm mach bootstrap --application-choice=browser",
 
     "fmt": "dprint fmt",
     "fmt:check": "dprint check",
