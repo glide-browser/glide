@@ -200,3 +200,28 @@ add_task(async function test_commandline_closes_on_blur() {
         === "normal", "Waiting for mode button to show `normal` mode");
   });
 });
+
+add_task(async function test_commandline_custom_excmd_arguments() {
+  await sleep_frames(20);
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
+        glide.g.value = args_arr;
+        glide.g.test_checked = true;
+      });
+    });
+
+    await keys(":my_long_command_name foo bar");
+    await sleep_frames(20);
+
+    EventUtils.synthesizeKey("KEY_Enter");
+
+    await TestUtils.waitForCondition(
+      () => GlideBrowser.api.g.test_checked === true,
+      "Waiting for excmd to be executed",
+    );
+
+    isjson(GlideBrowser.api.g.value, ["foo", "bar"], "arguments should be passed to the excmd");
+  });
+});

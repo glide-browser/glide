@@ -95,7 +95,7 @@ class GlideExcmdsClass {
    */
   is_known_command(command: string): command is GlideCommandString {
     const name = extract_command_name(command);
-    return name in GLIDE_EXCOMMANDS_MAP;
+    return name in GLIDE_EXCOMMANDS_MAP || GlideBrowser.user_excmds.has(name);
   }
 
   async execute(
