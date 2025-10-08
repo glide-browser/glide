@@ -257,6 +257,8 @@ declare global {
       get_first(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab | undefined>;
 
       /**
+       * Gets all tabs that have the specified properties, or all tabs if no properties are specified.
+       *
        * This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
        */
       query(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab[]>;
