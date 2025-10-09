@@ -194,6 +194,9 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       }
 
       this.hidden = true;
+
+      // give focus to the content frame
+      // gBrowser.selectedBrowser.focus();
     }
 
     toggle() {
