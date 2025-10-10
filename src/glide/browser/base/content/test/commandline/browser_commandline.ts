@@ -17,12 +17,10 @@ add_task(async function test_basic_commandline() {
     await keys("foo");
     is(GlideTestUtils.commandline.get_input_content(), "foo", "key presses should be entered into the input element");
 
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await TestUtils.waitForCondition(() =>
       document!.getElementById("glide-toolbar-mode-button")!.textContent
         === "normal", "Waiting for mode button to show `normal` mode");
-
-    EventUtils.synthesizeKey("KEY_Escape");
     ok(
       document!.querySelector<HTMLElement>("glide-commandline")!.hidden,
       "Commandline should be hidden after pressing escape",
@@ -34,7 +32,7 @@ add_task(async function test_basic_filtering() {
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 
-    await GlideTestUtils.synthesize_keyseq("ex");
+    await keys("ex");
     await sleep_frames(3);
 
     let visible_rows = GlideTestUtils.commandline.visible_rows();
@@ -42,15 +40,13 @@ add_task(async function test_basic_filtering() {
     is(visible_rows.length, 1, "Only one command should match 'ex'");
     is(visible_rows[0]!.querySelector(".excmd")!.textContent, "examplecmd", "Correct command should be visible");
 
-    EventUtils.synthesizeKey("KEY_Backspace");
-    EventUtils.synthesizeKey("KEY_Backspace");
+    await keys("<Backspace><Backspace>");
     await sleep_frames(3);
 
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
 
-    await new Promise(r => requestAnimationFrame(r));
-
+    await sleep_frames(1);
     is(
       GlideTestUtils.commandline.focused_row()!.children[0]!.textContent,
       "examplecmd",
@@ -69,8 +65,7 @@ add_task(async function test_basic_tabbing() {
     for (let i = 0; i < visible_rows.length; i++) {
       // the first row should be focused without needing to `tab`
       if (i !== 0) {
-        EventUtils.synthesizeKey("KEY_Tab");
-        await new Promise(r => requestAnimationFrame(r));
+        await keys("<tab>");
       }
 
       const focused_row = GlideTestUtils.commandline.focused_row();
@@ -81,7 +76,7 @@ add_task(async function test_basic_tabbing() {
 
     // shift+tab goes back
     for (let i = visible_rows.length - 1; i >= 0; i--) {
-      EventUtils.synthesizeKey("KEY_Tab", { shiftKey: true });
+      await keys("<S-Tab>");
       const focused_row = GlideTestUtils.commandline.focused_row();
       const row_index = i === 0 ? visible_rows.length - 1 : i - 1;
       is(focused_row, visible_rows[row_index], `Shift+Tab should focus row ${row_index}`);
@@ -101,11 +96,7 @@ add_task(async function test_tabs() {
     await GlideTestUtils.commandline.open();
     await new Promise(r => requestAnimationFrame(r));
 
-    EventUtils.synthesizeKey("t");
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey(" ");
-    await new Promise(r => requestAnimationFrame(r));
+    await keys("tab ");
 
     is(
       GlideTestUtils.commandline.current_source_header(),
@@ -118,21 +109,14 @@ add_task(async function test_tabs() {
     is(visible_rows[1]!.querySelector(".url")!.textContent, FILE, "Current tab should be the second option");
 
     // filtering
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("s");
-    await new Promise(r => requestAnimationFrame(r));
+    await keys("bas");
 
     is(GlideTestUtils.commandline.get_input_content(), "tab bas");
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 1, "there should only be 1 tab option present after filtering");
     is(visible_rows[0]!.querySelector(".url")!.textContent, FILE, "Current tab should be the only option");
 
-    EventUtils.synthesizeKey("KEY_Backspace");
-    EventUtils.synthesizeKey("KEY_Backspace");
-    EventUtils.synthesizeKey("KEY_Backspace");
-    EventUtils.synthesizeKey("KEY_Backspace");
-    await new Promise(r => requestAnimationFrame(r));
+    await keys("<Backspace><Backspace><Backspace><Backspace>");
     is(GlideTestUtils.commandline.get_input_content(), "tab");
     is(
       GlideTestUtils.commandline.current_source_header(),
@@ -148,16 +132,14 @@ add_task(async function test_excmd_enter() {
 
     await sleep_frames(5);
 
-    EventUtils.synthesizeKey("e");
-    EventUtils.synthesizeKey("x");
+    await keys("ex");
 
     let visible_rows = GlideTestUtils.commandline.visible_rows();
 
     is(visible_rows.length, 1, "Only one command should match 'ex'");
     is(visible_rows[0]!.querySelector(".excmd")!.textContent, "examplecmd", "Correct command should be visible");
 
-    EventUtils.synthesizeKey("KEY_Backspace");
-    EventUtils.synthesizeKey("KEY_Backspace");
+    await keys("<Backspace><Backspace>");
 
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
@@ -184,10 +166,7 @@ add_task(async function test_commandline_closes_on_blur() {
     ok(!commandline.hidden, "Commandline should be visible after opening");
     is(document!.activeElement, input, "Input should have focus");
 
-    EventUtils.synthesizeKey("t");
-    EventUtils.synthesizeKey("e");
-    EventUtils.synthesizeKey("s");
-    EventUtils.synthesizeKey("t");
+    await keys("test");
     is(input!.value, "test", "Input should contain 'test'");
 
     // Move focus to browser content
@@ -215,7 +194,7 @@ add_task(async function test_commandline_custom_excmd_arguments() {
     await keys(":my_long_command_name foo bar");
     await sleep_frames(20);
 
-    EventUtils.synthesizeKey("KEY_Enter");
+    await keys("<CR>");
 
     await TestUtils.waitForCondition(
       () => GlideBrowser.api.g.test_checked === true,

@@ -44,7 +44,7 @@ add_task(async function test_jj_insert_middle() {
       input.setSelectionRange(40, 40);
     });
 
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(5);
     let value = await SpecialPowers.spawn(browser, [], async () => {
       return content.document.getElementById<HTMLInputElement>("input-2")!
@@ -56,7 +56,7 @@ add_task(async function test_jj_insert_middle() {
       "Partial insert mapping matches should insert the key",
     );
 
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(4);
 
     value = await SpecialPowers.spawn(browser, [], async () => {
@@ -87,7 +87,7 @@ add_task(async function test_jj_insert_end() {
     });
 
     await sleep_frames(1);
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(4);
 
     let value = await SpecialPowers.spawn(browser, [], async () => {
@@ -96,7 +96,7 @@ add_task(async function test_jj_insert_end() {
     });
     is(value, INPUT_TEST_URI + "j");
 
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(3);
 
     // content should be the exact same
@@ -122,7 +122,7 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
       input.setSelectionRange(40, 40);
     });
 
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(1);
     let value = await SpecialPowers.spawn(browser, [], async () => {
       return content.document.getElementById<HTMLInputElement>("input-2")!
@@ -131,7 +131,7 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
     await sleep_frames(2);
     is(value, "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html");
 
-    EventUtils.synthesizeKey("e");
+    await keys("e");
     await sleep_frames(4);
 
     // content should now have `je`
@@ -161,7 +161,7 @@ add_task(async function test_j_cancel_by_escape() {
       input.setSelectionRange(40, 40);
     });
 
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(2);
     let value = await SpecialPowers.spawn(browser, [], async () => {
       return content.document.getElementById<HTMLInputElement>("input-2")!
@@ -173,7 +173,7 @@ add_task(async function test_j_cancel_by_escape() {
       "Partial insert mapping matches should insert the key",
     );
 
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await sleep_frames(3);
     is(GlideBrowser.state.mode, "normal", "Esc after a single j should go to normal mode");
 
@@ -202,8 +202,7 @@ add_task(async function test_jj_switching_elements() {
       input.focus();
     });
 
-    EventUtils.synthesizeKey("f");
-    EventUtils.synthesizeKey("j");
+    await keys("fj");
     await sleep_frames(5);
     let value = await SpecialPowers.spawn(browser, [], async () => {
       return content.document.getElementById<HTMLInputElement>("input-1")!
@@ -212,7 +211,7 @@ add_task(async function test_jj_switching_elements() {
     is(value, "foofj", "Partial insert mapping matches should insert the key");
 
     // start a new context
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await sleep_frames(3);
 
     await SpecialPowers.spawn(browser, [], async () => {
@@ -222,7 +221,7 @@ add_task(async function test_jj_switching_elements() {
     });
 
     await sleep_frames(3);
-    EventUtils.synthesizeKey("j");
+    await keys("j");
     await sleep_frames(4);
 
     const [first_value, second_value] = await SpecialPowers.spawn(browser, [], async () => {
@@ -246,7 +245,7 @@ add_task(async function test_mapped_keys_no_events() {
     });
 
     // verify the event listeners are working by sending an unmapped key
-    EventUtils.synthesizeKey("m");
+    await keys("m");
     await sleep_frames(2);
     let captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {
@@ -260,8 +259,7 @@ add_task(async function test_mapped_keys_no_events() {
     is(captured_events.keyup, 1, "Unmapped key should trigger keyup");
 
     // mapped key sequence
-    EventUtils.synthesizeKey("j");
-    EventUtils.synthesizeKey("j");
+    await keys("jj");
     await sleep_frames(2);
     captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {
@@ -292,7 +290,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
     await DOMFullscreenTestUtils.changeFullscreen(browser, true);
     is(window.fullScreen, true, "window should now be in full screen mode");
 
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
 
     await DOMFullscreenTestUtils.waitForFullScreenState(browser, false);
     is(window.fullScreen, false, "window should not be in full screen mode after pressing Escape");
@@ -309,9 +307,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
 
     await SpecialPowers.spawn(browser, [], async () => content.document.getElementById("input-1")!.focus());
     await sleep_frames(1);
-    EventUtils.synthesizeKey("a");
-    EventUtils.synthesizeKey("b");
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("ab<esc>");
     await sleep_frames(1);
     is(window.fullScreen, false, "window not be in full screen mode");
   });
@@ -319,10 +315,10 @@ add_task(async function test_Escape_to_exit_fullscreen() {
 
 add_task(async function test_d_op_pending_q_normal() {
   // Test that pressing "d" enters op-pending mode and then pressing "q" goes back to normal mode because q is not mapped
-  EventUtils.synthesizeKey("d");
+  await keys("d");
   await sleep_frames(4);
   is(GlideBrowser.state.mode, "op-pending", "Pressing 'd' enters op-pending mode");
-  EventUtils.synthesizeKey("q");
+  await keys("q");
   await sleep_frames(4);
   is(GlideBrowser.state.mode, "normal", "Pressing 'q' in op-pending mode returns to normal mode");
 });
@@ -340,8 +336,7 @@ add_task(async function test_mapping_user_gesture_activation() {
       });
     });
 
-    EventUtils.synthesizeKey("y");
-    EventUtils.synthesizeKey("c");
+    await keys("yc");
     await sleep_frames(10);
 
     // clicking the button should attempt to copy the contents of a `<textarea>` to
@@ -365,7 +360,7 @@ add_task(async function test_buf_local_keymaps_override_global() {
       });
     });
 
-    EventUtils.synthesizeKey("q");
+    await keys("q");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 1, "Buffer-local mapping should be executed in the originating buffer");
     is(GlideBrowser.api.g.invoked_global, 0, "Global mapping should be shadowed by the buffer-local mapping");
@@ -373,7 +368,7 @@ add_task(async function test_buf_local_keymaps_override_global() {
     // Open a new tab to clear buffer-local mappings.
     const new_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, KEYS_TEST_URI);
 
-    EventUtils.synthesizeKey("q");
+    await keys("q");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 1, "Buffer-local mapping should not fire in a different buffer");
     is(
@@ -399,7 +394,7 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
       glide.buf.keymaps.del("normal", "q");
     });
 
-    EventUtils.synthesizeKey("q");
+    await keys("q");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
     is(GlideBrowser.api.g.invoked_global, 0, "Global mapping should be deleted");
@@ -407,7 +402,7 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
     // Open a new tab to clear buffer-local mappings.
     const new_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, KEYS_TEST_URI);
 
-    EventUtils.synthesizeKey("q");
+    await keys("q");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
     is(
@@ -440,7 +435,7 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
       });
     });
 
-    EventUtils.synthesizeKey("t");
+    await keys("t");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 1, "Initial buffer keymap should work");
     is(GlideBrowser.api.g.invoked_global, 0, "Global keymap should be overridden");
@@ -466,28 +461,28 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
       });
     });
 
-    EventUtils.synthesizeKey("t");
+    await keys("t");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 0, "Old buffer keymap should not fire");
     is(GlideBrowser.api.g.invoked_global, 1, "Global keymap should now be active");
 
     // Test that new buffer keymap 'u' works
-    EventUtils.synthesizeKey("u");
+    await keys("u");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_after_reload, 1, "New buffer keymap registered after reload should work");
 
     // Test that kept buffer keymap 'r' still works
-    EventUtils.synthesizeKey("r");
+    await keys("r");
     await sleep_frames(3);
     is(GlideBrowser.api.g.invoked_buffer, 1, "Kept buffer keymap should still work after reload");
 
     // Open new tab to verify buffer keymaps don't leak
     await BrowserTestUtils.withNewTab(KEYS_TEST_URI, async _ => {
-      EventUtils.synthesizeKey("u");
+      await keys("u");
       await sleep_frames(3);
       is(GlideBrowser.api.g.invoked_after_reload, 1, "Buffer keymap should not fire in new tab");
 
-      EventUtils.synthesizeKey("t");
+      await keys("t");
       await sleep_frames(3);
       is(GlideBrowser.api.g.invoked_global, 2, "Global keymap should work in new tab");
     });
@@ -502,13 +497,8 @@ add_task(async function test_shift_with_another_modifier() {
       });
     });
 
-    EventUtils.synthesizeKey("KEY_Shift", { type: "keydown" });
-    EventUtils.synthesizeKey("KEY_Meta", { type: "keydown" });
-    EventUtils.synthesizeKey("c");
+    await keys("<D-S-c>");
 
     is(GlideBrowser.api.g.value, true);
-
-    EventUtils.synthesizeKey("KEY_Shift", { type: "keyup" });
-    EventUtils.synthesizeKey("KEY_Meta", { type: "keyup" });
   });
 });

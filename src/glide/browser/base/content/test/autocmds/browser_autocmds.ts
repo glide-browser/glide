@@ -255,15 +255,15 @@ add_task(async function test_mode_changed_autocmd() {
     await sleep_frames(5);
 
     // normal
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await sleep_frames(5);
 
     // visual
-    EventUtils.synthesizeKey("v");
+    await keys("v");
     await sleep_frames(5);
 
     // normal
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await sleep_frames(5);
 
     isjson(GlideBrowser.api.g.calls, [
@@ -323,15 +323,15 @@ add_task(async function test_mode_changed_specific_pattern() {
     await sleep_frames(5);
 
     // normal
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await sleep_frames(5);
 
     // visual
-    EventUtils.synthesizeKey("v");
+    await keys("v");
     await sleep_frames(5);
 
     // normal
-    EventUtils.synthesizeKey("KEY_Escape");
+    await keys("<esc>");
     await sleep_frames(5);
 
     isjson(GlideBrowser.api.g.calls, [
