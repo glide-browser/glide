@@ -55,14 +55,14 @@ add_task(async function test_g_stores_arbitrary_data() {
 });
 
 add_task(async function test_keymap_reloading() {
-  await GlideTestUtils.synthesize_keyseq(";");
+  await keys(";");
   is(GlideBrowser.state.mode, "normal");
 
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", ";", "mode_change insert");
   });
 
-  await GlideTestUtils.synthesize_keyseq(";");
+  await keys(";");
   is(GlideBrowser.state.mode, "insert");
 });
 
@@ -278,9 +278,9 @@ add_task(async function test_keys_next_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>k");
+    await keys("<Space>k");
 
-    await GlideTestUtils.synthesize_keyseq("a");
+    await keys("a");
 
     await TestUtils.waitForCondition(
       () => GlideBrowser.api.g.received_key === "a",
@@ -298,9 +298,9 @@ add_task(async function test_keys_next_str_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>s");
+    await keys("<Space>s");
 
-    await GlideTestUtils.synthesize_keyseq("<C-l>");
+    await keys("<C-l>");
 
     await TestUtils.waitForCondition(
       () => GlideBrowser.api.g.received_key === "<C-l>",
@@ -333,9 +333,9 @@ add_task(async function test_keys_next_concurrency_disallowed() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>c");
+    await keys("<Space>c");
 
-    await GlideTestUtils.synthesize_keyseq("x");
+    await keys("x");
 
     await TestUtils.waitForCondition(
       () => GlideBrowser.api.g.received_key === "x",
@@ -358,9 +358,9 @@ add_task(async function test_keys_next_special_keys() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>p");
+    await keys("<Space>p");
 
-    await GlideTestUtils.synthesize_keyseq("<Esc>");
+    await keys("<Esc>");
 
     await TestUtils.waitForCondition(
       () => GlideBrowser.api.g.received_key === "<Esc>",
@@ -384,9 +384,9 @@ add_task(async function test_keys_next_passthrough_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>z");
+    await keys("<Space>z");
 
-    await GlideTestUtils.synthesize_keyseq("b");
+    await keys("b");
 
     await TestUtils.waitForCondition(
       () => GlideBrowser.api.g.received_key === "b",
@@ -409,7 +409,7 @@ add_task(async function test_glide_ctx_url() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>u");
+    await keys("<Space>u");
 
     is(GlideBrowser.api.g.value, INPUT_TEST_URI, "glide.ctx.url should return the current page URL");
   });
@@ -426,7 +426,7 @@ add_task(async function test_glide_excmds_execute() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>e");
+    await keys("<Space>e");
     await sleep_frames(20);
 
     is(GlideBrowser.api.g.value, "initial", "After config reload, the value should be reset to undefined");
@@ -475,7 +475,7 @@ add_task(async function test_webext_storage_api_listener_error() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await sleep_frames(5);
-    await GlideTestUtils.synthesize_keyseq("<Space>q");
+    await keys("<Space>q");
     await sleep_frames(50);
     GlideBrowser.flush_pending_error_notifications();
 
@@ -560,7 +560,7 @@ add_task(async function test_excmds_create() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>0");
+    await keys("<Space>0");
 
     is(GlideBrowser.api.g.value, "from hello excmd", "the excmd callback should set g.value");
 
@@ -568,7 +568,7 @@ add_task(async function test_excmds_create() {
     await GlideTestUtils.reload_config(function _() {
       glide.keymaps.set("normal", "<leader>0", "my_test_command");
     });
-    await GlideTestUtils.synthesize_keyseq("<Space>0");
+    await keys("<Space>0");
     await sleep_frames(10);
 
     let notification = gNotificationBox.getNotificationWithValue("glide-excmd-error");
@@ -596,7 +596,7 @@ add_task(async function test_keys_send_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(50);
 
     is(GlideBrowser.api.g.value, "after send", "glide.keys.send() should trigger the 'j' keymap");
@@ -619,7 +619,7 @@ add_task(async function test_keys_send_to_input_element() {
     await sleep_frames(3);
     is(GlideBrowser.state.mode, "insert", "Should be in insert mode when input is focused");
 
-    await GlideTestUtils.synthesize_keyseq("<C-k>");
+    await keys("<C-k>");
     await sleep_frames(5);
 
     is(
@@ -650,12 +650,12 @@ add_task(async function test_keys_send_accepts_glide_key() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(50);
 
     is(GlideBrowser.api.g.value, "before next", "should wait for the next key");
 
-    await GlideTestUtils.synthesize_keyseq("j");
+    await keys("j");
     await sleep_frames(10);
 
     is(GlideBrowser.api.g.value, "after send", "glide.keys.send() should trigger the 'j' keymap");
@@ -675,7 +675,7 @@ add_task(async function test_keys_send_skip_mappings() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(50);
 
     is(
@@ -706,11 +706,11 @@ add_task(async function test_custom_modes() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(10);
     is(GlideBrowser.state.mode, "test_custom_mode", "we should switch to the custom mode");
 
-    await GlideTestUtils.synthesize_keyseq("j");
+    await keys("j");
     await sleep_frames(10);
     is(GlideBrowser.api.g.value, "from custom mode keymap", "the custom mode keymap callback should be invoked");
 
@@ -747,7 +747,7 @@ add_task(async function test_ctx_mode() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(10);
     is(GlideBrowser.api.g.value, "normal", "the keymap should be invoked and set the value to the current mode");
   });
@@ -772,7 +772,7 @@ add_task(async function test_dedent_helpers() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(10);
     is(GlideBrowser.api.g.value, "<!---->\n<div>foo</div>");
     is(
@@ -875,7 +875,7 @@ add_task(async function test_keymap_callback_receives_tab_id() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>i");
+    await keys("<Space>i");
     await sleep_frames(10);
 
     const active_tab = await GlideBrowser.api.tabs.active();
@@ -953,7 +953,7 @@ add_task(async function test_add_excmd_while_commandline_is_cached() {
     // open commandline so it is cached
     await GlideTestUtils.commandline.open();
     await sleep_frames(2);
-    await GlideTestUtils.synthesize_keyseq("<esc>");
+    await keys("<esc>");
     await TestUtils.waitForCondition(() =>
       document!.getElementById("glide-toolbar-mode-button")!.textContent
         === "normal", "Waiting for mode button to show `normal` mode");
@@ -962,7 +962,7 @@ add_task(async function test_add_excmd_while_commandline_is_cached() {
       glide.excmds.create({ name: "hello" }, () => {});
     });
 
-    await GlideTestUtils.synthesize_keyseq(":hello");
+    await keys(":hello");
     is(GlideTestUtils.commandline.focused_row()?.textContent, "hello", "commandline should show the newly added excmd");
   });
 });
@@ -977,7 +977,7 @@ add_task(async function test_fs_read() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     is(GlideBrowser.api.g.value, ".contents {}");
@@ -992,7 +992,7 @@ add_task(async function test_fs_read_file_not_found() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     ok(
@@ -1012,7 +1012,7 @@ add_task(async function test_fs_write() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     is(GlideBrowser.api.g.value, ".contents {}");
@@ -1028,7 +1028,7 @@ add_task(async function test_fs_write_new_dir() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     is(GlideBrowser.api.g.value, "#id {}");
@@ -1046,13 +1046,13 @@ add_task(async function test_fs_exists() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(5);
     is(GlideBrowser.api.g.value, true);
 
     await IOUtils.remove(test_path);
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(5);
     is(GlideBrowser.api.g.value, false);
   });
@@ -1069,7 +1069,7 @@ add_task(async function test_fs_stat() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     const result = GlideBrowser.api.g.value as glide.FileInfo;
@@ -1095,7 +1095,7 @@ add_task(async function test_fs_stat_directory() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     const result = GlideBrowser.api.g.value as glide.FileInfo;
@@ -1120,7 +1120,7 @@ add_task(async function test_fs_stat_not_found() {
       });
     });
 
-    await GlideTestUtils.synthesize_keyseq("~");
+    await keys("~");
     await sleep_frames(10);
 
     const result = GlideBrowser.api.g.value as FileNotFoundError;

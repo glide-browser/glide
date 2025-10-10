@@ -25,13 +25,13 @@ const g: {
   sleep_frames: typeof sleep_frames;
   EventUtils: typeof EventUtils;
   TestUtils: typeof TestUtils;
+  keys: typeof keys;
 } = {} as any;
 
 declare var content: TestContent;
 
 const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { dedent } = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
-const GlideEventUtils = ChromeUtils.importESModule("chrome://glide/content/event-utils.mjs", { global: "current" });
 
 class GlideTestUtilsClass {
   commandline = new GlideCommandLineTestUtils();
@@ -84,19 +84,6 @@ class GlideTestUtilsClass {
     const str = func.toString();
     const body = str.substring(str.indexOf("{") + 1, str.lastIndexOf("}"));
     return dedent(body).trimEnd();
-  }
-
-  /**
-   * Take a given key sequence and synthesize events for each keyn,
-   *
-   * e.g. `ab<C-d>` will fire three different events, a, b, and ctrl+c
-   */
-  async synthesize_keyseq<const Keys>(
-    keyseq: $keymapcompletions.T<Keys>,
-  ): Promise<void> {
-    // note: we intentionally do *not* use the available `EventUtils.synthesizeKey` function
-    //       so that we can test our modified version of it in `src/glide/browser/base/content/event-utils.mts`
-    await GlideEventUtils.synthesize_keyseq(keyseq as string);
   }
 
   async wait_for_mode(mode: GlideMode) {
@@ -157,7 +144,7 @@ class GlideTestUtilsClass {
         expected_char: string,
         state?: "todo",
       ) {
-        await GlideTestUtils.synthesize_keyseq(motion);
+        await g.keys(motion);
         await g.sleep_frames(3);
 
         const [position, char] = await SpecialPowers.spawn(browser, [], async () => {
@@ -190,7 +177,7 @@ class GlideTestUtilsClass {
           await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === "normal", "Waiting for `normal` mode");
         }
 
-        await GlideTestUtils.synthesize_keyseq(motion);
+        await g.keys(motion);
         await g.sleep_frames(3);
 
         const [text, position] = await SpecialPowers.spawn(browser, [], async () => {
@@ -208,7 +195,7 @@ class GlideTestUtilsClass {
         expected_selection: string,
         state?: "todo",
       ) {
-        await GlideTestUtils.synthesize_keyseq(motion);
+        await g.keys(motion);
         await g.sleep_frames(3);
 
         const selected_text = await SpecialPowers.spawn(browser, [], async () => {
@@ -238,7 +225,7 @@ class GlideCommandLineTestUtils {
    * Open the commandline with 3 fake options inserted.
    */
   async open() {
-    await GlideTestUtils.synthesize_keyseq(":");
+    await g.keys(":");
 
     await new Promise(r => requestAnimationFrame(r));
 

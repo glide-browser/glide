@@ -12,7 +12,7 @@ const SINGLE_HINT_FILE = "http://mochi.test:8888/browser/glide/browser/base/cont
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async () => {
-  await GlideTestUtils.synthesize_keyseq("<escape>");
+  await keys("<escape>");
   is(GlideBrowser.state.mode, "normal");
   await sleep_frames(3);
 });
@@ -33,12 +33,12 @@ async function wait_for_hints(): Promise<HTMLElement[]> {
 
 add_task(async function test_f_shows_hints() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     await wait_for_hints();
     is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'f'");
     ok(get_hints().length > 0, "Hints should be visible on the page");
 
-    await GlideTestUtils.synthesize_keyseq("<escape>");
+    await keys("<escape>");
     await sleep_frames(5);
 
     is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after pressing Escape");
@@ -48,7 +48,7 @@ add_task(async function test_f_shows_hints() {
 
 add_task(async function test_F_shows_hints() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("F");
+    await keys("F");
     await wait_for_hints();
     is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'F'");
     ok(get_hints().length > 0, "Hints should be visible on the page");
@@ -57,14 +57,14 @@ add_task(async function test_F_shows_hints() {
 
 add_task(async function test_hints_follow_link() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     await wait_for_hints();
 
     const first_hint = get_hints()[0];
     ok(first_hint);
     ok(first_hint.textContent);
 
-    await GlideTestUtils.synthesize_keyseq(first_hint.textContent);
+    await keys(first_hint.textContent);
 
     is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
   });
@@ -74,14 +74,14 @@ add_task(async function test_F_opens_new_tab() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     const initial_tab_count = gBrowser.tabs.length;
 
-    await GlideTestUtils.synthesize_keyseq("F");
+    await keys("F");
     await wait_for_hints();
 
     const first_hint = get_hints()[0];
     ok(first_hint);
     ok(first_hint.textContent);
 
-    await GlideTestUtils.synthesize_keyseq(first_hint.textContent);
+    await keys(first_hint.textContent);
     await sleep_frames(3);
 
     const final_tab_count = gBrowser.tabs.length;
@@ -98,11 +98,11 @@ add_task(async function test_F_opens_new_tab() {
 
 add_task(async function test_partial_hint_filtering() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     await wait_for_hints();
     const initial_count = get_hints().length;
 
-    await GlideTestUtils.synthesize_keyseq("a");
+    await keys("a");
     const filtered_hints = get_hints().length;
 
     ok(filtered_hints <= initial_count, "Typing should filter hints");
@@ -116,7 +116,7 @@ add_task(async function test_auto_activate_single_hint() {
   });
 
   await BrowserTestUtils.withNewTab(SINGLE_HINT_FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     await sleep_frames(5);
 
     ok(GlideBrowser.state.mode === "normal", "Should have entered auto-activated to normal");
@@ -135,16 +135,16 @@ add_task(async function test_include_selector() {
 
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     // First, test without --include
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     await wait_for_hints();
     const standard_hints = get_hints();
     const standard_count = standard_hints.length;
 
-    await GlideTestUtils.synthesize_keyseq("<Esc>");
+    await keys("<Esc>");
     await sleep_frames(3);
 
     // Now test with --include
-    await GlideTestUtils.synthesize_keyseq("F");
+    await keys("F");
     await wait_for_hints();
     await sleep_frames(3);
 
@@ -168,18 +168,18 @@ add_task(async function test_pick_basic() {
   });
 
   await BrowserTestUtils.withNewTab(FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     const hints = await wait_for_hints();
 
     is(hints.length, 1, "only one hint should be returned as that's what our pick function does");
 
-    await GlideTestUtils.synthesize_keyseq("<Esc>");
+    await keys("<Esc>");
   });
 });
 
 add_task(async function test_gI() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("gI");
+    await keys("gI");
     await sleep_frames(5);
 
     var focument_element = await SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
@@ -192,7 +192,7 @@ add_task(async function test_gI() {
       textarea!.style.height = "20px";
     });
 
-    await GlideTestUtils.synthesize_keyseq("<Escape>gI");
+    await keys("<Escape>gI");
     await sleep_frames(5);
 
     var focument_element = await SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
@@ -212,14 +212,14 @@ add_task(async function test_expandable_content_can_be_hinted() {
     await sleep_frames(10);
     is(is_open, false, "<details> content should be hidden by default");
 
-    await GlideTestUtils.synthesize_keyseq("f");
+    await keys("f");
     await wait_for_hints();
 
     const hints = GlideCommands.get_active_hints();
     const summary_hint = hints.find((hint) => hint.element_id === "summary-1");
     ok(summary_hint);
 
-    await GlideTestUtils.synthesize_keyseq(summary_hint.label);
+    await keys(summary_hint.label);
     await GlideTestUtils.wait_for_mode("normal");
 
     var is_open = await SpecialPowers.spawn(

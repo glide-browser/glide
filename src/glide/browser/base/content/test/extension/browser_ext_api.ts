@@ -48,12 +48,12 @@ add_task(async function test_tabs_functions() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
 
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(10);
 
     is(gBrowser.selectedBrowser?.currentURI.spec, "about:blank");
 
-    await GlideTestUtils.synthesize_keyseq("<Space>d");
+    await keys("<Space>d");
   });
 
   await sleep_frames(10);
@@ -87,7 +87,7 @@ add_task(async function test_tabs_functions() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(10);
   });
 });
@@ -119,7 +119,7 @@ add_task(async function test_css_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
@@ -128,7 +128,7 @@ add_task(async function test_css_injection() {
     });
     is(border_style, "20px dotted rgb(255, 192, 203)");
 
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
@@ -147,7 +147,7 @@ add_task(async function test_script_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
@@ -169,7 +169,7 @@ add_task(async function test_contextual_identities() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>c");
+    await keys("<Space>c");
     await sleep_frames(10);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -188,7 +188,7 @@ add_task(async function test_search_engines() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>s");
+    await keys("<Space>s");
     await sleep_frames(10);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -213,7 +213,7 @@ add_task(async function test_error_handling_for_unsupported_apis() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>e");
+    await keys("<Space>e");
     await sleep_frames(10);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -237,7 +237,7 @@ add_task(async function test_bookmarks_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>b");
+    await keys("<Space>b");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -261,7 +261,7 @@ add_task(async function test_history_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>h");
+    await keys("<Space>h");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -280,7 +280,7 @@ add_task(async function test_permissions_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>p");
+    await keys("<Space>p");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -313,7 +313,7 @@ add_task(async function test_runtime_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>p");
+    await keys("<Space>p");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -336,7 +336,7 @@ add_task(async function test_notifications_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -369,7 +369,7 @@ add_task(async function test_storage_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>s");
+    await keys("<Space>s");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -400,7 +400,7 @@ add_task(async function test_downloads_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>d");
+    await keys("<Space>d");
     await sleep_frames(30);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -436,7 +436,7 @@ add_task(async function test_cookies_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>c");
+    await keys("<Space>c");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -464,7 +464,7 @@ add_task(async function test_windows_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>w");
+    await keys("<Space>w");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -501,7 +501,7 @@ add_task(async function test_webRequest_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>w");
+    await keys("<Space>w");
     await sleep_frames(400); // Web requests might take longer
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -518,7 +518,7 @@ add_task(async function test_sessions_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>s");
+    await keys("<Space>s");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -542,7 +542,7 @@ add_task(async function test_i18n_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>i");
+    await keys("<Space>i");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -571,7 +571,7 @@ add_task(async function test_theme_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>t");
+    await keys("<Space>t");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -591,7 +591,7 @@ add_task(async function test_identity_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>i");
+    await keys("<Space>i");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -614,7 +614,7 @@ add_task(async function test_function_script_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "method call with no args");
@@ -640,7 +640,7 @@ add_task(async function test_function_script_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
@@ -660,7 +660,7 @@ add_task(async function test_function_script_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "function syntax with no args");
@@ -685,7 +685,7 @@ add_task(async function test_function_script_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
@@ -714,7 +714,7 @@ add_task(async function test_function_script_injection() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -741,7 +741,7 @@ add_task(async function test_runtime_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>r");
+    await keys("<Space>r");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -778,7 +778,7 @@ add_task(async function test_commands_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>c");
+    await keys("<Space>c");
     await sleep_frames(20);
     ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
   });
@@ -820,7 +820,7 @@ add_task(async function test_sidebarAction_api() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>s");
+    await keys("<Space>s");
     await sleep_frames(20);
     // The assertions are in the config
   });

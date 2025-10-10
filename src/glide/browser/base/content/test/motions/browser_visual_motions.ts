@@ -158,10 +158,10 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
 
     await set_text("Hello world", "yank selection to clipboard");
     await set_selection(1);
-    await GlideTestUtils.synthesize_keyseq("vlll");
+    await keys("vlll");
     await sleep_frames(3);
 
-    await GlideTestUtils.synthesize_keyseq("y");
+    await keys("y");
     await sleep_frames(10);
 
     const clipboardText = await navigator.clipboard.readText();
@@ -199,7 +199,7 @@ add_task(async function test_visual_yank_non_editable_to_clipboard() {
     });
 
     await sleep_frames(3);
-    await GlideTestUtils.synthesize_keyseq("vy");
+    await keys("vy");
     await sleep_frames(3);
 
     is(await navigator.clipboard.readText(), "Enter your text:", "Label text should be copied to clipboard");

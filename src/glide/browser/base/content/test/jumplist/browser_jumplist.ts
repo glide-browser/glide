@@ -17,10 +17,6 @@ function current_url() {
   return gBrowser.selectedBrowser?.currentURI.spec;
 }
 
-async function keys(keyseq: string) {
-  await GlideTestUtils.synthesize_keyseq(keyseq);
-}
-
 add_task(async function test_jumplist_basic_navigation() {
   const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
   BrowserTestUtils.startLoadingURIString(browser, uri(0));

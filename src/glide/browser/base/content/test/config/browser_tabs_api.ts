@@ -55,7 +55,7 @@ add_task(async function test_tabs_active() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
 
-    await GlideTestUtils.synthesize_keyseq("<Space>n");
+    await keys("<Space>n");
     await sleep_frames(30);
 
     ok(GlideBrowser.api.g.test_checked);
@@ -75,7 +75,7 @@ add_task(async function test_tabs_get_first() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>f");
+    await keys("<Space>f");
     await sleep_frames(50);
 
     ok(GlideBrowser.api.g.test_checked);
@@ -96,7 +96,7 @@ add_task(async function test_tabs_query() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.synthesize_keyseq("<Space>f");
+    await keys("<Space>f");
     await sleep_frames(50);
 
     ok(GlideBrowser.api.g.test_checked);

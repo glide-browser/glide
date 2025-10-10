@@ -35,7 +35,7 @@ add_task(async function test_video_fullscreen() {
 add_task(async function test_video_fullscreen_does_not_switch_on_ignore_mode() {
   await BrowserTestUtils.withNewTab(VIDEO_FILE, async browser => {
     await GlideTestUtils.wait_for_mode("normal");
-    await GlideTestUtils.synthesize_keyseq("<S-Esc>");
+    await keys("<S-Esc>");
 
     await SpecialPowers.spawn(browser, [], async () => {
       const video = content.document.getElementById("testVideo") as HTMLVideoElement;

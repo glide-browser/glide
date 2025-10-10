@@ -188,7 +188,7 @@ add_task(async function test_leader() {
     node = key_manager.handle_key_event(event, "normal");
   }, { mozSystemGroup: true, capture: true });
 
-  await GlideTestUtils.synthesize_keyseq("\\sf");
+  await keys("\\sf");
 
   ok(node);
   is(node.value?.command, "back");

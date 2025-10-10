@@ -32,7 +32,7 @@ add_setup(async () => {
   });
 
   // Clear any existing keyseq display from previous tests
-  await GlideTestUtils.synthesize_keyseq("<escape>");
+  await keys("<escape>");
   const existing_span = document!.getElementById("glide-toolbar-keyseq-span");
   if (existing_span) {
     existing_span.textContent = "";
@@ -45,31 +45,31 @@ add_task(async function test_keyseq_display_element_creation() {
   is(toolbar_button().textContent, "", "Initially keyseq should be empty");
 
   // Press 't' which has display_keyseq: true
-  await GlideTestUtils.synthesize_keyseq("t");
+  await keys("t");
   is(toolbar_button().textContent, "t", "Keyseq span should display 't'");
 });
 
 add_task(async function test_keyseq_display_multi_key_sequence() {
-  await GlideTestUtils.synthesize_keyseq("<escape>");
+  await keys("<escape>");
 
-  await GlideTestUtils.synthesize_keyseq("g");
+  await keys("g");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "g", "Should display 'g' for first key");
 
-  await GlideTestUtils.synthesize_keyseq("g");
+  await keys("g");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "", "Should clear display after completing 'gg' mapping");
 });
 
 add_task(async function test_keyseq_op_pending() {
-  await GlideTestUtils.synthesize_keyseq("d");
+  await keys("d");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "d", "Should display 'd'");
 
-  await GlideTestUtils.synthesize_keyseq("w");
+  await keys("w");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "", "Keyseq should be cleared after complete operation");
@@ -77,12 +77,12 @@ add_task(async function test_keyseq_op_pending() {
 });
 
 add_task(async function test_keyseq_display_clears_on_invalid_sequence() {
-  await GlideTestUtils.synthesize_keyseq("g");
+  await keys("g");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "g", "Should display 'g'");
 
-  await GlideTestUtils.synthesize_keyseq("x");
+  await keys("x");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "", "Keyseq should be cleared after invalid key");
@@ -92,14 +92,14 @@ add_task(async function test_keyseq_display_with_op_pending_mode() {
   // Test with operator-pending mode which shows keyseq
   GlideBrowser.api.g.test_executed = false;
 
-  await GlideTestUtils.synthesize_keyseq("d");
+  await keys("d");
 
   let keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "d", "Should display 'd' in op-pending mode");
   is(GlideBrowser.state.mode, "op-pending", "Should be in op-pending mode");
 
   // Cancel with escape
-  await GlideTestUtils.synthesize_keyseq("<Esc>");
+  await keys("<Esc>");
 
   keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span!.textContent, "", "Keyseq should be cleared after escape");
@@ -112,7 +112,7 @@ add_task(async function test_keyseq_display_without_toolbar_button() {
   original_button!.remove();
 
   // This should not throw an error
-  await GlideTestUtils.synthesize_keyseq("g");
+  await keys("g");
 
   const keyseq_span = document!.getElementById("glide-toolbar-keyseq-span");
   is(keyseq_span, null, "No keyseq span should be created when toolbar button is missing");

@@ -29,16 +29,16 @@ add_task(async function test_tab_switching() {
 
   is(current_url(), INPUT_TEST_FILE + "?i=2");
 
-  await GlideTestUtils.synthesize_keyseq("<C-j>");
+  await keys("<C-j>");
   is(current_url(), INPUT_TEST_FILE + "?i=0", "tab_next wraps around");
 
-  await GlideTestUtils.synthesize_keyseq("<C-j>");
+  await keys("<C-j>");
   is(current_url(), INPUT_TEST_FILE + "?i=1", "tab_next advances forward once");
 
-  await GlideTestUtils.synthesize_keyseq("<C-k>");
+  await keys("<C-k>");
   is(current_url(), INPUT_TEST_FILE + "?i=0", "tab_prev moves backward once");
 
-  await GlideTestUtils.synthesize_keyseq("<C-k>");
+  await keys("<C-k>");
   is(current_url(), INPUT_TEST_FILE + "?i=2", "tab_prev wraps back around");
 
   BrowserTestUtils.removeTab(second_tab);
@@ -54,10 +54,10 @@ add_task(async function test_tab_close() {
 
   is(current_url(), INPUT_TEST_FILE + "?i=2");
 
-  await GlideTestUtils.synthesize_keyseq(" d");
+  await keys(" d");
   is(current_url(), INPUT_TEST_FILE + "?i=1", "tab_close moves backwards");
 
-  await GlideTestUtils.synthesize_keyseq(".");
+  await keys(".");
   is(current_url(), INPUT_TEST_FILE + "?i=0", "tab_close moves backwards");
 
   BrowserTestUtils.removeTab(second_tab);
@@ -83,7 +83,7 @@ add_task(async function test_scrolling() {
     is(y, min_y);
 
     for (let i = 0; i < 10; i++) {
-      await GlideTestUtils.synthesize_keyseq("l");
+      await keys("l");
     }
     // ensure we give enough frame time to complete the horizontal scroll
     // TODO(glide): better solution for this
@@ -92,19 +92,19 @@ add_task(async function test_scrolling() {
     var [curr_x] = await get_scroll();
     isnot(curr_x, 0, `repeated \`l\` should move the scroll x position`);
 
-    await GlideTestUtils.synthesize_keyseq("G");
+    await keys("G");
     var [x, y] = await get_scroll();
     is(x, curr_x, `G should retain the x position`);
     ok(y >= max_y, `G should go to the max y`);
 
-    await GlideTestUtils.synthesize_keyseq("gg");
+    await keys("gg");
     var [x, y] = await get_scroll();
     is(x, curr_x, `gg should retain the x position`);
     is(y, min_y, `gg should go to the minimum y`);
 
     var last_y = min_y;
 
-    await GlideTestUtils.synthesize_keyseq("<C-d>");
+    await keys("<C-d>");
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-d> should retain the x position`);
@@ -112,42 +112,42 @@ add_task(async function test_scrolling() {
 
     last_y = y;
 
-    await GlideTestUtils.synthesize_keyseq("<C-d>");
+    await keys("<C-d>");
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-d> should retain the x position`);
     ok(y > last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
 
-    await GlideTestUtils.synthesize_keyseq("<C-u>");
+    await keys("<C-u>");
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-u> should retain the x position`);
     is(y, last_y, `<C-u> should decrease y to the previous <C-d>`);
 
-    await GlideTestUtils.synthesize_keyseq("<C-u>");
+    await keys("<C-u>");
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-u> should retain the x position`);
     is(y, min_y, `Second <C-u> should decrease y to the minimum`);
 
-    await GlideTestUtils.synthesize_keyseq("gg");
+    await keys("gg");
     var [x, y] = await get_scroll();
 
     // Test j scrolls down
-    await GlideTestUtils.synthesize_keyseq("j");
+    await keys("j");
     await sleep_frames(50);
     var [x, new_y] = await get_scroll();
     ok(new_y > y, `j should scroll down`);
 
     // Test k scrolls up
-    await GlideTestUtils.synthesize_keyseq("k");
+    await keys("k");
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(y, min_y, `k should scroll back up`);
 
     // Test h scrolls left
     for (let i = 0; i < 10; i++) {
-      await GlideTestUtils.synthesize_keyseq("h");
+      await keys("h");
     }
     await sleep_frames(100);
     var [new_x, y] = await get_scroll();
@@ -166,7 +166,7 @@ add_task(async function test_gi_focuses_last_used_input() {
       document!.getElementById("glide-toolbar-mode-button")!.textContent
         === "insert", "Waiting for mode button to show `insert` mode");
 
-    await GlideTestUtils.synthesize_keyseq("hello");
+    await keys("hello");
 
     await SpecialPowers.spawn(browser, [], async () => {
       content.document.getElementById("input-1")!.blur();
@@ -176,13 +176,13 @@ add_task(async function test_gi_focuses_last_used_input() {
       document!.getElementById("glide-toolbar-mode-button")!.textContent
         === "normal", "Waiting for mode button to show `normal` mode");
 
-    await GlideTestUtils.synthesize_keyseq("gi");
+    await keys("gi");
 
     await TestUtils.waitForCondition(() =>
       document!.getElementById("glide-toolbar-mode-button")!.textContent
         === "insert", "Waiting for mode button to show `insert` mode after gi");
 
-    await GlideTestUtils.synthesize_keyseq(" world");
+    await keys(" world");
     const inputContent = await SpecialPowers.spawn(
       browser,
       [],
@@ -193,18 +193,18 @@ add_task(async function test_gi_focuses_last_used_input() {
 });
 
 add_task(async function test_set_string_option() {
-  await GlideTestUtils.synthesize_keyseq(":set yank_highlight #ff0000<CR>");
+  await keys(":set yank_highlight #ff0000<CR>");
   is(GlideBrowser.api.o.yank_highlight, "#ff0000", "String option should be updated to new value");
 
-  await GlideTestUtils.synthesize_keyseq(":set yank_highlight rgb(255,0,0)<CR>");
+  await keys(":set yank_highlight rgb(255,0,0)<CR>");
   is(GlideBrowser.api.o.yank_highlight, "rgb(255,0,0)", "String option should accept complex string values");
 });
 
 add_task(async function test_set_number_option() {
-  await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 500<CR>");
+  await keys(":set mapping_timeout 500<CR>");
   is(GlideBrowser.api.o.mapping_timeout, 500, "Number option should be updated to new value");
 
-  await GlideTestUtils.synthesize_keyseq(":set mapping_timeout 0<CR>");
+  await keys(":set mapping_timeout 0<CR>");
   is(GlideBrowser.api.o.mapping_timeout, 0, "Number option should accept zero");
 });
 
@@ -225,7 +225,7 @@ add_task(async function test_excmd_callback_receives_tab_id() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
-    await GlideTestUtils.synthesize_keyseq(":test_command<CR>");
+    await keys(":test_command<CR>");
     await sleep_frames(10);
 
     const active_tab = await GlideBrowser.api.tabs.active();
@@ -262,7 +262,7 @@ add_task(async function test_excmd_callback_receives_unparsed_args() {
 add_task(async function test_tab_new() {
   const initial_tab_count = gBrowser.tabs.length;
 
-  await GlideTestUtils.synthesize_keyseq(":tab_new<CR>");
+  await keys(":tab_new<CR>");
   await TestUtils.waitForCondition(
     () => gBrowser.tabs.length === initial_tab_count + 1,
     "Waiting for new tab to be created",
@@ -275,7 +275,7 @@ add_task(async function test_tab_new() {
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
 
   // with url
-  await GlideTestUtils.synthesize_keyseq(`:tab_new "${INPUT_TEST_FILE}"<CR>`);
+  await keys(`:tab_new "${INPUT_TEST_FILE}"<CR>`);
   await TestUtils.waitForCondition(
     () => gBrowser.tabs.length === initial_tab_count + 1,
     "Waiting for new tab with URL to be created",
@@ -295,7 +295,7 @@ add_task(async function test_keys() {
   });
 
   ok(GlideTestUtils.commandline.get_element()?.hidden, "commandline should be hidden at the start");
-  await GlideTestUtils.synthesize_keyseq(";");
+  await keys(";");
   ok(GlideTestUtils.commandline.get_element()!.hidden, "commandline should be shown after pressing ;");
 
   GlideTestUtils.commandline.get_element()!.close();
@@ -316,7 +316,7 @@ add_task(async function test_clear_removes_notifications() {
 
     is(gNotificationBox.allNotifications.length, 1, "notification should be added");
 
-    await GlideTestUtils.synthesize_keyseq(":clear<CR>");
+    await keys(":clear<CR>");
     await TestUtils.waitForCondition(
       () => gNotificationBox.getNotificationWithValue("test-notification") === null,
       "Waiting for notification to disappear",
