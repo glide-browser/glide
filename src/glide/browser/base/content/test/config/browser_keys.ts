@@ -68,6 +68,64 @@ add_task(async function test_keys_send_space() {
   });
 });
 
+add_task(async function test_keys_send_arrow_keys() {
+  const glide = GlideBrowser.api;
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById<HTMLInputElement>("input-1")!;
+      input.focus();
+      input.value = "hello";
+      input.setSelectionRange(5, 5);
+    });
+    await sleep_frames(3);
+    is(GlideBrowser.state.mode, "insert", "Should be in insert mode when input is focused");
+    is(
+      await SpecialPowers.spawn(browser, [], async () => {
+        const input = content.document.getElementById<HTMLInputElement>("input-1")!;
+        return input.selectionStart;
+      }),
+      5,
+      "selection should be at the end",
+    );
+
+    await glide.keys.send("<left>");
+    await sleep_frames(5);
+
+    is(
+      await SpecialPowers.spawn(browser, [], async () => {
+        const input = content.document.getElementById<HTMLInputElement>("input-1")!;
+        return input.selectionStart;
+      }),
+      4,
+      "glide.keys.send('<left>') should move cursor left",
+    );
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
+      textarea.focus();
+      textarea.value = "first line\nsecond line";
+      textarea.setSelectionRange(11, 11);
+    });
+    await sleep_frames(3);
+
+    var cursor_pos = await SpecialPowers.spawn(browser, [], async () => {
+      const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
+      return textarea.selectionStart;
+    });
+    is(cursor_pos, 11);
+
+    await glide.keys.send("<up>");
+    await sleep_frames(5);
+
+    cursor_pos = await SpecialPowers.spawn(browser, [], async () => {
+      const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
+      return textarea.selectionStart;
+    });
+    ok(cursor_pos! < 11, `glide.keys.send('<up>') should move cursor up (expected < 11, got ${cursor_pos})`);
+  });
+});
+
 add_task(async function test_keys_send_downcast() {
   const glide = GlideBrowser.api;
 
