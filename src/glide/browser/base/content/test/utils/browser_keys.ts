@@ -149,7 +149,7 @@ add_task(async function test_event_to_ident() {
 });
 
 add_task(async function test_parse_modifiers() {
-  const base_modifiers = { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false };
+  const base_modifiers = { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, is_special: false };
   isjson(parse_modifiers("a"), { ...base_modifiers, key: "a" });
   isjson(parse_modifiers("b"), { ...base_modifiers, key: "b" });
   isjson(parse_modifiers("H"), { ...base_modifiers, key: "H" });
@@ -157,12 +157,23 @@ add_task(async function test_parse_modifiers() {
   isjson(parse_modifiers("<S-H>"), { ...base_modifiers, shiftKey: true, key: "H" });
   isjson(parse_modifiers("<C-S-h>"), { ...base_modifiers, ctrlKey: true, shiftKey: true, key: "h" });
   isjson(parse_modifiers("<S-C-h>"), { ...base_modifiers, ctrlKey: true, shiftKey: true, key: "h" });
-  isjson(parse_modifiers("<S-A-D-C-h>"), { altKey: true, metaKey: true, ctrlKey: true, shiftKey: true, key: "h" });
+  isjson(parse_modifiers("<S-A-D-C-h>"), {
+    ...base_modifiers,
+    altKey: true,
+    metaKey: true,
+    ctrlKey: true,
+    shiftKey: true,
+    key: "h",
+  });
 
   // lowercase
   isjson(parse_modifiers("<s-h>"), { ...base_modifiers, shiftKey: true, key: "h" });
   isjson(parse_modifiers("<s-H>"), { ...base_modifiers, shiftKey: true, key: "H" });
   isjson(parse_modifiers("<c-s-h>"), { ...base_modifiers, ctrlKey: true, shiftKey: true, key: "h" });
+
+  // special keys
+  isjson(parse_modifiers("<esc>"), { ...base_modifiers, is_special: true, key: "Escape" });
+  isjson(parse_modifiers("<Esc>"), { ...base_modifiers, is_special: true, key: "Escape" });
 });
 
 add_task(async function test_leader() {

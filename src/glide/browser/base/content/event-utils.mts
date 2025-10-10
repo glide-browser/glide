@@ -24,6 +24,10 @@ export async function synthesize_keyseq(
     await new Promise(r => requestAnimationFrame(r));
 
     const event = Keys.parse_modifiers(keyn);
+    if (event.key !== " " && event.is_special) {
+      event.key = `KEY_${event.key}`;
+    }
+
     firefox_synthesizeKey(event.key, event, window, opts);
   }
 }

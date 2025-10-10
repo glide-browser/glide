@@ -28,3 +28,6 @@ https_first_disabled = true
 
 ["dist/browser_include.js"]
 https_first_disabled = true
+
+["dist/browser_keys.js"]
+https_first_disabled = true

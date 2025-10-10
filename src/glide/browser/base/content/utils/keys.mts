@@ -614,29 +614,35 @@ export function normalize(keyn: string): string {
  * @example "Space" -> " "
  */
 function keyn_to_event_repr(key: string): string {
-  switch (key) {
-    case "Space":
+  switch (key.toLowerCase()) {
+    case "space":
       return " ";
-    case "ArrowUp":
-      return "Up";
-    case "ArrowDown":
-      return "Down";
-    case "ArrowLeft":
-      return "Left";
-    case "ArrowRight":
-      return "Right";
-    case "BS":
+    case "up":
+    case "arrowup":
+      return "ArrowUp";
+    case "down":
+    case "arrowdown":
+      return "ArrowDown";
+    case "left":
+    case "arrowleft":
+      return "ArrowLeft";
+    case "right":
+    case "arrowright":
+      return "ArrowRight";
+    case "bs":
       return "Backspace";
-    case "CR":
+    case "cr":
       return "Enter";
-    case "Del":
+    case "del":
       return "Delete";
+    case "esc":
+      return "Escape";
     default:
       return key;
   }
 }
 
-type GlideParsedMapping = Mutable<GlideMappingEvent>;
+type GlideParsedMapping = Mutable<GlideMappingEvent> & { is_special: boolean };
 
 /**
  * Returns exactly the modifiers and the key string that were present in the
@@ -652,7 +658,14 @@ export function parse_modifiers(
   keyn: string,
   { use_event_repr = true }: { use_event_repr?: boolean } = {},
 ): GlideParsedMapping {
-  const parsed: GlideParsedMapping = { altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, key: keyn };
+  const parsed: GlideParsedMapping = {
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    is_special: false,
+    key: keyn,
+  };
 
   if (!keyn.startsWith("<") || !keyn.endsWith(">")) {
     // no modifiers, or not valid notation
@@ -674,6 +687,10 @@ export function parse_modifiers(
     parsed.key = keyn_to_event_repr(raw_key);
   } else {
     parsed.key = to_special_key(raw_key) ?? raw_key;
+  }
+
+  if (to_special_key(raw_key)) {
+    parsed.is_special = true;
   }
 
   for (const part of modifier_parts) {
