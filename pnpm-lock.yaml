@@ -80,7 +80,7 @@ importers:
         version: 4.41.0
       webextension-polyfill:
         specifier: github:glide-browser/webextension-types
-        version: webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/b7e46a54ef5987f2f0559077413e43d0e3d8b839
+        version: webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/785990f273fba33c14677dd2e90070c414d83f4d
       webidl2:
         specifier: ^24.5.0
         version: 24.5.0
@@ -771,8 +771,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/b7e46a54ef5987f2f0559077413e43d0e3d8b839:
-    resolution: {tarball: https://codeload.github.com/glide-browser/webextension-types/tar.gz/b7e46a54ef5987f2f0559077413e43d0e3d8b839}
+  webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/785990f273fba33c14677dd2e90070c414d83f4d:
+    resolution: {tarball: https://codeload.github.com/glide-browser/webextension-types/tar.gz/785990f273fba33c14677dd2e90070c414d83f4d}
     version: 0.30.0
 
   webidl2@24.5.0:
@@ -1415,7 +1415,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/b7e46a54ef5987f2f0559077413e43d0e3d8b839: {}
+  webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/785990f273fba33c14677dd2e90070c414d83f4d: {}
 
   webidl2@24.5.0: {}
 

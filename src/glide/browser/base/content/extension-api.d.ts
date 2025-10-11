@@ -10799,7 +10799,11 @@ declare global {
          * first tab in the array instead.
          * @param options Optional.
          */
-        moveInSuccession(tabIds: number[], tabId?: number, options?: MoveInSuccessionOptionsType): void;
+        moveInSuccession(
+          tabIds: number[],
+          tabId?: number,
+          options?: MoveInSuccessionOptionsType,
+        ): Promise<void>;
 
         /**
          * Navigate to next page in tab's history, if available
@@ -10825,7 +10829,7 @@ declare global {
          *
          * @param tabIds The tab ID or list of tab IDs to remove from their respective groups.
          */
-        ungroup(tabIds: number | number[]): void;
+        ungroup(tabIds: number | number[]): Promise<void>;
 
         /**
          * Fired when a tab is created. Note that the tab's URL may not be set at the time this event fired,
