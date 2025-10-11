@@ -17,11 +17,15 @@ export async function synthesize_keyseq(
   keyseq: string,
   opts?: glide.KeySendOptions,
 ) {
-  for (const keyn of Keys.split(keyseq).map(Keys.normalize)) {
+  for (let keyn of Keys.split(keyseq).map(Keys.normalize)) {
     // sleep one frame as Firefox cannot process key events in parallel
     // so if this was called inside a keymap callback, firefox will still
     // be handling the previous key event
     await new Promise(r => requestAnimationFrame(r));
+
+    if (keyn === "<leader>") {
+      keyn = GlideBrowser.api.g.mapleader;
+    }
 
     const event = Keys.parse_modifiers(keyn);
     if (event.key !== " " && event.is_special) {
