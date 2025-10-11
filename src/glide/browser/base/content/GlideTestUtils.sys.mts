@@ -21,6 +21,10 @@ const g: {
   //       as there's an LSP bug where it otherwise thinks these
   //       don't exist.
   is: typeof is;
+  isnot: typeof isnot;
+  isjson: typeof isjson;
+  ok: typeof ok;
+  notok: typeof notok;
   todo_is: typeof todo_is;
   sleep_frames: typeof sleep_frames;
   EventUtils: typeof EventUtils;
@@ -88,6 +92,68 @@ class GlideTestUtilsClass {
 
   async wait_for_mode(mode: GlideMode) {
     await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === mode, `Waiting for mode to be "${mode}" mode`);
+  }
+
+  async until<R>(cb: () => R | undefined | null, name?: string): Promise<R> {
+    await g.TestUtils.waitForCondition(cb, name ?? String(cb), /* interval */ 10, /* max tries */ 500);
+    return cb()!;
+  }
+
+  waiter(getter: () => unknown): GlideTestWaiter {
+    const tries = 500;
+    const interval = 10;
+    return {
+      async is(value: unknown, name?: string) {
+        await g.TestUtils.waitForCondition(
+          () => getter() === value,
+          name ?? (String(getter) + ` === ${value}`),
+          interval,
+          tries,
+        );
+        g.is(getter(), value, name);
+      },
+      async isnot(value, name) {
+        await g.TestUtils.waitForCondition(
+          () => getter() !== value,
+          name ?? (String(getter) + ` !== ${value}`),
+          interval,
+          tries,
+        );
+        g.isnot(getter(), value, name);
+      },
+
+      async isjson(value, name) {
+        const serialised = JSON.stringify(value, typeof value === "object" && value ? Object.keys(value).sort() : null);
+
+        await g.TestUtils.waitForCondition(
+          () => {
+            const resolved = getter();
+            return JSON.stringify(
+              resolved,
+              typeof resolved === "object" && resolved ? Object.keys(resolved).sort() : null,
+            ) === serialised;
+          },
+          name ?? (String(getter) + ` === ${value}`),
+          interval,
+          tries,
+        );
+        g.isjson(getter(), value, name);
+      },
+
+      async ok(message?: string) {
+        await g.TestUtils.waitForCondition(getter, message ?? (String(getter) + ` === <truthy>`), interval, tries);
+        g.ok(getter(), message);
+      },
+      async notok(message?: string) {
+        await g.TestUtils.waitForCondition(
+          () => !getter(),
+          message ?? (String(getter) + ` === <not truthy>`),
+          interval,
+          tries,
+        );
+        g.notok(getter(), message);
+      },
+    };
   }
 
   /**

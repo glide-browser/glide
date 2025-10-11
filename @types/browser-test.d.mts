@@ -7,6 +7,30 @@ declare global {
     only(): void;
   }
 
+  interface GlideTestWaiter {
+    is(value: unknown, name?: string): Promise<void>;
+    isnot(value: unknown, name?: string): Promise<void>;
+    isjson(value: unknown, name?: string): Promise<void>;
+
+    ok(name?: string): Promise<void>;
+    notok(name?: string): Promise<void>;
+  }
+
+  /**
+   * Returns an object wrapping the given function so that it can be repeatedly called until
+   * a certain condition is met.
+   *
+   * This checks the condition every 10ms, up to 500 times.
+   */
+  function waiter(getter: () => unknown): GlideTestWaiter;
+
+  /**
+   * Returns a promise that will resolve when the given function returns a truthy value.
+   *
+   * This checks the function every 10ms, up to 500 times.
+   */
+  function until<R>(check: () => R | undefined | null, name?: string): Promise<R>;
+
   function info(message: string): void;
 
   /**

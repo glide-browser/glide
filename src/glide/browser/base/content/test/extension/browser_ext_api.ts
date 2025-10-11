@@ -42,6 +42,7 @@ add_task(async function test_tabs_functions() {
       const tab = (await browser.tabs.query({})).find(tab => tab.url === "about:blank");
       assert(tab?.id, "no tab id");
       await browser.tabs.remove(tab.id);
+      glide.g.test_checked = true;
     });
   });
 
@@ -49,14 +50,11 @@ add_task(async function test_tabs_functions() {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
 
     await keys("<Space>n");
-    await sleep_frames(10);
-
-    is(gBrowser.selectedBrowser?.currentURI.spec, "about:blank");
+    await waiter(() => gBrowser.selectedBrowser?.currentURI.spec).is("about:blank");
 
     await keys("<Space>d");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
-
-  await sleep_frames(10);
 
   // reload a new config file that doesn't include the event listener defined earlier
   // and spawn a bunch of tabs to trigger it if the listener is still registered
@@ -82,13 +80,14 @@ add_task(async function test_tabs_functions() {
       if (i !== 1) {
         throw new Error(`Expected tab creation listener to have been called once - got ${i}`);
       }
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
     await keys("<Space>n");
-    await sleep_frames(10);
+    await until(() => GlideBrowser.api.g.test_checked);
   });
 });
 
@@ -115,12 +114,15 @@ add_task(async function test_css_injection() {
         await browser.scripting.insertCSS(css_injection);
       }
       has_css_injection = !has_css_injection;
+
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
+    GlideBrowser.api.g.test_checked = undefined;
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
       const styles = content.window.getComputedStyle(content.document.body!)!;
@@ -129,7 +131,8 @@ add_task(async function test_css_injection() {
     is(border_style, "20px dotted rgb(255, 192, 203)");
 
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
+    GlideBrowser.api.g.test_checked = undefined;
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
       const styles = content.window.getComputedStyle(content.document.body!)!;
@@ -143,12 +146,13 @@ add_task(async function test_script_injection() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
       await browser.tabs.executeScript({ code: `document.body.style.border = "20px dotted pink"` });
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "20px dotted pink");
@@ -170,8 +174,7 @@ add_task(async function test_contextual_identities() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>c");
-    await sleep_frames(10);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -189,8 +192,7 @@ add_task(async function test_search_engines() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await sleep_frames(10);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -214,8 +216,7 @@ add_task(async function test_error_handling_for_unsupported_apis() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>e");
-    await sleep_frames(10);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -238,8 +239,7 @@ add_task(async function test_bookmarks_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>b");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -262,8 +262,7 @@ add_task(async function test_history_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>h");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -281,8 +280,7 @@ add_task(async function test_permissions_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>p");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -314,8 +312,7 @@ add_task(async function test_runtime_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>p");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -337,8 +334,7 @@ add_task(async function test_notifications_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>n");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -370,8 +366,7 @@ add_task(async function test_storage_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -401,8 +396,7 @@ add_task(async function test_downloads_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>d");
-    await sleep_frames(30);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -437,8 +431,7 @@ add_task(async function test_cookies_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>c");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -465,8 +458,7 @@ add_task(async function test_windows_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>w");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -502,8 +494,7 @@ add_task(async function test_webRequest_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>w");
-    await sleep_frames(400); // Web requests might take longer
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -519,8 +510,7 @@ add_task(async function test_sessions_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -543,8 +533,7 @@ add_task(async function test_i18n_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>i");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -572,8 +561,7 @@ add_task(async function test_theme_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -592,8 +580,7 @@ add_task(async function test_identity_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>i");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 });
 
@@ -610,12 +597,14 @@ add_task(async function test_function_script_injection() {
           document?.body?.style.setProperty("border", "5px solid green");
         },
       });
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
+
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "method call with no args");
   });
@@ -636,12 +625,14 @@ add_task(async function test_function_script_injection() {
         },
         args: [BODY_STYLE],
       });
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
+
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
   });
@@ -656,12 +647,14 @@ add_task(async function test_function_script_injection() {
         document?.body?.style.setProperty("border", "5px solid green");
       }
       await browser.scripting.executeScript({ target: { tabId: tab.id }, func: content });
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
+
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "function syntax with no args");
   });
@@ -681,12 +674,14 @@ add_task(async function test_function_script_injection() {
         },
         args: [BODY_STYLE],
       });
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
+
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
   });
@@ -715,8 +710,7 @@ add_task(async function test_function_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>n");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await until(() => GlideBrowser.api.g.test_checked);
   });
 });
 
@@ -742,8 +736,7 @@ add_task(async function test_runtime_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>r");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
   });
 }).skip();
 
@@ -779,49 +772,41 @@ add_task(async function test_commands_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>c");
-    await sleep_frames(20);
-    ok(GlideBrowser.api.g.test_checked, "the handler was correctly invoked");
+    await waiter(() => GlideBrowser.api.g.test_checked).ok();
   });
 }).skip();
 
 add_task(async function test_sidebarAction_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
-      // Test setting the title
       await browser.sidebarAction.setTitle({ title: "Glide Test Sidebar" });
 
-      // Get the title to verify it was set
       const title = await browser.sidebarAction.getTitle({});
-
       if (title !== "Glide Test Sidebar") {
         throw new Error("Sidebar title was not set correctly");
       }
 
-      // Test opening and closing the sidebar
       await browser.sidebarAction.open();
 
-      // Check if it's open
       const isOpen = await browser.sidebarAction.isOpen({});
-
       if (!isOpen) {
         throw new Error("Sidebar should be open");
       }
 
-      // Close the sidebar
       await browser.sidebarAction.close();
 
-      // Check if it's closed
       const isClosed = !(await browser.sidebarAction.isOpen({}));
-
       if (!isClosed) {
         throw new Error("Sidebar should be closed");
       }
+
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await sleep_frames(20);
+    await until(() => GlideBrowser.api.g.test_checked);
     // The assertions are in the config
   });
 }).skip();

@@ -38,6 +38,7 @@ add_task(async function test_g_mapleader_normalizes_input() {
 declare global {
   interface GlideGlobals {
     test_prop?: boolean;
+    test_state?: string;
     received_key?: string;
     error_thrown?: boolean;
     unexpected_error?: string;
@@ -72,16 +73,19 @@ add_task(async function test_buf_prefs_set() {
 
     glide.autocmds.create("UrlEnter", /input_test/, () => {
       glide.buf.prefs.set("smoothscroll", true);
+      glide.g.test_state = "enter";
+      return () => {
+        glide.g.test_state = "cleanup";
+      };
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(10);
-
+    await until(() => GlideBrowser.api.g.test_state === "enter");
     is(GlideBrowser.api.prefs.get("smoothscroll"), true, "pref should be set via UrlEnter");
   });
 
-  await sleep_frames(10);
+  await until(() => GlideBrowser.api.g.test_state === "cleanup");
 
   is(GlideBrowser.api.prefs.get("smoothscroll"), false, "pref should be restored after navigating away");
 
@@ -92,16 +96,19 @@ add_task(async function test_buf_prefs_set_new_pref() {
   await GlideTestUtils.reload_config(function _() {
     glide.autocmds.create("UrlEnter", /input_test/, () => {
       glide.buf.prefs.set("mynewpref", true);
+      glide.g.test_state = "enter";
+      return () => {
+        glide.g.test_state = "cleanup";
+      };
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(10);
-
+    await until(() => GlideBrowser.api.g.test_state === "enter");
     is(GlideBrowser.api.prefs.get("mynewpref"), true, "pref should be set via UrlEnter");
   });
 
-  await sleep_frames(10);
+  await until(() => GlideBrowser.api.g.test_state === "cleanup");
 
   is(GlideBrowser.api.prefs.get("mynewpref"), undefined, "pref should be cleared after navigating away");
 });
@@ -113,9 +120,7 @@ add_task(async function test_invalid_config_notification() {
       glide.nonexistent_method();
     });
 
-    await sleep_frames(5);
-
-    let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
+    const notification = await until(() => gNotificationBox.getNotificationWithValue("glide-config-error"));
 
     ok(notification, "Error notification should be shown");
     is(
@@ -134,11 +139,8 @@ add_task(async function test_invalid_config_notification() {
       glide.keymaps.set("normal", ";", "motion w");
     });
 
-    // @ts-ignore
-    reload_button.click();
-    await sleep_frames(5);
-    ok(
-      !gNotificationBox.getNotificationWithValue("glide-config-error"),
+    (reload_button as HTMLElement).click();
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-config-error")).notok(
       "Notification should be removed after fixing config + reload",
     );
     is(gNotificationBox.currentNotification, null, "No notification should be present");
@@ -152,9 +154,7 @@ add_task(async function test_invalid_config_notification_cleared_after_reloading
       glide.nonexistent_method();
     });
 
-    await sleep_frames(5);
-
-    let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
+    const notification = await until(() => gNotificationBox.getNotificationWithValue("glide-config-error"));
 
     ok(notification, "Error notification should be shown");
     is(
@@ -172,9 +172,7 @@ add_task(async function test_invalid_config_notification_cleared_after_reloading
     // TODO(glide): test util for executing a command with keys
     await GlideExcmds.execute("config_reload");
 
-    await sleep_frames(5);
-    ok(
-      !gNotificationBox.getNotificationWithValue("glide-config-error"),
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-config-error")).notok(
       "Notification should be removed after fixing config + reload",
     );
     is(gNotificationBox.currentNotification, null, "No notification should be present");
@@ -191,9 +189,7 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
       my_func();
     });
 
-    await sleep_frames(5);
-
-    let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
+    const notification = await until(() => gNotificationBox.getNotificationWithValue("glide-config-error"));
 
     ok(notification, "Error notification should be shown");
     is(
@@ -220,9 +216,7 @@ add_task(async function test_glide_prefs_set() {
       glide.prefs.set("ui.highlight", "#edc73b");
     });
 
-    await sleep_frames(5);
-
-    is(GlideBrowser.api.prefs.get("ui.highlight"), "#edc73b");
+    await waiter(() => GlideBrowser.api.prefs.get("ui.highlight")).is("#edc73b");
     GlideBrowser.api.prefs.clear("ui.highlight");
   });
 });
@@ -237,9 +231,7 @@ add_task(async function test_glide_prefs_get() {
       glide.g.value = glide.prefs.get("browser.active_color");
     });
 
-    await sleep_frames(5);
-
-    is(GlideBrowser.api.g.value, "#EE0000");
+    await waiter(() => GlideBrowser.api.g.value).is("#EE0000");
   });
 });
 
@@ -250,9 +242,7 @@ add_task(async function test_glide_prefs_get_undefined_pref() {
       glide.g.value = glide.prefs.get("my_new_pref");
     });
 
-    await sleep_frames(5);
-
-    is(GlideBrowser.api.g.value, undefined);
+    await waiter(() => GlideBrowser.api.g.value).is(undefined);
   });
 });
 
@@ -427,9 +417,10 @@ add_task(async function test_glide_excmds_execute() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>e");
-    await sleep_frames(20);
-
-    is(GlideBrowser.api.g.value, "initial", "After config reload, the value should be reset to undefined");
+    await waiter(() => GlideBrowser.api.g.value).is(
+      "initial",
+      "After config reload, the value should be reset to undefined",
+    );
   });
 });
 
@@ -439,16 +430,12 @@ add_task(async function test_webext_listener_error() {
       throw new Error(`an error in webRequest callback`);
     }, { urls: ["*://*/*/input_test.html"] });
   });
-  await sleep_frames(5);
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await TestUtils.waitForCondition(() => {
+    const notification = await until(() => {
       GlideBrowser.flush_pending_error_notifications();
-      return gNotificationBox.getNotificationWithValue("glide-config-error") != null;
+      return gNotificationBox.getNotificationWithValue("glide-config-error");
     }, "an error notification should be reported");
-    await sleep_frames(100); // this seems to fix race conditions somehow
-
-    let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
 
     ok(notification, "Error notification should be shown");
     is(
@@ -479,7 +466,7 @@ add_task(async function test_webext_storage_api_listener_error() {
     await sleep_frames(50);
     GlideBrowser.flush_pending_error_notifications();
 
-    let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
+    const notification = gNotificationBox.getNotificationWithValue("glide-config-error");
 
     ok(notification, "Error notification should be shown");
     is(
@@ -569,9 +556,8 @@ add_task(async function test_excmds_create() {
       glide.keymaps.set("normal", "<leader>0", "my_test_command");
     });
     await keys("<Space>0");
-    await sleep_frames(10);
 
-    let notification = gNotificationBox.getNotificationWithValue("glide-excmd-error");
+    const notification = await until(() => gNotificationBox.getNotificationWithValue("glide-excmd-error"));
 
     ok(notification, "Error notification should be shown");
     is(
@@ -597,9 +583,7 @@ add_task(async function test_keys_send_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await sleep_frames(50);
-
-    is(GlideBrowser.api.g.value, "after send", "glide.keys.send() should trigger the 'j' keymap");
+    await waiter(() => GlideBrowser.api.g.value).is("after send", "glide.keys.send() should trigger the 'j' keymap");
   });
 });
 
@@ -607,6 +591,7 @@ add_task(async function test_keys_send_to_input_element() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("insert", "<C-k>", async () => {
       await glide.keys.send("hello");
+      glide.g.test_checked = true;
     });
   });
 
@@ -616,17 +601,14 @@ add_task(async function test_keys_send_to_input_element() {
       input.focus();
       input.value = "";
     });
-    await sleep_frames(3);
-    is(GlideBrowser.state.mode, "insert", "Should be in insert mode when input is focused");
+    await waiter(() => GlideBrowser.state.mode).is("insert");
 
     await keys("<C-k>");
-    await sleep_frames(5);
+    await until(() => GlideBrowser.api.g.test_checked);
 
     is(
-      await SpecialPowers.spawn(browser, [], async () => {
-        const input = content.document.getElementById<HTMLInputElement>("input-1")!;
-        return input.value;
-      }),
+      await SpecialPowers.spawn(browser, [], async () =>
+        content.document.getElementById<HTMLInputElement>("input-1")!.value),
       "hello",
       "glide.keys.send() should insert text into focused input element",
     );
@@ -635,13 +617,14 @@ add_task(async function test_keys_send_to_input_element() {
 
 add_task(async function test_keys_send_accepts_glide_key() {
   await GlideTestUtils.reload_config(function _() {
-    glide.keymaps.set("normal", "<Space>t", async () => {
+    glide.keymaps.set("normal", "~", async () => {
       glide.g.value = "before next";
 
       const key = await glide.keys.next();
       glide.g.value = "before send";
 
       await glide.keys.send(key);
+      glide.g.test_checked = true;
     });
 
     glide.keymaps.set("normal", "j", () => {
@@ -650,13 +633,11 @@ add_task(async function test_keys_send_accepts_glide_key() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await keys("<Space>t");
-    await sleep_frames(50);
-
-    is(GlideBrowser.api.g.value, "before next", "should wait for the next key");
+    await keys("~");
+    await waiter(() => GlideBrowser.api.g.value).is("before next", "should wait for the next key");
 
     await keys("j");
-    await sleep_frames(10);
+    await until(() => GlideBrowser.api.g.test_checked);
 
     is(GlideBrowser.api.g.value, "after send", "glide.keys.send() should trigger the 'j' keymap");
   });
@@ -676,10 +657,7 @@ add_task(async function test_keys_send_skip_mappings() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await sleep_frames(50);
-
-    is(
-      GlideBrowser.api.g.value,
+    await waiter(() => GlideBrowser.api.g.value).is(
       "from first mapping",
       "glide.keys.send() with skip_mappings: true should not trigger the 'j' keymap",
     );
@@ -707,12 +685,13 @@ add_task(async function test_custom_modes() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await sleep_frames(10);
-    is(GlideBrowser.state.mode, "test_custom_mode", "we should switch to the custom mode");
+    await waiter(() => GlideBrowser.state.mode).is("test_custom_mode", "we should switch to the custom mode");
 
     await keys("j");
-    await sleep_frames(10);
-    is(GlideBrowser.api.g.value, "from custom mode keymap", "the custom mode keymap callback should be invoked");
+    await waiter(() => GlideBrowser.api.g.value).is(
+      "from custom mode keymap",
+      "the custom mode keymap callback should be invoked",
+    );
 
     await GlideBrowser.api.excmds.execute("mode_change normal");
   });
@@ -723,9 +702,7 @@ add_task(async function test_registering_mode_twice_results_in_an_error() {
     glide.modes.register("normal", { caret: "block" });
   });
 
-  await sleep_frames(100);
-
-  let notification = gNotificationBox.getNotificationWithValue("glide-config-error");
+  const notification = await until(() => gNotificationBox.getNotificationWithValue("glide-config-error"));
 
   ok(notification, "Error notification should be shown");
   is(
@@ -748,8 +725,10 @@ add_task(async function test_ctx_mode() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await sleep_frames(10);
-    is(GlideBrowser.api.g.value, "normal", "the keymap should be invoked and set the value to the current mode");
+    await waiter(() => GlideBrowser.api.g.value).is(
+      "normal",
+      "the keymap should be invoked and set the value to the current mode",
+    );
   });
 });
 
@@ -773,8 +752,7 @@ add_task(async function test_dedent_helpers() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await sleep_frames(10);
-    is(GlideBrowser.api.g.value, "<!---->\n<div>foo</div>");
+    await waiter(() => GlideBrowser.api.g.value).is("<!---->\n<div>foo</div>");
     is(
       GlideBrowser.api.g.error_message,
       "Error: The html template function does not support interpolating arguments as escaping is not implemented.",
@@ -801,8 +779,10 @@ add_task(async function test_options_get() {
   is(GlideBrowser.api.options.get("yank_highlight_time"), 50, "global option should be retrieved correctly");
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(10);
-    is(GlideBrowser.api.options.get("yank_highlight_time"), 100, "buffer option should be retrieved correctly");
+    await waiter(() => GlideBrowser.api.options.get("yank_highlight_time")).is(
+      100,
+      "buffer option should be retrieved correctly",
+    );
   });
 });
 
@@ -871,12 +851,13 @@ add_task(async function test_keymap_callback_receives_tab_id() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>i", ({ tab_id }) => {
       glide.g.value = tab_id;
+      glide.g.test_checked = true;
     });
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>i");
-    await sleep_frames(10);
+    await until(() => GlideBrowser.api.g.test_checked);
 
     const active_tab = await GlideBrowser.api.tabs.active();
     is(GlideBrowser.api.g.value, active_tab.id, "Keymap callback should receive tab_id that matches the active tab ID");
@@ -894,10 +875,7 @@ add_task(async function test_assert_never() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(5);
-
-    is(
-      GlideBrowser.api.g.value,
+    await waiter(() => GlideBrowser.api.g.value).is(
       "Error: assert_never: impossible to call: \"value\"",
       "assert_never should throw an error",
     );
@@ -952,11 +930,10 @@ add_task(async function test_add_excmd_while_commandline_is_cached() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
     // open commandline so it is cached
     await GlideTestUtils.commandline.open();
-    await sleep_frames(2);
+    await waiter(() => GlideBrowser.api.ctx.mode).is("command");
+
     await keys("<esc>");
-    await TestUtils.waitForCondition(() =>
-      document!.getElementById("glide-toolbar-mode-button")!.textContent
-        === "normal", "Waiting for mode button to show `normal` mode");
+    await waiter(() => GlideBrowser.api.ctx.mode).is("normal");
 
     await GlideTestUtils.reload_config(function _() {
       glide.excmds.create({ name: "hello" }, () => {});
@@ -978,9 +955,7 @@ add_task(async function test_fs_read() {
     });
 
     await keys("~");
-    await sleep_frames(10);
-
-    is(GlideBrowser.api.g.value, ".contents {}");
+    await waiter(() => GlideBrowser.api.g.value).is(".contents {}");
   });
 });
 
@@ -993,13 +968,14 @@ add_task(async function test_fs_read_file_not_found() {
     });
 
     await keys("~");
-    await sleep_frames(10);
+
+    const value = await until(() => GlideBrowser.api.g.value);
 
     ok(
-      GlideBrowser.api.g.value instanceof GlideBrowser.config_sandbox.FileNotFoundError,
+      value instanceof GlideBrowser.config_sandbox.FileNotFoundError,
       "reading an undefined file results in a FileNotFoundError",
     );
-    is(GlideBrowser.api.g.value.name, "FileNotFoundError");
+    is(value.name, "FileNotFoundError");
   });
 });
 
@@ -1013,9 +989,7 @@ add_task(async function test_fs_write() {
     });
 
     await keys("~");
-    await sleep_frames(10);
-
-    is(GlideBrowser.api.g.value, ".contents {}");
+    await waiter(() => GlideBrowser.api.g.value).is(".contents {}");
   });
 });
 
@@ -1029,9 +1003,7 @@ add_task(async function test_fs_write_new_dir() {
     });
 
     await keys("~");
-    await sleep_frames(10);
-
-    is(GlideBrowser.api.g.value, "#id {}");
+    await waiter(() => GlideBrowser.api.g.value).is("#id {}");
   });
 });
 
@@ -1047,14 +1019,13 @@ add_task(async function test_fs_exists() {
     });
 
     await keys("~");
-    await sleep_frames(5);
-    is(GlideBrowser.api.g.value, true);
+    await waiter(() => GlideBrowser.api.g.value).is(true);
 
+    GlideBrowser.api.g.value = undefined;
     await IOUtils.remove(test_path);
 
     await keys("~");
-    await sleep_frames(5);
-    is(GlideBrowser.api.g.value, false);
+    await waiter(() => GlideBrowser.api.g.value).is(false);
   });
 });
 
@@ -1070,9 +1041,8 @@ add_task(async function test_fs_stat() {
     });
 
     await keys("~");
-    await sleep_frames(10);
 
-    const result = GlideBrowser.api.g.value as glide.FileInfo;
+    const result = await until(() => GlideBrowser.api.g.value as glide.FileInfo | undefined);
     is(result.type, "file");
     is(typeof result.size, "number");
     is(typeof result.creation_time, "number");
@@ -1096,9 +1066,8 @@ add_task(async function test_fs_stat_directory() {
     });
 
     await keys("~");
-    await sleep_frames(10);
 
-    const result = GlideBrowser.api.g.value as glide.FileInfo;
+    const result = await until(() => GlideBrowser.api.g.value as glide.FileInfo | undefined);
     is(result.type, "directory");
     is(typeof result.size, "number");
     is(typeof result.creation_time, "number");
@@ -1121,9 +1090,8 @@ add_task(async function test_fs_stat_not_found() {
     });
 
     await keys("~");
-    await sleep_frames(10);
 
-    const result = GlideBrowser.api.g.value as FileNotFoundError;
+    const result = await until(() => GlideBrowser.api.g.value as FileNotFoundError | undefined);
     is(result.name, "FileNotFoundError");
     ok(result.path.endsWith("nonexistent_file.txt"), "Error should include the path");
   });

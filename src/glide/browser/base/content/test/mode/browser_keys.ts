@@ -403,13 +403,11 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
     const new_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, KEYS_TEST_URI);
 
     await keys("q");
-    await sleep_frames(3);
-    is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
-    is(
-      GlideBrowser.api.g.invoked_global,
+    await waiter(() => GlideBrowser.api.g.invoked_global).is(
       1,
       "Global mapping should be executed in buffers without a buffer-local deletion",
     );
+    is(GlideBrowser.api.g.invoked_buffer, 0, "No mapping should be invoked");
 
     BrowserTestUtils.removeTab(new_tab);
   });
@@ -436,8 +434,7 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
     });
 
     await keys("t");
-    await sleep_frames(3);
-    is(GlideBrowser.api.g.invoked_buffer, 1, "Initial buffer keymap should work");
+    await waiter(() => GlideBrowser.api.g.invoked_buffer).is(1, "Initial buffer keymap should work");
     is(GlideBrowser.api.g.invoked_global, 0, "Global keymap should be overridden");
 
     // Reload config with different buffer keymaps
@@ -462,29 +459,27 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
     });
 
     await keys("t");
-    await sleep_frames(3);
+    await waiter(() => GlideBrowser.api.g.invoked_global).is(1, "Global keymap should now be active");
     is(GlideBrowser.api.g.invoked_buffer, 0, "Old buffer keymap should not fire");
-    is(GlideBrowser.api.g.invoked_global, 1, "Global keymap should now be active");
 
     // Test that new buffer keymap 'u' works
     await keys("u");
-    await sleep_frames(3);
-    is(GlideBrowser.api.g.invoked_after_reload, 1, "New buffer keymap registered after reload should work");
+    await waiter(() => GlideBrowser.api.g.invoked_after_reload).is(
+      1,
+      "New buffer keymap registered after reload should work",
+    );
 
     // Test that kept buffer keymap 'r' still works
     await keys("r");
-    await sleep_frames(3);
-    is(GlideBrowser.api.g.invoked_buffer, 1, "Kept buffer keymap should still work after reload");
+    await waiter(() => GlideBrowser.api.g.invoked_buffer).is(1, "Kept buffer keymap should still work after reload");
 
     // Open new tab to verify buffer keymaps don't leak
     await BrowserTestUtils.withNewTab(KEYS_TEST_URI, async _ => {
       await keys("u");
-      await sleep_frames(3);
       is(GlideBrowser.api.g.invoked_after_reload, 1, "Buffer keymap should not fire in new tab");
 
       await keys("t");
-      await sleep_frames(3);
-      is(GlideBrowser.api.g.invoked_global, 2, "Global keymap should work in new tab");
+      await waiter(() => GlideBrowser.api.g.invoked_global).is(2, "Global keymap should work in new tab");
     });
   });
 });
