@@ -43,3 +43,14 @@ cp engine/tools/@types/*.ts src/glide/generated/@types/
 cp engine/tools/@types/subs/AppConstants.sys.d.mts src/glide/generated/@types/subs/AppConstants.sys.d.ts
 cp engine/tools/@types/generated/*.ts src/glide/generated/@types/generated/
 cp engine/toolkit/components/extensions/types/ext-tabs-base.d.ts src/glide/generated/@types/extensions/
+
+cp node_modules/webextension-polyfill/out/index.d.ts src/glide/browser/base/content/extension-api.d.ts
+{ cat <<'EOF'
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+EOF
+cat src/glide/browser/base/content/extension-api.d.ts
+} > "$TEMP_FILE" && mv "$TEMP_FILE" src/glide/browser/base/content/extension-api.d.ts
+node_modules/.bin/dprint fmt --log-level=error src/glide/browser/base/content/extension-api.d.ts
