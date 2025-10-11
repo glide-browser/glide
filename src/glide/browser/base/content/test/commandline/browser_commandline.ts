@@ -204,3 +204,16 @@ add_task(async function test_commandline_custom_excmd_arguments() {
     isjson(GlideBrowser.api.g.value, ["foo", "bar"], "arguments should be passed to the excmd");
   });
 });
+
+add_task(async function test_commandline_tab_reopen() {
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("<space><space>");
+    await waiter(() => GlideTestUtils.commandline.focused_row()?.classList.contains("TabCompletionOption")).ok();
+
+    await keys("<esc>");
+    await until(() => GlideBrowser.state.mode === "normal");
+
+    await keys("<space><space>");
+    await waiter(() => GlideTestUtils.commandline.focused_row()?.classList.contains("TabCompletionOption")).ok();
+  });
+});

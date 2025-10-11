@@ -33,6 +33,19 @@ class GlideCommandsClass {
     if (cached) {
       cached.refresh_data();
       cached.show(opts);
+
+      // workaround for https://github.com/glide-browser/glide/issues/33
+      //
+      // there's some weird interaction between setting the input value to `tab `
+      // and determining what row to focus.
+      //
+      // this is a terrible solution to the above problem but I'm planning on completely
+      // rewriting the commandline logic from the ground up, so there's no point trying to
+      // figure out a more correct fix.
+      if (cached.get_active_group() === "tab") {
+        cached.focus_next();
+      }
+
       return cached;
     }
 
