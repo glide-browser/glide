@@ -43,11 +43,7 @@ declare global {
        * The type of log entry.  api_call is a function call made by the extension and api_event is an event callback to the
        * extension.  content_script is logged when a content script is injected.
        */
-      type OnExtensionActivityDetailsTypeTypeEnum =
-        | "api_call"
-        | "api_event"
-        | "content_script"
-        | "user_script";
+      type OnExtensionActivityDetailsTypeTypeEnum = "api_call" | "api_event" | "content_script" | "user_script";
 
       /**
        * The type of view where the activity occurred.  Content scripts will not have a viewType.
@@ -96,20 +92,13 @@ declare global {
       /**
        * Receives an activityItem for each logging event.
        */
-      interface OnExtensionActivityEvent extends
-        Events.Event<
-          (details: OnExtensionActivityDetailsType) => void
-        >
-      {
+      interface OnExtensionActivityEvent extends Events.Event<(details: OnExtensionActivityDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
          * @param callback Called when an event occurs. The parameters of this function depend on the type of event.
          */
-        addListener(
-          callback: (details: OnExtensionActivityDetailsType) => void,
-          id: string,
-        ): void;
+        addListener(callback: (details: OnExtensionActivityDetailsType) => void, id: string): void;
       }
 
       interface Static {
@@ -181,10 +170,7 @@ declare global {
          * Users should never provide both 'when' and 'delayInMinutes'. If 'periodInMinutes' is provided,
          * then the alarm recurs repeatedly after that many minutes.
          */
-        create(
-          name: string | undefined,
-          alarmInfo: CreateAlarmInfoType,
-        ): Promise<void>;
+        create(name: string | undefined, alarmInfo: CreateAlarmInfoType): Promise<void>;
 
         /**
          * Creates an alarm. After the delay is expired, the onAlarm event is fired. If there is another alarm with the same name
@@ -469,19 +455,13 @@ declare global {
         /**
          * Moves the specified BookmarkTreeNode to the provided location.
          */
-        move(
-          id: string,
-          destination: MoveDestinationType,
-        ): Promise<BookmarkTreeNode>;
+        move(id: string, destination: MoveDestinationType): Promise<BookmarkTreeNode>;
 
         /**
          * Updates the properties of a bookmark or folder. Specify only the properties that you want to change; unspecified
          * properties will be left unchanged.  <b>Note:</b> Currently, only 'title' and 'url' are supported.
          */
-        update(
-          id: string,
-          changes: UpdateChangesType,
-        ): Promise<BookmarkTreeNode>;
+        update(id: string, changes: UpdateChangesType): Promise<BookmarkTreeNode>;
 
         /**
          * Removes a bookmark or an empty bookmark folder.
@@ -496,31 +476,23 @@ declare global {
         /**
          * Fired when a bookmark or folder is created.
          */
-        onCreated: Events.Event<
-          (id: string, bookmark: BookmarkTreeNode) => void
-        >;
+        onCreated: Events.Event<(id: string, bookmark: BookmarkTreeNode) => void>;
 
         /**
          * Fired when a bookmark or folder is removed.  When a folder is removed recursively,
          * a single notification is fired for the folder, and none for its contents.
          */
-        onRemoved: Events.Event<
-          (id: string, removeInfo: OnRemovedRemoveInfoType) => void
-        >;
+        onRemoved: Events.Event<(id: string, removeInfo: OnRemovedRemoveInfoType) => void>;
 
         /**
          * Fired when a bookmark or folder changes.  <b>Note:</b> Currently, only title and url changes trigger this.
          */
-        onChanged: Events.Event<
-          (id: string, changeInfo: OnChangedChangeInfoType) => void
-        >;
+        onChanged: Events.Event<(id: string, changeInfo: OnChangedChangeInfoType) => void>;
 
         /**
          * Fired when a bookmark or folder is moved to a different parent folder.
          */
-        onMoved: Events.Event<
-          (id: string, moveInfo: OnMovedMoveInfoType) => void
-        >;
+        onMoved: Events.Event<(id: string, moveInfo: OnMovedMoveInfoType) => void>;
       }
     }
 
@@ -656,12 +628,7 @@ declare global {
         windowId?: number;
       }
 
-      type OnClickDataModifiersItemEnum =
-        | "Shift"
-        | "Alt"
-        | "Command"
-        | "Ctrl"
-        | "MacCtrl";
+      type OnClickDataModifiersItemEnum = "Shift" | "Alt" | "Command" | "Ctrl" | "MacCtrl";
 
       interface Static {
         /**
@@ -710,9 +677,7 @@ declare global {
         /**
          * Sets the background color for the badge.
          */
-        setBadgeBackgroundColor(
-          details: SetBadgeBackgroundColorDetailsType,
-        ): Promise<void>;
+        setBadgeBackgroundColor(details: SetBadgeBackgroundColorDetailsType): Promise<void>;
 
         /**
          * Gets the background color of the browser action badge.
@@ -760,9 +725,7 @@ declare global {
          *
          * @param info Optional.
          */
-        onClicked: Events.Event<
-          (tab: Browser.Tabs.Tab, info: OnClickData | undefined) => void
-        >;
+        onClicked: Events.Event<(tab: Browser.Tabs.Tab, info: OnClickData | undefined) => void>;
       }
     }
 
@@ -1053,10 +1016,7 @@ declare global {
          * @param dataToRemove The set of data types to remove.
          * @returns Called when deletion has completed.
          */
-        remove(
-          options: RemovalOptions,
-          dataToRemove: DataTypeSet,
-        ): Promise<void>;
+        remove(options: RemovalOptions, dataToRemove: DataTypeSet): Promise<void>;
 
         /**
          * Clears the browser's cache.
@@ -1132,19 +1092,13 @@ declare global {
       /**
        * The current captive portal state.
        */
-      type OnStateChangedDetailsTypeStateEnum =
-        | "unknown"
-        | "not_captive"
-        | "unlocked_portal"
-        | "locked_portal";
+      type OnStateChangedDetailsTypeStateEnum = "unknown" | "not_captive" | "unlocked_portal" | "locked_portal";
 
       interface Static {
         /**
          * Returns the current portal state, one of `unknown`, `not_captive`, `unlocked_portal`, `locked_portal`.
          */
-        getState(): Promise<
-          "unknown" | "not_captive" | "unlocked_portal" | "locked_portal"
-        >;
+        getState(): Promise<"unknown" | "not_captive" | "unlocked_portal" | "locked_portal">;
 
         /**
          * Returns the time difference between NOW and the last time a request was completed in milliseconds.
@@ -1154,18 +1108,14 @@ declare global {
         /**
          * Fired when the captive portal state changes.
          */
-        onStateChanged: Events.Event<
-          (details: OnStateChangedDetailsType) => void
-        >;
+        onStateChanged: Events.Event<(details: OnStateChangedDetailsType) => void>;
 
         /**
          * This notification will be emitted when the captive portal service has determined that we can connect to the internet.
          * The service will pass either `captive` if there is an unlocked captive portal present,
          * or `clear` if no captive portal was detected.
          */
-        onConnectivityAvailable: Events.Event<
-          (status: OnConnectivityAvailableStatusEnum) => void
-        >;
+        onConnectivityAvailable: Events.Event<(status: OnConnectivityAvailableStatusEnum) => void>;
 
         /**
          * Return the canonical captive-portal detection URL. Read-only.
@@ -1191,10 +1141,7 @@ declare global {
          * @param imageData The image data to be copied.
          * @param imageType The type of imageData.
          */
-        setImageData(
-          imageData: ArrayBuffer,
-          imageType: SetImageDataImageTypeEnum,
-        ): Promise<void>;
+        setImageData(imageData: ArrayBuffer, imageType: SetImageDataImageTypeEnum): Promise<void>;
       }
     }
 
@@ -1292,9 +1239,7 @@ declare global {
          *
          * @param tab Optional. Details of the $(ref:tabs.Tab) where the command was activated.
          */
-        onCommand: Events.Event<
-          (command: string, tab: Browser.Tabs.Tab | undefined) => void
-        >;
+        onCommand: Events.Event<(command: string, tab: Browser.Tabs.Tab | undefined) => void>;
 
         /**
          * Fired when a registered command's shortcut is changed.
@@ -1396,9 +1341,7 @@ declare global {
         /**
          * Register a content script programmatically
          */
-        register(
-          contentScriptOptions: RegisteredContentScriptOptions,
-        ): Promise<RegisteredContentScript>;
+        register(contentScriptOptions: RegisteredContentScriptOptions): Promise<RegisteredContentScript>;
       }
     }
 
@@ -1544,10 +1487,7 @@ declare global {
          * @param cookieStoreId The ID of the contextual identity cookie store.
          * @param details Details about the contextual identity being created.
          */
-        update(
-          cookieStoreId: string,
-          details: UpdateDetailsType,
-        ): Promise<ContextualIdentity>;
+        update(cookieStoreId: string, details: UpdateDetailsType): Promise<ContextualIdentity>;
 
         /**
          * Reorder one or more contextual identities by their cookieStoreIDs to a given position.
@@ -1555,10 +1495,7 @@ declare global {
          * @param cookieStoreIds The ID or list of IDs of the contextual identity cookie stores.
          * @param position The position the contextual identity should move to.
          */
-        move(
-          cookieStoreIds: string | string[],
-          position: number,
-        ): Promise<void>;
+        move(cookieStoreIds: string | string[], position: number): Promise<void>;
 
         /**
          * Deletes a contextual identity by its cookie Store ID.
@@ -1713,12 +1650,7 @@ declare global {
        * "cause" will be "evicted".  If a cookie was automatically removed due to a "set" call that overwrote it,
        * "cause" will be "overwrite". Plan your response accordingly.
        */
-      type OnChangedCause =
-        | "evicted"
-        | "expired"
-        | "explicit"
-        | "expired_overwrite"
-        | "overwrite";
+      type OnChangedCause = "evicted" | "expired" | "explicit" | "expired_overwrite" | "overwrite";
 
       /**
        * Details to identify the cookie being retrieved.
@@ -2016,9 +1948,7 @@ declare global {
          *
          * @param details Information to identify the cookie to remove.
          */
-        remove(
-          details: RemoveDetailsType,
-        ): Promise<RemoveCallbackDetailsType | null>;
+        remove(details: RemoveDetailsType): Promise<RemoveCallbackDetailsType | null>;
 
         /**
          * Lists all existing cookie stores.
@@ -2178,10 +2108,7 @@ declare global {
          * @param rules Optional. Rule ids to fetch.
          * @param callback Optional. Called when rules have been fetched.
          */
-        getRules(
-          rules?: string[],
-          callback?: (rules: Array<Rule<TCondition, TAction>>) => void,
-        ): void;
+        getRules(rules?: string[], callback?: (rules: Array<Rule<TCondition, TAction>>) => void): void;
 
         /**
          * Unregisters currently registered rules.
@@ -2197,17 +2124,13 @@ declare global {
       }
 
       interface Static {
-        PageStateMatcher: {
-          new(options?: PageStateMatcher): PageStateMatcher;
-        };
+        PageStateMatcher: { new(options?: PageStateMatcher): PageStateMatcher };
 
         ShowAction: { new(options?: ShowAction): ShowAction };
 
         SetIcon: { new(options?: SetIcon): SetIcon };
 
-        RequestContentScript: {
-          new(options?: RequestContentScript): RequestContentScript;
-        };
+        RequestContentScript: { new(options?: RequestContentScript): RequestContentScript };
 
         onPageChanged: RuleEvent<
           PageStateMatcher,
@@ -2752,9 +2675,7 @@ declare global {
          *
          * @returns Called when the dynamic rules have been updated
          */
-        updateDynamicRules(
-          options: UpdateDynamicRulesOptionsType,
-        ): Promise<void>;
+        updateDynamicRules(options: UpdateDynamicRulesOptionsType): Promise<void>;
 
         /**
          * Modifies the current set of session scoped rules for the extension. The rules with IDs listed in options.
@@ -2763,9 +2684,7 @@ declare global {
          *
          * @returns Called when the session rules have been updated
          */
-        updateSessionRules(
-          options: UpdateSessionRulesOptionsType,
-        ): Promise<void>;
+        updateSessionRules(options: UpdateSessionRulesOptionsType): Promise<void>;
 
         /**
          * Returns the ids for the current set of enabled static rulesets.
@@ -2793,9 +2712,7 @@ declare global {
         /**
          * Returns the list of individual disabled static rules from a given static ruleset id.
          */
-        getDisabledRuleIds(
-          options: GetDisabledRuleIdsOptionsType,
-        ): Promise<number[]>;
+        getDisabledRuleIds(options: GetDisabledRuleIdsOptionsType): Promise<number[]>;
 
         /**
          * Returns the current set of dynamic rules for the extension.
@@ -2982,15 +2899,7 @@ declare global {
        * The download presents no known danger to the user's computer.</dd></dl>These string constants will never change,
        * however the set of DangerTypes may change.
        */
-      type DangerType =
-        | "file"
-        | "url"
-        | "content"
-        | "uncommon"
-        | "host"
-        | "unwanted"
-        | "safe"
-        | "accepted";
+      type DangerType = "file" | "url" | "content" | "uncommon" | "host" | "unwanted" | "safe" | "accepted";
 
       /**
        * <dl><dt>in_progress</dt><dd>The download is currently receiving data from the server.</dd><dt>interrupted</dt><dd>
@@ -3548,10 +3457,7 @@ declare global {
          * @param downloadId The identifier for the download.
          * @param options Optional.
          */
-        getFileIcon(
-          downloadId: number,
-          options?: GetFileIconOptionsType,
-        ): Promise<string>;
+        getFileIcon(downloadId: number, options?: GetFileIconOptionsType): Promise<string>;
 
         /**
          * Open the downloaded file.
@@ -3588,9 +3494,7 @@ declare global {
          * When any of a <a href='#type-DownloadItem'>DownloadItem</a>'s properties except <code>bytesReceived</code> changes,
          * this event fires with the <code>downloadId</code> and an object containing the properties that changed.
          */
-        onChanged: Events.Event<
-          (downloadDelta: OnChangedDownloadDeltaType) => void
-        >;
+        onChanged: Events.Event<(downloadDelta: OnChangedDownloadDeltaType) => void>;
       }
     }
 
@@ -3829,10 +3733,7 @@ declare global {
 
       type APIEvent = "startup";
 
-      type APIParentScope =
-        | "addon_parent"
-        | "content_parent"
-        | "devtools_parent";
+      type APIParentScope = "addon_parent" | "content_parent" | "devtools_parent";
 
       type APIChildScope = "addon_child" | "content_child" | "devtools_child";
 
@@ -3984,9 +3885,7 @@ declare global {
 
       type DateType = string | number | Date;
 
-      type ExtensionFileOrCode =
-        | ExtensionFileOrCodeC1Type
-        | ExtensionFileOrCodeC2Type;
+      type ExtensionFileOrCode = ExtensionFileOrCodeC1Type | ExtensionFileOrCodeC2Type;
 
       /**
        * A plain JSON value
@@ -4647,16 +4546,12 @@ declare global {
          * Fired when one or more URLs are removed from the history service.  When all visits have been removed the URL is purged
          * from history.
          */
-        onVisitRemoved: Events.Event<
-          (removed: OnVisitRemovedRemovedType) => void
-        >;
+        onVisitRemoved: Events.Event<(removed: OnVisitRemovedRemovedType) => void>;
 
         /**
          * Fired when the title of a URL is changed in the browser history.
          */
-        onTitleChanged: Events.Event<
-          (changed: OnTitleChangedChangedType) => void
-        >;
+        onTitleChanged: Events.Event<(changed: OnTitleChangedChangedType) => void>;
       }
     }
 
@@ -4716,10 +4611,7 @@ declare global {
          * @param substitutions Optional. Substitution strings, if the message requires any.
          * @returns Message localized for current locale.
          */
-        getMessage(
-          messageName: string,
-          substitutions?: string[] | string,
-        ): Promise<string>;
+        getMessage(messageName: string, substitutions?: string[] | string): Promise<string>;
 
         /**
          * Gets the browser UI language of the browser. This is different from $(ref:i18n.getAcceptLanguages)
@@ -4765,9 +4657,7 @@ declare global {
         /**
          * Starts an auth flow at the specified URL.
          */
-        launchWebAuthFlow(
-          details: LaunchWebAuthFlowDetailsType,
-        ): Promise<string>;
+        launchWebAuthFlow(details: LaunchWebAuthFlowDetailsType): Promise<string>;
 
         /**
          * Generates a redirect URL to be used in |launchWebAuthFlow|.
@@ -4846,12 +4736,7 @@ declare global {
        * : The extension was installed by other software on the machine,<br><var>admin</var>
        * : The extension was installed by policy,<br><var>other</var>: The extension was installed by other means.
        */
-      type ExtensionInstallType =
-        | "development"
-        | "normal"
-        | "sideload"
-        | "admin"
-        | "other";
+      type ExtensionInstallType = "development" | "normal" | "sideload" | "admin" | "other";
 
       /**
        * Information about an installed extension.
@@ -5001,9 +4886,7 @@ declare global {
         /**
          * Installs and enables a theme extension from the given url.
          */
-        install(
-          options: InstallOptionsType,
-        ): Promise<InstallCallbackResultType>;
+        install(options: InstallOptionsType): Promise<InstallCallbackResultType>;
 
         /**
          * Returns information about the calling extension. Note: This function can be used without requesting the 'management'
@@ -5166,9 +5049,7 @@ declare global {
         /**
          * Optional.
          */
-        content_security_policy?:
-          | string
-          | WebExtensionManifestContentSecurityPolicyC2Type;
+        content_security_policy?: string | WebExtensionManifestContentSecurityPolicyC2Type;
 
         /**
          * Optional.
@@ -5198,9 +5079,7 @@ declare global {
         /**
          * Optional.
          */
-        web_accessible_resources?:
-          | string[]
-          | WebExtensionManifestWebAccessibleResourcesC2ItemType[];
+        web_accessible_resources?: string[] | WebExtensionManifestWebAccessibleResourcesC2ItemType[];
 
         /**
          * Optional.
@@ -5295,18 +5174,12 @@ declare global {
       interface WebExtensionLangpackManifest extends ManifestBase {
         langpack_id: string;
 
-        languages: Record<
-          string,
-          WebExtensionLangpackManifestLanguagesPatternType
-        >;
+        languages: Record<string, WebExtensionLangpackManifestLanguagesPatternType>;
 
         /**
          * Optional.
          */
-        sources?: Record<
-          string,
-          WebExtensionLangpackManifestSourcesPatternType
-        >;
+        sources?: Record<string, WebExtensionLangpackManifestSourcesPatternType>;
       }
 
       /**
@@ -5376,16 +5249,9 @@ declare global {
         | "webNavigation"
         | "identity.email";
 
-      type OptionalPermissionOrOrigin =
-        | OptionalPermission
-        | OptionalOnlyPermission
-        | MatchPattern;
+      type OptionalPermissionOrOrigin = OptionalPermission | OptionalOnlyPermission | MatchPattern;
 
-      type PermissionPrivileged =
-        | "mozillaAddons"
-        | "activityLog"
-        | "networkStatus"
-        | "normandyAddonStudy";
+      type PermissionPrivileged = "mozillaAddons" | "activityLog" | "networkStatus" | "normandyAddonStudy";
 
       type CommonDataCollectionPermission =
         | "authenticationInfo"
@@ -5402,9 +5268,7 @@ declare global {
 
       type DataCollectionPermission = CommonDataCollectionPermission | "none";
 
-      type OptionalDataCollectionPermission =
-        | CommonDataCollectionPermission
-        | "technicalAndInteraction";
+      type OptionalDataCollectionPermission = CommonDataCollectionPermission | "technicalAndInteraction";
 
       type PermissionNoPrompt =
         | OptionalPermissionNoPrompt
@@ -5422,11 +5286,7 @@ declare global {
         | "contextMenus"
         | "theme";
 
-      type Permission =
-        | PermissionNoPrompt
-        | OptionalPermission
-        | "declarativeNetRequest"
-        | string;
+      type Permission = PermissionNoPrompt | OptionalPermission | "declarativeNetRequest" | string;
 
       type PermissionOrOrigin = Permission | MatchPattern;
 
@@ -5503,10 +5363,7 @@ declare global {
         gecko_android?: GeckoAndroidSpecificProperties;
       }
 
-      type MatchPattern =
-        | "<all_urls>"
-        | MatchPatternRestricted
-        | MatchPatternUnestricted;
+      type MatchPattern = "<all_urls>" | MatchPatternRestricted | MatchPatternUnestricted;
 
       /**
        * Same as MatchPattern above, but excludes <all_urls>
@@ -5682,10 +5539,7 @@ declare global {
         uriTemplate: ExtensionURL | HttpURL;
       }
 
-      type ThemeColor =
-        | string
-        | [number, number, number]
-        | [number, number, number, number];
+      type ThemeColor = string | [number, number, number] | [number, number, number, number];
 
       interface ThemeExperiment {
         /**
@@ -5768,19 +5622,14 @@ declare global {
       /**
        * The 'split' value is not supported.
        */
-      type WebExtensionManifestIncognitoEnum =
-        | "not_allowed"
-        | "spanning"
-        | "split";
+      type WebExtensionManifestIncognitoEnum = "not_allowed" | "spanning" | "split";
 
       /**
        * Only supported for page/scripts; not for service_worker yet, see bug 1775574
        */
       type WebExtensionManifestBackgroundTypeEnum = "module" | "classic";
 
-      type WebExtensionManifestBackgroundPreferredEnvironmentItemEnum =
-        | "service_worker"
-        | "document";
+      type WebExtensionManifestBackgroundPreferredEnvironmentItemEnum = "service_worker" | "document";
 
       interface WebExtensionManifestBackgroundType {
         /**
@@ -6093,10 +5942,7 @@ declare global {
       }
 
       interface WebExtensionLangpackManifestLanguagesPatternType {
-        chrome_resources: Record<
-          string,
-          ExtensionURL | Record<string, ExtensionURL>
-        >;
+        chrome_resources: Record<string, ExtensionURL | Record<string, ExtensionURL>>;
 
         version: string;
       }
@@ -6125,11 +5971,7 @@ declare global {
       /**
        * Defines the location the browserAction will appear by default.  The default location is navbar.
        */
-      type ActionManifestDefaultAreaEnum =
-        | "navbar"
-        | "menupanel"
-        | "tabstrip"
-        | "personaltoolbar";
+      type ActionManifestDefaultAreaEnum = "navbar" | "menupanel" | "tabstrip" | "personaltoolbar";
 
       interface ThemeExperimentImagesType {
         [s: string]: unknown;
@@ -6375,17 +6217,9 @@ declare global {
         | "repeat-x"
         | "repeat-y";
 
-      type ThemeTypePropertiesColorSchemeEnum =
-        | "auto"
-        | "light"
-        | "dark"
-        | "system";
+      type ThemeTypePropertiesColorSchemeEnum = "auto" | "light" | "dark" | "system";
 
-      type ThemeTypePropertiesContentColorSchemeEnum =
-        | "auto"
-        | "light"
-        | "dark"
-        | "system";
+      type ThemeTypePropertiesContentColorSchemeEnum = "auto" | "light" | "dark" | "system";
 
       interface ThemeTypePropertiesType {
         /**
@@ -6825,12 +6659,7 @@ declare global {
         targetElementId?: number;
       }
 
-      type OnClickDataModifiersItemEnum =
-        | "Shift"
-        | "Alt"
-        | "Command"
-        | "Ctrl"
-        | "MacCtrl";
+      type OnClickDataModifiersItemEnum = "Shift" | "Alt" | "Command" | "Ctrl" | "MacCtrl";
 
       /**
        * ContextType to override, to allow menu items from other extensions in the menu. Currently only 'bookmark' and 'tab' are
@@ -6847,10 +6676,7 @@ declare global {
          * item, details will be available in $(ref:runtime.lastError).
          * @returns The ID of the newly created item.
          */
-        create(
-          createProperties: CreateCreatePropertiesType,
-          callback?: () => void,
-        ): number | string;
+        create(createProperties: CreateCreatePropertiesType, callback?: () => void): number | string;
 
         /**
          * Updates a previously created context menu item.
@@ -6859,10 +6685,7 @@ declare global {
          * @param updateProperties The properties to update. Accepts the same values as the create function.
          * @returns Called when the context menu has been updated.
          */
-        update(
-          id: number | string,
-          updateProperties: UpdateUpdatePropertiesType,
-        ): Promise<void>;
+        update(id: number | string, updateProperties: UpdateUpdatePropertiesType): Promise<void>;
 
         /**
          * Removes a context menu item.
@@ -6883,9 +6706,7 @@ declare global {
          * Show the matching menu items from this extension instead of the default menu. This should be called during a
          * 'contextmenu' DOM event handler, and only applies to the menu that opens after this event.
          */
-        overrideContext(
-          contextOptions: OverrideContextContextOptionsType,
-        ): void;
+        overrideContext(contextOptions: OverrideContextContextOptionsType): void;
 
         /**
          * Updates the extension items in the shown menu, including changes that have been made since the menu was shown.
@@ -6909,9 +6730,7 @@ declare global {
          * @param tab Optional. The details of the tab where the click took place. If the click did not take place in a tab,
          * this parameter will be missing.
          */
-        onClicked: Events.Event<
-          (info: OnClickData, tab: Browser.Tabs.Tab | undefined) => void
-        >;
+        onClicked: Events.Event<(info: OnClickData, tab: Browser.Tabs.Tab | undefined) => void>;
 
         /**
          * Fired when a menu is shown. The extension can add, modify or remove menu items and call menus.refresh()
@@ -6922,9 +6741,7 @@ declare global {
          * host permissions for the given context: linkUrl, linkText, srcUrl, pageUrl, frameUrl, selectionText.
          * @param tab The details of the tab where the menu was opened.
          */
-        onShown: Events.Event<
-          (info: OnShownInfoType, tab: Browser.Tabs.Tab) => void
-        >;
+        onShown: Events.Event<(info: OnShownInfoType, tab: Browser.Tabs.Tab) => void>;
 
         /**
          * Fired when a menu is hidden. This event is only fired if onShown has fired before.
@@ -6969,13 +6786,7 @@ declare global {
       /**
        * If known, the type of network connection that is avialable.
        */
-      type NetworkLinkInfoTypeEnum =
-        | "unknown"
-        | "ethernet"
-        | "usb"
-        | "wifi"
-        | "wimax"
-        | "mobile";
+      type NetworkLinkInfoTypeEnum = "unknown" | "ethernet" | "usb" | "wifi" | "wimax" | "mobile";
 
       interface Static {
         /**
@@ -7267,10 +7078,7 @@ declare global {
          * operation.
          * @param options Contents of the notification.
          */
-        create(
-          notificationId: string | undefined,
-          options: CreateNotificationOptions,
-        ): Promise<string>;
+        create(notificationId: string | undefined, options: CreateNotificationOptions): Promise<string>;
 
         /**
          * Creates and displays a notification.
@@ -7297,9 +7105,7 @@ declare global {
          * @param notificationId The notificationId of the closed notification.
          * @param byUser True if the notification was closed by the user.
          */
-        onClosed: Events.Event<
-          (notificationId: string, byUser: boolean) => void
-        >;
+        onClosed: Events.Event<(notificationId: string, byUser: boolean) => void>;
 
         /**
          * Fired when the user clicked in a non-button area of the notification.
@@ -7314,9 +7120,7 @@ declare global {
          * @param notificationId The notificationId of the clicked notification.
          * @param buttonIndex The index of the button clicked by the user.
          */
-        onButtonClicked: Events.Event<
-          (notificationId: string, buttonIndex: number) => void
-        >;
+        onButtonClicked: Events.Event<(notificationId: string, buttonIndex: number) => void>;
 
         /**
          * Fired when the notification is shown.
@@ -7341,10 +7145,7 @@ declare global {
        * if the omnibox command is to navigate to a certain URL, a disposition of 'newForegroundTab' means the navigation should
        * take place in a new selected tab.
        */
-      type OnInputEnteredDisposition =
-        | "currentTab"
-        | "newForegroundTab"
-        | "newBackgroundTab";
+      type OnInputEnteredDisposition = "currentTab" | "newForegroundTab" | "newBackgroundTab";
 
       /**
        * A suggest result.
@@ -7401,18 +7202,13 @@ declare global {
          * @param suggest A callback passed to the onInputChanged event used for sending suggestions back to the browser.
          */
         onInputChanged: Events.Event<
-          (
-            text: string,
-            suggest: (suggestResults: SuggestResult[]) => void,
-          ) => void
+          (text: string, suggest: (suggestResults: SuggestResult[]) => void) => void
         >;
 
         /**
          * User has accepted what is typed into the omnibox.
          */
-        onInputEntered: Events.Event<
-          (text: string, disposition: OnInputEnteredDisposition) => void
-        >;
+        onInputEntered: Events.Event<(text: string, disposition: OnInputEnteredDisposition) => void>;
 
         /**
          * User has ended the keyword input session without accepting the input.
@@ -7526,12 +7322,7 @@ declare global {
         tabId: number;
       }
 
-      type OnClickDataModifiersItemEnum =
-        | "Shift"
-        | "Alt"
-        | "Command"
-        | "Ctrl"
-        | "MacCtrl";
+      type OnClickDataModifiersItemEnum = "Shift" | "Alt" | "Command" | "Ctrl" | "MacCtrl";
 
       interface Static {
         /**
@@ -7590,9 +7381,7 @@ declare global {
          *
          * @param info Optional.
          */
-        onClicked: Events.Event<
-          (tab: Browser.Tabs.Tab, info: OnClickData | undefined) => void
-        >;
+        onClicked: Events.Event<(tab: Browser.Tabs.Tab, info: OnClickData | undefined) => void>;
       }
     }
 
@@ -7604,10 +7393,7 @@ declare global {
         /**
          * Optional.
          */
-        permissions?: Array<
-          | Browser.Manifest.OptionalPermission
-          | Browser.Manifest.OptionalOnlyPermission
-        >;
+        permissions?: Array<Browser.Manifest.OptionalPermission | Browser.Manifest.OptionalOnlyPermission>;
 
         /**
          * Optional.
@@ -7624,9 +7410,7 @@ declare global {
         /**
          * Optional.
          */
-        permissions?: Array<
-          Browser.Manifest.Permission | Browser.Manifest.OptionalOnlyPermission
-        >;
+        permissions?: Array<Browser.Manifest.Permission | Browser.Manifest.OptionalOnlyPermission>;
 
         /**
          * Optional.
@@ -7929,12 +7713,7 @@ declare global {
       /**
        * The type of proxy to use.
        */
-      type ProxyConfigProxyTypeEnum =
-        | "none"
-        | "autoDetect"
-        | "system"
-        | "manual"
-        | "autoConfig";
+      type ProxyConfigProxyTypeEnum = "none" | "autoDetect" | "system" | "manual" | "autoConfig";
 
       /**
        * Fired when proxy data is needed for a request.
@@ -8154,26 +7933,12 @@ declare global {
       /**
        * The operating system the browser is running on.
        */
-      type PlatformOs =
-        | "mac"
-        | "win"
-        | "android"
-        | "cros"
-        | "linux"
-        | "openbsd";
+      type PlatformOs = "mac" | "win" | "android" | "cros" | "linux" | "openbsd";
 
       /**
        * The machine's processor architecture.
        */
-      type PlatformArch =
-        | "aarch64"
-        | "arm"
-        | "ppc64"
-        | "s390x"
-        | "sparc64"
-        | "x86-32"
-        | "x86-64"
-        | "noarch";
+      type PlatformArch = "aarch64" | "arm" | "ppc64" | "s390x" | "sparc64" | "x86-32" | "x86-64" | "noarch";
 
       /**
        * An object containing information about the current platform.
@@ -8218,10 +7983,7 @@ declare global {
       /**
        * Result of the update check.
        */
-      type RequestUpdateCheckStatus =
-        | "throttled"
-        | "no_update"
-        | "update_available";
+      type RequestUpdateCheckStatus = "throttled" | "no_update" | "update_available";
 
       /**
        * The reason that this event is being dispatched.
@@ -8263,20 +8025,11 @@ declare global {
        * The return value should be a promise of any JSON-ifiable object. If you have more than one <code>onMessage</code>
        * listener in the same document, then only one may send a response.
        */
-      type OnMessageListenerAsync = (
-        message: unknown,
-        sender: MessageSender,
-      ) => Promise<unknown>;
+      type OnMessageListenerAsync = (message: unknown, sender: MessageSender) => Promise<unknown>;
 
-      type OnMessageListenerNoResponse = (
-        message: unknown,
-        sender: MessageSender,
-      ) => void;
+      type OnMessageListenerNoResponse = (message: unknown, sender: MessageSender) => void;
 
-      type OnMessageListener =
-        | OnMessageListenerCallback
-        | OnMessageListenerAsync
-        | OnMessageListenerNoResponse;
+      type OnMessageListener = OnMessageListenerCallback | OnMessageListenerAsync | OnMessageListenerNoResponse;
 
       /**
        * If an update is available, this contains more information about the available update.
@@ -8443,9 +8196,7 @@ declare global {
         /**
          * Requests an update check for this app/extension.
          */
-        requestUpdateCheck(): Promise<
-          [RequestUpdateCheckStatus, RequestUpdateCheckCallbackDetailsType]
-        >;
+        requestUpdateCheck(): Promise<[RequestUpdateCheckStatus, RequestUpdateCheckCallbackDetailsType]>;
 
         /**
          * Attempts to connect to connect listeners within an extension/app (such as the background page), or other extensions/apps.
@@ -8460,10 +8211,7 @@ declare global {
          * @returns Port through which messages can be sent and received. The port's $(ref:runtime.Port onDisconnect)
          * event is fired if the extension/app does not exist.
          */
-        connect(
-          extensionId?: string,
-          connectInfo?: ConnectConnectInfoType,
-        ): Port;
+        connect(extensionId?: string, connectInfo?: ConnectConnectInfoType): Port;
 
         /**
          * Attempts to connect to connect listeners within an extension/app (such as the background page), or other extensions/apps.
@@ -8581,9 +8329,7 @@ declare global {
          *
          * @param details The manifest details of the available update.
          */
-        onUpdateAvailable: Events.Event<
-          (details: OnUpdateAvailableDetailsType) => void
-        >;
+        onUpdateAvailable: Events.Event<(details: OnUpdateAvailableDetailsType) => void>;
 
         /**
          * Fired when a connection is made from either an extension process or a content script.
@@ -8619,9 +8365,7 @@ declare global {
          * Fired when a runtime performance issue is detected with the extension. Observe this event to be proactively notified of
          * runtime performance problems with the extension.
          */
-        onPerformanceWarning: Events.Event<
-          (details: OnPerformanceWarningDetailsType) => void
-        >;
+        onPerformanceWarning: Events.Event<(details: OnPerformanceWarningDetailsType) => void>;
 
         /**
          * This will be defined during an API method callback if there was an error
@@ -8937,9 +8681,7 @@ declare global {
          * or if the IDs specified already exist, then no scripts are registered.
          * @returns Invoked upon completion of the registration.
          */
-        registerContentScripts(
-          scripts: RegisteredContentScript[],
-        ): Promise<void>;
+        registerContentScripts(scripts: RegisteredContentScript[]): Promise<void>;
 
         /**
          * Returns all dynamically registered content scripts for this extension that match the given filter.
@@ -8947,9 +8689,7 @@ declare global {
          * @param filter Optional. An object to filter the extension's dynamically registered scripts.
          * @returns The resulting array contains the registered content scripts.
          */
-        getRegisteredContentScripts(
-          filter?: ContentScriptFilter,
-        ): Promise<RegisteredContentScript[]>;
+        getRegisteredContentScripts(filter?: ContentScriptFilter): Promise<RegisteredContentScript[]>;
 
         /**
          * Unregisters one or more content scripts for this extension.
@@ -8967,9 +8707,7 @@ declare global {
          * or if the IDs specified do not already exist, then no scripts are updated.
          * @returns Invoked when scripts have been updated.
          */
-        updateContentScripts(
-          scripts: UpdateContentScriptsScriptsItemType[],
-        ): Promise<void>;
+        updateContentScripts(scripts: UpdateContentScriptsScriptsItemType[]): Promise<void>;
       }
     }
 
@@ -9175,11 +8913,7 @@ declare global {
          * @param key The key which corresponds to the value being set.
          * @param value The value being set.
          */
-        setWindowValue(
-          windowId: number,
-          key: string,
-          value: unknown,
-        ): Promise<void>;
+        setWindowValue(windowId: number, key: string, value: unknown): Promise<void>;
 
         /**
          * Retrieve a value that was set for a given key on a given window.
@@ -9410,9 +9144,7 @@ declare global {
          * to get the entire contents of storage.
          * @returns Callback with storage items, or on failure (in which case $(ref:runtime.lastError) will be set).
          */
-        get(
-          keys?: null | string | string[] | Record<string, unknown>,
-        ): Promise<Record<string, unknown>>;
+        get(keys?: null | string | string[] | Record<string, unknown>): Promise<Record<string, unknown>>;
 
         /**
          * Sets multiple items.
@@ -9446,9 +9178,7 @@ declare global {
          *
          * @param changes Object mapping each key that changed to its corresponding $(ref:storage.StorageChange) for that item.
          */
-        onChanged: Events.Event<
-          (changes: StorageAreaOnChangedChangesType) => void
-        >;
+        onChanged: Events.Event<(changes: StorageAreaOnChangedChangesType) => void>;
       }
 
       interface StorageAreaWithUsage {
@@ -9460,9 +9190,7 @@ declare global {
          * to get the entire contents of storage.
          * @returns Callback with storage items, or on failure (in which case $(ref:runtime.lastError) will be set).
          */
-        get(
-          keys?: null | string | string[] | Record<string, unknown>,
-        ): Promise<Record<string, unknown>>;
+        get(keys?: null | string | string[] | Record<string, unknown>): Promise<Record<string, unknown>>;
 
         /**
          * Gets the amount of space (in bytes) being used by one or more items.
@@ -9506,9 +9234,7 @@ declare global {
          *
          * @param changes Object mapping each key that changed to its corresponding $(ref:storage.StorageChange) for that item.
          */
-        onChanged: Events.Event<
-          (changes: StorageAreaWithUsageOnChangedChangesType) => void
-        >;
+        onChanged: Events.Event<(changes: StorageAreaWithUsageOnChangedChangesType) => void>;
       }
 
       /**
@@ -9533,9 +9259,7 @@ declare global {
          * @param areaName The name of the storage area (<code>"sync"</code>, <code>"local"</code> or <code>"managed"</code>)
          * the changes are for.
          */
-        onChanged: Events.Event<
-          (changes: Record<string, StorageChange>, areaName: string) => void
-        >;
+        onChanged: Events.Event<(changes: Record<string, StorageChange>, areaName: string) => void>;
 
         /**
          * Items in the <code>sync</code> storage area are synced by the browser.
@@ -9568,16 +9292,7 @@ declare global {
       /**
        * The group's color, using 'grey' spelling for compatibility with Chromium.
        */
-      type Color =
-        | "blue"
-        | "cyan"
-        | "grey"
-        | "green"
-        | "orange"
-        | "pink"
-        | "purple"
-        | "red"
-        | "yellow";
+      type Color = "blue" | "cyan" | "grey" | "green" | "orange" | "pink" | "purple" | "red" | "yellow";
 
       /**
        * State of a tab group inside of an open window.
@@ -9674,10 +9389,7 @@ declare global {
         /**
          * Move a group within, or to another window.
          */
-        move(
-          groupId: number,
-          moveProperties: MoveMovePropertiesType,
-        ): Promise<TabGroup>;
+        move(groupId: number, moveProperties: MoveMovePropertiesType): Promise<TabGroup>;
 
         /**
          * Return all grups, or find groups with specified properties.
@@ -9687,10 +9399,7 @@ declare global {
         /**
          * Modifies state of a specified group.
          */
-        update(
-          groupId: number,
-          updateProperties: UpdateUpdatePropertiesType,
-        ): Promise<TabGroup>;
+        update(groupId: number, updateProperties: UpdateUpdatePropertiesType): Promise<TabGroup>;
 
         /**
          * Fired when a tab group is created.
@@ -9705,9 +9414,7 @@ declare global {
         /**
          * Fired when a tab group is removed.
          */
-        onRemoved: Events.Event<
-          (group: TabGroup, removeInfo: OnRemovedRemoveInfoType) => void
-        >;
+        onRemoved: Events.Event<(group: TabGroup, removeInfo: OnRemovedRemoveInfoType) => void>;
 
         /**
          * Fired when a tab group is updated.
@@ -10770,10 +10477,8 @@ declare global {
       /**
        * Fired when a tab is updated.
        */
-      interface OnUpdatedEvent extends
-        Events.Event<
-          (tabId: number, changeInfo: OnUpdatedChangeInfoType, tab: Tab) => void
-        >
+      interface OnUpdatedEvent
+        extends Events.Event<(tabId: number, changeInfo: OnUpdatedChangeInfoType, tab: Tab) => void>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -10782,11 +10487,7 @@ declare global {
          * @param filter Optional. A set of filters that restricts the events that will be sent to this listener.
          */
         addListener(
-          callback: (
-            tabId: number,
-            changeInfo: OnUpdatedChangeInfoType,
-            tab: Tab,
-          ) => void,
+          callback: (tabId: number, changeInfo: OnUpdatedChangeInfoType, tab: Tab) => void,
           filter?: UpdateFilter,
         ): void;
       }
@@ -10812,10 +10513,7 @@ declare global {
          * @returns A port that can be used to communicate with the content scripts running in the specified tab.
          * The port's $(ref:runtime.Port) event is fired if the tab closes or does not exist.
          */
-        connect(
-          tabId: number,
-          connectInfo?: ConnectConnectInfoType,
-        ): Browser.Runtime.Port;
+        connect(tabId: number, connectInfo?: ConnectConnectInfoType): Browser.Runtime.Port;
 
         /**
          * Sends a single message to the content script(s) in the specified tab, with an optional callback to run when a response
@@ -10842,10 +10540,7 @@ declare global {
          * @param tabId The ID of the tab which is to be duplicated.
          * @param duplicateProperties Optional.
          */
-        duplicate(
-          tabId: number,
-          duplicateProperties?: DuplicateDuplicatePropertiesType,
-        ): Promise<Tab>;
+        duplicate(tabId: number, duplicateProperties?: DuplicateDuplicatePropertiesType): Promise<Tab>;
 
         /**
          * Gets all tabs that have the specified properties, or all tabs if no properties are specified.
@@ -10855,19 +10550,14 @@ declare global {
         /**
          * Highlights the given tabs.
          */
-        highlight(
-          highlightInfo: HighlightHighlightInfoType,
-        ): Promise<Browser.Windows.Window>;
+        highlight(highlightInfo: HighlightHighlightInfoType): Promise<Browser.Windows.Window>;
 
         /**
          * Modifies the properties of a tab. Properties that are not specified in <var>updateProperties</var> are not modified.
          *
          * @param tabId Optional. Defaults to the selected tab of the $(topic:current-window)[current window].
          */
-        update(
-          tabId: number | undefined,
-          updateProperties: UpdateUpdatePropertiesType,
-        ): Promise<Tab>;
+        update(tabId: number | undefined, updateProperties: UpdateUpdatePropertiesType): Promise<Tab>;
 
         /**
          * Modifies the properties of a tab. Properties that are not specified in <var>updateProperties</var> are not modified.
@@ -10880,10 +10570,7 @@ declare global {
          *
          * @param tabIds The tab or list of tabs to move.
          */
-        move(
-          tabIds: number | number[],
-          moveProperties: MoveMovePropertiesType,
-        ): Promise<Tab | Tab[]>;
+        move(tabIds: number | number[], moveProperties: MoveMovePropertiesType): Promise<Tab | Tab[]>;
 
         /**
          * Reload a tab.
@@ -10891,10 +10578,7 @@ declare global {
          * @param tabId Optional. The ID of the tab to reload; defaults to the selected tab of the current window.
          * @param reloadProperties Optional.
          */
-        reload(
-          tabId?: number,
-          reloadProperties?: ReloadReloadPropertiesType,
-        ): Promise<void>;
+        reload(tabId?: number, reloadProperties?: ReloadReloadPropertiesType): Promise<void>;
 
         /**
          * Warm up a tab
@@ -10938,10 +10622,7 @@ declare global {
          * @param tabId Optional. The tab to capture. Defaults to the active tab of the current window.
          * @param options Optional.
          */
-        captureTab(
-          tabId?: number,
-          options?: Browser.ExtensionTypes.ImageDetails,
-        ): Promise<string>;
+        captureTab(tabId?: number, options?: Browser.ExtensionTypes.ImageDetails): Promise<string>;
 
         /**
          * Captures an area of the currently active tab in the specified window. You must have &lt;all_urls&gt; or activeTab
@@ -10950,10 +10631,7 @@ declare global {
          * @param windowId Optional. The target window. Defaults to the $(topic:current-window)[current window].
          * @param options Optional.
          */
-        captureVisibleTab(
-          windowId?: number,
-          options?: Browser.ExtensionTypes.ImageDetails,
-        ): Promise<string>;
+        captureVisibleTab(windowId?: number, options?: Browser.ExtensionTypes.ImageDetails): Promise<string>;
 
         /**
          * Injects JavaScript code into a page. For details, see the $(topic:content_scripts)[programmatic injection]
@@ -10975,9 +10653,7 @@ declare global {
          * @param details Details of the script to run.
          * @returns Called after all the JavaScript has been executed.
          */
-        executeScript(
-          details: Browser.ExtensionTypes.InjectDetails,
-        ): Promise<unknown[]>;
+        executeScript(details: Browser.ExtensionTypes.InjectDetails): Promise<unknown[]>;
 
         /**
          * Injects CSS into a page. For details, see the $(topic:content_scripts)[programmatic injection]
@@ -10987,10 +10663,7 @@ declare global {
          * @param details Details of the CSS text to insert.
          * @returns Called when all the CSS has been inserted.
          */
-        insertCSS(
-          tabId: number | undefined,
-          details: Browser.ExtensionTypes.InjectDetails,
-        ): Promise<void>;
+        insertCSS(tabId: number | undefined, details: Browser.ExtensionTypes.InjectDetails): Promise<void>;
 
         /**
          * Injects CSS into a page. For details, see the $(topic:content_scripts)[programmatic injection]
@@ -11010,10 +10683,7 @@ declare global {
          * @param details Details of the CSS text to remove.
          * @returns Called when all the CSS has been removed.
          */
-        removeCSS(
-          tabId: number | undefined,
-          details: Browser.ExtensionTypes.InjectDetails,
-        ): Promise<void>;
+        removeCSS(tabId: number | undefined, details: Browser.ExtensionTypes.InjectDetails): Promise<void>;
 
         /**
          * Removes injected CSS from a page. For details, see the $(topic:content_scripts)[programmatic injection]
@@ -11061,10 +10731,7 @@ declare global {
          * @param zoomSettings Defines how zoom changes are handled and at what scope.
          * @returns Called after the zoom settings have been changed.
          */
-        setZoomSettings(
-          tabId: number | undefined,
-          zoomSettings: ZoomSettings,
-        ): Promise<void>;
+        setZoomSettings(tabId: number | undefined, zoomSettings: ZoomSettings): Promise<void>;
 
         /**
          * Sets the zoom settings for a specified tab, which define how zoom changes are handled.
@@ -11132,11 +10799,7 @@ declare global {
          * first tab in the array instead.
          * @param options Optional.
          */
-        moveInSuccession(
-          tabIds: number[],
-          tabId?: number,
-          options?: MoveInSuccessionOptionsType,
-        ): void;
+        moveInSuccession(tabIds: number[], tabId?: number, options?: MoveInSuccessionOptionsType): void;
 
         /**
          * Navigate to next page in tab's history, if available
@@ -11182,59 +10845,43 @@ declare global {
          * Move events are not fired for the other tabs that must move in response. This event is not fired when a tab is moved
          * between windows. For that, see $(ref:tabs.onDetached).
          */
-        onMoved: Events.Event<
-          (tabId: number, moveInfo: OnMovedMoveInfoType) => void
-        >;
+        onMoved: Events.Event<(tabId: number, moveInfo: OnMovedMoveInfoType) => void>;
 
         /**
          * Fires when the active tab in a window changes. Note that the tab's URL may not be set at the time this event fired,
          * but you can listen to onUpdated events to be notified when a URL is set.
          */
-        onActivated: Events.Event<
-          (activeInfo: OnActivatedActiveInfoType) => void
-        >;
+        onActivated: Events.Event<(activeInfo: OnActivatedActiveInfoType) => void>;
 
         /**
          * Fired when the highlighted or selected tabs in a window changes.
          */
-        onHighlighted: Events.Event<
-          (highlightInfo: OnHighlightedHighlightInfoType) => void
-        >;
+        onHighlighted: Events.Event<(highlightInfo: OnHighlightedHighlightInfoType) => void>;
 
         /**
          * Fired when a tab is detached from a window, for example because it is being moved between windows.
          */
-        onDetached: Events.Event<
-          (tabId: number, detachInfo: OnDetachedDetachInfoType) => void
-        >;
+        onDetached: Events.Event<(tabId: number, detachInfo: OnDetachedDetachInfoType) => void>;
 
         /**
          * Fired when a tab is attached to a window, for example because it was moved between windows.
          */
-        onAttached: Events.Event<
-          (tabId: number, attachInfo: OnAttachedAttachInfoType) => void
-        >;
+        onAttached: Events.Event<(tabId: number, attachInfo: OnAttachedAttachInfoType) => void>;
 
         /**
          * Fired when a tab is closed.
          */
-        onRemoved: Events.Event<
-          (tabId: number, removeInfo: OnRemovedRemoveInfoType) => void
-        >;
+        onRemoved: Events.Event<(tabId: number, removeInfo: OnRemovedRemoveInfoType) => void>;
 
         /**
          * Fired when a tab is replaced with another tab due to prerendering or instant.
          */
-        onReplaced: Events.Event<
-          (addedTabId: number, removedTabId: number) => void
-        >;
+        onReplaced: Events.Event<(addedTabId: number, removedTabId: number) => void>;
 
         /**
          * Fired when a tab is zoomed.
          */
-        onZoomChange: Events.Event<
-          (ZoomChangeInfo: OnZoomChangeZoomChangeInfoType) => void
-        >;
+        onZoomChange: Events.Event<(ZoomChangeInfo: OnZoomChangeZoomChangeInfoType) => void>;
 
         /**
          * An ID which represents the absence of a browser tab.
@@ -11284,10 +10931,7 @@ declare global {
          * @param windowId Optional. The id of the window to update. No id updates all windows.
          * @param details The properties of the theme to update.
          */
-        update(
-          windowId: number | undefined,
-          details: Browser.Manifest.ThemeType,
-        ): Promise<void>;
+        update(windowId: number | undefined, details: Browser.Manifest.ThemeType): Promise<void>;
 
         /**
          * Make complete updates to the theme. Resolves when the update has completed.
@@ -11426,11 +11070,7 @@ declare global {
        * session ends (overrides regular and incognito_persistent preferences).</li></ul> Only <var>regular</var>
        * is supported by Firefox at this time.
        */
-      type SettingScope =
-        | "regular"
-        | "regular_only"
-        | "incognito_persistent"
-        | "incognito_session_only";
+      type SettingScope = "regular" | "regular_only" | "incognito_persistent" | "incognito_session_only";
 
       /**
        * One of<ul><li><var>not_controllable</var>: cannot be controlled by any extension</li><li><var>
@@ -11450,9 +11090,7 @@ declare global {
          *
          * @param details Which setting to consider.
          */
-        get(
-          details: SettingGetDetailsType,
-        ): Promise<SettingGetCallbackDetailsType>;
+        get(details: SettingGetDetailsType): Promise<SettingGetCallbackDetailsType>;
 
         /**
          * Sets the value of a setting.
@@ -11768,9 +11406,7 @@ declare global {
          * Register a user script programmatically given its $(ref:userScripts.UserScriptOptions),
          * and resolves to an object with the unregister() function
          */
-        register(
-          userScriptOptions: UserScriptOptions,
-        ): Promise<RegisterCallbackLegacyRegisteredUserScriptType>;
+        register(userScriptOptions: UserScriptOptions): Promise<RegisterCallbackLegacyRegisteredUserScriptType>;
 
         /**
          * Registers one or more user scripts for this extension.
@@ -11844,11 +11480,7 @@ declare global {
         | "keyword"
         | "keyword_generated";
 
-      type TransitionQualifier =
-        | "client_redirect"
-        | "server_redirect"
-        | "forward_back"
-        | "from_address_bar";
+      type TransitionQualifier = "client_redirect" | "server_redirect" | "forward_back" | "from_address_bar";
 
       interface EventUrlFilters {
         url: Browser.Events.UrlFilter[];
@@ -12180,10 +11812,7 @@ declare global {
          * @param filters Optional. Conditions that the URL being navigated to must satisfy. The 'schemes' and 'ports' fields of
          * UrlFilter are ignored for this event.
          */
-        addListener(
-          callback: (details: OnBeforeNavigateDetailsType) => void,
-          filters?: EventUrlFilters,
-        ): void;
+        addListener(callback: (details: OnBeforeNavigateDetailsType) => void, filters?: EventUrlFilters): void;
       }
 
       /**
@@ -12199,10 +11828,7 @@ declare global {
          * @param filters Optional. Conditions that the URL being navigated to must satisfy. The 'schemes' and 'ports' fields of
          * UrlFilter are ignored for this event.
          */
-        addListener(
-          callback: (details: OnCommittedDetailsType) => void,
-          filters?: EventUrlFilters,
-        ): void;
+        addListener(callback: (details: OnCommittedDetailsType) => void, filters?: EventUrlFilters): void;
       }
 
       /**
@@ -12233,10 +11859,7 @@ declare global {
          * @param filters Optional. Conditions that the URL being navigated to must satisfy. The 'schemes' and 'ports' fields of
          * UrlFilter are ignored for this event.
          */
-        addListener(
-          callback: (details: OnCompletedDetailsType) => void,
-          filters?: EventUrlFilters,
-        ): void;
+        addListener(callback: (details: OnCompletedDetailsType) => void, filters?: EventUrlFilters): void;
       }
 
       /**
@@ -12251,19 +11874,14 @@ declare global {
          * @param filters Optional. Conditions that the URL being navigated to must satisfy. The 'schemes' and 'ports' fields of
          * UrlFilter are ignored for this event.
          */
-        addListener(
-          callback: (details: OnErrorOccurredDetailsType) => void,
-          filters?: EventUrlFilters,
-        ): void;
+        addListener(callback: (details: OnErrorOccurredDetailsType) => void, filters?: EventUrlFilters): void;
       }
 
       /**
        * Fired when a new window, or a new tab in an existing window, is created to host a navigation.
        */
-      interface OnCreatedNavigationTargetEvent extends
-        Events.Event<
-          (details: OnCreatedNavigationTargetDetailsType) => void
-        >
+      interface OnCreatedNavigationTargetEvent
+        extends Events.Event<(details: OnCreatedNavigationTargetDetailsType) => void>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -12281,10 +11899,8 @@ declare global {
       /**
        * Fired when the reference fragment of a frame was updated. All future events for that frame will use the updated URL.
        */
-      interface OnReferenceFragmentUpdatedEvent extends
-        Events.Event<
-          (details: OnReferenceFragmentUpdatedDetailsType) => void
-        >
+      interface OnReferenceFragmentUpdatedEvent
+        extends Events.Event<(details: OnReferenceFragmentUpdatedDetailsType) => void>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -12302,11 +11918,7 @@ declare global {
       /**
        * Fired when the frame's history was updated to a new URL. All future events for that frame will use the updated URL.
        */
-      interface OnHistoryStateUpdatedEvent extends
-        Events.Event<
-          (details: OnHistoryStateUpdatedDetailsType) => void
-        >
-      {
+      interface OnHistoryStateUpdatedEvent extends Events.Event<(details: OnHistoryStateUpdatedDetailsType) => void> {
         /**
          * Registers an event listener <em>callback</em> to an event.
          *
@@ -12327,18 +11939,14 @@ declare global {
          *
          * @param details Information about the frame to retrieve information about.
          */
-        getFrame(
-          details: GetFrameDetailsType,
-        ): Promise<GetFrameCallbackDetailsType | null>;
+        getFrame(details: GetFrameDetailsType): Promise<GetFrameCallbackDetailsType | null>;
 
         /**
          * Retrieves information about all frames of a given tab.
          *
          * @param details Information about the tab to retrieve all frames from.
          */
-        getAllFrames(
-          details: GetAllFramesDetailsType,
-        ): Promise<GetAllFramesCallbackDetailsItemType[] | null>;
+        getAllFrames(details: GetAllFramesDetailsType): Promise<GetAllFramesCallbackDetailsItemType[] | null>;
 
         /**
          * Fired when a navigation is about to occur.
@@ -12381,9 +11989,7 @@ declare global {
         /**
          * Fired when the contents of the tab is replaced by a different (usually previously pre-rendered) tab.
          */
-        onTabReplaced: Events.Event<
-          (details: OnTabReplacedDetailsType) => void
-        >;
+        onTabReplaced: Events.Event<(details: OnTabReplacedDetailsType) => void>;
 
         /**
          * Fired when the frame's history was updated to a new URL. All future events for that frame will use the updated URL.
@@ -12420,23 +12026,13 @@ declare global {
 
       type OnBeforeRequestOptions = "blocking" | "requestBody" | "extraHeaders";
 
-      type OnBeforeSendHeadersOptions =
-        | "requestHeaders"
-        | "blocking"
-        | "extraHeaders";
+      type OnBeforeSendHeadersOptions = "requestHeaders" | "blocking" | "extraHeaders";
 
       type OnSendHeadersOptions = "requestHeaders" | "extraHeaders";
 
-      type OnHeadersReceivedOptions =
-        | "blocking"
-        | "responseHeaders"
-        | "extraHeaders";
+      type OnHeadersReceivedOptions = "blocking" | "responseHeaders" | "extraHeaders";
 
-      type OnAuthRequiredOptions =
-        | "responseHeaders"
-        | "blocking"
-        | "asyncBlocking"
-        | "extraHeaders";
+      type OnAuthRequiredOptions = "responseHeaders" | "blocking" | "asyncBlocking" | "extraHeaders";
 
       type OnResponseStartedOptions = "responseHeaders" | "extraHeaders";
 
@@ -12736,10 +12332,7 @@ declare global {
        * A BlockingResponse or a Promise<BlockingResponse>
        */
       // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-      type BlockingResponseOrPromiseOrVoid =
-        | BlockingResponse
-        | Promise<BlockingResponse>
-        | void;
+      type BlockingResponseOrPromiseOrVoid = BlockingResponse | Promise<BlockingResponse> | void;
 
       /**
        * "uninitialized": The StreamFilter is not fully initialized. No methods may be called until a "start" event has been
@@ -13852,12 +13445,7 @@ declare global {
       /**
        * Protocol version if state is "secure"
        */
-      type SecurityInfoProtocolVersionEnum =
-        | "TLSv1"
-        | "TLSv1.1"
-        | "TLSv1.2"
-        | "TLSv1.3"
-        | "unknown";
+      type SecurityInfoProtocolVersionEnum = "TLSv1" | "TLSv1.1" | "TLSv1.2" | "TLSv1.3" | "unknown";
 
       /**
        * The type of certificate error that was overridden for this connection, if any.
@@ -13906,12 +13494,8 @@ declare global {
       /**
        * Fired when a request is about to occur.
        */
-      interface OnBeforeRequestEvent extends
-        Events.Event<
-          (
-            details: OnBeforeRequestDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid
-        >
+      interface OnBeforeRequestEvent
+        extends Events.Event<(details: OnBeforeRequestDetailsType) => BlockingResponseOrPromiseOrVoid>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -13921,9 +13505,7 @@ declare global {
          * @param extraInfoSpec Optional. Array of extra information that should be passed to the listener function.
          */
         addListener(
-          callback: (
-            details: OnBeforeRequestDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid,
+          callback: (details: OnBeforeRequestDetailsType) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
           extraInfoSpec?: OnBeforeRequestOptions[],
         ): void;
@@ -13933,12 +13515,8 @@ declare global {
        * Fired before sending an HTTP request, once the request headers are available. This may occur after a TCP connection is
        * made to the server, but before any HTTP data is sent.
        */
-      interface OnBeforeSendHeadersEvent extends
-        Events.Event<
-          (
-            details: OnBeforeSendHeadersDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid
-        >
+      interface OnBeforeSendHeadersEvent
+        extends Events.Event<(details: OnBeforeSendHeadersDetailsType) => BlockingResponseOrPromiseOrVoid>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -13948,9 +13526,7 @@ declare global {
          * @param extraInfoSpec Optional. Array of extra information that should be passed to the listener function.
          */
         addListener(
-          callback: (
-            details: OnBeforeSendHeadersDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid,
+          callback: (details: OnBeforeSendHeadersDetailsType) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
           extraInfoSpec?: OnBeforeSendHeadersOptions[],
         ): void;
@@ -13978,12 +13554,8 @@ declare global {
       /**
        * Fired when HTTP response headers of a request have been received.
        */
-      interface OnHeadersReceivedEvent extends
-        Events.Event<
-          (
-            details: OnHeadersReceivedDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid
-        >
+      interface OnHeadersReceivedEvent
+        extends Events.Event<(details: OnHeadersReceivedDetailsType) => BlockingResponseOrPromiseOrVoid>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -13993,9 +13565,7 @@ declare global {
          * @param extraInfoSpec Optional. Array of extra information that should be passed to the listener function.
          */
         addListener(
-          callback: (
-            details: OnHeadersReceivedDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid,
+          callback: (details: OnHeadersReceivedDetailsType) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
           extraInfoSpec?: OnHeadersReceivedOptions[],
         ): void;
@@ -14006,12 +13576,8 @@ declare global {
        * credentials, it can cancel the request and display the error page, or it can take no action on the challenge.
        * If bad user credentials are provided, this may be called multiple times for the same request.
        */
-      interface OnAuthRequiredEvent extends
-        Events.Event<
-          (
-            details: OnAuthRequiredDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid
-        >
+      interface OnAuthRequiredEvent
+        extends Events.Event<(details: OnAuthRequiredDetailsType) => BlockingResponseOrPromiseOrVoid>
       {
         /**
          * Registers an event listener <em>callback</em> to an event.
@@ -14021,9 +13587,7 @@ declare global {
          * @param extraInfoSpec Optional. Array of extra information that should be passed to the listener function.
          */
         addListener(
-          callback: (
-            details: OnAuthRequiredDetailsType,
-          ) => BlockingResponseOrPromiseOrVoid,
+          callback: (details: OnAuthRequiredDetailsType) => BlockingResponseOrPromiseOrVoid,
           filter: RequestFilter,
           extraInfoSpec?: OnAuthRequiredOptions[],
         ): void;
@@ -14119,10 +13683,7 @@ declare global {
          *
          * @param options Optional.
          */
-        getSecurityInfo(
-          requestId: string,
-          options?: GetSecurityInfoOptionsType,
-        ): Promise<SecurityInfo>;
+        getSecurityInfo(requestId: string, options?: GetSecurityInfoOptionsType): Promise<SecurityInfo>;
 
         /**
          * Fired when a request is about to occur.
@@ -14196,12 +13757,7 @@ declare global {
        * The state of this browser window. Under some circumstances a Window may not be assigned state property,
        * for example when querying closed windows from the $(ref:sessions) API.
        */
-      type WindowState =
-        | "normal"
-        | "minimized"
-        | "maximized"
-        | "fullscreen"
-        | "docked";
+      type WindowState = "normal" | "minimized" | "maximized" | "fullscreen" | "docked";
 
       interface Window {
         /**
@@ -14500,10 +14056,7 @@ declare global {
          * Updates the properties of a window. Specify only the properties that you want to change; unspecified properties will be
          * left unchanged.
          */
-        update(
-          windowId: number,
-          updateInfo: UpdateUpdateInfoType,
-        ): Promise<Window>;
+        update(windowId: number, updateInfo: UpdateUpdateInfoType): Promise<Window>;
 
         /**
          * Removes (closes) a window, and all the tabs inside it.
@@ -14907,22 +14460,12 @@ declare global {
         /**
          * The minimum TLS version supported.
          */
-        type TlsVersionRestrictionConfigMinimumEnum =
-          | "TLSv1"
-          | "TLSv1.1"
-          | "TLSv1.2"
-          | "TLSv1.3"
-          | "unknown";
+        type TlsVersionRestrictionConfigMinimumEnum = "TLSv1" | "TLSv1.1" | "TLSv1.2" | "TLSv1.3" | "unknown";
 
         /**
          * The maximum TLS version supported.
          */
-        type TlsVersionRestrictionConfigMaximumEnum =
-          | "TLSv1"
-          | "TLSv1.1"
-          | "TLSv1.2"
-          | "TLSv1.3"
-          | "unknown";
+        type TlsVersionRestrictionConfigMaximumEnum = "TLSv1" | "TLSv1.1" | "TLSv1.2" | "TLSv1.3" | "unknown";
 
         interface Static {
           /**
@@ -14982,10 +14525,7 @@ declare global {
         /**
          * The mode for tracking protection.
          */
-        type TrackingProtectionModeOption =
-          | "always"
-          | "never"
-          | "private_browsing";
+        type TrackingProtectionModeOption = "always" | "never" | "private_browsing";
 
         /**
          * The settings for cookies.
@@ -15095,9 +14635,7 @@ declare global {
            * @param progressData Object containing the data, see https://firefox-source-docs.mozilla.
            * org/toolkit/components/ml/notifications.html
            */
-          onProgress: Events.Event<
-            (progressData: OnProgressProgressDataType) => void
-          >;
+          onProgress: Events.Event<(progressData: OnProgressProgressDataType) => void>;
         }
       }
     }
