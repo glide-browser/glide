@@ -89,7 +89,14 @@ export async function main() {
       .on("change", async path => {
         await queue.add(async () => {
           console.time(`Copied ${path}`);
-          await copy(path);
+
+          try {
+            await copy(path);
+          } catch (err) {
+            console.error(`could not copy ${path} due to error`, err);
+            return;
+          }
+
           console.timeEnd(`Copied ${path}`);
         });
       })
