@@ -35,3 +35,19 @@ See [Contributing](https://glide-browser.app/contributing).
 ## License
 
 This project is licensed under the Mozilla Public License Version 2.0. See [LICENSE](LICENSE) for details.
+
+## Sponsors
+
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://depot.dev/assets/brand/1693758816/depot-logo-horizontal-on-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="https://depot.dev/assets/brand/1693758816/depot-logo-horizontal-on-light.svg" />
+    <img
+      alt="Depot logo"
+      src="https://depot.dev/assets/brand/1693758816/depot-logo-horizontal-on-dark.svg"
+      height="36"
+      align="middle"
+    />
+  </picture>
+  &nbsp;Thanks to <a href="https://depot.dev">Depot</a> for sponsoring Glide's CI!
+</p>
