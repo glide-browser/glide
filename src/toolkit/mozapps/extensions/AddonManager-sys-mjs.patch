@@ -1,5 +1,5 @@
 diff --git a/toolkit/mozapps/extensions/AddonManager.sys.mjs b/toolkit/mozapps/extensions/AddonManager.sys.mjs
-index f544f44cf7a73858213ddfc07c0ad693e2f56504..96bbc7402cbf58ef2e28ee9a494c7d60f3bc3840 100644
+index 2c1e187d14bae0dcc17a1fa2de768e7c949b3776..12e73215918f2869a6bcbacb356e4429fc3fbf4a 100644
 --- a/toolkit/mozapps/extensions/AddonManager.sys.mjs
 +++ b/toolkit/mozapps/extensions/AddonManager.sys.mjs
 @@ -1228,6 +1228,9 @@ var AddonManagerInternal = {
@@ -12,3 +12,19 @@ index f544f44cf7a73858213ddfc07c0ad693e2f56504..96bbc7402cbf58ef2e28ee9a494c7d60
          REQ_VERSION: UPDATE_REQUEST_VERSION,
          APP_OS: Services.appinfo.OS,
          APP_ABI: Services.appinfo.XPCOMABI,
+@@ -1728,6 +1731,7 @@ var AddonManagerInternal = {
+    * @param  {Object} [aOptions.telemetryInfo]
+    *         An optional object which provides details about the installation source
+    *         included in the addon manager telemetry events.
++   * @returns {Promise<AddonInstall>}
+    * @throws if aUrl is not specified or if an optional argument of
+    *         an improper type is passed.
+    */
+@@ -4315,6 +4319,7 @@ export var AddonManager = {
+     return "unknown";
+   },
+ 
++  /** @type {AddonManagerInternal['getInstallForURL']} */
+   getInstallForURL(aUrl, aOptions) {
+     return AddonManagerInternal.getInstallForURL(aUrl, aOptions);
+   },

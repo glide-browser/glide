@@ -34,6 +34,11 @@ interface ChromeWindow extends Window {
 declare type BaseProcess = import("../engine/toolkit/modules/subprocess/subprocess_common.sys.mjs").BaseProcess;
 declare type ProcessInputPipe = import("../engine/toolkit/modules/subprocess/subprocess_common.sys.mjs").InputPipe;
 
+// add all the actual types to the `AddonManager` variable, by default FF only includes the IDL types
+declare type _AddonManager =
+  (typeof import("../engine/toolkit/mozapps/extensions/AddonManager.sys.mjs"))["AddonManager"];
+interface AddonManager extends _AddonManager {}
+
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`
  *

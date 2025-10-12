@@ -1856,6 +1856,19 @@ function make_glide_api(): typeof glide {
         });
       },
     },
+    addons: {
+      async install_from_url(xpi_url): Promise<glide.Addon> {
+        const installer = await AddonManager.getInstallForURL(xpi_url);
+        const addon = await installer.install() as unknown as Addon;
+        return {
+          id: addon.id,
+          name: addon.name,
+          active: addon.isActive,
+          version: addon.version,
+          description: addon.description,
+        };
+      },
+    },
     keys: {
       async send(input, opts) {
         const EventUtils = ChromeUtils.importESModule("chrome://glide/content/event-utils.mjs", { global: "current" });

@@ -75,6 +75,8 @@ text-decoration: none;
 [`glide.buf.keymaps`](#glide.buf.keymaps)\
 [`glide.buf.keymaps.set()`](#glide.buf.keymaps.set)\
 [`glide.buf.keymaps.del()`](#glide.buf.keymaps.del)\
+[`glide.addons`](#glide.addons)\
+[`glide.addons.install_from_url()`](#glide.addons.install_from_url)\
 [`glide.keys`](#glide.keys)\
 [`glide.keys.send()`](#glide.keys.send)\
 [`glide.keys.next()`](#glide.keys.next)\
@@ -103,6 +105,7 @@ text-decoration: none;
 [`glide.CompletedProcess`](#glide.CompletedProcess)\
 [`glide.RGBString`](#glide.RGBString)\
 [`glide.TabWithID`](#glide.TabWithID)\
+[`glide.Addon`](#glide.Addon)\
 [`glide.KeyEvent`](#glide.KeyEvent)\
 [`glide.KeySendOptions`](#glide.KeySendOptions)\
 [`glide.KeymapCallback`](#glide.KeymapCallback)\
@@ -464,6 +467,17 @@ Remove the mapping of {lhs} for the {modes} where the map command applies.
 
 The mapping may remain defined for other modes where it applies.
 
+## • `glide.addons` {% id="glide.addons" %}
+
+{% api-heading id="glide.addons.install_from_url" %}
+glide.addons.install_from_url(xpi_url): Promise<glide.Addon>
+{% /api-heading %}
+
+Install an addon from the given XPI URL.
+
+You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
+the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
+
 ## • `glide.keys` {% id="glide.keys" %}
 
 {% api-heading id="glide.keys.send" %}
@@ -791,6 +805,16 @@ A web extension tab that is guaranteed to have the `ts:id` property present.
 Omit<Browser.Tabs.Tab, "id"> & {
     id: number;
 }
+```
+
+## • `glide.Addon` {% id="glide.Addon" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+readonly id: string;
+readonly name: string;
+readonly description: string;
+readonly version: string;
+readonly active: boolean;
 ```
 
 ## • `glide.KeyEvent` {% id="glide.KeyEvent" %}

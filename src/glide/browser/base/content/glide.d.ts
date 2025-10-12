@@ -470,6 +470,16 @@ declare global {
       };
     };
 
+    addons: {
+      /**
+       * Install an addon from the given XPI URL.
+       *
+       * You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
+       * the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
+       */
+      install_from_url(xpi_url: string): Promise<glide.Addon>;
+    };
+
     keys: {
       /**
        * Send a key sequence to the browser, simulating physical key presses.
@@ -943,6 +953,14 @@ declare global {
 
     /** A web extension tab that is guaranteed to have the `ts:id` property present. */
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
+
+    export type Addon = {
+      readonly id: string;
+      readonly name: string;
+      readonly description: string;
+      readonly version: string;
+      readonly active: boolean;
+    };
 
     export type KeyEvent = KeyboardEvent & {
       /**
