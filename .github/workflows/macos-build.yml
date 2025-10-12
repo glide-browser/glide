@@ -13,7 +13,7 @@ on:
       MOZ_BUILD_DATE:
         type: string
         default: ""
-        description: "Corresponds to the build id"
+        description: "Set the build id"
   workflow_call:
     inputs:
       artifacts:
@@ -23,7 +23,7 @@ on:
       MOZ_BUILD_DATE:
         type: string
         default: ""
-        description: "Corresponds to the build id"
+        description: "Set the build id"
 
 jobs:
   macos-build:
