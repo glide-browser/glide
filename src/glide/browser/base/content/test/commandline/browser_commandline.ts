@@ -217,3 +217,17 @@ add_task(async function test_commandline_tab_reopen() {
     await waiter(() => GlideTestUtils.commandline.focused_row()?.classList.contains("TabCompletionOption")).ok();
   });
 });
+
+add_task(async function test_commandline_keymaps() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.excmds.create({ name: "foobarbaz" }, () => {});
+    glide.keymaps.set("normal", "<leader>~~~", "foobarbaz" as any);
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":foobarbaz");
+    await until(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent === "foobarbaz");
+
+    is(GlideTestUtils.commandline.focused_row()?.children[2]?.textContent, "<leader>~~~");
+  });
+});

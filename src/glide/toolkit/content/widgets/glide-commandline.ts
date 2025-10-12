@@ -142,6 +142,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
           children: [
             DOM.create_element("td", { className: "excmd", children: option.name }),
             DOM.create_element("td", { className: "documentation", children: option.description }),
+            DOM.create_element("td", { className: "keymap", children: option.keymap ?? "" }),
           ],
         });
         table.appendChild(row);
@@ -260,12 +261,28 @@ export type GlideCommandlineGroup = "excmd" | "tab";
     #init_excmds() {
       this.#options = [];
 
-      for (const command of GLIDE_EXCOMMANDS) {
-        this.#options.push(command);
+      const excmd_keymaps = new Map<string, string>();
+      for (const keymaps of GlideBrowser.api.keymaps.list("normal")) {
+        if (typeof keymaps.rhs === "string") {
+          excmd_keymaps.set(keymaps.rhs, keymaps.lhs);
+        }
       }
 
+      for (const command of GLIDE_EXCOMMANDS) {
+        const keymap = excmd_keymaps.get(command.name);
+        if (keymap) {
+          this.#options.push({ ...command, keymap });
+        } else {
+          this.#options.push(command);
+        }
+      }
       for (const command of GlideBrowser.user_excmds.values()) {
-        this.#options.push(command);
+        const keymap = excmd_keymaps.get(command.name);
+        if (keymap) {
+          this.#options.push({ ...command, keymap });
+        } else {
+          this.#options.push(command);
+        }
       }
     }
 

@@ -8,6 +8,7 @@ declare type GlideCommandlineGroup =
 interface GlideCommandlineCompletionOption {
   name: string;
   description: string;
+  keymap?: string;
 }
 
 type Glide = typeof glide;
