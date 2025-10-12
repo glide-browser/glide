@@ -272,15 +272,17 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       }
 
       for (const command of GLIDE_EXCOMMANDS) {
-        if (excmd_keymaps.has(command.name)) {
-          this.#options.push({ ...command, keymap: excmd_keymaps.get(command.name) });
+        const keymap = excmd_keymaps.get(command.name);
+        if (keymap) {
+          this.#options.push({ ...command, keymap });
         } else {
           this.#options.push(command);
         }
       }
       for (const command of GlideBrowser.user_excmds.values()) {
-        if (excmd_keymaps.has(command.name)) {
-          this.#options.push({ ...command, keymap: excmd_keymaps.get(command.name) });
+        const keymap = excmd_keymaps.get(command.name);
+        if (keymap) {
+          this.#options.push({ ...command, keymap });
         } else {
           this.#options.push(command);
         }
