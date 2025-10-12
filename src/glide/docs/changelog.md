@@ -17,6 +17,26 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.52a
+
+- Bumped Firefox from 144.0b8 to 144.0b9.
+- Fixed synthesizing special keys, e.g. `glide.keys.send("<down>")`.
+- Fixed the font family for hints, it now falls back to monospace instead of serif.
+- Fixed locale fetching, you can now download locales other than en-US in the settings page.
+- Fixed incorrect "new update" notification under certain conditions.
+- Fixed passing arguments to custom excmds from the commandline.
+- Fixed some web extension method return types to indicate a `Promise` is returned.
+- Fixed tab commandline not always focusing the first tab.
+- Enabled loading unsigned extensions when the `path:xpinstall.signatures.required` pref is set.
+- Enabled WebAuthn on Linux.
+- Enabled access to missing Web Extension APIs, `tabGroups`, `activityLog`, `geckoProfiler`, and `networkStatus`.
+  - N.B. these APIs haven't all been tested fully yet, so they may not work as expected. Prior to this release, you could not use them at all.
+- Added `glide.tabs.query()` as an alias to `browser.tabs.query()` for better discoverability.
+  - Thank you [@roceb](https://github.com/roceb) for the contribution!
+- Added keymaps to the commandline UI, so you can easily identify what commands are mapped to.
+  - Thank you to [@jacobzim-stl](https://github.com/jacobzim-stl) for the contribution!
+- Disabled the AI chat button in the context menu.
+
 # 0.1.51a
 
 ### Breaking changes {% id="0.1.51a-breaking-changes" %}
