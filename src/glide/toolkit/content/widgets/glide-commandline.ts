@@ -142,10 +142,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
           children: [
             DOM.create_element("td", { className: "excmd", children: option.name }),
             DOM.create_element("td", { className: "documentation", children: option.description }),
-            DOM.create_element("td", {
-              className: "keymap",
-              children: option.keymap ?? "",
-            }),
+            DOM.create_element("td", { className: "keymap", children: option.keymap ?? "" }),
           ],
         });
         table.appendChild(row);
