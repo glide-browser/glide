@@ -264,7 +264,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       const excmd_keymaps = new Map<string, string>();
       for (const keymaps of GlideBrowser.api.keymaps.list("normal")) {
         if (typeof keymaps.rhs === "string") {
-          excmd_keymaps.set(keymaps.rhs as string, keymaps.lhs);
+          excmd_keymaps.set(keymaps.rhs, keymaps.lhs);
         }
       }
 
