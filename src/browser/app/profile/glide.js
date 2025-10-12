@@ -10,20 +10,6 @@ pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 // (e.g. firefox browser dom updates)
 pref("app.update.auto", false);
 
-#ifdef XP_MACOSX
-  // disable webauthn until apple grants us access to the entitlement
-  pref("security.webauth.webauthn", false);
-  pref("security.webauth.webauthn_enable_softtoken", false);
-  pref("security.webauth.webauthn_enable_usbtoken", false);
-  pref("security.webauthn.enable_conditional_mediation", false);
-  pref("security.webauthn.ctap2", false);
-  pref("security.webauthn.enable_conditional_mediation", false);
-  pref("security.webauthn.enable_json_serialization_methods", false);
-  pref("security.webauthn.enable_macos_passkeys", false);
-  pref("security.webauthn.show_ms_settings_link", false);
-  pref("security.webauthn.webauthn_enable_android_fido2.residentkey", false);
-#endif
-
 // disable AI by default
 pref("browser.ml.enable", false);
 pref("browser.ml.chat.menu", false);
