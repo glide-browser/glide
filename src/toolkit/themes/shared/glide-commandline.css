@@ -238,7 +238,7 @@ xul|glide-commandline input:focus {
   display: table-cell;
   opacity: 0.7;
   width: 10%;
-  transition: width 0.3s ease;
+  transition: width 0.1s ease;
 }
 
 @media screen and (min-width: 600px) {
