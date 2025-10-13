@@ -71,6 +71,17 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           RELEASE_SHA: ${{ github.sha }}
 
+      # tmp
+      - name: Check release is not published
+        run: |
+          if gh release view $VERSION --json isDraft --jq '.isDraft' | grep -q 'false'; then
+            echo -e "Error: Release $VERSION is already published. Refusing to continue."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+
   linux:
     if: ${{ inputs.linux }}
 
