@@ -163,6 +163,16 @@ jobs:
     environment: release
 
     steps:
+      - name: Check release is not published
+        run: |
+          if gh release view $VERSION --json isDraft --jq '.isDraft' | grep -q 'false'; then
+            echo -e "Error: Release $VERSION is already published. Refusing to continue."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          VERSION: ${{ needs.metadata.outputs.version }}
+
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           persist-credentials: false
