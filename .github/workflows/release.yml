@@ -7,6 +7,10 @@ on:
         description: "dry run"
         type: boolean
         default: true
+      sign:
+        description: "sign"
+        type: boolean
+        default: false
       linux:
         description: "linux"
         type: boolean
@@ -92,7 +96,7 @@ jobs:
       MOZ_BUILD_DATE: ${{ needs.metadata.outputs.build_id }}
 
   macos-sign:
-    if: ${{ !inputs.dry_run && inputs.macos }}
+    if: ${{ inputs.sign && inputs.macos }}
 
     name: macOS sign
     needs: [macos]
