@@ -971,6 +971,8 @@ declare global {
       readonly description: string;
       readonly version: string;
       readonly active: boolean;
+
+      uninstall(): Promise<void>;
     };
 
     // @docs-expand-type-body

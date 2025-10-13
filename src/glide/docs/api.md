@@ -829,6 +829,7 @@ readonly name: string;
 readonly description: string;
 readonly version: string;
 readonly active: boolean;
+uninstall(): Promise<void>;
 ```
 
 ## • `glide.AddonType` {% id="glide.AddonType" %}

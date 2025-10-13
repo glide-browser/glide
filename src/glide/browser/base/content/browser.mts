@@ -2230,6 +2230,10 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
     active: addon.isActive,
     version: addon.version,
     description: addon.description,
+
+    async uninstall() {
+      await addon.uninstall();
+    },
   };
 }
 

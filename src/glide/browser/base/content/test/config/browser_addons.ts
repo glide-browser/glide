@@ -8,6 +8,7 @@
 "use strict";
 
 const ADDON_ID = "amosigned-xpi@tests.mozilla.org";
+const ADDON_NAME = "XPI Test";
 
 async function setup() {
   await SpecialPowers.pushPrefEnv({
@@ -15,13 +16,6 @@ async function setup() {
       ["extensions.install.requireBuiltInCerts", false],
     ],
   });
-}
-
-async function teardown() {
-  const addon = await AddonManager.getAddonByID(ADDON_ID);
-  if (addon) {
-    await addon.uninstall();
-  }
 }
 
 add_task(async function test_install_addon_from_url() {
@@ -42,10 +36,10 @@ add_task(async function test_install_addon_from_url() {
 
   const addon = GlideBrowser.api.g.value as glide.Addon;
   is(addon.id, ADDON_ID);
-  is(addon.name, "XPI Test");
+  is(addon.name, ADDON_NAME);
   ok(addon.active);
 
-  await teardown();
+  await addon.uninstall();
 });
 
 add_task(async function test_addons_list() {
@@ -60,30 +54,34 @@ add_task(async function test_addons_list() {
     });
 
     glide.keymaps.set("normal", "~", async () => {
+      const ADDON_NAME = "XPI Test";
+
       var addons = await glide.addons.list();
-      assert(addons.find((addon) => addon.name === "XPI Test"));
+      assert(addons.find((addon) => addon.name === ADDON_NAME));
 
       var addons = await glide.addons.list("extension");
-      assert(addons.find((addon) => addon.name === "XPI Test"));
+      assert(addons.find((addon) => addon.name === ADDON_NAME));
 
       var addons = await glide.addons.list(["extension"]);
-      assert(addons.find((addon) => addon.name === "XPI Test"));
+      assert(addons.find((addon) => addon.name === ADDON_NAME));
 
       var addons = await glide.addons.list(["extension", "locale", "dictionary"]);
-      assert(addons.find((addon) => addon.name === "XPI Test"));
+      assert(addons.find((addon) => addon.name === ADDON_NAME));
 
       var addons = await glide.addons.list(["locale", "dictionary"]);
-      assert(!addons.find((addon) => addon.name === "XPI Test"));
+      assert(!addons.find((addon) => addon.name === ADDON_NAME));
 
       glide.g.value = true;
     });
   });
 
-  await waiter(() => GlideBrowser.api.g.value).ok("Waiting for addon to install");
+  const addon = await until(() => GlideBrowser.api.g.value as glide.Addon | undefined);
   GlideBrowser.api.g.value = undefined;
 
   await keys("~");
   await waiter(() => GlideBrowser.api.g.value).ok("Waiting for tests to finish");
 
-  await teardown();
+  await addon.uninstall();
+
+  notok((await GlideBrowser.api.addons.list()).find((a) => a.name === ADDON_NAME));
 });
