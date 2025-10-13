@@ -478,6 +478,17 @@ declare global {
        * the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
        */
       install_from_url(xpi_url: string): Promise<glide.Addon>;
+
+      /**
+       * List all installed addons.
+       *
+       * The returned addons can be filtered by type, for example to only return extensions:
+       *
+       * ```typescript
+       * await glide.addons.list('extension');
+       * ```
+       */
+      list(types?: glide.AddonType | glide.AddonType[]): Promise<glide.Addon[]>;
     };
 
     keys: {
@@ -961,6 +972,8 @@ declare global {
       readonly version: string;
       readonly active: boolean;
     };
+
+    export type AddonType = "extension" | "theme" | "locale" | "dictionary" | "sitepermission";
 
     export type KeyEvent = KeyboardEvent & {
       /**

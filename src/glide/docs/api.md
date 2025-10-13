@@ -77,6 +77,7 @@ text-decoration: none;
 [`glide.buf.keymaps.del()`](#glide.buf.keymaps.del)\
 [`glide.addons`](#glide.addons)\
 [`glide.addons.install_from_url()`](#glide.addons.install_from_url)\
+[`glide.addons.list()`](#glide.addons.list)\
 [`glide.keys`](#glide.keys)\
 [`glide.keys.send()`](#glide.keys.send)\
 [`glide.keys.next()`](#glide.keys.next)\
@@ -106,6 +107,7 @@ text-decoration: none;
 [`glide.RGBString`](#glide.RGBString)\
 [`glide.TabWithID`](#glide.TabWithID)\
 [`glide.Addon`](#glide.Addon)\
+[`glide.AddonType`](#glide.AddonType)\
 [`glide.KeyEvent`](#glide.KeyEvent)\
 [`glide.KeySendOptions`](#glide.KeySendOptions)\
 [`glide.KeymapCallback`](#glide.KeymapCallback)\
@@ -478,6 +480,18 @@ Install an addon from the given XPI URL.
 You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
 the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
 
+{% api-heading id="glide.addons.list" %}
+glide.addons.list(types?): Promise<glide.Addon[]>
+{% /api-heading %}
+
+List all installed addons.
+
+The returned addons can be filtered by type, for example to only return extensions:
+
+```typescript
+await glide.addons.list("extension");
+```
+
 ## • `glide.keys` {% id="glide.keys" %}
 
 {% api-heading id="glide.keys.send" %}
@@ -816,6 +830,8 @@ readonly description: string;
 readonly version: string;
 readonly active: boolean;
 ```
+
+## • `glide.AddonType: "extension" | "theme" | "locale" | "dictionary" | "sitepermission"` {% id="glide.AddonType" %}
 
 ## • `glide.KeyEvent` {% id="glide.KeyEvent" %}
 

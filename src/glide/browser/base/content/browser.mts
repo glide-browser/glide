@@ -1860,13 +1860,16 @@ function make_glide_api(): typeof glide {
       async install_from_url(xpi_url): Promise<glide.Addon> {
         const installer = await AddonManager.getInstallForURL(xpi_url);
         const addon = await installer.install() as unknown as Addon;
-        return {
-          id: addon.id,
-          name: addon.name,
-          active: addon.isActive,
-          version: addon.version,
-          description: addon.description,
-        };
+        return firefox_addon_to_glide(addon);
+      },
+
+      async list(types: glide.AddonType | glide.AddonType[]): Promise<glide.Addon[]> {
+        const addons = await (typeof types === "string"
+          ? AddonManager.getAddonsByTypes([types])
+          : Array.isArray(types)
+          ? AddonManager.getAddonsByTypes(types)
+          : AddonManager.getAllAddons());
+        return addons.map(firefox_addon_to_glide);
       },
     },
     keys: {
@@ -2217,6 +2220,16 @@ function make_glide_api(): typeof glide {
         }
       },
     },
+  };
+}
+
+function firefox_addon_to_glide(addon: Addon): glide.Addon {
+  return {
+    id: addon.id,
+    name: addon.name,
+    active: addon.isActive,
+    version: addon.version,
+    description: addon.description,
   };
 }
 

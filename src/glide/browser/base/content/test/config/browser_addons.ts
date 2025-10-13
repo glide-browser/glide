@@ -47,3 +47,43 @@ add_task(async function test_install_addon_from_url() {
 
   await teardown();
 });
+
+add_task(async function test_addons_list() {
+  await setup();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmds.create("ConfigLoaded", async () => {
+      // mochitest resolves example.com to local files
+      glide.g.value = await glide.addons.install_from_url(
+        "https://example.com/browser/toolkit/mozapps/extensions/test/xpinstall/amosigned.xpi",
+      );
+    });
+
+    glide.keymaps.set("normal", "~", async () => {
+      var addons = await glide.addons.list();
+      assert(addons.find((addon) => addon.name === "XPI Test"));
+
+      var addons = await glide.addons.list("extension");
+      assert(addons.find((addon) => addon.name === "XPI Test"));
+
+      var addons = await glide.addons.list(["extension"]);
+      assert(addons.find((addon) => addon.name === "XPI Test"));
+
+      var addons = await glide.addons.list(["extension", "locale", "dictionary"]);
+      assert(addons.find((addon) => addon.name === "XPI Test"));
+
+      var addons = await glide.addons.list(["locale", "dictionary"]);
+      assert(!addons.find((addon) => addon.name === "XPI Test"));
+
+      glide.g.value = true;
+    });
+  });
+
+  await waiter(() => GlideBrowser.api.g.value).ok("Waiting for addon to install");
+  GlideBrowser.api.g.value = undefined;
+
+  await keys("~");
+  await waiter(() => GlideBrowser.api.g.value).ok("Waiting for tests to finish");
+
+  await teardown();
+});
