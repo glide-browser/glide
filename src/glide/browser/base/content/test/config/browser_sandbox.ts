@@ -361,3 +361,20 @@ function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
     yield element as HTMLElement;
   }
 }
+
+add_task(async function test_correct_realm_instances() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = {
+        ["glide.ctx.url"]: glide.ctx.url instanceof URL,
+      };
+    });
+  });
+
+  await keys("~");
+
+  const checks = await until(() => GlideBrowser.api.g.value);
+  for (const [name, result] of Object.entries(checks)) {
+    ok(result, `${name} is created in the correct realm`);
+  }
+});

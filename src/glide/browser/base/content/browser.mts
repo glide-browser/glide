@@ -1689,7 +1689,7 @@ function make_glide_api(): typeof glide {
         if (!url) {
           throw new Error("Could not resolve the current URL.");
         }
-        return new URL(url);
+        return new GlideBrowser._sandbox_window.URL(url);
       },
 
       get os() {
