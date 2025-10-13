@@ -298,7 +298,7 @@ class GlideBrowserClass {
   #sandbox: Sandbox | null = null;
   get config_sandbox() {
     this.#sandbox ??= create_sandbox({
-      window: this._sandbox_window,
+      window: this.sandbox_window,
       original_window: window,
       document: this._mirrored_document,
       console,
@@ -320,7 +320,7 @@ class GlideBrowserClass {
     return redefine_getter(this, "_hidden_browser", Services.appShell.createWindowlessBrowser(/* isChrome */ false));
   }
 
-  get _sandbox_window(): HiddenWindow {
+  get sandbox_window(): HiddenWindow {
     return assert_present(this._hidden_browser.browsingContext.window) as HiddenWindow;
   }
 
@@ -1499,8 +1499,8 @@ class GlideBrowserClass {
   }
 
   #keyboard_event_to_glide(event: KeyboardEvent, keyn: string): glide.KeyEvent {
-    const init = Cu.cloneInto(event.initDict, this._sandbox_window);
-    const sandbox_event = (new this._sandbox_window.KeyboardEvent(event.type, init)) as glide.KeyEvent;
+    const init = Cu.cloneInto(event.initDict, this.sandbox_window);
+    const sandbox_event = (new this.sandbox_window.KeyboardEvent(event.type, init)) as glide.KeyEvent;
     sandbox_event.glide_key = keyn;
     return sandbox_event;
   }
@@ -1689,7 +1689,7 @@ function make_glide_api(): typeof glide {
         if (!url) {
           throw new Error("Could not resolve the current URL.");
         }
-        return new GlideBrowser._sandbox_window.URL(url);
+        return new GlideBrowser.sandbox_window.URL(url);
       },
 
       get os() {
@@ -2178,7 +2178,7 @@ function make_glide_api(): typeof glide {
 
         const sandbox = create_sandbox({
           document: GlideBrowser._mirrored_document,
-          window: GlideBrowser._sandbox_window,
+          window: GlideBrowser.sandbox_window,
           original_window: window,
           console,
           get glide(): Glide {
