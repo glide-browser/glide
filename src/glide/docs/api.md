@@ -831,7 +831,12 @@ readonly version: string;
 readonly active: boolean;
 ```
 
-## • `glide.AddonType: "extension" | "theme" | "locale" | "dictionary" | "sitepermission"` {% id="glide.AddonType" %}
+## • `glide.AddonType` {% id="glide.AddonType" %}
+
+```typescript {% highlight_prefix="type x = " %}
+"extension" | "theme" | "locale" | "dictionary"
+  | "sitepermission";
+```
 
 ## • `glide.KeyEvent` {% id="glide.KeyEvent" %}
 

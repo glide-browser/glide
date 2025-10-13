@@ -973,6 +973,7 @@ declare global {
       readonly active: boolean;
     };
 
+    // @docs-expand-type-body
     export type AddonType = "extension" | "theme" | "locale" | "dictionary" | "sitepermission";
 
     export type KeyEvent = KeyboardEvent & {

@@ -239,8 +239,9 @@ function* traverse(
     const body = children(node)[2];
 
     if (body) {
-      // makes more sense to show these types inline in the header as they're short
-      if (Node.isTemplateLiteralTypeNode(body) || Node.isUnionTypeNode(body)) {
+      // makes more sense to show these types inline in the header as they're generally pretty short, unless we're
+      // explicitly told to expand them into the body.
+      if ((Node.isTemplateLiteralTypeNode(body) || Node.isUnionTypeNode(body)) && !directives.expand_type_body) {
         yield* Header(`${QualifiedName}: ${replace_surrounding(body.print(), "`", "'")}`, {
           parents,
           id: QualifiedName,
@@ -294,6 +295,7 @@ function* Header(
 interface DocsDirectives {
   skip?: boolean;
   expand_type_reference?: boolean;
+  expand_type_body?: boolean;
 }
 
 const DIRECTIVES_PATTERN = /\@(.*)/g;
@@ -309,6 +311,10 @@ function get_directives(node: TSM.Node): DocsDirectives {
       switch (name) {
         case "docs-expand-type-reference": {
           directives.expand_type_reference = true;
+          break;
+        }
+        case "docs-expand-type-body": {
+          directives.expand_type_body = true;
           break;
         }
         case "docs-skip": {
