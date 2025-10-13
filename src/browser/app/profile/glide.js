@@ -10,11 +10,6 @@ pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 // (e.g. firefox browser dom updates)
 pref("app.update.auto", false);
 
-#ifdef XP_MACOSX
-  // disable webauthn for macos passkeys until apple grants us access to the entitlement
-  pref("security.webauthn.enable_macos_passkeys", false);
-#endif
-
 // disable AI by default
 pref("browser.ml.enable", false);
 pref("browser.ml.chat.menu", false);
