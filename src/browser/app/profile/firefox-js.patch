@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index dd170f73438017cc7f2d89033f387c9f49d2eab4..bf28d72e4205ef5702b016e251808ac1bd34eb31 100644
+index 920272322c92e5e075cce63ca535e99549ccb92a..4a75d69d1c31206699da4393c92debaf9c290428 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3478,3 +3478,5 @@ pref("toolkit.rust-components.logging.crates", "");
+@@ -3492,3 +3492,5 @@ pref("toolkit.rust-components.logging.internal-level", "Warn");
  
- // Log level for the internal logs in `AppServicesTracing.sys.mjs`
- pref("toolkit.rust-components.logging.internal-level", "Warn");
+ // Settings Redesign 2025 prefs
+ pref("browser.settings-redesign.enabled", false);
 +
 +#include glide.js

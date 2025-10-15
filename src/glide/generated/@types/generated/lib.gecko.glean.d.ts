@@ -73,7 +73,6 @@ interface GleanImpl {
     cachePurgeDueToMemoryLimit: Record<"cache_memory_limit"|"meta_data_file_size_limit", GleanCounter>;
     cookieAccessFixupDiff: GleanCustomDistribution;
     cookieChipsPartitionLimitOverflow: GleanCustomDistribution;
-    cookieCountInvalidFirstPartyPartitionedInDb: GleanCounter;
     cookieCountPartByKey: GleanCustomDistribution;
     cookieCountPartitioned: GleanCustomDistribution;
     cookieCountTotal: GleanCustomDistribution;
@@ -195,7 +194,6 @@ interface GleanImpl {
     setCookieForeign: GleanNumerator;
     setCookieForeignPartitioned: GleanNumerator;
     setCookiePartitioned: GleanNumerator;
-    setInvalidFirstPartyPartitionedCookie: GleanCounter;
     speculativeConnectOutcome: Record<"aborted_https_not_enabled"|"aborted_socket_fail"|"aborted_socket_limit"|"successful", GleanCounter>;
     sqliteCookiesBlockMainThread: GleanTimingDistribution;
     sqliteCookiesTimeToBlockMainThread: GleanTimingDistribution;
@@ -354,19 +352,6 @@ interface GleanImpl {
     userActionOnBlockedDownload: Record<string, GleanCustomDistribution>;
   }
 
-  glamExperiment: {
-    panelShown: GleanCounter;
-    activeTicks: GleanCounter;
-    largestContentfulPaint: GleanTimingDistribution;
-    protectTime: GleanTimingDistribution;
-    httpContentHtml5parserOndatafinishedToOnstopDelay: GleanTimingDistribution;
-    osSocketLimitReached: GleanCounter;
-    subCompleteLoadNet: GleanTimingDistribution;
-    used: GleanCounter;
-    cpuTimeBogusValues: GleanCounter;
-    totalCpuTimeMs: GleanCounter;
-  }
-
   extensionsButton: {
     openViaAppMenu: GleanEventWithExtras<{ is_extensions_button_visible?: string, is_extensions_panel_empty?: string }>;
     prefersHiddenButton: GleanBoolean;
@@ -415,7 +400,6 @@ interface GleanImpl {
     onboardingFinish: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingLearnMore: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderChoiceDisplayed: GleanEventWithExtras<{ provider?: string, step?: string }>;
-    onboardingProviderLearn: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderSelection: GleanEventWithExtras<{ provider?: string, step?: string }>;
     onboardingProviderTerms: GleanEventWithExtras<{ provider?: string, step?: string, text?: string }>;
     page: GleanBoolean;
@@ -709,7 +693,7 @@ interface GleanImpl {
     promoCardImpression: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     sectionsBlockSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     sectionsFollowSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
-    sectionsImpression: GleanEventWithExtras<{ content_redacted?: string, is_section_followed?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
+    sectionsImpression: GleanEventWithExtras<{ content_redacted?: string, is_section_followed?: string, layout_name?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     sectionsUnblockSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     sectionsUnfollowSection: GleanEventWithExtras<{ content_redacted?: string, event_source?: string, newtab_visit_id?: string, section?: string, section_position?: string }>;
     selectedTopics: GleanStringList;
@@ -801,11 +785,11 @@ interface GleanImpl {
 
   topsites: {
     add: GleanEventWithExtras<{ advertiser_name?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string }>;
-    click: GleanEventWithExtras<{ advertiser_name?: string, is_pinned?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string }>;
+    click: GleanEventWithExtras<{ advertiser_name?: string, is_pinned?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string, visible_topsites?: string }>;
     dismiss: GleanEventWithExtras<{ advertiser_name?: string, content_redacted?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string }>;
     edit: GleanEventWithExtras<{ advertiser_name?: string, has_title_changed?: string, has_url_changed?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string }>;
     enabled: GleanBoolean;
-    impression: GleanEventWithExtras<{ advertiser_name?: string, is_pinned?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string }>;
+    impression: GleanEventWithExtras<{ advertiser_name?: string, is_pinned?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string, visible_topsites?: string }>;
     pin: GleanEventWithExtras<{ advertiser_name?: string, is_sponsored?: string, newtab_visit_id?: string, position?: string, tile_id?: string }>;
     prefChanged: GleanEventWithExtras<{ new_value?: string, pref_name?: string }>;
     rows: GleanQuantity;
@@ -3144,12 +3128,10 @@ interface GleanImpl {
     initMouseEvent: GleanCounter;
     initNsmouseEvent: GleanCounter;
     installTriggerDeprecated: GleanCounter;
-    installTriggerInstallDeprecated: GleanCounter;
     lenientSetter: GleanCounter;
     lenientThis: GleanCounter;
     mathMlDeprecatedMathSpaceValue2: GleanCounter;
     mathMlDeprecatedMathVariant: GleanCounter;
-    mathMlDeprecatedStixgeneralOperatorStretching: GleanCounter;
     motionEvent: GleanCounter;
     mouseEventMozPressure: GleanCounter;
     mozInputSource: GleanCounter;
@@ -3195,12 +3177,10 @@ interface GleanImpl {
     initMouseEvent: GleanCounter;
     initNsmouseEvent: GleanCounter;
     installTriggerDeprecated: GleanCounter;
-    installTriggerInstallDeprecated: GleanCounter;
     lenientSetter: GleanCounter;
     lenientThis: GleanCounter;
     mathMlDeprecatedMathSpaceValue2: GleanCounter;
     mathMlDeprecatedMathVariant: GleanCounter;
-    mathMlDeprecatedStixgeneralOperatorStretching: GleanCounter;
     motionEvent: GleanCounter;
     mouseEventMozPressure: GleanCounter;
     mozInputSource: GleanCounter;
@@ -4352,7 +4332,7 @@ interface GleanImpl {
     jsExecAsmJs: GleanTimingDistribution;
     largestContentfulPaint: GleanTimingDistribution;
     largestContentfulPaintFromResponseStart: GleanTimingDistribution;
-    pageLoad: GleanEventWithExtras<{ cache_disposition?: string, delazify_time?: string, dns_lookup_time?: string, document_features?: string, fcp_time?: string, has_ssd?: string, http_ver?: string, js_exec_time?: string, lcp_time?: string, load_time?: string, load_type?: string, network_type?: string, redirect_count?: string, redirect_time?: string, response_time?: string, same_origin_nav?: string, time_to_request_start?: string, tls_handshake_time?: string, trr_domain?: string, user_features?: string, using_webdriver?: string }>;
+    pageLoad: GleanEventWithExtras<{ android_app_link_launch_type?: string, android_app_link_to_navigation_start?: string, cache_disposition?: string, delazify_time?: string, dns_lookup_time?: string, document_features?: string, fcp_time?: string, has_ssd?: string, http_ver?: string, js_exec_time?: string, lcp_time?: string, load_time?: string, load_type?: string, network_type?: string, redirect_count?: string, redirect_time?: string, response_time?: string, same_origin_nav?: string, time_to_request_start?: string, tls_handshake_time?: string, trr_domain?: string, user_features?: string, using_webdriver?: string }>;
     pageLoadDomain: GleanEventWithExtras<{ document_features?: string, domain?: string, http_ver?: string, lcp_time?: string, load_type?: string, same_origin_nav?: string }>;
   }
 
@@ -6088,6 +6068,7 @@ interface GleanImpl {
     enabledOptInPanel: GleanEventWithExtras<{ value?: string }>;
     enabledPrefChange: GleanEventNoExtras;
     getUnlimitedMasksReusePanel: GleanEventWithExtras<{ value?: string }>;
+    placedEmailMask: GleanEventWithExtras<{ error_code?: string, value?: string }>;
     postponedOptInPanel: GleanEventWithExtras<{ value?: string }>;
     reuseMaskReusePanel: GleanEventWithExtras<{ value?: string }>;
     shownFillUsername: GleanEventWithExtras<{ error_code?: string, value?: string }>;
@@ -6873,7 +6854,10 @@ interface GleanImpl {
     completeRemoteStatus2: Record<string, GleanCustomDistribution>;
     completeServerResponseTime: Record<string, GleanTimingDistribution>;
     completeTimeout: GleanDualLabeledCounter;
+    completion: GleanEventWithExtras<{ hit?: string, table_name?: string }>;
     completionError: GleanCustomDistribution;
+    lookupHit: Record<"ads-track-digest256"|"analytics-track-digest256"|"anti-fraud-track-digest256"|"base-cryptomining-track-digest256"|"base-email-track-digest256"|"base-fingerprinting-track-digest256"|"base-track-digest256"|"consent-manager-track-digest256"|"content-cryptomining-track-digest256"|"content-email-track-digest256"|"content-fingerprinting-track-digest256"|"content-track-digest256"|"goog-badbinurl-proto"|"goog-downloadwhite-proto"|"goog-harmful-proto"|"goog-malware-proto"|"goog-phish-proto"|"goog-unwanted-proto"|"google-trackwhite-digest256"|"googpub-phish-proto"|"mozplugin-block-digest256"|"mozstd-trackwhite-digest256"|"social-track-digest256"|"social-tracking-protection-digest256"|"social-tracking-protection-facebook-digest256"|"social-tracking-protection-linkedin-digest256"|"social-tracking-protection-twitter-digest256"|"test-malware-simple"|"test-unwanted-simple", GleanCounter>;
+    lookupMiss: Record<"ads-track-digest256"|"analytics-track-digest256"|"anti-fraud-track-digest256"|"base-cryptomining-track-digest256"|"base-email-track-digest256"|"base-fingerprinting-track-digest256"|"base-track-digest256"|"consent-manager-track-digest256"|"content-cryptomining-track-digest256"|"content-email-track-digest256"|"content-fingerprinting-track-digest256"|"content-track-digest256"|"goog-badbinurl-proto"|"goog-downloadwhite-proto"|"goog-harmful-proto"|"goog-malware-proto"|"goog-phish-proto"|"goog-unwanted-proto"|"google-trackwhite-digest256"|"googpub-phish-proto"|"mozplugin-block-digest256"|"mozstd-trackwhite-digest256"|"social-track-digest256"|"social-tracking-protection-digest256"|"social-tracking-protection-facebook-digest256"|"social-tracking-protection-linkedin-digest256"|"social-tracking-protection-twitter-digest256"|"test-malware-simple"|"test-unwanted-simple", GleanCounter>;
     lookupTime2: GleanTimingDistribution;
     shutdownTime: GleanTimingDistribution;
     threathitNetworkError: GleanCustomDistribution;

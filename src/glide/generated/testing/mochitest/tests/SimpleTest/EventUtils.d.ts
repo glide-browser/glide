@@ -39,8 +39,10 @@ function isHidden(aElement: any): boolean;
  * actual node) . The "event" passed in to aEvent is just a JavaScript
  * object with the properties set that the real drag event object should
  * have. This includes the type of the drag event.
+ *
+ * @returns {boolean}
  */
-function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): any;
+function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): boolean;
 /**
  * Send the char aChar to the focused element.  This method handles casing of
  * chars (sends the right charcode, and sends a shift key for uppercase chars).
@@ -813,12 +815,12 @@ function createDragEventObject(aType: any, aDestElement: any, aDestWindow: any, 
  *        Default is to match ``aWindow``.
  * @param {Object} [aDragEvent={}]
  *        Defaults to empty object. Overwrites an object passed to sendDragEvent.
- * @return {Array}
+ * @return {[boolean, DataTransfer]}
  *        A two element array, where the first element is the value returned
  *        from sendDragEvent for dragover event, and the second element is the
  *        dataTransfer for the current drag session.
  */
-function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: any): any[];
+function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: any): [boolean, DataTransfer];
 /**
  * Emulate the drop event and mouseup event.
  * This should be called after synthesizeDragOver.
