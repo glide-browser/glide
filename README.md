@@ -5,7 +5,7 @@
 
 <h1>Glide Browser</h1>
 
-<p>An extensible and keyboard-focused web browser built on Firefox</p>
+<p>An extensible and keyboard-driven web browser built on Firefox</p>
 
 <p>
     <a href="https://glide-browser.app">Documentation</a>
