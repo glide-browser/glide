@@ -5,7 +5,7 @@
 
 # Glide
 
-An [extensible](config.md) and [keyboard-focused](hints.md) web browser.
+An [extensible](config.md) and [keyboard-driven](hints.md) web browser.
 
 Features:
 
