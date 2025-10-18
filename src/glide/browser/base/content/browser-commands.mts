@@ -167,9 +167,9 @@ class GlideCommandsClass {
     }
 
     const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
-    const hint_alphabet = hint_keys.length == 0
-      ? Hinting.ALPHABET
-      : Hinting.ALPHABET.filter((k) => !hint_keys.includes(k));
+    const hint_alphabet = hint_keys.length
+      ? Hinting.ALPHABET.filter((k) => !hint_keys.includes(k))
+      : Hinting.ALPHABET;
     const labels = Strings.generate_prefix_free_codes(hint_alphabet, hints.length, Hinting.ALPHABET_COST_MAP);
 
     for (let i = 0; i < hints.length; i++) {
