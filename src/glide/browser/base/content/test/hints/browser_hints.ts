@@ -230,3 +230,27 @@ add_task(async function test_expandable_content_can_be_hinted() {
     is(is_open, true, "<details> content should be open after activating the hint");
   });
 });
+
+add_task(async function test_hint_keymaps_are_ignored() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("hint", "f", "keys <esc>");
+    glide.keymaps.set("normal", "j", "config_edit");
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async browser => {
+    var is_open = await SpecialPowers.spawn(browser, [], () => {
+      const summary = content.document.getElementById("summary-1");
+      summary.scrollIntoView();
+      return summary.parentElement.open;
+    });
+    await sleep_frames(10);
+    is(is_open, false, "<details> content should be hidden by default");
+
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideCommands.get_active_hints();
+    notok(hints.find(hint => hint.label === "f"), "'f' is hidden when remapped in hint mode");
+    ok(hints.find(hint => hint.label === "j"), "'j' is not mapped in hint mode");
+  });
+});
