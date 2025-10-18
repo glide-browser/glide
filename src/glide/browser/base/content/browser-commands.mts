@@ -166,7 +166,7 @@ class GlideCommandsClass {
       return;
     }
 
-    const hint_keys = glide.keymaps.list("hint").map((k) => k.lhs);
+    const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
     const hint_alphabet = hint_keys.length
       ? Hinting.ALPHABET
       : Hinting.ALPHABET.filter((k) => !hint_keys.includes(k));
