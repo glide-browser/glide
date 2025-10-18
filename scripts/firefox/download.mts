@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import meow from "meow";
+import Path from 'path';
 import config from "../../firefox.json" with { type: "json" };
 import { ENGINE_DIR, ROOT_DIR } from "../canonical-paths.mts";
 import { exists } from "../util.mts";
@@ -9,6 +10,7 @@ const cli = meow({
   importMeta: import.meta,
   allowUnknownFlags: false,
   flags: {
+    zen: { type: "boolean", default: false },
     force: { type: "boolean", default: false },
     fullHistory: { type: "boolean", default: false },
   },
@@ -35,6 +37,37 @@ async function main() {
   if (is_empty) {
     log.info("'engine/' is empty, removing it...");
     await fs.rmdir(ENGINE_DIR, { recursive: true });
+  }
+
+  if (cli.flags.zen) {
+    const tar_path = Path.join(ROOT_DIR, "firefox.source.tar.xz");
+
+    await run("curl", [
+      "-L",
+      "-o",
+      tar_path,
+      // TODO: version
+      `https://github.com/zen-browser/desktop/releases/download/1.16.4b/zen.source.tar.zst`,
+    ], { cwd: ROOT_DIR });
+
+    await fs.mkdir(ENGINE_DIR, { recursive: true });
+
+    await run("tar", [
+      "xf",
+      tar_path,
+      "-C",
+      ENGINE_DIR,
+    ]);
+    await run("git", ["init"], { cwd: ENGINE_DIR });
+    return;
+
+    // curl -L -o firefox.source.tar.xz https://download.cdn.mozilla.net/pub/mozilla.org/firefox/releases/144.0b5/source/firefox-144.0b5.source.tar.xz
+
+    // mkdir -p engine
+
+    // # note: the firefox tar unpacks to firefox-$version/
+
+    // tar xf firefox.source.tar.xz --strip-components=1 -C engine
   }
 
   // if it exists, fetch the latest changes

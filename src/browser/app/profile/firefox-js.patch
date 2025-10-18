@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 920272322c92e5e075cce63ca535e99549ccb92a..4a75d69d1c31206699da4393c92debaf9c290428 100644
+index 28abc7e1a7dae565d23a6cb02b5c4f0946de3c27..cafce0a356793929756aae3c27a2af2cf22b183e 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3492,3 +3492,5 @@ pref("toolkit.rust-components.logging.internal-level", "Warn");
+@@ -3459,3 +3459,5 @@ pref("browser.ipProtection.log", false);
+ pref("browser.ipProtection.guardian.endpoint", "https://vpn.mozilla.org/");
  
- // Settings Redesign 2025 prefs
- pref("browser.settings-redesign.enabled", false);
+ #include zen.js
 +
 +#include glide.js

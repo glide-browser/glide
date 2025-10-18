@@ -39,10 +39,8 @@ function isHidden(aElement: any): boolean;
  * actual node) . The "event" passed in to aEvent is just a JavaScript
  * object with the properties set that the real drag event object should
  * have. This includes the type of the drag event.
- *
- * @returns {boolean}
  */
-function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): boolean;
+function sendDragEvent(aEvent: any, aTarget: any, aWindow?: Window & typeof globalThis): any;
 /**
  * Send the char aChar to the focused element.  This method handles casing of
  * chars (sends the right charcode, and sends a shift key for uppercase chars).
@@ -72,100 +70,23 @@ function sendKey(aKey: any, aWindow: any): void;
  */
 function _parseModifiers(aEvent: any, aWindow?: Window & typeof globalThis): number;
 /**
- * Return the drag service.  Note that if we're in the headless mode, this
- * may return null because the service may be never instantiated (e.g., on
- * Linux).
+ * Synthesize a mouse event on a target. The actual client point is determined
+ * by taking the aTarget's client box and offseting it by aOffsetX and
+ * aOffsetY. This allows mouse clicks to be simulated by calling this method.
+ *
+ * aEvent is an object which may contain the properties:
+ *   `shiftKey`, `ctrlKey`, `altKey`, `metaKey`, `accessKey`, `clickCount`,
+ *   `button`, `type`.
+ *   For valid `type`s see nsIDOMWindowUtils' `sendMouseEvent`.
+ *
+ * If the type is specified, an mouse event of that type is fired. Otherwise,
+ * a mousedown followed by a mouseup is performed.
+ *
+ * aWindow is optional, and defaults to the current window object.
+ *
+ * Returns whether the event had preventDefault() called on it.
  */
-function getDragService(): any;
-/**
- * End drag session if there is.
- *
- * TODO: This should synthesize "drop" if necessary.
- *
- * @param left          X offset in the viewport
- * @param top           Y offset in the viewport
- * @param aEvent        The event data, the modifiers are applied to the
- *                      "dragend" event.
- * @param aWindow       The window.
- * @return              true if handled.  In this case, the caller should not
- *                      synthesize DOM events basically.
- */
-function _maybeEndDragSession(left: any, top: any, aEvent: any, aWindow: any): boolean;
-function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any): boolean;
-/**
- * @typedef {Object} MouseEventData
- *
- * @property {string} [accessKey] - The character or key associated with
- *     the access key event. Typically a single character used to activate a UI
- *     element via keyboard shortcuts (e.g., Alt + accessKey).
- * @property {boolean} [altKey] - If set to `true`, the Alt key will be
- *     considered pressed.
- * @property {boolean} [asyncEnabled] - If `true`, the event is
- *     dispatched to the parent process through APZ, without being injected
- *     into the OS event queue.
- * @property {number} [button=0] - Button to synthesize.
- * @property {number} [buttons] - Indicates which mouse buttons are pressed
- *     when a mouse event is triggered.
- * @property {number} [clickCount=1] - Number of clicks that have to be performed.
- * @property {boolean} [ctrlKey] - If set to `true`, the Ctrl key will
- *     be considered pressed.
- * @property {number} [id] - A unique identifier for the pointer causing the event.
- * @property {number} [inputSource] - Input source, see MouseEvent for values.
- *     Defaults to MouseEvent.MOZ_SOURCE_MOUSE.
- * @property {boolean} [isSynthesized] - Controls Event.isSynthesized value that
- *     helps identifying test related events
- * @property {boolean} [isWidgetEventSynthesized] - Controls WidgetMouseEvent.mReason value.
- * @property {boolean} [metaKey] - If set to `true`, the Meta key will
- *     be considered pressed.
- * @property {number} [pressure=0] - Touch input pressure (0.0 -> 1.0).
- * @property {boolean} [shiftKey] - If set to `true`, the Shift key will
- *     be considered pressed.
- * @property {string} [type] - Event type to synthesize. If not specified
- *     a `mousedown` followed by a `mouseup` are performed.
- *
- * @see nsIDOMWindowUtils.sendMouseEvent
- */
-/**
- * Synthesize a mouse event on a target.
- *
- * The actual client point is determined by taking the aTarget's client box
- * and offsetting it by aOffsetX and aOffsetY.
- *
- * Note that additional events may be fired as a result of this call. For
- * instance, typically a click event will be fired as a result of a
- * mousedown and mouseup in sequence.
- *
- * @param {Element} aTarget - DOM element to dispatch the event on.
- * @param {number} aOffsetX - X offset in CSS pixels from the element’s left edge.
- * @param {number} aOffsetY - Y offset in CSS pixels from the element’s top edge.
- * @param {MouseEventData} aEvent - Details of the mouse event to dispatch.
- * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
- * @param {Function} [aCallback] - A callback function that is invoked when the
- *                                 mouse event is dispatched.
- *
- * @returns {boolean} Whether the event had preventDefault() called on it.
- */
-function synthesizeMouse(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: MouseEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
-function synthesizeMouseAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): boolean;
-function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any, aCallback: any): boolean;
-/**
- * @typedef {Object} TouchEventData
- * @property {boolean} [aEvent.asyncEnabled] - If `true`, the event is
- * dispatched to the parent process through APZ, without being injected
- * into the OS event queue.
- * @property {string} [aEvent.type] - The touch event type. If undefined,
- * "touchstart" and "touchend" will be synthesized at same point.
- * @property {number | number[]} [aEvent.id] - The touch id. If you don't specify this,
- * default touch id will be used for first touch and further touch ids
- * are the values incremented from the first id.
- * @property {number | number[]} [aEvent.ry] - The X radius in CSS pixels of the touch
- * @property {number | number[]} [aEvent.ry] - The Y radius in CSS pixels of the touch
- * @property {number | number[]} [aEvent.angle] - The angle in degrees
- * @property {number | number[]} [aEvent.force] - The force of the touch
- * @property {number | number[]} [aEvent.tiltX] - The X tilt of the touch
- * @property {number | number[]} [aEvent.tiltY] - The Y tilt of the touch
- * @property {number | number[]} [aEvent.twist] - The twist of the touch
- */
+function synthesizeMouse(aTarget: any, aOffsetX: any, aOffsetY: any, aEvent: any, aWindow: any): boolean;
 /**
  * Synthesize one or more touches on aTarget. aTarget can be either Element
  * or Array of Elements.  aOffsetX, aOffsetY, aEvent.id, aEvent.rx, aEvent.ry,
@@ -187,6 +108,46 @@ function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any, aCallb
  */
 function synthesizeTouch(aTarget: Element | Element[], aOffsetX: number | number[], aOffsetY: number | number[], aEvent?: TouchEventData, aWindow?: DOMWindow): any;
 /**
+ * Return the drag service.  Note that if we're in the headless mode, this
+ * may return null because the service may be never instantiated (e.g., on
+ * Linux).
+ */
+function getDragService(): any;
+/**
+ * End drag session if there is.
+ *
+ * TODO: This should synthesize "drop" if necessary.
+ *
+ * @param left          X offset in the viewport
+ * @param top           Y offset in the viewport
+ * @param aEvent        The event data, the modifiers are applied to the
+ *                      "dragend" event.
+ * @param aWindow       The window.
+ * @return              true if handled.  In this case, the caller should not
+ *                      synthesize DOM events basically.
+ */
+function _maybeEndDragSession(left: any, top: any, aEvent: any, aWindow: any): boolean;
+function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any): boolean;
+function synthesizeMouseAtPoint(left: any, top: any, aEvent: any, aWindow?: Window & typeof globalThis): boolean;
+/**
+ * @typedef {Object} TouchEventData
+ * @property {boolean} [aEvent.asyncEnabled] - If `true`, the event is
+ * dispatched to the parent process through APZ, without being injected
+ * into the OS event queue.
+ * @property {string} [aEvent.type] - The touch event type. If undefined,
+ * "touchstart" and "touchend" will be synthesized at same point.
+ * @property {number | number[]} [aEvent.id] - The touch id. If you don't specify this,
+ * default touch id will be used for first touch and further touch ids
+ * are the values incremented from the first id.
+ * @property {number | number[]} [aEvent.ry] - The X radius in CSS pixels of the touch
+ * @property {number | number[]} [aEvent.ry] - The Y radius in CSS pixels of the touch
+ * @property {number | number[]} [aEvent.angle] - The angle in degrees
+ * @property {number | number[]} [aEvent.force] - The force of the touch
+ * @property {number | number[]} [aEvent.tiltX] - The X tilt of the touch
+ * @property {number | number[]} [aEvent.tiltY] - The Y tilt of the touch
+ * @property {number | number[]} [aEvent.twist] - The twist of the touch
+ */
+/**
  * Synthesize one or more touches at the points. aLeft, aTop, aEvent.id,
  * aEvent.rx, aEvent.ry, aEvent.angle, aEvent.force, aEvent.tiltX, aEvent.tiltY
  * and aEvent.twist can be either number or array of numbers (can be mixed).
@@ -203,6 +164,7 @@ function synthesizeTouch(aTarget: Element | Element[], aOffsetX: number | number
  * event is prevented.
  */
 function synthesizeTouchAtPoint(aLeft: number | number[], aTop: number | number[], aEvent?: TouchEventData, aWindow?: DOMWindow): any;
+function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any): boolean;
 /**
  * Synthesize one or more touches at the center of your target
  *
@@ -815,12 +777,12 @@ function createDragEventObject(aType: any, aDestElement: any, aDestWindow: any, 
  *        Default is to match ``aWindow``.
  * @param {Object} [aDragEvent={}]
  *        Defaults to empty object. Overwrites an object passed to sendDragEvent.
- * @return {[boolean, DataTransfer]}
+ * @return {Array}
  *        A two element array, where the first element is the value returned
  *        from sendDragEvent for dragover event, and the second element is the
  *        dataTransfer for the current drag session.
  */
-function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: any): [boolean, DataTransfer];
+function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: any): any[];
 /**
  * Emulate the drop event and mouseup event.
  * This should be called after synthesizeDragOver.
@@ -1315,80 +1277,6 @@ class EventCounter {
     unregister(): void;
     get count(): number;
 }
-type MouseEventData = {
-    /**
-     * - The character or key associated with
-     * the access key event. Typically a single character used to activate a UI
-     * element via keyboard shortcuts (e.g., Alt + accessKey).
-     */
-    accessKey?: string;
-    /**
-     * - If set to `true`, the Alt key will be
-     * considered pressed.
-     */
-    altKey?: boolean;
-    /**
-     * - If `true`, the event is
-     * dispatched to the parent process through APZ, without being injected
-     * into the OS event queue.
-     */
-    asyncEnabled?: boolean;
-    /**
-     * - Button to synthesize.
-     */
-    button?: number;
-    /**
-     * - Indicates which mouse buttons are pressed
-     * when a mouse event is triggered.
-     */
-    buttons?: number;
-    /**
-     * - Number of clicks that have to be performed.
-     */
-    clickCount?: number;
-    /**
-     * - If set to `true`, the Ctrl key will
-     * be considered pressed.
-     */
-    ctrlKey?: boolean;
-    /**
-     * - A unique identifier for the pointer causing the event.
-     */
-    id?: number;
-    /**
-     * - Input source, see MouseEvent for values.
-     * Defaults to MouseEvent.MOZ_SOURCE_MOUSE.
-     */
-    inputSource?: number;
-    /**
-     * - Controls Event.isSynthesized value that
-     * helps identifying test related events
-     */
-    isSynthesized?: boolean;
-    /**
-     * - Controls WidgetMouseEvent.mReason value.
-     */
-    isWidgetEventSynthesized?: boolean;
-    /**
-     * - If set to `true`, the Meta key will
-     * be considered pressed.
-     */
-    metaKey?: boolean;
-    /**
-     * - Touch input pressure (0.0 -> 1.0).
-     */
-    pressure?: number;
-    /**
-     * - If set to `true`, the Shift key will
-     * be considered pressed.
-     */
-    shiftKey?: boolean;
-    /**
-     * - Event type to synthesize. If not specified
-     * a `mousedown` followed by a `mouseup` are performed.
-     */
-    type?: string;
-};
 type TouchEventData = {
     /**
      * - If `true`, the event is
