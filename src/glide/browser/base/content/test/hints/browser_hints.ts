@@ -243,5 +243,7 @@ add_task(async function test_hint_keymaps_are_ignored() {
     const hints = GlideCommands.get_active_hints();
     notok(hints.find(hint => hint.label === "f"), "'f' is hidden when mapped in hint mode");
     ok(hints.find(hint => hint.label === "j"), "'j' is not mapped in hint mode");
+
+    await keys("<esc>");
   });
 });
