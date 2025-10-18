@@ -5,16 +5,6 @@
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
-export const ALPHABET = "hjklasdfgyuiopqwertnmzxcvb".split("");
-
-// prioritise the chars in their order in the above string
-// as we want to try and stay on the home row as much as possible
-export const ALPHABET_COST_MAP: Record<string, number> = {};
-let cost = 0;
-for (const char of ALPHABET) {
-  ALPHABET_COST_MAP[char] = cost += 0.1;
-}
-
 export type GlideHintIPC = Omit<glide.ContentHint, "element" | "label"> & {
   /**
    * Only included if the `debug: true` prop is passed

@@ -6,7 +6,6 @@
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
-const Hinting = ChromeUtils.importESModule("chrome://glide/content/hinting.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 /**
@@ -166,11 +165,13 @@ class GlideCommandsClass {
       return;
     }
 
+    const hint_chars = GlideBrowser.api.options.get("hint_chars");
     const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
-    const hint_alphabet = hint_keys.length
-      ? Hinting.ALPHABET.filter((k) => !hint_keys.includes(k))
-      : Hinting.ALPHABET;
-    const labels = Strings.generate_prefix_free_codes(hint_alphabet, hints.length, Hinting.ALPHABET_COST_MAP);
+
+    const alphabet = hint_keys.length
+      ? hint_chars.split("").filter((k) => !hint_keys.includes(k))
+      : hint_chars.split("");
+    const labels = Strings.generate_prefix_free_codes(alphabet, hints.length, this.#make_alphabet_cost_map(hint_chars));
 
     for (let i = 0; i < hints.length; i++) {
       const hint = hints[i]!;
@@ -188,6 +189,25 @@ class GlideCommandsClass {
     gBrowser.$hints_location = location;
 
     document!.body!.insertAdjacentElement("afterend", container);
+  }
+
+  #alphabet_cost_maps = new Map<string, Record<string, number>>();
+
+  #make_alphabet_cost_map(alphabet: string): Record<string, number> {
+    const cached = this.#alphabet_cost_maps.get(alphabet);
+    if (cached) {
+      return cached;
+    }
+
+    // prioritise the chars in their order in the above string
+    const cost_map: Record<string, number> = {};
+    let cost = 0;
+    for (const char of alphabet) {
+      cost_map[char] = cost += 0.1;
+    }
+
+    this.#alphabet_cost_maps.set(alphabet, cost_map);
+    return cost_map;
   }
 
   async #create_commandline(tab: BrowserTab, opts: { prefill?: string } = {}) {

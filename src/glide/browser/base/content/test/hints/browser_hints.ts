@@ -247,3 +247,26 @@ add_task(async function test_hint_keymaps_are_ignored() {
     await keys("<esc>");
   });
 });
+
+add_task(async function test_hint_keymaps_are_ignored() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.hint_chars = "abc";
+
+    glide.keymaps.set("normal", "f", () => {
+      glide.hints.show({
+        pick: (hints) => hints.slice(0, 2),
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideCommands.get_active_hints();
+    is(hints[0]?.label, "a");
+    is(hints[1]?.label, "b");
+
+    await keys("<esc>");
+  });
+});

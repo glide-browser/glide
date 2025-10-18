@@ -38,6 +38,7 @@ text-decoration: none;
 [`glide.o.which_key_delay`](#glide.o.which_key_delay)\
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
 [`glide.o.hint_size`](#glide.o.hint_size)\
+[`glide.o.hint_chars`](#glide.o.hint_chars)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -198,6 +199,12 @@ The font size of the hint label, directly corresponds to the
 [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) property.
 
 `ts:@default "11px"`
+
+### `glide.o.hint_chars: string` {% id="glide.o.hint_chars" %}
+
+The characters to include in hint labels.
+
+`ts:@default "hjklasdfgyuiopqwertnmzxcvb"`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 

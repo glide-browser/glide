@@ -1655,6 +1655,8 @@ class GlideOptions implements GlideO {
 
   which_key_delay = 300;
 
+  hint_chars = "hjklasdfgyuiopqwertnmzxcvb";
+
   #hint_size = "11px";
   get hint_size() {
     return this.#hint_size;

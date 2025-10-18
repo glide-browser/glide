@@ -886,6 +886,13 @@ declare global {
        * @default "11px"
        */
       hint_size: string;
+
+      /**
+       * The characters to include in hint labels.
+       *
+       * @default "hjklasdfgyuiopqwertnmzxcvb"
+       */
+      hint_chars: string;
     };
 
     export type SpawnOptions = {
