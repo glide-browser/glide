@@ -227,6 +227,9 @@ your own function or use an included one:
   combinations of the characters in [hint_chars](#glide.o.hint_chars).
   This is the default.
 
+- `glide.hints.label_numeric`: Generate sequential numeric labels,
+  starting at `1` and counting up. Ignores [hint_chars](#glide.o.hint_chars).
+
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
 Set buffer specific options.
