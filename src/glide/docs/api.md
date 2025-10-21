@@ -1,3 +1,9 @@
+<!--
+  This file is auto-generated from `pnpm build:docs` and `scripts/build-api-reference.mts`.
+
+  Do not edit it manually! Any changes will be lost.
+-->
+
 {% styles %}
 h1, h2 {
 font-size: revert !important;
