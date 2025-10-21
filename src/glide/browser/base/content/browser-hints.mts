@@ -56,13 +56,8 @@ class GlideHintsClass {
       return;
     }
 
-    const hint_chars = GlideBrowser.api.options.get("hint_chars");
-    const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
-
-    const alphabet = hint_keys.length
-      ? hint_chars.split("").filter((k) => !hint_keys.includes(k))
-      : hint_chars.split("");
-    const labels = Strings.generate_prefix_free_codes(alphabet, hints.length, this.#make_alphabet_cost_map(hint_chars));
+    const hint_gen = GlideBrowser.api.options.get("hint_label_generator");
+    const labels = hint_gen(ipc_hints);
 
     for (let i = 0; i < hints.length; i++) {
       const hint = hints[i]!;
@@ -166,6 +161,15 @@ class GlideHintsClass {
 
     this.#alphabet_cost_maps.set(alphabet, cost_map);
     return cost_map;
+  }
+
+  hint_label_prefix_free(len: number): string[] {
+    const hint_chars = GlideBrowser.api.options.get("hint_chars");
+    const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
+    const alphabet = hint_keys.length
+      ? hint_chars.split("").filter((k) => !hint_keys.includes(k))
+      : hint_chars.split("");
+    return Strings.generate_prefix_free_codes(alphabet, len, this.#make_alphabet_cost_map(hint_chars));
   }
 }
 

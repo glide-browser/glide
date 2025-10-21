@@ -567,6 +567,15 @@ declare global {
          */
         pick?: (hints: glide.ContentHint[]) => glide.ContentHint[];
       }): void;
+
+      label_generators: {
+        /**
+         * Use with {@link glide.o.hint_label_generator} to generate
+         * prefix-free combinations of the characters in
+         * {@link glide.o.hint_chars}.
+         */
+        prefix_free(hints: glide.Hint[]): string[];
+      };
     };
 
     buf: {
@@ -1002,6 +1011,15 @@ declare global {
     hint_chars: string;
 
     /**
+     * A function to produce labels for `len` hints. You can provide
+     * your own function or use an included one:
+     *
+     *  - {@link glide.hints.label_generators.prefix_free}; this is the
+     *    default.
+     */
+    hint_label_generator: (hints: glide.Hint[]) => string[];
+
+    /**
      * Determines if the current mode will change when certain element types are focused.
      *
      * For example, if `true` then Glide will automatically switch to `insert` mode when an editable element is focused.
@@ -1293,14 +1311,15 @@ declare global {
       | `${keyof ExcmdRegistry} ${string}`;
 
     /// @docs-skip
-    export type ContentHint = {
+    export type Hint = {
       id: number;
       x: number;
       y: number;
       width: number;
       height: number;
-      element: HTMLElement;
     };
+    /// @docs-skip
+    export type ContentHint = glide.Hint & { element: HTMLElement };
 
     export type HintLocation = "content" | "browser-ui";
 
