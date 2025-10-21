@@ -40,6 +40,8 @@ If there are too many hints for each label to have a single character from the a
 - Elements 2-26 get single-character labels: `j`, `k`, `l`, `a` etc.
 - Elements 1 & 27-30 get two-character labels: `hh`, `hj`, `hk`, `hl`
 
+The algorithm above is implemented by [`glide.hints.label_generators.prefix_free`](api.md#glide.hints.label_generators.prefix_free). You can provide your own generator function by setting [glide.o.hint_label_generator](api.md#glide.o.hint_label_generator).
+
 ## Default key mappings
 
 | Key         | Action                                                           |

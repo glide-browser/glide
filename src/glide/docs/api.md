@@ -47,6 +47,7 @@ text-decoration: none;
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
 [`glide.o.hint_size`](#glide.o.hint_size)\
 [`glide.o.hint_chars`](#glide.o.hint_chars)\
+[`glide.o.hint_label_generator`](#glide.o.hint_label_generator)\
 [`glide.o.switch_mode_on_focus`](#glide.o.switch_mode_on_focus)\
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
 [`glide.bo`](#glide.bo)\
@@ -89,6 +90,8 @@ text-decoration: none;
 [`glide.keymaps.list()`](#glide.keymaps.list)\
 [`glide.hints`](#glide.hints)\
 [`glide.hints.show()`](#glide.hints.show)\
+[`glide.hints.label_generators`](#glide.hints.label_generators)\
+[`glide.hints.label_generators.prefix_free()`](#glide.hints.label_generators.prefix_free)\
 [`glide.buf`](#glide.buf)\
 [`glide.buf.prefs`](#glide.buf.prefs)\
 [`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
@@ -260,6 +263,14 @@ The font size of the hint label, directly corresponds to the
 The characters to include in hint labels.
 
 `ts:@default "hjklasdfgyuiopqwertnmzxcvb"`
+
+### `glide.o.hint_label_generator` {% id="glide.o.hint_label_generator" %}
+
+A function to produce labels for `len` hints. You can provide
+your own function or use an included one:
+
+- {% link href="#glide.hints.label_generators.prefix_free" class="go-to-def" %} `ts:glide.hints.label_generators.prefix_free`{% /link %}; this is the
+  default.
 
 ### `glide.o.switch_mode_on_focus: boolean` {% id="glide.o.switch_mode_on_focus" %}
 
@@ -634,6 +645,16 @@ Find and show hints for "clickable" elements in the content frame.
 
 An optional `action()` function can be passed that will be invoked when
 a hint is selected.
+
+### `glide.hints.label_generators` {% id="glide.hints.label_generators" %}
+
+{% api-heading id="glide.hints.label_generators.prefix_free" %}
+glide.hints.label_generators.prefix_free(hints): string[]
+{% /api-heading %}
+
+Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:glide.o.hint_label_generator`{% /link %} to generate
+prefix-free combinations of the characters in
+{% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint_chars`{% /link %}.
 
 ## • `glide.buf` {% id="glide.buf" %}
 
