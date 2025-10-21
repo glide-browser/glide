@@ -580,6 +580,13 @@ declare global {
          * {@link glide.o.hint_chars}.
          */
         prefix_free(hints: glide.Hint[]): string[];
+
+        /**
+         * Use with {@link glide.o.hint_label_generator} to generate
+         * sequential numeric labels, starting at `1` and counting up.
+         * Ignores {@link glide.o.hint_chars}.
+         */
+        numeric(hints: glide.Hint[]): string[];
       };
     };
 
@@ -1021,6 +1028,8 @@ declare global {
      *
      *  - {@link glide.hints.label_generators.prefix_free}; this is the
      *    default.
+     *
+     *  - {@link glide.hints.label_generators.numeric}
      */
     hint_label_generator: (hints: glide.Hint[]) => string[];
 

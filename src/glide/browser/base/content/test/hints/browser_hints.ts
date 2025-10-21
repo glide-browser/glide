@@ -323,3 +323,20 @@ add_task(async function test_hint_generator_config() {
     await keys("<esc>");
   });
 });
+
+add_task(async function test_numeric_hint_generator() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.hint_label_generator = glide.hints.label_generators.numeric;
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    is(hints[0]?.label, "1");
+    is(hints[1]?.label, "2");
+    is(hints[9]?.label, "10");
+    await keys("<esc>");
+  });
+});
