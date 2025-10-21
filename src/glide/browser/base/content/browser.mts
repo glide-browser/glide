@@ -1665,6 +1665,12 @@ class GlideOptions implements GlideO {
     this.#hint_size = value;
     GlideBrowser.set_css_property("--glide-hint-font-size", value);
   }
+
+  // Ideally this would default to glide.api.hints.label_prefix_free,
+  // but we haven't made the api object yet! This may be an indication that
+  // the helper functions should go somewhere else (and maybe just
+  // get aliased into the api so users can see them).
+  hint_label_generator: (alphabet: string[], len: number) => string[];
 }
 
 function make_glide_api(): typeof glide {
@@ -1857,7 +1863,12 @@ function make_glide_api(): typeof glide {
           debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
       },
+
+      label_prefix_free(len: number): string[] {
+        return GlideCommands.hint_label_prefix_free(len);
+      },
     },
+
     addons: {
       async install_from_url(xpi_url): Promise<glide.Addon> {
         const installer = await AddonManager.getInstallForURL(xpi_url);
