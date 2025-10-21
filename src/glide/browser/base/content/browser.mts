@@ -1867,6 +1867,14 @@ function make_glide_api(): typeof glide {
       label_prefix_free(len: number): string[] {
         return GlideCommands.hint_label_prefix_free(len);
       },
+
+      label_numeric(len: number): string[] {
+        var ret = [];
+        for (var i = 1; i <= len; i++) {
+          ret.push(i.toString());
+        }
+        return ret;
+      },
     },
 
     addons: {
