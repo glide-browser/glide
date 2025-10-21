@@ -91,6 +91,7 @@ text-decoration: none;
 [`glide.hints.show()`](#glide.hints.show)\
 [`glide.hints.label_generators`](#glide.hints.label_generators)\
 [`glide.hints.label_generators.prefix_free()`](#glide.hints.label_generators.prefix_free)\
+[`glide.hints.label_generators.numeric()`](#glide.hints.label_generators.numeric)\
 [`glide.buf`](#glide.buf)\
 [`glide.buf.prefs`](#glide.buf.prefs)\
 [`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
@@ -270,6 +271,8 @@ your own function or use an included one:
 
 - {% link href="#glide.hints.label_generators.prefix_free" class="go-to-def" %} `ts:glide.hints.label_generators.prefix_free`{% /link %}; this is the
   default.
+
+- {% link href="#glide.hints.label_generators.numeric" class="go-to-def" %} `ts:glide.hints.label_generators.numeric`{% /link %}
 
 ### `glide.o.switch_mode_on_focus: boolean` {% id="glide.o.switch_mode_on_focus" %}
 
@@ -648,6 +651,14 @@ glide.hints.label_generators.prefix_free(hints): string[]
 Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:glide.o.hint_label_generator`{% /link %} to generate
 prefix-free combinations of the characters in
 {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint_chars`{% /link %}.
+
+{% api-heading id="glide.hints.label_generators.numeric" %}
+glide.hints.label_generators.numeric(hints): string[]
+{% /api-heading %}
+
+Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:glide.o.hint_label_generator`{% /link %} to generate
+sequential numeric labels, starting at `1` and counting up.
+Ignores {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint_chars`{% /link %}.
 
 ## • `glide.buf` {% id="glide.buf" %}
 
