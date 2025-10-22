@@ -133,6 +133,25 @@ glide.keymaps.set(
 
 {% /details %}
 
+{% details heading=true %} {% slot "summary" %}Hide builtin tabs
+{% /slot %}
+
+Note: this only applies after a restart, as mutations to the browser UI cannot be reloaded like the rest of the config yet.
+
+```typescript
+glide.autocmds.create("WindowLoaded", () => {
+  document.head!.appendChild(DOM.create_element("style", {
+    textContent: css`
+      #TabsToolbar {
+        visibility: collapse !important;
+      }
+    `,
+  }));
+});
+```
+
+{% /details %}
+
 {% details heading=true %} {% slot "summary" %}Set a custom homepage
 {% /slot %}
 
