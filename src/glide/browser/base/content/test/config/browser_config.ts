@@ -1163,3 +1163,29 @@ add_task(async function test_env_delete() {
   });
   is(GlideBrowser.api.g.value, null, "env.delete() should return null for nonexistent variables");
 });
+
+add_task(async function test_chrome_css_add() {
+  const visible_width = get_tabs_bar_width();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.chrome.css.add(css`
+      #TabsToolbar {
+        visibility: collapse !important;
+      }
+    `);
+  });
+  ok(get_tabs_bar_width() < visible_width, "applying the custom css should make the tabs toolbar smaller");
+
+  await GlideTestUtils.reload_config(function _() {});
+
+  is(
+    get_tabs_bar_width(),
+    visible_width,
+    "reloading the config without the custom css should revert the tabs toolbar to the previous width",
+  );
+
+  function get_tabs_bar_width(): number {
+    const element = document.getElementById("TabsToolbar")!;
+    return element.getBoundingClientRect().width!;
+  }
+});

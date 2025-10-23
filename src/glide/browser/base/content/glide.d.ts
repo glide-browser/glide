@@ -195,6 +195,23 @@ declare global {
       ): void;
     };
 
+    chrome: {
+      css: {
+        /**
+         * Add custom CSS styles to the browser UI.
+         *
+         * ```typescript
+         * glide.chrome.css.add(css`
+         *   #TabsToolbar {
+         *     visibility: collapse !important;
+         *   }
+         * `);
+         * ```
+         */
+        add(styles: string): void;
+      };
+    };
+
     prefs: {
       /**
        * Set a preference. This is an alternative to `prefs.js` / [`about:config`](https://support.mozilla.org/en-US/kb/about-config-editor-firefox) so

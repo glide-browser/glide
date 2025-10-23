@@ -55,6 +55,9 @@ text-decoration: none;
 [`glide.process`](#glide.process)\
 [`glide.process.spawn()`](#glide.process.spawn)\
 [`glide.process.execute()`](#glide.process.execute)\
+[`glide.chrome`](#glide.chrome)\
+[`glide.chrome.css`](#glide.chrome.css)\
+[`glide.chrome.css.add()`](#glide.chrome.css.add)\
 [`glide.prefs`](#glide.prefs)\
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
@@ -278,6 +281,24 @@ glide.process.execute(command, args?, opts?): Promise<glide.CompletedProcess>
 Spawn a new process and wait for it to exit.
 
 See {% link href="#glide.process.spawn" class="go-to-def" %} `ts:glide.process.spawn`{% /link %} for more information.
+
+## • `glide.chrome` {% id="glide.chrome" %}
+
+### `glide.chrome.css` {% id="glide.chrome.css" %}
+
+{% api-heading id="glide.chrome.css.add" %}
+glide.chrome.css.add(styles): void
+{% /api-heading %}
+
+Add custom CSS styles to the browser UI.
+
+```typescript
+glide.chrome.css.add(css`
+  #TabsToolbar {
+    visibility: collapse !important;
+  }
+`);
+```
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 

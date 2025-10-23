@@ -375,6 +375,8 @@ class GlideBrowserClass {
     this.#reload_config_clear_properties.add(name);
   }
 
+  reload_config_remove_elements: Set<HTMLElement> = new Set();
+
   async #reload_config() {
     this.#api = null;
     this.config_path = null;
@@ -385,9 +387,17 @@ class GlideBrowserClass {
 
     const css_properties = this.#reload_config_clear_properties;
     this.#reload_config_clear_properties = new Set();
-
     for (const property of css_properties) {
       document.documentElement.style.removeProperty(property);
+    }
+
+    const remove_elements = this.reload_config_remove_elements;
+    this.reload_config_remove_elements = new Set();
+    for (const element of remove_elements) {
+      // the element may have been removed separately, so we just ignore any errors
+      try {
+        element.remove();
+      } catch {}
     }
 
     try {
@@ -1989,6 +1999,15 @@ function make_glide_api(): typeof glide {
         GlideBrowser._modes[mode] = { caret: opts.caret };
         MODE_SCHEMA_TYPE.enum.push(mode);
         GlideBrowser.key_manager.register_mode(mode);
+      },
+    },
+    chrome: {
+      css: {
+        add(styles) {
+          const element = DOM.create_element("style", { textContent: styles });
+          document.head!.appendChild(element);
+          GlideBrowser.reload_config_remove_elements.add(element);
+        },
       },
     },
     prefs: {
