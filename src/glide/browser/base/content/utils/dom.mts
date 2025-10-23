@@ -208,16 +208,15 @@ export function element_at_point(
   return element as HTMLElement;
 }
 
-export async function scroll(
+export function scroll(
   window: Window,
   delta: { type: "page" | "pixel"; x?: number; y?: number; z?: number },
-): Promise<void> {
+): void {
   const prev_x = window.scrollX;
   const prev_y = window.scrollY;
   const dx = (delta.x ?? 0) * (delta.type === "page" ? window.innerWidth : 1);
   const dy = (delta.y ?? 0) * (delta.type === "page" ? window.innerHeight : 1);
   window.scrollTo({ left: prev_x + dx, top: prev_y + dy, behavior: "smooth" });
-  return;
 }
 
 /**
