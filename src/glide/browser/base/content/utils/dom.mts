@@ -2,9 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-const logger: ConsoleInstance = console.createInstance
-  ? console.createInstance({ prefix: "Glide[DOM]", maxLogLevelPref: "glide.logging.loglevel" })
-  : (console as any);
+// const logger: consoleinstance = console.createinstance
+//   ? console.createinstance({
+//       prefix: "glide[dom]",
+//       maxloglevelpref: "glide.logging.loglevel",
+//     })
+//   : (console as any);
 
 const EDITABLE_NODE_NAMES = new Set(["SELECT", "TEXTAREA", "OBJECT"]);
 
@@ -218,21 +221,26 @@ export async function scroll(
 ): Promise<void> {
   const prev_x = window.scrollX;
   const prev_y = window.scrollY;
+  const dx = (delta.x ?? 0) * (delta.type === "page" ? window.innerWidth : 1);
+  const dy = (delta.y ?? 0) * (delta.type === "page" ? window.innerHeight : 1);
+  window.scrollTo({ left: prev_x + dx, top: prev_y + dy, behavior: "smooth" });
+  return;
+  // Old implementation:
 
-  window.windowUtils.sendWheelEvent(
-    window.scrollX,
-    window.scrollY,
-    delta.x ?? 0,
-    delta.y ?? 0,
-    delta.z ?? 0,
-    delta.type === "pixel"
-      ? WheelEvent.DOM_DELTA_PIXEL
-      : WheelEvent.DOM_DELTA_PAGE,
-    0, // modifiers
-    0, // line or page delta X
-    0, // line or page delta Y
-    0, // options
-  );
+  // window.windowUtils.sendWheelEvent(
+  //   window.scrollX,
+  //   window.scrollY,
+  //   delta.x ?? 0,
+  //   delta.y ?? 0,
+  //   delta.z ?? 0,
+  //   delta.type === "pixel"
+  //     ? WheelEvent.DOM_DELTA_PIXEL
+  //     : WheelEvent.DOM_DELTA_PAGE,
+  //   0, // modifiers
+  //   0, // line or page delta X
+  //   0, // line or page delta Y
+  //   0, // options
+  // );
 
   // For some reason, `sendWheelEvent()` doesn't always actually trigger a scroll until
   // the user *actually* scrolls with a mouse/trackpad.
@@ -249,37 +257,19 @@ export async function scroll(
   //
   // Note: we can't just always use `.scrollTo()` because that *also* doesn't work in certain *other* cases.
 
-  for (let i = 0; i < 5; i++) {
-    if (delta.x && window.scrollX !== prev_x) {
-      return;
-    }
-    if (delta.y && window.scrollY !== prev_y) {
-      return;
-    }
+  // for (let i = 0; i < 5; i++) {
+  //   if (delta.x && window.scrollX !== prev_x) {
+  //     return;
+  //   }
+  //   if (delta.y && window.scrollY !== prev_y) {
+  //     return;
+  //   }
 
-    await new Promise(r => window.requestAnimationFrame(r));
-  }
+  //   await new Promise(r => window.requestAnimationFrame(r));
+  // }
 
-  logger.debug("using scroll fallback");
-  window.scrollTo({ left: prev_x + (delta.x ?? 0), top: prev_y + (delta.y ?? 0), behavior: "instant" });
-}
-
-export function scroll_to(
-  window: Window,
-  coords: { x: number; y: number },
-): void {
-  window.windowUtils.sendWheelEvent(
-    coords.x,
-    coords.y,
-    0,
-    0,
-    0,
-    WheelEvent.DOM_DELTA_PIXEL,
-    0, // modifiers
-    0, // line or page delta X
-    0, // line or page delta Y
-    0, // options
-  );
+  // logger.debug("using scroll fallback");
+  // window.scrollTo({ left: prev_x + dx, top: prev_y + dy, behavior: "smooth" });
 }
 
 /**
