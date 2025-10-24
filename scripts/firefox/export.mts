@@ -71,4 +71,4 @@ function get_patch_name(file: string): string {
   return `${Path.basename(file).replace(/\./g, "-")}.patch`;
 }
 
-main();
+await main();

@@ -143,9 +143,7 @@ const DEFAULT_TSCONFIG = dedent`
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true,
     "noErrorTruncation": true,
-    "erasableSyntaxOnly": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "erasableSyntaxOnly": true
   }
 }
 `;

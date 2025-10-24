@@ -6,6 +6,7 @@
  * https://creativecommons.org/publicdomain/zero/1.0/ */
 
 // @ts-check
+/* oxlint-disable no-unused-vars */
 
 "use strict";
 

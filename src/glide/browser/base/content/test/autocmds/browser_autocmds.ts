@@ -448,7 +448,7 @@ add_task(async function test_window_loaded() {
     "WindowLoaded autocmd should be triggered on initial window startup",
   );
 
-  BrowserTestUtils.closeWindow(win);
+  await BrowserTestUtils.closeWindow(win);
 });
 
 add_task(async function test_window_loaded_not_called_on_reload() {

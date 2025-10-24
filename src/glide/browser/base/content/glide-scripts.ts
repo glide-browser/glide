@@ -13,19 +13,19 @@
 // N.B. We disable it to avoid confusing duplicative logs / behaviour.
 
 if (!window.location.toString().endsWith("hiddenWindowMac.xhtml")) {
-  import("chrome://glide/content/browser.mjs").then(({ GlideBrowser }) => {
+  void import("chrome://glide/content/browser.mjs").then(({ GlideBrowser }) => {
     window.GlideBrowser = GlideBrowser;
   });
 
-  import("chrome://glide/content/browser-commands.mjs").then(({ GlideCommands }) => {
+  void import("chrome://glide/content/browser-commands.mjs").then(({ GlideCommands }) => {
     window.GlideCommands = GlideCommands;
   });
 
-  import("chrome://glide/content/browser-excmds.mjs").then(({ GlideExcmds }) => {
+  void import("chrome://glide/content/browser-excmds.mjs").then(({ GlideExcmds }) => {
     window.GlideExcmds = GlideExcmds;
   });
 
-  import("chrome://glide/content/browser-excmds-registry.mjs").then(({ GLIDE_EXCOMMANDS }) => {
+  void import("chrome://glide/content/browser-excmds-registry.mjs").then(({ GLIDE_EXCOMMANDS }) => {
     // @ts-expect-error TS doesn't recognise that window.GLIDE_EXCOMMANDS is defined
     window.GLIDE_EXCOMMANDS = GLIDE_EXCOMMANDS;
   });

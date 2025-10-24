@@ -93,7 +93,7 @@ add_task(async function test_tabs_functions() {
 
 add_task(async function test_dns() {
   await GlideTestUtils.reload_config(function _() {
-    browser.dns.resolve("example.com").then(r => {
+    void browser.dns.resolve("example.com").then(r => {
       assert(r.addresses.length, "no DNS addresses resolved");
     });
   });

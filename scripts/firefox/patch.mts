@@ -18,7 +18,7 @@ interface Context {
 }
 
 if (import.meta.url.endsWith(process.argv[1]!)) {
-  main();
+  await main();
 }
 
 async function main() {

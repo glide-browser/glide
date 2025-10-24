@@ -23,8 +23,6 @@
     "skipLibCheck": true,
     "noErrorTruncation": true,
     "allowImportingTsExtensions": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
 
     "paths": {

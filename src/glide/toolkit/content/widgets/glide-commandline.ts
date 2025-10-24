@@ -99,7 +99,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
           this.#handle_tab(event.shiftKey);
         } else if (event.keyCode == event.DOM_VK_RETURN) {
           event.preventDefault();
-          this.accept_focused();
+          void this.accept_focused();
         } else if (event.keyCode == event.DOM_VK_ESCAPE) {
           event.preventDefault();
           this.close();
@@ -242,7 +242,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
       return this.get_element<HTMLElement>("glide-commandline-completions-tabs")!;
     }
 
-    async #toggle_tabs() {
+    #toggle_tabs() {
       // TODO(glide): more general logic here
       const excmds = this.#get_excmds_group();
       const tabs = this.#get_tabs_group();

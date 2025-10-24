@@ -5,6 +5,8 @@
 /* Any copyright is dedicated to the Public Domain.
  * https://creativecommons.org/publicdomain/zero/1.0/ */
 
+/* oxlint-disable unbound-method */
+
 "use strict";
 
 declare var document: Document & { documentElement: HTMLElement };
@@ -53,7 +55,7 @@ add_task(async function test_chrome_window_not_accessible() {
           try {
             navigator.constructor.constructor("return globalThis")();
             return false;
-          } catch (_) {
+          } catch {
             return true;
           }
         })(),

@@ -323,7 +323,6 @@ export function forward_word(
  * Move the selection to the end of the word.
  */
 export function end_word(editor: Editor, mode: GlideMode | undefined) {
-  debugger;
   const extend = mode === "visual";
 
   do {

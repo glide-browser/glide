@@ -402,7 +402,7 @@ class GlideBrowserClass {
 
     try {
       this.remove_all_notifications();
-    } catch (_) {
+    } catch {
       // just ignore any errors here as we may try to call this too early in
       // startup where it also isn't even applicable yet
     }
@@ -555,7 +555,7 @@ class GlideBrowserClass {
 
     this.extension.backgroundContext.$glide_errors = new Set();
 
-    for (const { error, source } of [...errors]) {
+    for (const { error, source } of errors) {
       const loc = this.#clean_stack(error, source) ?? "<unknown>";
       this.add_notification(this.config_error_id, {
         label: `An error occurred inside a Web Extension listener at ${loc} - ${error}`,
@@ -783,7 +783,7 @@ class GlideBrowserClass {
         if (location.displayHost !== pattern.hostname) {
           return false;
         }
-      } catch (_) {
+      } catch {
         // if the host is invalid/not set it could never match
         return false;
       }
@@ -2189,7 +2189,7 @@ function make_glide_api(): typeof glide {
         const path = (() => {
           try {
             return PathUtils.join(config_dir, rel_path);
-          } catch (err) {
+          } catch {
             throw new Error(`Could not resolve file at path ${config_dir} + ${rel_path}`);
           }
         })();
@@ -2232,9 +2232,7 @@ function make_glide_api(): typeof glide {
             buttons: [
               {
                 "l10n-id": "glide-error-notification-reload-config-button",
-                callback: () => {
-                  GlideBrowser.reload_config();
-                },
+                callback: GlideBrowser.reload_config,
               },
             ],
           });

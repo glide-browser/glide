@@ -145,7 +145,7 @@ function _getKeyboardEvent(aWindow: Window = window): typeof KeyboardEvent {
       // 'TypeError: can't access dead object' or 'KeyboardEvent is not a constructor'.
       new KeyboardEvent("", {});
       return KeyboardEvent;
-    } catch (ex) {}
+    } catch {}
   }
   if (typeof content != "undefined" && "KeyboardEvent" in content) {
     return content.KeyboardEvent;
@@ -254,7 +254,7 @@ function _EU_isMac(aWindow = window) {
   if (aWindow) {
     try {
       return aWindow.navigator.platform.indexOf("Mac") > -1;
-    } catch (ex) {}
+    } catch {}
   }
   return navigator.platform.indexOf("Mac") > -1;
 }
@@ -276,7 +276,7 @@ function _maybeEndDragSession(
   // set proper left/top to `dragend` event.
   try {
     dragSession.endDragSession(false, _parseModifiers(aEvent, aWindow));
-  } catch (e) {}
+  } catch {}
   return true;
 }
 

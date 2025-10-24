@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+/* oxlint-disable no-unused-vars no-floating-promises */
+
 /// <reference path="../../../dist/bundled.compiled.d.ts" />
 
 // ensure node types are not loaded

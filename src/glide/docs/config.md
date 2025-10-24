@@ -140,9 +140,7 @@ Every other part can be more freely customised.
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true,
     "noErrorTruncation": true,
-    "erasableSyntaxOnly": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "erasableSyntaxOnly": true
   }
 }
 ```

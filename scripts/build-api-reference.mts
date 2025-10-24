@@ -303,7 +303,7 @@ interface DocsDirectives {
   expand_type_body?: boolean;
 }
 
-const DIRECTIVES_PATTERN = /\@(.*)/g;
+const DIRECTIVES_PATTERN = /@(.*)/g;
 
 function get_directives(node: TSM.Node): DocsDirectives {
   const directives: DocsDirectives = {};
@@ -466,4 +466,4 @@ function generate_index(entries: IndexEntry[]): string {
   return lines.join("\n");
 }
 
-main();
+await main();

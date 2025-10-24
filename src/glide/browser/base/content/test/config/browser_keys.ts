@@ -130,7 +130,7 @@ add_task(async function test_keys_send_downcast() {
   const glide = GlideBrowser.api;
 
   for (const [input, key] of [["<lt>", "<"], ["<LT>", "<"], ["<Bar>", "|"], ["<bar>", "|"], ["<Bslash>", "\\"]]) {
-    glide.keys.send(input);
+    void glide.keys.send(input);
 
     const event = await glide.keys.next();
 
@@ -226,7 +226,7 @@ add_task(async function test_all_keys() {
   const glide = GlideBrowser.api;
 
   for (const key of KEYS) {
-    glide.keys.send(key);
+    void glide.keys.send(key);
     const received = await glide.keys.next();
     is(received.glide_key, Keys.normalize(key));
   }
@@ -236,7 +236,7 @@ add_task(async function test_leader() {
   const glide = GlideBrowser.api;
 
   for (const leader of ["<leader>", "<Leader>"]) {
-    glide.keys.send(leader);
+    void glide.keys.send(leader);
     const key_event = await glide.keys.next();
     is(key_event.key, " ", `${leader} key should be sent as a space`);
   }

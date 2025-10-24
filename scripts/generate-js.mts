@@ -211,4 +211,4 @@ async function main(output_file: string) {
 }
 
 // @ts-ignore
-main(...process.argv.slice(2));
+await main(...process.argv.slice(2));

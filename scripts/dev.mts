@@ -18,11 +18,11 @@ async function main() {
     return;
   }
 
-  build_ts();
-  watch_docs();
-  copy_files();
+  void build_ts();
+  void watch_docs();
+  void copy_files();
 }
 
 if (import.meta.url.endsWith(process.argv[1]!)) {
-  main();
+  await main();
 }

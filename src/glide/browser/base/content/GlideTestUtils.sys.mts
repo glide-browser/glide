@@ -64,7 +64,7 @@ class GlideTestUtilsClass {
     configFile.append(filename);
     try {
       configFile.remove(/* recursive */ false);
-    } catch (_) {}
+    } catch {}
     configFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0o600);
     console.debug("config file: ", configFile.path);
 

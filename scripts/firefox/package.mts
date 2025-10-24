@@ -247,4 +247,4 @@ async function ensure_empty(path: string) {
   await fs.mkdir(path, { recursive: true });
 }
 
-main();
+await main();

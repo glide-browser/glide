@@ -145,4 +145,4 @@ function parse_attrs(attrs: string): CodeMeta {
   return parsed;
 }
 
-main();
+await main();

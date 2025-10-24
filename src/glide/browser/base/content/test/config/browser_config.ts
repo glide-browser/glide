@@ -309,7 +309,7 @@ add_task(async function test_keys_next_concurrency_disallowed() {
         try {
           await glide.keys.next();
           glide.g.error_thrown = false;
-        } catch (e) {
+        } catch {
           // This is expected
           glide.g.error_thrown = true;
         }
@@ -743,7 +743,7 @@ add_task(async function test_dedent_helpers() {
       const arg = "foo";
       try {
         // @ts-expect-error
-        html`<div>${arg}</div>`;
+        void html`<div>${arg}</div>`;
       } catch (err) {
         glide.g.error_message = String(err);
       }
@@ -836,13 +836,13 @@ add_task(async function test_keys_parse() {
   try {
     parse("<>");
     ok(false, "Should error on <>");
-  } catch (e) {
+  } catch {
     ok(true, "Correctly handles <>");
   }
   try {
     parse("<X-a>");
     ok(false, "Should throw on invalid modifier");
-  } catch (e) {
+  } catch {
     ok(true, "Correctly throws on invalid modifier");
   }
 });

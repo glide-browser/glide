@@ -42,7 +42,7 @@ const cli = meow({
   flags: { fix: { type: "boolean", default: false } },
 });
 
-main();
+await main();
 
 async function main() {
   const missing: string[] = [];

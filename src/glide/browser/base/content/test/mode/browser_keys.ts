@@ -241,7 +241,7 @@ add_task(async function test_mapped_keys_no_events() {
     await GlideTestUtils.reload_config(function _() {
       try {
         glide.keymaps.del("normal", "m");
-      } catch (_) {}
+      } catch {}
     });
 
     // verify the event listeners are working by sending an unmapped key
@@ -327,7 +327,7 @@ add_task(async function test_mapping_user_gesture_activation() {
   await BrowserTestUtils.withNewTab(CLIPBOARD_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {
       glide.keymaps.set("normal", "yc", async () => {
-        glide.content.execute(async () => {
+        await glide.content.execute(async () => {
           const button = document!.getElementById("copy-button") as HTMLButtonElement;
           button.click();
         }, { tab_id: await glide.tabs.active() });

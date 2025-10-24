@@ -16,7 +16,7 @@ const cli = meow({
 
 const log = console;
 
-main();
+await main();
 
 async function main() {
   const tag = config.version.tag;

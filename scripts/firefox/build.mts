@@ -8,4 +8,4 @@ async function main() {
   await execa("./mach", ["build"], { stdio: "inherit", cwd: ENGINE_DIR });
 }
 
-main();
+await main();
