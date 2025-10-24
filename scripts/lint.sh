@@ -7,6 +7,9 @@ cd "$(dirname "$0")/.."
 echo "==> Checking types"
 pnpm tsc
 
+echo "==> Checking oxlint"
+pnpm oxlint
+
 echo "==> Checking license comments"
 # note: run `pnpm fix:license` to autofix most cases
 pnpm check:license
