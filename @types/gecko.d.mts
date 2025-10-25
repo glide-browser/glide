@@ -373,6 +373,7 @@ declare var ChromeUtils: MockedExports.ChromeUtils;
 
 // note extends types in `glide/generated/@types/lib.gecko.dom.d.ts`
 interface Addon {
+  sourceURI: nsIURI | null;
   reload(): Promise<void>;
 }
 declare var AddonManager: AddonManager;

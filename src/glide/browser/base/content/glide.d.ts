@@ -995,6 +995,7 @@ declare global {
       readonly description: string;
       readonly version: string;
       readonly active: boolean;
+      readonly source_uri: URL | null;
 
       uninstall(): Promise<void>;
     };

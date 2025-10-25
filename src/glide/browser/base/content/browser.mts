@@ -2249,6 +2249,7 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
     active: addon.isActive,
     version: addon.version,
     description: addon.description,
+    source_uri: addon.sourceURI ? new GlideBrowser.sandbox_window.URL(addon.sourceURI.spec) : null,
 
     async uninstall() {
       await addon.uninstall();
