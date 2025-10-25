@@ -489,12 +489,14 @@ declare global {
 
     addons: {
       /**
-       * Install an addon from the given XPI URL.
+       * Installs an addon from the given XPI URL if that addon has *not* already been installed.
+       *
+       * If you want to ensure the addon is reinstalled, pass `{ force: true }`.
        *
        * You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
        * the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
        */
-      install_from_url(xpi_url: string): Promise<glide.Addon>;
+      install_from_url(xpi_url: string, opts?: glide.AddonInstallOptions): Promise<glide.AddonInstall>;
 
       /**
        * List all installed addons.
@@ -989,6 +991,15 @@ declare global {
     /** A web extension tab that is guaranteed to have the `ts:id` property present. */
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
 
+    export type AddonInstallOptions = {
+      /**
+       * If `true`, always install the given addon, even if it is already installed.
+       *
+       * @default false
+       */
+      force?: boolean;
+    };
+
     export type Addon = {
       readonly id: string;
       readonly name: string;
@@ -999,6 +1010,8 @@ declare global {
 
       uninstall(): Promise<void>;
     };
+
+    export type AddonInstall = glide.Addon & { cached: boolean };
 
     // @docs-expand-type-body
     export type AddonType = "extension" | "theme" | "locale" | "dictionary" | "sitepermission";

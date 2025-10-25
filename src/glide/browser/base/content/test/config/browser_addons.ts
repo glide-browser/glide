@@ -7,6 +7,12 @@
 
 "use strict";
 
+declare global {
+  interface GlideGlobals {
+    addons?: glide.AddonInstall[];
+  }
+}
+
 const ADDON_ID = "amosigned-xpi@tests.mozilla.org";
 const ADDON_NAME = "XPI Test";
 
@@ -16,6 +22,18 @@ async function setup() {
       ["extensions.install.requireBuiltInCerts", false],
     ],
   });
+}
+
+async function teardown() {
+  const uninstalled = new Set<string>();
+  for (const addon of GlideBrowser.api.g.addons ?? []) {
+    if (uninstalled.has(addon.id)) {
+      continue;
+    }
+
+    await addon.uninstall();
+    uninstalled.add(addon.id);
+  }
 }
 
 add_task(async function test_install_addon_from_url() {
@@ -84,4 +102,61 @@ add_task(async function test_addons_list() {
   await addon.uninstall();
 
   notok((await GlideBrowser.api.addons.list()).find((a) => a.name === ADDON_NAME));
+});
+
+add_task(async function test_install_from_url_calls_same_url_cached() {
+  await setup();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmds.create("ConfigLoaded", async () => {
+      glide.g.addons = [];
+
+      const url = "https://example.com/browser/toolkit/mozapps/extensions/test/xpinstall/amosigned.xpi";
+      glide.g.addons.push(
+        // shouldn't be cached
+        await glide.addons.install_from_url(url),
+        // should be cached
+        await glide.addons.install_from_url(url),
+      );
+    });
+  });
+
+  await waiter(() => GlideBrowser.api.g.addons?.length === 2)
+    .ok("Waiting for addons to be installed");
+
+  const addons = GlideBrowser.api.g.addons as Tuple<glide.AddonInstall, 2>;
+
+  is(addons[0].id, ADDON_ID);
+  is(addons[0].cached, false, "First addon is not cached as it is the first install");
+
+  is(addons[1].id, ADDON_ID);
+  is(addons[1].cached, true, "Second addon is cached as the addon is already installed");
+
+  await teardown();
+});
+
+add_task(async function test_install_from_url_force_reinstall() {
+  await setup();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmds.create("ConfigLoaded", async () => {
+      glide.g.addons = [];
+      const url = "https://example.com/browser/toolkit/mozapps/extensions/test/xpinstall/amosigned.xpi";
+      glide.g.addons.push(
+        await glide.addons.install_from_url(url),
+        await glide.addons.install_from_url(url, { force: true }),
+      );
+    });
+  });
+
+  await waiter(() => GlideBrowser.api.g.addons?.length === 2)
+    .ok("Waiting for addons to be installed");
+
+  const addons = GlideBrowser.api.g.addons as Tuple<glide.AddonInstall, 2>;
+
+  is(addons[0].cached, false, "First addon is not cached");
+  is(addons[1].cached, false, "Force install bypasses cache");
+  is(addons[0].id, addons[1].id, "Both installs have the same ID");
+
+  await teardown();
 });

@@ -36,3 +36,15 @@ type NonReadonly<T> = Pick<
     [K in keyof T]: T[K] extends Readonly<any> ? never : K;
   }[keyof T]
 >;
+
+/**
+ * Defines an array with an explicit length.
+ *
+ * ```typescript
+ * const arr = obj.get.array.from.somewhere as Tuple<string, 5>
+ * arr[0]; // string
+ * arr[4]; // string
+ * ```
+ */
+type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : _TupleOf<T, N, []> : never;
+type _TupleOf<T, N extends number, R extends unknown[]> = R["length"] extends N ? R : _TupleOf<T, N, [T, ...R]>;

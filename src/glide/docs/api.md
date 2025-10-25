@@ -116,7 +116,9 @@ text-decoration: none;
 [`glide.CompletedProcess`](#glide.CompletedProcess)\
 [`glide.RGBString`](#glide.RGBString)\
 [`glide.TabWithID`](#glide.TabWithID)\
+[`glide.AddonInstallOptions`](#glide.AddonInstallOptions)\
 [`glide.Addon`](#glide.Addon)\
+[`glide.AddonInstall`](#glide.AddonInstall)\
 [`glide.AddonType`](#glide.AddonType)\
 [`glide.KeyEvent`](#glide.KeyEvent)\
 [`glide.KeySendOptions`](#glide.KeySendOptions)\
@@ -506,10 +508,12 @@ The mapping may remain defined for other modes where it applies.
 ## • `glide.addons` {% id="glide.addons" %}
 
 {% api-heading id="glide.addons.install_from_url" %}
-glide.addons.install_from_url(xpi_url): Promise<glide.Addon>
+glide.addons.install_from_url(xpi_url, opts?): Promise<glide.AddonInstall>
 {% /api-heading %}
 
-Install an addon from the given XPI URL.
+Installs an addon from the given XPI URL if that addon has _not_ already been installed.
+
+If you want to ensure the addon is reinstalled, pass `{ force: true }`.
 
 You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
 the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
@@ -855,6 +859,17 @@ Omit<Browser.Tabs.Tab, "id"> & {
 }
 ```
 
+## • `glide.AddonInstallOptions` {% id="glide.AddonInstallOptions" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * If `true`, always install the given addon, even if it is already installed.
+ *
+ * @default false
+ */
+force?: boolean;
+```
+
 ## • `glide.Addon` {% id="glide.Addon" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
@@ -863,7 +878,16 @@ readonly name: string;
 readonly description: string;
 readonly version: string;
 readonly active: boolean;
+readonly source_uri: URL | null;
 uninstall(): Promise<void>;
+```
+
+## • `glide.AddonInstall` {% id="glide.AddonInstall" %}
+
+```typescript {% highlight_prefix="type x = " %}
+glide.Addon & {
+    cached: boolean;
+}
 ```
 
 ## • `glide.AddonType` {% id="glide.AddonType" %}

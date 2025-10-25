@@ -39,6 +39,10 @@ declare type _AddonManager =
   (typeof import("../engine/toolkit/mozapps/extensions/AddonManager.sys.mjs"))["AddonManager"];
 interface AddonManager extends _AddonManager {}
 
+declare type TypedJSONFile<Data> =
+  & Omit<InstanceType<typeof import("../engine/toolkit/modules/JSONFile.sys.mjs")["JSONFile"]>, "data">
+  & { data: Data };
+
 /**
  * See `browser/components/tabbrowser/content/tabbrowser.js`
  *
@@ -251,6 +255,7 @@ declare namespace MockedExports {
       typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
     "resource://testing-common/fast-check.mjs": typeof import("fast-check");
 
+    "resource://gre/modules/JSONFile.sys.mjs": typeof import("../engine/toolkit/modules/JSONFile.sys.mjs");
     "resource://gre/modules/FileUtils.sys.mjs": typeof import("../engine/toolkit/modules/FileUtils.sys.mjs");
     "resource://gre/modules/Extension.sys.mjs":
       typeof import("../engine/toolkit/components/extensions/Extension.sys.mjs");

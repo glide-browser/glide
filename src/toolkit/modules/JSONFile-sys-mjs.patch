@@ -1,0 +1,22 @@
+diff --git a/toolkit/modules/JSONFile.sys.mjs b/toolkit/modules/JSONFile.sys.mjs
+index f706d06d6a35009946eefa07d92bd9034e23137d..1c52de1d1a5c8f9c353a6cf4fbd9b33a502a335d 100644
+--- a/toolkit/modules/JSONFile.sys.mjs
++++ b/toolkit/modules/JSONFile.sys.mjs
+@@ -63,7 +63,7 @@ const kSaveDelayMs = 1500;
+  *   Sanitized string identifier used for logging,
+  *   shutdown debugging, and telemetry. Defaults to basename of given `path`,
+  *   sanitized.
+- * @param {Function} [config.dataPostProcessor]
++ * @param {(data: any) => any} [config.dataPostProcessor]
+  *   Function triggered when data is just loaded. The data object will be passed
+  *   as the first argument and should be returned no matter if it's modified or
+  *   not. Its failure leads to the failure of load() and ensureDataReady().
+@@ -163,6 +163,8 @@ JSONFile.prototype = {
+ 
+   /**
+    * Internal data object.
++   *
++   * @type unknown
+    */
+   _data: null,
+ 

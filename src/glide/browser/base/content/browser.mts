@@ -29,13 +29,14 @@ const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
 );
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
-const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
+const { redefine_getter, object_assign } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 const { create_sandbox, FileNotFoundError, GlideProcessError } = ChromeUtils.importESModule(
   "chrome://glide/content/sandbox.mjs",
 );
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
+const { JSONFile } = ChromeUtils.importESModule("resource://gre/modules/JSONFile.sys.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -48,6 +49,9 @@ export interface StateChangeMeta {
    * yanking, we want to display a short animation first. */
   disable_auto_collapse?: boolean;
 }
+type ResolvedAddonCache = {
+  addons: Record<string, { id: string }>;
+};
 
 const _defaultState: State = { mode: "normal", operator: null };
 
@@ -190,7 +194,7 @@ class GlideBrowserClass {
   }
 
   async reload_config() {
-    // note: we hae to initialise this promise as early as possible so that we don't
+    // note: we have to initialise this promise as early as possible so that we don't
     //       register the listener *after* the extension has started up, therefore
     //       resulting in the listener never firing.
     const extension_startup = this._extension_startup_promise;
@@ -486,6 +490,24 @@ class GlideBrowserClass {
 
         this.extension.on("extension-proxy-context-load", listener);
       }),
+    );
+  }
+
+  /**
+   * Stores a `Record<XPI URL, AddonData>`, so that we can cache XPI URL -> id lookups, and avoid
+   * fetching XPI URLs unless we really need to.
+   */
+  get resolved_addons_cache_file(): TypedJSONFile<ResolvedAddonCache> {
+    // note: there is an invariant here that the profile directory cannot be changed in the window this code is running in
+    const cache_path = GlideBrowser.api.path.join(GlideBrowser.api.path.profile_dir, ".glide", "addons.json");
+
+    return redefine_getter(
+      this,
+      "resolved_addons_cache_file",
+      new JSONFile({
+        path: cache_path,
+        dataPostProcessor: (data): ResolvedAddonCache => !data.addons ? { ...data, addons: {} } : data,
+      }) as TypedJSONFile<ResolvedAddonCache>,
     );
   }
 
@@ -1869,10 +1891,39 @@ function make_glide_api(): typeof glide {
       },
     },
     addons: {
-      async install_from_url(xpi_url): Promise<glide.Addon> {
+      async install_from_url(xpi_url, opts): Promise<glide.AddonInstall> {
+        const cache = GlideBrowser.resolved_addons_cache_file;
+        await cache.load(); // memoized
+
+        if (!opts?.force) {
+          const resolved_addon_info = cache.data.addons[xpi_url];
+          const addons = await AddonManager.getAllAddons() as Addon[];
+
+          // we could have an entry in the cache even if the addon has been uninstalled, so verify it actually is installed.
+          //
+          // the cache is primarily to handle the case where an XPI url has been given but the addon has since been updated, meaning
+          // that a naive `sourceURI` check would fail, and the addon would be reverted to the previous version, which is not what we want.
+          //
+          // this also handles the case where we don't have a cache entry for an addon that has been installed, which
+          // could happen in theory if one window installs an addon independently.
+          const existing = addons.find((addon) =>
+            addon.id === resolved_addon_info?.id || addon.sourceURI?.spec === xpi_url
+          );
+          if (existing) {
+            GlideBrowser._log.debug(`Addon install with url='${xpi_url}' is cached; id='${existing.id}'`);
+            return object_assign(firefox_addon_to_glide(existing), { cached: true });
+          }
+        }
+
+        GlideBrowser._log.debug(`Addon install with url='${xpi_url}' is *not* cached`);
+
         const installer = await AddonManager.getInstallForURL(xpi_url);
-        const addon = await installer.install() as unknown as Addon;
-        return firefox_addon_to_glide(addon);
+        const ff_addon = await installer.install() as unknown as Addon;
+
+        cache.data.addons[xpi_url] = { id: ff_addon.id };
+        cache.saveSoon();
+
+        return object_assign(firefox_addon_to_glide(ff_addon), { cached: false });
       },
 
       async list(types: glide.AddonType | glide.AddonType[]): Promise<glide.Addon[]> {
