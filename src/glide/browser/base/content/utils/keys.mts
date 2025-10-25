@@ -19,7 +19,7 @@
  *     e.g. `ab`, `<C-a>b`, `x<lt>`, `<leader>sf`
  */
 
-import type { SetNonNullable } from "type-fest";
+import type { SetNonNullable, SetOptional } from "type-fest";
 
 const { lastx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
@@ -488,9 +488,12 @@ const SHIFTED_CHARACTERS = new Set([
 /**
  * A minimla version of `KeyboardEvent` that only defines the properties we rely on.
  */
-export type GlideMappingEvent = Pick<
-  KeyboardEvent,
-  "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey"
+export type GlideMappingEvent = SetOptional<
+  Pick<
+    KeyboardEvent,
+    "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey" | "getModifierState"
+  >,
+  "getModifierState"
 >;
 
 /**
@@ -512,7 +515,7 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
     modifiers.push("C");
   }
 
-  if (event.altKey) {
+  if (event.altKey || event.getModifierState?.("AltGraph")) {
     modifiers.push("A");
   }
 
