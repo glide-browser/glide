@@ -1,16 +1,8 @@
 diff --git a/tools/signing/macos/mach_commands.py b/tools/signing/macos/mach_commands.py
-index 454a9bbc35802fbf811065e8e1ca592674016bb3..5d6bc6deddfe437854acc48eab6ba8f9048c7bdb 100644
+index d6b0cf119664e0534a3898f72ffbcd3aade9c89d..ac0407d07303160175066a54eb8ef1353857c3e9 100644
 --- a/tools/signing/macos/mach_commands.py
 +++ b/tools/signing/macos/mach_commands.py
-@@ -37,7 +37,6 @@ from mozbuild.base import MachCommandConditions as conditions
-     "Release channel entitlements, but the configuration used will be the "
-     "Release configuration as defined in the repo working directory, not the "
-     "configuration from the revision of the earlier 120 build.",
--    conditions=[conditions.is_firefox],
- )
- @CommandArgument(
-     "-v",
-@@ -165,6 +164,11 @@ def macos_sign(
+@@ -164,6 +164,11 @@ def macos_sign(
          sys.exit(1)
      app = os.path.realpath(app_arg)
  
@@ -22,12 +14,3 @@ index 454a9bbc35802fbf811065e8e1ca592674016bb3..5d6bc6deddfe437854acc48eab6ba8f9
      # With rcodesign, either both a p12 file and p12 password file should be
      # provided or neither. If neither, the signing identity must be either '-'
      # for ad-hoc or None.
-@@ -567,7 +571,7 @@ def sign_with_rcodesign(
-     # input path and its options are specified as standard arguments.
-     ctx.log(logging.INFO, "macos-sign", {}, "Signing with rcodesign")
- 
--    cs_cmd = ["rcodesign", "sign"]
-+    cs_cmd = ["rcodesign", "sign", "--for-notarization"]
-     if p12_file_arg is not None:
-         cs_cmd.append("--p12-file")
-         cs_cmd.append(p12_file_arg)

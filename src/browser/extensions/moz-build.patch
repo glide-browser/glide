@@ -1,10 +1,10 @@
 diff --git a/browser/extensions/moz.build b/browser/extensions/moz.build
-index 1d90db803e83e0dbf6da08b98e04e8511f861ba6..7ba46274dc501cdddb56ef8c5686c8b0827c958b 100644
+index f3375f21103335fcae6b0f72961571447c4d8b32..d702e675d0ebdc6b30d0144fe8f0ae85bae2d800 100644
 --- a/browser/extensions/moz.build
 +++ b/browser/extensions/moz.build
-@@ -7,6 +7,7 @@
+@@ -6,6 +6,7 @@
+ 
  DIRS += [
-     "data-leak-blocker",
      "formautofill",
 +    "glide",
      "ipp-activator",

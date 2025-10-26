@@ -1,8 +1,8 @@
 diff --git a/browser/themes/shared/toolbarbuttons.css b/browser/themes/shared/toolbarbuttons.css
-index a8df2d5cd8b3009daa033a9bf06908be78adeb3b..e84cd55c0e1b1026ce34a4ffbb57a97971103e51 100644
+index 938a8cb8c3d854a75fe300db2a7330d188c9ed6f..119b79fe36574b863f53b3b44300cc6689ab4bab 100644
 --- a/browser/themes/shared/toolbarbuttons.css
 +++ b/browser/themes/shared/toolbarbuttons.css
-@@ -638,6 +638,37 @@ toolbar:not(#TabsToolbar) > #personal-bookmarks {
+@@ -623,6 +623,20 @@ toolbarseparator {
    }
  }
  
@@ -12,23 +12,6 @@ index a8df2d5cd8b3009daa033a9bf06908be78adeb3b..e84cd55c0e1b1026ce34a4ffbb57a979
 +  justify-content: left !important;
 +  padding-right: 0;
 +  position: relative;
-+}
-+
-+.glide-mode-button::after {
-+  content: "";
-+  position: absolute;
-+  bottom: 4px;
-+  /* TODO(glide): does this work with localisation? */
-+  width: 10ch;
-+  height: 2px;
-+  background-color: var(--toolbarbutton-icon-fill-attention, #0060df);
-+  border-radius: 1px;
-+}
-+
-+@media (prefers-color-scheme: dark) {
-+  .glide-mode-button::after {
-+    background-color: var(--toolbarbutton-icon-fill-attention, #45a9ff);
-+  }
 +}
 +
 +.glide-keyseq-button {

@@ -1,5 +1,5 @@
 diff --git a/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs b/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs
-index 5b7b10a7641c57e1f5206fb57030c8c2afb60971..880a743279f838ca56c09a6e709288a27d6f1bff 100644
+index a1161428e6ae4141b3d6767042edf90935694121..880a743279f838ca56c09a6e709288a27d6f1bff 100644
 --- a/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs
 +++ b/toolkit/mozapps/extensions/internal/AddonUpdateChecker.sys.mjs
 @@ -21,6 +21,7 @@ ChromeUtils.defineESModuleGetters(lazy, {
@@ -24,7 +24,7 @@ index 5b7b10a7641c57e1f5206fb57030c8c2afb60971..880a743279f838ca56c09a6e709288a2
      aIgnoreStrictCompat
    ) {
      if (!aAppVersion) {
--      aAppVersion = Services.appinfo.version;
+-      aAppVersion = Services.appinfo.platformVersion;
 +      aAppVersion =
 +        AppConstants.GLIDE_FIREFOX_VERSION ?? Services.appinfo.version;
      }

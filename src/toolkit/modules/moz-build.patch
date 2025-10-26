@@ -1,12 +1,12 @@
 diff --git a/toolkit/modules/moz.build b/toolkit/modules/moz.build
-index 4c45be797e2cca88d302f98e765545b13da3f0dc..de6ff501abc62a8928b3c5474d6a37d51b9296ef 100644
+index cd43715aea607fc7dbafda589e14e1462568dd61..0c14c0b515f5ef641a0a1ec932a68ed2cf2b648c 100644
 --- a/toolkit/modules/moz.build
 +++ b/toolkit/modules/moz.build
-@@ -280,6 +280,7 @@ for var in (
+@@ -281,6 +281,7 @@ for var in (
      "DLL_SUFFIX",
      "DEBUG_JS_MODULES",
      "OMNIJAR_NAME",
 +    "GLIDE_FIREFOX_VERSION",
+     "ZEN_FIREFOX_VERSION"
  ):
      DEFINES[var] = CONFIG[var] or ""
- 

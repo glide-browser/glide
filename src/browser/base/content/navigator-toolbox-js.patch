@@ -1,9 +1,9 @@
 diff --git a/browser/base/content/navigator-toolbox.js b/browser/base/content/navigator-toolbox.js
-index c6fefefef50c73bcfb2e4b2ac347741d3f3d5cbc..fbca8f2f93400703e592e974066c720c8e644b08 100644
+index b621c586e679bb8686fe9a5e6743512e71604425..4d1de0140073dd64614f059d9cf175615d0b28db 100644
 --- a/browser/base/content/navigator-toolbox.js
 +++ b/browser/base/content/navigator-toolbox.js
 @@ -11,6 +11,23 @@ document.addEventListener(
-     const navigatorToolbox = document.getElementById("navigator-toolbox");
+     const navigatorToolbox = document.getElementById("browser");
      const widgetOverflow = document.getElementById("widget-overflow");
  
 +    // glide-injection-start

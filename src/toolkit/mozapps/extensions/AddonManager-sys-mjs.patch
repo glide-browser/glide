@@ -1,11 +1,13 @@
 diff --git a/toolkit/mozapps/extensions/AddonManager.sys.mjs b/toolkit/mozapps/extensions/AddonManager.sys.mjs
-index 2c1e187d14bae0dcc17a1fa2de768e7c949b3776..12e73215918f2869a6bcbacb356e4429fc3fbf4a 100644
+index 01293cb38ad53ff36c545ccb392071e20fe1d62b..6bdc2abbfda2702e19cc0f1f7a093611c4b130f4 100644
 --- a/toolkit/mozapps/extensions/AddonManager.sys.mjs
 +++ b/toolkit/mozapps/extensions/AddonManager.sys.mjs
-@@ -1228,6 +1228,9 @@ var AddonManagerInternal = {
+@@ -1227,7 +1227,10 @@ var AddonManagerInternal = {
+         ITEM_VERSION: aAddon.version,
          ITEM_STATUS: addonStatus,
          APP_ID: Services.appinfo.ID,
-         APP_VERSION: aAppVersion ? aAppVersion : Services.appinfo.version,
+-        APP_VERSION: AppConstants.ZEN_FIREFOX_VERSION,
++        APP_VERSION: aAppVersion ? aAppVersion : Services.appinfo.version,
 +        FIREFOX_VERSION: aAppVersion
 +          ? aAppVersion
 +          : AppConstants.GLIDE_FIREFOX_VERSION,
@@ -20,7 +22,7 @@ index 2c1e187d14bae0dcc17a1fa2de768e7c949b3776..12e73215918f2869a6bcbacb356e4429
     * @throws if aUrl is not specified or if an optional argument of
     *         an improper type is passed.
     */
-@@ -4315,6 +4319,7 @@ export var AddonManager = {
+@@ -4312,6 +4316,7 @@ export var AddonManager = {
      return "unknown";
    },
  

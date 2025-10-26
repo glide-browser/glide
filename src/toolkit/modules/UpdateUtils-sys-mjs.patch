@@ -1,17 +1,19 @@
 diff --git a/toolkit/modules/UpdateUtils.sys.mjs b/toolkit/modules/UpdateUtils.sys.mjs
-index 2c8a093013d40623aa16864eca18945887add7c8..25da46442805801a505fdc0bd164b292fb83211d 100644
+index 592f8a77665f8e8b4c2f64fe6ae44f3f1f3935e1..25da46442805801a505fdc0bd164b292fb83211d 100644
 --- a/toolkit/modules/UpdateUtils.sys.mjs
 +++ b/toolkit/modules/UpdateUtils.sys.mjs
-@@ -83,6 +83,9 @@ export var UpdateUtils = {
-         case "VERSION":
-           replacement = Services.appinfo.version;
+@@ -81,7 +81,10 @@ export var UpdateUtils = {
+           replacement = Services.appinfo.name;
            break;
+         case "VERSION":
+-          replacement = AppConstants.ZEN_FIREFOX_VERSION;
++          replacement = Services.appinfo.version;
++          break;
 +        case "FIREFOX_VERSION":
 +          replacement = AppConstants.GLIDE_FIREFOX_VERSION;
-+          break;
+           break;
          case "BUILD_ID":
            replacement = Services.appinfo.appBuildID;
-           break;
 @@ -98,6 +101,10 @@ export var UpdateUtils = {
          case "CHANNEL":
            replacement = this.UpdateChannel;
