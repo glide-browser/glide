@@ -1,0 +1,12 @@
+diff --git a/tools/lint/eslint/eslint-plugin-mozilla/lib/environments/browser-window.mjs b/tools/lint/eslint/eslint-plugin-mozilla/lib/environments/browser-window.mjs
+index 9abe9807689698114dc96d675e22e1f5e584c7ff..68bb572aea611b3e2584fe77d523480a928ab367 100644
+--- a/tools/lint/eslint/eslint-plugin-mozilla/lib/environments/browser-window.mjs
++++ b/tools/lint/eslint/eslint-plugin-mozilla/lib/environments/browser-window.mjs
+@@ -46,6 +46,7 @@ const extraGlobals = {
+ 
+ // Some files in global-scripts.inc need mapping to specific locations.
+ const MAPPINGS = {
++  "glide-scripts.js": "glide/browser/base/content/dist/glide-scripts.js",
+   "browserPlacesViews.js":
+     "browser/components/places/content/browserPlacesViews.js",
+   "browser-sidebar.js": "browser/components/sidebar/browser-sidebar.js",

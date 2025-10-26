@@ -8,12 +8,87 @@
     "src/browser/app/profile/glide.js"
   ],
 
+  "jsPlugins": [
+    "./engine/tools/lint/eslint/eslint-plugin-mozilla"
+  ],
+
   "rules": {
     // we're in a unique situation where this is better
     "typescript/triple-slash-reference": "off",
 
     // I do not care
-    "typescript/no-this-alias": "off"
+    "typescript/no-this-alias": "off",
+
+    // Mozilla rules
+    "eslint-plugin-mozilla/no-addtask-setup": "error",
+    "eslint-plugin-mozilla/no-cu-reportError": "error",
+    "eslint-plugin-mozilla/no-throw-cr-literal": "error",
+    "eslint-plugin-mozilla/no-useless-run-test": "error",
+    "eslint-plugin-mozilla/no-browser-refs-in-toolkit": "error",
+    "eslint-plugin-mozilla/no-comparison-or-assignment-inside-ok": "error",
+
+    "eslint-plugin-mozilla/reject-addtask-only": "error",
+    "eslint-plugin-mozilla/reject-multiple-getters-calls": "error",
+    "eslint-plugin-mozilla/reject-relative-requires": "error",
+    "eslint-plugin-mozilla/reject-lazy-imports-into-globals": "error",
+    "eslint-plugin-mozilla/reject-import-system-module-from-non-system": "error",
+
+    "eslint-plugin-mozilla/use-services": "error",
+    "eslint-plugin-mozilla/use-chromeutils-generateqi": "error",
+    "eslint-plugin-mozilla/use-console-createInstance": "error",
+    "eslint-plugin-mozilla/use-default-preference-values": "error",
+    "eslint-plugin-mozilla/use-includes-instead-of-indexOf": "error",
+
+    "eslint-plugin-mozilla/prefer-formatValues": "error",
+
+    // this is not true in our environment
+    "eslint-plugin-mozilla/reject-top-level-await": "off"
+    // --------------------------- TODO: check what we want from this list
+    // "eslint-plugin-mozilla/avoid-Date-timing": "error",
+    // "eslint-plugin-mozilla/avoid-removeChild": "error",
+    // "eslint-plugin-mozilla/balanced-listeners": "error",
+    // "eslint-plugin-mozilla/balanced-observers": "error",
+    // "eslint-plugin-mozilla/lazy-getter-object-name": "error",
+    // "eslint-plugin-mozilla/no-aArgs": "error",
+    // "eslint-plugin-mozilla/no-compare-against-boolean-literals": "error",
+    // "eslint-plugin-mozilla/no-define-cc-etc": "error",
+    // "eslint-plugin-mozilla/no-useless-parameters": "error",
+    // "eslint-plugin-mozilla/no-useless-removeEventListener": "error",
+    // "eslint-plugin-mozilla/prefer-boolean-length-check": "error",
+    // "eslint-plugin-mozilla/reject-eager-module-in-lazy-getter": "error",
+    // "eslint-plugin-mozilla/reject-globalThis-modification": "error",
+    // "eslint-plugin-mozilla/reject-importGlobalProperties": "error",
+    // "eslint-plugin-mozilla/reject-mixing-eager-and-lazy": "error",
+    // "eslint-plugin-mozilla/reject-multiple-await": "error",
+    // "eslint-plugin-mozilla/reject-scriptableunicodeconverter": "error",
+    // "eslint-plugin-mozilla/rejects-requires-await": "error",
+    // "eslint-plugin-mozilla/use-cc-etc": "error",
+    // "eslint-plugin-mozilla/use-ownerGlobal": "error",
+    // "eslint-plugin-mozilla/use-returnValue": "error",
+    // "eslint-plugin-mozilla/use-static-import": "error",
+    // "eslint-plugin-mozilla/valid-lazy": "error",
+    // "eslint-plugin-mozilla/valid-services": "error",
+
+    // --------------------------- unsupported rules
+    // `getFileName()` is not a function
+    // "eslint-plugin-mozilla/mark-test-function-used": "error",
+    // "eslint-plugin-mozilla/no-arbitrary-setTimeout": "error",
+    // "eslint-plugin-mozilla/no-newtab-refs-outside-newtab": "error",
+    // "eslint-plugin-mozilla/import-browser-window-globals": "error",
+    // "eslint-plugin-mozilla/import-globals": "error",
+    // "eslint-plugin-mozilla/import-headjs-globals": "error",
+
+    // `TypeError: Cannot read private member #internal from an object whose class did not declare it`
+    // "eslint-plugin-mozilla/no-redeclare-with-import-autofix": "error",
+
+    // seems to require some more config
+    // "eslint-plugin-mozilla/reject-some-requires": "error",
+    // "eslint-plugin-mozilla/valid-ci-uses": "error",
+    // "eslint-plugin-mozilla/valid-services-property": "error",
+
+    // `getScope()` is not a function
+    // "eslint-plugin-mozilla/use-isInstance": "error",
+    // "eslint-plugin-mozilla/import-content-task-globals": "error",
   },
 
   "overrides": [
@@ -29,6 +104,12 @@
         // this is generated, we don't *really* care enough right now
         "typescript/no-redundant-type-constituents": "off"
       }
+    },
+
+    {
+      // the mozilla plugin reports issues in .d.ts files, that we don't care about
+      "files": ["src/glide/generated/**"],
+      "jsPlugins": []
     }
   ]
 }
