@@ -17,6 +17,70 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.53a
+
+### Addons API {% id="0.1.53a-addons-api" %}
+
+You can now install addons directly from the Glide config:
+
+```typescript {% copy=false %}
+glide.addons.install(
+  "https://addons.mozilla.org/firefox/downloads/file/4598854/ublock_origin-1.67.0.xpi",
+);
+```
+
+This will install the [uBlock Origin](https://addons.mozilla.org/en-GB/firefox/addon/ublock-origin) addon, if it isn't _already_ installed. If you want to install the addon even if it's installed already, use `glide.addons.install('...', { force: true })`.
+
+`glide.addons.install()` expects a URL for an [XPI](https://file-extensions.com/docs/xpi) file, you can obtain the XPI URL from an [addons.mozilla.org](https://addons.mozilla.org) page by right clicking on "Add to Firefox", and selecting "Copy link".
+
+### Styles API {% id="0.1.53a-addons-api" %}
+
+You can now easily inject custom CSS into the browser UI directly from the Glide config:
+
+```typescript
+glide.styles.add(css`
+  #TabsToolbar {
+    visibility: collapse !important;
+  }
+`);
+```
+
+This particular example hides the horizontal native tabs toolbar, but you can customise essentialy anything in the browser UI with this method.
+
+Note that prior to this release you could inject custom CSS yourself but it was slower and would be persisted between config reloads.
+
+{% details %} {% slot "summary" %}Old API
+{% /slot %}
+
+```typescript
+glide.autocmds.create("WindowLoaded", () => {
+  document.head!.appendChild(DOM.create_element("style", {
+    textContent: css`
+      #TabsToolbar {
+        visibility: collapse !important;
+      }
+    `,
+  }));
+});
+```
+
+{% /details %}
+
+### Changes {% id="0.1.53a-changes" %}
+
+- Bumped Firefox from 144.0b9 to 145.0b6
+- [Enabled](https://github.com/glide-browser/glide/discussions/10) WebAuthn on macOS
+- Added [`glide.addons.install()`](api.md#glide.addons.install)
+- Added [`glide.addons.list()`](api.md#glide.addons.list)
+- Added [`glide.styles.add()`](api.md#glide.styles.add)
+- Added [`glide.o.hint_chars`](api.md#glide.o.hint_chars)
+- [Fixed](https://github.com/glide-browser/glide/discussions/76) the source tarball, it now includes hidden files
+- Fixed hint label generation so that keymaps defined in `hint` mode do not conflict with labels
+  - Thank you to [@jacobzim-stl](https://github.com/jacobzim-stl) for the contribution!
+- Fixed [missing](https://github.com/glide-browser/glide/discussions/71) hints for elements across shadow roots
+- Fixed `glide.ctx.url` so that it is constructed in the correct JS realm
+- [Fixed](https://github.com/glide-browser/glide/issues/8) the commandline stealing focus even after it was closed
+
 # 0.1.52a
 
 - Bumped Firefox from 144.0b8 to 144.0b9.
