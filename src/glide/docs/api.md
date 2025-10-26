@@ -45,6 +45,7 @@ text-decoration: none;
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
 [`glide.o.hint_size`](#glide.o.hint_size)\
 [`glide.o.hint_chars`](#glide.o.hint_chars)\
+[`glide.o.hint_label_generator`](#glide.o.hint_label_generator)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -216,6 +217,17 @@ The font size of the hint label, directly corresponds to the
 The characters to include in hint labels.
 
 `ts:@default "hjklasdfgyuiopqwertnmzxcvb"`
+
+### `glide.o.hint_label_generator: (len: number) => string[]` {% id="glide.o.hint_label_generator" %}
+
+A function to produce labels for `len` hints. You can provide your own
+function or use an included one:
+
+- `glide.hints.label_prefix_free`: Generate prefix-free combinations
+  of the characters in [hint_chars](#glide.o.hint_chars). This is the default.
+
+- `glide.hints.label_numeric`: Generate sequential numeric labels,
+  starting at `1` and counting up. Ignores [hint_chars](#glide.o.hint_chars).
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 

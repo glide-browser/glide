@@ -270,3 +270,44 @@ add_task(async function test_hint_keymaps_are_ignored() {
     await keys("<esc>");
   });
 });
+
+add_task(async function test_hint_generator_config() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.hint_label_generator = (len) => {
+      return ["foo", "bar", "baz"].slice(0, len);
+    };
+    glide.keymaps.set("normal", "f", () => {
+      glide.hints.show({
+        pick: (hints) => hints.slice(0, 2),
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideCommands.get_active_hints();
+    is(hints[0]?.label, "foo");
+    is(hints[1]?.label, "bar");
+    is(hints.length, 2);
+    await keys("<esc>");
+  });
+});
+
+add_task(async function test_numeric_hint_generator() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.hint_label_generator = glide.hints.label_numeric;
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideCommands.get_active_hints();
+    is(hints[0]?.label, "1");
+    is(hints[1]?.label, "2");
+    is(hints[9]?.label, "10");
+    await keys("<esc>");
+  });
+});
