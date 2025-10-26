@@ -137,7 +137,7 @@ glide.keymaps.set(
 {% /slot %}
 
 ```typescript
-glide.chrome.css.add(css`
+glide.styles.add(css`
   #TabsToolbar {
     visibility: collapse !important;
   }

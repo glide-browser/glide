@@ -1168,7 +1168,7 @@ add_task(async function test_chrome_css_add() {
   const visible_width = get_tabs_bar_width();
 
   await GlideTestUtils.reload_config(function _() {
-    glide.chrome.css.add(css`
+    glide.styles.add(css`
       #TabsToolbar {
         visibility: collapse !important;
       }

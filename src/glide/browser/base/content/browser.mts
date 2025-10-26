@@ -2052,13 +2052,11 @@ function make_glide_api(): typeof glide {
         GlideBrowser.key_manager.register_mode(mode);
       },
     },
-    chrome: {
-      css: {
-        add(styles) {
-          const element = DOM.create_element("style", { textContent: styles });
-          document.head!.appendChild(element);
-          GlideBrowser.reload_config_remove_elements.add(element);
-        },
+    styles: {
+      add(styles) {
+        const element = DOM.create_element("style", { textContent: styles });
+        document.head!.appendChild(element);
+        GlideBrowser.reload_config_remove_elements.add(element);
       },
     },
     prefs: {

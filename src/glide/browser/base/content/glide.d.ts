@@ -195,21 +195,19 @@ declare global {
       ): void;
     };
 
-    chrome: {
-      css: {
-        /**
-         * Add custom CSS styles to the browser UI.
-         *
-         * ```typescript
-         * glide.chrome.css.add(css`
-         *   #TabsToolbar {
-         *     visibility: collapse !important;
-         *   }
-         * `);
-         * ```
-         */
-        add(styles: string): void;
-      };
+    styles: {
+      /**
+       * Add custom CSS styles to the browser UI.
+       *
+       * ```typescript
+       * glide.styles.add(css`
+       *   #TabsToolbar {
+       *     visibility: collapse !important;
+       *   }
+       * `);
+       * ```
+       */
+      add(styles: string): void;
     };
 
     prefs: {
