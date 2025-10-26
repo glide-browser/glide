@@ -231,3 +231,29 @@ add_task(async function test_commandline_keymaps() {
     is(GlideTestUtils.commandline.focused_row()?.children[2]?.textContent, "<leader>~~~");
   });
 });
+
+add_task(async function test_commandline_focus_to_content() {
+  await sleep_frames(20);
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
+        glide.g.value = args_arr;
+        glide.g.test_checked = true;
+      });
+    });
+
+    await keys(":foo");
+    await sleep_frames(10);
+
+    is(document?.activeElement?.getAttribute("anonid"), "glide-commandline-input", "commandline should be focused");
+
+    EventUtils.synthesizeKey("KEY_Escape");
+    await sleep_frames(20);
+
+    await TestUtils.waitForCondition(
+      () => document?.activeElement?.tagName.toLowerCase() === "browser",
+      "content should be focused",
+    );
+  });
+});
