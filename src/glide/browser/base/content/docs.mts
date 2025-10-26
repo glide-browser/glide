@@ -613,10 +613,12 @@ class RenderState {
             language: { type: String, required: true },
             content: { type: String, required: true },
             caption: { type: String, required: false },
+            copy: { type: Boolean, required: false, default: true },
           },
           transform: (node, config: MarkdocConfig) => {
-            // e.g. ```typescript {% caption="Example: key mapping to toggle CSS debugging" %}
+            // e.g. ```typescript {% caption="Example: key mapping to toggle CSS debugging" copy=false %}
             const caption = node.attributes["caption"] as string | undefined;
+            const copy = node.attributes["copy"] !== false;
             const content = node.attributes["content"] as string;
             const language = node.attributes["language"] as string;
             const highlighted = code_to_html(this.highlighter, content, {
@@ -627,15 +629,16 @@ class RenderState {
               grammarContextCode: node.attributes["highlight_prefix"],
             });
 
+            const copy_button = copy ? copy_to_clipboard_button() : "";
             return this.html({
               html: caption
                 ? html`
                   <figure>
-                  ${highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`)}
+                  ${highlighted.replace("</pre>", `${copy_button}</pre>`)}
                     <figcaption>${caption}</figcaption>
                   </figure>
                 `
-                : highlighted.replace("</pre>", `${copy_to_clipboard_button()}</pre>`),
+                : highlighted.replace("</pre>", `${copy_button}</pre>`),
               content,
             });
           },
