@@ -8,19 +8,19 @@ importers:
 
   .:
     dependencies:
-      eslint-plugin-mozilla:
-        specifier: ^4.3.1
-        version: 4.3.1(@microsoft/eslint-plugin-sdl@1.1.0(eslint@9.38.0))(eslint-plugin-jsdoc@54.7.0(eslint@9.38.0))(eslint-plugin-no-unsanitized@4.1.4(eslint@9.38.0))(eslint-plugin-promise@7.2.1(eslint@9.38.0))(eslint@9.38.0)
+      '@markdoc/markdoc':
+        specifier: ^0.5.4
+        version: 0.5.4
+      shiki:
+        specifier: ^3.12.2
+        version: 3.12.2
       ts-blank-space:
         specifier: ^0.6.2
         version: 0.6.2
       typescript:
         specifier: ^5.9.2
-        version: 5.9.2
+        version: 5.9.3
     devDependencies:
-      '@markdoc/markdoc':
-        specifier: ^0.5.4
-        version: 0.5.4
       '@microsoft/eslint-plugin-sdl':
         specifier: ^1.1.0
         version: 1.1.0(eslint@9.38.0)
@@ -54,6 +54,9 @@ importers:
       esbuild:
         specifier: ^0.25.9
         version: 0.25.9
+      eslint-plugin-mozilla:
+        specifier: ^4.3.1
+        version: 4.3.1(@microsoft/eslint-plugin-sdl@1.1.0(eslint@9.38.0))(eslint-plugin-jsdoc@54.7.0(eslint@9.38.0))(eslint-plugin-no-unsanitized@4.1.4(eslint@9.38.0))(eslint-plugin-promise@7.2.1(eslint@9.38.0))(eslint@9.38.0)
       execa:
         specifier: ^9.6.0
         version: 9.6.0
@@ -81,9 +84,6 @@ importers:
       pagefind:
         specifier: ^1.4.0
         version: 1.4.0
-      shiki:
-        specifier: ^3.12.2
-        version: 3.12.2
       ts-morph:
         specifier: ^27.0.0
         version: 27.0.0
@@ -1716,13 +1716,8 @@ packages:
     resolution: {integrity: sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg==}
     engines: {node: '>= 0.4'}
 
-  typescript@5.8.3:
-    resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
-  typescript@5.9.2:
-    resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2416,7 +2411,7 @@ snapshots:
 
   dts-bundle-generator@9.5.1:
     dependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
       yargs: 17.7.2
 
   dunder-proto@1.0.1:
@@ -3540,7 +3535,7 @@ snapshots:
 
   ts-blank-space@0.6.2:
     dependencies:
-      typescript: 5.8.3
+      typescript: 5.9.3
 
   ts-morph@27.0.0:
     dependencies:
@@ -3586,9 +3581,7 @@ snapshots:
       possible-typed-array-names: 1.1.0
       reflect.getprototypeof: 1.0.10
 
-  typescript@5.8.3: {}
-
-  typescript@5.9.2: {}
+  typescript@5.9.3: {}
 
   unbox-primitive@1.1.0:
     dependencies:
