@@ -1404,13 +1404,13 @@ class GlideBrowserClass {
 
     if (!mapping && this.state.mode === "hint") {
       const label = [...current_sequence].join("");
-      const hints = GlideCommands.get_active_hints().filter(hint => hint.label.startsWith(label));
+      const hints = GlideHints.get_active_hints().filter(hint => hint.label.startsWith(label));
       this._log.debug({ hints, label });
 
       if (hints.length > 1) {
         this.#prevent_keydown(keyn, event);
 
-        GlideCommands.filter_hints(label);
+        GlideHints.filter_hints(label);
         return;
       }
 
@@ -1418,7 +1418,7 @@ class GlideBrowserClass {
         this.#prevent_keydown(keyn, event);
 
         const hint = hints[0]!;
-        const location = GlideCommands.get_hints_location();
+        const location = GlideHints.get_hints_location();
         const actor = location === "browser-ui"
           ? GlideBrowser.get_chrome_actor()
           : location === "content"
@@ -1427,7 +1427,7 @@ class GlideBrowserClass {
         actor.send_async_message("Glide::ExecuteHint", { id: hint.id });
 
         this.key_manager.reset_sequence();
-        GlideCommands.remove_hints();
+        GlideHints.remove_hints();
         return;
       }
 

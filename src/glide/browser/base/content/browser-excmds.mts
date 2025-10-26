@@ -644,7 +644,7 @@ class GlideExcmdsClass {
       }
 
       case "hints_remove": {
-        GlideCommands.remove_hints();
+        GlideHints.remove_hints();
         break;
       }
 

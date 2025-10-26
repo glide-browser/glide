@@ -115,8 +115,8 @@ export class GlideHandlerParent extends JSWindowActorParent<
     return this.browsingContext?.topChromeWindow?.GlideBrowser;
   }
 
-  get glide_commands() {
-    return this.browsingContext?.topChromeWindow?.GlideCommands;
+  get glide_hints() {
+    return this.browsingContext?.topChromeWindow?.GlideHints;
   }
 
   get glide_excmds() {
@@ -169,12 +169,12 @@ export class GlideHandlerParent extends JSWindowActorParent<
           return;
         }
 
-        this.glide_commands!.show_hints(message.data.hints, message.data.location, message.data.auto_activate);
+        this.glide_hints!.show_hints(message.data.hints, message.data.location, message.data.auto_activate);
         break;
       }
 
       case "Glide::HideHints": {
-        this.glide_commands!.hide_hints();
+        this.glide_hints!.hide_hints();
         break;
       }
 

@@ -216,7 +216,7 @@ add_task(async function test_expandable_content_can_be_hinted() {
     await keys("f");
     await wait_for_hints();
 
-    const hints = GlideCommands.get_active_hints();
+    const hints = GlideHints.get_active_hints();
     const summary_hint = hints.find((hint) => hint.element_id === "summary-1");
     ok(summary_hint);
 
@@ -241,7 +241,7 @@ add_task(async function test_hint_keymaps_are_ignored() {
   await BrowserTestUtils.withNewTab(FILE, async _browser => {
     await keys("f");
     await wait_for_hints();
-    const hints = GlideCommands.get_active_hints();
+    const hints = GlideHints.get_active_hints();
     notok(hints.find(hint => hint.label === "f"), "'f' is hidden when mapped in hint mode");
     ok(hints.find(hint => hint.label === "j"), "'j' is not mapped in hint mode");
 
@@ -264,7 +264,7 @@ add_task(async function test_hint_keymaps_are_ignored() {
     await keys("f");
     await wait_for_hints();
 
-    const hints = GlideCommands.get_active_hints();
+    const hints = GlideHints.get_active_hints();
     is(hints[0]?.label, "a");
     is(hints[1]?.label, "b");
 

@@ -27,6 +27,7 @@
 
     "paths": {
       "chrome://glide/content/browser.mjs": ["./src/glide/browser/base/content/browser.mts"],
+      "chrome://glide/content/browser-hints.mjs": ["./src/glide/browser/base/content/browser-hints.mts"],
       "chrome://glide/content/browser-commands.mjs": ["./src/glide/browser/base/content/browser-commands.mts"],
       "chrome://glide/content/browser-excmds.mjs": ["./src/glide/browser/base/content/browser-excmds.mts"],
       "chrome://glide/content/browser-excmds-registry.mjs": [
