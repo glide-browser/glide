@@ -45,6 +45,18 @@ pnpm launch
 
 ## Editor setup
 
+### Linting
+
+Glide uses [oxlint](https://oxc.rs/docs/guide/usage/linter.html) for linting, there is a [VSCode extension](https://oxc.rs/docs/guide/usage/linter.html#vscode-extension), [Zed extension](https://oxc.rs/docs/guide/usage/linter.html#zed-extension), and a `oxc_language_server` LSP available for oxlint.
+
+Alternatively, you can run all lint checks with:
+
+```bash
+pnpm lint
+```
+
+### Formatting
+
 Glide uses [dprint](https://dprint.dev/) for formatting, if you have not used dprint before, it is recommended you install and [configure](https://dprint.dev/install/#editor-extensions) it.
 
 Alternatively, you can run auto-formatting with:
