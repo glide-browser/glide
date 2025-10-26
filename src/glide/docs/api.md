@@ -86,7 +86,7 @@ text-decoration: none;
 [`glide.buf.keymaps.set()`](#glide.buf.keymaps.set)\
 [`glide.buf.keymaps.del()`](#glide.buf.keymaps.del)\
 [`glide.addons`](#glide.addons)\
-[`glide.addons.install_from_url()`](#glide.addons.install_from_url)\
+[`glide.addons.install()`](#glide.addons.install)\
 [`glide.addons.list()`](#glide.addons.list)\
 [`glide.keys`](#glide.keys)\
 [`glide.keys.send()`](#glide.keys.send)\
@@ -507,8 +507,8 @@ The mapping may remain defined for other modes where it applies.
 
 ## • `glide.addons` {% id="glide.addons" %}
 
-{% api-heading id="glide.addons.install_from_url" %}
-glide.addons.install_from_url(xpi_url, opts?): Promise<glide.AddonInstall>
+{% api-heading id="glide.addons.install" %}
+glide.addons.install(xpi_url, opts?): Promise<glide.AddonInstall>
 {% /api-heading %}
 
 Installs an addon from the given XPI URL if that addon has _not_ already been installed.

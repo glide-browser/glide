@@ -1891,7 +1891,7 @@ function make_glide_api(): typeof glide {
       },
     },
     addons: {
-      async install_from_url(xpi_url, opts): Promise<glide.AddonInstall> {
+      async install(xpi_url, opts): Promise<glide.AddonInstall> {
         const cache = GlideBrowser.resolved_addons_cache_file;
         await cache.load(); // memoized
 

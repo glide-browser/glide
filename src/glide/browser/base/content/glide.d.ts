@@ -496,7 +496,7 @@ declare global {
        * You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
        * the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
        */
-      install_from_url(xpi_url: string, opts?: glide.AddonInstallOptions): Promise<glide.AddonInstall>;
+      install(xpi_url: string, opts?: glide.AddonInstallOptions): Promise<glide.AddonInstall>;
 
       /**
        * List all installed addons.
