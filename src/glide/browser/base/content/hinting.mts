@@ -43,15 +43,19 @@ export const content = {
       //
       // if said element does not include the target as a child node or if the target doesn't
       // include the element as a child then we assume the target is hidden and shouldn't be hinted.
+      const node_stack = new Set<Node>();
       const point_element = DOM.element_at_point(
         document,
         dom_rect.left + dom_rect.width * 0.5,
         dom_rect.top + dom_rect.height * 0.5,
+        node_stack,
       );
       if (
         point_element
         && point_element !== target
-        && !(point_element.contains(target) || target.contains(point_element))
+        && !(point_element.contains(target) || target.contains(point_element)
+          // ensure `.contains()` works across shadowroot boundaries
+          || node_stack.values().some((n) => target.contains(n)))
       ) {
         continue;
       }
