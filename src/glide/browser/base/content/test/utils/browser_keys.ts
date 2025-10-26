@@ -214,7 +214,7 @@ add_task(async function test_keymaps_list_filter() {
   });
 
   const keymaps = GlideBrowser.api.keymaps.list();
-  ok(keymaps.length > 0, "Only normal keymaps should be returned");
+  Assert.greater(keymaps.length, 0, "Only normal keymaps should be returned");
 
   await GlideTestUtils.reload_config(function _() {
     for (const keymap of glide.keymaps.list(["visual", "normal"])) {
@@ -225,7 +225,7 @@ add_task(async function test_keymaps_list_filter() {
     }
   });
 
-  ok(GlideBrowser.api.keymaps.list().length < keymaps.length, "Only normal/visual keymaps should be returned");
+  Assert.less(GlideBrowser.api.keymaps.list().length, keymaps.length, "Only normal/visual keymaps should be returned");
 });
 
 add_task(async function test_shifted_characters() {

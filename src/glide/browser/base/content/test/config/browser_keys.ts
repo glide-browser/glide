@@ -122,7 +122,7 @@ add_task(async function test_keys_send_arrow_keys() {
       const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
       return textarea.selectionStart;
     });
-    ok(cursor_pos! < 11, `glide.keys.send('<up>') should move cursor up (expected < 11, got ${cursor_pos})`);
+    Assert.less(cursor_pos!, 11, `glide.keys.send('<up>') should move cursor up (expected < 11, got ${cursor_pos})`);
   });
 });
 

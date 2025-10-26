@@ -1101,28 +1101,28 @@ add_task(async function test_path_cwd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.cwd;
   });
-  ok(GlideBrowser.api.g.value.length > 0, "glide.path.cwd should not be empty");
+  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.cwd should not be empty");
 });
 
 add_task(async function test_path_home_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.home_dir;
   });
-  ok(GlideBrowser.api.g.value.length > 0, "glide.path.home_dir should not be empty");
+  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.home_dir should not be empty");
 });
 
 add_task(async function test_path_profile_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.profile_dir;
   });
-  ok(GlideBrowser.api.g.value.length > 0, "glide.path.profile_dir should not be empty");
+  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.profile_dir should not be empty");
 });
 
 add_task(async function test_path_temp_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.temp_dir;
   });
-  ok(GlideBrowser.api.g.value.length > 0, "glide.path.temp_dir should not be empty");
+  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.temp_dir should not be empty");
 });
 
 add_task(async function test_path_join() {
@@ -1174,7 +1174,7 @@ add_task(async function test_chrome_css_add() {
       }
     `);
   });
-  ok(get_tabs_bar_width() < visible_width, "applying the custom css should make the tabs toolbar smaller");
+  Assert.less(get_tabs_bar_width(), visible_width, "applying the custom css should make the tabs toolbar smaller");
 
   await GlideTestUtils.reload_config(function _() {});
 

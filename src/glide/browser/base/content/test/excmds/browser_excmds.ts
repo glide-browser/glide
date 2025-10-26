@@ -95,7 +95,7 @@ add_task(async function test_scrolling() {
     await keys("G");
     var [x, y] = await get_scroll();
     is(x, curr_x, `G should retain the x position`);
-    ok(y >= max_y, `G should go to the max y`);
+    Assert.greaterOrEqual(y, max_y, `G should go to the max y`);
 
     await keys("gg");
     var [x, y] = await get_scroll();
@@ -108,7 +108,7 @@ add_task(async function test_scrolling() {
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-d> should retain the x position`);
-    ok(y > last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
+    Assert.greater(y, last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
 
     last_y = y;
 
@@ -116,7 +116,7 @@ add_task(async function test_scrolling() {
     await sleep_frames(50);
     var [x, y] = await get_scroll();
     is(x, curr_x, `<C-d> should retain the x position`);
-    ok(y > last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
+    Assert.greater(y, last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
 
     await keys("<C-u>");
     await sleep_frames(50);
@@ -137,7 +137,7 @@ add_task(async function test_scrolling() {
     await keys("j");
     await sleep_frames(50);
     var [x, new_y] = await get_scroll();
-    ok(new_y > y, `j should scroll down`);
+    Assert.greater(new_y, y, `j should scroll down`);
 
     // Test k scrolls up
     await keys("k");

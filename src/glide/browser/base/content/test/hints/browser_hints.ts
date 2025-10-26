@@ -36,13 +36,13 @@ add_task(async function test_f_shows_hints() {
     await keys("f");
     await wait_for_hints();
     is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'f'");
-    ok(get_hints().length > 0, "Hints should be visible on the page");
+    Assert.greater(get_hints().length, 0, "Hints should be visible on the page");
 
     await keys("<escape>");
     await sleep_frames(5);
 
     is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after pressing Escape");
-    ok(get_hints().length === 0, "Hints should be removed after exiting hint mode");
+    Assert.strictEqual(get_hints().length, 0, "Hints should be removed after exiting hint mode");
   });
 });
 
@@ -51,7 +51,7 @@ add_task(async function test_F_shows_hints() {
     await keys("F");
     await wait_for_hints();
     is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'F'");
-    ok(get_hints().length > 0, "Hints should be visible on the page");
+    Assert.greater(get_hints().length, 0, "Hints should be visible on the page");
   });
 });
 
@@ -105,8 +105,8 @@ add_task(async function test_partial_hint_filtering() {
     await keys("a");
     const filtered_hints = get_hints().length;
 
-    ok(filtered_hints <= initial_count, "Typing should filter hints");
-    ok(filtered_hints >= 0, "Should have some hints remaining or none if no matches");
+    Assert.lessOrEqual(filtered_hints, initial_count, "Typing should filter hints");
+    Assert.greaterOrEqual(filtered_hints, 0, "Should have some hints remaining or none if no matches");
   });
 });
 
@@ -119,7 +119,7 @@ add_task(async function test_auto_activate_single_hint() {
     await keys("f");
     await sleep_frames(5);
 
-    ok(GlideBrowser.state.mode === "normal", "Should have entered auto-activated to normal");
+    Assert.strictEqual(GlideBrowser.state.mode, "normal", "Should have entered auto-activated to normal");
 
     is(gBrowser.selectedBrowser?.currentURI.spec, FILE);
 
@@ -149,8 +149,9 @@ add_task(async function test_include_selector() {
     await sleep_frames(3);
 
     const extended_hints = get_hints();
-    ok(
-      extended_hints.length > standard_count,
+    Assert.greater(
+      extended_hints.length,
+      standard_count,
       `Extended hints (${extended_hints.length}) should be more than standard hints (${standard_count})`,
     );
   });

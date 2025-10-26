@@ -179,7 +179,7 @@ add_task(async function test_config_cannot_pollute_browser_prototypes() {
   is([1, 2].push(3), 3, "Array push should work normally");
   is("hello".includes("ell"), true, "String includes should work normally");
   is((3.14159).toFixed(2), "3.14", "Number toFixed should work normally");
-  ok(new Date().getTime() > 0, "Date getTime should work normally");
+  Assert.greater(new Date().getTime(), 0, "Date getTime should work normally");
   is(Function.prototype.call.call(() => "test", undefined), "test", "Function call should work normally");
 
   // Verify pollution occurred within the sandbox (demonstrating isolation)
@@ -319,8 +319,8 @@ add_task(async function test_performance_now_monotonicity() {
   await sleep_frames(2);
 
   const { t0, t1, inc } = GlideBrowser.api.g.value;
-  ok(t1 >= t0, "monotonic, non-decreasing");
-  ok(inc >= 0, "non-negative delta");
+  Assert.greaterOrEqual(t1, t0, "monotonic, non-decreasing");
+  Assert.greaterOrEqual(inc, 0, "non-negative delta");
 });
 
 add_task(async function test_all_elements_are_copied() {

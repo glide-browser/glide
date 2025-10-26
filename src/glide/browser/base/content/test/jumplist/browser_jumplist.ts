@@ -149,7 +149,7 @@ add_task(async function test_jumplist_deleted_intermediary_tab() {
   BrowserTestUtils.removeTab(tab2);
   await sleep_frames(5);
 
-  ok(current_url() !== uri(2), "No longer on deleted tab2");
+  Assert.notStrictEqual(current_url(), uri(2), "No longer on deleted tab2");
 
   await keys("<C-o>");
   await sleep_frames(5);
