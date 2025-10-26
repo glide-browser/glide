@@ -9,7 +9,7 @@
   ],
 
   "jsPlugins": [
-    "./engine/tools/lint/eslint/eslint-plugin-mozilla"
+    "eslint-plugin-mozilla"
   ],
 
   "rules": {
@@ -31,7 +31,8 @@
     "eslint-plugin-mozilla/reject-multiple-getters-calls": "error",
     "eslint-plugin-mozilla/reject-relative-requires": "error",
     "eslint-plugin-mozilla/reject-lazy-imports-into-globals": "error",
-    "eslint-plugin-mozilla/reject-import-system-module-from-non-system": "error",
+    // TODO: requires a patch so that it doesn't apply to type imports
+    "eslint-plugin-mozilla/reject-import-system-module-from-non-system": "off",
 
     "eslint-plugin-mozilla/use-services": "error",
     "eslint-plugin-mozilla/use-chromeutils-generateqi": "error",
