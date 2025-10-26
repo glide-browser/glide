@@ -58,6 +58,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Privacy", href: "privacy.html" },
   { name: "Changelog", href: "changelog.html" },
   { name: "Contributing", href: "contributing.html" },
+  { name: "Chat", href: "chat.html" },
 ];
 
 // overrides for certain cases where we render type declarations differently
@@ -724,7 +725,8 @@ class RenderState {
 
     const children = node.transformChildren(config);
 
-    const is_external = href.startsWith("https://") || href.startsWith("http://") || href.startsWith("mailto:");
+    const is_external = href.startsWith("https://") || href.startsWith("http://") || href.startsWith("mailto:")
+      || href.startsWith("ircs://");
     if (is_external) {
       return this.html({
         html: html`<a href="${href}" target="_blank" rel="noopener"

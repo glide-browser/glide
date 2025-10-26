@@ -11,6 +11,8 @@
     <a href="https://glide-browser.app">Documentation</a>
     ·
     <a href="https://glide-browser.app/#download">Download</a>
+    ·
+    <a href="https://glide-browser.app/chat">IRC</a>
   </p>
 
 <br>
