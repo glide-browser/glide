@@ -135,7 +135,7 @@ add_task(async function test_invalid_config_notification() {
     ok(reload_button, "Reload config button should exist");
 
     // note: *not* using reload config directly
-    GlideTestUtils.write_config(function _() {
+    await GlideTestUtils.write_config(function _() {
       glide.keymaps.set("normal", ";", "motion w");
     });
 
@@ -165,7 +165,7 @@ add_task(async function test_invalid_config_notification_cleared_after_reloading
     );
 
     // note: *not* using reload config directly
-    GlideTestUtils.write_config(function _() {
+    await GlideTestUtils.write_config(function _() {
       glide.keymaps.set("normal", ";", "motion w");
     });
 

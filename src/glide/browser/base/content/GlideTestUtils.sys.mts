@@ -48,7 +48,7 @@ class GlideTestUtilsClass {
    * function.
    */
   async reload_config(config_fn: () => void): Promise<void> {
-    this.write_config(config_fn);
+    await this.write_config(config_fn);
 
     // TODO(glide): proper solution for this - we need to do it because otherwise
     //              we'll sometimes get unhandled rejection errors when reloading
@@ -57,30 +57,9 @@ class GlideTestUtilsClass {
     return await GlideBrowser.reload_config();
   }
 
-  write_config(config_fn: () => void, filename = "glide.ts"): void {
-    // get config file path & touch it
-    let configFile = Services.dirsvc!.QueryInterface!(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
-    configFile.append("glide");
-    configFile.append(filename);
-    try {
-      configFile.remove(/* recursive */ false);
-    } catch {}
-    configFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0o600);
-    console.debug("config file: ", configFile.path);
-
-    // write contents
-    var outStream = Cc[
-      "@mozilla.org/network/file-output-stream;1"
-    ]!.createInstance(Ci.nsIFileOutputStream);
-    outStream.init(
-      configFile,
-      0x02 | 0x08 | 0x20, // write, create, truncate
-      0o666,
-      0,
-    );
-    const config_str = this.#get_function_body(config_fn);
-    outStream.write(config_str, config_str.length);
-    outStream.close();
+  async write_config(config_fn: () => void, path = "glide.ts"): Promise<void> {
+    const absolute = PathUtils.join(PathUtils.profileDir, "glide", path);
+    await IOUtils.writeUTF8(absolute, this.#get_function_body(config_fn));
   }
 
   // `String(func)` but without the enclosing `function $name {}`

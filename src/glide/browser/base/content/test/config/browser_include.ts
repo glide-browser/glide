@@ -15,7 +15,7 @@ add_setup(async function setup() {
 });
 
 add_task(async function test_include_basic_functionality() {
-  GlideTestUtils.write_config(function _() {
+  await GlideTestUtils.write_config(function _() {
     glide.g.include_called = true;
   }, "included.ts");
 
