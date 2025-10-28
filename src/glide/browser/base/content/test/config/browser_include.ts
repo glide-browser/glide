@@ -27,3 +27,17 @@ add_task(async function test_include_basic_functionality() {
 
   ok(GlideBrowser.api.g.include_called, "the included.ts file was executed");
 });
+
+add_task(async function test_include_absolute_path() {
+  await GlideTestUtils.write_config(function _() {
+    glide.g.include_called = true;
+  }, "included.ts");
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.unstable.include(glide.path.join(glide.path.profile_dir, "glide", "included.ts"));
+  });
+
+  await sleep_frames(10);
+
+  ok(GlideBrowser.api.g.include_called, "the included.ts file was executed");
+});

@@ -596,10 +596,6 @@ declare global {
        * Include another file as part of your config. The given file is evluated as if it
        * was just another Glide config file.
        *
-       * **note**: this only supports files that are directly relative to your config file,
-       *           for example, `ts:"shared.glide.ts"` or `ts:"shared/glide.ts"` would work but
-       *           `ts:"../shared/glide.ts"` will not.
-       *
        * **note**: this function cannot be called from inside a file that has been included
        *           itself, i.e. nested {@link glide.unstable.include} calls are not supported.
        *

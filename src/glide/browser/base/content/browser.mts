@@ -2225,26 +2225,11 @@ function make_glide_api(): typeof glide {
       },
     },
     unstable: {
-      async include(rel_path) {
-        const config_path = assert_present(
-          GlideBrowser.config_path,
-          "cannot call .include() without a config path set",
-        );
-        const config_dir = assert_present(
-          PathUtils.parent(config_path),
-          `Could not resolve parent dir for config path ${config_path}`,
-        );
+      async include(path) {
+        const absolute = resolve_path(path);
 
-        const path = (() => {
-          try {
-            return PathUtils.join(config_dir, rel_path);
-          } catch {
-            throw new Error(`Could not resolve file at path ${config_dir} + ${rel_path}`);
-          }
-        })();
-
-        GlideBrowser._log.info(`Including \`${path}\``);
-        const config_str = await IOUtils.readUTF8(path);
+        GlideBrowser._log.info(`Including \`${absolute}\``);
+        const config_str = await IOUtils.readUTF8(absolute);
 
         const sandbox = create_sandbox({
           document: GlideBrowser._mirrored_document,
@@ -2269,12 +2254,12 @@ function make_glide_api(): typeof glide {
 
         try {
           const config_js = TSBlank.default(config_str);
-          Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${rel_path}`, 1, false);
+          Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${path}`, 1, false);
         } catch (err) {
           GlideBrowser._log.error(err);
 
           // TODO: better stack trace
-          const loc = (err as Error).stack ?? rel_path;
+          const loc = (err as Error).stack ?? path;
           GlideBrowser.add_notification(GlideBrowser.config_error_id, {
             label: `An error occurred while evaluating \`${loc}\` - ${err}`,
             priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
