@@ -2052,13 +2052,37 @@ function make_glide_api(): typeof glide {
         GlideBrowser.key_manager.register_mode(mode);
       },
     },
-    styles: {
-      add(styles) {
-        const element = DOM.create_element("style", { textContent: styles });
-        document.head!.appendChild(element);
-        GlideBrowser.reload_config_remove_elements.add(element);
-      },
-    },
+    styles: ((): typeof glide["styles"] => {
+      const elements = new Map<string, HTMLStyleElement>();
+      return {
+        add(styles, opts) {
+          const element = DOM.create_element("style", { textContent: styles });
+          document.head!.appendChild(element);
+          GlideBrowser.reload_config_remove_elements.add(element);
+
+          if (opts?.id) {
+            if (elements.has(opts.id)) {
+              throw Cu.cloneInto(
+                new Error(`A style element has already been registered with ID '${opts.id}'`),
+                GlideBrowser.sandbox_window,
+              );
+            }
+
+            elements.set(opts.id, element);
+          }
+        },
+        remove(id) {
+          const element = elements.get(id);
+          if (!element) {
+            return false;
+          }
+
+          element.remove();
+          GlideBrowser.reload_config_remove_elements.delete(element);
+          return true;
+        },
+      };
+    })(),
     prefs: {
       set(name, value) {
         const type = Services.prefs.getPrefType(name);

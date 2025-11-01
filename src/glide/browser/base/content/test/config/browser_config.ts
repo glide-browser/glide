@@ -1164,7 +1164,7 @@ add_task(async function test_env_delete() {
   is(GlideBrowser.api.g.value, null, "env.delete() should return null for nonexistent variables");
 });
 
-add_task(async function test_chrome_css_add() {
+add_task(async function test_styles_add() {
   const visible_width = get_tabs_bar_width();
 
   await GlideTestUtils.reload_config(function _() {
@@ -1183,9 +1183,61 @@ add_task(async function test_chrome_css_add() {
     visible_width,
     "reloading the config without the custom css should revert the tabs toolbar to the previous width",
   );
-
-  function get_tabs_bar_width(): number {
-    const element = document.getElementById("TabsToolbar")!;
-    return element.getBoundingClientRect().width!;
-  }
 });
+
+add_task(async function test_styles_add_duplicate_id() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.styles.add(`#TabsToolbar {}`, { id: "my-styles" });
+
+    try {
+      glide.styles.add(`#TabsToolbar {}`, { id: "my-styles" });
+    } catch (error) {
+      glide.g.value = error;
+    }
+  });
+
+  await waiter(() => GlideBrowser.api.g.value).ok();
+
+  is((GlideBrowser.api.g.value as Error).message, "A style element has already been registered with ID 'my-styles'");
+});
+
+add_task(async function test_styles_remove() {
+  const visible_width = get_tabs_bar_width();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.styles.add(
+      css`
+        #TabsToolbar {
+          visibility: collapse !important;
+        }
+      `,
+      { id: "my-id" },
+    );
+
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = glide.styles.remove("my-id");
+    });
+  });
+  Assert.less(get_tabs_bar_width(), visible_width, "applying the custom css should make the tabs toolbar smaller");
+
+  await keys("~");
+
+  is(
+    get_tabs_bar_width(),
+    visible_width,
+    "removing the custom css should revert the tabs toolbar to the previous width",
+  );
+  is(GlideBrowser.api.g.value, true);
+});
+
+add_task(async function test_styles_remove_unknown_id() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.value = glide.styles.remove("my-styles");
+  });
+  await waiter(() => GlideBrowser.api.g.value).is(false);
+});
+
+function get_tabs_bar_width(): number {
+  const element = document.getElementById("TabsToolbar")!;
+  return element.getBoundingClientRect().width!;
+}

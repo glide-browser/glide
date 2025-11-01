@@ -57,6 +57,7 @@ text-decoration: none;
 [`glide.process.execute()`](#glide.process.execute)\
 [`glide.styles`](#glide.styles)\
 [`glide.styles.add()`](#glide.styles.add)\
+[`glide.styles.remove()`](#glide.styles.remove)\
 [`glide.prefs`](#glide.prefs)\
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
@@ -286,7 +287,7 @@ See {% link href="#glide.process.spawn" class="go-to-def" %} `ts:glide.process.s
 ## • `glide.styles` {% id="glide.styles" %}
 
 {% api-heading id="glide.styles.add" %}
-glide.styles.add(styles): void
+glide.styles.add(styles, opts?): void
 {% /api-heading %}
 
 Add custom CSS styles to the browser UI.
@@ -298,6 +299,30 @@ glide.styles.add(css`
   }
 `);
 ```
+
+If you want to remove the styles later on, you can pass an ID with `ts:glide.styles.add(..., { id: 'my-id'}`, and then
+remove it with `ts:glide.styles.remove('my-id')`.
+
+{% api-heading id="glide.styles.remove" %}
+glide.styles.remove(id): boolean
+{% /api-heading %}
+
+Remove custom CSS that has previously been added.
+
+```typescript
+glide.styles.add(
+  css`
+  #TabsToolbar {
+    visibility: collapse !important;
+  }
+`,
+  { id: "disable-tab-bar" },
+);
+// ...
+glide.styles.remove("disable-tab-bar");
+```
+
+If the given ID does not correspond to any previously registered styles, then `false` is returned.
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 

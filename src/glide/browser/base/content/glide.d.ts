@@ -206,8 +206,28 @@ declare global {
        *   }
        * `);
        * ```
+       *
+       * If you want to remove the styles later on, you can pass an ID with `ts:glide.styles.add(..., { id: 'my-id'}`, and then
+       * remove it with `ts:glide.styles.remove('my-id')`.
        */
-      add(styles: string): void;
+      add(styles: string, opts?: { id: string }): void;
+
+      /**
+       * Remove custom CSS that has previously been added.
+       *
+       * ```typescript
+       * glide.styles.add(css`
+       *   #TabsToolbar {
+       *     visibility: collapse !important;
+       *   }
+       * `, { id: 'disable-tab-bar' });
+       * // ...
+       * glide.styles.remove('disable-tab-bar');
+       * ```
+       *
+       * If the given ID does not correspond to any previously registered styles, then `false` is returned.
+       */
+      remove(id: string): boolean;
     };
 
     prefs: {
