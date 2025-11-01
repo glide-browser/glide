@@ -330,3 +330,33 @@ add_task(async function test_clear_removes_notifications() {
     );
   });
 });
+
+add_task(async function test_copy_excmd_single_notification() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await keys(":profile_dir<CR>");
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") !== null,
+      "Waiting for profile_dir notification to appear",
+    );
+
+    const profile_dir = PathUtils.profileDir;
+
+    await keys(":copy<CR>");
+    await sleep_frames(10);
+
+    const clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, profile_dir, "Clipboard should contain the profile directory path");
+
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") === null,
+      "Waiting for notification to be removed after copy",
+    );
+    is(
+      gNotificationBox.getNotificationWithValue("glide-profile-dir"),
+      null,
+      "Notification should be removed after copying",
+    );
+  });
+});

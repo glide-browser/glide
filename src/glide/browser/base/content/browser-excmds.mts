@@ -661,6 +661,23 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "copy": {
+        const selector = `[data-l10n-id="glide-notification-copy-to-clipboard-button"]`;
+        const buttons = document!.querySelectorAll<HTMLElement>(selector);
+
+        if (!buttons.length) {
+          throw new Error("There are no active notifications to copy text from");
+        }
+
+        if (buttons.length === 1) {
+          buttons[0]!.click();
+          break;
+        }
+
+        GlideBrowser.api.hints.show({ selector, action: "click", location: "browser-ui" });
+        break;
+      }
+
       case "visual_selection_copy": {
         const actor = GlideBrowser.get_focused_actor();
         await actor.send_query("Glide::Query::CopySelection");
