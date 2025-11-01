@@ -5,7 +5,7 @@
 
 Glide is for you if:
 
-- You like keyboard focused applications
+- You like keyboard driven applications
 - You enjoy tinkering with software and going deep with customisation
 - You're happy to configure software through TypeScript code
 - You like Firefox
