@@ -58,7 +58,7 @@ add_task(async function test_tabs_active() {
     await keys("<Space>n");
     await sleep_frames(30);
 
-    ok(GlideBrowser.api.g.test_checked);
+    ok(glide.g.test_checked);
   });
 });
 
@@ -78,7 +78,7 @@ add_task(async function test_tabs_get_first() {
     await keys("<Space>f");
     await sleep_frames(50);
 
-    ok(GlideBrowser.api.g.test_checked);
+    ok(glide.g.test_checked);
   });
 });
 
@@ -99,6 +99,6 @@ add_task(async function test_tabs_query() {
     await keys("<Space>f");
     await sleep_frames(50);
 
-    ok(GlideBrowser.api.g.test_checked);
+    ok(glide.g.test_checked);
   });
 });

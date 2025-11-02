@@ -194,18 +194,18 @@ add_task(async function test_gi_focuses_last_used_input() {
 
 add_task(async function test_set_string_option() {
   await keys(":set yank_highlight #ff0000<CR>");
-  is(GlideBrowser.api.o.yank_highlight, "#ff0000", "String option should be updated to new value");
+  is(glide.o.yank_highlight, "#ff0000", "String option should be updated to new value");
 
   await keys(":set yank_highlight rgb(255,0,0)<CR>");
-  is(GlideBrowser.api.o.yank_highlight, "rgb(255,0,0)", "String option should accept complex string values");
+  is(glide.o.yank_highlight, "rgb(255,0,0)", "String option should accept complex string values");
 });
 
 add_task(async function test_set_number_option() {
   await keys(":set mapping_timeout 500<CR>");
-  is(GlideBrowser.api.o.mapping_timeout, 500, "Number option should be updated to new value");
+  is(glide.o.mapping_timeout, 500, "Number option should be updated to new value");
 
   await keys(":set mapping_timeout 0<CR>");
-  is(GlideBrowser.api.o.mapping_timeout, 0, "Number option should accept zero");
+  is(glide.o.mapping_timeout, 0, "Number option should accept zero");
 });
 
 declare global {
@@ -228,8 +228,8 @@ add_task(async function test_excmd_callback_receives_tab_id() {
     await keys(":test_command<CR>");
     await sleep_frames(10);
 
-    const active_tab = await GlideBrowser.api.tabs.active();
-    is(GlideBrowser.api.g.value, active_tab.id, "Excmd callback should receive tab_id that matches the active tab ID");
+    const active_tab = await glide.tabs.active();
+    is(glide.g.value, active_tab.id, "Excmd callback should receive tab_id that matches the active tab ID");
   });
 });
 
@@ -241,21 +241,21 @@ add_task(async function test_excmd_callback_receives_unparsed_args() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
-    await GlideBrowser.api.excmds.execute("test_command");
+    await glide.excmds.execute("test_command");
     await sleep_frames(10);
-    isjson(GlideBrowser.api.g.value, [], "Excmd callback should receive empty args as none were passed");
+    isjson(glide.g.value, [], "Excmd callback should receive empty args as none were passed");
 
-    await GlideBrowser.api.excmds.execute("test_command Hello");
+    await glide.excmds.execute("test_command Hello");
     await sleep_frames(10);
-    isjson(GlideBrowser.api.g.value, ["Hello"], "Excmd callback should receive 1 arg");
+    isjson(glide.g.value, ["Hello"], "Excmd callback should receive 1 arg");
 
-    await GlideBrowser.api.excmds.execute("test_command Hello world");
+    await glide.excmds.execute("test_command Hello world");
     await sleep_frames(10);
-    isjson(GlideBrowser.api.g.value, ["Hello", "world"], "Excmd callback should receive 2 args");
+    isjson(glide.g.value, ["Hello", "world"], "Excmd callback should receive 2 args");
 
-    await GlideBrowser.api.excmds.execute("test_command \"Hello world\"");
+    await glide.excmds.execute("test_command \"Hello world\"");
     await sleep_frames(10);
-    isjson(GlideBrowser.api.g.value, ["Hello world"], "Excmd callback should get quoted args");
+    isjson(glide.g.value, ["Hello world"], "Excmd callback should get quoted args");
   });
 });
 

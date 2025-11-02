@@ -53,7 +53,7 @@ add_task(async function test_tabs_functions() {
     await waiter(() => gBrowser.selectedBrowser?.currentURI.spec).is("about:blank");
 
     await keys("<Space>d");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 
   // reload a new config file that doesn't include the event listener defined earlier
@@ -87,7 +87,7 @@ add_task(async function test_tabs_functions() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
   });
 });
 
@@ -121,8 +121,8 @@ add_task(async function test_css_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
-    GlideBrowser.api.g.test_checked = undefined;
+    await until(() => glide.g.test_checked);
+    glide.g.test_checked = undefined;
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
       const styles = content.window.getComputedStyle(content.document.body!)!;
@@ -131,8 +131,8 @@ add_task(async function test_css_injection() {
     is(border_style, "20px dotted rgb(255, 192, 203)");
 
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
-    GlideBrowser.api.g.test_checked = undefined;
+    await until(() => glide.g.test_checked);
+    glide.g.test_checked = undefined;
 
     var border_style = await SpecialPowers.spawn(browser, [], async () => {
       const styles = content.window.getComputedStyle(content.document.body!)!;
@@ -152,7 +152,7 @@ add_task(async function test_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "20px dotted pink");
@@ -174,7 +174,7 @@ add_task(async function test_contextual_identities() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>c");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -192,7 +192,7 @@ add_task(async function test_search_engines() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -216,7 +216,7 @@ add_task(async function test_error_handling_for_unsupported_apis() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>e");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -239,7 +239,7 @@ add_task(async function test_bookmarks_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>b");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -262,7 +262,7 @@ add_task(async function test_history_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>h");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -280,7 +280,7 @@ add_task(async function test_permissions_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>p");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -312,7 +312,7 @@ add_task(async function test_runtime_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>p");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -334,7 +334,7 @@ add_task(async function test_notifications_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>n");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -366,7 +366,7 @@ add_task(async function test_storage_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -396,7 +396,7 @@ add_task(async function test_downloads_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>d");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -431,7 +431,7 @@ add_task(async function test_cookies_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>c");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -458,7 +458,7 @@ add_task(async function test_windows_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>w");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -494,7 +494,7 @@ add_task(async function test_webRequest_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>w");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -510,7 +510,7 @@ add_task(async function test_sessions_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -533,7 +533,7 @@ add_task(async function test_i18n_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>i");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -561,7 +561,7 @@ add_task(async function test_theme_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 });
 
@@ -580,7 +580,7 @@ add_task(async function test_identity_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>i");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -603,7 +603,7 @@ add_task(async function test_function_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "method call with no args");
@@ -631,7 +631,7 @@ add_task(async function test_function_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
@@ -653,7 +653,7 @@ add_task(async function test_function_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid green", "function syntax with no args");
@@ -680,7 +680,7 @@ add_task(async function test_function_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
     const border_style = await SpecialPowers.spawn(browser, [], async () => content.document.body!.style.border);
     is(border_style, "5px solid red", "method call with args");
@@ -710,7 +710,7 @@ add_task(async function test_function_script_injection() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>n");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
   });
 });
 
@@ -736,7 +736,7 @@ add_task(async function test_runtime_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>r");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok("the handler was correctly invoked");
+    await waiter(() => glide.g.test_checked).ok("the handler was correctly invoked");
   });
 }).skip();
 
@@ -772,7 +772,7 @@ add_task(async function test_commands_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>c");
-    await waiter(() => GlideBrowser.api.g.test_checked).ok();
+    await waiter(() => glide.g.test_checked).ok();
   });
 }).skip();
 
@@ -806,7 +806,7 @@ add_task(async function test_sidebarAction_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>s");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
     // The assertions are in the config
   });
 }).skip();

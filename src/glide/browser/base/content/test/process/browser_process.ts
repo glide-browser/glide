@@ -22,9 +22,9 @@ add_task(async function test_basic() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
-  is(GlideBrowser.api.g.exit_code, 0);
+  is(glide.g.exit_code, 0);
 });
 
 add_task(async function test_unknown_command() {
@@ -36,10 +36,10 @@ add_task(async function test_unknown_command() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
   is(
-    String(GlideBrowser.api.g.value),
+    String(glide.g.value),
     "Error: Executable not found: this_should_not_resolve",
     "unknown commands should error at the spawn() step",
   );
@@ -58,10 +58,10 @@ add_task(async function test_non_zero_exit_code() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  const err = GlideBrowser.api.g.value as GlideProcessError;
+  const err = glide.g.value as GlideProcessError;
   is(
     String(err),
     "GlideProcessError: Process exited with a non-zero code 3",
@@ -70,7 +70,7 @@ add_task(async function test_non_zero_exit_code() {
   is(err.name, "GlideProcessError");
   is(err.exit_code, 3);
   is(err.process.exit_code, 3);
-  is(GlideBrowser.api.g.stdout, "a bad thing happened!\n");
+  is(glide.g.stdout, "a bad thing happened!\n");
 });
 
 add_task(async function test_non_zero_exit_code_check_exit_code_disables() {
@@ -82,10 +82,10 @@ add_task(async function test_non_zero_exit_code_check_exit_code_disables() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  const proc = GlideBrowser.api.g.value as glide.CompletedProcess;
+  const proc = glide.g.value as glide.CompletedProcess;
   is(proc.exit_code, 3, "process should be returned when check_exit_code is set to false");
 });
 
@@ -100,10 +100,10 @@ add_task(async function test_non_zero_exit_code_success_codes_disables() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  const proc = GlideBrowser.api.g.value as glide.CompletedProcess;
+  const proc = glide.g.value as glide.CompletedProcess;
   is(proc.exit_code, 3, "process should be returned when success_codes matches the exit code");
 });
 
@@ -115,10 +115,10 @@ add_task(async function test_stdout() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
   await new Promise((r) => setTimeout(r, 300));
-  isjson(GlideBrowser.api.g.value, ["first\n", "second\n"], "pauses in the stream should be separate chunks");
+  isjson(glide.g.value, ["first\n", "second\n"], "pauses in the stream should be separate chunks");
 });
 
 add_task(async function test_stderr() {
@@ -129,9 +129,9 @@ add_task(async function test_stderr() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
-  isjson(GlideBrowser.api.g.value, ["An error\n"]);
+  isjson(glide.g.value, ["An error\n"]);
 });
 
 add_task(async function test_stderr_stdout_simul() {
@@ -159,10 +159,10 @@ add_task(async function test_stderr_stdout_simul() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
   await new Promise((r) => setTimeout(r, 400));
-  isjson(GlideBrowser.api.g.value, ["stderr:An error\n", "stdout:foo\n", "stderr:Another error\n"]);
+  isjson(glide.g.value, ["stderr:An error\n", "stdout:foo\n", "stderr:Another error\n"]);
 });
 
 add_task(async function test_stderr_as_stdout() {
@@ -176,10 +176,10 @@ add_task(async function test_stderr_as_stdout() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
   await new Promise((r) => setTimeout(r, 300));
-  isjson(GlideBrowser.api.g.value, ["An error\nfoo\n", "Another error\n"]);
+  isjson(glide.g.value, ["An error\nfoo\n", "Another error\n"]);
 });
 
 add_task(async function test_cwd_option() {
@@ -195,11 +195,11 @@ add_task(async function test_cwd_option() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  const result = GlideBrowser.api.g.value as { default: string; specified: string };
-  is(result.default, GlideBrowser.api.path.cwd, "process cwd should be the same as path.cwd");
+  const result = glide.g.value as { default: string; specified: string };
+  is(result.default, glide.path.cwd, "process cwd should be the same as path.cwd");
   isnot(result.specified, result.default, "process should be spawned in a different directory");
 });
 
@@ -214,14 +214,11 @@ add_task(async function test_env() {
   Services.env.set("GLIDE_FROM_HOST", "from_outer_scope");
 
   try {
-    await GlideBrowser.api.keys.send("~");
+    await glide.keys.send("~");
     await sleep_frames(10);
 
-    ok(GlideBrowser.api.g.value.includes("MY_ENV_VAR=glide!"), "explicitly set env vars should be passed through");
-    ok(
-      GlideBrowser.api.g.value.includes("GLIDE_FROM_HOST=from_outer_scope"),
-      "other env variables should be set as well",
-    );
+    ok(glide.g.value.includes("MY_ENV_VAR=glide!"), "explicitly set env vars should be passed through");
+    ok(glide.g.value.includes("GLIDE_FROM_HOST=from_outer_scope"), "other env variables should be set as well");
   } finally {
     Services.env.set("GLIDE_FROM_HOST", "");
   }
@@ -238,10 +235,10 @@ add_task(async function test_deleting_env() {
   Services.env.set("MY_ENV_VAR", "glide!");
 
   try {
-    await GlideBrowser.api.keys.send("~");
+    await glide.keys.send("~");
     await sleep_frames(10);
 
-    notok(GlideBrowser.api.g.value.includes("MY_ENV_VAR=glide!"), "env vars set with null should be deleted");
+    notok(glide.g.value.includes("MY_ENV_VAR=glide!"), "env vars set with null should be deleted");
   } finally {
     Services.env.set("MY_ENV_VAR", "");
   }
@@ -256,10 +253,10 @@ add_task(async function test_minimal_env() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  is(GlideBrowser.api.g.value, "", "env should be empty when env: {} and extend_env: false are set");
+  is(glide.g.value, "", "env should be empty when env: {} and extend_env: false are set");
 
   await GlideTestUtils.reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
@@ -268,10 +265,10 @@ add_task(async function test_minimal_env() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  is(GlideBrowser.api.g.value, "MY_ENV_VAR=glide!", "only the explicitly set env var should be present");
+  is(glide.g.value, "MY_ENV_VAR=glide!", "only the explicitly set env var should be present");
 });
 
 add_task(async function test_execute() {
@@ -282,8 +279,8 @@ add_task(async function test_execute() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  is(GlideBrowser.api.g.value, 0, "execute() should wait for the process to exit before returning");
+  is(glide.g.value, 0, "execute() should wait for the process to exit before returning");
 });

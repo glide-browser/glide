@@ -44,10 +44,7 @@ add_task(async function test_autocmd_regexp_filter() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
-      ["expected-call"],
-      "UrlEnter autocmd should be triggered on matching URL",
-    );
+    await waiter(() => glide.g.calls).isjson(["expected-call"], "UrlEnter autocmd should be triggered on matching URL");
   });
 });
 
@@ -65,7 +62,7 @@ add_task(async function test_autocmd_host_filter() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
+    await waiter(() => glide.g.calls).isjson(
       ["expected-call"],
       "UrlEnter autocmd should be triggered on matching hostname",
     );
@@ -94,7 +91,7 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
+    await waiter(() => glide.g.calls).isjson(
       ["first", "second"],
       "All registered autocmd callbacks should fire in registration order",
     );
@@ -102,7 +99,7 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
     await BrowserTestUtils.reloadTab(gBrowser.selectedTab);
 
     isjson(
-      GlideBrowser.api.g.calls,
+      glide.g.calls,
       ["first", "second", "first-cleanup", "second-cleanup", "first", "second"],
       "All registered autocmd callbacks should fire in registration order",
     );
@@ -189,16 +186,16 @@ add_task(async function test_autocmd_multiple_matching_tabs_triggers_once_each()
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["enter"]);
+    await waiter(() => glide.g.calls).isjson(["enter"]);
     const tab1 = gBrowser.selectedTab;
 
     await BrowserTestUtils.withNewTab(INPUT_TEST_URI + "?second", async _ => {
-      await waiter(() => GlideBrowser.api.g.calls).isjson(["enter", "enter"]);
+      await waiter(() => glide.g.calls).isjson(["enter", "enter"]);
       const tab2 = gBrowser.selectedTab;
 
       await BrowserTestUtils.switchTab(gBrowser, tab1);
       await BrowserTestUtils.switchTab(gBrowser, tab2);
-      await waiter(() => GlideBrowser.api.g.calls).isjson(
+      await waiter(() => glide.g.calls).isjson(
         ["enter", "enter", "enter", "enter"],
         "Switching between already loaded matching tabs should trigger again",
       );
@@ -218,7 +215,7 @@ add_task(async function test_about_blank_with_hostname_filter() {
   await BrowserTestUtils.withNewTab("about:blank", async _ => {
     await sleep_frames(5);
 
-    isjson(GlideBrowser.api.g.calls, [], "UrlEnter autocmd with hostname filter should not trigger for about:blank");
+    isjson(glide.g.calls, [], "UrlEnter autocmd with hostname filter should not trigger for about:blank");
   });
 });
 
@@ -232,21 +229,21 @@ add_task(async function test_mode_changed_autocmd() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["null->normal"]);
+    await waiter(() => glide.g.calls).isjson(["null->normal"]);
 
     // insert
     await SpecialPowers.spawn(browser, [], async () => {
       content.document.getElementById("input-1")!.focus();
     });
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["null->normal", "normal->insert"]);
+    await waiter(() => glide.g.calls).isjson(["null->normal", "normal->insert"]);
 
     // normal
     await keys("<esc>");
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["null->normal", "normal->insert", "insert->normal"]);
+    await waiter(() => glide.g.calls).isjson(["null->normal", "normal->insert", "insert->normal"]);
 
     // visual
     await keys("v");
-    await waiter(() => GlideBrowser.api.g.calls).isjson([
+    await waiter(() => glide.g.calls).isjson([
       "null->normal",
       "normal->insert",
       "insert->normal",
@@ -255,7 +252,7 @@ add_task(async function test_mode_changed_autocmd() {
 
     // normal
     await keys("<esc>");
-    await waiter(() => GlideBrowser.api.g.calls).isjson([
+    await waiter(() => glide.g.calls).isjson([
       "null->normal",
       "normal->insert",
       "insert->normal",
@@ -275,7 +272,7 @@ add_task(async function test_mode_changed_autocmd_config_reload() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
+    await waiter(() => glide.g.calls).isjson(
       ["null->normal"],
       "ModeChanged autocmd should be called for the initial mode load",
     );
@@ -304,15 +301,15 @@ add_task(async function test_mode_changed_specific_pattern() {
     await SpecialPowers.spawn(browser, [], async () => {
       content.document.getElementById("input-1")!.focus();
     });
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["normal-to-insert"]);
+    await waiter(() => glide.g.calls).isjson(["normal-to-insert"]);
 
     // normal
     await keys("<esc>");
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["normal-to-insert", "leaving-insert-to-normal"]);
+    await waiter(() => glide.g.calls).isjson(["normal-to-insert", "leaving-insert-to-normal"]);
 
     // visual
     await keys("v");
-    await waiter(() => GlideBrowser.api.g.calls).isjson([
+    await waiter(() => glide.g.calls).isjson([
       "normal-to-insert",
       "leaving-insert-to-normal",
       "normal-entering-visual",
@@ -341,12 +338,12 @@ add_task(async function test_mode_changed_multiple_callbacks() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await waiter(() => GlideBrowser.api.g.calls).isjson(["first", "second"]);
+    await waiter(() => glide.g.calls).isjson(["first", "second"]);
 
     await SpecialPowers.spawn(browser, [], async () => {
       content.document.getElementById("input-1")!.focus();
     });
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
+    await waiter(() => glide.g.calls).isjson(
       ["first", "second", "first", "second", "specific"],
       "Multiple ModeChanged autocmds should fire in registration order",
     );
@@ -388,7 +385,7 @@ add_task(async function test_urlenter_triggered_on_config_reload() {
       });
     });
 
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
+    await waiter(() => glide.g.calls).isjson(
       ["reloaded-config"],
       "UrlEnter autocmd should be triggered on config reload for already loaded tabs",
     );
@@ -405,8 +402,8 @@ add_task(async function test_urlenter_tab_id() {
       });
     });
 
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
-      [String((await GlideBrowser.api.tabs.active()).id)],
+    await waiter(() => glide.g.calls).isjson(
+      [String((await glide.tabs.active()).id)],
       "UrlEnter autocmd should be passed a tab ID that matches the active tab ID",
     );
   });
@@ -422,7 +419,7 @@ add_task(async function test_startup_triggered_on_config_reload() {
       });
     });
 
-    await waiter(() => GlideBrowser.api.g.calls).isjson(
+    await waiter(() => glide.g.calls).isjson(
       ["reloaded-config"],
       "ConfigLoaded autocmd should be triggered on config reload after initial startup",
     );
@@ -460,7 +457,7 @@ add_task(async function test_window_loaded_not_called_on_reload() {
     });
   });
 
-  isjson(GlideBrowser.api.g.calls, [], "WindowLoaded autocmd should not be triggered on config reload");
+  isjson(glide.g.calls, [], "WindowLoaded autocmd should not be triggered on config reload");
 });
 
 add_task(async function test_key_state_changed_autocmd() {
@@ -477,10 +474,10 @@ add_task(async function test_key_state_changed_autocmd() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("gtj");
 
-    await until(() => GlideBrowser.api.g.autocmds?.length === 3);
+    await until(() => glide.g.autocmds?.length === 3);
 
     is(
-      JSON.stringify(GlideBrowser.api.g.autocmds),
+      JSON.stringify(glide.g.autocmds),
       JSON.stringify([
         { mode: "normal", sequence: ["g"], partial: true },
         {
@@ -495,5 +492,5 @@ add_task(async function test_key_state_changed_autocmd() {
 });
 
 function num_calls() {
-  return (GlideBrowser.api.g.calls ?? []).length;
+  return (glide.g.calls ?? []).length;
 }

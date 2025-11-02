@@ -88,8 +88,8 @@ add_task(async function test_jumplist_max_entries_trim() {
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
-  const max_entries = GlideBrowser.api.o.jumplist_max_entries;
-  GlideBrowser.api.o.jumplist_max_entries = 10;
+  const max_entries = glide.o.jumplist_max_entries;
+  glide.o.jumplist_max_entries = 10;
 
   try {
     // Open 11 additional tabs so that we end up with 12 entries (0–11).
@@ -114,7 +114,7 @@ add_task(async function test_jumplist_max_entries_trim() {
       BrowserTestUtils.removeTab(tab);
     }
   } finally {
-    GlideBrowser.api.o.jumplist_max_entries = max_entries;
+    glide.o.jumplist_max_entries = max_entries;
   }
 });
 

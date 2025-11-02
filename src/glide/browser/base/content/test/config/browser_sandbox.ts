@@ -63,7 +63,7 @@ add_task(async function test_chrome_window_not_accessible() {
     ];
   });
 
-  for (const test of GlideBrowser.api.g.sandbox_tests!) {
+  for (const test of glide.g.sandbox_tests!) {
     ok(test.success, test.message);
   }
 });
@@ -183,7 +183,7 @@ add_task(async function test_config_cannot_pollute_browser_prototypes() {
   is(Function.prototype.call.call(() => "test", undefined), "test", "Function call should work normally");
 
   // Verify pollution occurred within the sandbox (demonstrating isolation)
-  const sandbox_tests = GlideBrowser.api.g.sandbox_pollution_test!;
+  const sandbox_tests = glide.g.sandbox_pollution_test!;
   ok(sandbox_tests.sandbox_object_polluted, "Object.prototype was polluted in sandbox");
   ok(sandbox_tests.sandbox_array_polluted, "Array.prototype was polluted in sandbox");
   ok(sandbox_tests.sandbox_string_polluted, "String.prototype was polluted in sandbox");
@@ -217,12 +217,12 @@ add_task(async function test_page_visibility_signal_exists() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(1);
 
   // note: we may want to force this to be `visible` in the future, this test is just
   //       to verify when that changes.
-  is(GlideBrowser.api.g.value, "hidden");
+  is(glide.g.value, "hidden");
 });
 
 add_task(async function test_setTimeout() {
@@ -234,10 +234,10 @@ add_task(async function test_setTimeout() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  is(GlideBrowser.api.g.value, "from setTimeout");
+  is(glide.g.value, "from setTimeout");
 });
 
 add_task(async function test_requestAnimationFrame() {
@@ -249,10 +249,10 @@ add_task(async function test_requestAnimationFrame() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  is(GlideBrowser.api.g.value, "from requestAnimationFrame");
+  is(glide.g.value, "from requestAnimationFrame");
 });
 
 add_task(async function test_setInterval() {
@@ -265,10 +265,10 @@ add_task(async function test_setInterval() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(10);
 
-  is(GlideBrowser.api.g.value, 1, "setInterval ticked at least once and then cleared");
+  is(glide.g.value, 1, "setInterval ticked at least once and then cleared");
 });
 
 add_task(async function test_queueMicrotask() {
@@ -280,10 +280,10 @@ add_task(async function test_queueMicrotask() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(1);
 
-  is(GlideBrowser.api.g.value, "from queueMicrotask");
+  is(glide.g.value, "from queueMicrotask");
 });
 
 add_task(async function test_requestIdleCallback_with_timeout() {
@@ -295,10 +295,10 @@ add_task(async function test_requestIdleCallback_with_timeout() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(20);
 
-  is(GlideBrowser.api.g.value, "from requestIdleCallback");
+  is(glide.g.value, "from requestIdleCallback");
 });
 
 add_task(async function test_performance_now_monotonicity() {
@@ -315,10 +315,10 @@ add_task(async function test_performance_now_monotonicity() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
+  await glide.keys.send("~");
   await sleep_frames(2);
 
-  const { t0, t1, inc } = GlideBrowser.api.g.value;
+  const { t0, t1, inc } = glide.g.value;
   Assert.greaterOrEqual(t1, t0, "monotonic, non-decreasing");
   Assert.greaterOrEqual(inc, 0, "non-negative delta");
 });
@@ -375,7 +375,7 @@ add_task(async function test_correct_realm_instances() {
 
   await keys("~");
 
-  const checks = await until(() => GlideBrowser.api.g.value);
+  const checks = await until(() => glide.g.value);
   for (const [name, result] of Object.entries(checks)) {
     ok(result, `${name} is created in the correct realm`);
   }

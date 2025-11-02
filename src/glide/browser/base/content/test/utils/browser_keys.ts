@@ -180,7 +180,7 @@ add_task(async function test_leader() {
   const key_manager = new KeyManager();
   key_manager.set("normal", "<leader>sf", "back");
 
-  GlideBrowser.api.g.mapleader = "\\";
+  glide.g.mapleader = "\\";
 
   var node: KeyMappingTrieNode | undefined;
   document?.addEventListener("keydown", event => {
@@ -201,7 +201,7 @@ add_task(async function test_keymaps_list_all() {
     }
   });
 
-  const keymaps = GlideBrowser.api.keymaps.list();
+  const keymaps = glide.keymaps.list();
   is(keymaps.length, 0, "keymaps.list() should list all keymaps");
 });
 
@@ -213,7 +213,7 @@ add_task(async function test_keymaps_list_filter() {
     }
   });
 
-  const keymaps = GlideBrowser.api.keymaps.list();
+  const keymaps = glide.keymaps.list();
   Assert.greater(keymaps.length, 0, "Only normal keymaps should be returned");
 
   await GlideTestUtils.reload_config(function _() {
@@ -225,7 +225,7 @@ add_task(async function test_keymaps_list_filter() {
     }
   });
 
-  Assert.less(GlideBrowser.api.keymaps.list().length, keymaps.length, "Only normal/visual keymaps should be returned");
+  Assert.less(glide.keymaps.list().length, keymaps.length, "Only normal/visual keymaps should be returned");
 });
 
 add_task(async function test_shifted_characters() {

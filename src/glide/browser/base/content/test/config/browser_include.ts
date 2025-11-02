@@ -25,7 +25,7 @@ add_task(async function test_include_basic_functionality() {
 
   await sleep_frames(10);
 
-  ok(GlideBrowser.api.g.include_called, "the included.ts file was executed");
+  ok(glide.g.include_called, "the included.ts file was executed");
 });
 
 add_task(async function test_include_absolute_path() {
@@ -39,5 +39,5 @@ add_task(async function test_include_absolute_path() {
 
   await sleep_frames(10);
 
-  ok(GlideBrowser.api.g.include_called, "the included.ts file was executed");
+  ok(glide.g.include_called, "the included.ts file was executed");
 });

@@ -13,6 +13,6 @@ add_task(async function test_creat_element_attributes() {
     });
   });
 
-  await GlideBrowser.api.keys.send("~");
-  is(GlideBrowser.api.g.value, "bar");
+  await glide.keys.send("~");
+  is(glide.g.value, "bar");
 });

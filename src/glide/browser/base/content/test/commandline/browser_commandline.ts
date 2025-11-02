@@ -196,12 +196,9 @@ add_task(async function test_commandline_custom_excmd_arguments() {
 
     await keys("<CR>");
 
-    await TestUtils.waitForCondition(
-      () => GlideBrowser.api.g.test_checked === true,
-      "Waiting for excmd to be executed",
-    );
+    await TestUtils.waitForCondition(() => glide.g.test_checked === true, "Waiting for excmd to be executed");
 
-    isjson(GlideBrowser.api.g.value, ["foo", "bar"], "arguments should be passed to the excmd");
+    isjson(glide.g.value, ["foo", "bar"], "arguments should be passed to the excmd");
   });
 });
 

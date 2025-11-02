@@ -32,7 +32,7 @@ add_task(async function test_g_mapleader_normalizes_input() {
     glide.g.mapleader = "<C-C-d>";
   });
 
-  is(GlideBrowser.api.g.mapleader, "<C-d>", "glide.g.mapleader assignments should be normalized");
+  is(glide.g.mapleader, "<C-d>", "glide.g.mapleader assignments should be normalized");
 });
 
 declare global {
@@ -52,7 +52,7 @@ add_task(async function test_g_stores_arbitrary_data() {
     glide.g.test_prop = true;
   });
 
-  ok(GlideBrowser.api.g.test_prop, "glide.g.test_prop should be retained");
+  ok(glide.g.test_prop, "glide.g.test_prop should be retained");
 });
 
 add_task(async function test_keymap_reloading() {
@@ -81,15 +81,15 @@ add_task(async function test_buf_prefs_set() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await until(() => GlideBrowser.api.g.test_state === "enter");
-    is(GlideBrowser.api.prefs.get("smoothscroll"), true, "pref should be set via UrlEnter");
+    await until(() => glide.g.test_state === "enter");
+    is(glide.prefs.get("smoothscroll"), true, "pref should be set via UrlEnter");
   });
 
-  await until(() => GlideBrowser.api.g.test_state === "cleanup");
+  await until(() => glide.g.test_state === "cleanup");
 
-  is(GlideBrowser.api.prefs.get("smoothscroll"), false, "pref should be restored after navigating away");
+  is(glide.prefs.get("smoothscroll"), false, "pref should be restored after navigating away");
 
-  GlideBrowser.api.prefs.clear("smoothscroll");
+  glide.prefs.clear("smoothscroll");
 });
 
 add_task(async function test_buf_prefs_set_new_pref() {
@@ -104,13 +104,13 @@ add_task(async function test_buf_prefs_set_new_pref() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await until(() => GlideBrowser.api.g.test_state === "enter");
-    is(GlideBrowser.api.prefs.get("mynewpref"), true, "pref should be set via UrlEnter");
+    await until(() => glide.g.test_state === "enter");
+    is(glide.prefs.get("mynewpref"), true, "pref should be set via UrlEnter");
   });
 
-  await until(() => GlideBrowser.api.g.test_state === "cleanup");
+  await until(() => glide.g.test_state === "cleanup");
 
-  is(GlideBrowser.api.prefs.get("mynewpref"), undefined, "pref should be cleared after navigating away");
+  is(glide.prefs.get("mynewpref"), undefined, "pref should be cleared after navigating away");
 });
 
 add_task(async function test_invalid_config_notification() {
@@ -207,7 +207,7 @@ add_task(async function test_invalid_config_notification_nested_stack_trace() {
 });
 
 add_task(async function test_glide_prefs_set() {
-  is(GlideBrowser.api.prefs.get("ui.highlight"), undefined);
+  is(glide.prefs.get("ui.highlight"), undefined);
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {
@@ -216,8 +216,8 @@ add_task(async function test_glide_prefs_set() {
       glide.prefs.set("ui.highlight", "#edc73b");
     });
 
-    await waiter(() => GlideBrowser.api.prefs.get("ui.highlight")).is("#edc73b");
-    GlideBrowser.api.prefs.clear("ui.highlight");
+    await waiter(() => glide.prefs.get("ui.highlight")).is("#edc73b");
+    glide.prefs.clear("ui.highlight");
   });
 });
 
@@ -231,7 +231,7 @@ add_task(async function test_glide_prefs_get() {
       glide.g.value = glide.prefs.get("browser.active_color");
     });
 
-    await waiter(() => GlideBrowser.api.g.value).is("#EE0000");
+    await waiter(() => glide.g.value).is("#EE0000");
   });
 });
 
@@ -242,12 +242,11 @@ add_task(async function test_glide_prefs_get_undefined_pref() {
       glide.g.value = glide.prefs.get("my_new_pref");
     });
 
-    await waiter(() => GlideBrowser.api.g.value).is(undefined);
+    await waiter(() => glide.g.value).is(undefined);
   });
 });
 
 add_task(async function test_glide_prefs_clear() {
-  const glide = GlideBrowser.api;
   const pre = glide.prefs.get("browser.active_color");
 
   glide.prefs.set("browser.active_color", "#EE0001");
@@ -273,7 +272,7 @@ add_task(async function test_keys_next_api() {
     await keys("a");
 
     await TestUtils.waitForCondition(
-      () => GlideBrowser.api.g.received_key === "a",
+      () => glide.g.received_key === "a",
       "glide.keys.next() should capture the 'a' key correctly",
       10,
     );
@@ -293,7 +292,7 @@ add_task(async function test_keys_next_str_api() {
     await keys("<C-l>");
 
     await TestUtils.waitForCondition(
-      () => GlideBrowser.api.g.received_key === "<C-l>",
+      () => glide.g.received_key === "<C-l>",
       "glide.keys.next() should capture the '<C-l>' key correctly",
       10,
     );
@@ -328,15 +327,15 @@ add_task(async function test_keys_next_concurrency_disallowed() {
     await keys("x");
 
     await TestUtils.waitForCondition(
-      () => GlideBrowser.api.g.received_key === "x",
+      () => glide.g.received_key === "x",
       "First call should still receive the key correctly",
       10,
     );
 
     // Verify an error was thrown for the second call
-    ok(GlideBrowser.api.g.error_thrown, "Second call to glide.keys.next() should throw an error");
-    is(GlideBrowser.api.g.received_key, "x", "First call should still receive the key correctly");
-    ok(!GlideBrowser.api.g.unexpected_error, "No unexpected errors should occur");
+    ok(glide.g.error_thrown, "Second call to glide.keys.next() should throw an error");
+    is(glide.g.received_key, "x", "First call should still receive the key correctly");
+    ok(!glide.g.unexpected_error, "No unexpected errors should occur");
   });
 });
 
@@ -353,7 +352,7 @@ add_task(async function test_keys_next_special_keys() {
     await keys("<Esc>");
 
     await TestUtils.waitForCondition(
-      () => GlideBrowser.api.g.received_key === "<Esc>",
+      () => glide.g.received_key === "<Esc>",
       "glide.keys.next_str() should capture the Escape key correctly",
       10,
     );
@@ -379,12 +378,12 @@ add_task(async function test_keys_next_passthrough_api() {
     await keys("b");
 
     await TestUtils.waitForCondition(
-      () => GlideBrowser.api.g.received_key === "b",
+      () => glide.g.received_key === "b",
       "glide.keys.next_passthrough() should capture the 'b' key correctly",
       10,
     );
     is(
-      GlideBrowser.api.g.value,
+      glide.g.value,
       "b triggered",
       "glide.keys.next_passthrough() should pass keys through to their original mappings",
     );
@@ -401,7 +400,7 @@ add_task(async function test_glide_ctx_url() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>u");
 
-    is(GlideBrowser.api.g.value, INPUT_TEST_URI, "glide.ctx.url should return the current page URL");
+    is(glide.g.value, INPUT_TEST_URI, "glide.ctx.url should return the current page URL");
   });
 });
 
@@ -417,10 +416,7 @@ add_task(async function test_glide_excmds_execute() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>e");
-    await waiter(() => GlideBrowser.api.g.value).is(
-      "initial",
-      "After config reload, the value should be reset to undefined",
-    );
+    await waiter(() => glide.g.value).is("initial", "After config reload, the value should be reset to undefined");
   });
 });
 
@@ -512,24 +508,24 @@ add_task(async function test_config_sandbox_properties() {
     glide.g.sb.has_GlideExcmds = typeof GlideExcmds !== "undefined";
   });
 
-  ok(GlideBrowser.api.g.sb.has_fetch, "fetch should be available in config sandbox");
-  ok(GlideBrowser.api.g.sb.has_setTimeout, "setTimeout should be available in config sandbox");
-  ok(GlideBrowser.api.g.sb.has_console, "console should be available in config sandbox");
-  ok(GlideBrowser.api.g.sb.has_document, "document should be available in config sandbox");
-  ok(GlideBrowser.api.g.sb.has_navigator, "navigator should be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_openDialog, "openDialog should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_GlideBrowser, "GlideBrowser should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_ChromeUtils, "ChromeUtils should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_Services, "Services should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_Components, "Components should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_Cu, "Cu should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_Cc, "Cc should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_Ci, "Ci should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_gBrowser, "gBrowser should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_gNotificationBox, "gNotificationBox should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_BrowserTestUtils, "BrowserTestUtils should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_GlideTestUtils, "GlideTestUtils should NOT be available in config sandbox");
-  ok(!GlideBrowser.api.g.sb.has_GlideExcmds, "GlideExcmds should NOT be available in config sandbox");
+  ok(glide.g.sb.has_fetch, "fetch should be available in config sandbox");
+  ok(glide.g.sb.has_setTimeout, "setTimeout should be available in config sandbox");
+  ok(glide.g.sb.has_console, "console should be available in config sandbox");
+  ok(glide.g.sb.has_document, "document should be available in config sandbox");
+  ok(glide.g.sb.has_navigator, "navigator should be available in config sandbox");
+  ok(!glide.g.sb.has_openDialog, "openDialog should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_GlideBrowser, "GlideBrowser should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_ChromeUtils, "ChromeUtils should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_Services, "Services should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_Components, "Components should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_Cu, "Cu should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_Cc, "Cc should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_Ci, "Ci should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_gBrowser, "gBrowser should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_gNotificationBox, "gNotificationBox should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_BrowserTestUtils, "BrowserTestUtils should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_GlideTestUtils, "GlideTestUtils should NOT be available in config sandbox");
+  ok(!glide.g.sb.has_GlideExcmds, "GlideExcmds should NOT be available in config sandbox");
 });
 
 declare global {
@@ -549,7 +545,7 @@ add_task(async function test_excmds_create() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>0");
 
-    is(GlideBrowser.api.g.value, "from hello excmd", "the excmd callback should set g.value");
+    is(glide.g.value, "from hello excmd", "the excmd callback should set g.value");
 
     // ensure removed after reload
     await GlideTestUtils.reload_config(function _() {
@@ -583,7 +579,7 @@ add_task(async function test_keys_send_api() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await waiter(() => GlideBrowser.api.g.value).is("after send", "glide.keys.send() should trigger the 'j' keymap");
+    await waiter(() => glide.g.value).is("after send", "glide.keys.send() should trigger the 'j' keymap");
   });
 });
 
@@ -604,7 +600,7 @@ add_task(async function test_keys_send_to_input_element() {
     await waiter(() => GlideBrowser.state.mode).is("insert");
 
     await keys("<C-k>");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
     is(
       await SpecialPowers.spawn(browser, [], async () =>
@@ -634,12 +630,12 @@ add_task(async function test_keys_send_accepts_glide_key() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("~");
-    await waiter(() => GlideBrowser.api.g.value).is("before next", "should wait for the next key");
+    await waiter(() => glide.g.value).is("before next", "should wait for the next key");
 
     await keys("j");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
-    is(GlideBrowser.api.g.value, "after send", "glide.keys.send() should trigger the 'j' keymap");
+    is(glide.g.value, "after send", "glide.keys.send() should trigger the 'j' keymap");
   });
 });
 
@@ -657,7 +653,7 @@ add_task(async function test_keys_send_skip_mappings() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await waiter(() => GlideBrowser.api.g.value).is(
+    await waiter(() => glide.g.value).is(
       "from first mapping",
       "glide.keys.send() with skip_mappings: true should not trigger the 'j' keymap",
     );
@@ -688,12 +684,12 @@ add_task(async function test_custom_modes() {
     await waiter(() => GlideBrowser.state.mode).is("test_custom_mode", "we should switch to the custom mode");
 
     await keys("j");
-    await waiter(() => GlideBrowser.api.g.value).is(
+    await waiter(() => glide.g.value).is(
       "from custom mode keymap",
       "the custom mode keymap callback should be invoked",
     );
 
-    await GlideBrowser.api.excmds.execute("mode_change normal");
+    await glide.excmds.execute("mode_change normal");
   });
 });
 
@@ -725,7 +721,7 @@ add_task(async function test_ctx_mode() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await waiter(() => GlideBrowser.api.g.value).is(
+    await waiter(() => glide.g.value).is(
       "normal",
       "the keymap should be invoked and set the value to the current mode",
     );
@@ -752,9 +748,9 @@ add_task(async function test_dedent_helpers() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>t");
-    await waiter(() => GlideBrowser.api.g.value).is("<!---->\n<div>foo</div>");
+    await waiter(() => glide.g.value).is("<!---->\n<div>foo</div>");
     is(
-      GlideBrowser.api.g.error_message,
+      glide.g.error_message,
       "Error: The html template function does not support interpolating arguments as escaping is not implemented.",
     );
   });
@@ -762,8 +758,8 @@ add_task(async function test_dedent_helpers() {
 
 add_task(async function test_os() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    ok(GlideBrowser.api.ctx.os, "glide.ctx.os is not empty");
-    is(typeof GlideBrowser.api.ctx.os, "string", "glide.ctx.os should be set to a string");
+    ok(glide.ctx.os, "glide.ctx.os is not empty");
+    is(typeof glide.ctx.os, "string", "glide.ctx.os should be set to a string");
   });
 });
 
@@ -776,19 +772,16 @@ add_task(async function test_options_get() {
     });
   });
 
-  is(GlideBrowser.api.options.get("yank_highlight_time"), 50, "global option should be retrieved correctly");
+  is(glide.options.get("yank_highlight_time"), 50, "global option should be retrieved correctly");
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.options.get("yank_highlight_time")).is(
-      100,
-      "buffer option should be retrieved correctly",
-    );
+    await waiter(() => glide.options.get("yank_highlight_time")).is(100, "buffer option should be retrieved correctly");
   });
 });
 
 add_task(async function test_keys_parse() {
   const base: Omit<glide.KeyNotation, "key"> = { alt: false, ctrl: false, meta: false, shift: false };
-  const parse = GlideBrowser.api.keys.parse;
+  const parse = glide.keys.parse;
   isjson(parse("a"), { key: "a", ...base });
   isjson(parse("b"), { key: "b", ...base });
   isjson(parse("H"), { key: "H", ...base });
@@ -857,10 +850,10 @@ add_task(async function test_keymap_callback_receives_tab_id() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>i");
-    await until(() => GlideBrowser.api.g.test_checked);
+    await until(() => glide.g.test_checked);
 
-    const active_tab = await GlideBrowser.api.tabs.active();
-    is(GlideBrowser.api.g.value, active_tab.id, "Keymap callback should receive tab_id that matches the active tab ID");
+    const active_tab = await glide.tabs.active();
+    is(glide.g.value, active_tab.id, "Keymap callback should receive tab_id that matches the active tab ID");
   });
 });
 
@@ -875,7 +868,7 @@ add_task(async function test_assert_never() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => GlideBrowser.api.g.value).is(
+    await waiter(() => glide.g.value).is(
       "Error: assert_never: impossible to call: \"value\"",
       "assert_never should throw an error",
     );
@@ -887,7 +880,7 @@ add_task(async function test_ensure() {
     glide.g.value = ensure("foo");
   });
 
-  is(GlideBrowser.api.g.value, "foo", "ensure should return the value");
+  is(glide.g.value, "foo", "ensure should return the value");
 
   await GlideTestUtils.reload_config(function _() {
     try {
@@ -897,11 +890,7 @@ add_task(async function test_ensure() {
     }
   });
 
-  is(
-    GlideBrowser.api.g.value,
-    "Error: Expected a truthy value, got `false`",
-    "ensure should throw an error on falsy input",
-  );
+  is(glide.g.value, "Error: Expected a truthy value, got `false`", "ensure should throw an error on falsy input");
 });
 
 add_task(async function test_hint_css_property_cleared_on_reload() {
@@ -909,7 +898,7 @@ add_task(async function test_hint_css_property_cleared_on_reload() {
     glide.o.hint_size = "30px";
   });
 
-  is(GlideBrowser.api.o.hint_size, "30px");
+  is(glide.o.hint_size, "30px");
   is(
     document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
     "30px",
@@ -918,7 +907,7 @@ add_task(async function test_hint_css_property_cleared_on_reload() {
 
   await GlideTestUtils.reload_config(function _() {});
 
-  is(GlideBrowser.api.o.hint_size, "11px");
+  is(glide.o.hint_size, "11px");
   is(
     document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
     "",
@@ -930,10 +919,10 @@ add_task(async function test_add_excmd_while_commandline_is_cached() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
     // open commandline so it is cached
     await GlideTestUtils.commandline.open();
-    await waiter(() => GlideBrowser.api.ctx.mode).is("command");
+    await waiter(() => glide.ctx.mode).is("command");
 
     await keys("<esc>");
-    await waiter(() => GlideBrowser.api.ctx.mode).is("normal");
+    await waiter(() => glide.ctx.mode).is("normal");
 
     await GlideTestUtils.reload_config(function _() {
       glide.excmds.create({ name: "hello" }, () => {});
@@ -955,7 +944,7 @@ add_task(async function test_fs_read() {
     });
 
     await keys("~");
-    await waiter(() => GlideBrowser.api.g.value).is(".contents {}");
+    await waiter(() => glide.g.value).is(".contents {}");
   });
 });
 
@@ -969,7 +958,7 @@ add_task(async function test_fs_read_file_not_found() {
 
     await keys("~");
 
-    const value = await until(() => GlideBrowser.api.g.value);
+    const value = await until(() => glide.g.value);
 
     ok(
       value instanceof GlideBrowser.config_sandbox.FileNotFoundError,
@@ -989,7 +978,7 @@ add_task(async function test_fs_write() {
     });
 
     await keys("~");
-    await waiter(() => GlideBrowser.api.g.value).is(".contents {}");
+    await waiter(() => glide.g.value).is(".contents {}");
   });
 });
 
@@ -1003,7 +992,7 @@ add_task(async function test_fs_write_new_dir() {
     });
 
     await keys("~");
-    await waiter(() => GlideBrowser.api.g.value).is("#id {}");
+    await waiter(() => glide.g.value).is("#id {}");
   });
 });
 
@@ -1019,13 +1008,13 @@ add_task(async function test_fs_exists() {
     });
 
     await keys("~");
-    await waiter(() => GlideBrowser.api.g.value).is(true);
+    await waiter(() => glide.g.value).is(true);
 
-    GlideBrowser.api.g.value = undefined;
+    glide.g.value = undefined;
     await IOUtils.remove(test_path);
 
     await keys("~");
-    await waiter(() => GlideBrowser.api.g.value).is(false);
+    await waiter(() => glide.g.value).is(false);
   });
 });
 
@@ -1042,7 +1031,7 @@ add_task(async function test_fs_stat() {
 
     await keys("~");
 
-    const result = await until(() => GlideBrowser.api.g.value as glide.FileInfo | undefined);
+    const result = await until(() => glide.g.value as glide.FileInfo | undefined);
     is(result.type, "file");
     is(typeof result.size, "number");
     is(typeof result.creation_time, "number");
@@ -1067,7 +1056,7 @@ add_task(async function test_fs_stat_directory() {
 
     await keys("~");
 
-    const result = await until(() => GlideBrowser.api.g.value as glide.FileInfo | undefined);
+    const result = await until(() => glide.g.value as glide.FileInfo | undefined);
     is(result.type, "directory");
     is(typeof result.size, "number");
     is(typeof result.creation_time, "number");
@@ -1091,7 +1080,7 @@ add_task(async function test_fs_stat_not_found() {
 
     await keys("~");
 
-    const result = await until(() => GlideBrowser.api.g.value as FileNotFoundError | undefined);
+    const result = await until(() => glide.g.value as FileNotFoundError | undefined);
     is(result.name, "FileNotFoundError");
     ok(result.path.endsWith("nonexistent_file.txt"), "Error should include the path");
   });
@@ -1101,28 +1090,28 @@ add_task(async function test_path_cwd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.cwd;
   });
-  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.cwd should not be empty");
+  Assert.greater(glide.g.value.length, 0, "glide.path.cwd should not be empty");
 });
 
 add_task(async function test_path_home_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.home_dir;
   });
-  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.home_dir should not be empty");
+  Assert.greater(glide.g.value.length, 0, "glide.path.home_dir should not be empty");
 });
 
 add_task(async function test_path_profile_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.profile_dir;
   });
-  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.profile_dir should not be empty");
+  Assert.greater(glide.g.value.length, 0, "glide.path.profile_dir should not be empty");
 });
 
 add_task(async function test_path_temp_dir() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.temp_dir;
   });
-  Assert.greater(GlideBrowser.api.g.value.length, 0, "glide.path.temp_dir should not be empty");
+  Assert.greater(glide.g.value.length, 0, "glide.path.temp_dir should not be empty");
 });
 
 add_task(async function test_path_join() {
@@ -1132,7 +1121,7 @@ add_task(async function test_path_join() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.join("/tmp", "foo", "bar", "baz.txt");
   });
-  is(GlideBrowser.api.g.value, "/tmp/foo/bar/baz.txt");
+  is(glide.g.value, "/tmp/foo/bar/baz.txt");
 
   await IOUtils.remove(PathUtils.join("/tmp", "foo", "bar", "baz.txt"));
 });
@@ -1142,12 +1131,12 @@ add_task(async function test_env() {
     glide.env.set("TEST_VAR", "test_value");
     glide.g.value = glide.env.get("TEST_VAR");
   });
-  is(GlideBrowser.api.g.value, "test_value");
+  is(glide.g.value, "test_value");
 
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.env.get("NONEXISTENT_VAR_XYZ123");
   });
-  is(GlideBrowser.api.g.value, null, "env.get() should return null for nonexistent variables");
+  is(glide.g.value, null, "env.get() should return null for nonexistent variables");
 });
 
 add_task(async function test_env_delete() {
@@ -1156,12 +1145,12 @@ add_task(async function test_env_delete() {
     glide.env.delete("DELETE_TEST_VAR");
     glide.g.value = glide.env.get("DELETE_TEST_VAR");
   });
-  is(GlideBrowser.api.g.value, null, "env.delete() should remove the environment variable");
+  is(glide.g.value, null, "env.delete() should remove the environment variable");
 
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.env.delete("NONEXISTENT_VAR_ABC789");
   });
-  is(GlideBrowser.api.g.value, null, "env.delete() should return null for nonexistent variables");
+  is(glide.g.value, null, "env.delete() should return null for nonexistent variables");
 });
 
 add_task(async function test_styles_add() {
@@ -1196,9 +1185,9 @@ add_task(async function test_styles_add_duplicate_id() {
     }
   });
 
-  await waiter(() => GlideBrowser.api.g.value).ok();
+  await waiter(() => glide.g.value).ok();
 
-  is((GlideBrowser.api.g.value as Error).message, "A style element has already been registered with ID 'my-styles'");
+  is((glide.g.value as Error).message, "A style element has already been registered with ID 'my-styles'");
 });
 
 add_task(async function test_styles_remove() {
@@ -1227,14 +1216,14 @@ add_task(async function test_styles_remove() {
     visible_width,
     "removing the custom css should revert the tabs toolbar to the previous width",
   );
-  is(GlideBrowser.api.g.value, true);
+  is(glide.g.value, true);
 });
 
 add_task(async function test_styles_remove_unknown_id() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.styles.remove("my-styles");
   });
-  await waiter(() => GlideBrowser.api.g.value).is(false);
+  await waiter(() => glide.g.value).is(false);
 });
 
 function get_tabs_bar_width(): number {

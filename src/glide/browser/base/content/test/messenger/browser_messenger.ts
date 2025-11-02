@@ -35,7 +35,7 @@ add_task(async function test_basic_message_usage() {
 
     await keys("gt");
     await sleep_frames(10);
-    is(GlideBrowser.api.g.value, "my_message", "the message should be sent through to the parent config");
+    is(glide.g.value, "my_message", "the message should be sent through to the parent config");
   });
 });
 

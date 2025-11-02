@@ -41,8 +41,6 @@ add_task(async function test_keys_send_backspace() {
 });
 
 add_task(async function test_keys_send_space() {
-  const glide = GlideBrowser.api;
-
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     for (const space of [" ", "<space>", "<Space>"]) {
       await SpecialPowers.spawn(browser, [], async () => {
@@ -69,8 +67,6 @@ add_task(async function test_keys_send_space() {
 });
 
 add_task(async function test_keys_send_arrow_keys() {
-  const glide = GlideBrowser.api;
-
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
     await SpecialPowers.spawn(browser, [], async () => {
       const input = content.document.getElementById<HTMLInputElement>("input-1")!;
@@ -127,8 +123,6 @@ add_task(async function test_keys_send_arrow_keys() {
 });
 
 add_task(async function test_keys_send_downcast() {
-  const glide = GlideBrowser.api;
-
   for (const [input, key] of [["<lt>", "<"], ["<LT>", "<"], ["<Bar>", "|"], ["<bar>", "|"], ["<Bslash>", "\\"]]) {
     void glide.keys.send(input);
 
@@ -223,8 +217,6 @@ const KEYS = [
 // note: this test just verifies that no errors happen when sending the above keys.
 //       it does not verify that each key is actually mapped to the right semantics.
 add_task(async function test_all_keys() {
-  const glide = GlideBrowser.api;
-
   for (const key of KEYS) {
     void glide.keys.send(key);
     const received = await glide.keys.next();
@@ -233,8 +225,6 @@ add_task(async function test_all_keys() {
 });
 
 add_task(async function test_leader() {
-  const glide = GlideBrowser.api;
-
   for (const leader of ["<leader>", "<Leader>"]) {
     void glide.keys.send(leader);
     const key_event = await glide.keys.next();

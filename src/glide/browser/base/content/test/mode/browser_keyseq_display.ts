@@ -90,7 +90,7 @@ add_task(async function test_keyseq_display_clears_on_invalid_sequence() {
 
 add_task(async function test_keyseq_display_with_op_pending_mode() {
   // Test with operator-pending mode which shows keyseq
-  GlideBrowser.api.g.test_executed = false;
+  glide.g.test_executed = false;
 
   await keys("d");
 

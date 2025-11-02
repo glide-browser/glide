@@ -26,7 +26,7 @@ async function setup() {
 
 async function teardown() {
   const uninstalled = new Set<string>();
-  for (const addon of GlideBrowser.api.g.addons ?? []) {
+  for (const addon of glide.g.addons ?? []) {
     if (uninstalled.has(addon.id)) {
       continue;
     }
@@ -50,9 +50,9 @@ add_task(async function test_install_addon_from_url() {
     });
   });
 
-  await waiter(() => GlideBrowser.api.g.value !== undefined).ok("Waiting for addon to be installed");
+  await waiter(() => glide.g.value !== undefined).ok("Waiting for addon to be installed");
 
-  const addon = GlideBrowser.api.g.value as glide.Addon;
+  const addon = glide.g.value as glide.Addon;
   is(addon.id, ADDON_ID);
   is(addon.name, ADDON_NAME);
   ok(addon.active);
@@ -93,15 +93,15 @@ add_task(async function test_addons_list() {
     });
   });
 
-  const addon = await until(() => GlideBrowser.api.g.value as glide.Addon | undefined);
-  GlideBrowser.api.g.value = undefined;
+  const addon = await until(() => glide.g.value as glide.Addon | undefined);
+  glide.g.value = undefined;
 
   await keys("~");
-  await waiter(() => GlideBrowser.api.g.value).ok("Waiting for tests to finish");
+  await waiter(() => glide.g.value).ok("Waiting for tests to finish");
 
   await addon.uninstall();
 
-  notok((await GlideBrowser.api.addons.list()).find((a) => a.name === ADDON_NAME));
+  notok((await glide.addons.list()).find((a) => a.name === ADDON_NAME));
 });
 
 add_task(async function test_install_calls_same_url_cached() {
@@ -121,10 +121,10 @@ add_task(async function test_install_calls_same_url_cached() {
     });
   });
 
-  await waiter(() => GlideBrowser.api.g.addons?.length === 2)
+  await waiter(() => glide.g.addons?.length === 2)
     .ok("Waiting for addons to be installed");
 
-  const addons = GlideBrowser.api.g.addons as Tuple<glide.AddonInstall, 2>;
+  const addons = glide.g.addons as Tuple<glide.AddonInstall, 2>;
 
   is(addons[0].id, ADDON_ID);
   is(addons[0].cached, false, "First addon is not cached as it is the first install");
@@ -146,10 +146,10 @@ add_task(async function test_install_force_reinstall() {
     });
   });
 
-  await waiter(() => GlideBrowser.api.g.addons?.length === 2)
+  await waiter(() => glide.g.addons?.length === 2)
     .ok("Waiting for addons to be installed");
 
-  const addons = GlideBrowser.api.g.addons as Tuple<glide.AddonInstall, 2>;
+  const addons = glide.g.addons as Tuple<glide.AddonInstall, 2>;
 
   is(addons[0].cached, false, "First addon is not cached");
   is(addons[1].cached, false, "Force install bypasses cache");
