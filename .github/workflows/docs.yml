@@ -50,6 +50,9 @@ jobs:
       - name: Build docs
         run: pnpm build:docs
 
+      - name: Transform docs
+        run: pnpm build:docs:production
+
       - name: Deploy to Cloudflare
         working-directory: infra
         run: |
