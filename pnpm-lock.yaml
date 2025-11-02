@@ -66,6 +66,9 @@ importers:
       html-assets-hash:
         specifier: ^1.0.5
         version: 1.0.5
+      html-rewriter-wasm:
+        specifier: ^0.4.1
+        version: 0.4.1
       ini:
         specifier: ^5.0.0
         version: 5.0.0
@@ -1112,6 +1115,9 @@ packages:
     resolution: {integrity: sha512-jWR7tBbIdp7jtbmc3lUprwq29lcHrKfjq48JDkICdeqW447S58NJUjWPnq1Ls5w0WNYoLTGUx2csTylytl6A+Q==}
     engines: {node: '>=16.13.0'}
     hasBin: true
+
+  html-rewriter-wasm@0.4.1:
+    resolution: {integrity: sha512-lNovG8CMCCmcVB1Q7xggMSf7tqPCijZXaH4gL6iE8BFghdQCbaY5Met9i1x2Ex8m/cZHDUtXK9H6/znKamRP8Q==}
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
@@ -2886,6 +2892,8 @@ snapshots:
       '@types/hast': 3.0.4
 
   html-assets-hash@1.0.5: {}
+
+  html-rewriter-wasm@0.4.1: {}
 
   html-void-elements@3.0.0: {}
 
