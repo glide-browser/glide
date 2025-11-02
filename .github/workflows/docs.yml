@@ -2,6 +2,11 @@ name: Docs
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        type: string
+        required: false
+        description: branch to deploy to
   push:
     branches:
       - docs
@@ -51,7 +56,8 @@ jobs:
           pnpm wrangler pages deploy --cwd=../src/glide/docs \
             dist \
             --project-name=glide \
-            --branch=main
+            --branch="$BRANCH"
         env:
+          BRANCH: ${{ inputs.branch || 'main' }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
