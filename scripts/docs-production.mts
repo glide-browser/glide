@@ -17,14 +17,23 @@ async function main() {
     rewriter.on("a", {
       element(element) {
         const href = element.getAttribute("href");
-        if (!href || !href.endsWith(".html")) {
+        if (!href || !href.includes(".html")) {
           return;
         }
 
         if (!URL.canParse(href)) {
           // if the href is not a fully formed URL, then it must be a relative URL
           // so we can safely strip the `.html` extension to use cloudflare's prettier URLs
-          element.setAttribute("href", href.slice(0, -5));
+          const anchor_index = href.indexOf("#");
+          if (anchor_index === -1) {
+            element.setAttribute("href", href.slice(0, -5));
+          } else {
+            const base = href.slice(0, anchor_index);
+            const anchor = href.slice(anchor_index);
+            if (base.endsWith(".html")) {
+              element.setAttribute("href", base.slice(0, -5) + anchor);
+            }
+          }
         }
       },
     });
