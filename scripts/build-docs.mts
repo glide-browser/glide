@@ -142,6 +142,7 @@ async function build_tutor_docs() {
 
     if (for_docs) {
       content = content.replaceAll("resource://glide-docs/", "../");
+      content = content.replaceAll("chrome://branding/content/about-logo.png", "../logo.png");
     }
 
     // highlight code blocks
