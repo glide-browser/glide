@@ -435,3 +435,29 @@ add_task(async function test_normal_u() {
     await test_edit("u", "Hello world", 0, "H");
   });
 });
+
+add_task(async function test_normal_I() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
+
+    await set_text("Hello world", "from end of line");
+    await test_edit("Ifob", "fobHello world", 2, "b");
+
+    await set_text("  Hello world", "with leading whitespace");
+    await test_edit("Ifob", "  fobHello world", 4, "b");
+
+    await set_text("Hello\nworld", "multiline - first line");
+    await set_selection(4, "o");
+    await test_edit("Ifob", "fobHello\nworld", 2, "b");
+
+    await set_text("Hello\nworld", "multiline - second line");
+    await set_selection(10, "d");
+    await test_edit("Ifob", "Hello\nfobworld", 8, "b");
+
+    await set_text("Hello\n\nworld", "empty line in middle");
+    await set_selection(5, "\n");
+    await test_edit("Ifob", "Hello\nfob\nworld", 8, "b");
+  });
+});

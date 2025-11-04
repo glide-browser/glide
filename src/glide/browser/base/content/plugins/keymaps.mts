@@ -97,6 +97,7 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", "}", "motion }");
   glide.keymaps.set("normal", "r", "r");
   glide.keymaps.set("normal", "s", "motion s");
+  glide.keymaps.set(["normal", "visual"], "I", "motion I");
 
   // TODO(glide-motions): more general support for numbers like this
   glide.keymaps.set("normal", "0", "motion 0");

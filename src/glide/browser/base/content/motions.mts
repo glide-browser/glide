@@ -492,6 +492,24 @@ export function end_of_line(
 }
 
 /**
+ * Used for `I`.
+ *
+ * Goes to the first non-whitespace character in the line.
+ */
+export function first_non_whitespace(editor: Editor, extend: boolean = false) {
+  if (is_eol(editor)) {
+    return;
+  }
+
+  // TODO(someday): this probably has bad / weird implications for visual mode
+  beginning_of_line(editor, extend, /* inclusive */ true);
+
+  while (!is_eol(editor) && !is_eof(editor) && text_obj.cls(next_char(editor)) === text_obj.CLS_WHITESPACE) {
+    editor.selectionController.characterMove(true, extend);
+  }
+}
+
+/**
  * Delete the current selection range.
  */
 export function delete_selection(editor: Editor, forward: boolean) {

@@ -517,6 +517,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
             motions.next_para(editor);
             break;
           }
+          case "I": {
+            motions.first_non_whitespace(editor, false);
+            this.#change_mode("insert");
+            break;
+          }
           case "0": {
             motions.beginning_of_line(editor, false);
             break;
@@ -666,6 +671,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "vl":
       case "vd":
       case "vc":
+      case "I":
         return false;
       case "x":
       case "X":
