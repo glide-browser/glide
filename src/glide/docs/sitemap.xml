@@ -61,8 +61,28 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://glide-browser.app/changelog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://glide-browser.app/security</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://glide-browser.app/chat</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://glide-browser.app/tutorial/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://glide-browser.app/firefox</loc>
-    <changefreq>yearly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
@@ -74,10 +94,5 @@
     <loc>https://glide-browser.app/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://glide-browser.app/changelog</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.4</priority>
   </url>
 </urlset>
