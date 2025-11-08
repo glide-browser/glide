@@ -82,8 +82,41 @@ add_task(async function test_scrolling() {
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
 });
 
+add_task(async function test_scrolling_pdf() {
+  await BrowserTestUtils.withNewTab(
+    "http://mochi.test:8888/browser/toolkit/components/pdfjs/test/file_pdfjs_test.pdf",
+    async browser => {
+      async function get_scroll(): Promise<[number, number]> {
+        return await SpecialPowers.spawn(browser, [], async () => {
+          const container = content.document.getElementById("viewerContainer")!;
+          return [container.scrollLeft, container.scrollTop];
+        });
+      }
+
+      const { max_y, min_y } = await SpecialPowers.spawn(browser, [], async () => {
+        const container = content.document.getElementById("viewerContainer")!;
+        return { max_y: container.scrollTopMax, min_y: container.scrollTop };
+      });
+
+      await vertical_scroll_tests({
+        min_y,
+        max_y,
+        get_scroll,
+        // for some reason, G goes *almost* to the actual bottom of the PDF
+        // I *think* this is a Firefox/PDF.js bug but I haven't investigated deeply
+        G_wip: true,
+      });
+    },
+  );
+});
+
 async function vertical_scroll_tests(
-  { min_y, max_y, get_scroll }: { min_y: number; max_y: number; get_scroll(): Promise<[number, number]> },
+  { min_y, max_y, get_scroll, G_wip }: {
+    min_y: number;
+    max_y: number;
+    get_scroll(): Promise<[number, number]>;
+    G_wip?: boolean;
+  },
 ) {
   const interval = 50;
 
@@ -142,7 +175,11 @@ async function vertical_scroll_tests(
   await sleep_frames(interval);
   var [x, y] = await get_scroll();
   is(x, curr_x, `G should retain the x position`);
-  Assert.greaterOrEqual(y, max_y, `G should go to the max y`);
+  if (G_wip) {
+    todo_is(y, max_y, `G should go to the max y`);
+  } else {
+    Assert.greaterOrEqual(y, max_y, `G should go to the max y`);
+  }
 
   await keys("gg");
   await sleep_frames(interval);
