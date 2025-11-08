@@ -29,7 +29,7 @@ async function main() {
         const new_url = ((): string | undefined => {
           const anchor_index = href.indexOf("#");
           if (anchor_index === -1) {
-            return href.slice(0, -5);
+            return href.endsWith(".html") ? href.slice(0, -5) : href;
           }
 
           const base = href.slice(0, anchor_index);
@@ -40,7 +40,10 @@ async function main() {
         })();
 
         if (new_url) {
-          element.setAttribute("href", new_url === "./index" ? "/" : new_url);
+          element.setAttribute(
+            "href",
+            new_url === "./index" ? "/" : new_url.endsWith("/index") ? new_url.slice(0, -5) : new_url,
+          );
         }
       },
     });
