@@ -26,25 +26,24 @@ async function main() {
           return;
         }
 
-        const new_url = ((): string | undefined => {
-          const anchor_index = href.indexOf("#");
-          if (anchor_index === -1) {
-            return href.endsWith(".html") ? href.slice(0, -5) : href;
-          }
+        const anchor_index = href.indexOf("#");
+        const base = anchor_index === -1 ? href : href.slice(0, anchor_index);
+        const anchor = anchor_index === -1 ? "" : href.slice(anchor_index);
 
-          const base = href.slice(0, anchor_index);
-          const anchor = href.slice(anchor_index);
-          if (base.endsWith(".html")) {
-            return base.slice(0, -5) + anchor;
-          }
-        })();
-
-        if (new_url) {
-          element.setAttribute(
-            "href",
-            new_url === "./index" ? "/" : new_url.endsWith("/index") ? new_url.slice(0, -5) : new_url,
-          );
+        if (!base.endsWith(".html")) {
+          return;
         }
+
+        // prettify links, to match what cloudflare does
+        let new_base = base.slice(0, -5);
+
+        if (new_base === "./index") {
+          new_base = "/";
+        } else if (new_base.endsWith("/index")) {
+          new_base = new_base.slice(0, -5);
+        }
+
+        element.setAttribute("href", new_base + anchor);
       },
     });
 
