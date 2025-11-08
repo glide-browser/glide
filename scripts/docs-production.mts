@@ -26,15 +26,21 @@ async function main() {
           return;
         }
 
-        const anchor_index = href.indexOf("#");
-        if (anchor_index === -1) {
-          element.setAttribute("href", href.slice(0, -5));
-        } else {
+        const new_url = ((): string | undefined => {
+          const anchor_index = href.indexOf("#");
+          if (anchor_index === -1) {
+            return href.slice(0, -5);
+          }
+
           const base = href.slice(0, anchor_index);
           const anchor = href.slice(anchor_index);
           if (base.endsWith(".html")) {
-            element.setAttribute("href", base.slice(0, -5) + anchor);
+            return base.slice(0, -5) + anchor;
           }
+        })();
+
+        if (new_url) {
+          element.setAttribute("href", new_url === "./index" ? "/" : new_url);
         }
       },
     });
