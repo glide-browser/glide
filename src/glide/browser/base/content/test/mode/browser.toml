@@ -22,3 +22,6 @@ https_first_disabled = true
 
 ["dist/browser_fullscreen.js"]
 https_first_disabled = true
+
+["dist/browser_profile_storage.js"]
+https_first_disabled = true

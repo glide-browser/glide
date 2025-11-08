@@ -191,6 +191,20 @@ class GlideBrowserClass {
         });
       }
     });
+
+    // store a bit indicating all Glide versions the current profile has used so that
+    // we can provide helpful notifications when defaults are changed in the future
+    this.on_startup(async () => {
+      const file = this.versions_file;
+      await file.load();
+
+      if (file.data[Services.appinfo.version]) {
+        return;
+      }
+
+      file.data[Services.appinfo.version] = true;
+      file.saveSoon();
+    });
   }
 
   async reload_config() {
@@ -508,6 +522,18 @@ class GlideBrowserClass {
         path: cache_path,
         dataPostProcessor: (data): ResolvedAddonCache => !data.addons ? { ...data, addons: {} } : data,
       }) as TypedJSONFile<ResolvedAddonCache>,
+    );
+  }
+
+  get versions_file(): TypedJSONFile<Record<string, boolean>> {
+    const file_path = GlideBrowser.api.path.join(GlideBrowser.api.path.profile_dir, ".glide", "versions.json");
+    return redefine_getter(
+      this,
+      "versions_file",
+      new JSONFile({
+        path: file_path,
+        dataPostProcessor: (data) => data ? data : {},
+      }) as TypedJSONFile<Record<string, boolean>>,
     );
   }
 
