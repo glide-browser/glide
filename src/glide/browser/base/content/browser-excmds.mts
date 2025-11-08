@@ -346,7 +346,7 @@ class GlideExcmdsClass {
 
         // TODO(glide): use command chaining to do this instead
         if (automove) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction: automove });
+          GlideBrowser.api.excmds.execute(`caret_move ${automove}`);
         }
 
         if (current_mode === "normal" && mode === "normal") {
@@ -357,12 +357,53 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "scroll_top": {
+        if (GlideBrowser.api.ctx.os === "macosx") {
+          await GlideBrowser.api.keys.send("<D-Up>", { skip_mappings: true });
+        } else {
+          await GlideBrowser.api.keys.send("<C-Home>", { skip_mappings: true });
+        }
+        break;
+      }
+
+      case "scroll_bottom": {
+        if (GlideBrowser.api.ctx.os === "macosx") {
+          await GlideBrowser.api.keys.send("<D-Down>", { skip_mappings: true });
+        } else {
+          await GlideBrowser.api.keys.send("<C-End>", { skip_mappings: true });
+        }
+        break;
+      }
+
+      case "scroll_page_up": {
+        await GlideBrowser.api.keys.send("<pageup>", { skip_mappings: true });
+        break;
+      }
+
+      case "scroll_page_down": {
+        await GlideBrowser.api.keys.send("<pagedown>", { skip_mappings: true });
+        break;
+      }
+
       case "caret_move": {
         const {
           args: { direction },
         } = this.#parse_command_args(command_meta, command);
 
-        return GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction });
+        switch (direction) {
+          case "up":
+            return await GlideBrowser.api.keys.send("<up>", { skip_mappings: true });
+          case "left":
+            return await GlideBrowser.api.keys.send("<left>", { skip_mappings: true });
+          case "right":
+            return await GlideBrowser.api.keys.send("<right>", { skip_mappings: true });
+          case "down":
+            return await GlideBrowser.api.keys.send("<down>", { skip_mappings: true });
+          case "endline":
+            return GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction: "endline" });
+          default:
+            throw assert_never(direction);
+        }
       }
 
       case "echo": {

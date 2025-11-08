@@ -260,7 +260,7 @@ add_task(async function test_mapped_keys_no_events() {
     is(captured_events.keyup, 1, "Unmapped key should trigger keyup");
 
     // mapped key sequence
-    await keys("jj");
+    await keys("..");
     await sleep_frames(2);
     captured_events = await SpecialPowers.spawn(browser, [], async () => {
       return {

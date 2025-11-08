@@ -60,7 +60,7 @@ export interface ParentMessages {
       | null;
     pick?: GlideFunctionIPC<(hints: glide.ContentHint[]) => glide.ContentHint[]>;
   };
-  "Glide::Move": { direction: GlideDirection };
+  "Glide::Move": { direction: "endline" };
   "Glide::Debug": null;
 }
 
