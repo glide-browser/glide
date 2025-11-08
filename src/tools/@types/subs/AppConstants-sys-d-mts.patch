@@ -1,0 +1,13 @@
+diff --git a/tools/@types/subs/AppConstants.sys.d.mts b/tools/@types/subs/AppConstants.sys.d.mts
+index c56091a820a406a0adf5d74b567e4145b1a34a6d..01576bd720dd87916e2ad589513d08850eae3e25 100644
+--- a/tools/@types/subs/AppConstants.sys.d.mts
++++ b/tools/@types/subs/AppConstants.sys.d.mts
+@@ -19,6 +19,8 @@ export const AppConstants: Readonly<{
+ 
+   IS_ESR: boolean;
+ 
++  GLIDE_FIREFOX_VERSION: string;
++
+   ACCESSIBILITY: boolean;
+ 
+   // Official corresponds, roughly, to whether this build is performed

@@ -18,6 +18,13 @@ declare global {
       version: string;
 
       /**
+       * The firefox version that glide is based on.
+       *
+       * @example "145.0b6"
+       */
+      firefox_version: string;
+
+      /**
        * The URL of the currently focused tab.
        */
       url: URL;

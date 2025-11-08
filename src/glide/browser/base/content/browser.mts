@@ -1747,6 +1747,10 @@ function make_glide_api(): typeof glide {
       get version() {
         return Services.appinfo.version;
       },
+      get firefox_version() {
+        const { AppConstants } = ChromeUtils.importESModule("resource://gre/modules/AppConstants.sys.mjs");
+        return AppConstants.GLIDE_FIREFOX_VERSION;
+      },
       get url() {
         const url = (gBrowser?.selectedBrowser?.currentURI as nsIURI)?.spec;
         if (!url) {

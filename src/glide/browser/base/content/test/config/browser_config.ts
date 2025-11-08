@@ -7,6 +7,8 @@
 
 "use strict";
 
+const { AppConstants } = ChromeUtils.importESModule("resource://gre/modules/AppConstants.sys.mjs");
+
 declare var content: TestContent;
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -416,6 +418,24 @@ add_task(async function test_glide_ctx_version() {
   ok(glide.g.value, "glide.ctx.version should be present and non-empty");
   is(typeof glide.g.value, "string", "glide.ctx.version should be a string");
   is(glide.g.value, Services.appinfo.version, "glide.ctx.version should return the current version");
+});
+
+add_task(async function test_glide_ctx_firefox_version() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = glide.ctx.firefox_version;
+    });
+  });
+
+  await keys("~");
+
+  ok(glide.g.value, "glide.ctx.firefox_version should be present and non-empty");
+  is(typeof glide.g.value, "string", "glide.ctx.firefox_version should be a string");
+  is(
+    glide.g.value,
+    AppConstants.GLIDE_FIREFOX_VERSION,
+    "glide.ctx.firefox_version should return the current firefox version",
+  );
 });
 
 add_task(async function test_glide_excmds_execute() {
