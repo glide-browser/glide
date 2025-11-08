@@ -41,8 +41,6 @@ declare interface GlideCommandLineInterface {
 
 declare type GlideCommandLine = GlideCommandLineInterface & XULElement;
 
-declare type GlideDirection = "left" | "right" | "up" | "down" | "endline";
-
 declare type KeyMappingIPC =
   & Omit<
     NonNullable<
