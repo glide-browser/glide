@@ -11,6 +11,13 @@ declare global {
       mode: GlideMode;
 
       /**
+       * The current glide version.
+       *
+       * @example "0.1.53a"
+       */
+      version: string;
+
+      /**
        * The URL of the currently focused tab.
        */
       url: URL;

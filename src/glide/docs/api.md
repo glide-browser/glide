@@ -34,6 +34,7 @@ text-decoration: none;
 
 [`glide.ctx`](#glide.ctx)\
 [`glide.ctx.mode`](#glide.ctx.mode)\
+[`glide.ctx.version`](#glide.ctx.version)\
 [`glide.ctx.url`](#glide.ctx.url)\
 [`glide.ctx.os`](#glide.ctx.os)\
 [`glide.ctx.is_editing()`](#glide.ctx.is_editing)\
@@ -144,6 +145,12 @@ text-decoration: none;
 ### `glide.ctx.mode: GlideMode` {% id="glide.ctx.mode" %}
 
 The currently active mode.
+
+### `glide.ctx.version: string` {% id="glide.ctx.version" %}
+
+The current glide version.
+
+`ts:@example "0.1.53a"`
 
 ### `glide.ctx.url: URL` {% id="glide.ctx.url" %}
 

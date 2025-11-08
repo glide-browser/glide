@@ -404,6 +404,20 @@ add_task(async function test_glide_ctx_url() {
   });
 });
 
+add_task(async function test_glide_ctx_version() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = glide.ctx.version;
+    });
+  });
+
+  await keys("~");
+
+  ok(glide.g.value, "glide.ctx.version should be present and non-empty");
+  is(typeof glide.g.value, "string", "glide.ctx.version should be a string");
+  is(glide.g.value, Services.appinfo.version, "glide.ctx.version should return the current version");
+});
+
 add_task(async function test_glide_excmds_execute() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = "initial";
