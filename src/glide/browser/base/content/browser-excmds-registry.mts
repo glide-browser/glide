@@ -260,7 +260,7 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: false,
     args_schema: {
-      direction: { type: { enum: ["left", "right", "up", "down"] }, required: true, position: 0 },
+      direction: { type: { enum: ["left", "right", "up", "down", "endline"] }, required: true, position: 0 },
     } as const satisfies ArgumentsSchema,
   },
 
@@ -302,6 +302,21 @@ export const GLIDE_EXCOMMANDS = [
     args_schema: { character: { type: "string", required: false, position: 0 } } as const satisfies ArgumentsSchema,
   },
 
+  { name: "scroll_top", description: "Scroll to the top of the window", content: false, repeatable: false },
+  { name: "scroll_bottom", description: "Scroll to the bottom of the window", content: false, repeatable: false },
+  {
+    name: "scroll_page_down",
+    description: "Scroll down by 1 page (the size of the viewport)",
+    content: false,
+    repeatable: false,
+  },
+  {
+    name: "scroll_page_up",
+    description: "Scroll up by 1 page (the size of the viewport)",
+    content: false,
+    repeatable: false,
+  },
+
   // TODO
   // {
   //   name: "bookmark",
@@ -310,20 +325,6 @@ export const GLIDE_EXCOMMANDS = [
   // },
 
   // ------------ commands that require accessing the content frame ------------
-  { name: "scroll_top", description: "Scroll to the top of the window", content: true, repeatable: false },
-  {
-    name: "scroll_page_down",
-    description: "Scroll down by 1 page (the size of the viewport)",
-    content: true,
-    repeatable: false,
-  },
-  {
-    name: "scroll_page_up",
-    description: "Scroll up by 1 page (the size of the viewport)",
-    content: true,
-    repeatable: false,
-  },
-  { name: "scroll_bottom", description: "Scroll to the bottom of the window", content: true, repeatable: false },
   { name: "blur", description: "Blur the active element", content: true, repeatable: false },
 
   {
