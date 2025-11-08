@@ -75,12 +75,94 @@ add_task(async function test_scrolling() {
     const max_y = await SpecialPowers.spawn(browser, [], async () => {
       return content.window.scrollMaxY;
     });
-    var min_x = 0;
-    var min_y = 0;
 
-    var [x, y] = await get_scroll();
+    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll });
+  });
+
+  await horizontal_scroll_tests(SCROLL_TEST_FILE);
+});
+
+async function vertical_scroll_tests(
+  { min_y, max_y, get_scroll }: { min_y: number; max_y: number; get_scroll(): Promise<[number, number]> },
+) {
+  const interval = 50;
+
+  var min_x = 0;
+
+  var [x, y] = await get_scroll();
+  is(x, min_x);
+  is(y, min_y);
+
+  var curr_x = 0;
+
+  var last_y = min_y;
+
+  await keys("<C-d>");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  is(x, curr_x, `<C-d> should retain the x position`);
+  Assert.greater(y, last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
+
+  last_y = y;
+
+  await keys("<C-d>");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  is(x, curr_x, `<C-d> should retain the x position`);
+  Assert.greater(y, last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
+
+  await keys("<C-u>");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  is(x, curr_x, `<C-u> should retain the x position`);
+  is(y, last_y, `<C-u> should decrease y to the previous <C-d>`);
+
+  await keys("<C-u>");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  is(x, curr_x, `<C-u> should retain the x position`);
+  is(y, min_y, `Second <C-u> should decrease y to the minimum`);
+
+  await keys("gg");
+  var [x, y] = await get_scroll();
+
+  // Test j scrolls down
+  await keys("j");
+  await sleep_frames(interval);
+  var [x, new_y] = await get_scroll();
+  Assert.greater(new_y, y, `j should scroll down`);
+
+  // Test k scrolls up
+  await keys("k");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  Assert.lessOrEqual(y, min_y, `k should scroll back up`);
+
+  await keys("G");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  is(x, curr_x, `G should retain the x position`);
+  Assert.greaterOrEqual(y, max_y, `G should go to the max y`);
+
+  await keys("gg");
+  await sleep_frames(interval);
+  var [x, y] = await get_scroll();
+  is(x, curr_x, `gg should retain the x position`);
+  is(y, min_y, `gg should go to the minimum y`);
+}
+
+async function horizontal_scroll_tests(url: string) {
+  await BrowserTestUtils.withNewTab(url, async browser => {
+    async function get_x(): Promise<number> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return content.window.scrollX;
+      });
+    }
+
+    var min_x = 0;
+
+    var x = await get_x();
     is(x, min_x);
-    is(y, min_y);
 
     for (let i = 0; i < 10; i++) {
       await keys("l");
@@ -89,71 +171,18 @@ add_task(async function test_scrolling() {
     // TODO(glide): better solution for this
     await sleep_frames(100);
 
-    var [curr_x] = await get_scroll();
+    var curr_x = await get_x();
     isnot(curr_x, 0, `repeated \`l\` should move the scroll x position`);
-
-    await keys("G");
-    var [x, y] = await get_scroll();
-    is(x, curr_x, `G should retain the x position`);
-    Assert.greaterOrEqual(y, max_y, `G should go to the max y`);
-
-    await keys("gg");
-    var [x, y] = await get_scroll();
-    is(x, curr_x, `gg should retain the x position`);
-    is(y, min_y, `gg should go to the minimum y`);
-
-    var last_y = min_y;
-
-    await keys("<C-d>");
-    await sleep_frames(50);
-    var [x, y] = await get_scroll();
-    is(x, curr_x, `<C-d> should retain the x position`);
-    Assert.greater(y, last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
-
-    last_y = y;
-
-    await keys("<C-d>");
-    await sleep_frames(50);
-    var [x, y] = await get_scroll();
-    is(x, curr_x, `<C-d> should retain the x position`);
-    Assert.greater(y, last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
-
-    await keys("<C-u>");
-    await sleep_frames(50);
-    var [x, y] = await get_scroll();
-    is(x, curr_x, `<C-u> should retain the x position`);
-    is(y, last_y, `<C-u> should decrease y to the previous <C-d>`);
-
-    await keys("<C-u>");
-    await sleep_frames(50);
-    var [x, y] = await get_scroll();
-    is(x, curr_x, `<C-u> should retain the x position`);
-    is(y, min_y, `Second <C-u> should decrease y to the minimum`);
-
-    await keys("gg");
-    var [x, y] = await get_scroll();
-
-    // Test j scrolls down
-    await keys("j");
-    await sleep_frames(50);
-    var [x, new_y] = await get_scroll();
-    Assert.greater(new_y, y, `j should scroll down`);
-
-    // Test k scrolls up
-    await keys("k");
-    await sleep_frames(50);
-    var [x, y] = await get_scroll();
-    is(y, min_y, `k should scroll back up`);
 
     // Test h scrolls left
     for (let i = 0; i < 10; i++) {
       await keys("h");
     }
     await sleep_frames(100);
-    var [new_x, y] = await get_scroll();
+    var new_x = await get_x();
     is(new_x, min_x, `h should scroll to the left edge`);
   });
-});
+}
 
 add_task(async function test_gi_focuses_last_used_input() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
