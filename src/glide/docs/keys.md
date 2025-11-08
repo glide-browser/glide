@@ -17,7 +17,7 @@ Here, each argument corresponds to:
 
 1. The mode the keymap should apply in.
 2. The key sequence to activate it.
-3. The [excmd](ex-commands.md) to run when activated. (note this can also just be a function)
+3. The [excmd](excmds.md) to run when activated. (note this can also just be a function)
 
 You can also specify multiple modes at once using an array:
 
