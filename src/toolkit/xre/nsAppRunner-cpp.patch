@@ -1,0 +1,67 @@
+diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
+index 442fe6ee029fee3be487ab829f24fc94342b4519..086ab4381e19ed5bad625a000f4b75a20e786ecd 100644
+--- a/toolkit/xre/nsAppRunner.cpp
++++ b/toolkit/xre/nsAppRunner.cpp
+@@ -274,6 +274,8 @@
+ extern void InstallSignalHandlers(const char* ProgramName);
+ 
+ #define FILE_COMPATIBILITY_INFO "compatibility.ini"_ns
++#define FILE_COMPATIBILITY_GLIDE_VERSION_BACKUP \
++  "glide__compatibility_oldest_version.txt"_ns
+ #define FILE_INVALIDATE_CACHES ".purgecaches"_ns
+ #define FILE_STARTUP_INCOMPLETE u".startup-incomplete"_ns
+ 
+@@ -3671,6 +3673,42 @@ static void WriteVersion(nsIFile* aProfileDir, const nsCString& aVersion,
+   PR_Close(fd);
+ }
+ 
++/**
++ * Write the *previous* version that was in `compatibility.ini` to a separate file
++ * so that we can use it inside `browser.mts` to display breaking change notifications.
++ *
++ * This will be removed in the future, as we now have `.glide/versions.json`, but we need
++ * this for any user on 0.1.53a or earlier.
++ */
++static void WriteCompatibilityOldestVersion(nsIFile* aProfileDir,
++                                     const nsCString& aVersion) {
++  nsCOMPtr<nsIFile> file;
++  aProfileDir->Clone(getter_AddRefs(file));
++  if (!file) return;
++
++  file->AppendNative(FILE_COMPATIBILITY_GLIDE_VERSION_BACKUP);
++
++  // if it exists then do nothing, as we just want the oldest version
++  bool exists;
++  nsresult rv = file->Exists(&exists);
++  if (NS_FAILED(rv) || exists) return;
++
++  PRFileDesc* fd;
++  rv = file->OpenNSPRFileDesc(PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0600,
++                              &fd);
++  if (NS_FAILED(rv)) {
++    NS_ERROR("glide: could not create compatibility oldest version file");
++    return;
++  }
++
++  PR_Write(fd, aVersion.get(), aVersion.Length());
++
++  static const char kNL[] = NS_LINEBREAK;
++  PR_Write(fd, kNL, sizeof(kNL) - 1);
++
++  PR_Close(fd);
++}
++
+ /**
+  * Returns true if the startup cache file was successfully removed.
+  * Returns false if file->Clone fails at any point (OOM) or if unable
+@@ -5313,6 +5351,10 @@ int XREMain::XRE_mainStartup(bool* aExitFlag) {
+       mProfD, version, osABI, mDirProvider.GetGREDir(), mAppData->directory,
+       flagFile, &cachesOK, &isDowngrade, lastVersion);
+ 
++  if (!lastVersion.IsEmpty()) {
++    WriteCompatibilityOldestVersion(mProfD, lastVersion);
++  }
++
+   MOZ_RELEASE_ASSERT(!cachesOK || lastVersion.Equals(version),
+                      "Caches cannot be good if the version has changed.");
+ 
