@@ -171,6 +171,19 @@ export function create_element<K extends keyof HTMLElementTagNameMap | (string &
 }
 
 /**
+ * Wrapper over `document.createDocumentFragment()` that supports applying children in-place.
+ */
+export function create_fragment(children: ReadonlyArray<Node | string>, a_document = document): DocumentFragment {
+  if (!a_document) {
+    throw new Error("dom utils must be imported with { global: \"current\" } or passed the document argument");
+  }
+
+  const fragment = a_document.createDocumentFragment();
+  fragment.replaceChildren(...children);
+  return fragment;
+}
+
+/**
  * Check if the given element is visible using options from
  * `Element.checkVisibility()`
  *
