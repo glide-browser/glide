@@ -150,6 +150,20 @@ export class GlideHandlerParent extends JSWindowActorParent<
 
     switch (message.name) {
       case "Glide::ChangeMode": {
+        if (this.glide_browser?.state.mode === "ignore" && !message.data.force) {
+          // the content process requesting to switch out of ignore mode is almost definitely a mistake
+          // so we just ignore this change request unless we're explicitly told to with `force`.
+          //
+          // one known case where this can happen is when a tab is first created and some event happens that
+          // causes the content process to try to change modes, e.g. focusing an <input>, *before* it's gotten
+          // it's own `state` filled in, so it doesn't know that we're in `ignore` mode and thus that the mode
+          // shouldn't actually be changed.
+          //
+          // we also send a state update message back to the content process to make sure its state is up to date.
+          this.send_async_message("Glide::StateUpdate", { state: this.glide_browser.state });
+          return;
+        }
+
         this.#log.debug("changing mode", message.data);
         this.glide_browser?._change_mode(message.data.mode);
         break;

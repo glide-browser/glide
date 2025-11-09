@@ -27,7 +27,7 @@ export interface ChildMessages {
     auto_activate: boolean;
   };
   "Glide::HideHints": {};
-  "Glide::ChangeMode": { mode: GlideMode };
+  "Glide::ChangeMode": { mode: GlideMode; force?: boolean };
   "Glide::RecordRepeatableCommand": ParentMessages["Glide::ExecuteContentCommand"];
 }
 
