@@ -358,6 +358,11 @@ class GlideExcmdsClass {
       }
 
       case "scroll_top": {
+        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "top" });
+          return;
+        }
+
         if (GlideBrowser.api.ctx.os === "macosx") {
           await GlideBrowser.api.keys.send("<D-Up>", { skip_mappings: true });
         } else {
@@ -367,6 +372,11 @@ class GlideExcmdsClass {
       }
 
       case "scroll_bottom": {
+        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "bottom" });
+          return;
+        }
+
         if (GlideBrowser.api.ctx.os === "macosx") {
           await GlideBrowser.api.keys.send("<D-Down>", { skip_mappings: true });
         } else {
@@ -376,11 +386,21 @@ class GlideExcmdsClass {
       }
 
       case "scroll_page_up": {
+        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_up" });
+          return;
+        }
+
         await GlideBrowser.api.keys.send("<pageup>", { skip_mappings: true });
         break;
       }
 
       case "scroll_page_down": {
+        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_down" });
+          return;
+        }
+
         await GlideBrowser.api.keys.send("<pagedown>", { skip_mappings: true });
         break;
       }
@@ -389,6 +409,11 @@ class GlideExcmdsClass {
         const {
           args: { direction },
         } = this.#parse_command_args(command_meta, command);
+
+        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction });
+          return;
+        }
 
         switch (direction) {
           case "up":
