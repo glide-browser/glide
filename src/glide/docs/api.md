@@ -35,6 +35,7 @@ text-decoration: none;
 [`glide.ctx`](#glide.ctx)\
 [`glide.ctx.mode`](#glide.ctx.mode)\
 [`glide.ctx.version`](#glide.ctx.version)\
+[`glide.ctx.firefox_version`](#glide.ctx.firefox_version)\
 [`glide.ctx.url`](#glide.ctx.url)\
 [`glide.ctx.os`](#glide.ctx.os)\
 [`glide.ctx.is_editing()`](#glide.ctx.is_editing)\
@@ -151,6 +152,12 @@ The currently active mode.
 The current glide version.
 
 `ts:@example "0.1.53a"`
+
+### `glide.ctx.firefox_version: string` {% id="glide.ctx.firefox_version" %}
+
+The firefox version that glide is based on.
+
+`ts:@example "145.0b6"`
 
 ### `glide.ctx.url: URL` {% id="glide.ctx.url" %}
 
