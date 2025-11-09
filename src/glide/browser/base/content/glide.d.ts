@@ -948,6 +948,18 @@ declare global {
        * @default "hjklasdfgyuiopqwertnmzxcvb"
        */
       hint_chars: string;
+
+      /**
+       * Configure the strategy for implementing scrolling, this affects the
+       * `h`, `j`, `k`, `l`,`<C-u>`, `<C-d>`, `G`, and `gg` mappings.
+       *
+       * This is exposed as the current `keys` implementation can result in non-ideal behaviour if a website overrides arrow key events.
+       *
+       * This will be removed in the future when the kinks with the `keys` implementation are ironed out.
+       *
+       * @default "keys"
+       */
+      scroll_implementation: "keys" | "legacy";
     };
 
     export type SpawnOptions = {
