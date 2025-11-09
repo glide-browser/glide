@@ -17,7 +17,14 @@ pref("browser.ml.chat.enabled", false);
 pref("browser.ml.chat.sidebar", false);
 pref("browser.ml.chat.shortcuts", false);
 pref("browser.ml.chat.shortcuts.custom", false);
+pref("browser.ml.chat.page", false);
+pref("browser.ml.chat.page.menuBadge", false);
+pref("browser.ml.chat.page.footerBadge", false);
+pref("browser.ml.linkPreview.enabled", false);
 pref("browser.tabs.groups.smart.enabled", false);
+pref("browser.ml.pageAssist.enabled", false);
+pref("browser.ml.smartAssist.enabled", false);
+pref("browser.ml.smartAssist.overrideNewTab", false);
 
 // extensions
 // these should be the same as browser/app/profile/firefox.js, but with the app version replaced with FIREFOX_VERSION
