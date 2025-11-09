@@ -363,6 +363,8 @@ class GlideExcmdsClass {
           return;
         }
 
+        GlideBrowser.notify_scroll_breaking_change?.();
+
         if (GlideBrowser.api.ctx.os === "macosx") {
           await GlideBrowser.api.keys.send("<D-Up>", { skip_mappings: true });
         } else {
@@ -376,6 +378,8 @@ class GlideExcmdsClass {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "bottom" });
           return;
         }
+
+        GlideBrowser.notify_scroll_breaking_change?.();
 
         if (GlideBrowser.api.ctx.os === "macosx") {
           await GlideBrowser.api.keys.send("<D-Down>", { skip_mappings: true });
@@ -391,6 +395,8 @@ class GlideExcmdsClass {
           return;
         }
 
+        GlideBrowser.notify_scroll_breaking_change?.();
+
         await GlideBrowser.api.keys.send("<pageup>", { skip_mappings: true });
         break;
       }
@@ -400,6 +406,8 @@ class GlideExcmdsClass {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_down" });
           return;
         }
+
+        GlideBrowser.notify_scroll_breaking_change?.();
 
         await GlideBrowser.api.keys.send("<pagedown>", { skip_mappings: true });
         break;
@@ -414,6 +422,8 @@ class GlideExcmdsClass {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction });
           return;
         }
+
+        GlideBrowser.notify_scroll_breaking_change?.();
 
         switch (direction) {
           case "up":

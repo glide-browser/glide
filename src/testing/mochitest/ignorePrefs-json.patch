@@ -1,8 +1,8 @@
 diff --git a/testing/mochitest/ignorePrefs.json b/testing/mochitest/ignorePrefs.json
-index 33d4bca53aeda2b331abef957ad6b37bcaaab284..eba6534410e184078e0d11f9169822ae7761f699 100644
+index 47ab1ddf8d14091366c78984c4790e79d994da10..cb8f37297136c14fedcb87e70281869b61963886 100644
 --- a/testing/mochitest/ignorePrefs.json
 +++ b/testing/mochitest/ignorePrefs.json
-@@ -32,6 +32,7 @@
+@@ -35,6 +35,7 @@
    "dom.security.https_only_mode_ever_enabled",
    "extensions.databaseSchema",
    "extensions.pendingOperations",
@@ -10,11 +10,12 @@ index 33d4bca53aeda2b331abef957ad6b37bcaaab284..eba6534410e184078e0d11f9169822ae
    "extensions.ui.dictionary.hidden",
    "extensions.ui.extension.hidden",
    "extensions.ui.lastCategory",
-@@ -39,6 +40,7 @@
+@@ -42,6 +43,8 @@
    "extensions.ui.mlmodel.hidden",
    "extensions.ui.sitepermission.hidden",
    "extensions.webextensions.ExtensionStorageIDB.migrated.*",
 +  "glide.caret.style",
++  "glide.notifications.scroll_instant_to_smooth",
    "mail.*",
    "media.gmp-manager.buildID",
    "media.gmp-manager.lastCheck",
