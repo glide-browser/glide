@@ -82,6 +82,28 @@ add_task(async function test_scrolling() {
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
 });
 
+add_task(async function test_scrolling_legacy() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.scroll_implementation = "legacy";
+  });
+
+  await BrowserTestUtils.withNewTab(SCROLL_TEST_FILE, async browser => {
+    async function get_scroll(): Promise<[number, number]> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return [content.window.scrollX, content.window.scrollY];
+      });
+    }
+
+    const max_y = await SpecialPowers.spawn(browser, [], async () => {
+      return content.window.scrollMaxY;
+    });
+
+    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll });
+  });
+
+  await horizontal_scroll_tests(SCROLL_TEST_FILE);
+});
+
 add_task(async function test_scrolling_pdf() {
   await BrowserTestUtils.withNewTab(
     "http://mochi.test:8888/browser/toolkit/components/pdfjs/test/file_pdfjs_test.pdf",
@@ -118,7 +140,7 @@ async function vertical_scroll_tests(
     G_wip?: boolean;
   },
 ) {
-  const interval = 50;
+  const interval = 100;
 
   var min_x = 0;
 

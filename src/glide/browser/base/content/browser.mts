@@ -1720,6 +1720,8 @@ type GlideO = (typeof glide)["o"];
 class GlideOptions implements GlideO {
   mapping_timeout = 200;
 
+  scroll_implementation = "keys" as const;
+
   yank_highlight: glide.RGBString = `#edc73b`;
   yank_highlight_time = 150;
 

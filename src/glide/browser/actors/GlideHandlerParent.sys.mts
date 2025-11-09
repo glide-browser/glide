@@ -60,7 +60,8 @@ export interface ParentMessages {
       | null;
     pick?: GlideFunctionIPC<(hints: glide.ContentHint[]) => glide.ContentHint[]>;
   };
-  "Glide::Move": { direction: "endline" };
+  "Glide::Move": { direction: "left" | "right" | "up" | "down" | "endline" };
+  "Glide::Scroll": { to: "page_up" | "page_down" | "top" | "bottom" };
   "Glide::Debug": null;
 }
 
