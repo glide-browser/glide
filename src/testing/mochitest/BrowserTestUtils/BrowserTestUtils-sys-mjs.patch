@@ -1,5 +1,5 @@
 diff --git a/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs b/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
-index b76a451fa7dd22fcff81a6659091fdd5ae56fc32..0e6ce153b319ecdd74000f8ea352f54453f89974 100644
+index badc466bd2068fa3213fd4ae961f4c4a7cb8eb87..8a4ed1bc1b3161aaf096929f2f8c156448ec5573 100644
 --- a/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
 +++ b/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
 @@ -98,7 +98,7 @@ export var BrowserTestUtils = {
@@ -11,3 +11,12 @@ index b76a451fa7dd22fcff81a6659091fdd5ae56fc32..0e6ce153b319ecdd74000f8ea352f544
     *        Async function representing that will be executed while
     *        the tab is loaded. The first argument passed to the function is a
     *        reference to the browser object for the new tab.
+@@ -948,7 +948,7 @@ export var BrowserTestUtils = {
+    *        A xul:browser.
+    * @param {string} uri
+    *        The URI to load.
+-   * @param {number} loadFlags [optional]
++   * @param {number} [loadFlags]
+    *        Load flags to pass to nsIWebNavigation.loadURI.
+    */
+   startLoadingURIString(browser, uri, loadFlags) {

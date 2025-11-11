@@ -193,7 +193,7 @@ declare class TabBase {
      *        @readonly
      *        @abstract
      */
-    readonly get browser(): XULBrowserElement;
+    readonly get browser(): MozBrowser;
     /**
      * @property {BrowsingContext} browsingContext
      *        Returns the BrowsingContext for the given tab.

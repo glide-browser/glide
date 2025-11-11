@@ -1,5 +1,5 @@
 diff --git a/layout/base/nsCaret.cpp b/layout/base/nsCaret.cpp
-index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f5127e01d 100644
+index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1077a08a3 100644
 --- a/layout/base/nsCaret.cpp
 +++ b/layout/base/nsCaret.cpp
 @@ -13,11 +13,13 @@
@@ -48,7 +48,7 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
  nsresult nsCaret::Init(PresShell* aPresShell) {
    NS_ENSURE_ARG(aPresShell);
  
-@@ -67,6 +87,11 @@ nsresult nsCaret::Init(PresShell* aPresShell) {
+@@ -63,6 +83,11 @@ nsresult nsCaret::Init(PresShell* aPresShell) {
      return NS_ERROR_FAILURE;
    }
  
@@ -60,7 +60,7 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
    selection->AddSelectionListener(this);
    mDomSelectionWeak = selection;
    UpdateCaretPositionFromSelectionIfNeeded();
-@@ -99,6 +124,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
+@@ -95,6 +120,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
        nsPresContext::CSSPixelsToAppUnits(
            LookAndFeel::GetInt(LookAndFeel::IntID::CaretWidth, 1));
  
@@ -130,20 +130,19 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
    if (DrawCJKCaret(aFrame, aOffset)) {
      caretWidth += nsPresContext::CSSPixelsToAppUnits(1);
    }
-@@ -126,6 +214,12 @@ void nsCaret::Terminate() {
-   if (mDomSelectionWeak) {
-     mDomSelectionWeak->RemoveSelectionListener(this);
-   }
-+
+@@ -118,6 +206,11 @@ void nsCaret::Terminate() {
+   StopBlinking();
+   mBlinkTimer = nullptr;
+ 
 +  // glide-injection-start
 +  Preferences::UnregisterCallback(GlideCaretStyleChangedCallback,
 +                                  "glide.caret.style", this);
 +  // glide-injection-end
 +
-   mDomSelectionWeak = nullptr;
-   mPresShell = nullptr;
-   mCaretPosition = {};
-@@ -260,7 +354,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
+   // unregiser ourselves as a selection listener
+   if (mDomSelectionWeak) {
+     mDomSelectionWeak->RemoveSelectionListener(this);
+@@ -232,7 +325,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
  
  /* static */
  nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
@@ -156,7 +155,7 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
    nsPoint framePos(0, 0);
    nsRect rect;
    nsresult rv = aFrame->GetPointFromOffset(aFrameOffset, &framePos);
-@@ -306,6 +404,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -278,6 +375,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      }
    }
  
@@ -174,7 +173,7 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
    // on RTL frames the right edge of mCaretRect must be equal to framePos
    if (aFrame->StyleVisibility()->mDirection == StyleDirection::Rtl) {
      if (vertical) {
-@@ -323,10 +432,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -295,10 +403,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      framePos.y = caretBlockAxisMetrics.mOffset;
    }
  
@@ -208,7 +207,7 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
  
    rect.MoveBy(AdjustRectForClipping(rect, aFrame, vertical));
    if (aBidiIndicatorSize) {
-@@ -370,11 +498,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
+@@ -342,11 +469,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
  }
  
  /* static */
@@ -230,7 +229,7 @@ index 6bf86e930cce11d900ebd25c0250461a2f3d1b47..3cf0c918917882f6aef4ebcb896f9a4f
    }
    return data.mFrame;
  }
-@@ -617,7 +753,12 @@ void nsCaret::ResetBlinking() {
+@@ -589,7 +724,12 @@ void nsCaret::ResetBlinking() {
    }
  
    const int32_t oldBlinkTime = mBlinkTime;

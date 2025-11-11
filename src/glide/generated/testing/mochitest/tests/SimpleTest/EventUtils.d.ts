@@ -21,7 +21,6 @@ function _EU_roundDevicePixels(aMaybeFractionalPixels: any): number;
 function promiseElementReadyForUserInput(aElement: any, aWindow?: Window & typeof globalThis, aLogFunc?: any): Promise<void>;
 function getElement(id: any): any;
 function computeButton(aEvent: any): any;
-function computeButtons(aEvent: any, utils: any): any;
 /**
  * Send a mouse event to the node aTarget (aTarget can be an id, or an
  * actual node) . The "event" passed in to aEvent is just a JavaScript
@@ -146,8 +145,42 @@ function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any
  * @returns {boolean} Whether the event had preventDefault() called on it.
  */
 function synthesizeMouse(aTarget: Element, aOffsetX: number, aOffsetY: number, aEvent: MouseEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
-function synthesizeMouseAtPoint(aLeft: any, aTop: any, aEvent: any, aWindow: Window & typeof globalThis, aCallback: any): boolean;
-function synthesizeMouseAtCenter(aTarget: any, aEvent: any, aWindow: any, aCallback: any): boolean;
+/**
+ * Synthesize a mouse event in `aWindow` at a point.
+ *
+ * `nsIDOMWindowUtils.sendMouseEvent` takes floats for the coordinates.
+ * Therefore, don't round or truncate the values.
+ *
+ * Note that additional events may be fired as a result of this call. For
+ * instance, typically a click event will be fired as a result of a
+ * mousedown and mouseup in sequence.
+ *
+ * @param {number} aLeft - Floating-point value for the X offset in CSS pixels.
+ * @param {number} aTop - Floating-point value for the Y offset in CSS pixels.
+ * @param {MouseEventData} aEvent - Details of the mouse event to dispatch.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
+ * @param {Function} [aCallback] - A callback function that is invoked when the
+ *                                 mouse event is dispatched.
+ *
+ * @returns {boolean} Whether the event had preventDefault() called on it.
+ */
+function synthesizeMouseAtPoint(aLeft: number, aTop: number, aEvent: MouseEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
+/**
+ * Synthesize a mouse event at the center of `aTarget`.
+ *
+ * Note that additional events may be fired as a result of this call. For
+ * instance, typically a click event will be fired as a result of a
+ * mousedown and mouseup in sequence.
+ *
+ * @param {Element} aTarget - DOM element to dispatch the event on.
+ * @param {MouseEventData} aEvent - Details of the mouse event to dispatch.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
+ * @param {Function} [aCallback] - A callback function that is invoked when the
+ *                                 mouse event is dispatched.
+ *
+ * @returns {boolean} Whether the event had preventDefault() called on it.
+ */
+function synthesizeMouseAtCenter(aTarget: Element, aEvent: MouseEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
 /**
  * @typedef {Object} TouchEventData
  * @property {boolean} [aEvent.asyncEnabled] - If `true`, the event is

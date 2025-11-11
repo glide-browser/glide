@@ -4,7 +4,7 @@
 
 // More specific types for parent process browsing contexts.
 interface CanonicalBrowsingContext extends LoadContextMixin {
-  embedderElement: XULBrowserElement;
+  embedderElement: MozBrowser;
   currentWindowContext: WindowGlobalParent;
   parent: CanonicalBrowsingContext;
   parentWindowContext: WindowGlobalParent;
@@ -26,7 +26,7 @@ interface ChromeWindow extends Window {
 }
 
 interface Document {
-  createXULElement(name: "browser"): XULBrowserElement;
+  createXULElement(name: "browser"): MozBrowser;
 }
 
 type nsIGleanPingNoReason = {
@@ -126,15 +126,6 @@ type Sandbox = typeof globalThis & nsISupports;
 
 interface WindowGlobalParent extends WindowContext {
   readonly browsingContext: CanonicalBrowsingContext;
-}
-
-// Hand-crafted artisanal types.
-interface XULBrowserElement extends XULFrameElement, FrameLoader {
-  currentURI: nsIURI;
-  documentURI: nsIURI | null;
-  docShellIsActive: boolean;
-  isRemoteBrowser: boolean;
-  remoteType: string;
 }
 
 // https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1736
