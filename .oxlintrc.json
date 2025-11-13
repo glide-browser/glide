@@ -100,6 +100,12 @@
     },
 
     {
+      // this rule is incorrect in this case
+      "files": ["src/glide/generated/@types/subs/AppConstants.sys.d.ts"],
+      "rules": { "mozilla/no-browser-refs-in-toolkit": "off" }
+    },
+
+    {
       "files": ["src/glide/browser/base/content/extension-api.d.ts"],
       "rules": {
         // this is generated, we don't *really* care enough right now
