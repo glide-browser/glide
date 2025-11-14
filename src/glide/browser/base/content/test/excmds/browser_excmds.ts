@@ -191,9 +191,7 @@ add_task(async function test_gi_focuses_last_used_input() {
     });
     await sleep_frames(100);
 
-    await TestUtils.waitForCondition(() =>
-      document!.getElementById("glide-toolbar-mode-button")!.textContent
-        === "insert", "Waiting for mode button to show `insert` mode");
+    await GlideTestUtils.wait_for_mode("insert");
 
     await keys("hello");
 
@@ -201,15 +199,11 @@ add_task(async function test_gi_focuses_last_used_input() {
       content.document.getElementById("input-1")!.blur();
     });
 
-    await TestUtils.waitForCondition(() =>
-      document!.getElementById("glide-toolbar-mode-button")!.textContent
-        === "normal", "Waiting for mode button to show `normal` mode");
+    await GlideTestUtils.wait_for_mode("normal");
 
     await keys("gi");
 
-    await TestUtils.waitForCondition(() =>
-      document!.getElementById("glide-toolbar-mode-button")!.textContent
-        === "insert", "Waiting for mode button to show `insert` mode after gi");
+    await GlideTestUtils.wait_for_mode("insert");
 
     await keys(" world");
     const inputContent = await SpecialPowers.spawn(
