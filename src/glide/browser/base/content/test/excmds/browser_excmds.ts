@@ -191,7 +191,7 @@ add_task(async function test_gi_focuses_last_used_input() {
     });
     await sleep_frames(100);
 
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("hello");
 
@@ -199,11 +199,11 @@ add_task(async function test_gi_focuses_last_used_input() {
       content.document.getElementById("input-1")!.blur();
     });
 
-    await GlideTestUtils.wait_for_mode("normal");
+    await wait_for_mode("normal");
 
     await keys("gi");
 
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys(" world");
     const inputContent = await SpecialPowers.spawn(

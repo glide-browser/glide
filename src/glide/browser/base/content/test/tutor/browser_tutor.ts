@@ -18,7 +18,7 @@ add_task(async function test_ctrl_comma_blurs_input() {
       input!.focus();
     });
 
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     var active_element_tag = await SpecialPowers.spawn(browser, [], async () => {
       await new Promise(r => content.window.requestAnimationFrame(r));
@@ -34,6 +34,6 @@ add_task(async function test_ctrl_comma_blurs_input() {
     });
     isnot(active_element_tag, "input", "<C-,> should blur the input element");
 
-    await GlideTestUtils.wait_for_mode("normal");
+    await wait_for_mode("normal");
   });
 });

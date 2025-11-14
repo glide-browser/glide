@@ -18,7 +18,7 @@ add_task(async function test_basic_commandline() {
     is(GlideTestUtils.commandline.get_input_content(), "foo", "key presses should be entered into the input element");
 
     await keys("<esc>");
-    await GlideTestUtils.wait_for_mode("normal");
+    await wait_for_mode("normal");
     ok(
       document!.querySelector<HTMLElement>("glide-commandline")!.hidden,
       "Commandline should be hidden after pressing escape",
@@ -172,7 +172,7 @@ add_task(async function test_commandline_closes_on_blur() {
     await sleep_frames(50);
 
     ok(commandline.hidden, "Commandline should be hidden after losing focus");
-    await GlideTestUtils.wait_for_mode("normal");
+    await wait_for_mode("normal");
   });
 });
 

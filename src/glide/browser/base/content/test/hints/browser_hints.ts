@@ -221,7 +221,7 @@ add_task(async function test_expandable_content_can_be_hinted() {
     ok(summary_hint);
 
     await keys(summary_hint.label);
-    await GlideTestUtils.wait_for_mode("normal");
+    await wait_for_mode("normal");
 
     var is_open = await SpecialPowers.spawn(
       browser,

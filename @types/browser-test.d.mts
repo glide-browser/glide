@@ -40,6 +40,8 @@ declare global {
    */
   function keys<const Keys>(keyseq: $keymapcompletions.T<Keys>): Promise<void>;
 
+  function wait_for_mode(modde: GlideMode): Promise<void>;
+
   function is(a: unknown, b: unknown, name?: string): void;
   function todo_is(a: unknown, b: unknown, name?: string): void;
   /**

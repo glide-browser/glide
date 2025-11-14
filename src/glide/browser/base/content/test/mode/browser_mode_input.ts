@@ -18,7 +18,7 @@ add_task(async function test_focus_input_element_activates_insert_mode() {
       content.document.getElementById<HTMLInputElement>("input-1")!.focus();
     });
 
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("abcr");
 
@@ -39,7 +39,7 @@ add_task(async function test_focus_input_element_while_in_insert_mode() {
       content.document.getElementById("input-2")!.focus();
     });
 
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("abcr");
 
@@ -56,7 +56,7 @@ add_task(async function test_focus_input_element_while_in_insert_mode() {
 add_task(async function test_about_settings_search() {
   await BrowserTestUtils.withNewTab("about:settings", async browser => {
     // search should be focused by default
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("rabc");
 
@@ -80,7 +80,7 @@ add_task(async function test_shadow_dom() {
       ).focus());
 
     // search should be focused after clicking on an input in a shadow dom
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("rabc");
 
@@ -108,7 +108,7 @@ add_task(async function test_direct_click_nested_shadow_dom() {
       ).focus());
 
     // search should be focused after clicking on an input in a shadow dom
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("rabc");
 
@@ -133,7 +133,7 @@ add_task(async function test_focus_contenteditable_div_textbox_role() {
         .getElementById("contenteditable-div-with-role-textbox")!
         .focus());
 
-    await GlideTestUtils.wait_for_mode("insert");
+    await wait_for_mode("insert");
 
     await keys("rabc");
 
