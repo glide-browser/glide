@@ -940,6 +940,19 @@ declare global {
        * @default "hjklasdfgyuiopqwertnmzxcvb"
        */
       hint_chars: string;
+
+      /**
+       * A function to produce labels for `len` hints. You can provide
+       * your own function or use an included one:
+       *
+       *  - `glide.hints.label_prefix_free`: Generate prefix-free
+       *    combinations of the characters in [hint_chars](#glide.o.hint_chars).
+       *    This is the default.
+       *
+       *  - `glide.hints.label_numeric`: Generate sequential numeric labels,
+       *    starting at `1` and counting up. Ignores [hint_chars](#glide.o.hint_chars).
+       */
+      hint_label_generator: (GlideResolvedHint[]) => string[];
     };
 
     export type SpawnOptions = {
