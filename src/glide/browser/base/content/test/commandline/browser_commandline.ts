@@ -31,7 +31,7 @@ add_task(async function test_basic_filtering() {
     await GlideTestUtils.commandline.open();
 
     await keys("ex");
-    await sleep_frames(3);
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length === 1).ok();
 
     let visible_rows = GlideTestUtils.commandline.visible_rows();
 
@@ -39,12 +39,12 @@ add_task(async function test_basic_filtering() {
     is(visible_rows[0]!.querySelector(".excmd")!.textContent, "examplecmd", "Correct command should be visible");
 
     await keys("<Backspace><Backspace>");
-    await sleep_frames(3);
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length === 3).ok();
 
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
 
-    await sleep_frames(1);
+    await waiter(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent === "examplecmd").ok();
     is(
       GlideTestUtils.commandline.focused_row()!.children[0]!.textContent,
       "examplecmd",
@@ -127,10 +127,10 @@ add_task(async function test_tabs() {
 add_task(async function test_excmd_enter() {
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
-
-    await sleep_frames(5);
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length > 0).ok();
 
     await keys("ex");
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length === 1).ok();
 
     let visible_rows = GlideTestUtils.commandline.visible_rows();
 
@@ -138,11 +138,12 @@ add_task(async function test_excmd_enter() {
     is(visible_rows[0]!.querySelector(".excmd")!.textContent, "examplecmd", "Correct command should be visible");
 
     await keys("<Backspace><Backspace>");
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length === 3).ok();
 
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
 
-    await new Promise(r => requestAnimationFrame(r));
+    await waiter(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent === "examplecmd").ok();
 
     is(
       GlideTestUtils.commandline.focused_row()!.children[0]!.textContent,
@@ -153,8 +154,6 @@ add_task(async function test_excmd_enter() {
 });
 
 add_task(async function test_commandline_closes_on_blur() {
-  await sleep_frames(20);
-
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 
@@ -162,23 +161,19 @@ add_task(async function test_commandline_closes_on_blur() {
     const input = commandline.querySelector<HTMLInputElement>("[anonid=\"glide-commandline-input\"]");
 
     ok(!commandline.hidden, "Commandline should be visible after opening");
-    is(document!.activeElement, input, "Input should have focus");
+    await waiter(() => document!.activeElement).is(input, "Input should have focus");
 
     await keys("test");
     is(input!.value, "test", "Input should contain 'test'");
 
     // Move focus to browser content
     gBrowser.selectedBrowser.focus();
-    await sleep_frames(50);
-
-    ok(commandline.hidden, "Commandline should be hidden after losing focus");
+    await waiter(() => commandline.hidden).ok();
     await wait_for_mode("normal");
   });
 });
 
 add_task(async function test_commandline_custom_excmd_arguments() {
-  await sleep_frames(20);
-
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.reload_config(function _() {
       glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
@@ -188,7 +183,7 @@ add_task(async function test_commandline_custom_excmd_arguments() {
     });
 
     await keys(":my_long_command_name foo bar");
-    await sleep_frames(20);
+    await waiter(() => GlideTestUtils.commandline.get_input_content() === "my_long_command_name foo bar").ok();
 
     await keys("<CR>");
 
@@ -226,8 +221,6 @@ add_task(async function test_commandline_keymaps() {
 });
 
 add_task(async function test_commandline_focus_to_content() {
-  await sleep_frames(20);
-
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.reload_config(function _() {
       glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
@@ -237,12 +230,11 @@ add_task(async function test_commandline_focus_to_content() {
     });
 
     await keys(":foo");
-    await sleep_frames(10);
+    await waiter(() => document?.activeElement?.getAttribute("anonid") === "glide-commandline-input").ok();
 
     is(document?.activeElement?.getAttribute("anonid"), "glide-commandline-input", "commandline should be focused");
 
     EventUtils.synthesizeKey("KEY_Escape");
-    await sleep_frames(20);
 
     await TestUtils.waitForCondition(
       () => document?.activeElement?.tagName.toLowerCase() === "browser",
