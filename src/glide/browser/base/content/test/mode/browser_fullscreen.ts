@@ -40,15 +40,19 @@ add_task(async function test_video_fullscreen_does_not_switch_on_ignore_mode() {
     await SpecialPowers.spawn(browser, [], async () => {
       const video = content.document.getElementById("testVideo") as HTMLVideoElement;
       await video.requestFullscreen();
+      await ContentTaskUtils.waitForCondition(
+        () => !!content.document.fullscreenElement,
+        "Waiting for fullscreen to be active",
+      );
     });
 
-    await sleep_frames(10);
+    is(GlideBrowser.state.mode, "ignore", "Mode should stay as `ignore` after entering fullscreen");
 
     await SpecialPowers.spawn(browser, [], async () => {
       await content.document.exitFullscreen();
+      await ContentTaskUtils.waitForCondition(() => !content.document.fullscreenElement, "Waiting to exit fullscreen");
     });
 
-    await sleep_frames(10);
     is(GlideBrowser.state.mode, "ignore", "Mode should stay as `ignore` when exiting fullscreen");
   });
 });

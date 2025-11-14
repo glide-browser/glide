@@ -64,6 +64,12 @@ declare global {
   var SpecialPowers: import("../engine/testing/specialpowers/content/SpecialPowersChild.sys.mjs").SpecialPowersChild;
   var BrowserTestUtils:
     typeof import("../engine/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs").BrowserTestUtils;
+
+  /**
+   * This is only available inside `SpecialPowers.spawn()` callbacks.
+   */
+  var ContentTaskUtils:
+    typeof import("../engine/testing/specialpowers/content/ContentTaskUtils.sys.mjs").ContentTaskUtils;
 }
 
 export {};
