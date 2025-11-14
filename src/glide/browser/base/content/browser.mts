@@ -1418,6 +1418,14 @@ class GlideBrowserClass {
       }
     }
 
+    // this will be true when a browser modal is open, e.g. cmd+q / ctrl+W to quit.
+    //
+    // to avoid surprising behaviour we ignore all mappings in this case, this might need to be
+    // expanded in the future to allow registering keymappings even when the modal is open.
+    if (document!.getElementById("main-window")!.getAttribute("window-modal-open") === "true") {
+      return;
+    }
+
     const mode = this.state.mode;
     const has_partial = this.key_manager.has_partial_mapping;
     const current_sequence = this.key_manager.current_sequence;

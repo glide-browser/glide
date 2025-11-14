@@ -8,6 +8,7 @@
 "use strict";
 
 declare var content: TestContent;
+declare var document: Document;
 
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -489,4 +490,29 @@ add_task(async function test_shift_with_another_modifier() {
 
     is(glide.g.value, true);
   });
+});
+
+// toolkit/content/globalOverlay.js
+declare function goQuitApplication(event: any): void;
+
+add_task(async function test_mappings_ignored_with_browser_modals() {
+  await SpecialPowers.pushPrefEnv({
+    set: [
+      ["browser.warnOnQuit", true],
+      ["browser.warnOnQuitShortcut", true],
+    ],
+  });
+
+  setTimeout(() => {
+    goQuitApplication({ metaKey: true, ctrlKey: true });
+  }, 0);
+
+  await waiter(() => document.getElementById("main-window")!.getAttribute("window-modal-open")).is("true");
+
+  await sleep_frames(50);
+  await keys("<tab><tab><tab>"); // select "cancel"
+
+  // space should trigger the button instead of being used as the actual <leader> when the modal is open
+  await keys("<leader>");
+  await waiter(() => document.getElementById("main-window")!.getAttribute("window-modal-open")).is(null);
 });
