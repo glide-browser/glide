@@ -21,5 +21,6 @@ BROWSER_CHROME_MANIFESTS += [
     "content/test/mode/browser.toml",
     "content/test/motions/browser.toml",
     "content/test/process/browser.toml",
+    "content/test/tutor/browser.toml",
     "content/test/utils/browser.toml",
 ]

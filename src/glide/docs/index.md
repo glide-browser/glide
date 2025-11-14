@@ -117,6 +117,8 @@ title="Demo video showing Glide features including keyboard navigation and confi
       <span class="keymap-desc">Focus last input field</span>
       <span class="keymap-key">gI</span>
       <span class="keymap-desc">Focus the biggest editable element</span>
+      <span class="keymap-key">&lt;C-,&gt;</span>
+      <span class="keymap-desc">Move focus back to the page</span>
     </div>
     <h3>Page Actions</h3>
     <div class="keymap-grid">
