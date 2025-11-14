@@ -12,3 +12,16 @@ index 94843062f4bc77a400cfaf2c5faa9abea6c93f97..38cca1f34990ab8fb6df7a9416d4525c
  option(
      "--with-distribution-id",
      nargs=1,
+@@ -931,9 +931,9 @@
+ option("--disable-jxl", help="Disable jxl image support")
+ 
+ 
+-@depends("--disable-jxl", milestone.is_nightly)
+-def jxl(value, is_nightly):
+-    if is_nightly and value:
++@depends("--disable-jxl")
++def jxl(value):
++    if value:
+         return True
+ 
+ 
