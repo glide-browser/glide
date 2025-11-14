@@ -3,15 +3,10 @@ import { execa, ExecaError } from "execa";
 import fs from "fs/promises";
 import Path from "node:path";
 import config from "../../firefox.json" with { type: "json" };
+import { is_present } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
 import { ensure_symlink, exists } from "../util.mts";
 import { get_platform, GLOB_ALL_FILES } from "./util.mts";
-
-const PATCH_ARGS = [
-  "--ignore-space-change",
-  "--ignore-whitespace",
-  "--verbose",
-];
 
 interface Context {
   errors: string[];
@@ -23,7 +18,17 @@ if (import.meta.url.endsWith(process.argv[1]!)) {
 
 async function main() {
   const ctx: Context = { errors: [] };
-  await apply_git_patches(ctx);
+
+  const patch_args = [
+    "--ignore-space-change",
+    "--ignore-whitespace",
+    "--verbose",
+    // this creates `.rej` files for any conflicting hunks, and applies any hunks that do apply cleanly
+    // which is nice for resolving cases where there is just a single bad hunk.
+    process.argv.includes("--allow-partial") ? "--reject" : null,
+  ].filter(is_present);
+
+  await apply_git_patches(ctx, patch_args);
   await setup_symlinks(ctx);
   await branding_patch(ctx);
 
@@ -38,7 +43,7 @@ async function main() {
   }
 }
 
-async function apply_git_patches(ctx: Context) {
+async function apply_git_patches(ctx: Context, patch_args: string[]) {
   for await (const entry of fs.glob("**/*.patch", { cwd: SRC_DIR, withFileTypes: true })) {
     if (entry.isDirectory()) {
       continue;
@@ -48,14 +53,14 @@ async function apply_git_patches(ctx: Context) {
     const relative_path = Path.relative(ROOT_DIR, Path.join(entry.parentPath, entry.name));
 
     try {
-      await execa("git", ["apply", "-R", ...PATCH_ARGS, path], { cwd: ENGINE_DIR });
+      await execa("git", ["apply", "-R", ...patch_args, path], { cwd: ENGINE_DIR });
     } catch {
       // If the patch has already been applied, we want to revert it. Because
       // there is no good way to check this we are just going to catch and
       // discard the error
     }
 
-    const result = await execa("git", ["apply", ...PATCH_ARGS, path], { all: true, cwd: ENGINE_DIR }).catch((e) =>
+    const result = await execa("git", ["apply", ...patch_args, path], { all: true, cwd: ENGINE_DIR }).catch((e) =>
       e as ExecaError
     );
     if (result.exitCode === 0) {
