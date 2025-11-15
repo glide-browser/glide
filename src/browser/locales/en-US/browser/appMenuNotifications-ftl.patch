@@ -1,0 +1,20 @@
+diff --git a/browser/locales/en-US/browser/appMenuNotifications.ftl b/browser/locales/en-US/browser/appMenuNotifications.ftl
+index 1c2c740744049de44a14664f90191a788c88340f..9ce414d799b67167b9626298516cdc1c38ec818a 100644
+--- a/browser/locales/en-US/browser/appMenuNotifications.ftl
++++ b/browser/locales/en-US/browser/appMenuNotifications.ftl
+@@ -2,6 +2,15 @@
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
++
++appmenu-glide-smooth-scroll-default =
++    .buttonlabel = Learn more
++    .buttonaccesskey = L
++    .secondarybuttonlabel = :clear
++    .secondarybuttonaccesskey = C
++
++appmenu-glide-smooth-scroll-default-message = Smooth scrolling is now enabled by default.
++
+ appmenu-update-available2 =
+     .label = Update available
+     .buttonlabel = Download
