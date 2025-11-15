@@ -563,6 +563,7 @@ class GlideBrowserClass {
     });
     if (!version_full) {
       // something very weird happened if we couldn't read the version file, so just bail
+      Services.prefs.setBoolPref(pref, true);
       return;
     }
 
@@ -571,36 +572,32 @@ class GlideBrowserClass {
     this._log.debug("oldest used version", oldest_version);
 
     if (Services.vc.compare(oldest_version, "0.1.53a") > 0) {
+      Services.prefs.setBoolPref(pref, true);
       // oldest version is newer than 0.1.53a, nothing to do as the user never saw the previous instant scroll behaviour
       return;
     }
 
-    // note: for some reason, using the `resource://glide-docs/changelog.html` version completely breaks the browser.
-    const docs_url = "https://glide-browser.app/changelog#0.1.54a";
-
     this.notify_scroll_breaking_change = () => {
       this.notify_scroll_breaking_change = null;
+      Services.prefs.setBoolPref(pref, true);
 
-      setTimeout(() => {
-        Services.prefs.getDefaultBranch("").setBoolPref(pref, true);
+      // corresponds to the id in engine/browser/components/customizableui/content/panelUI.inc.xhtml
+      const notification_id = "glide-smooth-scroll-default";
 
-        this.add_notification("glide-breaking-scroll", {
-          priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
-          buttons: [GlideBrowser.remove_all_notifications_button],
-
-          label: DOM.create_fragment([
-            `Smooth scrolling is now the default; for more information see `,
-            DOM.create_element("a", {
-              href: docs_url,
-              children: [docs_url],
-              onclick() {
-                gBrowser.addTrustedTab((this as HTMLAnchorElement).href, { inBackground: false });
-                GlideBrowser.remove_notification("glide-breaking-scroll");
-              },
-            }),
-          ]),
-        });
-      }, 200);
+      AppMenuNotifications.showNotification(
+        notification_id,
+        // main action, the "learn more" button
+        {
+          // note: for some reason, using the `resource://glide-docs/changelog.html` version completely breaks the browser.
+          docs_url: "https://glide-browser.app/changelog#0.1.54a",
+          callback() {
+            AppMenuNotifications.removeNotification(notification_id);
+            gBrowser.addTrustedTab(this.docs_url, { inBackground: false });
+          },
+        },
+        // :clear
+        { callback: () => AppMenuNotifications.removeNotification(notification_id) },
+      );
     };
   }
 
