@@ -7,6 +7,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html";
 const SINGLE_HINT_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/single_hint_test.html";
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
@@ -231,9 +233,9 @@ add_task(async function test_expandable_content_can_be_hinted() {
 
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     var is_open = await SpecialPowers.spawn(browser, [], () => {
-      const summary = content.document.getElementById("summary-1");
+      const summary = content.document.getElementById("summary-1")!;
       summary.scrollIntoView();
-      return summary.parentElement.open;
+      return (summary as any).parentElement!.open;
     });
     await sleep_frames(10);
     is(is_open, false, "<details> content should be hidden by default");
@@ -251,7 +253,7 @@ add_task(async function test_expandable_content_can_be_hinted() {
     var is_open = await SpecialPowers.spawn(
       browser,
       [],
-      () => content.document.getElementById("summary-1").parentElement.open,
+      () => (content.document.getElementById("summary-1")!.parentElement! as any).open,
     );
     is(is_open, true, "<details> content should be open after activating the hint");
   });
