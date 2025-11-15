@@ -77,17 +77,17 @@
     "fast-check": "^4.3.0",
     "html-assets-hash": "^1.0.5",
     "html-rewriter-wasm": "^0.4.1",
-    "ini": "^5.0.0",
-    "meow": "^13.2.0",
+    "ini": "^6.0.0",
+    "meow": "^14.0.0",
     "oxlint": "^1.28.0",
     "oxlint-tsgolint": "^0.5.1",
-    "p-queue": "^8.1.0",
+    "p-queue": "^9.0.0",
     "pagefind": "^1.4.0",
     "ts-morph": "^27.0.0",
-    "type-fest": "^4.41.0",
+    "type-fest": "^5.2.0",
     "webextension-polyfill": "github:glide-browser/webextension-types",
     "webidl2": "^24.5.0",
-    "xmlbuilder2": "^3.1.1"
+    "xmlbuilder2": "^4.0.0"
   },
   "packageManager": "pnpm@10.17.0",
   "private": true
