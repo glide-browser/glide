@@ -51,6 +51,7 @@ export interface ParentMessages {
     selector?: string;
     include?: string;
     editable_only?: boolean;
+    include_click_listeners?: boolean;
     debug?: boolean;
     action?:
       | "click"

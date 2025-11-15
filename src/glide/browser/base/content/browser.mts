@@ -1930,6 +1930,7 @@ function make_glide_api(): typeof glide {
           location: opts?.location ?? "content",
           include: opts?.include,
           editable_only: opts?.editable ?? undefined,
+          include_click_listeners: opts?.include_click_listeners,
           auto_activate: opts?.auto_activate ?? false,
           pick: IPC.maybe_serialise_glidefunction(opts?.pick),
           browser_ui_rect: LayoutUtils.getElementBoundingScreenRect(document!.body),

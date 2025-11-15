@@ -16,6 +16,7 @@ interface ResolveProps {
   selector?: string;
   include?: string;
   editable_only?: boolean;
+  include_click_listeners?: boolean;
   browser_ui_rect: DOMRectReadOnly;
   pick?: (hints: glide.ContentHint[]) => glide.ContentHint[];
 }
@@ -154,6 +155,7 @@ export const content = {
         || (target.role && this.HINTABLE_ROLES.has(target.role))
         || (opts?.include && target.matches(opts?.include))
         || DOM.is_text_editable(target)
+        || (opts?.include_click_listeners && Services.els.hasListenersFor(el, "click"))
       ) {
         yield target;
       }

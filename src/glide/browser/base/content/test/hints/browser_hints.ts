@@ -157,6 +157,31 @@ add_task(async function test_include_selector() {
   });
 });
 
+add_task(async function test_include_click_listeners_option() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", () => glide.hints.show({}));
+    glide.keymaps.set("normal", "F", () => glide.hints.show({ include_click_listeners: true }));
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async browser => {
+    await SpecialPowers.spawn(browser, [], () => {
+      content.document.querySelector(".interactive-section")!.scrollIntoView();
+    });
+    await sleep_frames(5);
+
+    await keys("f");
+    const original_hints = await wait_for_hints();
+    Assert.greater(original_hints.length, 0, "There should be some hints shown");
+    await keys("<Esc>");
+
+    await keys("F");
+    const hints = await wait_for_hints();
+    Assert.greater(hints.length, original_hints.length, "including listeners should result in more hints");
+    ok(gBrowser.$hints?.find((hint) => hint.element_id === "clickable-span"));
+    await keys("<Esc>");
+  });
+});
+
 add_task(async function test_pick_basic() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>

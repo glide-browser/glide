@@ -448,6 +448,14 @@ declare global {
         editable?: boolean;
 
         /**
+         * Include elements that have a `click` listener registered.
+         *
+         * @experimental
+         * @default false
+         */
+        include_click_listeners?: boolean;
+
+        /**
          * If only one hint is generated, automatically activate it.
          *
          * @default false
