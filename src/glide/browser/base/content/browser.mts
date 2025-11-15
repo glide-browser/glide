@@ -667,6 +667,12 @@ class GlideBrowserClass {
     }
   }
 
+  remove_all_appmenu_notifications(): void {
+    for (const notification of AppMenuNotifications.notifications) {
+      AppMenuNotifications.removeNotification(notification.id);
+    }
+  }
+
   create_messenger<Messages extends Record<string, any>>(receiver: (message: glide.Message<Messages>) => void) {
     const id = GlideBrowser.#messenger_id++;
     const messenger = new Messenger(id, receiver);

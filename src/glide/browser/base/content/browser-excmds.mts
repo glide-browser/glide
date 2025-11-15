@@ -225,6 +225,7 @@ class GlideExcmdsClass {
 
       case "clear": {
         GlideBrowser.remove_all_notifications();
+        GlideBrowser.remove_all_appmenu_notifications();
         break;
       }
 

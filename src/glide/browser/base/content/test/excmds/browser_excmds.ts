@@ -336,13 +336,22 @@ add_task(async function test_clear_removes_notifications() {
       () => gNotificationBox.getNotificationWithValue("test-notification") !== null,
       "Waiting for notification to appear",
     );
-
     is(gNotificationBox.allNotifications.length, 1, "notification should be added");
+
+    AppMenuNotifications.showNotification("update-available");
+    await TestUtils.waitForCondition(
+      () => AppMenuNotifications.activeNotification !== null,
+      "Waiting for appmenu notification to appear",
+    );
 
     await keys(":clear<CR>");
     await TestUtils.waitForCondition(
       () => gNotificationBox.getNotificationWithValue("test-notification") === null,
       "Waiting for notification to disappear",
+    );
+    await TestUtils.waitForCondition(
+      () => AppMenuNotifications.activeNotification == null,
+      "Waiting for appmenu notification to disappear",
     );
 
     is(gNotificationBox.allNotifications.length, 0, ":clear should remove all notifications");

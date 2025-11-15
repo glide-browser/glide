@@ -1,0 +1,12 @@
+diff --git a/toolkit/modules/AppMenuNotifications.sys.mjs b/toolkit/modules/AppMenuNotifications.sys.mjs
+index 0f5f78758d2f7fc62d076c698c4e369f64f650ba..f73a5b651e5f7a460a718e637312efe686f360dc 100644
+--- a/toolkit/modules/AppMenuNotifications.sys.mjs
++++ b/toolkit/modules/AppMenuNotifications.sys.mjs
+@@ -11,6 +11,7 @@ function AppMenuNotification(id, mainAction, secondaryAction, options = {}) {
+ }
+ 
+ export var AppMenuNotifications = {
++  /** @type {AppMenuNotification[]} */
+   _notifications: [],
+   _hasInitialized: false,
+ 

@@ -9,6 +9,8 @@ declare var gBrowser: GlobalBrowser.GlobalBrowser;
 declare var gNotificationBox: GlobalBrowser.NotificationBox;
 
 declare var FileUtils: MockedExports.KnownModules["resource://gre/modules/FileUtils.sys.mjs"]["FileUtils"];
+declare var AppMenuNotifications:
+  MockedExports.KnownModules["resource://gre/modules/AppMenuNotifications.sys.mjs"]["AppMenuNotifications"];
 
 declare interface MirroredDocument extends Document {
   readonly $brand: "mirror";
@@ -275,6 +277,8 @@ declare namespace MockedExports {
       typeof import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs");
     "resource://gre/modules/AppConstants.sys.mjs":
       typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
+    "resource://gre/modules/AppMenuNotifications.sys.mjs":
+      typeof import("../engine/toolkit/modules/AppMenuNotifications.sys.mjs");
 
     "resource://devtools/shared/loader/Loader.sys.mjs":
       typeof import("../engine/devtools/shared/loader/Loader.sys.mjs");
