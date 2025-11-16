@@ -146,20 +146,19 @@ async function vertical_scroll_tests(
     G_wip?: boolean;
   },
 ) {
-  const interval = 100;
+  var [x, y] = await get_scroll();
 
   var min_x = 0;
-
-  var [x, y] = await get_scroll();
-  is(x, min_x);
-  is(y, min_y);
+  is(x, min_x, "scroll is at the min x");
+  is(y, min_y, "scroll is at the min y");
 
   var curr_x = 0;
-
   var last_y = min_y;
 
+  const wait_for_scroll_stop = await make_scroll_waiter(get_scroll);
+
   await keys("<C-d>");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-d> should retain the x position`);
   Assert.greater(y, last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
@@ -167,40 +166,41 @@ async function vertical_scroll_tests(
   last_y = y;
 
   await keys("<C-d>");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-d> should retain the x position`);
   Assert.greater(y, last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
 
   await keys("<C-u>");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-u> should retain the x position`);
   is(y, last_y, `<C-u> should decrease y to the previous <C-d>`);
 
   await keys("<C-u>");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-u> should retain the x position`);
   is(y, min_y, `Second <C-u> should decrease y to the minimum`);
 
   await keys("gg");
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
 
   // Test j scrolls down
   await keys("j");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, new_y] = await get_scroll();
   Assert.greater(new_y, y, `j should scroll down`);
 
   // Test k scrolls up
   await keys("k");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   Assert.lessOrEqual(y, min_y, `k should scroll back up`);
 
   await keys("G");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `G should retain the x position`);
   if (G_wip) {
@@ -210,7 +210,7 @@ async function vertical_scroll_tests(
   }
 
   await keys("gg");
-  await sleep_frames(interval);
+  await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `gg should retain the x position`);
   is(y, min_y, `gg should go to the minimum y`);
@@ -249,3 +249,33 @@ async function horizontal_scroll_tests(url: string) {
   });
 }
 
+async function make_scroll_waiter(get_scroll: () => Promise<[number, number]>) {
+  const [x, y] = await get_scroll();
+  const state = { x, y };
+
+  async function wait_for_scroll_stop() {
+    await sleep_frames(5); // ensure scrolling starts
+
+    await until(async () => {
+      const [new_x, new_y] = await get_scroll();
+      if (new_x === state.x && new_y === state.y) {
+        return true;
+      }
+
+      await sleep_frames(5);
+
+      var [x, y] = await get_scroll();
+      state.x = x;
+      state.y = y;
+
+      if (x !== new_x || y !== new_y) {
+        // we're still scrolling
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  return wait_for_scroll_stop;
+}
