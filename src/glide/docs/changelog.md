@@ -17,6 +17,74 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.54a
+
+Page navigation keys (`h`, `j`, `k`, `l`, `<C-u>`, `<C-d>`, `gg`, and `G`) are now translated into equivalent standard keys:
+
+- `hjkl` to arrow keys
+- `<C-u>` to `<PageUp>`
+- `<C-d>` to `<PageDown>`
+- `gg` to `<D-Up>` on macOS, and `<C-Home>` on Linux
+- `G` to `<D-Down>` on macOS, and `<C-End>` on Linux
+
+For example, when you press `j`, Glide will now send an `<ArrowDown>` event to the web page.
+
+This change was made for a couple reasons:
+
+1. We get to leverage Firefox's smooth scrolling implementation.
+2. The aforementioned keys are now more likely to _just work_ as you'd expect.
+   Scrolling in PDFs now works; websites with their own scrolling behaviour will now work, as long as they support standard navigation keys.
+
+#### Website key events {% id="0.1.54a-website-key-events" %}
+
+There is a notable behaviour change here now that navigation keys send key events to the web page; websites can now intercept those key events and function differently. This may or may not be desirable depending on the website you are using.
+
+If this behaviour is worse for you, please open a [discussion](https://github.com/glide-browser/glide/discussions), and if needed you can revert to the previous implementation with:
+
+```typescript
+glide.o.scroll_implementation = "legacy";
+```
+
+> [!TIP]
+> This behaviour can be worse when custom elements are focused, e.g. YouTube videos as `j` will turn the volume down when you really want to scroll the page.
+>
+> In these cases you can try pressing `<C-,>` first to move focus off of that element.
+
+### Smooth scrolling {% id="0.1.54a-smooth-scrolling" %}
+
+Smooth scrolling is now supported, and enabled by default.
+
+If you want to keep instant scrolling you can use this config:
+
+```typescript
+glide.prefs.set("general.smoothScroll", false);
+```
+
+Note that this also changes the scroll behaviour when using arrow keys directly.
+
+### Changes {% id="0.1.54a-changes" %}
+
+- Bumped Firefox from 145.0b6 to 146.0b3
+- Added `I` motion support
+- Added `<C-,>` to move focus out of the currently active element
+- Added `:copy` excmd for smoother integration with excmds like `:profile_dir`
+- Added support for removing browser styles with [`glide.styles.remove()`](api.md#glide.styles.remove)
+- Added opt-in support for hinting elements with `click` listeners
+  - See [#110](https://github.com/glide-browser/glide/discussions/110) for more information
+- Added [`glide.ctx.version`](api.md#glide.ctx.version) for accessing the current Glide version
+- Added [`glide.ctx.firefox_version`](api.md#glide.ctx.firefox_version) for accessing the Firefox version that Glide is based off of
+- Added opt-in JPEG XL support
+  - Thanks to [@SED4906](https://github.com/SED4906) for the contribution!
+- Removed relative path limitations in [`glide.unstable.include()`](api.md#glide.unstable.include), you can now pass absolute paths
+- Fixed scrolling while editable elments are focused, e.g. `<C-d>` will now actually scroll the page down.
+- Fixed `path:org.mozilla` references in DBus names on Linux, we now use `path:app.glide_browser` instead
+  - Thanks [@thomascft](https://github.com/thomascft) for the contribution!
+- Fixed a case where Glide would automatically exit `ignore` mode when switching tabs
+- Fixed keymappings conflicting with browser UI modals, e.g. `<D-q>` on macOS / `<C-S-w>` on Linux
+- Updated `:clear` to also dismiss app menu notifications, e.g. the "New update available" notification
+- Disabled more AI prefs
+- We now store the previous Glide versions you've used in the profile directory
+
 # 0.1.53a
 
 ### Addons API {% id="0.1.53a-addons-api" %}
