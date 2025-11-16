@@ -1737,6 +1737,14 @@ class GlideOptions implements GlideO {
     this.#hint_size = value;
     GlideBrowser.set_css_property("--glide-hint-font-size", value);
   }
+
+  #hint_label_generator: glide.Options['hint_label_generator'] | null = null;
+  get hint_label_generator() {
+      return this.#hint_label_generator ?? GlideBrowser.api.hints.label_prefix_free;
+  }
+  set hint_label_generator(value: glide.Options['hint_label_generator']) {
+      this.#hint_label_generator = value;
+  }
 }
 
 function make_glide_api(): typeof glide {
@@ -1937,7 +1945,20 @@ function make_glide_api(): typeof glide {
           debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
       },
+
+      label_prefix_free(hints): string[] {
+        return GlideHints.hint_label_prefix_free(hints.length);
+      },
+
+      label_numeric(hints): string[] {
+        var ret = [];
+        for (var i = 1; i <= hints.length; i++) {
+          ret.push(i.toString());
+        }
+        return ret;
+      },
     },
+
     addons: {
       async install(xpi_url, opts): Promise<glide.AddonInstall> {
         const cache = GlideBrowser.resolved_addons_cache_file;
