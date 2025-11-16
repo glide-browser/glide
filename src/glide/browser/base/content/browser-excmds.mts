@@ -358,7 +358,13 @@ class GlideExcmdsClass {
       }
 
       case "scroll_top": {
-        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+        if (
+          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
+          // if an input element is focused, <D-Up> would move the caret to the *start* of the input,
+          // instead of going to the top of the page, so we have to use our own API for scrolling to
+          // actually get to the top of the page.
+          || await GlideBrowser.api.ctx.is_editing()
+        ) {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "top" });
           return;
         }
@@ -374,7 +380,13 @@ class GlideExcmdsClass {
       }
 
       case "scroll_bottom": {
-        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+        if (
+          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
+          // if an input element is focused, <D-Down> would move the caret to the *end* of the input,
+          // instead of going to the bottom of the page, so we have to use our own API for scrolling to
+          // actually get to the bottom of the page.
+          || await GlideBrowser.api.ctx.is_editing()
+        ) {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "bottom" });
           return;
         }
@@ -390,7 +402,12 @@ class GlideExcmdsClass {
       }
 
       case "scroll_page_up": {
-        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+        if (
+          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
+          // if an input element is focused, <pageup> would scroll the element instead of actually scrolling
+          // the page up so we have to use our own API for scrolling to actually go up the page.
+          || await GlideBrowser.api.ctx.is_editing()
+        ) {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_up" });
           return;
         }
@@ -402,7 +419,12 @@ class GlideExcmdsClass {
       }
 
       case "scroll_page_down": {
-        if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+        if (
+          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
+          // if an input element is focused, <pagedown> would scroll the element instead of actually scrolling
+          // the page up so we have to use our own API for scrolling to actually go down the page.
+          || await GlideBrowser.api.ctx.is_editing()
+        ) {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_down" });
           return;
         }

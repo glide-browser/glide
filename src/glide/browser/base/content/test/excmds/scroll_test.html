@@ -61,6 +61,23 @@
         height: 1px;
         width: 100%;
       }
+
+      input, textarea {
+        position: absolute;
+        padding: 8px;
+        border: 2px solid #666;
+        border-radius: 4px;
+      }
+
+      input {
+        width: 200px;
+      }
+
+      textarea {
+        width: 300px;
+        height: 100px;
+        resize: both;
+      }
     </style>
   </head>
   <body>
@@ -99,6 +116,19 @@
       >
         Center
       </div>
+
+      <input
+        id="input-1"
+        type="text"
+        placeholder="Input field"
+        style="top: 50%; left: 50%; transform: translate(-50%, 60px)"
+      />
+
+      <textarea
+        id="textarea-1"
+        placeholder="Textarea"
+        style="top: 50%; left: 50%; transform: translate(-50%, 140px)"
+      ></textarea>
     </div>
 
     <script>

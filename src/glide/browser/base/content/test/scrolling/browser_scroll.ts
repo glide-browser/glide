@@ -4,6 +4,8 @@
 
 "use strict";
 
+declare var content: TestContent;
+
 const SCROLL_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/excmds/scroll_test.html";
 
 const breaking_change_pref = "glide.notifications.scroll_instant_to_smooth";
@@ -66,6 +68,69 @@ add_task(async function test_scrolling_does_NOT_trigger_notification_for_new_pro
     notok(
       AppMenuNotifications.notifications.find((n) => n.id === "glide-smooth-scroll-default"),
       "There should not be any notification if the oldest version a user used is greater than 0.1.53a",
+    );
+  });
+});
+
+add_task(async function test_scrolling_input_element_focused() {
+  await BrowserTestUtils.withNewTab(SCROLL_TEST_FILE, async browser => {
+    async function get_scroll(): Promise<[number, number]> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return [content.window.scrollX, content.window.scrollY];
+      });
+    }
+    const get_y = async () => (await get_scroll())[1];
+    const wait_for_scroll_stop = await make_scroll_waiter(get_scroll);
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      const input = content.document.getElementById("input-1")!;
+      input.scrollIntoView();
+      input.focus();
+    });
+
+    var last_y = await get_y();
+
+    await keys("<C-d>");
+    await wait_for_scroll_stop();
+    Assert.greater(await get_y(), last_y, "<C-d> should go down the page, even while an input element is focused");
+    is(
+      await SpecialPowers.spawn(browser, [], async () => content.document.activeElement?.id),
+      "input-1",
+      "input should still be focused",
+    );
+
+    await keys("<C-u>");
+    await wait_for_scroll_stop();
+    is(await get_y(), last_y, "<C-u> should go back up the page, even while an input element is focused");
+    is(
+      await SpecialPowers.spawn(browser, [], async () => content.document.activeElement?.id),
+      "input-1",
+      "input should still be focused",
+    );
+
+    await keys("<esc>");
+    await wait_for_mode("normal");
+
+    await keys("gg");
+    await wait_for_scroll_stop();
+    is(await get_y(), 0, "gg should go to the top of the page, even while an input element is focused");
+    is(
+      await SpecialPowers.spawn(browser, [], async () => content.document.activeElement?.id),
+      "input-1",
+      "input should still be focused",
+    );
+
+    await keys("G");
+    await wait_for_scroll_stop();
+    is(
+      await get_y(),
+      await SpecialPowers.spawn(browser, [], async () => content.window.scrollMaxY),
+      "G should go to the bottom of the page, even while an input element is focused",
+    );
+    is(
+      await SpecialPowers.spawn(browser, [], async () => content.document.activeElement?.id),
+      "input-1",
+      "input should still be focused",
     );
   });
 });
