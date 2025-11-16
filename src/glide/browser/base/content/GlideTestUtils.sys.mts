@@ -84,29 +84,29 @@ class GlideTestUtilsClass {
     return {
       async is(value: unknown, name?: string) {
         await g.TestUtils.waitForCondition(
-          () => getter() === value,
+          async () => (await getter()) === value,
           name ?? (String(getter) + ` === ${value}`),
           interval,
           tries,
         );
-        g.is(getter(), value, name);
+        g.is(await getter(), value, name);
       },
       async isnot(value, name) {
         await g.TestUtils.waitForCondition(
-          () => getter() !== value,
+          async () => (await getter()) !== value,
           name ?? (String(getter) + ` !== ${value}`),
           interval,
           tries,
         );
-        g.isnot(getter(), value, name);
+        g.isnot(await getter(), value, name);
       },
 
       async isjson(value, name) {
         const serialised = JSON.stringify(value, typeof value === "object" && value ? Object.keys(value).sort() : null);
 
         await g.TestUtils.waitForCondition(
-          () => {
-            const resolved = getter();
+          async () => {
+            const resolved = await getter();
             return JSON.stringify(
               resolved,
               typeof resolved === "object" && resolved ? Object.keys(resolved).sort() : null,
@@ -116,21 +116,21 @@ class GlideTestUtilsClass {
           interval,
           tries,
         );
-        g.isjson(getter(), value, name);
+        g.isjson(await getter(), value, name);
       },
 
       async ok(message?: string) {
         await g.TestUtils.waitForCondition(getter, message ?? (String(getter) + ` === <truthy>`), interval, tries);
-        g.ok(getter(), message);
+        g.ok(await getter(), message);
       },
       async notok(message?: string) {
         await g.TestUtils.waitForCondition(
-          () => !getter(),
+          async () => !(await getter()),
           message ?? (String(getter) + ` === <not truthy>`),
           interval,
           tries,
         );
-        g.notok(getter(), message);
+        g.notok(await getter(), message);
       },
     };
   }
