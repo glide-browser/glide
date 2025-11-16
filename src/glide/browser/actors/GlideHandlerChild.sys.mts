@@ -291,6 +291,34 @@ export class GlideHandlerChild extends JSWindowActorChild<
         this.document?.notifyUserGestureActivation();
         break;
       }
+
+      case "Glide::Scroll": {
+        switch (message.data.to) {
+          case "page_up": {
+            DOM.scroll(this.contentWindow!, { type: "page", y: -1 });
+            break;
+          }
+          case "page_down": {
+            DOM.scroll(this.contentWindow!, { type: "page", y: 1 });
+            break;
+          }
+          case "top": {
+            const window = assert_present(this.contentWindow, "no contentWindow");
+            this._log.debug(`[scroll_top]: scrolling to x=${window.scrollX} y=0`);
+            window.scroll(window.scrollX, 0);
+            break;
+          }
+          case "bottom": {
+            const window = assert_present(this.contentWindow, "no contentWindow");
+            this._log.debug(`[scroll_bottom]: scrolling to x=${window.scrollX} y=${window.scrollMaxY}`);
+            window.scroll(window.scrollX, window.scrollMaxY);
+            break;
+          }
+        }
+
+        break;
+      }
+
       case "Glide::Move": {
         const doc_shell = assert_present(this.docShell);
 
@@ -318,7 +346,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
         // work. so we need to use an alternative method for scrolling, sending
         // a wheel event directly.
         this._log.debug(`[Glide::Move]: no editor available, manually scrolling`);
-
         const delta = 200;
         const window = assert_present(this.contentWindow, "no content window");
 
@@ -405,28 +432,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
         if (target && "blur" in target) {
           (target as HTMLElement).blur();
         }
-        break;
-      }
-      case "scroll_top": {
-        const window = assert_present(this.contentWindow, "no contentWindow");
-        this._log.debug(`[scroll_top]: scrolling to x=${window.scrollX} y=0`);
-
-        window.scroll(window.scrollX, 0);
-        break;
-      }
-      case "scroll_page_down": {
-        DOM.scroll(this.contentWindow!, { type: "page", y: 1 });
-        break;
-      }
-      case "scroll_page_up": {
-        DOM.scroll(this.contentWindow!, { type: "page", y: -1 });
-        break;
-      }
-      case "scroll_bottom": {
-        const window = assert_present(this.contentWindow, "no contentWindow");
-        this._log.debug(`[scroll_bottom]: scrolling to x=${window.scrollX} y=${window.scrollMaxY}`);
-
-        window.scroll(window.scrollX, window.scrollMaxY);
         break;
       }
       case "execute_motion": {
