@@ -1,0 +1,20 @@
+diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
+index 0d19aa84ba415af20655924ef28db7d6db8174b4..432274ee9e3af72ad6d09ee94db437ac5a440c9b 100644
+--- a/testing/mochitest/runtests.py
++++ b/testing/mochitest/runtests.py
+@@ -2332,6 +2332,15 @@ toolbar#nav-bar {
+             path = os.path.join(profile_data_dir, profile)
+             self.profile.merge(path, interpolation=interpolation)
+ 
++            # glide-injection-start
++            glide_dir = os.path.join(path, "glide")
++            if os.path.isdir(glide_dir):
++              dest = os.path.join(options.profilePath, "glide")
++              if os.path.exists(dest):
++                  shutil.rmtree(dest)
++              shutil.copytree(glide_dir, dest)
++            # glide-injection-end
++
+     @property
+     def conditioned_profile_copy(self):
+         """Returns a copy of the original conditioned profile that was created."""
