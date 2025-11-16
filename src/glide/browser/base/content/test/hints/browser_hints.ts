@@ -68,7 +68,7 @@ add_task(async function test_hints_follow_link() {
 
     await keys(first_hint.textContent);
 
-    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
+    await wait_for_mode("normal");
   });
 });
 
