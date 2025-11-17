@@ -1,5 +1,5 @@
 diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
-index 0d19aa84ba415af20655924ef28db7d6db8174b4..432274ee9e3af72ad6d09ee94db437ac5a440c9b 100644
+index 0d19aa84ba415af20655924ef28db7d6db8174b4..8cda4e03f709f9af091ead852c8e3487a7ad8aa1 100644
 --- a/testing/mochitest/runtests.py
 +++ b/testing/mochitest/runtests.py
 @@ -2332,6 +2332,15 @@ toolbar#nav-bar {
@@ -18,3 +18,16 @@ index 0d19aa84ba415af20655924ef28db7d6db8174b4..432274ee9e3af72ad6d09ee94db437ac
      @property
      def conditioned_profile_copy(self):
          """Returns a copy of the original conditioned profile that was created."""
+@@ -2698,6 +2707,12 @@ toolbar#nav-bar {
+             attrs = ["pid", "ppid", "name", "cmdline", "username"]
+             for proc in psutil.process_iter():
+                 try:
++                    if "firefoxpwa" in proc.name():
++                        # no point in reporting a warning for firefoxpwa instances
++                        # as they should only be running in local testing, and are
++                        # almost guaranteed to not be running a marionette server.
++                        continue
++
+                     if "firefox" in proc.name():
+                         firefoxes = "%s%s\n" % (firefoxes, proc.as_dict(attrs=attrs))
+                 except Exception:
