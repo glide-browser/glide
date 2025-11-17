@@ -367,14 +367,12 @@ add_task(async function test_buf_local_keymaps_override_global() {
     is(glide.g.invoked_global, 0, "Global mapping should be shadowed by the buffer-local mapping");
 
     // Open a new tab to clear buffer-local mappings.
-    const new_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, KEYS_TEST_URI);
+    using _tab = await GlideTestUtils.new_tab(KEYS_TEST_URI);
 
     await keys("q");
     await sleep_frames(3);
     is(glide.g.invoked_buffer, 1, "Buffer-local mapping should not fire in a different buffer");
     is(glide.g.invoked_global, 1, "Global mapping should be executed in buffers without a buffer-local override");
-
-    BrowserTestUtils.removeTab(new_tab);
   });
 });
 

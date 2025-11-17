@@ -22,8 +22,8 @@ add_task(async function test_jumplist_basic_navigation() {
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
-  const tab1 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(1));
-  const tab2 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(2));
+  using _tab1 = await GlideTestUtils.new_tab(uri(1));
+  using _tab2 = await GlideTestUtils.new_tab(uri(2));
 
   is(current_url(), uri(2));
 
@@ -50,9 +50,6 @@ add_task(async function test_jumplist_basic_navigation() {
   await keys("<C-i>");
   await sleep_frames(5);
   is(current_url(), uri(2), "<C-i> at tip stays put");
-
-  BrowserTestUtils.removeTab(tab1);
-  BrowserTestUtils.removeTab(tab2);
 });
 
 add_task(async function test_jumplist_prunes_forward_slice() {
@@ -60,14 +57,14 @@ add_task(async function test_jumplist_prunes_forward_slice() {
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
-  const tab1 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(1));
-  const tab2 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(2));
+  using _tab1 = await GlideTestUtils.new_tab(uri(1));
+  using _tab2 = await GlideTestUtils.new_tab(uri(2));
 
   await keys("<C-o>");
   await sleep_frames(5);
   is(current_url(), uri(1), "<C-o> moves back to tab1");
 
-  const tab3 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(3));
+  using _tab3 = await GlideTestUtils.new_tab(uri(3));
   is(current_url(), uri(3));
 
   await keys("<C-i>");
@@ -77,10 +74,6 @@ add_task(async function test_jumplist_prunes_forward_slice() {
   await keys("<C-o>");
   await sleep_frames(5);
   is(current_url(), uri(1), "<C-o> still navigates backwards after prune");
-
-  BrowserTestUtils.removeTab(tab1);
-  BrowserTestUtils.removeTab(tab2);
-  BrowserTestUtils.removeTab(tab3);
 });
 
 add_task(async function test_jumplist_max_entries_trim() {
@@ -95,7 +88,7 @@ add_task(async function test_jumplist_max_entries_trim() {
     // Open 11 additional tabs so that we end up with 12 entries (0–11).
     const tabs: Array<any> = [];
     for (let i = 1; i <= 11; i++) {
-      tabs.push(await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(i)));
+      tabs.push(await GlideTestUtils.new_tab(uri(i)));
     }
 
     // We should now be on the last tab (i=11).
@@ -123,10 +116,10 @@ add_task(async function test_jumplist_deleted_intermediary_tab() {
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
-  const tab1 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(1));
-  const tab2 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(2));
-  const tab3 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(3));
-  const tab4 = await BrowserTestUtils.openNewForegroundTab(gBrowser, uri(4));
+  using _tab1 = await GlideTestUtils.new_tab(uri(1));
+  using tab2 = await GlideTestUtils.new_tab(uri(2));
+  using tab3 = await GlideTestUtils.new_tab(uri(3));
+  using _tab4 = await GlideTestUtils.new_tab(uri(4));
 
   is(current_url(), uri(4), "Currently on tab4");
 
@@ -158,7 +151,4 @@ add_task(async function test_jumplist_deleted_intermediary_tab() {
   await keys("<C-i><C-i>");
   await sleep_frames(5);
   is(current_url(), uri(4), "Skipped deleted tabs and jumped to tab4");
-
-  BrowserTestUtils.removeTab(tab1);
-  BrowserTestUtils.removeTab(tab4);
 });

@@ -30,6 +30,8 @@ const g: {
   EventUtils: typeof EventUtils;
   TestUtils: typeof TestUtils;
   keys: typeof keys;
+  gBrowser: typeof gBrowser;
+  BrowserTestUtils: typeof BrowserTestUtils;
 } = {} as any;
 
 declare var content: TestContent;
@@ -39,6 +41,21 @@ const { dedent } = ChromeUtils.importESModule("chrome://glide/content/utils/dede
 
 class GlideTestUtilsClass {
   commandline = new GlideCommandLineTestUtils();
+
+  /**
+   * Create a new foreground tab with the given URI.
+   *
+   * Behaves the same as `BrowserTestUtils.openNewForegroundTab()` but also defines
+   * `[Symbol.dispose]()` so you can use it with `using`.
+   */
+  async new_tab(uri: string): Promise<BrowserTab> {
+    const tab = await g.BrowserTestUtils.openNewForegroundTab(g.gBrowser, uri);
+    return Object.assign(tab, {
+      [Symbol.dispose]() {
+        g.BrowserTestUtils.removeTab(tab);
+      },
+    });
+  }
 
   /**
    * Extracts the function body to a string, writes that to `glide.ts` in

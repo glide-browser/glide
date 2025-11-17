@@ -23,8 +23,8 @@ add_task(async function test_tab_switching() {
   const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
   BrowserTestUtils.startLoadingURIString(browser, INPUT_TEST_FILE + "?i=0");
   await BrowserTestUtils.browserLoaded(browser);
-  let second_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=1");
-  let third_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=2");
+  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
+  using _tab3 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
 
   is(current_url(), INPUT_TEST_FILE + "?i=2");
 
@@ -39,17 +39,14 @@ add_task(async function test_tab_switching() {
 
   await keys("<C-k>");
   is(current_url(), INPUT_TEST_FILE + "?i=2", "tab_prev wraps back around");
-
-  BrowserTestUtils.removeTab(second_tab);
-  BrowserTestUtils.removeTab(third_tab);
 });
 
 add_task(async function test_tab_close() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.mapleader = "<Space>";
   });
-  let second_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=1");
-  let third_tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, INPUT_TEST_FILE + "?i=2");
+  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
+  using _tab3 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
 
   is(current_url(), INPUT_TEST_FILE + "?i=2");
 
@@ -58,9 +55,6 @@ add_task(async function test_tab_close() {
 
   await keys(".");
   is(current_url(), INPUT_TEST_FILE + "?i=0", "tab_close moves backwards");
-
-  BrowserTestUtils.removeTab(second_tab);
-  BrowserTestUtils.removeTab(third_tab);
 });
 
 add_task(async function test_gi_focuses_last_used_input() {
