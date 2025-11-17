@@ -94,8 +94,8 @@
 
   "overrides": [
     {
-      // this file is intentionally empty
-      "files": ["src/browser/extensions/glide/run.js"],
+      // these files are intentionally empty
+      "files": ["src/browser/extensions/glide/run.js", "src/testing/profiles/base/glide/glide.ts"],
       "rules": { "no-empty-file": "off" }
     },
 
