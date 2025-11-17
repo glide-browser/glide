@@ -25,7 +25,7 @@ const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/docume
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
-const { assert_never, assert_present, is_present } = ChromeUtils.importESModule(
+const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs",
 );
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
@@ -2541,6 +2541,74 @@ function make_glide_api(): typeof glide {
       },
     },
     unstable: {
+      split_views: {
+        create(tabs, opts) {
+          if (tabs.length < 2) {
+            throw Cu.cloneInto(new Error("2 or more tabs must be passed"), GlideBrowser.sandbox_window);
+          }
+
+          if (opts?.id) {
+            const existing = this.get(opts.id);
+            if (existing) {
+              throw Cu.cloneInto(
+                new Error(`Could not create a splitview; The '${opts.id}' ID is already in use`),
+                GlideBrowser.sandbox_window,
+              );
+            }
+          }
+
+          const splitview = gBrowser.addTabSplitView(tabs.map(web_tab_to_firefox), { id: opts?.id });
+          if (!splitview) {
+            throw Cu.cloneInto(
+              new Error("Could not create a splitview; Is one of the tabs pinned?"),
+              GlideBrowser.sandbox_window,
+            );
+          }
+
+          return {
+            id: splitview.splitViewId,
+            tabs: splitview.tabs.map(firefox_tab_to_web),
+          };
+        },
+
+        separate(tab) {
+          if (typeof tab === "string") {
+            const splitview = get_firefox_splitview(tab);
+            if (!splitview) {
+              throw Cu.cloneInto(new Error(`No splitview with ID '${tab}'`), GlideBrowser.sandbox_window);
+            }
+
+            gBrowser.unsplitTabs(splitview);
+            return;
+          }
+
+          const ff_tab = web_tab_to_firefox(tab);
+          if (!ff_tab.splitview) {
+            throw Cu.cloneInto(new Error("Tab is not in a split view"), GlideBrowser.sandbox_window);
+          }
+
+          gBrowser.unsplitTabs(ff_tab.splitview);
+        },
+
+        has_split_view(tab) {
+          return is_present(this.get(tab));
+        },
+
+        get(tab) {
+          const splitview = typeof tab === "number"
+            ? tab_id_to_firefox(tab).splitview
+            : typeof tab === "string"
+            ? get_firefox_splitview(tab)
+            : tab_id_to_firefox(assert_present(tab.id, "tab given with no id")).splitview;
+          if (!splitview) {
+            return null;
+          }
+          return {
+            id: splitview.splitViewId,
+            tabs: splitview.tabs.map(firefox_tab_to_web),
+          };
+        },
+      },
       async include(path) {
         const absolute = resolve_path(path);
 
@@ -2590,6 +2658,30 @@ function make_glide_api(): typeof glide {
       },
     },
   };
+}
+
+function get_firefox_splitview(id: string): any {
+  return gBrowser.tabContainer.querySelector(`tab-split-view-wrapper[splitViewId="${id}"]`);
+}
+
+function tab_id_to_firefox(id: TabID): BrowserTab {
+  return assert_present(
+    GlideBrowser.extension?.tabManager?.get?.(id),
+    "could not resolve tab, did you call this too early in startup?",
+  ).nativeTab;
+}
+
+function firefox_tab_to_web(tab: BrowserTab): Browser.Tabs.Tab {
+  return assert_present(
+    GlideBrowser.extension?.tabManager?.getWrapper?.(tab),
+    "could not resolve tab, did you call this too early in startup?",
+  ).convert() as Browser.Tabs.Tab;
+}
+
+function web_tab_to_firefox(tab: Browser.Tabs.Tab | number): BrowserTab {
+  return GlideBrowser.extension.tabManager.get(
+    typeof tab === "number" ? tab : ensure(tab.id, "Tab passed without an ID"),
+  ).nativeTab;
 }
 
 function firefox_addon_to_glide(addon: Addon): glide.Addon {

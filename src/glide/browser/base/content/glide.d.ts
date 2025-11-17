@@ -683,6 +683,39 @@ declare global {
 
     unstable: {
       /**
+       * Manage tab split views.
+       *
+       * **note**: split views are experimental in Firefox, there *will* be bugs.
+       */
+      split_views: {
+        /**
+         * Start a split view with the given tabs.
+         *
+         * At least 2 tabs must be passed.
+         *
+         * **note**: this will not work if one of the given tabs is *pinned*.
+         */
+        create(tabs: Array<TabID | Browser.Tabs.Tab>, opts?: glide.SplitViewCreateOpts): glide.SplitView;
+
+        /**
+         * Given a tab, tab ID, or a splitview ID, return the corresponding split view.
+         */
+        get(tab: SplitViewID | TabID | Browser.Tabs.Tab): glide.SplitView | null;
+
+        /**
+         * Revert a tab in a split view to a normal tab.
+         *
+         * If the given tab is *not* in a split view, then an error is thrown.
+         */
+        separate(tab: SplitViewID | TabID | Browser.Tabs.Tab): void;
+
+        /**
+         * Whether or not the given tab is in a split view.
+         */
+        has_split_view(tab: TabID | Browser.Tabs.Tab): boolean;
+      };
+
+      /**
        * Include another file as part of your config. The given file is evluated as if it
        * was just another Glide config file.
        *
@@ -1204,6 +1237,15 @@ declare global {
 
     export type HintLocation = "content" | "browser-ui";
 
+    export type SplitViewCreateOpts = {
+      id?: string;
+    };
+
+    export type SplitView = {
+      id: string;
+      tabs: Browser.Tabs.Tab[];
+    };
+
     export type KeyNotation = {
       /**
        * @example <leader>
@@ -1395,6 +1437,9 @@ declare global {
       size: number | undefined;
     };
   }
+
+  type TabID = number;
+  type SplitViewID = string;
 
   /**
    * Dedent template function.
