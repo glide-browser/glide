@@ -1551,8 +1551,15 @@ class GlideBrowserClass {
     }
 
     if (!mapping && this.state.mode === "hint") {
-      const label = [...current_sequence].join("");
-      const hints = GlideHints.get_active_hints().filter(hint => hint.label.startsWith(label));
+      var label: string;
+      var hints: GlideResolvedHint[];
+      if (current_sequence[current_sequence.length - 1] === "<CR>") {
+        label = current_sequence.slice(0, -1).join("");
+        hints = GlideHints.get_active_hints().filter(hint => hint.label === label);
+      } else {
+        label = [...current_sequence].join("");
+        hints = GlideHints.get_active_hints().filter(hint => hint.label.startsWith(label));
+      }
       this._log.debug({ hints, label });
 
       if (hints.length > 1) {
