@@ -330,13 +330,24 @@ add_task(async function test_numeric_hint_generator() {
   });
 
   await BrowserTestUtils.withNewTab(FILE, async _browser => {
-    await keys("f");
+    const initial_tab_count = gBrowser.tabs.length;
+    await keys("F");
     await wait_for_hints();
 
     const hints = GlideHints.get_active_hints();
     is(hints[0]?.label, "1");
     is(hints[1]?.label, "2");
     is(hints[9]?.label, "10");
-    await keys("<esc>");
+
+    await keys("1<CR>");
+    await sleep_frames(3);
+
+    const final_tab_count = gBrowser.tabs.length;
+    is(final_tab_count, initial_tab_count + 1, "<CR> should select first hint");
+    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
+
+    if (final_tab_count > initial_tab_count) {
+      gBrowser.removeTab(gBrowser.selectedTab);
+    }
   });
 });
