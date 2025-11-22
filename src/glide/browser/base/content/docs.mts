@@ -100,12 +100,15 @@ export async function markdown_to_html(
   const rel_to_dist = "../".repeat(props.nested_count - 1).slice(0, -1) || ".";
   const current_href = rel_to_dist + "/" + props.relative_dist_path;
 
+  const title = state.title ?? "Glide Docs";
+  const description = state.description ?? "an extensible and keyboard-focused web browser.";
+
   return html`
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
       <head>
         <meta charset="utf-8" />
-        <title>${state.title ?? "Glide Docs"}</title>
+        <title>${title}</title>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=yes"
@@ -113,7 +116,19 @@ export async function markdown_to_html(
         <meta name="author" content="Robert Craigie" />
         <meta
           name="description"
-          content="${state.description ?? "an extensible and keyboard-focused web browser."}" />
+          content="${description}" />
+
+        <meta property="og:title" content="${title}" />
+        <meta property="og:description" content="${description}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://glide-browser.app/${props.relative_dist_path}" />
+        <meta property="og:image" content="https://glide-browser.app/logo1024.png" />
+        <meta property="og:site_name" content="Glide Browser" />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="${title}" />
+        <meta name="twitter:description" content="${description}" />
+        <meta name="twitter:image" content="https://glide-browser.app/logo1024.png" />
 
         <link rel="icon" href="${rel_to_dist}/logo.png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
