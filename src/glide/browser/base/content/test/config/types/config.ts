@@ -142,3 +142,14 @@ async function stream_is_iterable() {
     var _: string = chunk;
   }
 }
+
+// custom options
+declare global {
+  interface GlideOptions {
+    my_custom_option?: boolean;
+  }
+}
+
+glide.o.my_custom_option = true;
+// @ts-expect-error
+glide.o.my_custom_option = "foo";

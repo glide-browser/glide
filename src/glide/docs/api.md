@@ -176,7 +176,7 @@ Whether or not the currently focused element is editable.
 
 This includes but is not limited to `html:<textarea>`, `html:<input>`, `contenteditable=true`.
 
-## • `glide.o: glide.Options` {% id="glide.o" %}
+## • `glide.o: GlideOptions` {% id="glide.o" %}
 
 Set browser-wide options.
 

@@ -46,7 +46,7 @@ declare global {
      * Set browser-wide options.
      */
     /// @docs-expand-type-reference
-    o: glide.Options;
+    o: GlideOptions;
 
     /**
      * Set buffer specific options.
@@ -819,6 +819,84 @@ declare global {
   }
 
   /**
+   * Corresponds to {@link glide.o} or {@link glide.bo}.
+   */
+  // note: this is skipped in docs generation because we expand `glide.o`, so rendering
+  //       the `Options` type as well would be redundant.
+  /// @docs-skip
+  interface GlideOptions {
+    /**
+     * How long to wait until cancelling a partial keymapping execution.
+     *
+     * For example, `glide.keymaps.set('insert', 'jj', 'mode_change normal')`, after
+     * pressing `j` once, this option determines how long the delay should be until
+     * the `j` key is considered fully pressed and the mapping sequence is reset.
+     *
+     * note: this only applies in insert mode.
+     *
+     * @default 200
+     */
+    mapping_timeout: number;
+
+    /**
+     * Color used to briefly highlight text when it's yanked.
+     *
+     * @example "#ff6b35" // Orange highlight
+     * @default "#edc73b"
+     */
+    yank_highlight: glide.RGBString;
+
+    /**
+     * How long, in milliseconds, to highlight the selection for when it's yanked.
+     *
+     * @default 150
+     */
+    yank_highlight_time: number;
+
+    /**
+     * The delay, in milliseconds, before showing the which key UI.
+     *
+     * @default 300
+     */
+    which_key_delay: number;
+
+    /**
+     * The maximum number of entries to include in the jumplist, i.e.
+     * how far back in history will the jumplist store.
+     *
+     * @default 100
+     */
+    jumplist_max_entries: number;
+
+    /**
+     * The font size of the hint label, directly corresponds to the
+     * [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) property.
+     *
+     * @default "11px"
+     */
+    hint_size: string;
+
+    /**
+     * The characters to include in hint labels.
+     *
+     * @default "hjklasdfgyuiopqwertnmzxcvb"
+     */
+    hint_chars: string;
+
+    /**
+     * Configure the strategy for implementing scrolling, this affects the
+     * `h`, `j`, `k`, `l`,`<C-u>`, `<C-d>`, `G`, and `gg` mappings.
+     *
+     * This is exposed as the current `keys` implementation can result in non-ideal behaviour if a website overrides arrow key events.
+     *
+     * This will be removed in the future when the kinks with the `keys` implementation are ironed out.
+     *
+     * @default "keys"
+     */
+    scroll_implementation: "keys" | "legacy";
+  }
+
+  /**
    * Throws an error if the given value is not truthy.
    *
    * Returns the value if it is truthy.
@@ -890,77 +968,7 @@ declare global {
     // note: this is skipped in docs generation because we expand `glide.o`, so rendering
     //       the `Options` type as well would be redundant.
     /// @docs-skip
-    export type Options = {
-      /**
-       * How long to wait until cancelling a partial keymapping execution.
-       *
-       * For example, `glide.keymaps.set('insert', 'jj', 'mode_change normal')`, after
-       * pressing `j` once, this option determines how long the delay should be until
-       * the `j` key is considered fully pressed and the mapping sequence is reset.
-       *
-       * note: this only applies in insert mode.
-       *
-       * @default 200
-       */
-      mapping_timeout: number;
-
-      /**
-       * Color used to briefly highlight text when it's yanked.
-       *
-       * @example "#ff6b35" // Orange highlight
-       * @default "#edc73b"
-       */
-      yank_highlight: glide.RGBString;
-
-      /**
-       * How long, in milliseconds, to highlight the selection for when it's yanked.
-       *
-       * @default 150
-       */
-      yank_highlight_time: number;
-
-      /**
-       * The delay, in milliseconds, before showing the which key UI.
-       *
-       * @default 300
-       */
-      which_key_delay: number;
-
-      /**
-       * The maximum number of entries to include in the jumplist, i.e.
-       * how far back in history will the jumplist store.
-       *
-       * @default 100
-       */
-      jumplist_max_entries: number;
-
-      /**
-       * The font size of the hint label, directly corresponds to the
-       * [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) property.
-       *
-       * @default "11px"
-       */
-      hint_size: string;
-
-      /**
-       * The characters to include in hint labels.
-       *
-       * @default "hjklasdfgyuiopqwertnmzxcvb"
-       */
-      hint_chars: string;
-
-      /**
-       * Configure the strategy for implementing scrolling, this affects the
-       * `h`, `j`, `k`, `l`,`<C-u>`, `<C-d>`, `G`, and `gg` mappings.
-       *
-       * This is exposed as the current `keys` implementation can result in non-ideal behaviour if a website overrides arrow key events.
-       *
-       * This will be removed in the future when the kinks with the `keys` implementation are ironed out.
-       *
-       * @default "keys"
-       */
-      scroll_implementation: "keys" | "legacy";
-    };
+    export type Options = GlideOptions;
 
     export type SpawnOptions = {
       cwd?: string;
