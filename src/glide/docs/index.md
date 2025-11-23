@@ -101,6 +101,8 @@ title="Demo video showing Glide features including keyboard navigation and confi
       <span class="keymap-desc">Jump back in jumplist</span>
       <span class="keymap-key">&lt;C-i&gt;</span>
       <span class="keymap-desc">Jump forward in jumplist</span>
+      <span class="keymap-key">gu</span>
+      <span class="keymap-desc">Go up one entry in the URL hierarchy</span>
     </div>
   </div>
 

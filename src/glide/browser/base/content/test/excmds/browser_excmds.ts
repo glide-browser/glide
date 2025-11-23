@@ -265,3 +265,20 @@ add_task(async function test_copy_excmd_single_notification() {
     );
   });
 });
+
+add_task(async function test_go_up() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(
+    "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html#foo?thing=true",
+    async _ => {
+      await keys("gu");
+      await waiter(() => glide.ctx.url.toString()).is(
+        "http://mochi.test:8888/browser/glide/browser/base/content/test/mode",
+      );
+
+      await keys("gu");
+      await waiter(() => glide.ctx.url.toString()).is("http://mochi.test:8888/browser/glide/browser/base/content/test");
+    },
+  );
+});

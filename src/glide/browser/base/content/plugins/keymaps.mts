@@ -52,6 +52,7 @@ export function init(sandbox: Sandbox) {
   // page navigation
   glide.keymaps.set("normal", "gi", "focusinput last");
   glide.keymaps.set(["normal", "insert"], "<C-,>", "blur");
+  glide.keymaps.set("normal", "gu", "go_up");
 
   // command mode
   glide.keymaps.set("command", "<Esc>", "commandline_toggle");
