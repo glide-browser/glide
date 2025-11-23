@@ -351,6 +351,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "go_to_root": {
+        await GlideBrowser.browser_proxy_api.tabs.update({ url: GlideBrowser.api.ctx.url.origin });
+        break;
+      }
+
       case "mode_change": {
         const { args } = this.#parse_command_args(command_meta, command);
         const { mode, "--automove": automove, "--operator": operator } = args;

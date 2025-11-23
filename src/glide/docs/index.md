@@ -103,6 +103,8 @@ title="Demo video showing Glide features including keyboard navigation and confi
       <span class="keymap-desc">Jump forward in jumplist</span>
       <span class="keymap-key">gu</span>
       <span class="keymap-desc">Go up one entry in the URL hierarchy</span>
+      <span class="keymap-key">gU</span>
+      <span class="keymap-desc">Go to the root of the current URL hierarchy</span>
     </div>
   </div>
 

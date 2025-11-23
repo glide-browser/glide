@@ -239,6 +239,7 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   { name: "go_up", description: "Go up the URL hierarchy", content: false, repeatable: true },
+  { name: "go_to_root", description: "Go to the root of the current URL", content: false, repeatable: true },
 
   {
     name: "mode_change",

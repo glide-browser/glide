@@ -23,3 +23,15 @@ add_task(async function test_go_up() {
     },
   );
 });
+
+add_task(async function test_go_to_root() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(
+    "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html#foo?thing=true",
+    async _ => {
+      await keys("gU");
+      await waiter(() => glide.ctx.url.toString()).is("http://mochi.test:8888/");
+    },
+  );
+});
