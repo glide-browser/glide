@@ -1,0 +1,13 @@
+diff --git a/toolkit/components/extensions/ExtensionPreferencesManager.sys.mjs b/toolkit/components/extensions/ExtensionPreferencesManager.sys.mjs
+index d4fe408b52e820944ea10cf7d474571f877f62ee..215e5649d7007e9959002fd160de0c3191941c29 100644
+--- a/toolkit/components/extensions/ExtensionPreferencesManager.sys.mjs
++++ b/toolkit/components/extensions/ExtensionPreferencesManager.sys.mjs
+@@ -698,7 +698,7 @@ ExtensionPreferencesManager = {
+             return registerEvent(fire).unregister;
+           },
+         }).api();
+-      } else {
++      } else if (name !== "ftpProtocolEnabled") {
+         Services.console.logStringMessage(
+           `ExtensionPreferencesManager API ${name} created but addSetting was not called.`
+         );
