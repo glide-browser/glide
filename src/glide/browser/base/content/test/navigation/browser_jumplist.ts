@@ -28,28 +28,22 @@ add_task(async function test_jumplist_basic_navigation() {
   is(current_url(), uri(2));
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(1), "<C-o> jumps back once");
+  await waiter(current_url).is(uri(1), "<C-o> jumps back once");
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(0), "Second <C-o> jumps back again");
+  await waiter(current_url).is(uri(0), "Second <C-o> jumps back again");
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(0), "<C-o> at start stays put");
+  await waiter(current_url).is(uri(0), "<C-o> at start stays put");
 
   await keys("<C-i>");
-  await sleep_frames(5);
-  is(current_url(), uri(1), "<C-i> jumps forward once");
+  await waiter(current_url).is(uri(1), "<C-i> jumps forward once");
 
   await keys("<C-i>");
-  await sleep_frames(5);
-  is(current_url(), uri(2), "Second <C-i> jumps forward again");
+  await waiter(current_url).is(uri(2), "Second <C-i> jumps forward again");
 
   await keys("<C-i>");
-  await sleep_frames(5);
-  is(current_url(), uri(2), "<C-i> at tip stays put");
+  await waiter(current_url).is(uri(2), "<C-i> at tip stays put");
 });
 
 add_task(async function test_jumplist_prunes_forward_slice() {
@@ -61,19 +55,16 @@ add_task(async function test_jumplist_prunes_forward_slice() {
   using _tab2 = await GlideTestUtils.new_tab(uri(2));
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(1), "<C-o> moves back to tab1");
+  await waiter(current_url).is(uri(1), "<C-o> moves back to tab1");
 
   using _tab3 = await GlideTestUtils.new_tab(uri(3));
   is(current_url(), uri(3));
 
   await keys("<C-i>");
-  await sleep_frames(5);
-  is(current_url(), uri(3), "Forward slice was pruned – <C-i> does nothing");
+  await waiter(current_url).is(uri(3), "Forward slice was pruned – <C-i> does nothing");
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(1), "<C-o> still navigates backwards after prune");
+  await waiter(current_url).is(uri(1), "<C-o> still navigates backwards after prune");
 });
 
 add_task(async function test_jumplist_max_entries_trim() {
@@ -84,9 +75,10 @@ add_task(async function test_jumplist_max_entries_trim() {
   const max_entries = glide.o.jumplist_max_entries;
   glide.o.jumplist_max_entries = 10;
 
+  const tabs: Array<any> = [];
+
   try {
     // Open 11 additional tabs so that we end up with 12 entries (0–11).
-    const tabs: Array<any> = [];
     for (let i = 1; i <= 11; i++) {
       tabs.push(await GlideTestUtils.new_tab(uri(i)));
     }
@@ -99,14 +91,12 @@ add_task(async function test_jumplist_max_entries_trim() {
     for (let i = 0; i < 11; i++) {
       await keys("<C-o>");
     }
-    await sleep_frames(10);
 
-    is(current_url(), uri(2), "After overflow trim, earliest entry should be i=2");
-
+    await waiter(current_url).is(uri(2), "After overflow trim, earliest entry should be i=2");
+  } finally {
     for (const tab of tabs) {
       BrowserTestUtils.removeTab(tab);
     }
-  } finally {
     glide.o.jumplist_max_entries = max_entries;
   }
 });
@@ -124,31 +114,25 @@ add_task(async function test_jumplist_deleted_intermediary_tab() {
   is(current_url(), uri(4), "Currently on tab4");
 
   await keys("<C-o><C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(2), "Jumped back to tab2");
+  await waiter(current_url).is(uri(2), "Jumped back to tab2");
 
   // delete tab3 while we're *not* on it
   BrowserTestUtils.removeTab(tab3);
+  await sleep_frames(30);
 
   await keys("<C-i>");
-  await sleep_frames(5);
-  is(current_url(), uri(4), "Skipped deleted tab3 and jumped to tab4");
+  await waiter(current_url).is(uri(4), "Skipped deleted tab3 and jumped to tab4");
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(2), "Can still jump backwards");
+  await waiter(current_url).is(uri(2), "Can still jump backwards");
 
   // delete tab2 while we're on it
   BrowserTestUtils.removeTab(tab2);
-  await sleep_frames(5);
-
-  Assert.notStrictEqual(current_url(), uri(2), "No longer on deleted tab2");
+  await waiter(current_url).isnot(uri(2), "No longer on deleted tab2");
 
   await keys("<C-o>");
-  await sleep_frames(5);
-  is(current_url(), uri(1), "Skipped deleted tab2 and jumped to tab1");
+  await waiter(current_url).is(uri(1), "Skipped deleted tab2 and jumped to tab1");
 
   await keys("<C-i><C-i>");
-  await sleep_frames(5);
-  is(current_url(), uri(4), "Skipped deleted tabs and jumped to tab4");
+  await waiter(current_url).is(uri(4), "Skipped deleted tabs and jumped to tab4");
 });

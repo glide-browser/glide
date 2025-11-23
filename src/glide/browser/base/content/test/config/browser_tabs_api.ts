@@ -56,9 +56,7 @@ add_task(async function test_tabs_active() {
     is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
 
     await keys("<Space>n");
-    await sleep_frames(30);
-
-    ok(glide.g.test_checked);
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -76,9 +74,7 @@ add_task(async function test_tabs_get_first() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>f");
-    await sleep_frames(50);
-
-    ok(glide.g.test_checked);
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
 
@@ -97,8 +93,6 @@ add_task(async function test_tabs_query() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await keys("<Space>f");
-    await sleep_frames(50);
-
-    ok(glide.g.test_checked);
+    await waiter(() => glide.g.test_checked).ok();
   });
 });
