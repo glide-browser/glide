@@ -6,3 +6,6 @@
 
 ["dist/browser_jumplist.js"]
 https_first_disabled = true
+
+["dist/browser_urls.js"]
+https_first_disabled = true
