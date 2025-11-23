@@ -190,7 +190,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
       }
 
       case "Glide::HideHints": {
-        this.glide_hints!.hide_hints();
+        this.glide_hints?.hide_hints();
         break;
       }
 

@@ -54,6 +54,9 @@ add_task(async function test_F_shows_hints() {
     await wait_for_hints();
     is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'F'");
     Assert.greater(get_hints().length, 0, "Hints should be visible on the page");
+
+    await keys("<esc>");
+    await wait_for_mode("normal");
   });
 });
 
@@ -91,7 +94,6 @@ add_task(async function test_F_opens_new_tab() {
 
     is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
 
-    // Clean up: close the new tab
     if (final_tab_count > initial_tab_count) {
       gBrowser.removeTab(gBrowser.selectedTab);
     }
@@ -119,11 +121,11 @@ add_task(async function test_auto_activate_single_hint() {
 
   await BrowserTestUtils.withNewTab(SINGLE_HINT_FILE, async _ => {
     await keys("f");
+
     await sleep_frames(5);
+    await wait_for_mode("normal");
 
-    Assert.strictEqual(GlideBrowser.state.mode, "normal", "Should have entered auto-activated to normal");
-
-    is(gBrowser.selectedBrowser?.currentURI.spec, FILE);
+    await waiter(() => gBrowser.selectedBrowser?.currentURI.spec).is(FILE);
 
     await sleep_frames(3);
   });
