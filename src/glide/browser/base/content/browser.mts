@@ -555,6 +555,10 @@ class GlideBrowserClass {
       GlideBrowser.api.path.profile_dir,
       "glide__compatibility_oldest_version.txt",
     );
+    if (!(await GlideBrowser.api.fs.exists(oldest_version_file))) {
+      // this can happen the *very first* time the browser is launched
+      return;
+    }
     const version_full = await GlideBrowser.api.fs.read(oldest_version_file, "utf8").then((version) =>
       version.trimEnd()
     ).catch((err) => {
