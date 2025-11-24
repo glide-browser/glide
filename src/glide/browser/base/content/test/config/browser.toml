@@ -14,6 +14,9 @@ https_first_disabled = true
 ["dist/browser_sandbox.js"]
 https_first_disabled = true
 
+["dist/browser_containers.js"]
+https_first_disabled = true
+
 ["dist/browser_document_mirror.js"]
 https_first_disabled = true
 
