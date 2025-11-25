@@ -7,11 +7,10 @@ you'd define a function to update the current URL:
 
 ```typescript
 async function github_go_to_issues() {
-  const url = new URL(glide.ctx.url);
-
+  const url = glide.ctx.url;
   const parts = url.pathname.split("/").filter(Boolean);
   assert(
-    parts.length > 2,
+    parts.length >= 2,
     `Path does not look like github.com/$org/$repo`,
   );
 
