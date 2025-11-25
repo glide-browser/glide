@@ -231,6 +231,11 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await extension_startup;
+      await this.#state_change_autocmd(this.state, { mode: null, operator: null });
+    });
+
+    this.on_startup(async () => {
+      await extension_startup;
 
       this._log.debug("[autocmds] emitting ConfigLoaded");
       const results = await Promise.allSettled((GlideBrowser.autocmds.ConfigLoaded ?? []).map(cmd =>
@@ -838,6 +843,56 @@ class GlideBrowserClass {
       GlideBrowser.extension?.tabManager?.getWrapper?.(tab),
       "could not resolve tab, did you call this too early in startup?",
     ).id;
+  }
+
+  // TODO:
+  async #invoke_tabenter_autocmd(location: nsIURI) {
+    const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
+    if (!cmds.length) {
+      return;
+    }
+
+    const args: glide.AutocmdArgs["UrlEnter"] = {
+      url: location.spec,
+      get tab_id() {
+        return assert_present(
+          GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
+          "could not resolve tab wrapper",
+        ).id;
+      },
+    };
+
+    const results = await Promise.allSettled(cmds.map(cmd =>
+      (async () => {
+        if (!GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)) {
+          return;
+        }
+
+        const cleanup = await cmd.callback(args);
+        if (typeof cleanup === "function") {
+          GlideBrowser.buffer_cleanups.push({ callback: cleanup, source: "UrlEnter cleanup" });
+        }
+      })()
+    ));
+
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      GlideBrowser._log.error(result.reason);
+
+      // TODO: if there are many errors this would be overwhelming...
+      //       maybe limit the number of errors we display at once?
+
+      const loc = GlideBrowser.#clean_stack(result.reason, "#invoke_urlenter_autocmd")
+        ?? "<unknown>";
+      GlideBrowser.add_notification("glide-autocmd-error", {
+        label: `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    }
   }
 
   async #invoke_urlenter_autocmd(location: nsIURI) {

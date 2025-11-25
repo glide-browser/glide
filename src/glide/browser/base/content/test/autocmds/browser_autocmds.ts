@@ -219,6 +219,30 @@ add_task(async function test_about_blank_with_hostname_filter() {
   });
 });
 
+add_task(async function test_tab_enter_autocmd() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("TabEnter", /input_test\.html/, () => {
+      glide.g.calls!.push("expected-call");
+    });
+
+    glide.autocmds.create("TabEnter", /definitely-wont-match/, () => {
+      glide.g.calls!.push("bad-call");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await waiter(() => glide.g.calls).isjson(["expected-call"], "TabEnter autocmd should be triggered on matching URL");
+
+    glide.g.calls = [];
+    await BrowserTestUtils.reloadTab(browser);
+    await sleep_frames(5);
+
+    isjson(glide.g.calls, [], "TabEnter should not be triggered for reloads");
+  });
+});
+
 add_task(async function test_mode_changed_autocmd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.calls = [];
