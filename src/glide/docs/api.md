@@ -47,6 +47,7 @@ text-decoration: none;
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
 [`glide.o.hint_size`](#glide.o.hint_size)\
 [`glide.o.hint_chars`](#glide.o.hint_chars)\
+[`glide.o.switch_mode_on_focus`](#glide.o.switch_mode_on_focus)\
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
@@ -231,6 +232,14 @@ The font size of the hint label, directly corresponds to the
 The characters to include in hint labels.
 
 `ts:@default "hjklasdfgyuiopqwertnmzxcvb"`
+
+### `glide.o.switch_mode_on_focus: boolean` {% id="glide.o.switch_mode_on_focus" %}
+
+Determines if the current mode will change when certain element types are focused.
+
+For example, if `true` then Glide will automatically switch to `insert` mode when an editable element is focused.
+
+`ts:@default true`
 
 ### `glide.o.scroll_implementation` {% id="glide.o.scroll_implementation" %}
 

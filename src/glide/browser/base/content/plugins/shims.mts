@@ -30,7 +30,7 @@ function youtube(sandbox: Sandbox) {
   }>((message) => {
     switch (message.name) {
       case "yt.video_focused": {
-        if (glide.ctx.mode !== "ignore") {
+        if (glide.ctx.mode !== "ignore" && glide.options.get("switch_mode_on_focus")) {
           void glide.excmds.execute("mode_change insert");
         }
 

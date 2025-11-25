@@ -884,6 +884,15 @@ declare global {
     hint_chars: string;
 
     /**
+     * Determines if the current mode will change when certain element types are focused.
+     *
+     * For example, if `true` then Glide will automatically switch to `insert` mode when an editable element is focused.
+     *
+     * @default true
+     */
+    switch_mode_on_focus: boolean;
+
+    /**
      * Configure the strategy for implementing scrolling, this affects the
      * `h`, `j`, `k`, `l`,`<C-u>`, `<C-d>`, `G`, and `gg` mappings.
      *

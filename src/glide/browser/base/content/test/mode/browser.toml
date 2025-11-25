@@ -28,3 +28,6 @@ https_first_disabled = true
 
 ["dist/browser_ignore_mode.js"]
 https_first_disabled = true
+
+["dist/browser_mode_switching.js"]
+https_first_disabled = true

@@ -1317,7 +1317,7 @@ class GlideBrowserClass {
   }
 
   #on_blur() {
-    if (this.state.mode !== "normal" && this.state.mode !== "ignore") {
+    if (this.state.mode !== "normal" && !this.is_mode_switching_disabled()) {
       this._change_mode("normal");
     }
   }
@@ -1645,15 +1645,19 @@ class GlideBrowserClass {
     return sandbox_event;
   }
 
+  is_mode_switching_disabled(): boolean {
+    return this.state.mode === "ignore" || !this.api.options.get("switch_mode_on_focus");
+  }
+
   async #on_fullscreen_enter() {
-    if (this.state.mode !== "ignore") {
+    if (!this.is_mode_switching_disabled()) {
       this._log.debug("fullscreen entered, switching to insert mode");
       this._change_mode("insert");
     }
   }
 
   async #on_fullscreen_exit() {
-    if (this.state.mode !== "ignore") {
+    if (!this.is_mode_switching_disabled()) {
       this._log.debug("fullscreen exit, switching to normal mode");
       this._change_mode("normal");
     }
@@ -1787,6 +1791,8 @@ class GlideGlobals implements GlideG {
 type GlideO = (typeof glide)["o"];
 class GlideOptions implements GlideO {
   mapping_timeout = 200;
+
+  switch_mode_on_focus = true as const;
 
   scroll_implementation = "keys" as const;
 

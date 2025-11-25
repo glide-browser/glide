@@ -152,7 +152,7 @@ export class GlideHandlerParent extends JSWindowActorParent<
 
     switch (message.name) {
       case "Glide::ChangeMode": {
-        if (this.glide_browser?.state.mode === "ignore" && !message.data.force) {
+        if (this.glide_browser?.is_mode_switching_disabled() && !message.data.force) {
           // the content process requesting to switch out of ignore mode is almost definitely a mistake
           // so we just ignore this change request unless we're explicitly told to with `force`.
           //
