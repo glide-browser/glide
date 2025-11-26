@@ -33,7 +33,7 @@ export interface Editor {
 /**
  * An exhaustive list of all currently supported motion operations.
  */
-export const MOTIONS = ["iw", "h", "j", "k", "l", "d"] as const;
+export const MOTIONS = ["iw", "h", "j", "k", "l", "d", "w"] as const;
 type GlideMotion = (typeof MOTIONS)[number];
 
 export function select_motion(
@@ -180,11 +180,23 @@ export function select_motion(
         },
       };
     }
+    case "w": {
+      if (is_bof(editor)) {
+        editor.selectionController.characterMove(true, true);
+      } else {
+        editor.selectionController.characterMove(false, false);
+        editor.selectionController.characterMove(true, true);
+      }
+      forward_word(editor, false, "visual");
+      if (!is_bof(editor) && !is_eof(editor)) {
+        editor.selectionController.characterMove(false, true);
+      }
+      break;
+    }
     default:
       throw assert_never(motion, `Unknown motion: ${motion}`);
   }
 }
-
 /**
  * Returns the offset of the caret in the current line.
  *
@@ -286,36 +298,37 @@ export function forward_word(
   const starting_cls = text_obj.cls(current_char(editor));
 
   // we always want to move one character forward no matter what
-  editor.selectionController.characterMove(true, extend);
+    if (!is_eof(editor) && !is_eol(editor)) {
+      editor.selectionController.characterMove(true, extend);
+    }
 
   // go one char past end of current word (if any)
   if (starting_cls !== text_obj.CLS_WHITESPACE) {
     if (bigword) {
       // for bigword, the word boundary is any whitespace
       while (text_obj.cls(current_char(editor)) !== text_obj.CLS_WHITESPACE) {
-        editor.selectionController.characterMove(true, extend);
         if (is_eof(editor) || is_eol(editor)) {
           break;
         }
+        editor.selectionController.characterMove(true, extend);
       }
     } else {
       // for non-bigword, the word boundary is anything other than the starting class
       while (text_obj.cls(current_char(editor)) === starting_cls) {
-        editor.selectionController.characterMove(true, extend);
         if (is_eof(editor) || is_eol(editor)) {
           break;
         }
+        editor.selectionController.characterMove(true, extend);
       }
     }
   }
 
   // find the next word
   while (text_obj.cls(current_char(editor)) === text_obj.CLS_WHITESPACE) {
-    editor.selectionController.characterMove(true, extend);
-
     if (is_eof(editor) || is_eol(editor)) {
       break;
     }
+    editor.selectionController.characterMove(true, extend);
   }
 }
 
