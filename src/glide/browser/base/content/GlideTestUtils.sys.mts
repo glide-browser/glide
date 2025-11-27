@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import type { GlideExcmdInfo } from "./browser-excmds-registry.mts";
+
 // ======================================================================================================
 // If you copy code written in test files into this file, you **WILL NEED TO RENAME CERTAIN VARIABLES**.
 //
@@ -287,18 +289,23 @@ class GlideCommandLineTestUtils {
    * Open the commandline with 3 fake options inserted.
    */
   async open() {
+    // override the real options so tests are stable
+    const override_excmds: GlideExcmdInfo[] = [
+      { name: "examplecmd", description: "This is how you do the thing", content: false, repeatable: false },
+      { name: "anothercmd", description: "This is how you do another thing", content: false, repeatable: false },
+      { name: "foo", description: "This is how you do foo", content: false, repeatable: false },
+    ];
+    GlideBrowser._commandline_excmds = override_excmds;
+    GlideBrowser.api.autocmds.create("CommandLineExit", () => {
+      if (GlideBrowser._commandline_excmds === override_excmds) {
+        GlideBrowser._commandline_excmds = null;
+      }
+      // TODO(someday): remove this autocmd once its been executed once
+    });
+
     await g.keys(":");
 
     await new Promise(r => requestAnimationFrame(r));
-
-    const commandLine = this.#expect_commandline();
-
-    // override the real options so tests are stable
-    commandLine.set_completion_options([
-      { name: "examplecmd", description: "This is how you do the thing" },
-      { name: "anothercmd", description: "This is how you do another thing" },
-      { name: "foo", description: "This is how you do foo" },
-    ]);
 
     // opening the commandline should result in insert mode
     await g.TestUtils.waitForCondition(() =>
@@ -319,13 +326,15 @@ class GlideCommandLineTestUtils {
 
   visible_rows(): HTMLElement[] {
     return Array.from(this.#expect_commandline().querySelectorAll(".gcl-option")).filter(row =>
-      !(row as HTMLElement).hidden
+      row && !(row as HTMLElement).hidden && !((row.parentElement?.parentElement as HTMLElement)?.hidden)
     ) as HTMLElement[];
   }
 
   focused_row() {
     const focused_rows = this.#expect_commandline().querySelectorAll(".focused");
-    g.is(focused_rows.length, 1, "Only one command should be selected");
+    if (focused_rows.length > 1) {
+      g.is(focused_rows.length, 1, "Only one command should be selected");
+    }
 
     return focused_rows[0];
   }

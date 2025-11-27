@@ -20,6 +20,7 @@ const HintsPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/h
 const WhichKeyPlugin = ChromeUtils.importESModule("chrome://glide/content/plugins/which-key.mjs", {
   global: "current",
 });
+const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-commandline.mjs", { global: "current" });
 const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
@@ -1248,6 +1249,22 @@ class GlideBrowserClass {
     }
   > {
     return this.#user_cmds;
+  }
+
+  get commandline_sources(): GlideCompletionSource[] {
+    return redefine_getter(this, "commandline_sources", [
+      new CommandLine.TabsCompletionSource(),
+      new CommandLine.ExcmdsCompletionSource(),
+    ]);
+  }
+
+  // used so that tests can override all the excmds
+  _commandline_excmds: GlideExcmdInfo[] | null = null;
+  get commandline_excmds(): GlideExcmdInfo[] {
+    if (this._commandline_excmds != null) {
+      return this._commandline_excmds;
+    }
+    return [...GLIDE_EXCOMMANDS, ...this.user_excmds.values()];
   }
 
   is_option(name: string): name is keyof glide.Options {

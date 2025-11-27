@@ -327,7 +327,7 @@ class GlideExcmdsClass {
 
       case "commandline_delete": {
         const commandline = GlideCommands.expect_commandline();
-        commandline.remove_focused_browser_tab();
+        commandline.delete_focused();
         break;
       }
 

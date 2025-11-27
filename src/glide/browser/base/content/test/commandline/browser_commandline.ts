@@ -10,6 +10,8 @@
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/commandline/basic.html";
 
 add_task(async function test_basic_commandline() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
     await new Promise(r => requestAnimationFrame(r));
@@ -27,6 +29,8 @@ add_task(async function test_basic_commandline() {
 });
 
 add_task(async function test_basic_filtering() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 
@@ -44,7 +48,7 @@ add_task(async function test_basic_filtering() {
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
 
-    await waiter(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent === "examplecmd").ok();
+    await waiter(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent).is("examplecmd");
     is(
       GlideTestUtils.commandline.focused_row()!.children[0]!.textContent,
       "examplecmd",
@@ -54,6 +58,8 @@ add_task(async function test_basic_filtering() {
 });
 
 add_task(async function test_basic_tabbing() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 
@@ -90,6 +96,8 @@ add_task(async function test_basic_tabbing() {
 });
 
 add_task(async function test_tabs() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
     await new Promise(r => requestAnimationFrame(r));
@@ -121,16 +129,19 @@ add_task(async function test_tabs() {
       "ex commands",
       "pressing backspace should result in excmd completions",
     );
+    await keys("<esc>");
   });
 });
 
 add_task(async function test_excmd_enter() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
     await waiter(() => GlideTestUtils.commandline.visible_rows().length > 0).ok();
 
     await keys("ex");
-    await waiter(() => GlideTestUtils.commandline.visible_rows().length === 1).ok();
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length).is(1);
 
     let visible_rows = GlideTestUtils.commandline.visible_rows();
 
@@ -138,12 +149,12 @@ add_task(async function test_excmd_enter() {
     is(visible_rows[0]!.querySelector(".excmd")!.textContent, "examplecmd", "Correct command should be visible");
 
     await keys("<Backspace><Backspace>");
-    await waiter(() => GlideTestUtils.commandline.visible_rows().length === 3).ok();
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length).is(3);
 
     visible_rows = GlideTestUtils.commandline.visible_rows();
     is(visible_rows.length, 3, "All commands should be shown");
 
-    await waiter(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent === "examplecmd").ok();
+    await waiter(() => GlideTestUtils.commandline.focused_row()?.children[0]?.textContent).is("examplecmd");
 
     is(
       GlideTestUtils.commandline.focused_row()!.children[0]!.textContent,
@@ -154,6 +165,8 @@ add_task(async function test_excmd_enter() {
 });
 
 add_task(async function test_commandline_closes_on_blur() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
 
@@ -174,6 +187,8 @@ add_task(async function test_commandline_closes_on_blur() {
 });
 
 add_task(async function test_commandline_custom_excmd_arguments() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.reload_config(function _() {
       glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
@@ -194,6 +209,8 @@ add_task(async function test_commandline_custom_excmd_arguments() {
 });
 
 add_task(async function test_commandline_tab_reopen() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await keys("<space><space>");
     await waiter(() => GlideTestUtils.commandline.focused_row()?.classList.contains("TabCompletionOption")).ok();
@@ -207,6 +224,8 @@ add_task(async function test_commandline_tab_reopen() {
 });
 
 add_task(async function test_commandline_keymaps() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await GlideTestUtils.reload_config(function _() {
     glide.excmds.create({ name: "foobarbaz" }, () => {});
     glide.keymaps.set("normal", "<leader>~~~", "foobarbaz" as any);
@@ -221,6 +240,8 @@ add_task(async function test_commandline_keymaps() {
 });
 
 add_task(async function test_commandline_focus_to_content() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.reload_config(function _() {
       glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
@@ -244,6 +265,8 @@ add_task(async function test_commandline_focus_to_content() {
 });
 
 add_task(async function test_commandline_exit_autocmd() {
+  await GlideTestUtils.reload_config(function _() {});
+
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.reload_config(function _() {
       glide.autocmds.create("CommandLineExit", () => {

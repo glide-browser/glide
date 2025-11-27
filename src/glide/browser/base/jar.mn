@@ -9,6 +9,7 @@ glide.jar:
   content/glide-menubar.js                     (content/dist/glide-menubar.js)
 
 # ES modules
+  content/browser-commandline.mjs              (content/dist/browser-commandline.mjs)
   content/browser-constants.mjs                (content/dist/browser-constants.mjs)
   content/browser-commands.mjs                 (content/dist/browser-commands.mjs)
   content/browser-excmds.mjs                   (content/dist/browser-excmds.mjs)

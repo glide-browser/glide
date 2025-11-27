@@ -9,39 +9,14 @@ const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/ut
  * Collection of internal helper functions.
  */
 class GlideCommandsClass {
-  get_active_commandline_group(): GlideCommandlineGroup | null {
-    const commandline = this.#get_active_commandline();
-    if (!commandline) {
-      return null;
-    }
-
-    return commandline.get_active_group();
-  }
-
   /**
    * Get or create the `glide-commandline` element, showing it in the UI.
    */
   async upsert_commandline(opts: { prefill?: string } = {}) {
-    // TODO(glide): instead of using prefill, just define a `feedkeys`-esque ex command
-
     const tab = gBrowser.selectedTab;
     const cached = this.#get_cached_commandline(tab);
     if (cached) {
-      cached.refresh_data();
       cached.show(opts);
-
-      // workaround for https://github.com/glide-browser/glide/issues/33
-      //
-      // there's some weird interaction between setting the input value to `tab `
-      // and determining what row to focus.
-      //
-      // this is a terrible solution to the above problem but I'm planning on completely
-      // rewriting the commandline logic from the ground up, so there's no point trying to
-      // figure out a more correct fix.
-      if (cached.get_active_group() === "tab") {
-        cached.focus_next();
-      }
-
       return cached;
     }
 
@@ -63,9 +38,7 @@ class GlideCommandsClass {
 
     this.#cache_commandline(tab, glide_commandline);
 
-    if (opts.prefill) {
-      glide_commandline.prefill = opts.prefill;
-    }
+    glide_commandline.show(opts);
 
     return glide_commandline;
   }

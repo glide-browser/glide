@@ -1,10 +1,8 @@
 declare var GlideCommands: typeof import("../src/glide/browser/base/content/browser-commands.mts").GlideCommands;
 declare var GlideHints: typeof import("../src/glide/browser/base/content/browser-hints.mts").GlideHints;
 declare var GlideExcmds: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GlideExcmds;
-declare var GLIDE_EXCOMMANDS: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GLIDE_EXCOMMANDS;
-
-declare type GlideCommandlineGroup =
-  import("../src/glide/toolkit/content/widgets/glide-commandline.ts").GlideCommandlineGroup;
+declare var GLIDE_EXCOMMANDS:
+  typeof import("../src/glide/browser/base/content/browser-excmds-registry.mts").GLIDE_EXCOMMANDS;
 
 interface GlideCommandlineCompletionOption {
   name: string;
@@ -20,23 +18,15 @@ type Browser = typeof browser;
  * defined in `glide/toolkit/content/widgets/glide-commandline.ts`.
  */
 declare interface GlideCommandLineInterface {
-  prefill: string;
-
   close(): void;
   show({ prefill }?: { prefill?: string }): void;
   toggle(): void;
-  refresh_data(): void;
 
   accept_focused(): Promise<void>;
+  delete_focused(): Promise<void>;
 
   focus_next(): void;
   focus_back(): void;
-
-  get_active_group(): GlideCommandlineGroup;
-
-  remove_focused_browser_tab(): void;
-
-  set_completion_options(options: GlideCommandlineCompletionOption[]): void;
 }
 
 declare type GlideCommandLine = GlideCommandLineInterface & XULElement;
@@ -64,4 +54,44 @@ declare interface HTMLElement {
    * e.g. check if the mouse was moved before the click.
    */
   $glide_hack_click_from_hint?: boolean;
+}
+
+declare interface GlideCompletionContext {
+  input: string;
+}
+
+declare interface GlideCompletionSource<OptionT extends GlideCompletionOption = GlideCompletionOption> {
+  readonly id: string;
+  readonly container: HTMLElement;
+
+  is_enabled(ctx: GlideCompletionContext): boolean;
+
+  resolve_options(): OptionT[];
+
+  /**
+   * Filter down the given options based on the input.
+   *
+   * This is mutative, each option should be updated with `option.set_hidden(true | false)`.
+   */
+  search(ctx: GlideCompletionContext, options: OptionT[]): void;
+}
+
+declare interface GlideCompletionOption {
+  readonly element: HTMLElement;
+
+  is_focused(): boolean;
+  is_hidden(): boolean;
+
+  set_hidden(hidden: boolean): void;
+  set_focused(focused: boolean): void;
+
+  /**
+   * Invoked on <enter>
+   */
+  accept(ctx: GlideCompletionContext): void | Promise<void>;
+
+  /**
+   * Invoked on <C-d>
+   */
+  delete(ctx: GlideCompletionContext): void | Promise<void>;
 }
