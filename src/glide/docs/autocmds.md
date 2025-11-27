@@ -132,6 +132,18 @@ Callback arguments:
 }
 ```
 
+## CommandLineExit
+
+Fired whenever the commandline is closed.
+
+```typescript
+glide.autocmds.create("CommandLineExit", () => {
+  //
+});
+```
+
+The callback is not given any arguments.
+
 ## KeyStateChanged
 
 Fired whenever the key sequence changes, which can happen under four circumstances:

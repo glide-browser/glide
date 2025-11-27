@@ -840,6 +840,31 @@ class GlideBrowserClass {
     ).id;
   }
 
+  async invoke_commandlineexit_autocmd() {
+    const results = await Promise.allSettled((GlideBrowser.autocmds.CommandLineExit ?? []).map(cmd =>
+      (async () => {
+        const cleanup = await cmd.callback({});
+        if (typeof cleanup === "function") {
+          throw new Error("CommandLineExit autocmds cannot define cleanup functions");
+        }
+      })()
+    ));
+
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      GlideBrowser._log.error(result.reason);
+      const loc = GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
+      GlideBrowser.add_notification("glide-autocmd-error", {
+        label: `Error occurred in CommandLineExit autocmd \`${loc}\` - ${result.reason}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    }
+  }
+
   async #invoke_urlenter_autocmd(location: nsIURI) {
     const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
     if (!cmds.length) {

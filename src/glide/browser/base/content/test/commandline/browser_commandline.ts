@@ -242,3 +242,21 @@ add_task(async function test_commandline_focus_to_content() {
     );
   });
 });
+
+add_task(async function test_commandline_exit_autocmd() {
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await GlideTestUtils.reload_config(function _() {
+      glide.autocmds.create("CommandLineExit", () => {
+        glide.g.test_checked = true;
+        glide.g.test_state = glide.ctx.mode;
+      });
+    });
+
+    await keys(":foo");
+    await sleep_frames(5);
+    await keys("<esc>");
+
+    await waiter(() => glide.g.test_checked).ok("CommandLineExit autocmd should be triggered");
+    is(glide.g.test_state, "normal", "mode when the CommandLineExit autocmd is triggered should be normal");
+  });
+});

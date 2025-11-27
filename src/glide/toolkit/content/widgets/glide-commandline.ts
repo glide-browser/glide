@@ -198,6 +198,7 @@ export type GlideCommandlineGroup = "excmd" | "tab";
 
       // return focus back to the content frame
       gBrowser.selectedBrowser?.focus();
+      GlideBrowser.invoke_commandlineexit_autocmd();
     }
 
     toggle() {

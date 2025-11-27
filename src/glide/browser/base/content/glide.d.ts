@@ -201,6 +201,14 @@ declare global {
         callback: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
 
+      /**
+       * Create an autocmd that will be invoked when the commandline is closed.
+       */
+      create<const Event extends "CommandLineExit">(
+        event: Event,
+        callback: (args: glide.AutocmdArgs[Event]) => void,
+      ): void;
+
       create<const Event extends glide.AutocmdEvent>(
         event: Event,
         pattern: glide.AutocmdPatterns[Event] extends never ? (args: glide.AutocmdArgs[Event]) => void
@@ -1208,12 +1216,14 @@ declare global {
       | "ModeChanged"
       | "ConfigLoaded"
       | "WindowLoaded"
+      | "CommandLineExit"
       | "KeyStateChanged";
     type AutocmdPatterns = {
       UrlEnter: RegExp | { hostname?: string };
       ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
       ConfigLoaded: null;
       WindowLoaded: null;
+      CommandLineExit: null;
       KeyStateChanged: null;
     };
     type AutocmdArgs = {
@@ -1227,6 +1237,7 @@ declare global {
       };
       ConfigLoaded: {};
       WindowLoaded: {};
+      CommandLineExit: {};
       KeyStateChanged: {
         readonly mode: GlideMode;
         readonly sequence: string[];
