@@ -22,6 +22,7 @@ export async function synthesize_keyseq(
     // so if this was called inside a keymap callback, firefox will still
     // be handling the previous key event
     await new Promise(r => requestAnimationFrame(r));
+    await new Promise(r => requestAnimationFrame(r));
 
     if (keyn === "<leader>") {
       keyn = GlideBrowser.api.g.mapleader;
