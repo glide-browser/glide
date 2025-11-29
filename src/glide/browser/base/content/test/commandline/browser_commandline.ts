@@ -320,3 +320,62 @@ add_task(async function test_commandline_show_api__input() {
     );
   });
 });
+
+add_task(async function test_commandline_show_api__options() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await glide.commandline.show({
+        options: Array.from({ length: 10 }, (_, i) => i + 1).map((num) => ({
+          label: `Number ${num}`,
+          execute() {
+            console.log("executing", { num });
+            glide.g.value = num;
+          },
+        })),
+      });
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("~");
+    await until(() => glide.g.test_checked);
+
+    is(glide.ctx.mode, "command", "the commandline should be open, so the mode should be command");
+    is(GlideTestUtils.commandline.visible_rows().length, 10, "all custom options should be present");
+    is(
+      GlideTestUtils.commandline.focused_row()?.textContent?.trim(),
+      "Number 1",
+      "the first custom option should be focused",
+    );
+
+    await keys("<Enter>");
+    await waiter(() => glide.g.value).is(1);
+
+    const commandline = GlideTestUtils.commandline.get_element()!;
+    const rendered = commandline.querySelector("[anonid=\"glide-commandline-completions-custom-options\"]");
+    is(rendered, null, "The custom options should be removed when the commandline is closed");
+  });
+
+  // selecting another option
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("~");
+    await until(() => glide.g.test_checked);
+
+    await keys("<Down><Down>");
+    await keys("<Enter>");
+
+    await waiter(() => glide.g.value).is(3);
+  });
+
+  // normal commandline should work
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":");
+    await wait_for_mode("command");
+    isnot(
+      GlideTestUtils.commandline.focused_row()?.textContent?.trim(),
+      "Number 1",
+      "opening the commandline the standard way should not display custom options",
+    );
+  });
+});
