@@ -1994,8 +1994,8 @@ function make_glide_api(): typeof glide {
       },
     },
     commandline: {
-      async show() {
-        await GlideCommands.upsert_commandline();
+      async show(opts) {
+        await GlideCommands.upsert_commandline({ prefill: opts?.input });
       },
     },
     excmds: {

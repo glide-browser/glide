@@ -135,6 +135,7 @@ text-decoration: none;
 [`glide.Keymap`](#glide.Keymap)\
 [`glide.KeymapOpts`](#glide.KeymapOpts)\
 [`glide.KeymapDeleteOpts`](#glide.KeymapDeleteOpts)\
+[`glide.CommandLineShowOpts`](#glide.CommandLineShowOpts)\
 [`glide.FileInfo`](#glide.FileInfo)\
 [`DOM.create_element()`](#DOM.create_element)
 
@@ -453,7 +454,7 @@ This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/d
 ## • `glide.commandline` {% id="glide.commandline" %}
 
 {% api-heading id="glide.commandline.show" %}
-glide.commandline.show(): Promise<void>
+glide.commandline.show(opts?): Promise<void>
 {% /api-heading %}
 
 Show the commandline UI.
@@ -1056,6 +1057,15 @@ retain_key_display?: boolean;
 
 ```typescript {% highlight_prefix="type x = " %}
 Pick<glide.KeymapOpts, "buffer">;
+```
+
+## • `glide.CommandLineShowOpts` {% id="glide.CommandLineShowOpts" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * Fill the commandline with this input by default.
+ */
+input?: string;
 ```
 
 ## • `glide.FileInfo` {% id="glide.FileInfo" %}

@@ -299,3 +299,24 @@ add_task(async function test_commandline_show_api() {
     is(glide.ctx.mode, "command", "the commandline should be open, so the mode should be command");
   });
 });
+
+add_task(async function test_commandline_show_api__input() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await glide.commandline.show({ input: "foobarbazbing" });
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("~");
+    await until(() => glide.g.test_checked);
+
+    is(glide.ctx.mode, "command", "the commandline should be open, so the mode should be command");
+    is(
+      GlideTestUtils.commandline.visible_rows().length,
+      0,
+      "no rows should be visible because the input should be \"foobarbazbing\" which doesn't match anything",
+    );
+  });
+});

@@ -325,7 +325,7 @@ declare global {
       /**
        * Show the commandline UI.
        */
-      show(): Promise<void>;
+      show(opts?: glide.CommandLineShowOpts): Promise<void>;
     };
 
     excmds: {
@@ -1219,6 +1219,13 @@ declare global {
     };
 
     export type KeymapDeleteOpts = Pick<glide.KeymapOpts, "buffer">;
+
+    export type CommandLineShowOpts = {
+      /**
+       * Fill the commandline with this input by default.
+       */
+      input?: string;
+    };
 
     type AutocmdEvent =
       | "UrlEnter"
