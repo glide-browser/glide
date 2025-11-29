@@ -34,7 +34,7 @@
     #focused_index = 0;
     #last_focused_option: GlideCompletionOption | null = null;
     #all_options: GlideCompletionOption[] = [];
-    #options_by_source = new Map<GlideCompletionSource, GlideCompletionOption[]>();
+    #options_by_source = new WeakMap<GlideCompletionSource, GlideCompletionOption[]>();
     #sources: GlideCompletionSource[];
 
     #log: ConsoleInstance = null as any;
@@ -276,7 +276,7 @@
 
       // bust the options cache
       this.#all_options = [];
-      this.#options_by_source.clear();
+      this.#options_by_source = new WeakMap();
 
       this.#focused_index = -1;
       this.#filter_table();
