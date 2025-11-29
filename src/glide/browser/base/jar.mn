@@ -11,7 +11,6 @@ glide.jar:
 # ES modules
   content/browser-commandline.mjs              (content/dist/browser-commandline.mjs)
   content/browser-constants.mjs                (content/dist/browser-constants.mjs)
-  content/browser-commands.mjs                 (content/dist/browser-commands.mjs)
   content/browser-excmds.mjs                   (content/dist/browser-excmds.mjs)
   content/browser-excmds-registry.mjs          (content/dist/browser-excmds-registry.mjs)
   content/browser-messenger.mjs                (content/dist/browser-messenger.mjs)

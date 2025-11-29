@@ -17,10 +17,6 @@ if (!window.location.toString().endsWith("hiddenWindowMac.xhtml")) {
     window.GlideBrowser = GlideBrowser;
   });
 
-  void import("chrome://glide/content/browser-commands.mjs").then(({ GlideCommands }) => {
-    window.GlideCommands = GlideCommands;
-  });
-
   void import("chrome://glide/content/browser-hints.mjs").then(({ GlideHints }) => {
     window.GlideHints = GlideHints;
   });

@@ -77,8 +77,6 @@ globalThis.ChromeUtils = {
         return a_require(`${SRC_DIR}/glide/browser/base/content/browser-excmds.mts`);
       case "chrome://glide/content/browser-excmds-registry.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/browser-excmds-registry.mts`);
-      case "chrome://glide/content/browser-commands.mjs":
-        return a_require(`${SRC_DIR}/glide/browser/base/content/browser-commands.mts`);
       case "chrome://glide/content/sandbox.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/sandbox.mts`);
       case "chrome://glide/content/sandbox-properties.mjs":

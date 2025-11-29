@@ -1,4 +1,3 @@
-declare var GlideCommands: typeof import("../src/glide/browser/base/content/browser-commands.mts").GlideCommands;
 declare var GlideHints: typeof import("../src/glide/browser/base/content/browser-hints.mts").GlideHints;
 declare var GlideExcmds: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GlideExcmds;
 declare var GLIDE_EXCOMMANDS:

@@ -220,8 +220,6 @@ declare namespace MockedExports {
     "chrome://glide/content/browser-excmds.mjs": typeof import("../src/glide/browser/base/content/browser-excmds.mts");
     "chrome://glide/content/browser-excmds-registry.mjs":
       typeof import("../src/glide/browser/base/content/browser-excmds-registry.mts");
-    "chrome://glide/content/browser-commands.mjs":
-      typeof import("../src/glide/browser/base/content/browser-commands.mts");
     "chrome://glide/content/browser-commandline.mjs":
       typeof import("../src/glide/browser/base/content/browser-commandline.mts");
     "chrome://glide/content/browser-messenger.mjs":
@@ -317,7 +315,6 @@ declare namespace MockedExports {
 interface Window {
   gBrowser: GlobalBrowser.GlobalBrowser;
   GlideBrowser: typeof import("../src/glide/browser/base/content/browser.mts").GlideBrowser;
-  GlideCommands: typeof import("../src/glide/browser/base/content/browser-commands.mts").GlideCommands;
   GlideHints: typeof import("../src/glide/browser/base/content/browser-hints.mts").GlideHints;
   GlideExcmds: typeof import("../src/glide/browser/base/content/browser-excmds.mts").GlideExcmds;
 }

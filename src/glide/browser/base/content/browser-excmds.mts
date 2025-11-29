@@ -304,35 +304,35 @@ class GlideExcmdsClass {
         const name_index = command.indexOf(" ");
         const args = name_index === -1 ? "" : command.slice(name_index + 1);
 
-        await GlideCommands.upsert_commandline({ prefill: args });
+        await GlideBrowser.upsert_commandline({ prefill: args });
         break;
       }
 
       case "commandline_toggle": {
-        await GlideCommands.toggle_commandline();
+        await GlideBrowser.toggle_commandline();
         break;
       }
 
       case "commandline_focus_next": {
-        const commandline = GlideCommands.expect_commandline();
+        const commandline = GlideBrowser.expect_commandline();
         commandline.focus_next();
         break;
       }
 
       case "commandline_focus_back": {
-        const commandline = GlideCommands.expect_commandline();
+        const commandline = GlideBrowser.expect_commandline();
         commandline.focus_back();
         break;
       }
 
       case "commandline_delete": {
-        const commandline = GlideCommands.expect_commandline();
+        const commandline = GlideBrowser.expect_commandline();
         commandline.delete_focused();
         break;
       }
 
       case "commandline_accept": {
-        const commandline = GlideCommands.expect_commandline();
+        const commandline = GlideBrowser.expect_commandline();
         await commandline.accept_focused();
         break;
       }
