@@ -1243,6 +1243,35 @@ declare global {
        * Fill the commandline with this input by default.
        */
       input?: string;
+
+      /**
+       * Configure the text shown at the top of the commandline.
+       *
+       * This is *only* used when `options` are provided.
+       *
+       * If `options` are given and this is not, then it defaults to `"options"`.
+       */
+      title?: string;
+
+      /**
+       * Replace the default commandline options.
+       */
+      options?: glide.CommandLineCustomOption[];
+    };
+
+    export type CommandLineCustomOption = {
+      /** Primary text shown for this option. */
+      label: string;
+
+      /** Optional secondary text rendered next to the label. */
+      description?: string;
+
+      /**
+       * Callback that is invoked when `<enter>` is pressed while this option is focused.
+       *
+       * The `input` corresponds to the text entered in the commandline.
+       */
+      execute(props: { input: string }): void;
     };
 
     type AutocmdEvent =

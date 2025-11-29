@@ -258,6 +258,23 @@ xul|glide-commandline input:focus {
   }
 }
 
+.CustomCompletionOption td.label {
+  padding-left: 0.5em;
+  width: 40%;
+}
+
+.CustomCompletionOption:has(td.description:empty) td.label {
+  width: 100%;
+}
+
+.CustomCompletionOption td.description {
+  width: 100%;
+}
+
+.CustomCompletionOption td.description:empty {
+  display: none;
+}
+
 .SettingsCompletionOption td.title {
   padding-left: 0.5em;
 }

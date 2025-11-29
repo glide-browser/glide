@@ -2006,7 +2006,27 @@ function make_glide_api(): typeof glide {
     },
     commandline: {
       async show(opts) {
-        await GlideCommands.upsert_commandline({ prefill: opts?.input });
+        const sources = (() => {
+          if (!opts?.options) {
+            return;
+          }
+
+          const source = new CommandLine.CustomCompletionSource({
+            title: opts.title,
+            options: opts.options,
+          });
+          GlideBrowser.api.autocmds.create("CommandLineExit", function autocmd() {
+            GlideBrowser.api.autocmds.remove("CommandLineExit", autocmd);
+
+            // remove all custom options from the UI to avoid memory leaks and so that they definitely
+            // will not appear in the UI again.
+            source.container.remove();
+          });
+
+          return [source, ...GlideBrowser.commandline_sources];
+        })();
+
+        await GlideCommands.upsert_commandline({ prefill: opts?.input, sources });
       },
     },
     excmds: {

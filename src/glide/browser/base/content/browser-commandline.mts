@@ -210,3 +210,94 @@ export class TabsCompletionSource implements GlideCompletionSource<TabCompletion
     return options;
   }
 }
+
+interface CustomCompletionOption extends GlideCompletionOption {
+  name: string;
+  description: string | null;
+}
+
+export class CustomCompletionSource implements GlideCompletionSource<CustomCompletionOption> {
+  id = "custom-options";
+  readonly container: HTMLElement;
+
+  #input_options: NonNullable<glide.CommandLineShowOpts["options"]>;
+
+  constructor(props: { title?: string; options: NonNullable<glide.CommandLineShowOpts["options"]> }) {
+    this.container = DOM.create_element("div", {
+      attributes: { anonid: "glide-commandline-completions-custom-options" },
+      children: [
+        DOM.create_element("div", { className: "section-header", children: [props.title ?? "options"] }),
+        DOM.create_element("table", { className: "gcl-table" }),
+      ],
+    });
+    this.#input_options = props.options;
+  }
+
+  is_enabled() {
+    // if this is configured it should take priority over everything else
+    return true;
+  }
+
+  search({ input }: GlideCompletionContext, options: CustomCompletionOption[]) {
+    input = input.toLowerCase();
+
+    options.forEach((option) => {
+      const candidates = [
+        option.name,
+        option.description,
+      ]
+        .map(text => text?.toLowerCase())
+        .filter(is_present);
+
+      // TODO(glide): better fuzzy finding
+      const matches = candidates.some(candidate => candidate.includes(input));
+      option.set_hidden(!matches);
+    });
+  }
+
+  resolve_options() {
+    const source = this;
+    const options: CustomCompletionOption[] = [];
+
+    for (const opt of this.#input_options) {
+      options.push({
+        name: opt.label,
+        description: opt.description ?? null,
+
+        element: DOM.create_element("tr", {
+          className: "CustomCompletionOption gcl-option",
+          children: [
+            DOM.create_element("td", { className: "label", children: opt.label }),
+            DOM.create_element("td", { className: "description", children: opt.description }),
+          ],
+        }),
+
+        async accept(ctx) {
+          opt.execute({ input: ctx.input });
+        },
+        async delete() {
+          // not implemented for custom options yet, need to figure out naming
+        },
+
+        is_focused() {
+          return this.element.classList.contains("focused");
+        },
+        set_focused(focused) {
+          if (focused) {
+            this.element.classList.add("focused");
+          } else {
+            this.element.classList.remove("focused");
+          }
+        },
+        is_hidden() {
+          return !!source.container.hidden || !!this.element.hidden;
+        },
+        set_hidden(hidden) {
+          this.element.hidden = hidden;
+        },
+      });
+    }
+
+    return options;
+  }
+}
