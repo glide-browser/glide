@@ -342,6 +342,20 @@ declare global {
     commandline: {
       /**
        * Show the commandline UI.
+       *
+       * By default this will list all excmds, but you can specify your own options, e.g.
+       *
+       * ```typescript
+       * glide.commandline.show({
+       *   title: "my options",
+       *   options: ["option 1", "option 2", "option 3"].map((label) => ({
+       *     label,
+       *     execute() {
+       *       console.log(`label ${label} was selected`);
+       *     },
+       *   })),
+       * });
+       * ```
        */
       show(opts?: glide.CommandLineShowOpts): Promise<void>;
     };
@@ -1255,6 +1269,17 @@ declare global {
 
       /**
        * Replace the default commandline options.
+       *
+       * For example:
+       *
+       * ```typescript
+       * ["option 1", "option 2", "option 3"].map((label) => ({
+       *   label,
+       *   execute() {
+       *     console.log(`label ${label} was selected`);
+       *   },
+       * })),
+       * ```
        */
       options?: glide.CommandLineCustomOption[];
     };

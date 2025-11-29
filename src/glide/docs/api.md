@@ -460,6 +460,22 @@ glide.commandline.show(opts?): Promise<void>
 
 Show the commandline UI.
 
+By default this will list all excmds, but you can specify your own options, e.g.
+
+```typescript
+glide.commandline.show({
+  title: "my options",
+  options: ["option 1", "option 2", "option 3"].map((
+    label,
+  ) => ({
+    label,
+    execute() {
+      console.log(`label ${label} was selected`);
+    },
+  })),
+});
+```
+
 ## • `glide.excmds` {% id="glide.excmds" %}
 
 {% api-heading id="glide.excmds.execute" %}
@@ -1062,7 +1078,7 @@ Pick<glide.KeymapOpts, "buffer">;
 
 ## • `glide.CommandLineShowOpts` {% id="glide.CommandLineShowOpts" %}
 
-```typescript {% highlight_prefix="type x = {" %}
+````typescript {% highlight_prefix="type x = {" %}
 /**
  * Fill the commandline with this input by default.
  */
@@ -1077,9 +1093,20 @@ input?: string;
 title?: string;
 /**
  * Replace the default commandline options.
+ *
+ * For example:
+ *
+ * ```typescript
+ * ["option 1", "option 2", "option 3"].map((label) => ({
+ *   label,
+ *   execute() {
+ *     console.log(`label ${label} was selected`);
+ *   },
+ * })),
+ * ```
  */
 options?: glide.CommandLineCustomOption[];
-```
+````
 
 ## • `glide.CommandLineCustomOption` {% id="glide.CommandLineCustomOption" %}
 
