@@ -1110,11 +1110,27 @@ options?: glide.CommandLineCustomOption[];
 
 ## • `glide.CommandLineCustomOption` {% id="glide.CommandLineCustomOption" %}
 
-```typescript {% highlight_prefix="type x = {" %}
+````typescript {% highlight_prefix="type x = {" %}
 /** Primary text shown for this option. */
 label: string;
 /** Optional secondary text rendered next to the label. */
 description?: string;
+/**
+ * Optional callback used to display this option in the UI.
+ *
+ * If provided, this _replaces_ the default rendering, which is placing `label` / `description` in two columns.
+ *
+ * @example
+ * ```typescript
+ * render() {
+ *   return DOM.create_element("div", {
+ *     style: { display: "flex", alignItems: "center", gap: "8px" },
+ *     children: [bookmark.title],
+ *   });
+ * }
+ * ```
+ */
+render?(): HTMLElement;
 /**
  * Callback that is invoked when `<enter>` is pressed while this option is focused.
  *
@@ -1123,7 +1139,7 @@ description?: string;
 execute(props: {
     input: string;
 }): void;
-```
+````
 
 ## • `glide.FileInfo` {% id="glide.FileInfo" %}
 

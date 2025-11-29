@@ -1292,6 +1292,23 @@ declare global {
       description?: string;
 
       /**
+       * Optional callback used to display this option in the UI.
+       *
+       * If provided, this _replaces_ the default rendering, which is placing `label` / `description` in two columns.
+       *
+       * @example
+       * ```typescript
+       * render() {
+       *   return DOM.create_element("div", {
+       *     style: { display: "flex", alignItems: "center", gap: "8px" },
+       *     children: [bookmark.title],
+       *   });
+       * }
+       * ```
+       */
+      render?(): HTMLElement;
+
+      /**
        * Callback that is invoked when `<enter>` is pressed while this option is focused.
        *
        * The `input` corresponds to the text entered in the commandline.

@@ -379,3 +379,62 @@ add_task(async function test_commandline_show_api__options() {
     );
   });
 });
+
+add_task(async function test_commandline_show_api__options_render() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await glide.commandline.show({
+        title: "custom rendered options",
+        options: [
+          {
+            label: "Option A",
+            render() {
+              return DOM.create_element("div", {
+                attributes: { "data-testid": "custom-render-a" },
+                style: { display: "flex", alignItems: "center", gap: "8px" },
+                children: [
+                  DOM.create_element("span", { className: "custom-icon", children: ["[A]"] }),
+                  DOM.create_element("span", { className: "custom-label", children: ["Custom Option A"] }),
+                ],
+              });
+            },
+            execute() {
+              glide.g.value = "A";
+            },
+          },
+          {
+            label: "Option B",
+            description: "This uses the default rendering",
+            execute() {
+              glide.g.value = "B";
+            },
+          },
+        ],
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("~");
+    await wait_for_mode("command");
+
+    is(GlideTestUtils.commandline.current_source_header(), "custom rendered options");
+    is(GlideTestUtils.commandline.visible_rows().length, 2, "all custom options should be present");
+
+    // custom render()
+    const option_a = GlideTestUtils.commandline.visible_rows()[0];
+    is(
+      option_a?.querySelector("[data-testid='custom-render-a']")?.querySelector(".custom-icon")?.textContent,
+      "[A]",
+      "option A should have a custom icon",
+    );
+
+    // default render()
+    const option_b = GlideTestUtils.commandline.visible_rows()[1];
+    ok(option_b?.classList.contains("CustomCompletionOption"), "option B should have default class");
+    is(option_b?.querySelector(".label")?.textContent, "Option B", "option B should have default label");
+
+    await keys("<Enter>");
+    await waiter(() => glide.g.value).is("A");
+  });
+});

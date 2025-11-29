@@ -260,13 +260,19 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
     const options: CustomCompletionOption[] = [];
 
     for (const opt of this.#input_options) {
+      const node = (() => {
+        const node = opt.render?.();
+        if (!node) return;
+        return document!.importNode(node, true);
+      })();
+
       options.push({
         name: opt.label,
         description: opt.description ?? null,
 
         element: DOM.create_element("tr", {
-          className: "CustomCompletionOption gcl-option",
-          children: [
+          className: node ? "gcl-option" : "CustomCompletionOption gcl-option",
+          children: node ?? [
             DOM.create_element("td", { className: "label", children: opt.label }),
             DOM.create_element("td", { className: "description", children: opt.description }),
           ],
