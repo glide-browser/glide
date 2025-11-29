@@ -123,7 +123,9 @@ add_task(async function test_keys_send_arrow_keys() {
 });
 
 add_task(async function test_keys_send_downcast() {
-  for (const [input, key] of [["<lt>", "<"], ["<LT>", "<"], ["<Bar>", "|"], ["<bar>", "|"], ["<Bslash>", "\\"]]) {
+  for (
+    const [input, key] of [["<lt>", "<"], ["<LT>", "<"], ["<Bar>", "|"], ["<bar>", "|"], ["<Bslash>", "\\"]] as const
+  ) {
     void glide.keys.send(input);
 
     const event = await glide.keys.next();

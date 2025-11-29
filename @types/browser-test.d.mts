@@ -7,10 +7,10 @@ declare global {
     only(): void;
   }
 
-  interface GlideTestWaiter {
-    is(value: unknown, name?: string): Promise<void>;
+  interface GlideTestWaiter<V = unknown> {
+    is(value: V, name?: string): Promise<void>;
     isnot(value: unknown, name?: string): Promise<void>;
-    isjson(value: unknown, name?: string): Promise<void>;
+    isjson(value: V, name?: string): Promise<void>;
 
     ok(name?: string): Promise<void>;
     notok(name?: string): Promise<void>;
@@ -22,7 +22,7 @@ declare global {
    *
    * This checks the condition every 10ms, up to 500 times.
    */
-  function waiter(getter: () => unknown): GlideTestWaiter;
+  function waiter<V>(getter: () => V): GlideTestWaiter<V extends Promise<infer U> ? U : V>;
 
   /**
    * Returns a promise that will resolve when the given function returns a truthy value.
@@ -42,12 +42,12 @@ declare global {
 
   function wait_for_mode(modde: GlideMode): Promise<void>;
 
-  function is(a: unknown, b: unknown, name?: string): void;
+  function is<V>(a: V, b: NoInfer<V>, name?: string): void;
   function todo_is(a: unknown, b: unknown, name?: string): void;
   /**
    * Like `is()` but compares by stringifying to JSON first.
    */
-  function isjson(a: unknown, b: unknown, name?: string): void;
+  function isjson<V>(a: V, b: NoInfer<V>, name?: string): void;
   function isnot(a: unknown, b: unknown, name?: string): void;
   function ok(a: unknown, name?: string): asserts a;
   function notok(
