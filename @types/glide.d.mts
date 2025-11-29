@@ -19,7 +19,7 @@ type Browser = typeof browser;
  */
 declare interface GlideCommandLineInterface {
   close(): void;
-  show({ prefill }?: { prefill?: string }): void;
+  show(opts?: GlideCommandLineShowOptions): void;
   toggle(): void;
 
   accept_focused(): Promise<void>;
@@ -28,6 +28,8 @@ declare interface GlideCommandLineInterface {
   focus_next(): void;
   focus_back(): void;
 }
+
+declare type GlideCommandLineShowOptions = { prefill?: string; sources?: GlideCompletionSource[] };
 
 declare type GlideCommandLine = GlideCommandLineInterface & XULElement;
 
