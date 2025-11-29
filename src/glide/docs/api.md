@@ -72,6 +72,8 @@ text-decoration: none;
 [`glide.tabs.active()`](#glide.tabs.active)\
 [`glide.tabs.get_first()`](#glide.tabs.get_first)\
 [`glide.tabs.query()`](#glide.tabs.query)\
+[`glide.commandline`](#glide.commandline)\
+[`glide.commandline.show()`](#glide.commandline.show)\
 [`glide.excmds`](#glide.excmds)\
 [`glide.excmds.execute()`](#glide.excmds.execute)\
 [`glide.excmds.create()`](#glide.excmds.create)\
@@ -445,6 +447,14 @@ glide.tabs.query(query): Promise<Browser.Tabs.Tab[]>
 Gets all tabs that have the specified properties, or all tabs if no properties are specified.
 
 This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
+
+## • `glide.commandline` {% id="glide.commandline" %}
+
+{% api-heading id="glide.commandline.show" %}
+glide.commandline.show(): Promise<void>
+{% /api-heading %}
+
+Show the commandline UI.
 
 ## • `glide.excmds` {% id="glide.excmds" %}
 

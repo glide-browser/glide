@@ -320,6 +320,14 @@ declare global {
        */
       query(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab[]>;
     };
+
+    commandline: {
+      /**
+       * Show the commandline UI.
+       */
+      show(): Promise<void>;
+    };
+
     excmds: {
       /**
        * Execute an excmd, this is the same as typing `:cmd --args`.

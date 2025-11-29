@@ -283,3 +283,19 @@ add_task(async function test_commandline_exit_autocmd() {
     is(glide.g.test_state, "normal", "mode when the CommandLineExit autocmd is triggered should be normal");
   });
 });
+
+add_task(async function test_commandline_show_api() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await glide.commandline.show();
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("~");
+    await until(() => glide.g.test_checked);
+
+    is(glide.ctx.mode, "command", "the commandline should be open, so the mode should be command");
+  });
+});

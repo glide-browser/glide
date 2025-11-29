@@ -1993,6 +1993,11 @@ function make_glide_api(): typeof glide {
         return tabs;
       },
     },
+    commandline: {
+      async show() {
+        await GlideCommands.upsert_commandline();
+      },
+    },
     excmds: {
       async execute(cmd: GlideCommandString): Promise<void> {
         await GlideExcmds.execute(cmd);
