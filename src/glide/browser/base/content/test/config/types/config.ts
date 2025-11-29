@@ -153,3 +153,6 @@ declare global {
 glide.o.my_custom_option = true;
 // @ts-expect-error
 glide.o.my_custom_option = "foo";
+
+// options types
+glide.o.yank_highlight = "rgb(255, 255, 0)";

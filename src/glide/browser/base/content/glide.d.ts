@@ -857,7 +857,8 @@ declare global {
     /**
      * Color used to briefly highlight text when it's yanked.
      *
-     * @example "#ff6b35" // Orange highlight
+     * @example "#ff6b35"        // Orange highlight
+     * @example "rgb(255, 0, 0)" // Red highlight
      * @default "#edc73b"
      */
     yank_highlight: glide.RGBString;
@@ -1067,7 +1068,7 @@ declare global {
      */
     export type CompletedProcess = glide.Process & { exit_code: number };
 
-    export type RGBString = `#${string}`;
+    export type RGBString = `#${string}` | `rgb(${string})`;
 
     /** A web extension tab that is guaranteed to have the `ts:id` property present. */
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };

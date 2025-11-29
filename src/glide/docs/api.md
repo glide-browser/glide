@@ -199,7 +199,9 @@ note: this only applies in insert mode.
 
 Color used to briefly highlight text when it's yanked.
 
-`ts:@example "#ff6b35" // Orange highlight`
+`ts:@example "#ff6b35"        // Orange highlight`
+
+`ts:@example "rgb(255, 0, 0)" // Red highlight`
 
 `ts:@default "#edc73b"`
 
@@ -910,7 +912,7 @@ glide.Process & {
 }
 ```
 
-## • `glide.RGBString: '#${string}'` {% id="glide.RGBString" %}
+## • `glide.RGBString: '#${string}` | `rgb(${string})'` {% id="glide.RGBString" %}
 
 ## • `glide.TabWithID` {% id="glide.TabWithID" %}
 
