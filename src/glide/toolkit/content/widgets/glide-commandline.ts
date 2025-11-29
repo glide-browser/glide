@@ -35,6 +35,8 @@
     #last_focused_option: GlideCompletionOption | null = null;
     #all_options: GlideCompletionOption[] = [];
     #options_by_source = new Map<GlideCompletionSource, GlideCompletionOption[]>();
+    #sources: GlideCompletionSource[];
+
     #log: ConsoleInstance = null as any;
 
     /**
@@ -44,6 +46,8 @@
 
     constructor() {
       super();
+
+      this.#sources = GlideBrowser.commandline_sources;
 
       this.#log = console.createInstance
         ? console.createInstance({ prefix: "glide-commandline", maxLogLevelPref: "glide.logging.loglevel" })
@@ -73,7 +77,7 @@
 
       let found_source = false;
 
-      for (const source of GlideBrowser.commandline_sources) {
+      for (const source of this.#sources) {
         if (!children.includes(source.container)) {
           parent.appendChild(source.container);
         }
@@ -251,7 +255,11 @@
       return this.#all_options[next]?.element;
     }
 
-    show({ prefill }: { prefill?: string } = {}) {
+    show({ prefill, sources }: GlideCommandLineShowOptions = {}) {
+      if (sources != null) {
+        this.#sources = sources;
+      }
+
       const input = this.#get_input();
 
       if (!this.hidden) {
@@ -275,6 +283,9 @@
     }
 
     close() {
+      // remove any custom sources
+      this.#sources = GlideBrowser.commandline_sources;
+
       if (this.hidden) {
         return;
       }

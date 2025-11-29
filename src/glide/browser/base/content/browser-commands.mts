@@ -12,7 +12,7 @@ class GlideCommandsClass {
   /**
    * Get or create the `glide-commandline` element, showing it in the UI.
    */
-  async upsert_commandline(opts: { prefill?: string } = {}) {
+  async upsert_commandline(opts: GlideCommandLineShowOptions = {}) {
     const tab = gBrowser.selectedTab;
     const cached = this.#get_cached_commandline(tab);
     if (cached) {
@@ -23,7 +23,7 @@ class GlideCommandsClass {
     return await this.#create_commandline(tab, opts);
   }
 
-  async #create_commandline(tab: BrowserTab, opts: { prefill?: string } = {}) {
+  async #create_commandline(tab: BrowserTab, opts: GlideCommandLineShowOptions = {}) {
     let browser = gBrowser.getBrowserForTab(tab);
 
     let glide_commandline = document!.createXULElement("glide-commandline") as GlideCommandLine;
