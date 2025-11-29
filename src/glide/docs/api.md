@@ -101,6 +101,11 @@ text-decoration: none;
 [`glide.keys.next_str()`](#glide.keys.next_str)\
 [`glide.keys.parse()`](#glide.keys.parse)\
 [`glide.unstable`](#glide.unstable)\
+[`glide.unstable.split_views`](#glide.unstable.split_views)\
+[`glide.unstable.split_views.create()`](#glide.unstable.split_views.create)\
+[`glide.unstable.split_views.get()`](#glide.unstable.split_views.get)\
+[`glide.unstable.split_views.separate()`](#glide.unstable.split_views.separate)\
+[`glide.unstable.split_views.has_split_view()`](#glide.unstable.split_views.has_split_view)\
 [`glide.unstable.include()`](#glide.unstable.include)\
 [`glide.path`](#glide.path)\
 [`glide.path.cwd`](#glide.path.cwd)\
@@ -131,6 +136,8 @@ text-decoration: none;
 [`glide.KeymapCallback`](#glide.KeymapCallback)\
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLocation`](#glide.HintLocation)\
+[`glide.SplitViewCreateOpts`](#glide.SplitViewCreateOpts)\
+[`glide.SplitView`](#glide.SplitView)\
 [`glide.KeyNotation`](#glide.KeyNotation)\
 [`glide.Keymap`](#glide.Keymap)\
 [`glide.KeymapOpts`](#glide.KeymapOpts)\
@@ -710,6 +717,42 @@ in in the input.
 
 ## • `glide.unstable` {% id="glide.unstable" %}
 
+### `glide.unstable.split_views` {% id="glide.unstable.split_views" %}
+
+Manage tab split views.
+
+**note**: split views are experimental in Firefox, there _will_ be bugs.
+
+{% api-heading id="glide.unstable.split_views.create" %}
+glide.unstable.split_views.create(tabs, opts?): glide.SplitView
+{% /api-heading %}
+
+Start a split view with the given tabs.
+
+At least 2 tabs must be passed.
+
+**note**: this will not work if one of the given tabs is _pinned_.
+
+{% api-heading id="glide.unstable.split_views.get" %}
+glide.unstable.split_views.get(tab): glide.SplitView | null
+{% /api-heading %}
+
+Given a tab, tab ID, or a splitview ID, return the corresponding split view.
+
+{% api-heading id="glide.unstable.split_views.separate" %}
+glide.unstable.split_views.separate(tab): void
+{% /api-heading %}
+
+Revert a tab in a split view to a normal tab.
+
+If the given tab is _not_ in a split view, then an error is thrown.
+
+{% api-heading id="glide.unstable.split_views.has_split_view" %}
+glide.unstable.split_views.has_split_view(tab): boolean
+{% /api-heading %}
+
+Whether or not the given tab is in a split view.
+
 {% api-heading id="glide.unstable.include" %}
 glide.unstable.include(path): Promise<void>
 {% /api-heading %}
@@ -1019,6 +1062,19 @@ tab_id: number;
 ```
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
+
+## • `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+id?: string;
+```
+
+## • `glide.SplitView` {% id="glide.SplitView" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+id: string;
+tabs: Browser.Tabs.Tab[];
+```
 
 ## • `glide.KeyNotation` {% id="glide.KeyNotation" %}
 

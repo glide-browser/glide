@@ -72,6 +72,10 @@ declare namespace GlobalBrowser {
 
     currentURI: nsIURI;
 
+    // split views
+    unsplitTabs(splitview: any): void;
+    addTabSplitView(tabs: BrowserTab[], opts?: { id?: string }): { splitViewId: string; tabs: BrowserTab[] } | null;
+
     // notifications
     getNotificationBox(): NotificationBox;
 
@@ -86,6 +90,7 @@ declare namespace GlobalBrowser {
   interface TabContainer {
     allTabs: BrowserTab[];
     selectedIndex: number;
+    querySelector(selectors: string): HTMLElement | null;
   }
 
   /** Corresponds to the `<browser>` element */
