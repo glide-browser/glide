@@ -62,24 +62,22 @@
       this.hidden = true;
       this.appendChild((this.constructor as any).fragment);
 
-      const ctx: GlideCompletionContext = { input: this.#prefill ?? "" };
-      const container = this.get_element("glide-commandline-completions")!;
-
-      for (const source of GlideBrowser.commandline_sources) {
-        container.appendChild(source.container);
-        source.container.hidden = !source.is_enabled(ctx);
-      }
-
       const input = this.#get_input();
       input?.addEventListener("input", () => this.#filter_table());
     }
 
     #filter_table() {
       const ctx: GlideCompletionContext = { input: this.#get_input()?.value ?? "" };
+      const parent = this.get_element("glide-commandline-completions")!;
+      const children = [...parent.childNodes.values()];
 
       let found_source = false;
 
       for (const source of GlideBrowser.commandline_sources) {
+        if (!children.includes(source.container)) {
+          parent.appendChild(source.container);
+        }
+
         if (
           // right now we only support displaying a single source at once
           found_source
