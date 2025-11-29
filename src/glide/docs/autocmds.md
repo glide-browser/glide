@@ -49,6 +49,25 @@ Some autocmds do not require a pattern and can be called with just:
 glide.autocmds.create(event, callback);
 ```
 
+Autocmds can subsequently be removed with:
+
+```typescript {% check="false" %}
+glide.autocmds.remove(event, callback);
+```
+
+For example, to create an autocmd that will only be invoked once:
+
+```typescript
+glide.autocmds.create(
+  "UrlEnter",
+  /url/,
+  function autocmd() {
+    // ... do things
+    glide.autocmds.remove("UrlEnter", autocmd);
+  },
+);
+```
+
 ## ConfigLoaded
 
 Fired when the config is first loaded _and_ on every subsequent reload.

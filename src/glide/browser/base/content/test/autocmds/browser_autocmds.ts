@@ -491,6 +491,41 @@ add_task(async function test_key_state_changed_autocmd() {
   });
 });
 
+add_task(async function test_autocmd_remove() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("UrlEnter", /input_test\.html/, function autocmd() {
+      glide.g.calls!.push("expected-call");
+      glide.g.value = glide.autocmds.remove("UrlEnter", autocmd);
+    });
+
+    glide.autocmds.create("UrlEnter", /input_test\.html/, () => {
+      glide.g.test_checked = true;
+    });
+  });
+
+  const calls = ["expected-call"];
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await waiter(() => glide.g.calls).isjson(calls, "UrlEnter autocmd should be triggered on matching URL");
+    is(glide.g.value, true, "`glide.autocmds.remove()` should return true after removing an autocmd");
+  });
+
+  glide.g.test_checked = false;
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await waiter(() => glide.g.test_checked).ok("other UrlEnter autocmds should still be triggered");
+    isjson(glide.g.calls, calls, "Original UrlEnter autocmd should not be triggered after being removed");
+  });
+
+  is(
+    glide.autocmds.remove("UrlEnter", () => {}),
+    false,
+    "`glide.autocmds.remove()` should return false if the the autocmd did not exist",
+  );
+});
+
 function num_calls() {
   return (glide.g.calls ?? []).length;
 }

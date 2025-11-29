@@ -215,6 +215,24 @@ declare global {
           : glide.AutocmdPatterns[Event],
         callback?: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
+
+      /**
+       * Remove a previously created autocmd.
+       *
+       * e.g. to create an autocmd that is only invoked once:
+       * ```typescript
+       * glide.autocmds.create("UrlEnter", /url/, function autocmd() {
+       *   // ... do things
+       *   glide.autocmds.remove("UrlEnter", autocmd);
+       * });
+       * ```
+       *
+       * If the given event/callback does not correspond to any previously created autocmds, then `false` is returned.
+       */
+      remove<const Event extends glide.AutocmdEvent>(
+        event: Event,
+        callback: (args: glide.AutocmdArgs[Event]) => void,
+      ): boolean;
     };
 
     styles: {

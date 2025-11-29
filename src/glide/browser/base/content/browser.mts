@@ -1928,6 +1928,17 @@ function make_glide_api(): typeof glide {
           ] as (typeof GlideBrowser.autocmds)[Event];
         }
       },
+      remove<Event extends glide.AutocmdEvent>(event: Event, cb?: (args: glide.AutocmdArgs[Event]) => void) {
+        const events = GlideBrowser.autocmds[event];
+        if (events == null) {
+          return false;
+        }
+
+        const filtered = events.filter(({ callback }) => callback !== cb);
+        GlideBrowser.autocmds[event] = filtered as (typeof GlideBrowser.autocmds)[Event];
+
+        return filtered.length !== events.length;
+      },
     },
     keymaps: {
       set(modes, lhs, rhs, opts) {
