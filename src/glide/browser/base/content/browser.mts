@@ -1566,17 +1566,8 @@ class GlideBrowserClass {
       if (hints.length === 1) {
         this.#prevent_keydown(keyn, event);
 
-        const hint = hints[0]!;
-        const location = GlideHints.get_hints_location();
-        const actor = location === "browser-ui"
-          ? GlideBrowser.get_chrome_actor()
-          : location === "content"
-          ? GlideBrowser.get_content_actor()
-          : assert_never(location);
-        actor.send_async_message("Glide::ExecuteHint", { id: hint.id });
-
+        GlideHints.execute(hints[0]!.id);
         this.key_manager.reset_sequence();
-        GlideHints.remove_hints();
         return;
       }
 
