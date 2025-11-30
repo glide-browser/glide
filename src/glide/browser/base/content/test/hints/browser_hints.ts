@@ -41,9 +41,8 @@ add_task(async function test_f_shows_hints() {
     Assert.greater(get_hints().length, 0, "Hints should be visible on the page");
 
     await keys("<escape>");
-    await sleep_frames(5);
 
-    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after pressing Escape");
+    await wait_for_mode("normal", "Mode should return to 'normal' after pressing Escape");
     Assert.strictEqual(get_hints().length, 0, "Hints should be removed after exiting hint mode");
   });
 });

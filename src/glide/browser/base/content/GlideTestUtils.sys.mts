@@ -88,8 +88,11 @@ class GlideTestUtilsClass {
     return dedent(body).trimEnd();
   }
 
-  async wait_for_mode(mode: GlideMode) {
-    await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === mode, `Waiting for mode to be "${mode}" mode`);
+  async wait_for_mode(mode: GlideMode, name?: string) {
+    await g.TestUtils.waitForCondition(
+      () => GlideBrowser.state.mode === mode,
+      name ?? `Waiting for mode to be "${mode}" mode`,
+    );
   }
 
   async until<R>(cb: () => R | undefined | null, name?: string): Promise<R> {
