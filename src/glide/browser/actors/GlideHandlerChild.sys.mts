@@ -238,7 +238,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
           throw new Error(`Could not find a hint with ID: ${message.data.id}`);
         }
 
-        const action = this.#hint_action;
+        const action = IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.action) ?? this.#hint_action;
         this._log.debug("activating hint on", hint.element, "with", action);
 
         if (typeof action === "function") {
@@ -398,6 +398,18 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
 
         return DOM.is_text_editable(element);
+      }
+
+      case "Glide::Query::ExecuteHintAction": {
+        const hint = this.#active_hints.find(hint => hint.id === message.data.id);
+        if (!hint) {
+          throw new Error(`Could not find a hint with ID: ${message.data.id}`);
+        }
+
+        const action = IPC.deserialise_glidefunction(this.sandbox, message.data.action);
+        this._log.debug("activating hint on", hint.element, "with", action);
+
+        return await action(hint.element);
       }
 
       default:
@@ -796,7 +808,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
   ) => Promise<ChildQueries[QueryName]["result"]> = this.sendQuery;
 
   #change_mode(mode: GlideMode): void {
-    this.state ??= { mode, operator: null };
+    this.state ??= { mode, operator: null, hint_action: null };
     this.state.mode = mode;
     this.state.operator = null;
     this.send_async_message("Glide::ChangeMode", { mode });

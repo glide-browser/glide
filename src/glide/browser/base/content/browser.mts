@@ -44,6 +44,8 @@ declare var document: Document & { documentElement: HTMLElement };
 export interface State {
   mode: GlideMode;
   operator: GlideOperator | null;
+  // hmm maybe putting it in state is not correct
+  hint_action: glide.HintAction | null;
 }
 export interface StateChangeMeta {
   /* By default, when exiting visual mode we collapse the selection but for certain cases, e.g.
@@ -54,7 +56,7 @@ type ResolvedAddonCache = {
   addons: Record<string, { id: string }>;
 };
 
-const _defaultState: State = { mode: "normal", operator: null };
+const _defaultState: State = { mode: "normal", operator: null, hint_action: null };
 
 export type StateChangeListener = (
   new_state: State,
@@ -227,7 +229,7 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await extension_startup;
-      await this.#state_change_autocmd(this.state, { mode: null, operator: null });
+      await this.#state_change_autocmd(this.state, { mode: null, operator: null, hint_action: null });
     });
 
     this.on_startup(async () => {
@@ -2159,8 +2161,10 @@ function make_glide_api(): typeof glide {
           ? GlideBrowser.get_content_actor()
           : assert_never(location);
 
+        GlideBrowser.state.hint_action = opts?.action ?? null;
+
         actor.send_async_message("Glide::Hint", {
-          action: IPC.maybe_serialise_glidefunction(opts?.action),
+          // action: IPC.maybe_serialise_glidefunction(opts?.action),
           selector: opts?.selector,
           location: opts?.location ?? "content",
           include: opts?.include,

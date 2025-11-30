@@ -43,7 +43,7 @@ export interface ParentMessages {
   "Glide::KeyMappingCancel": { mode: GlideMode };
   "Glide::ReplaceChar": { character: string };
   "Glide::BlurActiveElement": null;
-  "Glide::ExecuteHint": { id: number };
+  "Glide::ExecuteHint": { id: number; action: GlideFunctionIPC<(target: HTMLElement) => Promise<void>> | undefined };
   "Glide::Hint": {
     location: glide.HintLocation;
     auto_activate: boolean;
@@ -73,6 +73,13 @@ export interface ParentQueries {
   "Glide::Query::IsEditing": {
     props: {};
     result: boolean;
+  };
+  "Glide::Query::ExecuteHintAction": {
+    props: {
+      id: number;
+      action: GlideFunctionIPC<(target: HTMLElement) => Promise<unknown>>
+    };
+    result: unknown;
   };
 }
 
@@ -185,7 +192,12 @@ export class GlideHandlerParent extends JSWindowActorParent<
           return;
         }
 
-        this.glide_hints!.show_hints(message.data.hints, message.data.location, message.data.auto_activate);
+        this.glide_hints!.show_hints(
+          message.data.hints,
+          message.data.location,
+          this.glide_browser!.state.hint_action ?? "click",
+          message.data.auto_activate,
+        );
         break;
       }
 

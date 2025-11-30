@@ -81,7 +81,8 @@ declare namespace GlobalBrowser {
 
     /* used to cache the hint container element */
     $hints_container?: HTMLElement | null | undefined;
-    $hints_location?: GlideHintLocation;
+    $hints_action?: glide.HintAction;
+    $hints_location?: glide.HintLocation;
     // TODO(glide): just look at the elements in the container instead?
     $hints?: GlideResolvedHint[];
   }

@@ -515,10 +515,7 @@ declare global {
          *
          * This is executed in the content process.
          */
-        action?:
-          | "click"
-          | "newtab-click"
-          | ((target: HTMLElement) => Promise<void>);
+        action?: glide.HintAction;
 
         /**
          * Which area to generate hints for.
@@ -1236,6 +1233,15 @@ declare global {
     };
 
     export type HintLocation = "content" | "browser-ui";
+
+    export type HintAction =
+      | "click"
+      | "newtab-click"
+      // TODO
+      // | ((target: HTMLElement) => Promise<void>);
+
+      // TODO: optional promise in callback?
+      | ((ctx: { content: { execute<R>(cb: (target: HTMLElement) => Promise<R>): Promise<R> } }) => Promise<void>);
 
     export type SplitViewCreateOpts = {
       id?: string;
