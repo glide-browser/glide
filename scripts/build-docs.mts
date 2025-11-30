@@ -45,6 +45,7 @@ const SYMLINKS = [
   "demo.mp4",
   "demo.webm",
   "demo-thumb.webp",
+  "split-views.webp",
 ];
 const TUTOR_FILES = [
   "index.html",

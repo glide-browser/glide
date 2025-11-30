@@ -17,6 +17,126 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.55a
+
+### Picker API {% id="0.1.55a-picker-api" %}
+
+You can now use the commandline as a picker for arbitrary options.
+
+For example, creating a basic version of `:tab` that only shows bookmarks:
+
+```typescript
+glide.keymaps.set("normal", "<leader>o", async () => {
+  const bookmarks = await browser.bookmarks.getRecent(10);
+
+  glide.commandline.show({
+    title: "bookmarks",
+    options: bookmarks.map((bookmark) => ({
+      label: bookmark.title,
+      async execute() {
+        const tab = await glide.tabs.get_first({
+          url: bookmark.url,
+        });
+        if (tab) {
+          await browser.tabs.update(tab.id, {
+            active: true,
+          });
+        } else {
+          await browser.tabs.create({
+            active: true,
+            url: bookmark.url,
+          });
+        }
+      },
+    })),
+  });
+}, { description: "Open the bookmarks picker" });
+```
+
+You can also customise how each option is displayed by providing a `render()` function on each `option` that returns a `HTMLElement`:
+
+```typescript {% check="false" %}
+{
+  label: bookmark.title,
+  render() {
+    return DOM.create_element("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+      },
+      children: [
+        DOM.create_element("span", [bookmark.title]),
+        DOM.create_element("span", [bookmark.url], {
+          style: { color: "#777", fontSize: "0.9em" },
+        }),
+      ],
+    });
+  },
+};
+```
+
+See the full commandline [docs](./commandline.md) for more information.
+
+### Split views API {% id="0.1.55a-split-views" %}
+
+> [!WARNING]
+> This feature is very [early](https://connect.mozilla.org/t5/ideas/split-screen-tab-in-tab-feature-view-more-than-one-tab-at-once/idi-p/3989) in development in Firefox, there will be bugs.
+
+Firefox has work in progress support for split views, so you can view multiple tabs at the same time.
+
+![split views example](./split-views.webp)
+
+You can now manage split views directly from the Glide config with [`glide.unstable.split_views`](./api.md#glide.unstable.split_views), for example:
+
+```typescript
+glide.keymaps.set(
+  "normal",
+  "<C-w>v",
+  async ({ tab_id }) => {
+    const all_tabs = await glide.tabs.query({});
+    const current_index = all_tabs.findIndex((t) =>
+      t.id === tab_id
+    );
+    const other = all_tabs[current_index + 1];
+    if (!other) {
+      throw new Error("No next tab");
+    }
+    glide.unstable.split_views.create([tab_id, other]);
+  },
+  {
+    description:
+      "Create a split view with the tab to the right",
+  },
+);
+
+glide.keymaps.set(
+  "normal",
+  "<C-w>q",
+  async ({ tab_id }) => {
+    glide.unstable.split_views.separate(tab_id);
+  },
+  {
+    description: "Close the split view for the current tab",
+  },
+);
+```
+
+### Changes {% id="0.1.55a-changes" %}
+
+- Bumped Firefox from 146.0b4 to 146.0b9
+- Added `gU` keymapping to go to the root of the current URL hierarchy
+- Added `gu` keymapping to go up the URL hierarchy
+- Added [`CommandLineExit`](./autocmds.md#CommandLineExit) autocmd
+- Added [`glide.commandline.show()`](./api.md#glide.commandline.show())
+- Added support for removing autocmds with [`glide.autocmds.remove()`](./api.md#glide.autocmds.remove)
+- Added [`glide.content.fn()`](./api.md#glide.content.fn) for marking callbacks as executing in the content process, currently supported in `glide.keymaps.set()` and `glide.excmds.create()`
+- Added [`glide.o.switch_mode_on_focus`](./api.md#glide.o.switch_mode_on_focus) for disabling automatic mode switching
+- Added `children` syntax sugar to [`DOM.create_element()`](./api.md#DOM.create_element) so you can now do `DOM.create_element('div', ['child'], { ...props })`
+- Made the [`glide.o`](./api.md#glide.o) type extensible
+- Fixed [`glide.keys.send()`](./api.md#glide.keys.send) potentially resulting in out-of-order key events
+- Fixed the [`glide.o.yank_highlight`](./api.md#glide.o.yank_highlight) type to allow `rgb(255, 255, 255)` strings
+
 # 0.1.54a
 
 Page navigation keys (`h`, `j`, `k`, `l`, `<C-u>`, `<C-d>`, `gg`, and `G`) are now translated into equivalent standard keys:
