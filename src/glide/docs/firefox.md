@@ -11,6 +11,13 @@ Glide extends and heavily builds on top of Firefox but for the most part Glide i
 7. Taskbar [badges](https://connect.mozilla.org/t5/ideas/disable-profile-badge/idc-p/101744) are disabled by default, you can re-enable them with the `path:glide.firefox.taskbar.badge.enabled` pref.
 8. On Linux, the auto updater is disabled.
 
+Additionally, the extension native messaging runtime paths are different:
+
+- macOS system: `/Library/Application Support/Glide Browser`
+- macOS user: `~/Library/Application Support/Glide Browser`
+- Linux system: `/usr/lib64/glide-browser` (or `/usr/lib/glide-browser`)
+- Linux user: `path:~/.glide-browser`
+
 ## Version
 
 Glide generally targets the [Firefox beta channel](https://whattrainisitnow.com/release/?version=beta). This is purely for decreased maintenance burden as it is easier to deal with frequent smaller updates, than less frequent but larger updates.
