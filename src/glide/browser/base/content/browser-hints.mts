@@ -46,13 +46,7 @@ class GlideHintsClass {
     }));
 
     if (auto_activate && hints.length === 1) {
-      const actor = location === "browser-ui"
-        ? GlideBrowser.get_chrome_actor()
-        : location === "content"
-        ? GlideBrowser.get_content_actor()
-        : assert_never(location);
-      actor.send_async_message("Glide::ExecuteHint", { id: hints[0]!.id });
-      this.remove_hints();
+      this.execute(hints[0]!.id);
       return;
     }
 
@@ -85,6 +79,17 @@ class GlideHintsClass {
   hide_hints() {
     const container = this.#upsert_hints_container();
     container.style.setProperty("display", "none", "important");
+  }
+
+  execute(id: number) {
+    const location = gBrowser.$hints_location ?? "content";
+    const actor = location === "browser-ui"
+      ? GlideBrowser.get_chrome_actor()
+      : location === "content"
+      ? GlideBrowser.get_content_actor()
+      : assert_never(location);
+    actor.send_async_message("Glide::ExecuteHint", { id });
+    this.remove_hints();
   }
 
   /**
@@ -143,10 +148,6 @@ class GlideHintsClass {
 
   get_active_hints(): GlideResolvedHint[] {
     return gBrowser.$hints ?? [];
-  }
-
-  get_hints_location(): glide.HintLocation {
-    return gBrowser.$hints_location ?? "content";
   }
 
   #alphabet_cost_maps = new Map<string, Record<string, number>>();
