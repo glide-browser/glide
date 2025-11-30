@@ -44,6 +44,16 @@ declare global {
 
     /**
      * Set browser-wide options.
+     *
+     * You can define your own options by declaration merging `GlideOptions`:
+     *
+     * ```typescript
+     * declare global {
+     *   interface GlideOptions {
+     *     my_custom_option?: boolean;
+     *   }
+     * }
+     * ```
      */
     /// @docs-expand-type-reference
     o: GlideOptions;
@@ -917,6 +927,16 @@ declare global {
 
   /**
    * Corresponds to {@link glide.o} or {@link glide.bo}.
+   *
+   * You can define your own options by declaration merging `GlideOptions`:
+   *
+   * ```typescript
+   * declare global {
+   *   interface GlideOptions {
+   *     my_custom_option?: boolean;
+   *   }
+   * }
+   * ```
    */
   // note: this is skipped in docs generation because we expand `glide.o`, so rendering
   //       the `Options` type as well would be redundant.
@@ -985,6 +1005,8 @@ declare global {
      * Determines if the current mode will change when certain element types are focused.
      *
      * For example, if `true` then Glide will automatically switch to `insert` mode when an editable element is focused.
+     *
+     * This can be useful for staying in the same mode while switching tabs.
      *
      * @default true
      */

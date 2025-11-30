@@ -196,6 +196,16 @@ This includes but is not limited to `html:<textarea>`, `html:<input>`, `contente
 
 Set browser-wide options.
 
+You can define your own options by declaration merging `GlideOptions`:
+
+```typescript
+declare global {
+  interface GlideOptions {
+    my_custom_option?: boolean;
+  }
+}
+```
+
 ### `glide.o.mapping_timeout: number` {% id="glide.o.mapping_timeout" %}
 
 How long to wait until cancelling a partial keymapping execution.
@@ -255,6 +265,8 @@ The characters to include in hint labels.
 Determines if the current mode will change when certain element types are focused.
 
 For example, if `true` then Glide will automatically switch to `insert` mode when an editable element is focused.
+
+This can be useful for staying in the same mode while switching tabs.
 
 `ts:@default true`
 
