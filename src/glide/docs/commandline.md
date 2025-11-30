@@ -33,6 +33,29 @@ glide.commandline.show({
 
 When `options` are provided, they _replace_ the default excmds and tabs. Input fuzzy-filters against `option.label` and `option.description`.
 
+You can also customise how each option is displayed by providing a `render()` function on each `option` that returns a `HTMLElement`:
+
+```typescript {% check="false" %}
+{
+  label: bookmark.title,
+  render() {
+    return DOM.create_element("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+      },
+      children: [
+        DOM.create_element("span", [bookmark.title]),
+        DOM.create_element("span", [bookmark.url!], {
+          style: { color: "#777", fontSize: "0.9em" },
+        }),
+      ],
+    });
+  },
+};
+```
+
 See the [bookmarks picker](#bookmarks-picker) for a more complete example.
 
 ## Autocmds
