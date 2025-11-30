@@ -135,6 +135,7 @@ text-decoration: none;
 [`glide.KeyEvent`](#glide.KeyEvent)\
 [`glide.KeySendOptions`](#glide.KeySendOptions)\
 [`glide.KeymapCallback`](#glide.KeymapCallback)\
+[`glide.KeymapContentCallback`](#glide.KeymapContentCallback)\
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLocation`](#glide.HintLocation)\
 [`glide.SplitViewCreateOpts`](#glide.SplitViewCreateOpts)\
@@ -1068,6 +1069,12 @@ skip_mappings?: boolean;
 
 ```typescript {% highlight_prefix="type x = " %}
 (props: glide.KeymapCallbackProps) => void
+```
+
+## • `glide.KeymapContentCallback` {% id="glide.KeymapContentCallback" %}
+
+```typescript {% highlight_prefix="type x = " %}
+glide.ContentFunction<() => void>;
 ```
 
 ## • `glide.KeymapCallbackProps` {% id="glide.KeymapCallbackProps" %}

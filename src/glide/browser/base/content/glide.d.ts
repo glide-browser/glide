@@ -457,7 +457,7 @@ declare global {
       set<const LHS>(
         modes: GlideMode | GlideMode[],
         lhs: $keymapcompletions.T<LHS>,
-        rhs: glide.ExcmdString | glide.KeymapCallback,
+        rhs: glide.ExcmdString | glide.KeymapCallback | glide.KeymapContentCallback,
         opts?: glide.KeymapOpts | undefined,
       ): void;
 
@@ -574,7 +574,7 @@ declare global {
         set<const LHS>(
           modes: GlideMode | GlideMode[],
           lhs: $keymapcompletions.T<LHS>,
-          rhs: glide.ExcmdString | glide.KeymapCallback,
+          rhs: glide.ExcmdString | glide.KeymapCallback | glide.KeymapContentCallback,
           opts?: Omit<glide.KeymapOpts, "buffer"> | undefined,
         ): void;
 
@@ -1197,6 +1197,7 @@ declare global {
     };
 
     export type KeymapCallback = (props: glide.KeymapCallbackProps) => void;
+    export type KeymapContentCallback = glide.ContentFunction<() => void>;
 
     export type KeymapCallbackProps = {
       /**
@@ -1226,7 +1227,8 @@ declare global {
       | glide.ExcmdString
       | glide.ExcmdCallback
       | glide.ExcmdContentCallback
-      | glide.KeymapCallback;
+      | glide.KeymapCallback
+      | glide.KeymapContentCallback;
 
     /// @docs-skip
     export type ExcmdCallback = (props: glide.ExcmdCallbackProps) => void | Promise<void>;

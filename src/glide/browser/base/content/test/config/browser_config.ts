@@ -647,6 +647,29 @@ add_task(async function test_excmds_create__content__args() {
   });
 });
 
+add_task(async function test_keymaps_set__content() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set(
+      "normal",
+      "~",
+      glide.content.fn(() => {
+        document.body!.dataset["glide_test_marker"] = "content_fn_executed";
+      }),
+    );
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await keys("~");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => content.document.body!.dataset["glide_test_marker"] === "content_fn_executed",
+        "content function should mutate the body",
+      );
+    });
+  });
+});
+
 add_task(async function test_keys_send_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>t", async () => {
