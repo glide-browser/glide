@@ -409,6 +409,21 @@ declare interface NodeListOf<TNode extends Node> extends NodeList {
   [index: number]: TNode;
 }
 
+declare var ContextualIdentityService: {
+  create(name: string, icon: string, color: string): ContextualIdentityService.Container;
+  remove(id: number): boolean;
+};
+
+declare namespace ContextualIdentityService {
+  export type Container = {
+    userContextId: number;
+    public: boolean;
+    icon: string;
+    color: string;
+    name: string;
+  };
+}
+
 //////////////////////////////////////////
 ////////////// typed actors //////////////
 //////////////////////////////////////////
