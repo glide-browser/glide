@@ -128,11 +128,32 @@ export function is_element<ElementType extends typeof Element>(
  */
 export function create_element<K extends keyof HTMLElementTagNameMap | (string & {})>(
   tag_name: K,
+  props_or_children?:
+    // props
+    | DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">
+    // children
+    | Array<(Node | string)>,
   props?: DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">,
   a_document = document,
 ): K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement {
   if (!a_document) {
     throw new Error("dom utils must be imported with { global: \"current\" } or passed the document argument");
+  }
+
+  if (Array.isArray(props_or_children)) {
+    if (props?.children) {
+      throw new Error("Cannot pass both a `children` array and `props.children`");
+    }
+
+    props = { ...props, children: props_or_children } as DOM.CreateElementProps<
+      K extends keyof HTMLElementTagNameMap ? K : "div"
+    >;
+  } else if (typeof props_or_children === "object" && props_or_children) {
+    if (props) {
+      throw new Error("Cannot pass props twice");
+    }
+
+    props = props_or_children;
   }
 
   const element = a_document.createElement(tag_name);

@@ -82,13 +82,13 @@ export class GlideTutorChild extends JSWindowActorChild<
   update_config_path_references(path: string | null, home_path: string) {
     for (const element of this.document!.querySelectorAll("config-path")) {
       (element as HTMLElement).replaceChildren(
-        DOM.create_element("highlight", { textContent: path ?? "<unset>" }, this.document),
+        DOM.create_element("highlight", { textContent: path ?? "<unset>" }, undefined, this.document),
       );
     }
 
     for (const element of this.document!.querySelectorAll("config-path-home")) {
       (element as HTMLElement).replaceChildren(
-        DOM.create_element("highlight", { textContent: home_path }, this.document),
+        DOM.create_element("highlight", { textContent: home_path }, undefined, this.document),
       );
     }
 
@@ -97,12 +97,17 @@ export class GlideTutorChild extends JSWindowActorChild<
       " ",
       ...(path
         ? [
-          DOM.create_element("span", { textContent: "✓" }, this.document),
-          DOM.create_element("p", { textContent: "Great! you can move on to the next section" }, this.document),
+          DOM.create_element("span", { textContent: "✓" }, undefined, this.document),
+          DOM.create_element(
+            "p",
+            { textContent: "Great! you can move on to the next section" },
+            undefined,
+            this.document,
+          ),
         ]
         : [
-          DOM.create_element("span", { textContent: "⨯" }, this.document),
-          DOM.create_element("p", { textContent: "Setup the config file before moving on!" }, this.document),
+          DOM.create_element("span", { textContent: "⨯" }, undefined, this.document),
+          DOM.create_element("p", { textContent: "Setup the config file before moving on!" }, undefined, this.document),
         ]),
     );
   }

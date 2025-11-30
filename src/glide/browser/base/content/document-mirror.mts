@@ -244,12 +244,22 @@ function import_node(document: Document, node: Node): Node {
     // to avoid any weird issues with firefox code that assumes any `<browser>` element has a `browsingContext`
     // we do not copy `<browser>` elements over to the sandbox. e.g. devtools does a `querySelectorAll('browser')`
     // which caused it to crash.
-    return DOM.create_element("div", { attributes: { "glide-original-node-name": node.nodeName } }, document);
+    return DOM.create_element(
+      "div",
+      { attributes: { "glide-original-node-name": node.nodeName } },
+      undefined,
+      document,
+    );
   }
 
   if (node_name === "script") {
     // there's no point in loading scripts in the fake document, and they could cause weird behaviour.
-    return DOM.create_element("div", { attributes: { "glide-original-node-name": node.nodeName } }, document);
+    return DOM.create_element(
+      "div",
+      { attributes: { "glide-original-node-name": node.nodeName } },
+      undefined,
+      document,
+    );
   }
 
   const imported = node instanceof XULElement ? xul_to_element(document, node) : document.importNode(node);

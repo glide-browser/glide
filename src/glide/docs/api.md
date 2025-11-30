@@ -1280,7 +1280,7 @@ updating the browser UI itself. it is not available in
 content processes.
 
 {% api-heading id="DOM.create_element" %}
-DOM.create_element(tag_name, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement
+DOM.create_element(tag_name, props_or_children?, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement
 {% /api-heading %}
 
 Wrapper over `document.createElement()` providing a more ergonomic API.
@@ -1291,9 +1291,14 @@ Element properties that can be assigned directly can be provided as props:
 DOM.create_element("img", { src: "..." });
 ```
 
-You can also pass a `children` property, which will use `.replaceChildren()`:
+You can also pass a `children` array, or property, which will use `.replaceChildren()`:
 
 ```ts
+DOM.create_element("div", [
+  "text content",
+  DOM.create_element("img", { alt: "hint" }),
+]);
+// or
 DOM.create_element("div", {
   children: [
     "text content",

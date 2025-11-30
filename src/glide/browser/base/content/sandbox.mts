@@ -83,9 +83,14 @@ export function create_sandbox(props: SandboxProps): Sandbox {
   const DOM: DOM.Utils = {
     create_element<K extends keyof HTMLElementTagNameMap | (string & {})>(
       tag_name: K,
+      props_or_children?:
+        // props
+        | DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">
+        // children
+        | Array<(Node | string)>,
       props?: DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">,
     ): K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement {
-      return DOMUtils.create_element(tag_name, props, document);
+      return DOMUtils.create_element(tag_name, props_or_children, props, document);
     },
   };
 

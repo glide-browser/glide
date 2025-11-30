@@ -1553,9 +1553,11 @@ declare global {
      * DOM.create_element('img', { src: '...' });
      * ```
      *
-     * You can also pass a `children` property, which will use `.replaceChildren()`:
+     * You can also pass a `children` array, or property, which will use `.replaceChildren()`:
      *
      * ```ts
+     * DOM.create_element("div", ["text content", DOM.create_element("img", { alt: "hint" })]);
+     * // or
      * DOM.create_element("div", {
      *   children: ["text content", DOM.create_element("img", { alt: "hint" })],
      * });
@@ -1563,6 +1565,11 @@ declare global {
      */
     create_element<TagName extends keyof HTMLElementTagNameMap | (string & {})>(
       tag_name: TagName,
+      props_or_children?:
+        // props
+        | DOM.CreateElementProps<TagName extends keyof HTMLElementTagNameMap ? TagName : "div">
+        // children
+        | Array<(Node | string)>,
       props?: DOM.CreateElementProps<TagName extends keyof HTMLElementTagNameMap ? TagName : "div">,
     ): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement;
   };

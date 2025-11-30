@@ -50,7 +50,7 @@ add_task(async function test_adding_elements() {
   const source = create_test_doc("<body><div id='root'></div></body>");
   const mirror = Mirror.mirror_into_document(source, document.implementation.createHTMLDocument());
 
-  const new_div = DOM.create_element("div", { id: "new-div", textContent: "New content" }, source);
+  const new_div = DOM.create_element("div", { id: "new-div", textContent: "New content" }, undefined, source);
   source.getElementById("root")?.appendChild(new_div);
 
   await sleep_frames(20);
@@ -59,7 +59,7 @@ add_task(async function test_adding_elements() {
   ok(mirrored_div, "New div should be mirrored");
   is(mirrored_div.textContent, "New content", "Text content should match");
 
-  const nested = DOM.create_element("span", { className: "nested", textContent: "Nested" }, source);
+  const nested = DOM.create_element("span", { className: "nested", textContent: "Nested" }, undefined, source);
   new_div.appendChild(nested);
 
   await sleep_frames(20);
@@ -266,7 +266,7 @@ add_task(async function test_rapid_mutations() {
   const container = source.getElementById("container")!;
 
   for (let i = 0; i < 10; i++) {
-    container.appendChild(DOM.create_element("div", { id: `div${i}`, textContent: `Content ${i}` }, source));
+    container.appendChild(DOM.create_element("div", { id: `div${i}`, textContent: `Content ${i}` }, undefined, source));
   }
 
   await sleep_frames(20);
@@ -301,7 +301,7 @@ add_task(async function test_stop_mirroring_cleanup() {
   Mirror.stop_mirroring(mirror);
 
   source.getElementById("test")!.setAttribute("data-after", "stop");
-  source.body!.appendChild(DOM.create_element("div", { id: "after-stop" }, source));
+  source.body!.appendChild(DOM.create_element("div", { id: "after-stop" }, undefined, source));
 
   await sleep_frames(20);
 
@@ -366,7 +366,9 @@ add_task(async function test_document_fragments() {
 
   const fragment = source.createDocumentFragment();
   for (let i = 0; i < 5; i++) {
-    fragment.appendChild(DOM.create_element("div", { id: `frag-${i}`, textContent: `Fragment ${i}` }, source));
+    fragment.appendChild(
+      DOM.create_element("div", { id: `frag-${i}`, textContent: `Fragment ${i}` }, undefined, source),
+    );
   }
 
   source.getElementById("container")!.appendChild(fragment);
@@ -407,7 +409,7 @@ add_task(async function test_simultaneous_mutation_types() {
 
   source.getElementById("div1")?.setAttribute("class", "modified");
   source.getElementById("div2")?.remove();
-  source.body!.appendChild(DOM.create_element("div", { id: "div4", textContent: "Content 4" }, source));
+  source.body!.appendChild(DOM.create_element("div", { id: "div4", textContent: "Content 4" }, undefined, source));
   source.getElementById("div3")!.textContent = "Modified 3";
 
   await sleep_frames(20);
@@ -434,7 +436,7 @@ add_task(async function test_insert_before_siblings() {
   // insert between existing elements
   const container = source.getElementById("container");
   container!.insertBefore(
-    DOM.create_element("div", { id: "second", textContent: "Second" }, source),
+    DOM.create_element("div", { id: "second", textContent: "Second" }, undefined, source),
     source.getElementById("third"),
   );
 
@@ -449,7 +451,7 @@ add_task(async function test_insert_before_siblings() {
 
   // insert at beginning
   container!.insertBefore(
-    DOM.create_element("div", { id: "zeroth", textContent: "Zeroth" }, source),
+    DOM.create_element("div", { id: "zeroth", textContent: "Zeroth" }, undefined, source),
     container!.firstChild,
   );
 
@@ -499,10 +501,15 @@ add_task(async function test_replace_node_type() {
 
   const container = source.getElementById("container")!;
   container.replaceChild(
-    DOM.create_element("div", {
-      id: "replaced",
-      textContent: "I'm a div now",
-    }, source),
+    DOM.create_element(
+      "div",
+      {
+        id: "replaced",
+        textContent: "I'm a div now",
+      },
+      undefined,
+      source,
+    ),
     source.getElementById("replaceme")!,
   );
 
