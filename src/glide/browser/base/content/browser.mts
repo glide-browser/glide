@@ -1244,9 +1244,7 @@ class GlideBrowserClass {
 
   get user_excmds(): ReadonlyMap<
     string,
-    GlideExcmdInfo & {
-      fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>;
-    }
+    GlideExcmdInfo & { fn: glide.ExcmdCallback | glide.ExcmdContentCallback }
   > {
     return this.#user_cmds;
   }
@@ -2132,6 +2130,9 @@ function make_glide_api(): typeof glide {
       },
     },
     content: {
+      fn(wrapped) {
+        return IPC.content_fn(wrapped);
+      },
       async execute(func, opts) {
         const results = await GlideBrowser.browser_proxy_api.scripting.executeScript({
           target: { tabId: typeof opts.tab_id === "number" ? opts.tab_id : opts.tab_id.id },

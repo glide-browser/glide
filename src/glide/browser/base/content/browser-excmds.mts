@@ -22,6 +22,7 @@ const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/util
 const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const Args = ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
+const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 
 interface ExecuteProps {
   args: glide.ExcmdCallbackProps;
@@ -144,10 +145,18 @@ class GlideExcmdsClass {
       return this.#execute_function_command(command, props);
     }
 
+    if (IPC.is_content_fn(command)) {
+      return await GlideBrowser.api.content.execute(command.fn, { tab_id: props.args.tab_id, args: [props.args] });
+    }
+
     const name = extract_command_name(command);
 
     const meta = GlideBrowser.user_excmds.get(name);
     if (meta) {
+      if (IPC.is_content_fn(meta.fn)) {
+        return await GlideBrowser.api.content.execute(meta.fn.fn, { tab_id: props.args.tab_id, args: [props.args] });
+      }
+
       return await meta.fn(props.args);
     }
 

@@ -78,6 +78,7 @@ text-decoration: none;
 [`glide.excmds.execute()`](#glide.excmds.execute)\
 [`glide.excmds.create()`](#glide.excmds.create)\
 [`glide.content`](#glide.content)\
+[`glide.content.fn()`](#glide.content.fn)\
 [`glide.content.execute()`](#glide.content.execute)\
 [`glide.keymaps`](#glide.keymaps)\
 [`glide.keymaps.set()`](#glide.keymaps.set)\
@@ -514,6 +515,23 @@ declare global {
 ```
 
 ## • `glide.content` {% id="glide.content" %}
+
+{% api-heading id="glide.content.fn" %}
+glide.content.fn(wrapped): glide.ContentFunction<F>
+{% /api-heading %}
+
+Mark a function so that it will be executed in the content process instead of the main proces.
+
+This is useful for APIs that are typically executed in the main process, for example:
+
+```typescript
+glide.excmds.create(
+  { name: "focus_page" },
+  glide.content.fn(() => {
+    document.body!.focus();
+  }),
+);
+```
 
 {% api-heading id="glide.content.execute" %}
 glide.content.execute(func, opts): Promise<ReturnType<F>>

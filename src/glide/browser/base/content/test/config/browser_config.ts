@@ -599,6 +599,54 @@ add_task(async function test_excmds_create() {
   });
 });
 
+add_task(async function test_excmds_create__content() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.excmds.create(
+      { name: "my_test_command", description: "test" },
+      glide.content.fn(() => {
+        document.body!.dataset["glide_test_marker"] = "content_fn_executed";
+      }),
+    );
+
+    glide.keymaps.set("normal", "~", "my_test_command");
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await keys("~");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => content.document.body!.dataset["glide_test_marker"] === "content_fn_executed",
+        "content function should mutate the body",
+      );
+    });
+  });
+});
+
+add_task(async function test_excmds_create__content__args() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.excmds.create(
+      { name: "my_test_command", description: "test" },
+      glide.content.fn((props) => {
+        document.body!.dataset["glide_test_marker"] = props.args_arr.join(" ");
+      }),
+    );
+
+    glide.keymaps.set("normal", "~", "my_test_command foo bar");
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await keys("~");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => content.document.body!.dataset["glide_test_marker"] === "foo bar",
+        "content function should mutate the body",
+      );
+    });
+  });
+});
+
 add_task(async function test_keys_send_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>t", async () => {

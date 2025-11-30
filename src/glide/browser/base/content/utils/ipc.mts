@@ -158,3 +158,16 @@ function hashcode(str: string) {
   }
   return result;
 }
+
+export function content_fn<F extends (...args: any[]) => any>(wrapped: F): glide.ContentFunction<F> {
+  const fn: glide.ContentFunction<F> = {
+    $brand: "$glide.content.fn",
+    fn: wrapped,
+    name: wrapped.name,
+  };
+  return Object.freeze(fn);
+}
+
+export function is_content_fn(value: unknown): value is glide.ContentFunction<any> {
+  return (value as any)?.$brand === "$glide.content.fn";
+}

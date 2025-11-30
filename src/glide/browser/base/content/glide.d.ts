@@ -386,11 +386,27 @@ declare global {
        */
       create<const Excmd extends glide.ExcmdCreateProps>(
         info: Excmd,
-        fn: (props: glide.ExcmdCallbackProps) => void | Promise<void>,
+        fn: glide.ExcmdCallback | glide.ExcmdContentCallback,
       ): Excmd;
     };
 
     content: {
+      /**
+       * Mark a function so that it will be executed in the content process instead of the main proces.
+       *
+       * This is useful for APIs that are typically executed in the main process, for example:
+       *
+       * ```typescript
+       * glide.excmds.create(
+       *   { name: "focus_page" },
+       *   glide.content.fn(() => {
+       *     document.body!.focus();
+       *   }),
+       * );
+       * ```
+       */
+      fn<F extends (...args: any[]) => any>(wrapped: F): glide.ContentFunction<F>;
+
       /**
        * Execute a function in the content process for the given tab.
        *
@@ -1189,6 +1205,16 @@ declare global {
       tab_id: number;
     };
 
+    /**
+     * Represents a function that will be executed in the content process.
+     */
+    export interface ContentFunction<F extends (...args: any[]) => any> {
+      $brand: "$glide.content.fn";
+
+      fn: F;
+      name: string;
+    }
+
     /// @docs-skip
     export type ExcmdCreateProps = {
       name: string;
@@ -1196,10 +1222,16 @@ declare global {
     };
 
     /// @docs-skip
-    export type ExcmdValue = glide.ExcmdString | glide.ExcmdCallback | glide.KeymapCallback;
+    export type ExcmdValue =
+      | glide.ExcmdString
+      | glide.ExcmdCallback
+      | glide.ExcmdContentCallback
+      | glide.KeymapCallback;
 
     /// @docs-skip
-    export type ExcmdCallback = (props: glide.ExcmdCallbackProps) => void;
+    export type ExcmdCallback = (props: glide.ExcmdCallbackProps) => void | Promise<void>;
+    /// @docs-skip
+    export type ExcmdContentCallback = glide.ContentFunction<(props: glide.ExcmdContentCallbackProps) => void>;
 
     /// @docs-skip
     export type ExcmdCallbackProps = {
@@ -1208,6 +1240,17 @@ declare global {
        */
       tab_id: number;
 
+      /**
+       * The args passed to the excmd.
+       *
+       * @example "foo -r"                      -> ["-r"]
+       * @example "foo -r 'string with spaces'" -> ["-r", "string with spaces"]
+       */
+      args_arr: string[];
+    };
+
+    /// @docs-skip
+    export type ExcmdContentCallbackProps = {
       /**
        * The args passed to the excmd.
        *
