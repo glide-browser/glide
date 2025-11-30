@@ -80,7 +80,7 @@ add_task(async function test_scrolling_input_element_focused() {
       });
     }
     const get_y = async () => (await get_scroll())[1];
-    const wait_for_scroll_stop = await make_scroll_waiter(get_scroll);
+    const wait_for_scroll_stop = await GlideTestUtils.scroll_waiter(get_scroll);
 
     await SpecialPowers.spawn(browser, [], async () => {
       const input = content.document.getElementById("input-1")!;
@@ -220,7 +220,7 @@ async function vertical_scroll_tests(
   var curr_x = 0;
   var last_y = min_y;
 
-  const wait_for_scroll_stop = await make_scroll_waiter(get_scroll);
+  const wait_for_scroll_stop = await GlideTestUtils.scroll_waiter(get_scroll);
 
   await keys("<C-d>");
   await wait_for_scroll_stop();
@@ -312,35 +312,4 @@ async function horizontal_scroll_tests(url: string) {
     var new_x = await get_x();
     is(new_x, min_x, `h should scroll to the left edge`);
   });
-}
-
-async function make_scroll_waiter(get_scroll: () => Promise<[number, number]>) {
-  const [x, y] = await get_scroll();
-  const state = { x, y };
-
-  async function wait_for_scroll_stop() {
-    await sleep_frames(5); // ensure scrolling starts
-
-    await until(async () => {
-      const [new_x, new_y] = await get_scroll();
-      if (new_x === state.x && new_y === state.y) {
-        return true;
-      }
-
-      await sleep_frames(5);
-
-      var [x, y] = await get_scroll();
-      state.x = x;
-      state.y = y;
-
-      if (x !== new_x || y !== new_y) {
-        // we're still scrolling
-        return false;
-      }
-
-      return true;
-    });
-  }
-
-  return wait_for_scroll_stop;
 }

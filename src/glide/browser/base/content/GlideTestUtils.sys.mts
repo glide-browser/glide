@@ -157,6 +157,50 @@ class GlideTestUtilsClass {
     };
   }
 
+  async wait_for_scroll_stop() {
+    const waiter = await this.scroll_waiter();
+    return await waiter();
+  }
+
+  async scroll_waiter(get_scroll?: () => Promise<[number, number]>): Promise<() => Promise<void>> {
+    if (!get_scroll) {
+      get_scroll = async function get_scroll(): Promise<[number, number]> {
+        return await SpecialPowers.spawn(g.gBrowser.selectedBrowser, [], async () => {
+          return [content.window.scrollX, content.window.scrollY];
+        });
+      };
+    }
+
+    const [x, y] = await get_scroll();
+    const state = { x, y };
+
+    async function wait_for_scroll_stop() {
+      await g.sleep_frames(5); // ensure scrolling starts
+
+      await GlideTestUtils.until(async () => {
+        const [new_x, new_y] = await get_scroll!();
+        if (new_x === state.x && new_y === state.y) {
+          return true;
+        }
+
+        await g.sleep_frames(5);
+
+        var [x, y] = await get_scroll!();
+        state.x = x;
+        state.y = y;
+
+        if (x !== new_x || y !== new_y) {
+          // we're still scrolling
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    return wait_for_scroll_stop;
+  }
+
   /**
    * Helpers for setting text inputs, applying motions and expecting caret positions / text.
    */
