@@ -59,6 +59,8 @@ text-decoration: none;
 [`glide.process`](#glide.process)\
 [`glide.process.spawn()`](#glide.process.spawn)\
 [`glide.process.execute()`](#glide.process.execute)\
+[`glide.autocmds`](#glide.autocmds)\
+[`glide.autocmds.remove()`](#glide.autocmds.remove)\
 [`glide.styles`](#glide.styles)\
 [`glide.styles.add()`](#glide.styles.add)\
 [`glide.styles.remove()`](#glide.styles.remove)\
@@ -333,6 +335,29 @@ glide.process.execute(command, args?, opts?): Promise<glide.CompletedProcess>
 Spawn a new process and wait for it to exit.
 
 See {% link href="#glide.process.spawn" class="go-to-def" %} `ts:glide.process.spawn`{% /link %} for more information.
+
+## • `glide.autocmds` {% id="glide.autocmds" %}
+
+{% api-heading id="glide.autocmds.remove" %}
+glide.autocmds.remove(event, callback): boolean
+{% /api-heading %}
+
+Remove a previously created autocmd.
+
+e.g. to create an autocmd that is only invoked once:
+
+```typescript
+glide.autocmds.create(
+  "UrlEnter",
+  /url/,
+  function autocmd() {
+    // ... do things
+    glide.autocmds.remove("UrlEnter", autocmd);
+  },
+);
+```
+
+If the given event/callback does not correspond to any previously created autocmds, then `false` is returned.
 
 ## • `glide.styles` {% id="glide.styles" %}
 

@@ -30,7 +30,7 @@ const STYLES = css`
 
 const DISABLED_PROPERTIES = new Set([
   // we don't generate the overloads well right now
-  "glide.autocmds",
+  "glide.autocmds.create",
 ]);
 const DPRINT_EXE = Path.join(ROOT_DIR, "node_modules", ".bin", "dprint");
 
@@ -148,6 +148,10 @@ function* traverse(
       ...parents.map(({ name }) => name),
       node.getName(),
     ].join(".");
+    if (DISABLED_PROPERTIES.has(QualifiedName)) {
+      // wip properties
+      return;
+    }
 
     yield { type: "index", kind: "method", id: QualifiedName };
 
