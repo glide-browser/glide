@@ -368,6 +368,11 @@ declare global {
        * ```
        */
       show(opts?: glide.CommandLineShowOpts): Promise<void>;
+
+      /**
+       * If the commandline is open and focused.
+       */
+      is_active(): boolean;
     };
 
     excmds: {

@@ -76,6 +76,7 @@ text-decoration: none;
 [`glide.tabs.query()`](#glide.tabs.query)\
 [`glide.commandline`](#glide.commandline)\
 [`glide.commandline.show()`](#glide.commandline.show)\
+[`glide.commandline.is_active()`](#glide.commandline.is_active)\
 [`glide.excmds`](#glide.excmds)\
 [`glide.excmds.execute()`](#glide.excmds.execute)\
 [`glide.excmds.create()`](#glide.excmds.create)\
@@ -521,6 +522,12 @@ glide.commandline.show({
   })),
 });
 ```
+
+{% api-heading id="glide.commandline.is_active" %}
+glide.commandline.is_active(): boolean
+{% /api-heading %}
+
+If the commandline is open and focused.
 
 ## • `glide.excmds` {% id="glide.excmds" %}
 

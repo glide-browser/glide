@@ -2116,6 +2116,9 @@ function make_glide_api(): typeof glide {
 
         await GlideBrowser.upsert_commandline({ prefill: opts?.input, sources });
       },
+      is_active() {
+        return GlideBrowser.is_commandline_focused();
+      },
     },
     excmds: {
       async execute(cmd: GlideCommandString): Promise<void> {

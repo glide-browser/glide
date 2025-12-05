@@ -438,3 +438,23 @@ add_task(async function test_commandline_show_api__options_render() {
     await waiter(() => glide.g.value).is("A");
   });
 });
+
+add_task(async function test_basic_commandline() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("command", "<esc>", "mode_change normal");
+
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = glide.commandline.is_active();
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys("~");
+    await waiter(() => glide.g.value).is(false);
+
+    await keys(":<esc>~");
+    await waiter(() => glide.g.value).is(true);
+  });
+
+  await GlideTestUtils.reload_config(function _() {});
+});
