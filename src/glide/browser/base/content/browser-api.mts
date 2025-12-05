@@ -166,6 +166,11 @@ class GlideOptions implements GlideO {
     this.#newtab_url = value;
     options.newtab_url(value, false);
   }
+
+  plugin_search_roots = [
+    PathUtils.join(GlideBrowser.profile_config_dir, "plugins"),
+    PathUtils.join(GlideBrowser.home_config_dir, "plugins"),
+  ];
 }
 
 // above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have

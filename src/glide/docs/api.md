@@ -58,6 +58,7 @@ text-decoration: none;
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
 [`glide.o.native_tabs`](#glide.o.native_tabs)\
 [`glide.o.newtab_url`](#glide.o.newtab_url)\
+[`glide.o.plugin_search_roots`](#glide.o.plugin_search_roots)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -378,6 +379,16 @@ This may be a local file (e.g. `"file:///path/to/page.html"`) or
 any other URL, e.g. `"https://example.com"`.
 
 `ts:@default "about:newtab"`
+
+### `glide.o.plugin_search_roots` {% id="glide.o.plugin_search_roots" %}
+
+Directories that Glide will scan for plugins.
+
+Plugins should be in the format `$root/*\/glide.ts`.
+
+For example, with `["~/.config/glide/plugins"]`, Glide would load a plugin defined at `~/.config/glide/plugins/github.glide/glide.ts`.
+
+`ts:@default ["<profile directory>/plugins", "~/.config/glide/plugins"]`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
