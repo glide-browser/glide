@@ -579,14 +579,14 @@ declare global {
          * prefix-free combinations of the characters in
          * {@link glide.o.hint_chars}.
          */
-        prefix_free(hints: glide.Hint[]): string[];
+        prefix_free: glide.HintLabelGenerator;
 
         /**
          * Use with {@link glide.o.hint_label_generator} to generate
          * sequential numeric labels, starting at `1` and counting up.
          * Ignores {@link glide.o.hint_chars}.
          */
-        numeric(hints: glide.Hint[]): string[];
+        numeric: glide.HintLabelGenerator;
       };
     };
 
@@ -1023,15 +1023,20 @@ declare global {
     hint_chars: string;
 
     /**
-     * A function to produce labels for `len` hints. You can provide
+     * A function to produce labels for the given hints. You can provide
      * your own function or use an included one:
      *
      *  - {@link glide.hints.label_generators.prefix_free}; this is the
      *    default.
      *
      *  - {@link glide.hints.label_generators.numeric}
+     *
+     * For example:
+     * ```typescript
+     * glide.o.hint_label_generator = ({ hints }) => Array.from({ length: hints.length }).map((_, i) => String(i));
+     * ```
      */
-    hint_label_generator: (hints: glide.Hint[]) => string[];
+    hint_label_generator: glide.HintLabelGenerator;
 
     /**
      * Determines if the current mode will change when certain element types are focused.
@@ -1334,6 +1339,8 @@ declare global {
     };
     /// @docs-skip
     export type ContentHint = glide.Hint & { element: HTMLElement };
+
+    export type HintLabelGenerator = (ctx: { hints: glide.Hint[] }) => string[];
 
     export type HintLocation = "content" | "browser-ui";
 

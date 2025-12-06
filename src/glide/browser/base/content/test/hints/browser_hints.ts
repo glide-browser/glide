@@ -302,7 +302,7 @@ add_task(async function test_hint_keymaps_are_ignored() {
 
 add_task(async function test_hint_generator_config() {
   await GlideTestUtils.reload_config(function _() {
-    glide.o.hint_label_generator = (hints) => {
+    glide.o.hint_label_generator = ({ hints }) => {
       return ["foo", "bar", "baz"].slice(0, hints.length);
     };
     glide.keymaps.set("normal", "f", () => {

@@ -56,8 +56,8 @@ class GlideHintsClass {
       return;
     }
 
-    const hint_gen = GlideBrowser.api.options.get("hint_label_generator");
-    const labels = hint_gen(ipc_hints);
+    const labels_generator = GlideBrowser.api.options.get("hint_label_generator");
+    const labels = labels_generator({ hints: ipc_hints });
 
     for (let i = 0; i < hints.length; i++) {
       const hint = hints[i]!;

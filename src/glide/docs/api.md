@@ -91,8 +91,8 @@ text-decoration: none;
 [`glide.hints`](#glide.hints)\
 [`glide.hints.show()`](#glide.hints.show)\
 [`glide.hints.label_generators`](#glide.hints.label_generators)\
-[`glide.hints.label_generators.prefix_free()`](#glide.hints.label_generators.prefix_free)\
-[`glide.hints.label_generators.numeric()`](#glide.hints.label_generators.numeric)\
+[`glide.hints.label_generators.prefix_free`](#glide.hints.label_generators.prefix_free)\
+[`glide.hints.label_generators.numeric`](#glide.hints.label_generators.numeric)\
 [`glide.buf`](#glide.buf)\
 [`glide.buf.prefs`](#glide.buf.prefs)\
 [`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
@@ -144,6 +144,7 @@ text-decoration: none;
 [`glide.KeymapCallback`](#glide.KeymapCallback)\
 [`glide.KeymapContentCallback`](#glide.KeymapContentCallback)\
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
+[`glide.HintLabelGenerator`](#glide.HintLabelGenerator)\
 [`glide.HintLocation`](#glide.HintLocation)\
 [`glide.SplitViewCreateOpts`](#glide.SplitViewCreateOpts)\
 [`glide.SplitView`](#glide.SplitView)\
@@ -265,15 +266,24 @@ The characters to include in hint labels.
 
 `ts:@default "hjklasdfgyuiopqwertnmzxcvb"`
 
-### `glide.o.hint_label_generator` {% id="glide.o.hint_label_generator" %}
+### `glide.o.hint_label_generator: glide.HintLabelGenerator` {% id="glide.o.hint_label_generator" %}
 
-A function to produce labels for `len` hints. You can provide
+A function to produce labels for the given hints. You can provide
 your own function or use an included one:
 
 - {% link href="#glide.hints.label_generators.prefix_free" class="go-to-def" %} `ts:glide.hints.label_generators.prefix_free`{% /link %}; this is the
   default.
 
 - {% link href="#glide.hints.label_generators.numeric" class="go-to-def" %} `ts:glide.hints.label_generators.numeric`{% /link %}
+
+For example:
+
+```typescript
+glide.o.hint_label_generator = ({ hints }) =>
+  Array.from({ length: hints.length }).map((_, i) =>
+    String(i)
+  );
+```
 
 ### `glide.o.switch_mode_on_focus: boolean` {% id="glide.o.switch_mode_on_focus" %}
 
@@ -651,17 +661,13 @@ a hint is selected.
 
 ### `glide.hints.label_generators` {% id="glide.hints.label_generators" %}
 
-{% api-heading id="glide.hints.label_generators.prefix_free" %}
-glide.hints.label_generators.prefix_free(hints): string[]
-{% /api-heading %}
+#### `glide.hints.label_generators.prefix_free: glide.HintLabelGenerator` {% id="glide.hints.label_generators.prefix_free" %}
 
 Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:glide.o.hint_label_generator`{% /link %} to generate
 prefix-free combinations of the characters in
 {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint_chars`{% /link %}.
 
-{% api-heading id="glide.hints.label_generators.numeric" %}
-glide.hints.label_generators.numeric(hints): string[]
-{% /api-heading %}
+#### `glide.hints.label_generators.numeric: glide.HintLabelGenerator` {% id="glide.hints.label_generators.numeric" %}
 
 Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:glide.o.hint_label_generator`{% /link %} to generate
 sequential numeric labels, starting at `1` and counting up.
@@ -1160,6 +1166,14 @@ glide.ContentFunction<() => void>;
  * The tab that the callback is being executed in.
  */
 tab_id: number;
+```
+
+## • `glide.HintLabelGenerator` {% id="glide.HintLabelGenerator" %}
+
+```typescript {% highlight_prefix="type x = " %}
+(ctx: {
+    hints: glide.Hint[];
+}) => string[]
 ```
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
