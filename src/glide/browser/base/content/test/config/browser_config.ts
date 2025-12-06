@@ -812,7 +812,7 @@ add_task(async function test_registering_mode_twice_results_in_an_error() {
       .querySelector(".message")
       .textContent.trim()
       .replaceAll(CONFIG_LINE_COL_REGEX, ":X:X"),
-    "An error occurred while evaluating `register@chrome://glide/content/browser.mjs:X:X\n@glide.ts:1:13` - Error: The `normal` mode has already been registered. Modes can only be registered once",
+    "An error occurred while evaluating `register@chrome://glide/content/browser-api.mjs:X:X\n@glide.ts:1:13` - Error: The `normal` mode has already been registered. Modes can only be registered once",
     "Notification should contain error message",
   );
 });
