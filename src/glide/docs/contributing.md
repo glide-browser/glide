@@ -173,13 +173,22 @@ add_task(...).skip();
 add_task(...).only();
 ```
 
-TODO: mention docs type checking
+<!-- TODO: mention docs type checking -->
 
-Unfortunately, you cannot yet tell mochitest to run only a specific test file, but you can filter by directory, e.g.
+You can also filter tests by directory:
 
 ```bash
 pnpm mach test glide/browser/base/content/test/config/
 ```
+
+Or individual file:
+
+```bash
+pnpm mach test glide/browser/base/content/test/config/dist/browser_include.js
+```
+
+> [!NOTE]
+> The file has to be the `dist/$file.js` version, you cannot pass TypeScript files yet.
 
 ### Docs
 
