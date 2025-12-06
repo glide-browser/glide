@@ -4,7 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
-const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
@@ -146,7 +145,7 @@ class GlideHintsClass {
 
   #alphabet_cost_maps = new Map<string, Record<string, number>>();
 
-  #make_alphabet_cost_map(alphabet: string): Record<string, number> {
+  make_alphabet_cost_map(alphabet: string): Record<string, number> {
     const cached = this.#alphabet_cost_maps.get(alphabet);
     if (cached) {
       return cached;
@@ -161,15 +160,6 @@ class GlideHintsClass {
 
     this.#alphabet_cost_maps.set(alphabet, cost_map);
     return cost_map;
-  }
-
-  hint_label_prefix_free(len: number): string[] {
-    const hint_chars = GlideBrowser.api.options.get("hint_chars");
-    const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
-    const alphabet = hint_keys.length
-      ? hint_chars.split("").filter((k) => !hint_keys.includes(k))
-      : hint_chars.split("");
-    return Strings.generate_prefix_free_codes(alphabet, len, this.#make_alphabet_cost_map(hint_chars));
   }
 }
 

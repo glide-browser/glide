@@ -23,6 +23,7 @@ const WhichKeyPlugin = ChromeUtils.importESModule("chrome://glide/content/plugin
 const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-commandline.mjs", { global: "current" });
 const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
+const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importESModule(
@@ -2203,7 +2204,16 @@ function make_glide_api(): typeof glide {
 
       label_generators: {
         prefix_free({ hints }) {
-          return GlideHints.hint_label_prefix_free(hints.length);
+          const hint_chars = GlideBrowser.api.options.get("hint_chars");
+          const hint_keys = GlideBrowser.api.keymaps.list("hint").map((k) => k.lhs);
+          const alphabet = hint_keys.length
+            ? hint_chars.split("").filter((k) => !hint_keys.includes(k))
+            : hint_chars.split("");
+          return Strings.generate_prefix_free_codes(
+            alphabet,
+            hints.length,
+            GlideHints.make_alphabet_cost_map(hint_chars),
+          );
         },
 
         numeric({ hints }) {
