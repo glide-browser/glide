@@ -59,6 +59,7 @@ export type Sandbox = {
   document: Document;
   DOM: DOM.Utils;
   FileNotFoundError: typeof Error;
+  DataCloneError: typeof Error;
 } & {
   readonly __brand: unique symbol;
 };
@@ -109,6 +110,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     DOM,
 
     FileNotFoundError,
+    DataCloneError,
 
     // helper function for asserting invariants
     ensure(value: unknown, message?: string) {
@@ -179,6 +181,8 @@ export class FileNotFoundError extends Error {
     this.name = "FileNotFoundError";
   }
 }
+
+export class DataCloneError extends Error {}
 
 export class GlideProcessError extends Error {
   process: glide.CompletedProcess;

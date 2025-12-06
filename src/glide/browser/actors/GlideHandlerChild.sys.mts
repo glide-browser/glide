@@ -400,6 +400,17 @@ export class GlideHandlerChild extends JSWindowActorChild<
         return DOM.is_text_editable(element);
       }
 
+      case "Glide::Query::ExecuteHintAction": {
+        const hint = this.#active_hints.find(hint => hint.id === message.data.id);
+        if (!hint) {
+          throw new Error(`Could not find a hint with ID: ${message.data.id}`);
+        }
+
+        const action = IPC.deserialise_glidefunction(this.sandbox, message.data.action);
+        this._log.debug("activating hint on", hint.element, "with", action);
+        return await action(hint.element);
+      }
+
       default:
         throw assert_never(message);
     }
