@@ -80,3 +80,42 @@ add_task(async function test_include_nested_relative() {
     "relative include() paths should be resolved relative to the config file that executed it",
   );
 });
+
+add_task(async function test_include_fs_relative_api() {
+  await glide.fs.write(PathUtils.join(PathUtils.profileDir, "glide", "data.txt"), "Data from glide profile");
+  await glide.fs.write(
+    PathUtils.join(PathUtils.profileDir, "glide", "plugins", "my-plugin", "data.txt"),
+    "Data from my-plugin",
+  );
+
+  await GlideTestUtils.write_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      glide.g.value = await glide.fs.read("data.txt", "utf8");
+    });
+  }, "plugins/my-plugin/glide.ts");
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "P", async () => {
+      glide.g.value = await glide.fs.read("data.txt", "utf8");
+    });
+
+    glide.unstable.include("plugins/my-plugin/glide.ts");
+  });
+
+  await keys("~");
+  await waiter(() => typeof glide.g.value).is("string");
+  is(
+    glide.g.value,
+    "Data from my-plugin",
+    "glide.fs.read() should read the file relative to the file it was called from",
+  );
+
+  glide.g.value = undefined;
+  await keys("P");
+  await waiter(() => typeof glide.g.value).is("string");
+  is(
+    glide.g.value,
+    "Data from glide profile",
+    "glide.fs.read() should read the file relative to the file it was called from",
+  );
+});

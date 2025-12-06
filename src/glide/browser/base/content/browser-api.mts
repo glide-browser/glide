@@ -77,11 +77,13 @@ class GlideOptions implements GlideO {
   }
 }
 
-export function make_glide_api(): typeof glide {
+export function make_glide_api(
+  { get_config_path, shared_api }: { get_config_path: () => string | null; shared_api?: typeof glide },
+): typeof glide {
   return {
-    g: new GlideGlobals(),
-    o: new GlideOptions(),
-    bo: {},
+    g: shared_api?.g ?? new GlideGlobals(),
+    o: shared_api?.o ?? new GlideOptions(),
+    bo: shared_api?.bo ?? {},
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
         const option = GlideBrowser.api.bo[name];
@@ -774,6 +776,19 @@ export function make_glide_api(): typeof glide {
       },
     },
   };
+
+  function resolve_path(path: string): string {
+    if (PathUtils.isAbsolute(path)) {
+      return path;
+    }
+
+    const config_path = get_config_path();
+    if (!config_path) {
+      throw new Error("Non absolute paths can only be used when there is a config file defined.");
+    }
+
+    return PathUtils.joinRelative(PathUtils.parent(config_path) ?? "/", path);
+  }
 }
 
 async function load_config_at_path({ absolute, relative }: { absolute: string; relative: string }) {
@@ -787,7 +802,10 @@ async function load_config_at_path({ absolute, relative }: { absolute: string; r
     console,
     get glide(): Glide {
       return {
-        ...GlideBrowser.api,
+        ...make_glide_api({
+          get_config_path: () => absolute,
+          shared_api: GlideBrowser.api,
+        }),
         unstable: {
           ...GlideBrowser.api.unstable,
           include: async (new_path) => {
@@ -862,16 +880,4 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
       await addon.uninstall();
     },
   };
-}
-
-function resolve_path(path: string): string {
-  if (PathUtils.isAbsolute(path)) {
-    return path;
-  }
-
-  if (!GlideBrowser.config_path) {
-    throw new Error("Non absolute paths can only be used when there is a config file defined.");
-  }
-
-  return PathUtils.joinRelative(PathUtils.parent(GlideBrowser.config_path) ?? "/", path);
 }

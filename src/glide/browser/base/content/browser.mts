@@ -1003,7 +1003,7 @@ class GlideBrowserClass {
 
   get api(): typeof glide {
     if (this.#api == null) {
-      this.#api = make_glide_api();
+      this.#api = make_glide_api({ get_config_path: () => this.config_path });
     }
     return this.#api;
   }
