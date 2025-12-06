@@ -49,7 +49,11 @@ add_task(async function test_non_zero_exit_code() {
       await proc.wait().catch((err) => {
         glide.g.value = err;
       });
-      glide.g.stdout = await Array.fromAsync((glide.g.value as GlideProcessError).process.stdout.values()).then((
+
+      assert(glide.g.value instanceof GlideProcessError, "1");
+      assert(glide.g.value.name === "GlideProcessError", "2");
+
+      glide.g.stdout = await Array.fromAsync(glide.g.value.process.stdout.values()).then((
         chunks,
       ) => chunks.join(""));
     });

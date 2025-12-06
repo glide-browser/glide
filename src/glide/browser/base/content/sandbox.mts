@@ -58,7 +58,8 @@ export type Sandbox = {
   browser: Browser.Browser;
   document: Document;
   DOM: DOM.Utils;
-  FileNotFoundError: typeof Error;
+  FileNotFoundError: typeof FileNotFoundError;
+  GlideProcessError: typeof GlideProcessError;
 } & {
   readonly __brand: unique symbol;
 };
@@ -109,6 +110,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     DOM,
 
     FileNotFoundError,
+    GlideProcessError,
 
     // helper function for asserting invariants
     ensure(value: unknown, message?: string) {

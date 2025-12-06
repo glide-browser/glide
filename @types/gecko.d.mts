@@ -16,10 +16,14 @@ declare interface MirroredDocument extends Document {
   readonly $brand: "mirror";
 }
 
-declare type HiddenWindow = Window & typeof globalThis & {
-  /* note: this is a type-level only property */
-  readonly $brand: "hidden";
-};
+declare type HiddenWindow =
+  & Window
+  & typeof globalThis
+  & import("../src/glide/browser/base/content/sandbox.mts").Sandbox
+  & {
+    /* note: this is a type-level only property */
+    readonly $brand: "hidden";
+  };
 
 declare type TestContent = {
   document: Omit<Document, "getElementById"> & {
