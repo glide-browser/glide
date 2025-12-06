@@ -351,3 +351,119 @@ add_task(async function test_numeric_hint_generator() {
     }
   });
 });
+
+add_task(async function test_hint_action_function__basic() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      glide.hints.show({
+        selector: "a",
+        async action({ content }) {
+          const href = await content.execute(async (target) => (target as HTMLAnchorElement).href);
+          glide.g.value = href;
+        },
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("~");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    Assert.greater(hints.length, 0, "Should have resolved some hints");
+    await keys(hints[0]!.label);
+
+    await waiter(() => typeof glide.g.value).is("string");
+
+    is(glide.g.value, "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html#section1");
+  });
+});
+
+add_task(async function test_hint_action_function__multiple_calls() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      glide.hints.show({
+        selector: "a",
+        async action({ content }) {
+          const result1 = await content.execute((target) => (target as HTMLAnchorElement).href);
+          const result2 = await content.execute((target) => (target as HTMLAnchorElement).href);
+          glide.g.value = [result1, result2];
+        },
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("~");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    Assert.greater(hints.length, 0, "Should have resolved some hints");
+    await keys(hints[0]!.label);
+
+    await waiter(() => glide.g.value).ok();
+
+    isjson(glide.g.value, [
+      "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html#section1",
+      "http://mochi.test:8888/browser/glide/browser/base/content/test/hints/hints_test.html#section1",
+    ]);
+  });
+});
+
+add_task(async function test_hint_action_function__complex_return() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      glide.hints.show({
+        selector: "a",
+        async action({ content }) {
+          const value = await content.execute(async (target) => ({ id: target.id, arr: [1, 2, 3] }));
+          glide.g.value = value;
+        },
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("~");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    Assert.greater(hints.length, 0, "Should have resolved some hints");
+    await keys(hints[0]!.label);
+
+    await waiter(() => glide.g.value).ok();
+    isjson(glide.g.value, { id: "", arr: [1, 2, 3] });
+  });
+});
+
+add_task(async function test_hint_action_function__bad_return() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      glide.hints.show({
+        selector: "a",
+        async action({ content }) {
+          await content.execute(async (target) => target).catch((err) => {
+            assert((err as Error).name === "DataCloneError");
+            glide.g.value = String(err);
+          });
+        },
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _browser => {
+    await keys("~");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    Assert.greater(hints.length, 0, "Should have resolved some hints");
+    await keys(hints[0]!.label);
+
+    await waiter(() => glide.g.value).ok("Returning a HTMLElement should error");
+
+    is(
+      String(glide.g.value),
+      "DataCloneError: Could not clone hint action() return value; Only JSON serialisable values can be returned",
+    );
+  });
+});

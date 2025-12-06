@@ -147,6 +147,8 @@ text-decoration: none;
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLabelGenerator`](#glide.HintLabelGenerator)\
 [`glide.HintLocation`](#glide.HintLocation)\
+[`glide.HintAction`](#glide.HintAction)\
+[`glide.HintActionProps`](#glide.HintActionProps)\
 [`glide.SplitViewCreateOpts`](#glide.SplitViewCreateOpts)\
 [`glide.SplitView`](#glide.SplitView)\
 [`glide.KeyNotation`](#glide.KeyNotation)\
@@ -1184,6 +1186,25 @@ tab_id: number;
 ```
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
+
+## • `glide.HintAction: "click" | "newtab-click" | ((props: glide.HintActionProps) => Promise<void> | void)` {% id="glide.HintAction" %}
+
+## • `glide.HintActionProps` {% id="glide.HintActionProps" %}
+
+````typescript {% highlight_prefix="type x = {" %}
+content: {
+    /**
+     * Execute the given callback in the content process to extract properties
+     * from the hint element.
+     *
+     * For example:
+     * ```typescript
+     * const href = await content.execute((target) => target.href);
+     * ```
+     */
+    execute<R>(cb: (target: HTMLElement) => R | Promise<R>): Promise<R extends Promise<infer U> ? U : R>;
+};
+````
 
 ## • `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
 

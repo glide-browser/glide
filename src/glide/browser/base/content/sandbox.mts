@@ -58,6 +58,7 @@ export type Sandbox = {
   browser: Browser.Browser;
   document: Document;
   DOM: DOM.Utils;
+  DataCloneError: typeof DataCloneError;
   FileNotFoundError: typeof FileNotFoundError;
   GlideProcessError: typeof GlideProcessError;
 } & {
@@ -109,6 +110,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
 
     DOM,
 
+    DataCloneError,
     FileNotFoundError,
     GlideProcessError,
 
@@ -189,6 +191,10 @@ export class FileNotFoundError extends Error {
     this.path = props.path;
     this.name = "FileNotFoundError";
   }
+}
+
+export class DataCloneError extends Error {
+  override name = "DataCloneError";
 }
 
 export class GlideProcessError extends Error {
