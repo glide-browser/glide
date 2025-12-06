@@ -1060,6 +1060,17 @@ declare global {
      * @default "keys"
      */
     scroll_implementation: "keys" | "legacy";
+
+    /**
+     * Directories that Glide will scan for plugins.
+     *
+     * Plugins should be in the format `$root/*\/glide.ts`.
+     *
+     * For example, with `["~/.config/glide/plugins"]`, Glide would load a plugin defined at `~/.config/glide/plugins/github.glide/glide.ts`.
+     *
+     * @default ["<profile directory>/plugins", "~/.config/glide/plugins"]
+     */
+    plugin_search_roots: string[];
   }
 
   /**
