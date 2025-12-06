@@ -42,14 +42,21 @@ If there are too many hints for each label to have a single character from the a
 
 The algorithm above is implemented by [`glide.hints.label_generators.prefix_free`](api.md#glide.hints.label_generators.prefix_free). You can provide your own generator function by setting [glide.o.hint_label_generator](api.md#glide.o.hint_label_generator).
 
+### Prefix conflicting labels
+
+If you're using anything other than the default hint label generator, you may have hints where the labels overlap, e.g. `a`, and `ab`.
+
+When this happens, and you want to select the shorter hint (e.g. `a`), you'll need to explicitly tell Glide to select it. You can do so by pressing `a` and then `<enter>` (aka `<CR>`).
+
 ## Default key mappings
 
-| Key         | Action                                                           |
-| ----------- | ---------------------------------------------------------------- |
-| `f`         | Enter `hint` mode and activate the selected element via click.   |
-| `F`         | Enter `hint` mode and activate the selected element in a new tab |
-| `<leader>f` | Enter `hint` mode for elements in the browser UI                 |
-| `<esc>`     | Leave `hint` mode and clear all labels                           |
+| Key         | Action                                                                         |
+| ----------- | ------------------------------------------------------------------------------ |
+| `f`         | Enter `hint` mode and activate the selected element via click.                 |
+| `F`         | Enter `hint` mode and activate the selected element in a new tab               |
+| `<leader>f` | Enter `hint` mode for elements in the browser UI                               |
+| `<esc>`     | Leave `hint` mode and clear all labels                                         |
+| `<enter>`   | [Select the hint](#prefix-conflicting-labels) with the currently entered label |
 
 <!-- TODO: link `<leader>` to other docs explaining the leader key once they exist. -->
 
