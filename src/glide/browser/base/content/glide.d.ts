@@ -546,10 +546,7 @@ declare global {
          *
          * This is executed in the content process.
          */
-        action?:
-          | "click"
-          | "newtab-click"
-          | ((target: HTMLElement) => Promise<void>);
+        action?: glide.HintAction;
 
         /**
          * Which area to generate hints for.
@@ -1106,6 +1103,8 @@ declare global {
     constructor(message: string, props: { path: string });
   }
 
+  class DataCloneError extends Error {}
+
   class GlideProcessError extends Error {
     process: glide.CompletedProcess;
     exit_code: number;
@@ -1348,6 +1347,26 @@ declare global {
     export type HintLabelGenerator = (ctx: { hints: glide.Hint[] }) => string[];
 
     export type HintLocation = "content" | "browser-ui";
+
+    export type HintAction =
+      | "click"
+      | "newtab-click"
+      | ((props: glide.HintActionProps) => Promise<void> | void);
+
+    export type HintActionProps = {
+      content: {
+        /**
+         * Execute the given callback in the content process to extract properties
+         * from the hint element.
+         *
+         * For example:
+         * ```typescript
+         * const href = await content.execute((target) => target.href);
+         * ```
+         */
+        execute<R>(cb: (target: HTMLElement) => R | Promise<R>): Promise<R extends Promise<infer U> ? U : R>;
+      };
+    };
 
     export type SplitViewCreateOpts = {
       id?: string;

@@ -74,6 +74,13 @@ export interface ParentQueries {
     props: {};
     result: boolean;
   };
+  "Glide::Query::ExecuteHintAction": {
+    props: {
+      id: number;
+      action: GlideFunctionIPC<(target: HTMLElement) => unknown | Promise<unknown>>;
+    };
+    result: unknown;
+  };
 }
 
 export class GlideHandlerParent extends JSWindowActorParent<
@@ -111,6 +118,10 @@ export class GlideHandlerParent extends JSWindowActorParent<
     if (glide_browser) {
       glide_browser.remove_state_change_listener(this.#state_change_listener);
     }
+  }
+
+  get gBrowser() {
+    return this.browsingContext?.topChromeWindow?.gBrowser;
   }
 
   get glide_browser() {
@@ -186,7 +197,12 @@ export class GlideHandlerParent extends JSWindowActorParent<
           return;
         }
 
-        this.glide_hints!.show_hints(message.data.hints, message.data.location, message.data.auto_activate);
+        this.glide_hints!.show_hints(
+          message.data.hints,
+          message.data.location,
+          this.gBrowser?.$hints_action ?? "click",
+          message.data.auto_activate,
+        );
         break;
       }
 

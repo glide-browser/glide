@@ -6,6 +6,8 @@
 
 /// <reference path="../../../dist/bundled.compiled.d.ts" />
 
+function assert_type<T>(_x: T) {}
+
 // ensure node types are not loaded
 const x: number = setTimeout(() => {}, 1);
 
@@ -156,3 +158,12 @@ glide.o.my_custom_option = "foo";
 
 // options types
 glide.o.yank_highlight = "rgb(255, 255, 0)";
+
+// hints
+glide.hints.show({
+  async action({ content }) {
+    assert_type<Promise<string>>(content.execute(() => "foo"));
+    assert_type<string>(await content.execute(() => "foo"));
+    assert_type<string>(await content.execute((target) => target.id));
+  },
+});

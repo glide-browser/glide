@@ -306,8 +306,10 @@ export function make_glide_api(
           ? GlideBrowser.get_content_actor()
           : assert_never(location);
 
+        gBrowser.$hints_action = opts?.action;
+
         actor.send_async_message("Glide::Hint", {
-          action: IPC.maybe_serialise_glidefunction(opts?.action),
+          action: typeof opts?.action !== "function" ? opts?.action : undefined,
           selector: opts?.selector,
           location: opts?.location ?? "content",
           include: opts?.include,

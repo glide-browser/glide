@@ -4,13 +4,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
+const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { DataCloneError } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 
 class GlideHintsClass {
   show_hints(
     ipc_hints: GlideHintIPC[],
     location: glide.HintLocation,
+    action: glide.HintAction,
     auto_activate: boolean,
   ) {
     this.#clear_hints();
@@ -65,6 +68,7 @@ class GlideHintsClass {
     }
 
     gBrowser.$hints = hints;
+    gBrowser.$hints_action = action;
     gBrowser.$hints_location = location;
 
     document!.body!.insertAdjacentElement("afterend", container);
@@ -75,13 +79,38 @@ class GlideHintsClass {
     container.style.setProperty("display", "none", "important");
   }
 
-  execute(id: number) {
+  async execute(id: number) {
     const location = gBrowser.$hints_location ?? "content";
     const actor = location === "browser-ui"
       ? GlideBrowser.get_chrome_actor()
       : location === "content"
       ? GlideBrowser.get_content_actor()
       : assert_never(location);
+
+    if (typeof gBrowser.$hints_action === "function") {
+      await gBrowser.$hints_action({
+        content: {
+          async execute(cb) {
+            const result = await actor.send_query("Glide::Query::ExecuteHintAction", {
+              id,
+              action: IPC.maybe_serialise_glidefunction(cb),
+            }).catch((err) => {
+              if ((err as Error).name === "DataCloneError") {
+                throw new DataCloneError(
+                  "Could not clone hint action() return value; Only JSON serialisable values can be returned",
+                );
+              }
+
+              throw err;
+            });
+            return result as any;
+          },
+        },
+      });
+      this.remove_hints();
+      return;
+    }
+
     actor.send_async_message("Glide::ExecuteHint", { id });
     this.remove_hints();
   }
@@ -94,6 +123,7 @@ class GlideHintsClass {
     container.innerHTML = "";
 
     gBrowser.$hints = [];
+    gBrowser.$hints_action = undefined;
     gBrowser.$hints_location = undefined;
   }
 
