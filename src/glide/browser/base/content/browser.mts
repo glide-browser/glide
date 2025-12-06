@@ -2654,54 +2654,59 @@ function make_glide_api(): typeof glide {
         },
       },
       async include(path) {
-        const absolute = resolve_path(path);
-
-        GlideBrowser._log.info(`Including \`${absolute}\``);
-        const config_str = await IOUtils.readUTF8(absolute);
-
-        const sandbox = create_sandbox({
-          document: GlideBrowser._mirrored_document,
-          window: GlideBrowser.sandbox_window,
-          original_window: window,
-          console,
-          get glide(): Glide {
-            return {
-              ...GlideBrowser.api,
-              unstable: {
-                ...GlideBrowser.api.unstable,
-                include: async () => {
-                  throw new Error("Nested `.include()` calls are not supported yet");
-                },
-              },
-            };
-          },
-          get browser() {
-            return GlideBrowser.browser_proxy_api;
-          },
-        });
-
-        try {
-          const config_js = TSBlank.default(config_str);
-          Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${path}`, 1, false);
-        } catch (err) {
-          GlideBrowser._log.error(err);
-
-          // TODO: better stack trace
-          const loc = (err as Error).stack ?? path;
-          GlideBrowser.add_notification(GlideBrowser.config_error_id, {
-            label: `An error occurred while evaluating \`${loc}\` - ${err}`,
-            priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-            buttons: [
-              {
-                "l10n-id": "glide-error-notification-reload-config-button",
-                callback: GlideBrowser.reload_config,
-              },
-            ],
-          });
-        }
+        await load_config_at_path({ absolute: resolve_path(path), relative: path });
       },
     },
   };
+}
+
+async function load_config_at_path({ absolute, relative }: { absolute: string; relative: string }) {
+  GlideBrowser._log.info(`Including \`${absolute}\``);
+  const config_str = await IOUtils.readUTF8(absolute);
+
+  const sandbox = create_sandbox({
+    document: GlideBrowser._mirrored_document,
+    window: GlideBrowser.sandbox_window,
+    original_window: window,
+    console,
+    get glide(): Glide {
+      return {
+        ...GlideBrowser.api,
+        unstable: {
+          ...GlideBrowser.api.unstable,
+          include: async (new_path) => {
+            const resolved_path = PathUtils.isAbsolute(new_path)
+              ? new_path
+              : PathUtils.joinRelative(PathUtils.parent(absolute) ?? "/", new_path);
+            return await load_config_at_path({ absolute: resolved_path, relative: new_path });
+          },
+        },
+      };
+    },
+    get browser() {
+      return GlideBrowser.browser_proxy_api;
+    },
+  });
+
+  try {
+    const config_js = TSBlank.default(config_str);
+    Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${relative}`, 1, false);
+  } catch (err) {
+    GlideBrowser._log.error(err);
+
+    // TODO: better stack trace
+    const loc = (err as Error).stack ?? relative;
+    GlideBrowser.add_notification(GlideBrowser.config_error_id, {
+      label: `An error occurred while evaluating \`${loc}\` - ${err}`,
+      priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+      buttons: [
+        {
+          "l10n-id": "glide-error-notification-reload-config-button",
+          callback: GlideBrowser.reload_config,
+        },
+      ],
+    });
+  }
 }
 
 function get_firefox_splitview(id: string): any {

@@ -77,7 +77,8 @@ class GlideTestUtilsClass {
   }
 
   async write_config(config_fn: () => void, path = "glide.ts"): Promise<void> {
-    const absolute = PathUtils.join(PathUtils.profileDir, "glide", path);
+    const absolute = PathUtils.join(PathUtils.profileDir, "glide", ...(path.split("/")));
+    await IOUtils.makeDirectory(PathUtils.parent(absolute)!, { createAncestors: true, ignoreExisting: true });
     await IOUtils.writeUTF8(absolute, this.#get_function_body(config_fn));
   }
 
