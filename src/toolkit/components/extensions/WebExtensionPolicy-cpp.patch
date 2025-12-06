@@ -1,0 +1,19 @@
+diff --git a/toolkit/components/extensions/WebExtensionPolicy.cpp b/toolkit/components/extensions/WebExtensionPolicy.cpp
+index 144f031999410daea82cca4693f914f2166df931..56c64fb39bdad32bdaa068a49e8c10c4a6f6f35b 100644
+--- a/toolkit/components/extensions/WebExtensionPolicy.cpp
++++ b/toolkit/components/extensions/WebExtensionPolicy.cpp
+@@ -785,6 +785,14 @@ WebExtensionContentScript::WebExtensionContentScript(
+ 
+ bool MozDocumentMatcher::Matches(const DocInfo& aDoc,
+                                  bool aIgnorePermissions) const {
++  if (mExtension && mExtension->Id() &&
++      mExtension->Id()->Equals(
++          nsLiteralString(u"glide-internal@mozilla.org"))) {
++    // for the glide system addon, we allow it to match *every* page so that
++    // users can just write code that works everywhere.
++    return true;
++  }
++
+   if (!mFrameID.IsNull()) {
+     if (aDoc.FrameID() != mFrameID.Value()) {
+       return false;
