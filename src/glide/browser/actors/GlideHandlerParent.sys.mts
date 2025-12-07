@@ -153,8 +153,9 @@ export class GlideHandlerParent extends JSWindowActorParent<
     switch (message.name) {
       case "Glide::ChangeMode": {
         if (this.glide_browser?.is_mode_switching_disabled() && !message.data.force) {
-          // the content process requesting to switch out of ignore mode is almost definitely a mistake
-          // so we just ignore this change request unless we're explicitly told to with `force`.
+          // the content process can request to switch modes on focus/blur events, which we do not want
+          // to *actually* apply if `glide.o.switch_mode_on_focus === false`, so to prevent having to make
+          // sure that state in the child is correct, we just allow optional mode change requests.
           //
           // one known case where this can happen is when a tab is first created and some event happens that
           // causes the content process to try to change modes, e.g. focusing an <input>, *before* it's gotten

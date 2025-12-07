@@ -795,11 +795,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
     obj?: ChildQueries[QueryName]["props"] | undefined,
   ) => Promise<ChildQueries[QueryName]["result"]> = this.sendQuery;
 
-  #change_mode(mode: GlideMode): void {
+  #change_mode(mode: GlideMode, force: boolean = true): void {
     this.state ??= { mode, operator: null };
     this.state.mode = mode;
     this.state.operator = null;
-    this.send_async_message("Glide::ChangeMode", { mode });
+    this.send_async_message("Glide::ChangeMode", { mode, force });
     this._log.debug("new mode", this.state?.mode ?? "unset");
   }
 
@@ -894,14 +894,14 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         const new_mode = get_new_mode();
         if (new_mode !== this.state?.mode) {
-          this.#change_mode(new_mode);
+          this.#change_mode(new_mode, false);
         }
 
         break;
       }
       case "blur": {
         if (this.state?.mode !== "normal" && this.state?.mode !== "ignore") {
-          this.#change_mode("normal");
+          this.#change_mode("normal", false);
         }
         break;
       }

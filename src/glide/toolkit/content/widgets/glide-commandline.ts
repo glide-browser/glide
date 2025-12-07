@@ -260,6 +260,8 @@
         this.#sources = sources;
       }
 
+      GlideBrowser._change_mode("command");
+
       const input = this.#get_input();
 
       if (!this.hidden) {
@@ -289,6 +291,8 @@
       if (this.hidden) {
         return;
       }
+
+      GlideBrowser._change_mode("normal");
 
       this.hidden = true;
       this.#last_focused_option?.set_focused(false);

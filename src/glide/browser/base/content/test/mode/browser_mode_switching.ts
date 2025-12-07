@@ -57,3 +57,35 @@ add_task(async function test_auto_disabled__video_fullscreen() {
     is(glide.ctx.mode, "normal", "Mode should stay as `normal` when exiting fullscreen");
   });
 });
+
+add_task(async function test_auto_disabled__commandline_mode_switching() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.switch_mode_on_focus = false;
+  });
+
+  is(glide.ctx.mode, "normal");
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":");
+    await wait_for_mode("command");
+
+    await keys("<esc>");
+    await wait_for_mode("normal");
+  });
+});
+
+add_task(async function test_auto_disabled__hints() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.switch_mode_on_focus = false;
+  });
+
+  is(glide.ctx.mode, "normal");
+
+  await BrowserTestUtils.withNewTab(FILE, async _ => {
+    await keys("f");
+    await wait_for_mode("hint");
+
+    await keys("<esc>");
+    await wait_for_mode("normal");
+  });
+});
