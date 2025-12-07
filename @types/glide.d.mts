@@ -95,4 +95,6 @@ declare interface GlideCompletionOption {
    * Invoked on <C-d>
    */
   delete(ctx: GlideCompletionContext): void | Promise<void>;
+
+  matches?(ctx: GlideCompletionContext): boolean | null;
 }

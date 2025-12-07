@@ -239,18 +239,24 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
   }
 
   search({ input }: GlideCompletionContext, options: CustomCompletionOption[]) {
-    input = input.toLowerCase();
+    const normalised_input = input.toLowerCase();
 
     options.forEach((option) => {
-      const candidates = [
-        option.name,
-        option.description,
-      ]
-        .map(text => text?.toLowerCase())
-        .filter(is_present);
+      const matches = ((): boolean => {
+        const override = option.matches?.({ input });
+        if (override != null) {
+          return override;
+        }
 
-      // TODO(glide): better fuzzy finding
-      const matches = candidates.some(candidate => candidate.includes(input));
+        const candidates = [
+          option.name,
+          option.description,
+        ]
+          .map(text => text?.toLowerCase())
+          .filter(is_present);
+
+        return candidates.some(candidate => candidate.includes(normalised_input));
+      })();
       option.set_hidden(!matches);
     });
   }
@@ -283,6 +289,9 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
         },
         async delete() {
           // not implemented for custom options yet, need to figure out naming
+        },
+        matches(ctx) {
+          return opt.matches?.(ctx) ?? null;
         },
 
         is_focused() {

@@ -1303,6 +1303,23 @@ description?: string;
  */
 render?(): HTMLElement;
 /**
+ * Optional callback used to determine if this option matches the input entered in the commandline.
+ *
+ * This is called every time the input changes.
+ *
+ * `null` can be returned to defer to the default matcher.
+ *
+ * @example
+ * ```typescript
+ * matches({ input }) {
+ *   return my_fuzzy_matcher(input, [bookmark.title]);
+ * }
+ * ```
+ */
+matches?(props: {
+    input: string;
+}): boolean | null;
+/**
  * Callback that is invoked when `<enter>` is pressed while this option is focused.
  *
  * The `input` corresponds to the text entered in the commandline.
