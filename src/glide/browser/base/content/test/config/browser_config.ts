@@ -1295,6 +1295,31 @@ add_task(async function test_styles_add_duplicate_id() {
   is((glide.g.value as Error).message, "A style element has already been registered with ID 'my-styles'");
 });
 
+add_task(async function test_styles_add_duplicate_id_does_not_apply_styles() {
+  const visible_width = get_tabs_bar_width();
+
+  await GlideTestUtils.reload_config(function _() {
+    // empty placeholder
+    glide.styles.add(`#TabsToolbar {}`, { id: "my-styles" });
+
+    try {
+      // actually do the thing in this one, which should fail and not be applied
+      glide.styles.add(
+        css`
+          #TabsToolbar {
+            visibility: collapse !important;
+          }
+        `,
+        { id: "my-styles" },
+      );
+    } catch {
+      // expected
+    }
+  });
+
+  is(get_tabs_bar_width(), visible_width, "duplicate style call should not apply styles");
+});
+
 add_task(async function test_styles_remove() {
   const visible_width = get_tabs_bar_width();
 

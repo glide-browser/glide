@@ -510,18 +510,18 @@ export function make_glide_api(
       const elements = new Map<string, HTMLStyleElement>();
       return {
         add(styles, opts) {
+          if (opts?.id && elements.has(opts.id)) {
+            throw Cu.cloneInto(
+              new Error(`A style element has already been registered with ID '${opts.id}'`),
+              GlideBrowser.sandbox_window,
+            );
+          }
+
           const element = DOM.create_element("style", { textContent: styles });
           document.head!.appendChild(element);
           GlideBrowser.reload_config_remove_elements.add(element);
 
           if (opts?.id) {
-            if (elements.has(opts.id)) {
-              throw Cu.cloneInto(
-                new Error(`A style element has already been registered with ID '${opts.id}'`),
-                GlideBrowser.sandbox_window,
-              );
-            }
-
             elements.set(opts.id, element);
           }
         },
