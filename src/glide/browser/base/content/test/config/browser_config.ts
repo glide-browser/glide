@@ -1299,29 +1299,39 @@ add_task(async function test_styles_remove() {
   const visible_width = get_tabs_bar_width();
 
   await GlideTestUtils.reload_config(function _() {
-    glide.styles.add(
-      css`
-        #TabsToolbar {
-          visibility: collapse !important;
-        }
-      `,
-      { id: "my-id" },
-    );
-
+    glide.keymaps.set("normal", "!", () => {
+      glide.styles.add(
+        css`
+          #TabsToolbar {
+            visibility: collapse !important;
+          }
+        `,
+        { id: "my-id" },
+      );
+    });
     glide.keymaps.set("normal", "~", () => {
       glide.g.value = glide.styles.remove("my-id");
     });
   });
-  Assert.less(get_tabs_bar_width(), visible_width, "applying the custom css should make the tabs toolbar smaller");
 
-  await keys("~");
+  // run the test multiple times to ensure that the same style can be added and removed multiple times
+  for (let i = 0; i < 2; i++) {
+    await keys("!");
+    Assert.less(
+      get_tabs_bar_width(),
+      visible_width,
+      `applying the custom css should make the tabs toolbar smaller (i=${i})`,
+    );
 
-  is(
-    get_tabs_bar_width(),
-    visible_width,
-    "removing the custom css should revert the tabs toolbar to the previous width",
-  );
-  is(glide.g.value, true);
+    await keys("~");
+
+    is(
+      get_tabs_bar_width(),
+      visible_width,
+      `removing the custom css should revert the tabs toolbar to the previous width (i=${i})`,
+    );
+    is(glide.g.value, true, `remove() should return \`true\` as the styles were removed (i=${i})`);
+  }
 });
 
 add_task(async function test_styles_remove_unknown_id() {
