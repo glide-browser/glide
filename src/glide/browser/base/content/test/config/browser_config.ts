@@ -817,6 +817,32 @@ add_task(async function test_registering_mode_twice_results_in_an_error() {
   );
 });
 
+add_task(async function test_modes_list() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.modes.register("test_custom_mode", { caret: "underline" });
+
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = glide.modes.list();
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await keys("~");
+    await until(() => glide.g.value);
+
+    isjson(glide.g.value, [
+      "normal",
+      "visual",
+      "ignore",
+      "insert",
+      "command",
+      "op-pending",
+      "hint",
+      "test_custom_mode",
+    ]);
+  });
+});
+
 add_task(async function test_ctx_mode() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>t", async () => {

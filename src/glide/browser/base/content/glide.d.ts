@@ -899,6 +899,11 @@ declare global {
         mode: Mode,
         opts: { caret: "block" | "line" | "underline" },
       ): void;
+
+      /**
+       * List all registered modes.
+       */
+      list(): GlideMode[];
     };
   };
 

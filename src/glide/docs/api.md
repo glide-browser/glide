@@ -130,6 +130,7 @@ text-decoration: none;
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
 [`glide.modes.register()`](#glide.modes.register)\
+[`glide.modes.list()`](#glide.modes.list)\
 [`glide.SpawnOptions`](#glide.SpawnOptions)\
 [`glide.Process`](#glide.Process)\
 [`glide.CompletedProcess`](#glide.CompletedProcess)\
@@ -999,6 +1000,12 @@ declare global {
 }
 glide.modes.register("leap", { caret: "block" });
 ```
+
+{% api-heading id="glide.modes.list" %}
+glide.modes.list(): GlideMode[]
+{% /api-heading %}
+
+List all registered modes.
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 

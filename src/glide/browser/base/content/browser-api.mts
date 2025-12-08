@@ -505,6 +505,9 @@ export function make_glide_api(
         MODE_SCHEMA_TYPE.enum.push(mode);
         GlideBrowser.key_manager.register_mode(mode);
       },
+      list() {
+        return Object.keys(GlideBrowser._modes) as GlideMode[];
+      },
     },
     styles: ((): typeof glide["styles"] => {
       const elements = new Map<string, HTMLStyleElement>();
