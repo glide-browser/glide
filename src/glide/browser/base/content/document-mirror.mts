@@ -39,12 +39,13 @@ export function mirror_into_document(source: Document, target: Document): Mirror
     throw new Error("alreading mirroring, call stop_mirroring() first");
   }
 
-  const imported = import_node(target, ensure(source.documentElement)) as HTMLElement;
-  target.replaceChild(imported, ensure(target.documentElement));
-
   // store weak mappings between nodes on each side of the tree, so we know what node each mutation corresponds to
   const source_to_mirror = new WeakMap<Node, Node>();
   const mirror_to_source = new WeakMap<Node, Node>();
+
+  const imported = import_node(target, ensure(source.documentElement), source_to_mirror) as HTMLElement;
+  target.replaceChild(imported, ensure(target.documentElement));
+
   store_node_mappings(source.documentElement!, target.documentElement!, source_to_mirror, mirror_to_source);
 
   const opts: MutationObserverInit = {
@@ -165,7 +166,7 @@ function apply_mutations(
             }
           } else {
             // new node
-            const clone = import_node(to_document, node);
+            const clone = import_node(to_document, node, from_to_map);
             to_parent.insertBefore(clone, before_node);
             store_node_mappings(node, clone, from_to_map, to_from_map);
           }
@@ -238,7 +239,7 @@ function store_node_mappings(
  * generally follows the structure of the original, i.e. printing the original tree and the new
  * tree to a string, should be as close as possible. State on the nodes themselves are not transferred.
  */
-function import_node(document: Document, node: Node): Node {
+function import_node(document: Document, node: Node, from_to_map: WeakMap<Node, Node>): Node {
   const node_name = node.nodeName.toLowerCase();
   if (node_name === "browser") {
     // to avoid any weird issues with firefox code that assumes any `<browser>` element has a `browsingContext`
@@ -265,7 +266,12 @@ function import_node(document: Document, node: Node): Node {
   const imported = node instanceof XULElement ? xul_to_element(document, node) : document.importNode(node);
 
   for (const child of node.childNodes) {
-    imported.appendChild(import_node(document, child!));
+    imported.appendChild(
+      // we may be called to import a node where some of its child nodes have *already* been imported into the document
+      // in which case we should reuse the node instead of creating a new one to both avoid redundant work, and to allow
+      // storing a reference to the original node, which would otherwise become stale if we replaced it.
+      from_to_map.get(child!) ?? import_node(document, child!, from_to_map),
+    );
   }
 
   return imported;
@@ -278,5 +284,39 @@ function xul_to_element(document: Document, element: XULElement): Node {
     imported.setAttribute(attr.name, attr.value);
   }
 
+  return imported;
+}
+
+/**
+ * This function behaves similarly to `document.importNode(node, true)` but for the specific case where we have a `Node` constructed
+ * in the mirrored document, *and*, we cannot insert it into the mirrored document directly for whatever reason.
+ *
+ * This happens in the commandline as users can render custom options however they'd like with a `render()` function, but because the commandline
+ * is created in the *chrome* document, we need to manually make sure the mirroring state is correct so that when we eventually get the mutation
+ * event for the commandline options, we don't try and re-import the node.
+ *
+ * For example:
+ *
+ * ```typescript
+ * const node = DOM.create_element('span', { textContent: '', id: 'my-cool-span' });
+ * // ... later after the node has been created in the browser chrome
+ * node.textContent = 'updated value';
+ * ```
+ *
+ * If the node was imported naively then the later mutation would actually not do *anything*, because the node that is actually in the UI
+ * is an entirely different node. The correct mutation code would have to look like this, which is not intuitive at all:
+ *
+ * ```typescript
+ * document.getElementById('my-cool-span')!.textContent = 'updated value';
+ * ```
+ */
+export function import_mirrored_node(props: { mirror: Document; to_document: Document; node: Node }): Node {
+  const mirror = REGISTRY.get(props.mirror);
+  if (!mirror) {
+    throw new Error("No mirror registered for the given document");
+  }
+
+  const imported = import_node(props.to_document, props.node, mirror.mirror_to_source);
+  store_node_mappings(props.node, imported, mirror.mirror_to_source, mirror.source_to_mirror);
   return imported;
 }

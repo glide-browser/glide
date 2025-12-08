@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
+const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 export class ExcmdsCompletionSource implements GlideCompletionSource {
@@ -269,7 +270,11 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
       const node = (() => {
         const node = opt.render?.();
         if (!node) return;
-        return document!.importNode(node, true);
+        return DocumentMirror.import_mirrored_node({
+          node,
+          mirror: GlideBrowser._mirrored_document,
+          to_document: document!,
+        });
       })();
 
       options.push({
