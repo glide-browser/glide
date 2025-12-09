@@ -380,3 +380,16 @@ add_task(async function test_correct_realm_instances() {
     ok(result, `${name} is created in the correct realm`);
   }
 });
+
+add_task(async function test_static_methods() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = URL.canParse("foo");
+    });
+  });
+
+  await keys("~");
+
+  await until(() => glide.g.value != null);
+  notok(glide.g.value, "URL.canParse() should work");
+});

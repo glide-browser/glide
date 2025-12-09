@@ -151,9 +151,18 @@ export function create_sandbox(props: SandboxProps): Sandbox {
 
       Object.defineProperty(proto, name, {
         ...descriptor,
-        ...(descriptor.value && typeof descriptor.value === "function"
-          ? { value: descriptor.value.bind(binder) }
-          : undefined),
+        ...(
+          descriptor.value
+            && typeof descriptor.value === "function"
+            // we only `.bind()` if the function has no other static properties / methods on it as
+            // `.bind()` will strip them which would mean code like `URL.canParse()` would not work.
+            //
+            // if it does have extra properties then it is likely a constructor, and I *think* we are okay
+            // to not `.bind()` at all.
+            && Object.keys(descriptor.value).length === 0
+            ? { value: descriptor.value.bind(binder) }
+            : undefined
+        ),
         ...(descriptor.get
           ? {
             // rebind the getter to ensure it is called on the originating object
