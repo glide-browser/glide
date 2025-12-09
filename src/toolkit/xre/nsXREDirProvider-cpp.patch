@@ -1,8 +1,8 @@
 diff --git a/toolkit/xre/nsXREDirProvider.cpp b/toolkit/xre/nsXREDirProvider.cpp
-index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903f5f13991 100644
+index 64456439499d449ce7f2861b1a5addbeecd61721..854cf1cb19d1cecacb886414c29c1c3e5f3e2a33 100644
 --- a/toolkit/xre/nsXREDirProvider.cpp
 +++ b/toolkit/xre/nsXREDirProvider.cpp
-@@ -275,8 +275,8 @@ nsresult nsXREDirProvider::GetBackgroundTasksProfilesRootDir(
+@@ -312,8 +312,8 @@ nsresult nsXREDirProvider::GetBackgroundTasksProfilesRootDir(
   * Get the directory that is the parent of the system-wide directories
   * for extensions and native manifests.
   *
@@ -13,7 +13,7 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
   *   (for 32- and 64-bit systems respsectively)
   */
  static nsresult GetSystemParentDirectory(nsIFile** aFile) {
-@@ -286,16 +286,16 @@ static nsresult GetSystemParentDirectory(nsIFile** aFile) {
+@@ -323,16 +323,16 @@ static nsresult GetSystemParentDirectory(nsIFile** aFile) {
    rv = GetOSXFolderType(kOnSystemDisk, kApplicationSupportFolderType,
                          getter_AddRefs(localDir));
    if (NS_SUCCEEDED(rv)) {
@@ -34,8 +34,8 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
  #    endif
        ;
    rv = NS_NewNativeLocalFile(dirname, getter_AddRefs(localDir));
-@@ -367,9 +367,9 @@ nsXREDirProvider::GetFile(const char* aProperty, bool* aPersistent,
-     rv = GetUserDataDirectoryHome(getter_AddRefs(file), false);
+@@ -406,9 +406,9 @@ nsXREDirProvider::GetFile(const char* aProperty, bool* aPersistent,
+                                   /* aForceLegacy */ true);
      NS_ENSURE_SUCCESS(rv, rv);
  #  if defined(XP_MACOSX)
 -    rv = file->AppendNative("Mozilla"_ns);
@@ -46,7 +46,7 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
  #  endif  // defined(XP_MACOSX)
    }
  #endif  // defined(XP_UNIX) || defined(XP_MACOSX)
-@@ -399,9 +399,10 @@ nsXREDirProvider::GetFile(const char* aProperty, bool* aPersistent,
+@@ -438,9 +438,10 @@ nsXREDirProvider::GetFile(const char* aProperty, bool* aPersistent,
    else if (!strcmp(aProperty, XRE_SYS_SHARE_EXTENSION_PARENT_DIR)) {
  #  ifdef ENABLE_SYSTEM_EXTENSION_DIRS
  #    if defined(__OpenBSD__) || defined(__FreeBSD__)
@@ -59,7 +59,7 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
  #    endif
      rv = NS_NewNativeLocalFile(nsDependentCString(sysLExtDir),
                                 getter_AddRefs(file));
-@@ -933,7 +934,7 @@ nsresult nsXREDirProvider::GetUpdateRootDir(nsIFile** aResult,
+@@ -973,7 +974,7 @@ nsresult nsXREDirProvider::GetUpdateRootDir(nsIFile** aResult,
              nsDependentCString(hasVendor ? GetAppVendor() : GetAppName())))) {
        return NS_ERROR_FAILURE;
      }
@@ -68,7 +68,7 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
      return NS_ERROR_FAILURE;
    }
  
-@@ -1203,7 +1204,7 @@ nsresult nsXREDirProvider::AppendSysUserExtensionPath(nsIFile* aFile) {
+@@ -1266,7 +1267,7 @@ nsresult nsXREDirProvider::AppendSysUserExtensionPath(nsIFile* aFile) {
  
  #if defined(XP_MACOSX) || defined(XP_WIN)
  
@@ -77,7 +77,7 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
    rv = aFile->AppendNative(nsDependentCString(sXR));
    NS_ENSURE_SUCCESS(rv, rv);
  
-@@ -1213,7 +1214,7 @@ nsresult nsXREDirProvider::AppendSysUserExtensionPath(nsIFile* aFile) {
+@@ -1276,7 +1277,7 @@ nsresult nsXREDirProvider::AppendSysUserExtensionPath(nsIFile* aFile) {
  
  #elif defined(XP_UNIX)
  
@@ -86,7 +86,7 @@ index 89978fcc6e336bf32f8832d30b7546a75f461da8..6a95a4f668e6ade77c8df0209ee27903
    rv = aFile->AppendNative(nsDependentCString(sXR));
    NS_ENSURE_SUCCESS(rv, rv);
  
-@@ -1277,7 +1278,7 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
+@@ -1575,7 +1576,7 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
    // The parent of this directory is set in GetUserDataDirectoryHome
    // XXX: handle gAppData->profile properly
    // XXXsmaug ...and the rest of the profile creation!

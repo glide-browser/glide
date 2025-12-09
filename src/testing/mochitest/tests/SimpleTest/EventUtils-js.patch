@@ -1,8 +1,8 @@
 diff --git a/testing/mochitest/tests/SimpleTest/EventUtils.js b/testing/mochitest/tests/SimpleTest/EventUtils.js
-index 9ab4334bde8ed8480ed1cdd5dca94cb31baa30df..fd8c7c8b1436d1b973763e24e6f43bb5237c6d64 100644
+index f5cdcc756f74ebed56f108f24961d0401ef3ba50..4c87efa57aa4d23a1ab6cf7cc94de851fcafb8a1 100644
 --- a/testing/mochitest/tests/SimpleTest/EventUtils.js
 +++ b/testing/mochitest/tests/SimpleTest/EventUtils.js
-@@ -1657,22 +1657,26 @@ function synthesizeAndWaitNativeMouseMove(
+@@ -1734,22 +1734,26 @@ function synthesizeAndWaitNativeMouseMove(
   * @param {number} [aEvent.repeat]
   *        If you emulate auto-repeat, you should set the count of repeat.
   *        This method will automatically synthesize keydown (and keypress).
@@ -15,8 +15,8 @@ index 9ab4334bde8ed8480ed1cdd5dca94cb31baa30df..fd8c7c8b1436d1b973763e24e6f43bb5
   *        If you want to specify this, you can specify this explicitly.
   *        However, if you don't specify this value, it will be computed
   *        from code value.
-- * @param {String} aEvent.type
-+ * @param {String} [aEvent.type]
+- * @param {string} aEvent.type
++ * @param {string} [aEvent.type]
   *        Basically, you shouldn't specify this.  Then, this function will
   *        synthesize keydown (, keypress) and keyup.
   *        If keydown is specified, this only fires keydown (and keypress if
@@ -33,7 +33,7 @@ index 9ab4334bde8ed8480ed1cdd5dca94cb31baa30df..fd8c7c8b1436d1b973763e24e6f43bb5
   *        Is optional and can be used to receive notifications from TIP.
   *
   * @description
-@@ -3548,7 +3552,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
+@@ -3637,7 +3641,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
   *                The final x coordinate inside srcElement
   * @param {number} aParams.finalY
   *                The final x coordinate inside srcElement

@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 920272322c92e5e075cce63ca535e99549ccb92a..4a75d69d1c31206699da4393c92debaf9c290428 100644
+index 04f3a34510a1e74bac6ebce5b981a1d404e2e178..0de0fd178de5983e99fe29c98756aa51cb8c52c9 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3492,3 +3492,5 @@ pref("toolkit.rust-components.logging.internal-level", "Warn");
- 
- // Settings Redesign 2025 prefs
- pref("browser.settings-redesign.enabled", false);
+@@ -3549,3 +3549,5 @@ pref("browser.settings-redesign.enabled", false);
+ #if defined(MOZ_WIDGET_GTK)
+ pref("widget.support-xdg-config", true, locked);
+ #endif
 +
 +#include glide.js

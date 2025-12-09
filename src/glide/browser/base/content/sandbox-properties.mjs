@@ -879,6 +879,7 @@ export const WINDOW_PROPERTIES = new Set([
   "VideoTrack",
   "VideoTrackList",
   "ViewTransition",
+  "ViewTransitionTypeSet",
   "VisualViewport",
   "WGSLLanguageFeatures",
   "WakeLock",

@@ -92,7 +92,7 @@ function getDragService(): any;
 function _maybeEndDragSession(left: any, top: any, aEvent: any, aWindow: any): boolean;
 function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any): boolean;
 /**
- * @typedef {Object} MouseEventData
+ * @typedef {object} MouseEventData
  *
  * @property {string} [accessKey] - The character or key associated with
  *     the access key event. Typically a single character used to activate a UI
@@ -182,7 +182,7 @@ function synthesizeMouseAtPoint(aLeft: number, aTop: number, aEvent: MouseEventD
  */
 function synthesizeMouseAtCenter(aTarget: Element, aEvent: MouseEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
 /**
- * @typedef {Object} TouchEventData
+ * @typedef {object} TouchEventData
  * @property {boolean} [aEvent.asyncEnabled] - If `true`, the event is
  * dispatched to the parent process through APZ, without being injected
  * into the OS event queue.
@@ -245,7 +245,7 @@ function synthesizeTouchAtPoint(aLeft: number | number[], aTop: number | number[
  */
 function synthesizeTouchAtCenter(aTarget: Element | Element[], aEvent?: TouchEventData, aWindow?: DOMWindow): void;
 /**
- * @typedef {Object} WheelEventData
+ * @typedef {object} WheelEventData
  * @property {string} [aEvent.accessKey] - The character or key associated with
  *     the access key event. Typically a single character used to activate a UI
  *     element via keyboard shortcuts (e.g., Alt + accessKey).
@@ -365,7 +365,7 @@ function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTa
  * @param {object} aParams
  * @param {string} aParams.type "click", "mousedown", "mouseup" or "mousemove"
  * @param {Element} aParams.target Origin of offsetX and offsetY, must be an element
- * @param {Boolean} [aParams.atCenter]
+ * @param {boolean} [aParams.atCenter]
  *        Instead of offsetX/Y, synthesize the event at center of `target`.
  * @param {number} [aParams.offsetX]
  *        X offset in `target` (in CSS pixels if `scale` is "screenPixelsPerCSSPixel")
@@ -377,12 +377,12 @@ function synthesizeNativeTap(aTarget: any, aOffsetX: any, aOffsetY: any, aLongTa
  * @param {number} [aParams.screenY]
  *        Y offset in screen (in CSS pixels if `scale` is "screenPixelsPerCSSPixel"),
  *        Neither offsetX/Y nor atCenter must be set if this is set.
- * @param {String} [aParams.scale="screenPixelsPerCSSPixel"]
+ * @param {string} [aParams.scale="screenPixelsPerCSSPixel"]
  *        If scale is "screenPixelsPerCSSPixel", devicePixelRatio will be used.
  *        If scale is "inScreenPixels", clientX/Y nor scaleX/Y are not adjusted with screenPixelsPerCSSPixel.
  * @param {number} [aParams.button=0]
  *        Defaults to 0, if "click", "mousedown", "mouseup", set same value as DOM MouseEvent.button
- * @param {Object} [aParams.modifiers={}]
+ * @param {object} [aParams.modifiers={}]
  *        Active modifiers, see `_parseNativeModifiers`
  * @param {DOMWindow} [aParams.win=window]
  *        The window to use its utils. Defaults to the window in which EventUtils.js is running.
@@ -400,7 +400,7 @@ function synthesizeNativeMouseEvent(aParams: {
     screenY?: number;
     scale?: string;
     button?: number;
-    modifiers?: any;
+    modifiers?: object;
     win?: DOMWindow;
     elementOnWidget?: Element;
 }, aCallback?: any): void;
@@ -419,7 +419,7 @@ function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY:
  * Synthesize a key event. It is targeted at whatever would be targeted by an
  * actual keypress by the user, typically the focused element.
  *
- * @param {String} aKey
+ * @param {string} aKey
  *        Should be either:
  *
  *        - key value (recommended).  If you specify a non-printable key name,
@@ -429,10 +429,10 @@ function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY:
  *        - keyCode name starting with ``VK_`` (e.g., ``VK_RETURN``).  This is available
  *          only for compatibility with legacy API.  Don't use this with new tests.
  *
- * @param {Object} [aEvent]
+ * @param {object} [aEvent]
  *        Optional event object with more specifics about the key event to
  *        synthesize.
- * @param {String} [aEvent.code]
+ * @param {string} [aEvent.code]
  *        If you don't specify this explicitly, it'll be guessed from aKey
  *        of US keyboard layout.  Note that this value may be different
  *        between browsers.  For example, "Insert" is never set only on
@@ -452,7 +452,7 @@ function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY:
  *        If you want to specify this, you can specify this explicitly.
  *        However, if you don't specify this value, it will be computed
  *        from code value.
- * @param {String} [aEvent.type]
+ * @param {string} [aEvent.type]
  *        Basically, you shouldn't specify this.  Then, this function will
  *        synthesize keydown (, keypress) and keyup.
  *        If keydown is specified, this only fires keydown (and keypress if
@@ -476,7 +476,6 @@ function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY:
  * the modifiers only during dispatching the key events.
  * Note that if some of these values are false, they are ignored (i.e.,
  * not inactivated with this function).
- *
  */
 function synthesizeKey(aKey: string, aEvent?: {
     code?: string;
@@ -838,7 +837,7 @@ function createDragEventObject(aType: any, aDestElement: any, aDestWindow: any, 
  *        ]
  *
  *        Pass null to avoid modifying dataTransfer.
- * @param {String} [aDropEffect="move"]
+ * @param {string} [aDropEffect="move"]
  *        The drop effect to set during the dragstart event, or 'move' if omitted.
  * @param {DOMWindow} [aWindow=window]
  *        The DOM window in which the drag happens. Defaults to the window in which
@@ -846,14 +845,14 @@ function createDragEventObject(aType: any, aDestElement: any, aDestWindow: any, 
  * @param {DOMWindow} [aDestWindow=aWindow]
  *        Used when aDestElement is in a different DOM window than aSrcElement.
  *        Default is to match ``aWindow``.
- * @param {Object} [aDragEvent={}]
+ * @param {object} [aDragEvent={}]
  *        Defaults to empty object. Overwrites an object passed to sendDragEvent.
  * @return {[boolean, DataTransfer]}
  *        A two element array, where the first element is the value returned
  *        from sendDragEvent for dragover event, and the second element is the
  *        dataTransfer for the current drag session.
  */
-function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: any): [boolean, DataTransfer];
+function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: object): [boolean, DataTransfer];
 /**
  * Emulate the drop event and mouseup event.
  * This should be called after synthesizeDragOver.
@@ -867,12 +866,12 @@ function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragDa
  * @param {DOMWindow} [aDestWindow=window]
  *        The DOM window in which the drop happens. Defaults to the window in which
  *        EventUtils.js is loaded.
- * @param {Object} [aDragEvent={}]
+ * @param {object} [aDragEvent={}]
  *        Defaults to empty object. Overwrites an object passed to sendDragEvent.
- * @return {String}
+ * @return {string}
  *        "none" if aResult is true, ``aDataTransfer.dropEffect`` otherwise.
  */
-function synthesizeDropAfterDragOver(aResult: any, aDataTransfer: DataTransfer, aDestElement: Element, aDestWindow?: DOMWindow, aDragEvent?: any): string;
+function synthesizeDropAfterDragOver(aResult: any, aDataTransfer: DataTransfer, aDestElement: Element, aDestWindow?: DOMWindow, aDragEvent?: object): string;
 /**
  * Calls `nsIDragService.startDragSessionForTests`, which is required before
  * any other code can use `nsIDOMWindowUtils.dragSession`. Most notably,
@@ -904,7 +903,7 @@ function startDragSession(aWindow: Window, aDropEffect: typeof DataTransfer.prot
  *            ]
  *
  *        Pass null to avoid modifying dataTransfer.
- * @param {String} [aDropEffect="move"]
+ * @param {string} [aDropEffect="move"]
  *        The drop effect to set during the dragstart event, or 'move' if omitted..
  * @param {DOMWindow} [aWindow=window]
  *        The DOM window in which the drag happens. Defaults to the window in which
@@ -912,12 +911,12 @@ function startDragSession(aWindow: Window, aDropEffect: typeof DataTransfer.prot
  * @param {DOMWindow} [aDestWindow=aWindow]
  *        Used when aDestElement is in a different DOM window than aSrcElement.
  *        Default is to match ``aWindow``.
- * @param {Object} [aDragEvent={}]
+ * @param {object} [aDragEvent={}]
  *        Defaults to empty object. Overwrites an object passed to sendDragEvent.
- * @return {String}
+ * @return {string}
  *        The drop effect that was desired.
  */
-function synthesizeDrop(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: any): string;
+function synthesizeDrop(aSrcElement: Element, aDestElement: Element, aDragData: any[], aDropEffect?: string, aWindow?: DOMWindow, aDestWindow?: DOMWindow, aDragEvent?: object): string;
 function _getFlattenedTreeParentNode(aNode: any): any;
 function _getInclusiveFlattenedTreeParentElement(aNode: any): any;
 function _nodeIsFlattenedTreeDescendantOf(aPossibleDescendant: any, aPossibleAncestor: any): boolean;
@@ -930,7 +929,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
  * Note that if synthesized dragstart is canceled, this throws an exception
  * because in such case, Gecko does not start drag session.
  *
- * @param {Object} aParams
+ * @param {object} aParams
  * @param {Event} aParams.dragEvent
  *                The DnD events will be generated with modifiers specified with this.
  * @param {Element} aParams.srcElement
@@ -958,9 +957,9 @@ function _computeSrcElementFromSrcSelection(aSrcSelection: any): any;
  *                The DOM window for dispatching event on srcElement, defaults to the current window object.
  * @param {DOMWindow} aParams.destWindow
  *                The DOM window for dispatching event on destElement, defaults to the current window object.
- * @param {Boolean} aParams.expectCancelDragStart
+ * @param {boolean} aParams.expectCancelDragStart
  *                Set to true if the test cancels "dragstart"
- * @param {Boolean} aParams.expectSrcElementDisconnected
+ * @param {boolean} aParams.expectSrcElementDisconnected
  *                Set to true if srcElement will be disconnected and
  *                "dragend" event won't be fired.
  * @param {Function} aParams.logFunc
@@ -1001,7 +1000,7 @@ function _checkDataTransferItems(aDataTransfer: any, aExpectedDragData: any): an
  * of "dragstart".  Additionally, this checks whether the dataTransfer of
  * "dragstart" event has only expected items.
  *
- * @param {Object} aParams
+ * @param {object} aParams
  *        The params which is set to the argument of ``synthesizePlainDragAndDrop()``.
  * @param {Array} aExpectedDataTransferItems
  *        All expected dataTransfer items.
@@ -1026,7 +1025,7 @@ function _checkDataTransferItems(aDataTransfer: any, aExpectedDragData: any): an
  *        thrown exception, NOT false.  Therefore, you shouldn't
  *        use.
  */
-function synthesizePlainDragAndCancel(aParams: any, aExpectedDataTransferItems: any[]): boolean;
+function synthesizePlainDragAndCancel(aParams: object, aExpectedDataTransferItems: any[]): boolean;
 function _synthesizeMockDndFromChild(aParams: any): Promise<void>;
 /**
  * Emulate a drag and drop by generating a dragstart from mousedown and mousemove,
@@ -1041,7 +1040,7 @@ function _synthesizeMockDndFromChild(aParams: any): Promise<void>;
  * called from content processes, in which case the drag is over the window
  * that is in context, and no checks of DND internals will occur.
  *
- * @param {Object} aParams
+ * @param {object} aParams
  * @param {Window} aParams.sourceBrowsingCxt
  *                The BrowsingContext (possibly remote) that contains
  *                srcElement.  Only set in parent process.
@@ -1062,32 +1061,32 @@ function _synthesizeMockDndFromChild(aParams: any): Promise<void>;
  * @param {number} aParams.step
  *                The 2D step for intermediate dragging mousemoves.
  *                Default is [5,5].
- * @param {Boolean} aParams.expectCancelDragStart
+ * @param {boolean} aParams.expectCancelDragStart
  *                Set to true if srcElement is set up to cancel "dragstart"
  * @param {number} aParams.cancel
  *                The 2D coord the mouse is moved to as the last step if
  *                expectCancelDragStart is set
- * @param {Boolean} aParams.expectSrcElementDisconnected
+ * @param {boolean} aParams.expectSrcElementDisconnected
  *                Set to true if srcElement will be disconnected and
  *                "dragend" event won't be fired.
- * @param {Boolean} aParams.expectDragLeave
+ * @param {boolean} aParams.expectDragLeave
  *                Set to true if the drop event will be converted to a
  *                dragleave before it is sent (e.g. it was rejected by a
  *                content analysis check).
- * @param {Boolean} aParams.expectNoDragEvents
+ * @param {boolean} aParams.expectNoDragEvents
  *                Set to true if no mouse or drag events should be received
  *                on the source or target.
- * @param {Boolean} aParams.expectNoDragTargetEvents
+ * @param {boolean} aParams.expectNoDragTargetEvents
  *                Set to true if the drag should be blocked from sending
  *                events to the target.
- * @param {Boolean} aParams.dropPromise
+ * @param {boolean} aParams.dropPromise
  *                A promise that the caller will resolve before we check
  *                that the drop has happened.  Default is a pre-resolved
  *                promise.
- * @param {String} aParms.contextLabel
+ * @param {string} aParms.contextLabel
  *                Label that will appear in each output message.  Useful to
  *                distinguish between concurrent calls.  Default is none.
- * @param {Boolean} aParams.throwOnExtraMessage
+ * @param {boolean} aParams.throwOnExtraMessage
  *                Throw an exception in child process when an unexpected
  *                event is received.  Used for debugging.  Default is false.
  * @param {Function} aParams.record
@@ -1104,7 +1103,7 @@ function _synthesizeMockDndFromChild(aParams: any): Promise<void>;
  *                call this from content, to skip testing of DND internals.
  *                This parameter is required in the parent process and is
  *                optional in content processes.
- * @param {Object} aParams.dragController
+ * @param {object} aParams.dragController
  *                MockDragController that the function should use.  This
  *                function will automatically generate one if none is given.
  *                This can only be set in the parent process.

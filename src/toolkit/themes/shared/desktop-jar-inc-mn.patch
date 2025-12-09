@@ -1,9 +1,9 @@
 diff --git a/toolkit/themes/shared/desktop-jar.inc.mn b/toolkit/themes/shared/desktop-jar.inc.mn
-index 9f41a9206d65664a0ff481d874e80a7b02a2f25d..e12e0ce2c1b5022b45abe61bec3892981c340d59 100644
+index 8857ca35818d82886bed547e771d955d41a8ce06..c5eb33376bb9de1d3e9f05eb22fc7bf0a030bebd 100644
 --- a/toolkit/themes/shared/desktop-jar.inc.mn
 +++ b/toolkit/themes/shared/desktop-jar.inc.mn
-@@ -34,6 +34,9 @@
-   skin/classic/global/design-system/tokens-shared.css      (../../shared/design-system/tokens-shared.css)
+@@ -33,6 +33,9 @@
+   skin/classic/global/design-system/tokens-shared.css      (../../shared/design-system/dist/tokens-shared.css)
    skin/classic/global/error-pages.css                      (../../shared/error-pages.css)
    skin/classic/global/findbar.css                          (../../shared/findbar.css)
 +  skin/classic/global/glide.css                            (../../shared/glide.css)
