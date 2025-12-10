@@ -417,6 +417,52 @@ add_task(async function test_numeric_hint_generator() {
   });
 });
 
+add_task(async function test_hint_generator__content() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", () => {
+      glide.hints.show({
+        label_generator: async ({ content }) => {
+          const texts = await content.map((element) => element.textContent ?? "");
+          assert(Array.isArray(texts));
+          assert(texts.length === 2);
+          return texts;
+        },
+        pick: ({ hints }) => hints.slice(0, 2),
+      });
+    });
+  });
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><title>Test</title></head>
+    <body>
+      <a id="s1" onclick="this.textContent = 's1-modified'">s1</a>
+      <a id="s2" onclick="this.textContent = 's2-modified'">s2</a>
+    </body>
+    </html>
+  `;
+
+  await BrowserTestUtils.withNewTab("data:text/html," + encodeURI(html), async browser => {
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    is(hints.length, 2);
+    is(hints[0]!.label, "s1");
+    is(hints[1]!.label, "s2");
+
+    await keys("s1");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => content.document.getElementById("s1")?.textContent === "s1-modified",
+        "executing the hint should modify the element",
+      );
+    });
+  });
+});
+
 add_task(async function test_hint_action_function__basic() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {

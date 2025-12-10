@@ -308,6 +308,7 @@ export function make_glide_api(
 
         gBrowser.$hints_pick = opts?.pick;
         gBrowser.$hints_action = opts?.action;
+        gBrowser.$hints_label_generator = opts?.label_generator;
 
         actor.send_async_message("Glide::Hint", {
           action: typeof opts?.action !== "function" ? opts?.action : undefined,

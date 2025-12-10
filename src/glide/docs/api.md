@@ -146,6 +146,7 @@ text-decoration: none;
 [`glide.KeymapContentCallback`](#glide.KeymapContentCallback)\
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLabelGenerator`](#glide.HintLabelGenerator)\
+[`glide.HintLabelGeneratorProps`](#glide.HintLabelGeneratorProps)\
 [`glide.HintPicker`](#glide.HintPicker)\
 [`glide.HintPickerProps`](#glide.HintPickerProps)\
 [`glide.HintLocation`](#glide.HintLocation)\
@@ -289,6 +290,24 @@ glide.o.hint_label_generator = ({ hints }) =>
     String(i)
   );
 ```
+
+Or using data from the hinted elements through `content.execute()`:
+
+```typescript
+glide.hints.show({
+  async label_generator({ content }) {
+    const texts = await content.execute((element) =>
+      element.textContent
+    );
+    return texts.map((text) =>
+      text.trim().toLowerCase().slice(0, 2)
+    );
+  },
+});
+```
+
+note: the above example is a very naive implementation and will result in issues if there are multiple
+elements that start with the same text.
 
 ### `glide.o.switch_mode_on_focus: boolean` {% id="glide.o.switch_mode_on_focus" %}
 
@@ -1182,10 +1201,26 @@ tab_id: number;
 ## • `glide.HintLabelGenerator` {% id="glide.HintLabelGenerator" %}
 
 ```typescript {% highlight_prefix="type x = " %}
-(ctx: {
-    hints: glide.Hint[];
-}) => string[]
+(ctx: HintLabelGeneratorProps) => string[] | Promise<string[]>
 ```
+
+## • `glide.HintLabelGeneratorProps` {% id="glide.HintLabelGeneratorProps" %}
+
+````typescript {% highlight_prefix="type x = {" %}
+hints: glide.Hint[];
+content: {
+    /**
+     * Executes the given callback in the content process to extract properties
+     * from the all elements that are being hinted.
+     *
+     * For example:
+     * ```typescript
+     * const texts = await content.map((target) => target.textContent);
+     * ```
+     */
+    map<R>(cb: (target: HTMLElement, index: number) => R | Promise<R>): Promise<Awaited<R>[]>;
+};
+````
 
 ## • `glide.HintPicker` {% id="glide.HintPicker" %}
 
