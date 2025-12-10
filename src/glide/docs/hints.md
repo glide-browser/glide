@@ -48,6 +48,34 @@ If you're using anything other than the default hint label generator, you may ha
 
 When this happens, and you want to select the shorter hint (e.g. `a`), you'll need to explicitly tell Glide to select it. You can do so by pressing `a` and then `<enter>` (aka `<CR>`).
 
+## Actions
+
+The builtin actions you can perform on the selected element are:
+
+- `click` (default)
+- `newtab-click`
+
+For example:
+
+```typescript
+glide.hints.show({ action: "newtab-click" });
+```
+
+You can also perform _arbitrary_ actions with the selected element.
+
+For example, to copy the text of an element to your clipboard you can use:
+
+```typescript
+glide.hints.show({
+  async action({ content }) {
+    const text = await content.execute((target) =>
+      target.textContent ?? ""
+    );
+    await navigator.clipboard.writeText(text);
+  },
+});
+```
+
 ## Default key mappings
 
 | Key         | Action                                                                         |
