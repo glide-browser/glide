@@ -1192,6 +1192,10 @@ tab_id: number;
 ## • `glide.HintActionProps` {% id="glide.HintActionProps" %}
 
 ````typescript {% highlight_prefix="type x = {" %}
+/**
+ * The resolved hint that is being executed.
+ */
+hint: glide.ResolvedHint;
 content: {
     /**
      * Execute the given callback in the content process to extract properties
