@@ -53,3 +53,15 @@ export function object_assign(target: Obj, ...sources: Obj[]): any {
   }
   return target;
 }
+
+/**
+ * Whether or not the given object has any keys.
+ *
+ * Equivalent to `Object.keys(obj) === false` but should be slightly faster.
+ */
+export function is_empty(obj: object): boolean {
+  for (const _ in obj) {
+    return false;
+  }
+  return true;
+}

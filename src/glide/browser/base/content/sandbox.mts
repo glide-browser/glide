@@ -23,6 +23,7 @@ const { WINDOW_PROPERTIES } = ChromeUtils.importESModule("chrome://glide/content
 const Dedent = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.mjs");
 const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { AssertionError } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { is_empty } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 
 // note: do ***not*** add an entry to this Set without first checking if the API can be used to
 //       access the bound window, if this is the case then you *cannot* add it here.
@@ -161,7 +162,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
             //
             // if it does have extra properties then it is likely a constructor, and I *think* we are okay
             // to not `.bind()` at all.
-            && Object.keys(descriptor.value).length === 0
+            && is_empty(descriptor.value)
             ? { value: descriptor.value.bind(binder) }
             : undefined
         ),
