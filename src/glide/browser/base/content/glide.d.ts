@@ -1343,6 +1343,8 @@ declare global {
     };
     /// @docs-skip
     export type ContentHint = glide.Hint & { element: HTMLElement };
+    /// @docs-skip
+    export type ResolvedHint = glide.Hint & { label: string };
 
     export type HintLabelGenerator = (ctx: { hints: glide.Hint[] }) => string[];
 
@@ -1354,6 +1356,11 @@ declare global {
       | ((props: glide.HintActionProps) => Promise<void> | void);
 
     export type HintActionProps = {
+      /**
+       * The resolved hint that is being executed.
+       */
+      hint: glide.ResolvedHint;
+
       content: {
         /**
          * Execute the given callback in the content process to extract properties
