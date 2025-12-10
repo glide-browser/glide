@@ -6,7 +6,7 @@
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
-const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { DataCloneError } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 
 class GlideHintsClass {
@@ -88,7 +88,10 @@ class GlideHintsClass {
       : assert_never(location);
 
     if (typeof gBrowser.$hints_action === "function") {
+      const hints = assert_present(gBrowser.$hints, "No hints defined");
+      const hint = assert_present(hints.find((hint) => hint.id === id), `Could not find a hint with ID ${id}`);
       await gBrowser.$hints_action({
+        hint,
         content: {
           async execute(cb) {
             const result = await actor.send_query("Glide::Query::ExecuteHintAction", {
