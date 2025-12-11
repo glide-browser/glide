@@ -1697,16 +1697,18 @@ declare global {
      *
      * `<C-` -> `<C-a>` | `<C-D-` ...
      * `<leader>` -> `<leader>f` | `<leader><CR>` ...
+     * `<leader>-` -> `<leader>-a` | `<leader>-<CR>` ...
      * `g` -> `gg` | `gj` ...
      */
     type T<LHS> = LHS extends "" ? SingleKey
-      : LHS extends "<" ? SpecialKey | `<${ModifierKey}-`
+      : LHS extends "<" ? LHS | SpecialKey | `<${ModifierKey}-`
       : LHS extends `${infer S}<${infer M}-` ?
+          | LHS
           | `${S}<${M}-${Exclude<StripAngles<SingleKey>, ModifierKey>}>`
           | `${S}<${M}-${ModifierKey}-`
-          | (S & {})
-      : LHS extends `${infer S}<` ? `${S}${SpecialKey}` | S
-      : LHS extends `${infer S}` ? `${S}${SingleKey}` | S
+      : LHS extends `${infer S}<` ? LHS | `${S}${SpecialKey}`
+      : LHS extends `${infer S}-` ? LHS | `${S}-${SingleKey}`
+      : LHS extends `${infer S}` ? LHS | `${S}${SingleKey}`
       : LHS;
 
     /**

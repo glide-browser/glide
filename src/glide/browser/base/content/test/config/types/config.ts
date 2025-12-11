@@ -78,10 +78,12 @@ glide.keymaps.set("normal", "x", "help");
 glide.keymaps.set("normal", "p", "help");
 glide.keymaps.set("normal", "<C-space>", "help");
 glide.keymaps.set("normal", "<S-F5>", "help");
+glide.keymaps.set("normal", "<leader>-", "help");
+glide.keymaps.set("normal", "<<", "help");
+glide.keymaps.set("normal", "<", "help");
 
 // @ts-expect-error empty string
 glide.keymaps.set("normal", "", "help");
-// @ts-expect-error partially completed modifier
 glide.keymaps.set("normal", "<A-", "help");
 
 glide.autocmds.create("ConfigLoaded", () => {});
