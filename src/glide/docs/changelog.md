@@ -119,6 +119,8 @@ glide.hints.show({
 });
 ```
 
+Thanks to [@peff](https://github.com/peff) for the contribution!
+
 ## Changes {% id="0.1.56a-breaking-changes" %}
 
 - Bumped Firefox from 146.0b9 to 147.0b3
@@ -128,6 +130,7 @@ glide.hints.show({
 - Added support for overriding commandline custom option matching so you can bring your own fuzzy finder
 - Added `<CR>` keymapping to accept the hint with typed label
   - This is helpful for custom label generator functions that may define labels with the same prefix
+  - Thanks to [@peff](https://github.com/peff) for the contribution!
 - Added support for [`DOM.create_element()`](api.md#DOM.create_element) in the content process
 - Fixed [`glide.o.switch_mode_on_focus`](api.md#glide.o.switch_mode_on_focus) disabling certain non-focus mode changes
 - Fixed keymap types to correctly allow `<leader>-`, `<<`, `<` and other similar sequences
