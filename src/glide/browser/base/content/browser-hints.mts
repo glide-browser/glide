@@ -75,6 +75,10 @@ class GlideHintsClass {
 
     const hints = picked_hints.map((hint): GlideResolvedHint => ({ ...hint, label: "" }));
 
+    gBrowser.$hints = hints;
+    gBrowser.$hints_action = action;
+    gBrowser.$hints_location = location;
+
     if (auto_activate && hints.length === 1) {
       this.execute(hints[0]!.id);
       return;
@@ -94,11 +98,6 @@ class GlideHintsClass {
       });
       container.appendChild(hint_div);
     }
-
-    gBrowser.$hints = hints;
-    gBrowser.$hints_action = action;
-    gBrowser.$hints_location = location;
-
     document!.body!.insertAdjacentElement("afterend", container);
   }
 

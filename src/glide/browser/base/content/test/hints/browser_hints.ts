@@ -130,6 +130,25 @@ add_task(async function test_auto_activate_single_hint() {
   });
 });
 
+add_task(async function test_auto_activate_single_hint__action() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", () =>
+      glide.hints.show({
+        auto_activate: true,
+        action() {
+          glide.g.value = true;
+        },
+      }));
+  });
+
+  await BrowserTestUtils.withNewTab(SINGLE_HINT_FILE, async _ => {
+    await keys("f");
+    await wait_for_mode("normal");
+
+    await waiter(() => glide.g.value).ok("executing the hint should execute the action() function");
+  });
+});
+
 add_task(async function test_include_selector() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "f", "hint");
