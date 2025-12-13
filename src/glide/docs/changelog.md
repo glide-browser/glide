@@ -17,6 +17,128 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.56a
+
+## Breaking changes {% id="0.1.56a-breaking-changes" %}
+
+### Hint callback execution {% id="0.1.56a-hint-callback-execution" %}
+
+The `action` and `pick` callbacks are now executed in the main process, _not_ the content process. This change was made so that you can access the `glide` API in the callbacks, making them much more useful.
+
+For example, only selecting the hint with the largest width:
+
+```typescript
+// before
+glide.hints.show({
+  pick: (hints) => {
+    let biggest_hint = hints[0]!;
+    let biggest_width = hints[0]!.element.offsetWidth;
+    for (let i = 1; i < hints.length; i++) {
+      const hint = hints[i]!;
+      const width = hint.element.offsetWidth;
+      if (width > biggest_width) {
+        biggest_hint = hint;
+        biggest_width = width;
+      }
+    }
+    return [biggest_hint];
+  },
+});
+
+// after
+glide.hints.show({
+  pick: async ({ hints, content }) => {
+    const widths = await content.map((element) =>
+      element.offsetWidth
+    );
+    let biggest_hint = hints[0]!;
+    let biggest_width = widths[0]!;
+    for (let i = 1; i < hints.length; i++) {
+      const hint = hints[i]!;
+      const width = widths[i]!;
+      if (width > biggest_width) {
+        biggest_hint = hint;
+        biggest_width = width;
+      }
+    }
+    return [biggest_hint];
+  },
+});
+```
+
+For the `action` function:
+
+```typescript
+// before
+glide.hints.show({
+  action: (element) => {
+    element.click();
+  },
+});
+
+// after
+glide.hints.show({
+  action: async ({ content }) => {
+    await content.execute((element) => element.click());
+  },
+});
+```
+
+### Relative path resolution {% id="0.1.56a-hint-callback-execution" %}
+
+Previously calls to APIs like [`glide.fs.read()`](api.md#glide.fs.read) with relative paths would resolve relative to the config file instead of the current file.
+
+For example:
+
+```typescript
+// <config>/glide.ts
+glide.unstable.include("foo/bar/stuff.glide.ts");
+
+// <config>/foo/bar/stuff.glide.ts
+glide.fs.read("data.json");
+```
+
+0.1.55a would read `path:<config>/data.json`
+
+0.1.56a will now read `path:<config>/foo/bar/data.json`
+
+## Custom hint label generators {% id="0.1.56a-custom-hint-label-generators" %}
+
+You can now override label generation for hints to use whatever strategy you'd like.
+
+For example, a _very_ naive implementation for using the first two characters of the element text as the label:
+
+```typescript
+glide.hints.show({
+  label_generator: async ({ content }) => {
+    const texts = await content.map((element) =>
+      element.textContent!
+    );
+    return texts.map((text) => text.slice(0, 2));
+  },
+});
+```
+
+## Changes {% id="0.1.56a-breaking-changes" %}
+
+- Bumped Firefox from 146.0b9 to 147.0b3
+- Added support for nested [`glide.unstable.include()`](api.md#glide.unstable.include) calls
+- Added [`glide.modes.list()`](api.md#glide.modes.list)
+- Added [`glide.commandline.is_active()`](api.md#glide.commandline.is_active)
+- Added support for overriding commandline custom option matching so you can bring your own fuzzy finder
+- Added `<CR>` keymapping to accept the hint with typed label
+  - This is helpful for custom label generator functions that may define labels with the same prefix
+- Added support for [`DOM.create_element()`](api.md#DOM.create_element) in the content process
+- Fixed [`glide.o.switch_mode_on_focus`](api.md#glide.o.switch_mode_on_focus) disabling certain non-focus mode changes
+- Fixed keymap types to correctly allow `<leader>-`, `<<`, `<` and other similar sequences
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Fixed repeated [`glide.styles.remove()`](api.md#glide.styles.remove) calls with the same ID
+- Fixed [`glide.styles.add()`](api.md#glide.styles.add) erroneously adding duplicate styles
+- Fixed static properties / methods on builtin classes not being accessible, e.g. `URL.canParse()`
+- Fixed `GlideProcessError` not being exposed to the sandbox
+- Fixed [`glide.hints.show()`](api.md#glide.hints.show) with `auto_activate: true` not respecting `action: () => ...`
+- Fixed elements returned by commandline options `render()` functions from being needlessly duplicated, and breaking references
+
 # 0.1.55a
 
 ### Picker API {% id="0.1.55a-picker-api" %}
