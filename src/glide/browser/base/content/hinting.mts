@@ -178,17 +178,19 @@ function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
 }
 
 export const pickers = {
-  biggest_area: (hints) => {
+  biggest_area: async ({ hints, content }) => {
     if (!hints.length) {
       return [];
     }
 
+    const areas = await content.map((element) => element.offsetWidth * element.offsetHeight);
+
     let biggest_hint = hints[0]!;
-    let biggest_area = hints[0]!.element.offsetWidth * hints[0]!.element.offsetHeight;
+    let biggest_area = areas[0]!;
 
     for (let i = 1; i < hints.length; i++) {
       const hint = hints[i]!;
-      const area = hint.element.offsetWidth * hint.element.offsetHeight;
+      const area = areas[i]!;
 
       if (area > biggest_area) {
         biggest_hint = hint;
@@ -198,4 +200,4 @@ export const pickers = {
 
     return [biggest_hint];
   },
-} satisfies Record<string, (hints: glide.ContentHint[]) => glide.ContentHint[]>;
+} satisfies Record<string, glide.HintPicker>;

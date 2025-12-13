@@ -306,6 +306,7 @@ export function make_glide_api(
           ? GlideBrowser.get_content_actor()
           : assert_never(location);
 
+        gBrowser.$hints_pick = opts?.pick;
         gBrowser.$hints_action = opts?.action;
 
         actor.send_async_message("Glide::Hint", {
@@ -316,7 +317,6 @@ export function make_glide_api(
           editable_only: opts?.editable ?? undefined,
           include_click_listeners: opts?.include_click_listeners,
           auto_activate: opts?.auto_activate ?? false,
-          pick: IPC.maybe_serialise_glidefunction(opts?.pick),
           browser_ui_rect: LayoutUtils.getElementBoundingScreenRect(document!.body),
           debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
