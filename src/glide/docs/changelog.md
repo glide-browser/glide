@@ -27,7 +27,7 @@ The `action` and `pick` callbacks are now executed in the main process, _not_ th
 
 For example, only selecting the hint with the largest width:
 
-```typescript
+```typescript {% check="false" %}
 // before
 glide.hints.show({
   pick: (hints) => {
@@ -68,7 +68,7 @@ glide.hints.show({
 
 For the `action` function:
 
-```typescript
+```typescript {% check="false" %}
 // before
 glide.hints.show({
   action: (element) => {
@@ -90,7 +90,7 @@ Previously calls to APIs like [`glide.fs.read()`](api.md#glide.fs.read) with rel
 
 For example:
 
-```typescript
+```typescript {% check="false" %}
 // <config>/glide.ts
 glide.unstable.include("foo/bar/stuff.glide.ts");
 
