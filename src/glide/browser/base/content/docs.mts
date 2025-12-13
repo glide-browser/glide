@@ -676,7 +676,7 @@ class RenderState {
               <line x1="12" y1="9" x2="12" y2="13"></line>
               <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <span>Glide is in very <strong>early alpha</strong>. There will be many missing features and bugs.</span>
+            <span>Glide is in <strong>alpha</strong>. There will be missing features and bugs.</span>
           </div>
         `,
         content: "",
