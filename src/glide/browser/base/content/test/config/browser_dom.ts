@@ -3,7 +3,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 "use strict";
+
+const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
+
 declare var document: Document;
+declare var content: TestContent;
 
 add_task(async function test_create_element_attributes() {
   await GlideTestUtils.reload_config(function _() {
@@ -85,4 +89,27 @@ add_task(async function test_create_element_props_cannot_pass_both() {
 
   await glide.keys.send("~");
   await waiter(() => glide.g.value).is("Error: Cannot pass props twice");
+});
+
+add_task(async function test_available_in_content() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set(
+      "normal",
+      "~",
+      glide.content.fn(async () => {
+        document.body!.appendChild(DOM.create_element("div", { id: "my-glide-tester-element" }));
+      }),
+    );
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
+    await glide.keys.send("~");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => content.document.getElementById("my-glide-tester-element"),
+        "Waiting for keymapping fn to create element",
+      );
+    });
+  });
 });

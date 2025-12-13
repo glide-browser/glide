@@ -1,8 +1,8 @@
 diff --git a/toolkit/components/extensions/ExtensionContent.sys.mjs b/toolkit/components/extensions/ExtensionContent.sys.mjs
-index 97404bb84a3fee179524c734a491b8b571477983..c7b678c2afb9b8347953765a65da6cccfb9c2f74 100644
+index 988c32980bca19128ad893a188862d535f1e0017..08148625d3dedef636428ad585080bcc996e9f6c 100644
 --- a/toolkit/components/extensions/ExtensionContent.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionContent.sys.mjs
-@@ -1115,6 +1115,37 @@ export class ContentScriptContextChild extends BaseContext {
+@@ -1115,6 +1115,53 @@ export class ContentScriptContextChild extends BaseContext {
      );
      lazy.Schemas.exportLazyGetter(this.sandbox, "chrome", () => this.chromeObj);
  
@@ -35,6 +35,22 @@ index 97404bb84a3fee179524c734a491b8b571477983..c7b678c2afb9b8347953765a65da6ccc
 +          return obj
 +        }
 +      );
++      lazy.Schemas.exportLazyGetter(this.sandbox, "DOM", () => {
++        const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs")
++
++        let obj = Cu.createObjectIn(this.sandbox);
++
++        obj.create_element = (tag_name, props_or_children, props) => {
++          return DOMUtils.create_element(
++            tag_name,
++            props_or_children,
++            props,
++            this.contentWindow.document
++          );
++        };
++
++        return obj;
++      });
 +    }
 +
      // Keep track if the userScript API script has been already executed in this context
