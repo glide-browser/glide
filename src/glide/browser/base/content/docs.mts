@@ -1097,9 +1097,9 @@ function is_text_span(
 }
 
 function canonical_url(relative_dist_path: string): string {
-  const path = relative_dist_path.replace(/\.html$/, "")
+  const path = relative_dist_path.replace(/\.html$/, "");
   if (path === "index") {
-    return "https://glide-browser.app/"
+    return "https://glide-browser.app/";
   }
-  return `https://glide-browser.app/${path}`
+  return `https://glide-browser.app/${path}`;
 }
