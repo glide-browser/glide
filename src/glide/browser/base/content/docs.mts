@@ -141,6 +141,7 @@ export async function markdown_to_html(
           as="font"
           type="font/woff2"
           crossorigin="anonymous" />
+        <link rel="canonical" href="${canonical_url(props.relative_dist_path)}" />
 
         ${
     state.styles
@@ -1093,4 +1094,12 @@ function is_text_span(
     && node.children.length === 1
     && node.children[0]!.type === "text"
   );
+}
+
+function canonical_url(relative_dist_path: string): string {
+  const path = relative_dist_path.replace(/\.html$/, "")
+  if (path === "index") {
+    return "https://glide-browser.app/"
+  }
+  return `https://glide-browser.app/${path}`
 }
