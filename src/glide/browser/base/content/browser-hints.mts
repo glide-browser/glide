@@ -10,10 +10,11 @@ const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://gl
 const { DataCloneError } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 
 class GlideHintsClass {
-  show_hints(
+  async show_hints(
     ipc_hints: GlideHintIPC[],
     location: glide.HintLocation,
     action: glide.HintAction,
+    pick: glide.HintPicker | undefined,
     auto_activate: boolean,
   ) {
     this.#clear_hints();
@@ -36,16 +37,43 @@ class GlideHintsClass {
       return;
     }
 
+    const actor = location === "browser-ui"
+      ? GlideBrowser.get_chrome_actor()
+      : location === "content"
+      ? GlideBrowser.get_content_actor()
+      : assert_never(location);
+
     // the hints return an x/y of the screen rect, so to position it correctly inside the browser UI
     // we need to figure out what the screen rect is for the browser itself and then subtract that
     // from the hint x/y
     const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(document!.body);
-    const hints: GlideResolvedHint[] = ipc_hints.map((hint) => ({
+    const base_hints = ipc_hints.map((hint): glide.Hint => ({
       ...hint,
-      label: "",
       x: hint.x - chrome_ui_box.x,
       y: hint.y - chrome_ui_box.y,
     }));
+
+    const picked_hints = (await pick?.({
+      hints: base_hints,
+      content: {
+        async map(cb) {
+          const result = await actor.send_query("Glide::Query::InvokeOnAllHints", {
+            callback: IPC.maybe_serialise_glidefunction(cb),
+          }).catch((err) => {
+            if ((err as Error).name === "DataCloneError") {
+              throw new DataCloneError(
+                "Could not clone hint pick() return value; Only JSON serialisable values can be returned",
+              );
+            }
+
+            throw err;
+          });
+          return result as any;
+        },
+      },
+    })) ?? base_hints;
+
+    const hints = picked_hints.map((hint): GlideResolvedHint => ({ ...hint, label: "" }));
 
     if (auto_activate && hints.length === 1) {
       this.execute(hints[0]!.id);
@@ -53,7 +81,7 @@ class GlideHintsClass {
     }
 
     const labels_generator = GlideBrowser.api.options.get("hint_label_generator");
-    const labels = labels_generator({ hints: ipc_hints });
+    const labels = labels_generator({ hints });
 
     for (let i = 0; i < hints.length; i++) {
       const hint = hints[i]!;
@@ -126,6 +154,7 @@ class GlideHintsClass {
     container.innerHTML = "";
 
     gBrowser.$hints = [];
+    gBrowser.$hints_pick = undefined;
     gBrowser.$hints_action = undefined;
     gBrowser.$hints_location = undefined;
   }

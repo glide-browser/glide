@@ -146,6 +146,8 @@ text-decoration: none;
 [`glide.KeymapContentCallback`](#glide.KeymapContentCallback)\
 [`glide.KeymapCallbackProps`](#glide.KeymapCallbackProps)\
 [`glide.HintLabelGenerator`](#glide.HintLabelGenerator)\
+[`glide.HintPicker`](#glide.HintPicker)\
+[`glide.HintPickerProps`](#glide.HintPickerProps)\
 [`glide.HintLocation`](#glide.HintLocation)\
 [`glide.HintAction`](#glide.HintAction)\
 [`glide.HintActionProps`](#glide.HintActionProps)\
@@ -1184,6 +1186,30 @@ tab_id: number;
     hints: glide.Hint[];
 }) => string[]
 ```
+
+## • `glide.HintPicker` {% id="glide.HintPicker" %}
+
+```typescript {% highlight_prefix="type x = " %}
+(props: glide.HintPickerProps) => glide.Hint[] | Promise<glide.Hint[]>
+```
+
+## • `glide.HintPickerProps` {% id="glide.HintPickerProps" %}
+
+````typescript {% highlight_prefix="type x = {" %}
+hints: glide.Hint[];
+content: {
+    /**
+     * Executes the given callback in the content process to extract properties
+     * from the all elements that are being hinted.
+     *
+     * For example:
+     * ```typescript
+     * const areas = await content.map((element) => element.offsetWidth * element.offsetHeight);
+     * ```
+     */
+    map<R>(cb: (target: HTMLElement, index: number) => R | Promise<R>): Promise<Awaited<R>[]>;
+};
+````
 
 ## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
 

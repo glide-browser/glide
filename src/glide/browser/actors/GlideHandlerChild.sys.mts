@@ -36,12 +36,7 @@ export interface ChildQueries {}
 type HintAction = ToDeserialisedIPCFunction<
   ParentMessages["Glide::Hint"]["action"]
 >;
-type HintProps = Omit<ParentMessages["Glide::Hint"], "action" | "pick"> & {
-  action?: HintAction;
-  pick?: ToDeserialisedIPCFunction<
-    ParentMessages["Glide::Hint"]["pick"]
-  >;
-};
+type HintProps = Omit<ParentMessages["Glide::Hint"], "action"> & { action?: HintAction };
 
 export class GlideHandlerChild extends JSWindowActorChild<
   ChildMessages,
@@ -227,7 +222,6 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "Glide::Hint": {
         this.#start_hints({
           ...message.data,
-          pick: IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.pick),
           action: IPC.maybe_deserialise_glidefunction(this.sandbox, message.data.action),
         });
         break;
@@ -409,6 +403,18 @@ export class GlideHandlerChild extends JSWindowActorChild<
         const action = IPC.deserialise_glidefunction(this.sandbox, message.data.action);
         this._log.debug("activating hint on", hint.element, "with", action);
         return await action(hint.element);
+      }
+
+      case "Glide::Query::InvokeOnAllHints": {
+        if (!this.#active_hints.length) {
+          throw new Error("There are no active hints");
+        }
+
+        const callback = IPC.deserialise_glidefunction(this.sandbox, message.data.callback);
+        this._log.debug("executing hint callback", callback, "with hints", this.#active_hints);
+
+        const results = await Promise.all(this.#active_hints.map((hint, index) => callback(hint.element, index)));
+        return results;
       }
 
       default:

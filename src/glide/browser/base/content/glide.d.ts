@@ -564,10 +564,8 @@ declare global {
          *
          * An empty array may be returned but will result in an error notification indicating that no
          * hints were found.
-         *
-         * @content this function is evaluated in the content process.
          */
-        pick?: (hints: glide.ContentHint[]) => glide.ContentHint[];
+        pick?: glide.HintPicker;
       }): void;
 
       label_generators: {
@@ -1347,6 +1345,27 @@ declare global {
     export type ResolvedHint = glide.Hint & { label: string };
 
     export type HintLabelGenerator = (ctx: { hints: glide.Hint[] }) => string[];
+
+    export type HintPicker = (props: glide.HintPickerProps) => glide.Hint[] | Promise<glide.Hint[]>;
+
+    export type HintPickerProps = {
+      hints: glide.Hint[];
+
+      content: {
+        /**
+         * Executes the given callback in the content process to extract properties
+         * from the all elements that are being hinted.
+         *
+         * For example:
+         * ```typescript
+         * const areas = await content.map((element) => element.offsetWidth * element.offsetHeight);
+         * ```
+         */
+        map<R>(
+          cb: (target: HTMLElement, index: number) => R | Promise<R>,
+        ): Promise<Awaited<R>[]>;
+      };
+    };
 
     export type HintLocation = "content" | "browser-ui";
 

@@ -58,7 +58,6 @@ export interface ParentMessages {
       | "newtab-click"
       | GlideFunctionIPC<(target: HTMLElement) => Promise<void>>
       | null;
-    pick?: GlideFunctionIPC<(hints: glide.ContentHint[]) => glide.ContentHint[]>;
   };
   "Glide::Move": { direction: "left" | "right" | "up" | "down" | "endline" };
   "Glide::Scroll": { to: "page_up" | "page_down" | "top" | "bottom" };
@@ -80,6 +79,12 @@ export interface ParentQueries {
       action: GlideFunctionIPC<(target: HTMLElement) => unknown | Promise<unknown>>;
     };
     result: unknown;
+  };
+  "Glide::Query::InvokeOnAllHints": {
+    props: {
+      callback: GlideFunctionIPC<(element: HTMLElement, index: number) => unknown | Promise<unknown>>;
+    };
+    result: unknown[];
   };
 }
 
@@ -197,10 +202,11 @@ export class GlideHandlerParent extends JSWindowActorParent<
           return;
         }
 
-        this.glide_hints!.show_hints(
+        await this.glide_hints!.show_hints(
           message.data.hints,
           message.data.location,
           this.gBrowser?.$hints_action ?? "click",
+          this.gBrowser?.$hints_pick,
           message.data.auto_activate,
         );
         break;

@@ -86,6 +86,7 @@ declare namespace GlobalBrowser {
     /* used to cache the hint container element */
     $hints_container?: HTMLElement | null | undefined;
     $hints_action?: glide.HintAction;
+    $hints_pick?: glide.HintPicker;
     $hints_location?: glide.HintLocation;
     // TODO(glide): just look at the elements in the container instead?
     $hints?: GlideResolvedHint[];
@@ -185,8 +186,6 @@ declare type _ExtensionCommon =
 declare type GlideHintIPC = import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
 
 declare type GlideResolvedHint = GlideHintIPC & {
-  x: number;
-  y: number;
   label: string;
 };
 

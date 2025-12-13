@@ -189,7 +189,7 @@ add_task(async function test_pick_basic() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>
       glide.hints.show({
-        pick: (hints) => {
+        pick: ({ hints }) => {
           assert(hints.length > 1);
           return [hints[0]!];
         },
@@ -277,13 +277,13 @@ add_task(async function test_hint_keymaps_are_ignored() {
   });
 });
 
-add_task(async function test_hint_keymaps_are_ignored() {
+add_task(async function test_pick_hint_chars() {
   await GlideTestUtils.reload_config(function _() {
     glide.o.hint_chars = "abc";
 
     glide.keymaps.set("normal", "f", () => {
       glide.hints.show({
-        pick: (hints) => hints.slice(0, 2),
+        pick: ({ hints }) => hints.slice(0, 2),
       });
     });
   });
@@ -293,10 +293,56 @@ add_task(async function test_hint_keymaps_are_ignored() {
     await wait_for_hints();
 
     const hints = GlideHints.get_active_hints();
+    is(hints.length, 2);
     is(hints[0]?.label, "a");
     is(hints[1]?.label, "b");
 
     await keys("<esc>");
+  });
+});
+
+add_task(async function test_hint_pick__content() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", () => {
+      glide.hints.show({
+        pick: async ({ hints, content }) => {
+          const texts = await content.map((element) => element.textContent ?? "");
+          assert(Array.isArray(texts));
+          assert(texts.length === 2);
+          glide.g.value = texts;
+          return hints;
+        },
+      });
+    });
+  });
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><title>Test</title></head>
+    <body>
+      <a id="s1" onclick="this.textContent = 's1-modified'">s1</a>
+      <a id="s2" onclick="this.textContent = 's2-modified'">s2</a>
+    </body>
+    </html>
+  `;
+
+  await BrowserTestUtils.withNewTab("data:text/html," + encodeURI(html), async browser => {
+    await keys("f");
+    await wait_for_hints();
+
+    const hints = GlideHints.get_active_hints();
+    is(hints.length, 2);
+    isjson(glide.g.value, ["s1", "s2"]);
+
+    await keys(hints[0]!.label);
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => content.document.getElementById("s1")?.textContent === "s1-modified",
+        "executing the hint should modify the element",
+      );
+    });
   });
 });
 
@@ -307,7 +353,7 @@ add_task(async function test_hint_generator_config() {
     };
     glide.keymaps.set("normal", "f", () => {
       glide.hints.show({
-        pick: (hints) => hints.slice(0, 2),
+        pick: ({ hints }) => hints.slice(0, 2),
       });
     });
   });
