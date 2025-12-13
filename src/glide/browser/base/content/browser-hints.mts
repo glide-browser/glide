@@ -84,8 +84,26 @@ class GlideHintsClass {
       return;
     }
 
-    const labels_generator = GlideBrowser.api.options.get("hint_label_generator");
-    const labels = labels_generator({ hints });
+    const labels_generator = gBrowser.$hints_label_generator ?? GlideBrowser.api.options.get("hint_label_generator");
+    const labels = await labels_generator({
+      hints,
+      content: {
+        async map(cb) {
+          const result = await actor.send_query("Glide::Query::InvokeOnAllHints", {
+            callback: IPC.maybe_serialise_glidefunction(cb),
+          }).catch((err) => {
+            if ((err as Error).name === "DataCloneError") {
+              throw new DataCloneError(
+                "Could not clone hint label_generator() return value; Only JSON serialisable values can be returned",
+              );
+            }
+
+            throw err;
+          });
+          return result as any;
+        },
+      },
+    });
 
     for (let i = 0; i < hints.length; i++) {
       const hint = hints[i]!;

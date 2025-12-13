@@ -559,6 +559,36 @@ declare global {
         location?: glide.HintLocation;
 
         /**
+         * A function to produce labels for the given hints. You can provide
+         * your own function or use an included one:
+         *
+         *  - {@link glide.hints.label_generators.prefix_free}; this is the default.
+         *  - {@link glide.hints.label_generators.numeric}
+         *
+         * For example:
+         *
+         * ```typescript
+         * glide.hints.show({
+         *   label_generator: ({ hints }) => Array.from({ length: hints.length }).map((_, i) => String(i))
+         * });
+         * ```
+         *
+         * Or using data from the hinted elements through `content.execute()`:
+         *
+         * ```typescript
+         * glide.hints.show({
+         *   async label_generator({ content }) {
+         *     const texts = await content.execute((element) => element.textContent);
+         *     return texts.map((text) => text.trim().toLowerCase().slice(0, 2));
+         *   },
+         * });
+         * ```
+         * note: the above example is a very naive implementation and will result in issues if there are multiple
+         *       elements that start with the same text.
+         */
+        label_generator?: glide.HintLabelGenerator;
+
+        /**
          * Define a callback to filter the resolved hints. It is called once with the resolved hints,
          * and must return an array of the hints you want to include.
          *
@@ -1035,6 +1065,19 @@ declare global {
      * ```typescript
      * glide.o.hint_label_generator = ({ hints }) => Array.from({ length: hints.length }).map((_, i) => String(i));
      * ```
+     *
+     * Or using data from the hinted elements through `content.execute()`:
+     *
+     * ```typescript
+     * glide.hints.show({
+     *   async label_generator({ content }) {
+     *     const texts = await content.execute((element) => element.textContent);
+     *     return texts.map((text) => text.trim().toLowerCase().slice(0, 2));
+     *   },
+     * });
+     * ```
+     * note: the above example is a very naive implementation and will result in issues if there are multiple
+     *       elements that start with the same text.
      */
     hint_label_generator: glide.HintLabelGenerator;
 
@@ -1344,7 +1387,26 @@ declare global {
     /// @docs-skip
     export type ResolvedHint = glide.Hint & { label: string };
 
-    export type HintLabelGenerator = (ctx: { hints: glide.Hint[] }) => string[];
+    export type HintLabelGenerator = (ctx: HintLabelGeneratorProps) => string[] | Promise<string[]>;
+
+    export type HintLabelGeneratorProps = {
+      hints: glide.Hint[];
+
+      content: {
+        /**
+         * Executes the given callback in the content process to extract properties
+         * from the all elements that are being hinted.
+         *
+         * For example:
+         * ```typescript
+         * const texts = await content.map((target) => target.textContent);
+         * ```
+         */
+        map<R>(
+          cb: (target: HTMLElement, index: number) => R | Promise<R>,
+        ): Promise<Awaited<R>[]>;
+      };
+    };
 
     export type HintPicker = (props: glide.HintPickerProps) => glide.Hint[] | Promise<glide.Hint[]>;
 

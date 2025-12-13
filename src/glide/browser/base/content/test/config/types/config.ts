@@ -168,4 +168,11 @@ glide.hints.show({
     assert_type<string>(await content.execute(() => "foo"));
     assert_type<string>(await content.execute((target) => target.id));
   },
+
+  async label_generator({ content }) {
+    assert_type<Promise<string[]>>(content.map(() => "foo"));
+    assert_type<string[]>(await content.map(() => "foo"));
+    assert_type<string[]>(await content.map((target) => target.id));
+    return [];
+  },
 });
