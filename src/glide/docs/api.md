@@ -126,6 +126,9 @@ text-decoration: none;
 [`glide.fs.write()`](#glide.fs.write)\
 [`glide.fs.exists()`](#glide.fs.exists)\
 [`glide.fs.stat()`](#glide.fs.stat)\
+[`glide.containers`](#glide.containers)\
+[`glide.containers.create()`](#glide.containers.create)\
+[`glide.containers.remove()`](#glide.containers.remove)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
@@ -161,6 +164,9 @@ text-decoration: none;
 [`glide.CommandLineShowOpts`](#glide.CommandLineShowOpts)\
 [`glide.CommandLineCustomOption`](#glide.CommandLineCustomOption)\
 [`glide.FileInfo`](#glide.FileInfo)\
+[`glide.Container`](#glide.Container)\
+[`glide.ContainerIcon`](#glide.ContainerIcon)\
+[`glide.ContainerColor`](#glide.ContainerColor)\
 [`DOM.create_element()`](#DOM.create_element)
 
 {% html %}
@@ -964,6 +970,20 @@ stat.last_modified; // 1758835015092
 stat.type; // "file"
 ```
 
+## • `glide.containers` {% id="glide.containers" %}
+
+{% api-heading id="glide.containers.create" %}
+glide.containers.create(props): glide.Container
+{% /api-heading %}
+
+Create a new container.
+
+{% api-heading id="glide.containers.remove" %}
+glide.containers.remove(id): boolean
+{% /api-heading %}
+
+Remove a container.
+
 ## • `glide.messengers` {% id="glide.messengers" %}
 
 {% api-heading id="glide.messengers.create" %}
@@ -1433,6 +1453,20 @@ creation_time: number | undefined;
 path: string | undefined;
 size: number | undefined;
 ```
+
+## • `glide.Container` {% id="glide.Container" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+id: number;
+name: string;
+icon: string;
+color: string;
+cookie_store_id: string;
+```
+
+## • `glide.ContainerIcon: "fingerprint" | "briefcase" | "dollar" | "cart" | "vacation" | "gift" | "food" | "fruit" | "pet" | "tree" | "chill" | "circle" | "fence"` {% id="glide.ContainerIcon" %}
+
+## • `glide.ContainerColor: "blue" | "turquoise" | "green" | "yellow" | "orange" | "red" | "pink" | "purple" | "toolbar"` {% id="glide.ContainerColor" %}
 
 # `DOM` {% id="DOM" %}
 
