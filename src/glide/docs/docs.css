@@ -444,7 +444,7 @@ label input {
 }
 
 .grid {
-  --grid-cells: 0;
+  --grid-cells: 2; /* fallback for browsers without :has() */
   display: flex;
   gap: 1ch;
   width: calc(
