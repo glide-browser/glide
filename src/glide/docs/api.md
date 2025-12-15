@@ -65,6 +65,7 @@ text-decoration: none;
 [`glide.styles`](#glide.styles)\
 [`glide.styles.add()`](#glide.styles.add)\
 [`glide.styles.remove()`](#glide.styles.remove)\
+[`glide.styles.has()`](#glide.styles.has)\
 [`glide.prefs`](#glide.prefs)\
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
@@ -459,6 +460,12 @@ glide.styles.remove("disable-tab-bar");
 ```
 
 If the given ID does not correspond to any previously registered styles, then `false` is returned.
+
+{% api-heading id="glide.styles.has" %}
+glide.styles.has(id): boolean
+{% /api-heading %}
+
+Returns whether or not custom CSS has been registered with the given `id`.
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 

@@ -1385,6 +1385,45 @@ add_task(async function test_styles_remove() {
   }
 });
 
+add_task(async function test_styles_has() {
+  const visible_width = get_tabs_bar_width();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "!", () => {
+      glide.styles.add(
+        css`
+          #TabsToolbar {
+            visibility: collapse !important;
+          }
+        `,
+        { id: "my-id" },
+      );
+    });
+    glide.keymaps.set("normal", "~", () => {
+      glide.g.value = glide.styles.has("my-id");
+      glide.styles.remove("my-id");
+    });
+    glide.keymaps.set("normal", "0", () => {
+      glide.g.value = glide.styles.has("my-id");
+    });
+  });
+
+  await keys("0");
+  is(glide.g.value, false, `glide.styles.has() should return \`false\` when the styles have not been added yet`);
+
+  await keys("!");
+  Assert.less(get_tabs_bar_width(), visible_width, `applying the custom css should make the tabs toolbar smaller`);
+
+  await keys("~");
+
+  is(
+    get_tabs_bar_width(),
+    visible_width,
+    `removing the custom css should revert the tabs toolbar to the previous width`,
+  );
+  is(glide.g.value, true, `glide.styles.has() should return \`true\` when the styles are added`);
+});
+
 add_task(async function test_styles_remove_unknown_id() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.styles.remove("my-styles");

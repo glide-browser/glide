@@ -542,6 +542,9 @@ export function make_glide_api(
           GlideBrowser.reload_config_remove_elements.delete(element);
           return true;
         },
+        has(id) {
+          return elements.has(id);
+        },
       };
     })(),
     prefs: {

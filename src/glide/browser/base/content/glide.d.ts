@@ -278,6 +278,11 @@ declare global {
        * If the given ID does not correspond to any previously registered styles, then `false` is returned.
        */
       remove(id: string): boolean;
+
+      /**
+       * Returns whether or not custom CSS has been registered with the given `id`.
+       */
+      has(id: string): boolean;
     };
 
     prefs: {
