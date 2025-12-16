@@ -578,3 +578,29 @@ add_task(async function test_hint_action_function__bad_return() {
     );
   });
 });
+
+add_task(async function test_clear_no_hints_notification_on_retrigger() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", () => glide.hints.show({ selector: "[data-no-such-element]" }));
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async (_) => {
+    await keys("~");
+
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-no-hints-found")).ok(
+      "Waiting for 'No hints found' notification to appear",
+    );
+
+    await keys("f");
+    await wait_for_hints();
+
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-no-hints-found")).is(
+      null,
+      "Notification should be cleared when hints are successfully found",
+    );
+
+    Assert.greater(get_hints().length, 0, "Hints should be visible");
+
+    await keys("<esc>");
+  });
+});
