@@ -24,5 +24,6 @@ BROWSER_CHROME_MANIFESTS += [
     "content/test/scrolling/browser.toml",
     "content/test/split-views/browser.toml",
     "content/test/tutor/browser.toml",
+    "content/test/ui/browser.toml",
     "content/test/utils/browser.toml",
 ]

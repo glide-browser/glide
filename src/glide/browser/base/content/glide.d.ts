@@ -326,6 +326,12 @@ declare global {
     /// @docs-expand-type-reference
     g: GlideGlobals;
 
+    /**
+     * Set browser-wide UI options.
+     */
+    /// @docs-expand-type-reference
+    ui: GlideUI;
+
     tabs: {
       /**
        * Returns the active tab for the currently focused window.
@@ -1108,6 +1114,30 @@ declare global {
      * @default "keys"
      */
     scroll_implementation: "keys" | "legacy";
+  }
+
+  interface GlideUI {
+    /**
+     * Configure the behavior of the native tab bar.
+     *
+     *  - `autohide` (animated) shows the bar when the cursor is hovering over it's default position
+     *
+     * This works for both horizontal and vertical tabs.
+     *
+     * For **vertical** tabs, the default collapsed width can be adjusted like this:
+     * ```typescript
+     * glide.ui.native_tabs = "autohide";
+     * // fully collapse vertical tabs
+     * glide.styles.add(css`
+     *   :root {
+     *     --uc-tab-collapsed-width: 2px;
+     *   }
+     * `);
+     * ```
+     *
+     * @default "show"
+     */
+    native_tabs: "show" | "hide" | "autohide";
   }
 
   /**

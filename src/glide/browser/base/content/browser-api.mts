@@ -23,6 +23,10 @@ const { create_sandbox, FileNotFoundError, GlideProcessError } = ChromeUtils.imp
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
+const {
+  autohide_tabstoolbar_v2, hide_tabs_toolbar_v2,
+} = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
+
 declare var document: Document & { documentElement: HTMLElement };
 
 type GlideG = (typeof glide)["g"];
@@ -77,12 +81,34 @@ class GlideOptions implements GlideO {
   }
 }
 
+type GlideUI = (typeof glide)["ui"];
+class GlideUserInterface implements GlideUI {
+  #native_tabs: (typeof glide)["ui"]["native_tabs"] = "show";
+  get native_tabs() {
+    return this.#native_tabs;
+  }
+  set native_tabs(value: (typeof glide)["ui"]["native_tabs"]) {
+    this.#native_tabs = value;
+    switch (value) {
+      case "hide":
+        add_dom_style(hide_tabs_toolbar_v2);
+        break;
+      case "autohide":
+        add_dom_style(autohide_tabstoolbar_v2);
+        break;
+      case "show":
+      default:
+    }
+  }
+}
+
 export function make_glide_api(
   { get_config_path, shared_api }: { get_config_path: () => string | null; shared_api?: typeof glide },
 ): typeof glide {
   return {
     g: shared_api?.g ?? new GlideGlobals(),
     o: shared_api?.o ?? new GlideOptions(),
+    ui: shared_api?.ui ?? new GlideUserInterface(),
     bo: shared_api?.bo ?? {},
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
@@ -890,4 +916,10 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
       await addon.uninstall();
     },
   };
+}
+
+function add_dom_style(value: string) {
+  const element = DOM.create_element("style", { textContent: value });
+  document.head!.appendChild(element);
+  GlideBrowser.reload_config_remove_elements.add(element);
 }

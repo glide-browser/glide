@@ -72,6 +72,8 @@ text-decoration: none;
 [`glide.prefs.clear()`](#glide.prefs.clear)\
 [`glide.g`](#glide.g)\
 [`glide.g.mapleader`](#glide.g.mapleader)\
+[`glide.ui`](#glide.ui)\
+[`glide.ui.native_tabs`](#glide.ui.native_tabs)\
 [`glide.tabs`](#glide.tabs)\
 [`glide.tabs.active()`](#glide.tabs.active)\
 [`glide.tabs.get_first()`](#glide.tabs.get_first)\
@@ -517,6 +519,32 @@ The key notation that any `<leader>` mapping matches against.
 For example, a mapping defined with `<leader>r` would be matched when Space + r is pressed.
 
 `ts:@default "<Space>"`
+
+## • `glide.ui: GlideUI` {% id="glide.ui" %}
+
+Set browser-wide UI options.
+
+### `glide.ui.native_tabs` {% id="glide.ui.native_tabs" %}
+
+Configure the behavior of the native tab bar.
+
+- `autohide` (animated) shows the bar when the cursor is hovering over it's default position
+
+This works for both horizontal and vertical tabs.
+
+For **vertical** tabs, the default collapsed width can be adjusted like this:
+
+```typescript
+glide.ui.native_tabs = "autohide";
+// fully collapse vertical tabs
+glide.styles.add(css`
+  :root {
+    --uc-tab-collapsed-width: 2px;
+  }
+`);
+```
+
+`ts:@default "show"`
 
 ## • `glide.tabs` {% id="glide.tabs" %}
 
