@@ -372,8 +372,10 @@ class GlideExcmdsClass {
 
         GlideBrowser._change_mode(mode, { operator });
 
-        // TODO(glide): use command chaining to do this instead
-        if (automove) {
+        // we only send the `caret_move` excmd if the focused element is editable as it should
+        // be redundant otherwise, and may cause weird side effects like skipping back 5s in a
+        // youtube video, as that is what youtube maps `<left>` to.
+        if (automove && await GlideBrowser.api.ctx.is_editing()) {
           GlideBrowser.api.excmds.execute(`caret_move ${automove}`);
         }
 

@@ -476,6 +476,24 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
   });
 });
 
+add_task(async function test_i_normal_mode_no_events() {
+  await BrowserTestUtils.withNewTab(KEYS_TEST_URI, async browser => {
+    is(glide.ctx.mode, "normal");
+
+    await keys("i");
+    await sleep_frames(2);
+
+    const keydown_count = await SpecialPowers.spawn(browser, [], async () => {
+      return content.document.getElementById("keydown-events")!.children.length;
+    });
+    is(
+      keydown_count,
+      0,
+      "Pressing 'i' in normal mode, while no editable element is focused, should not send key events to the page",
+    );
+  });
+});
+
 add_task(async function test_shift_with_another_modifier() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
     await GlideTestUtils.reload_config(function _() {
