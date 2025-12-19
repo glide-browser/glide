@@ -75,6 +75,12 @@ class GlideHintsClass {
 
     const hints = picked_hints.map((hint): GlideResolvedHint => ({ ...hint, label: "" }));
 
+    // Clear "No hints found" notification when hints are found to avoid showing
+    // a stale notification from a previous failed hint attempt
+    if (hints.length > 0) {
+      GlideBrowser.remove_notification("glide-no-hints-found");
+    }
+
     gBrowser.$hints = hints;
     gBrowser.$hints_action = action;
     gBrowser.$hints_location = location;
