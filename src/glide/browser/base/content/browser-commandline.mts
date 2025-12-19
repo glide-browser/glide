@@ -85,6 +85,7 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
           return this.element.classList.contains("focused");
         },
         set_focused(focused) {
+          if (focused === this.is_focused()) return;
           if (focused) {
             this.element.classList.add("focused");
           } else {
@@ -95,6 +96,9 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
           return !!source.container.hidden || !!this.element.hidden;
         },
         set_hidden(hidden) {
+          if (hidden === this.is_hidden()) {
+            return;
+          }
           this.element.hidden = hidden;
         },
       });
@@ -191,6 +195,7 @@ export class TabsCompletionSource implements GlideCompletionSource<TabCompletion
           return this.element.classList.contains("focused");
         },
         set_focused(focused) {
+          if (focused === this.is_focused()) return;
           if (focused) {
             this.element.classList.add("focused");
           } else {
@@ -201,6 +206,9 @@ export class TabsCompletionSource implements GlideCompletionSource<TabCompletion
           return !!source.container.hidden || !!this.element.hidden;
         },
         set_hidden(hidden) {
+          if (hidden === this.is_hidden()) {
+            return;
+          }
           this.element.hidden = hidden;
         },
       };
@@ -303,6 +311,7 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
           return this.element.classList.contains("focused");
         },
         set_focused(focused) {
+          if (focused === this.is_focused()) return;
           if (focused) {
             this.element.classList.add("focused");
           } else {
@@ -313,6 +322,9 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
           return !!source.container.hidden || !!this.element.hidden;
         },
         set_hidden(hidden) {
+          if (hidden === this.is_hidden()) {
+            return;
+          }
           this.element.hidden = hidden;
         },
       });
