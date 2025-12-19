@@ -122,7 +122,7 @@ export async function markdown_to_html(
         <meta property="og:title" content="${title}" />
         <meta property="og:description" content="${description}" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://glide-browser.app/${props.relative_dist_path}" />
+        <meta property="og:url" content="${canonical_url(props.relative_dist_path)}" />
         <meta property="og:image" content="https://glide-browser.app/logo1024.png" />
         <meta property="og:site_name" content="Glide Browser" />
 
