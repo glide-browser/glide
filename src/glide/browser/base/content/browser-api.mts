@@ -11,6 +11,7 @@ const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-c
 const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
+const CSS = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
 const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs",
 );
@@ -22,11 +23,6 @@ const { create_sandbox, FileNotFoundError, GlideProcessError } = ChromeUtils.imp
 );
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
-
-const {
-  autohide_tabstoolbar_v2,
-  hide_tabs_toolbar_v2,
-} = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -94,10 +90,10 @@ class GlideUserInterface implements GlideUI {
     this.#native_tabs = value;
     switch (value) {
       case "hide":
-        GlideBrowser.api.styles.add(hide_tabs_toolbar_v2, { id });
+        GlideBrowser.api.styles.add(CSS.hide_tabs_toolbar_v2, { id });
         break;
       case "autohide":
-        GlideBrowser.api.styles.add(autohide_tabstoolbar_v2, { id });
+        GlideBrowser.api.styles.add(CSS.autohide_tabstoolbar_v2, { id });
         break;
       case "show":
       default:
