@@ -24,7 +24,8 @@ const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
 const {
-  autohide_tabstoolbar_v2, hide_tabs_toolbar_v2,
+  autohide_tabstoolbar_v2,
+  hide_tabs_toolbar_v2,
 } = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
@@ -88,13 +89,15 @@ class GlideUserInterface implements GlideUI {
     return this.#native_tabs;
   }
   set native_tabs(value: (typeof glide)["ui"]["native_tabs"]) {
+    const id = "$glide.ui.native_tabs";
+    GlideBrowser.api.styles.remove(id);
     this.#native_tabs = value;
     switch (value) {
       case "hide":
-        add_dom_style(hide_tabs_toolbar_v2);
+        GlideBrowser.api.styles.add(hide_tabs_toolbar_v2, { id });
         break;
       case "autohide":
-        add_dom_style(autohide_tabstoolbar_v2);
+        GlideBrowser.api.styles.add(autohide_tabstoolbar_v2, { id });
         break;
       case "show":
       default:
@@ -916,10 +919,4 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
       await addon.uninstall();
     },
   };
-}
-
-function add_dom_style(value: string) {
-  const element = DOM.create_element("style", { textContent: value });
-  document.head!.appendChild(element);
-  GlideBrowser.reload_config_remove_elements.add(element);
 }
