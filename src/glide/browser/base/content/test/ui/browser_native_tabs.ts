@@ -24,7 +24,7 @@ add_task(async function test_ui_native_tabs() {
     glide.ui.native_tabs = "hide";
   });
   const height_hide = navigator_toolbox!.clientHeight;
-  ok(height_default > height_hide, "glide.ui.native_tabs 'hide' option should shrink the toolbox height.");
+  Assert.greater(height_default, height_hide, "glide.ui.native_tabs 'hide' option should shrink the toolbox height.");
 
   await GlideTestUtils.reload_config(function _() {
     glide.ui.native_tabs = "autohide";
