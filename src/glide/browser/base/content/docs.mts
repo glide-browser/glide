@@ -966,6 +966,8 @@ export function code_to_html(
     options.lang = "bash";
   }
 
+  // If this gives a "Language not found, you may need to load it first" error,
+  // you can add the language in `scripts/build-docs.mts` when creating the `highlighter`.
   return highlighter.codeToHtml(code, options);
 }
 
