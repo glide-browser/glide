@@ -144,7 +144,10 @@ class GlideBrowserClass {
       setInterval(this.flush_pending_error_notifications.bind(this), 500);
     });
 
-    const config_promise = this.reload_config();
+    // set all_windows to false as this code is ran when new windows are created, which could otherwise
+    // cause weird issues, e.g. setting an option in one window, and then creating a new window
+    // would reset the previously set option; this behaviour only makes sense when explicitly reloading the config.
+    const config_promise = this.reload_config(/* all_windows */ false);
 
     // copy the glide.d.ts file to the profile dir so it's easy to
     // refer to it in the config file
@@ -206,13 +209,13 @@ class GlideBrowserClass {
     });
   }
 
-  async reload_config() {
+  async reload_config(all_windows = true) {
     // note: we have to initialise this promise as early as possible so that we don't
     //       register the listener *after* the extension has started up, therefore
     //       resulting in the listener never firing.
     const extension_startup = this._extension_startup_promise;
 
-    await this.#reload_config();
+    await this.#reload_config(all_windows);
 
     this.on_startup(async () => {
       await extension_startup;
@@ -306,6 +309,18 @@ class GlideBrowserClass {
         }
       }, 500);
     });
+
+    if (all_windows) {
+      // reload the config in other windows as well to avoid potential mismatches
+      const promises: Array<Promise<void>> = [];
+      for (const win of Services.wm.getEnumerator("navigator:browser")) {
+        if (win === window) {
+          continue;
+        }
+        promises.push(win.GlideBrowser.reload_config(/* all_windows */ false));
+      }
+      await Promise.allSettled(promises);
+    }
   }
 
   #config_watcher_id: number | undefined;
@@ -394,7 +409,7 @@ class GlideBrowserClass {
 
   reload_config_remove_elements: Set<HTMLElement> = new Set();
 
-  async #reload_config() {
+  async #reload_config(all_windows: boolean) {
     this.#api = null;
     this.config_path = null;
     this._modes = {} as any;
@@ -446,9 +461,14 @@ class GlideBrowserClass {
     this.jumplist = new JumplistPlugin.Jumplist(sandbox);
 
     if (this.#startup_finished) {
-      // clear all registered event listeners and any custom state on the `browser` object
-      const addon = await AddonManager.getAddonByID("glide-internal@mozilla.org");
-      await addon.reload();
+      // clear all registered event listeners and any custom state on the `browser` object.
+      //
+      // note: we only do this when `all_windows` is `true` because the addon state is global and shared
+      //       across windows, so we should only reload it when we are mutating the global state.
+      if (all_windows) {
+        const addon = await AddonManager.getAddonByID("glide-internal@mozilla.org");
+        await addon.reload();
+      }
 
       // TODO(glide): only do this if we need to
       redefine_getter(this, "browser_parent_api", this.#create_browser_parent_api());

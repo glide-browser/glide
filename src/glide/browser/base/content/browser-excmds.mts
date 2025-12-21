@@ -646,7 +646,7 @@ class GlideExcmdsClass {
       }
 
       case "config_reload": {
-        GlideBrowser.reload_config();
+        await GlideBrowser.reload_config();
         break;
       }
 

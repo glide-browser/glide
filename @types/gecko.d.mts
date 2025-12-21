@@ -166,6 +166,11 @@ interface MozElements {
   };
 }
 
+interface nsIWindowMediator {
+  // avoid `Iterable<any>` for known cases
+  getEnumerator(aWindowType: "navigator:browser"): Iterable<Window>;
+}
+
 declare var MozElements: MozElements;
 
 // TODO(glide-types)
