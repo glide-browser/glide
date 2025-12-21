@@ -96,7 +96,9 @@ class GlideUserInterface implements GlideUI {
         GlideBrowser.api.styles.add(CSS.autohide_tabstoolbar_v2, { id });
         break;
       case "show":
+        break;
       default:
+        throw assert_never(value);
     }
   }
 }
