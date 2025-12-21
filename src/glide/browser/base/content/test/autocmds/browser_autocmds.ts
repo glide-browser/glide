@@ -524,6 +524,169 @@ add_task(async function test_autocmd_remove() {
   );
 });
 
+add_task(async function test_tabenter_only_fires_on_tab_switch() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("TabEnter", /input_test/, () => {
+      glide.g.calls!.push("tabenter");
+    });
+
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
+      glide.g.calls!.push("urlenter");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await waiter(() => glide.g.calls).isjson(["urlenter"]);
+    is(num_calls(), 1, "Initial navigation should only trigger UrlEnter, not TabEnter");
+
+    const tab1 = gBrowser.selectedTab;
+
+    BrowserTestUtils.startLoadingURIString(gBrowser.selectedBrowser, INPUT_TEST_URI + "?navigate");
+    await BrowserTestUtils.browserLoaded(gBrowser.selectedBrowser);
+    await waiter(() => glide.g.calls).isjson(["urlenter", "urlenter"]);
+    is(num_calls(), 2, "Same-tab navigation should only trigger UrlEnter");
+
+    await BrowserTestUtils.withNewTab("about:mozilla", async _ => {
+      await sleep_frames(5);
+      is(num_calls(), 2, "Opening non-matching page should not trigger any autocmd");
+
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+      await waiter(() => glide.g.calls).isjson(["urlenter", "urlenter", "tabenter", "urlenter"]);
+      is(num_calls(), 4, "Switching tabs should trigger both TabEnter and UrlEnter");
+    });
+  });
+});
+
+add_task(async function test_tabenter_regexp_filter() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("TabEnter", /input_test\.html/, () => {
+      glide.g.calls!.push("expected-call");
+    });
+
+    glide.autocmds.create("TabEnter", /definitely-wont-match/, () => {
+      glide.g.calls!.push("bad-call");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    const tab1 = gBrowser.selectedTab;
+
+    await BrowserTestUtils.withNewTab("about:blank", async _ => {
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+      await waiter(() => glide.g.calls).isjson(
+        ["expected-call"],
+        "TabEnter autocmd should be triggered only for matching URL pattern",
+      );
+    });
+  });
+});
+
+add_task(async function test_tabenter_host_filter() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("TabEnter", { hostname: "mochi.test" }, () => {
+      glide.g.calls!.push("expected-call");
+    });
+
+    glide.autocmds.create("TabEnter", { hostname: "definitely-wont-match" }, () => {
+      glide.g.calls!.push("bad-call");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    const tab1 = gBrowser.selectedTab;
+
+    await BrowserTestUtils.withNewTab("about:blank", async _ => {
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+      await waiter(() => glide.g.calls).isjson(
+        ["expected-call"],
+        "TabEnter autocmd should be triggered only for matching hostname",
+      );
+    });
+  });
+});
+
+add_task(async function test_tabenter_tab_id() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    const tab1 = gBrowser.selectedTab;
+
+    await GlideTestUtils.reload_config(function _() {
+      glide.autocmds.create("TabEnter", /input_test/, ({ tab_id }) => {
+        glide.g.value = tab_id;
+      });
+    });
+
+    await BrowserTestUtils.withNewTab("about:blank", async _ => {
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+      await until(() => glide.g.value !== undefined);
+
+      is(
+        glide.g.value,
+        (await glide.tabs.active()).id,
+        "TabEnter autocmd should be passed a tab ID that matches the active tab ID",
+      );
+    });
+  });
+});
+
+add_task(async function test_tabenter_error_handling() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmds.create("TabEnter", /input_test/, () => {
+      throw new Error("tabenter failed");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    const tab1 = gBrowser.selectedTab;
+
+    await BrowserTestUtils.withNewTab("about:blank", async _ => {
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+
+      let notification = await until(() => gNotificationBox.getNotificationWithValue("glide-autocmd-error"));
+
+      ok(notification, "Error notification should be shown");
+      ok(
+        notification.shadowRoot
+          .querySelector(".message")
+          ?.textContent?.includes("Error occurred in TabEnter autocmd"),
+        "Notification should indicate TabEnter autocmd error",
+      );
+      gNotificationBox.removeNotification(notification);
+    });
+  });
+});
+
+add_task(async function test_tabenter_multiple_callbacks() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.g.calls = [];
+
+    glide.autocmds.create("TabEnter", /input_test/, () => {
+      glide.g.calls!.push("first");
+    });
+
+    glide.autocmds.create("TabEnter", /input_test/, () => {
+      glide.g.calls!.push("second");
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    const tab1 = gBrowser.selectedTab;
+
+    await BrowserTestUtils.withNewTab("about:blank", async _ => {
+      await BrowserTestUtils.switchTab(gBrowser, tab1);
+      await waiter(() => glide.g.calls).isjson(
+        ["first", "second"],
+        "Multiple TabEnter autocmds should fire in registration order",
+      );
+    });
+  });
+});
+
 function num_calls() {
   return (glide.g.calls ?? []).length;
 }
