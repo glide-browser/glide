@@ -33,4 +33,8 @@ add_task(async function test_ui_native_tabs() {
     const height_autohide = navigator_toolbox!.clientHeight;
     return height_default > height_autohide && height_autohide > height_hide;
   }).ok("glide.ui.native_tabs 'autohide' toolbox height should be in range 'show' - 'hide'.");
+
+  await GlideTestUtils.reload_config(() => {});
+  const height_reset_default = navigator_toolbox!.clientHeight;
+  is(height_default, height_reset_default, "Resetting the config should yield the default window height");
 });
