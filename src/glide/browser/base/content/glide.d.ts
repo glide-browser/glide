@@ -1137,6 +1137,8 @@ declare global {
      * `);
      * ```
      *
+     * See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
+     *
      * @default "show"
      */
     native_tabs: "show" | "hide" | "autohide";
