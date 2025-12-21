@@ -53,7 +53,7 @@ const TUTOR_FILES = [
 ];
 
 const highlighter = await shiki.createHighlighter({
-  langs: ["typescript", "javascript", "html", "go", "bash", "toml", "python", "jsonc"],
+  langs: ["typescript", "javascript", "html", "go", "bash", "toml", "python", "jsonc", "lua"],
   themes: [
     "catppuccin-mocha",
     "nord",
