@@ -53,7 +53,22 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
 
     const options: GlideCompletionOption[] = [];
 
-    for (const command of GlideBrowser.commandline_excmds) {
+    const suggested = gNotificationBox.currentNotification
+      ?.querySelectorAll("button.notification-button")
+      ?.[0]
+      ?.getAttribute("label")
+      ?.slice(1);
+
+    let all_cmds = GlideBrowser.commandline_excmds;
+    if (suggested) {
+      const match = all_cmds.findIndex(cmd => suggested.startsWith(cmd.name));
+      if (match > -1) {
+        const cmd = all_cmds.splice(match, 1);
+        all_cmds.unshift(...cmd);
+      }
+    }
+
+    for (const command of all_cmds) {
       const keymap = excmd_keymaps.get(command.name);
 
       options.push({

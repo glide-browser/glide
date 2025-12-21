@@ -190,6 +190,17 @@ pnpm mach test glide/browser/base/content/test/config/dist/browser_include.js
 > [!NOTE]
 > The file has to be the `dist/$file.js` version, you cannot pass TypeScript files yet.
 
+> [!NOTE]
+> Tests sometimes fail with this message:
+>
+> ```
+> "FAIL uncaught exception - NotFoundError: Node.insertBefore:
+> Child to insert before is not a child of this node
+> at apply_mutations/<@chrome://glide/content/document-mirror.mjs:170:23"
+> ```
+>
+> This is a known flakiness and does not indicate an issue with your local environment.
+
 ### Docs
 
 The docs pages are written in Markdown and located in the [`path:src/glide/docs/`](/src/glide/docs) directory. The markdown is then converted to HTML using a custom [Markdoc](https://markdoc.dev/) integration in [`path:src/glide/browser/base/content/docs.mts`](/src/glide/browser/base/content/docs.mts).
