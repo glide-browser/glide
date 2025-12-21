@@ -548,6 +548,8 @@ glide.styles.add(css`
 
 See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
 
+**warning**: `autohide` does not work on MacOS at the moment.
+
 `ts:@default "show"`
 
 ## • `glide.tabs` {% id="glide.tabs" %}
