@@ -1122,7 +1122,7 @@ declare global {
      *
      *  - `show`
      *  - `hide`
-     *  - `autohide` (animated) shows the bar when the cursor is hovering over it's default position
+     *  - `autohide` (animated) shows the bar when the cursor is hovering over its default position
      *
      * This works for both horizontal and vertical tabs.
      *
