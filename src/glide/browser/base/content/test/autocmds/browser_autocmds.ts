@@ -435,7 +435,7 @@ add_task(async function test_window_loaded() {
     });
   });
 
-  const win: Window = await BrowserTestUtils.openNewBrowserWindow();
+  await using win = await GlideTestUtils.new_window();
 
   await until(() => win.GlideBrowser?.api?.g?.calls?.length === 1);
 
@@ -444,8 +444,6 @@ add_task(async function test_window_loaded() {
     ["window-loaded"],
     "WindowLoaded autocmd should be triggered on initial window startup",
   );
-
-  await BrowserTestUtils.closeWindow(win);
 });
 
 add_task(async function test_window_loaded_not_called_on_reload() {

@@ -60,6 +60,21 @@ class GlideTestUtilsClass {
   }
 
   /**
+   * Create a new foreground window.
+   *
+   * Behaves the same as `BrowserTestUtils.openNewBrowserWindow()` but also defines
+   * `[Symbol.dispose]()` so you can use it with `using`.
+   */
+  async new_window(): Promise<Window & { [Symbol.asyncDispose](): Promise<void> }> {
+    const win = await g.BrowserTestUtils.openNewBrowserWindow();
+    return Object.assign(win, {
+      [Symbol.asyncDispose]() {
+        g.BrowserTestUtils.closeWindow(win);
+      },
+    });
+  }
+
+  /**
    * Extracts the function body to a string, writes that to `glide.ts` in
    * the current profile directory and simulates `:config_reload`.
    *
