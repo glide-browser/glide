@@ -19,6 +19,7 @@
 
     // I do not care
     "typescript/no-this-alias": "off",
+    "no-empty-file": "off",
 
     // Mozilla rules
     "eslint-plugin-mozilla/no-addtask-setup": "error",
@@ -94,12 +95,6 @@
   },
 
   "overrides": [
-    {
-      // these files are intentionally empty
-      "files": ["src/browser/extensions/glide/run.js", "src/testing/profiles/base/glide/glide.ts"],
-      "rules": { "no-empty-file": "off" }
-    },
-
     {
       // this rule is incorrect in this case
       "files": ["src/glide/generated/@types/subs/AppConstants.sys.d.ts"],
