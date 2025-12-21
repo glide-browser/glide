@@ -55,6 +55,18 @@ Alternatively, you can run all lint checks with:
 pnpm lint
 ```
 
+To enable oxlint in Nvim 11, you can use the following config:
+
+```lua
+vim.lsp.config('oxc', {
+	cmd = {"npx", "oxc_language_server"},
+	root_dir = function(buf, on_dir)
+		local dir = vim.fs.root(0, { 'package.json', 'tsconfig.json' })  -- order matters
+		if dir then on_dir(dir) end
+	end,
+})
+```
+
 ### Formatting
 
 Glide uses [dprint](https://dprint.dev/) for formatting, if you have not used dprint before, it is recommended you install and [configure](https://dprint.dev/install/#editor-extensions) it.
@@ -99,6 +111,28 @@ This handles:
 - Copying source files to the Firefox `path:engine/` directory
 
 If you have the watcher running, you should hardly ever have to explicitly rebuild.
+
+### `.mts` reloading
+
+Most of glide is implemented in bundled Typescript files.
+These files are loaded on browser start, but not on new tabs or windows.
+You can reload them by closing the browser and rerunning `pnpm launch`.
+
+### Logging
+
+Generally, use `GlideBrowser._log`.
+Some parts of the code use a more specific logger; search for `console.createInstance()`.
+
+By default, only `error` level logging is shown.
+You can enable more verbose logging by passing `--setpref="glide.logging.loglevel=Debug"` to `pnpm launch`.
+See `ConsoleLogLevel` for a list of available levels.
+
+For more information on Firefox's logging system, see [the upstream Firefox docs](https://firefox-source-docs.mozilla.org/xpcom/logging.html).
+
+### User config
+
+The config file in `src/glide.ts` will take precedence over the user-wide config.
+`pnpm bootstrap` creates an empty config automatically, but you can edit it manually for testing.
 
 ### Tests
 
