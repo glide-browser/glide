@@ -59,11 +59,11 @@ To enable oxlint in Nvim 11, you can use the following config:
 
 ```lua
 vim.lsp.config('oxc', {
-	cmd = {"npx", "oxc_language_server"},
-	root_dir = function(buf, on_dir)
-		local dir = vim.fs.root(0, { 'package.json', 'tsconfig.json' })  -- order matters
-		if dir then on_dir(dir) end
-	end,
+  cmd = {"npx", "oxc_language_server"},
+  root_dir = function(buf, on_dir)
+    local dir = vim.fs.root(0, { 'package.json', 'tsconfig.json' })
+    if dir then on_dir(dir) end
+  end,
 })
 ```
 
