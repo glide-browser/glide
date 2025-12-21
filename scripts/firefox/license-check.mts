@@ -132,6 +132,7 @@ async function check_license(relative_path: string): Promise<"skip" | "success" 
     || relative_path.startsWith("glide/docs/dist")
     || relative_path.startsWith("glide/bundled")
     || relative_path.startsWith("glide/generated/")
+    || relative_path.startsWith("glide.ts")
     || relative_path.endsWith("bundled.compiled.d.ts")
     // Mozilla does not appear to put licenses in these files
     || relative_path.endsWith("chrome.manifest")

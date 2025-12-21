@@ -20,3 +20,6 @@ pnpm build:js
 pnpm firefox:patch
 pnpm dev:once
 pnpm build:types
+
+# Create an empty config file to avoid loading the global user config.
+touch src/glide.ts
