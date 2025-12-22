@@ -1,10 +1,10 @@
 # Chat
 
-An official real-time discussion channel is hosted on the [Libera.Chat](https://libera.chat/) IRC network in the `#glide` channel. At the time of writing it is very inactive, pinging `@probablyrobert` should increase the chance of your message getting a response.
+The primary real-time discussion channel is a [Zulip](https://zulip.com) organisation, hosted at [glide.zulipchat.com](https://glide.zulipchat.com).
 
-If you're not familiar with IRC, the Libera.Chat [basics](https://libera.chat/guides/basics) document is a good starting point.
+## IRC
 
-If you're familiar with IRC, join [#glide](ircs://irc.libera.chat/glide) on `path:irc.libera.chat`.
+An official [#glide](ircs://irc.libera.chat/glide) channel is also hosted on the [Libera.Chat](https://libera.chat/) IRC network.
 
 ## Discussions
 
