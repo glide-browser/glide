@@ -330,7 +330,7 @@ declare global {
      * Set browser-wide UI options.
      */
     /// @docs-expand-type-reference
-    ui: GlideUI;
+    ui: glide.UI;
 
     tabs: {
       /**
@@ -1116,36 +1116,6 @@ declare global {
     scroll_implementation: "keys" | "legacy";
   }
 
-  interface GlideUI {
-    /**
-     * Configure the behavior of the native tab bar.
-     *
-     *  - `show`
-     *  - `hide`
-     *  - `autohide` (animated) shows the bar when the cursor is hovering over its default position
-     *
-     * This works for both horizontal and vertical tabs.
-     *
-     * For **vertical** tabs, the default collapsed width can be adjusted like this:
-     * ```typescript
-     * glide.ui.native_tabs = "autohide";
-     * // fully collapse vertical tabs
-     * glide.styles.add(css`
-     *   :root {
-     *     --uc-tab-collapsed-width: 2px;
-     *   }
-     * `);
-     * ```
-     *
-     * See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
-     *
-     * **warning**: `autohide` does not work on MacOS at the moment.
-     *
-     * @default "show"
-     */
-    native_tabs: "show" | "hide" | "autohide";
-  }
-
   /**
    * Throws an error if the given value is not truthy.
    *
@@ -1306,6 +1276,37 @@ declare global {
        * @default false
        */
       force?: boolean;
+    };
+
+    /// @docs-skip
+    export type UI = {
+      /**
+       * Configure the behavior of the native tab bar.
+       *
+       *  - `show`
+       *  - `hide`
+       *  - `autohide` (animated) shows the bar when the cursor is hovering over its default position
+       *
+       * This works for both horizontal and vertical tabs.
+       *
+       * For **vertical** tabs, the default collapsed width can be adjusted like this:
+       * ```typescript
+       * glide.ui.native_tabs = "autohide";
+       * // fully collapse vertical tabs
+       * glide.styles.add(css`
+       *   :root {
+       *     --uc-tab-collapsed-width: 2px;
+       *   }
+       * `);
+       * ```
+       *
+       * See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
+       *
+       * **warning**: `autohide` does not work on MacOS at the moment.
+       *
+       * @default "show"
+       */
+      native_tabs: "show" | "hide" | "autohide";
     };
 
     export type Addon = {

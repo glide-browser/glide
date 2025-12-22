@@ -520,7 +520,7 @@ For example, a mapping defined with `<leader>r` would be matched when Space + r 
 
 `ts:@default "<Space>"`
 
-## • `glide.ui: GlideUI` {% id="glide.ui" %}
+## • `glide.ui: glide.UI` {% id="glide.ui" %}
 
 Set browser-wide UI options.
 
