@@ -12,7 +12,7 @@
     ·
     <a href="https://glide-browser.app/#download">Download</a>
     ·
-    <a href="https://glide-browser.app/chat">IRC</a>
+    <a href="https://glide.zulipchat.com">Zulip chat</a>
   </p>
 
 <br>
