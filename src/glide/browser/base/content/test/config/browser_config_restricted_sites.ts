@@ -87,3 +87,55 @@ add_task(async function test_contentScript_uriFilters__restricted_domain() {
   // cleanup
   await GlideTestUtils.reload_config(function _() {});
 });
+
+add_task(async function test_tabs_create__resource_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await browser.tabs.create({ url: "resource://glide-docs/index.html#default-keymappings" });
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab("http://example.com/browser/docshell/test/browser/dummy_page.html", async () => {
+    const initial_tab_count = gBrowser.tabs.length;
+
+    await keys("~");
+    await waiter(() => glide.g.test_checked).ok();
+
+    is(gBrowser.tabs.length, initial_tab_count + 1, "A new tab should be created");
+
+    const tab = await until(
+      async () => await glide.tabs.get_first({ url: "resource://glide-docs/index.html*" }),
+      "Tab with resource://glide-docs URL should exist",
+    );
+    ok(tab);
+
+    await GlideBrowser.browser_proxy_api.tabs.remove(tab.id!);
+  });
+});
+
+add_task(async function test_tabs_create__about_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await browser.tabs.create({ url: "about:config" });
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab("http://example.com/browser/docshell/test/browser/dummy_page.html", async () => {
+    const initial_tab_count = gBrowser.tabs.length;
+
+    await keys("~");
+    await waiter(() => glide.g.test_checked).ok();
+
+    is(gBrowser.tabs.length, initial_tab_count + 1, "A new tab should be created");
+
+    const tab = await until(
+      async () => await glide.tabs.get_first({ url: "about:config" }),
+      "Tab with about:config URL should exist",
+    );
+    ok(tab);
+
+    await GlideBrowser.browser_proxy_api.tabs.remove(tab.id!);
+  });
+});
