@@ -75,6 +75,11 @@ class GlideOptions implements GlideO {
   set hint_label_generator(value: glide.Options["hint_label_generator"]) {
     this.#hint_label_generator = value;
   }
+
+  plugin_search_roots = [
+    PathUtils.join(GlideBrowser.profile_config_dir, "plugins"),
+    PathUtils.join(GlideBrowser.home_config_dir, "plugins"),
+  ];
 }
 
 export function make_glide_api(
