@@ -50,6 +50,7 @@ text-decoration: none;
 [`glide.o.hint_label_generator`](#glide.o.hint_label_generator)\
 [`glide.o.switch_mode_on_focus`](#glide.o.switch_mode_on_focus)\
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
+[`glide.o.native_tabs`](#glide.o.native_tabs)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -330,6 +331,34 @@ This is exposed as the current `keys` implementation can result in non-ideal beh
 This will be removed in the future when the kinks with the `keys` implementation are ironed out.
 
 `ts:@default "keys"`
+
+### `glide.o.native_tabs` {% id="glide.o.native_tabs" %}
+
+Configure the behavior of the native tab bar.
+
+- `show`
+- `hide`
+- `autohide` (animated) shows the bar when the cursor is hovering over its default position
+
+This works for both horizontal and vertical tabs.
+
+For **vertical** tabs, the default collapsed width can be adjusted like this:
+
+```typescript
+glide.o.native_tabs = "autohide";
+// fully collapse vertical tabs
+glide.styles.add(css`
+  :root {
+    --uc-tab-collapsed-width: 2px;
+  }
+`);
+```
+
+See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
+
+**warning**: `autohide` does not work on MacOS at the moment.
+
+`ts:@default "show"`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 

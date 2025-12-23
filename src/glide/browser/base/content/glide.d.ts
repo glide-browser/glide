@@ -1108,6 +1108,34 @@ declare global {
      * @default "keys"
      */
     scroll_implementation: "keys" | "legacy";
+
+    /**
+     * Configure the behavior of the native tab bar.
+     *
+     *  - `show`
+     *  - `hide`
+     *  - `autohide` (animated) shows the bar when the cursor is hovering over its default position
+     *
+     * This works for both horizontal and vertical tabs.
+     *
+     * For **vertical** tabs, the default collapsed width can be adjusted like this:
+     * ```typescript
+     * glide.o.native_tabs = "autohide";
+     * // fully collapse vertical tabs
+     * glide.styles.add(css`
+     *   :root {
+     *     --uc-tab-collapsed-width: 2px;
+     *   }
+     * `);
+     * ```
+     *
+     * See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
+     *
+     * **warning**: `autohide` does not work on MacOS at the moment.
+     *
+     * @default "show"
+     */
+    native_tabs: "show" | "hide" | "autohide";
   }
 
   /**

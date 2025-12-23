@@ -11,6 +11,7 @@ const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-c
 const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
+const CSS = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
 const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs",
 );
@@ -74,6 +75,28 @@ class GlideOptions implements GlideO {
   }
   set hint_label_generator(value: glide.Options["hint_label_generator"]) {
     this.#hint_label_generator = value;
+  }
+
+  #native_tabs: (typeof glide)["o"]["native_tabs"] = "show";
+  get native_tabs() {
+    return this.#native_tabs;
+  }
+  set native_tabs(value: (typeof glide)["o"]["native_tabs"]) {
+    const id = "$glide.o.native_tabs";
+    GlideBrowser.api.styles.remove(id);
+    this.#native_tabs = value;
+    switch (value) {
+      case "hide":
+        GlideBrowser.api.styles.add(CSS.hide_tabs_toolbar_v2, { id });
+        break;
+      case "autohide":
+        GlideBrowser.api.styles.add(CSS.autohide_tabstoolbar_v2, { id });
+        break;
+      case "show":
+        break;
+      default:
+        throw assert_never(value);
+    }
   }
 }
 
