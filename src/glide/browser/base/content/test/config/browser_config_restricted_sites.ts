@@ -139,3 +139,27 @@ add_task(async function test_tabs_create__about_url() {
     await GlideBrowser.browser_proxy_api.tabs.remove(tab.id!);
   });
 });
+
+add_task(async function test_tabs_update__resource_url() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "~", async ({ tab_id }) => {
+      await browser.tabs.update(tab_id, { url: "resource://glide-docs/index.html#default-keymappings" });
+      glide.g.test_checked = true;
+    });
+  });
+
+  await BrowserTestUtils.withNewTab("http://example.com/browser/docshell/test/browser/dummy_page.html", async () => {
+    const initial_tab_count = gBrowser.tabs.length;
+
+    await keys("~");
+    await waiter(() => glide.g.test_checked).ok();
+
+    is(gBrowser.tabs.length, initial_tab_count, "No new tabs should be created");
+
+    const tab = await until(
+      async () => await glide.tabs.get_first({ url: "resource://glide-docs/index.html*" }),
+      "Active tab should be updated to resource://glide-docs URL",
+    );
+    ok(tab, "Tab should have navigated to privileged resource:// URL");
+  });
+});
