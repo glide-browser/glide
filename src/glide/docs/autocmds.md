@@ -119,6 +119,33 @@ Callback arguments:
 }
 ```
 
+## TabEnter
+
+Fired when the focused tab changes, which can happen under the following circumstances:
+
+- switching tabs
+
+The `pattern` is either a `RegExp` that matches against the entire URL, or an object with `{ hostname: string }`.
+
+The callback can also `return` a function that will be called when _another_ `TabEnter` event would be fired.
+
+```typescript
+glide.autocmds.create("TabEnter", {
+  hostname: "example.com",
+}, () => {
+  //
+});
+```
+
+Callback arguments:
+
+```typescript {% highlight_prefix="interface x " %}
+{
+  tab_id: number;
+  url: string;
+}
+```
+
 ## ModeChanged
 
 Fired when the mode changes.
