@@ -1,0 +1,51 @@
+diff --git a/toolkit/components/extensions/Extension.sys.mjs b/toolkit/components/extensions/Extension.sys.mjs
+index dded4055fead2e8c8a16d13632c63b63a1afbee6..8b1239bff449bc5366456232667b7dcae4a77e73 100644
+--- a/toolkit/components/extensions/Extension.sys.mjs
++++ b/toolkit/components/extensions/Extension.sys.mjs
+@@ -3564,6 +3564,22 @@ export class Extension extends ExtensionData {
+     }
+   }
+ 
++  /**
++   * The principal to use for loading tabs, or other non-extension actions.
++   *
++   * This is used to allow calls like `browser.tabs.create({ url: "resource://glide-docs/index.html" })`,
++   * which are normally disallowed entirely for extension code.
++   *
++   * **note**: added for glide.
++   */
++  get loaderPrincipal() {
++    if (this.id === "glide-internal@mozilla.org") {
++      return Services.scriptSecurityManager.getSystemPrincipal();
++    }
++
++    return this.principal;
++  }
++
+   // Some helpful properties added elsewhere:
+ 
+   static getBootstrapScope() {
+@@ -3649,11 +3665,23 @@ export class Extension extends ExtensionData {
+   }
+ 
+   checkLoadURI(uri, options = {}) {
++    if (this.id === "glide-internal@mozilla.org") {
++      // allow our internal extension to load any URI as there is no reason
++      // to restrict it.
++      return true;
++    }
++
+     return ExtensionCommon.checkLoadURI(uri, this.principal, options);
+   }
+ 
+   // Note: use checkLoadURI instead of checkLoadURL if you already have a URI.
+   checkLoadURL(url, options = {}) {
++    if (this.id === "glide-internal@mozilla.org") {
++      // allow our internal extension to load any URI as there is no reason
++      // to restrict it.
++      return true;
++    }
++
+     // As an optimization, if the URL starts with the extension's base URL,
+     // don't do any further checks. It's always allowed to load it.
+     if (url.startsWith(this.baseURL)) {
