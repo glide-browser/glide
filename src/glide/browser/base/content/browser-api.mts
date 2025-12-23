@@ -76,16 +76,13 @@ class GlideOptions implements GlideO {
   set hint_label_generator(value: glide.Options["hint_label_generator"]) {
     this.#hint_label_generator = value;
   }
-}
 
-type GlideUI = (typeof glide)["ui"];
-class GlideUserInterface implements GlideUI {
-  #native_tabs: (typeof glide)["ui"]["native_tabs"] = "show";
+  #native_tabs: (typeof glide)["o"]["native_tabs"] = "show";
   get native_tabs() {
     return this.#native_tabs;
   }
-  set native_tabs(value: (typeof glide)["ui"]["native_tabs"]) {
-    const id = "$glide.ui.native_tabs";
+  set native_tabs(value: (typeof glide)["o"]["native_tabs"]) {
+    const id = "$glide.o.native_tabs";
     GlideBrowser.api.styles.remove(id);
     this.#native_tabs = value;
     switch (value) {
@@ -109,7 +106,6 @@ export function make_glide_api(
   return {
     g: shared_api?.g ?? new GlideGlobals(),
     o: shared_api?.o ?? new GlideOptions(),
-    ui: shared_api?.ui ?? new GlideUserInterface(),
     bo: shared_api?.bo ?? {},
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
