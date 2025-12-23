@@ -26,6 +26,9 @@ https_first_disabled = true
 ["dist/browser_config_profile.js"]
 https_first_disabled = true
 
+["dist/browser_config_restricted_sites.js"]
+https_first_disabled = true
+
 ["dist/browser_include.js"]
 https_first_disabled = true
 
