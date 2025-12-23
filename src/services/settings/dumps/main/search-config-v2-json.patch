@@ -1,0 +1,84 @@
+diff --git a/services/settings/dumps/main/search-config-v2.json b/services/settings/dumps/main/search-config-v2.json
+index da956f42f8a7ed14e0a3e556714da206fd8e75c8..9649e7a6b8a27fa5aee2ff5710415d60587ae82c 100644
+--- a/services/settings/dumps/main/search-config-v2.json
++++ b/services/settings/dumps/main/search-config-v2.json
+@@ -3404,79 +3404,6 @@
+         }
+       ]
+     },
+-    {
+-      "base": {
+-        "aliases": [
+-          "perplexity"
+-        ],
+-        "classification": "general",
+-        "name": "Perplexity",
+-        "partnerCode": "firefox",
+-        "urls": {
+-          "search": {
+-            "base": "https://www.perplexity.ai/search",
+-            "params": [
+-              {
+-                "name": "pc",
+-                "value": "{partnerCode}"
+-              }
+-            ],
+-            "searchTermParamName": "q"
+-          },
+-          "suggestions": {
+-            "base": "https://suggest.perplexity.ai/suggest",
+-            "searchTermParamName": "q"
+-          }
+-        }
+-      },
+-      "id": "bb836721-7be9-4de6-ac18-520189a69076",
+-      "identifier": "perplexity",
+-      "last_modified": 1763654608996,
+-      "recordType": "engine",
+-      "schema": 1763604941875,
+-      "variants": [
+-        {
+-          "environment": {
+-            "allRegionsAndLocales": true,
+-            "applications": [
+-              "firefox",
+-              "firefox-ios"
+-            ]
+-          },
+-          "isNewUntil": "2025-10-21",
+-          "subVariants": [
+-            {
+-              "environment": {
+-                "applications": [
+-                  "firefox"
+-                ],
+-                "minVersion": "143.0a1"
+-              },
+-              "urls": {
+-                "trending": {
+-                  "base": "https://www.perplexity.ai/rest/autosuggest/list-trending-suggest",
+-                  "params": [
+-                    {
+-                      "name": "lang",
+-                      "value": "{acceptLanguages}"
+-                    }
+-                  ]
+-                }
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "environment": {
+-            "allRegionsAndLocales": true,
+-            "applications": [
+-              "firefox-android"
+-            ],
+-            "minVersion": "145.0.1"
+-          }
+-        }
+-      ]
+-    },
+     {
+       "base": {
+         "charset": "ISO-8859-15",
