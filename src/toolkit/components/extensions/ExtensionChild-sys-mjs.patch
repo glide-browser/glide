@@ -1,8 +1,8 @@
 diff --git a/toolkit/components/extensions/ExtensionChild.sys.mjs b/toolkit/components/extensions/ExtensionChild.sys.mjs
-index 27dc8a50e9fc683fbd2b5f923d7f1944b7d81959..8e3cd568dace992bc04a24d41f3b0cff3ef3e8fe 100644
+index b2760d4419afd2ab323fa0452a6437c988a71b66..2c91bf9ab0da3a95fc101911f26c0b71e099f147 100644
 --- a/toolkit/components/extensions/ExtensionChild.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionChild.sys.mjs
-@@ -28,6 +28,15 @@ const lazy = XPCOMUtils.declareLazy({
+@@ -27,6 +27,15 @@ const lazy = XPCOMUtils.declareLazy({
    },
  });
  
@@ -18,7 +18,7 @@ index 27dc8a50e9fc683fbd2b5f923d7f1944b7d81959..8e3cd568dace992bc04a24d41f3b0cff
  import { ExtensionCommon } from "resource://gre/modules/ExtensionCommon.sys.mjs";
  import { ExtensionUtils } from "resource://gre/modules/ExtensionUtils.sys.mjs";
  
-@@ -882,6 +891,67 @@ export class ChildAPIManager {
+@@ -881,6 +890,131 @@ export class ChildAPIManager {
          return result;
        });
      }
@@ -60,17 +60,28 @@ index 27dc8a50e9fc683fbd2b5f923d7f1944b7d81959..8e3cd568dace992bc04a24d41f3b0cff
 +        }
 +      }
 +
-+      const sandbox = create_sandbox({
-+        document: this.context.contentWindow.document,
-+        window: this.context.contentWindow,
-+        browser: this.context.browserObj,
-+        console,
-+        glide: null,
-+      });
-+
-+      const args_deser = deserialise_args(sandbox, method_args);
++      const args_deser = deserialise_args(this._glide_sandbox, method_args);
 +
 +      return Promise.resolve(method(...args_deser)).then(result => {
++        switch (method_path) {
++          case "contentScripts.register": {
++            result = Cu.cloneInto(
++              {
++                $glide_content_functions: [
++                  {
++                    name: "unregister",
++                    id: this.glide_register_content_function(
++                      Cu.waiveXrays(result).unregister
++                    ),
++                  },
++                ],
++              },
++              this.context.cloneScope
++            );
++            break;
++          }
++        }
++
 +        if (result !== undefined) {
 +          return new StructuredCloneHolder(
 +            `ChildAPIManager/${this.context.extension.id}/${data.path}`,
@@ -83,6 +94,86 @@ index 27dc8a50e9fc683fbd2b5f923d7f1944b7d81959..8e3cd568dace992bc04a24d41f3b0cff
 +      });
 +    }
 +
++    // see comment in `glide/browser/base/content/browser.mts` for context
++    if (data.path && data.path === "glide.invoke_content_function") {
++      const args = data.args.deserialize(this.context.cloneScope);
++      const method_args = args.slice(1);
++
++      const function_id = args[0];
++      if (function_id == null) {
++        throw new Error(
++          "Expected `glide.invoke_content_function` message to define a function ID argument, e.g. `[1]`"
++        );
++      }
++
++      const fn = this.glide_content_functions.get(function_id);
++      if (!fn) {
++        throw new Error(
++          `Could not find a content function with ID ${function_id}`
++        );
++      }
++
++      const args_deser = deserialise_args(this._glide_sandbox, method_args);
++
++      return Promise.resolve(fn(...args_deser)).then(result => {
++        if (result !== undefined) {
++          return new StructuredCloneHolder(
++            `ChildAPIManager/${this.context.extension.id}/${data.path}`,
++            null,
++            result,
++            this.context.cloneScope
++          );
++        }
++        return result;
++      });
++    }
++    if (data.path && data.path === "glide.clear_content_function") {
++      const args = data.args.deserialize(this.context.cloneScope);
++
++      const function_id = args[0];
++      if (function_id == null) {
++        throw new Error(
++          "Expected `glide.clear_content_function` message to define a function ID argument, e.g. `[1]`"
++        );
++      }
++
++      const fn = this.glide_content_functions.get(function_id);
++      if (!fn) {
++        // nothing to do
++        return;
++      }
++
++      this.glide_content_functions.delete(function_id);
++      return Promise.resolve();
++    }
++
      if (!map.removedIds.has(data.listenerId)) {
        Services.console.logStringMessage(
          `Unknown listener at childId=${data.childId} path=${data.path} listenerId=${data.listenerId}\n`
+@@ -888,6 +1022,26 @@ export class ChildAPIManager {
+     }
+   }
+ 
++  glide_content_functions_id = 0;
++  /** @type {Map<number, () => void>} */
++  glide_content_functions = new Map();
++
++  glide_register_content_function(fn) {
++    const id = this.glide_content_functions_id++;
++    this.glide_content_functions.set(id, fn);
++    return id;
++  }
++
++  get _glide_sandbox() {
++    return create_sandbox({
++      document: this.context.contentWindow.document,
++      window: this.context.contentWindow,
++      browser: this.context.browserObj,
++      console,
++      glide: null,
++    });
++  }
++
+   async recvStreamFilterSuspendCancel() {
+     const promise = this.context.extension.emitLocalWithResult(
+       "internal:stream-filter-suspend-cancel"

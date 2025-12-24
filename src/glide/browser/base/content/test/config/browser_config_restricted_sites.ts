@@ -56,12 +56,12 @@ add_task(async function test_contentScript_uriFilters__restricted_domain() {
         matches: ["*://example.com/*"],
         runAt: "document_idle",
         js: [{ code: `document.body.setAttribute("data-content-script", "injected");` }],
-      }).catch(() => {});
+      });
       await browser.contentScripts.register({
         matches: ["*://should-not-match.com/*"],
         runAt: "document_idle",
         js: [{ code: `document.body.setAttribute("data-content-script2", "injected");` }],
-      }).catch(() => {});
+      });
       glide.g.test_checked = true;
     });
   });

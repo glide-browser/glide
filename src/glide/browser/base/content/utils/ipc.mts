@@ -14,6 +14,11 @@ export type ToDeserialisedIPCFunction<T> =
   | Exclude<T, GlideFunctionIPC>
   | Extract<T, GlideFunctionIPC>["$SigT"];
 
+export type ExtensionContentFunction = {
+  name: string;
+  id: number;
+};
+
 /**
  * Given an array, deeply serialise each entry so that it can be sent
  * across processes.
