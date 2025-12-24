@@ -217,6 +217,8 @@ class GlideBrowserClass {
 
     await this.#reload_config(all_windows);
 
+    this.init_config_debugger();
+
     this.on_startup(async () => {
       await extension_startup;
       await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
@@ -1282,6 +1284,58 @@ class GlideBrowserClass {
   is_option(name: string): name is keyof glide.Options {
     return name in this.api.o;
   }
+
+  init_config_debugger() {
+    const { addSandboxedDebuggerToGlobal } = ChromeUtils.importESModule("resource://gre/modules/jsdebugger.sys.mjs");
+
+    // Put Debugger in its own compartment (recommended).
+    addSandboxedDebuggerToGlobal(globalThis);
+
+    const dbg = new Debugger();
+    this.dbg = dbg;
+
+    // dbg.addAllGlobalsAsDebuggees();
+
+    // Add a *specific* debuggee global (e.g. one content window)
+    // const w = this.sandbox_window;
+    // const w = gBrowser.selectedBrowser.contentWindow.wrappedJSObject;
+    // dbg.addDebuggee(w);
+
+    dbg.addDebuggee(this.config_sandbox);
+
+    // dbg.onEnterFrame = (frame) => {
+    //   // console.log("right");
+    //   console.log(frame);
+    //   console.log(frame.environment.names());
+    //   // Filter aggressively, or you’ll drown:
+    //   if (frame.type !== "call") return;
+    //
+    //   const script = frame.script;
+    //   const url = script?.url ?? "<no url>";
+    //   if (!url.includes("your-target.js")) return;
+    //
+    //   // Walk scope chain
+    //   for (let env = frame.environment; env; env = env.parent) {
+    //     for (const name of env.names()) {
+    //       try {
+    //         console.log(name, "=", env.getVariable(name));
+    //       } catch (e) {
+    //         // getVariable can throw if reading it would run debuggee code
+    //         console.log(name, "=", "<unavailable>", e);
+    //       }
+    //     }
+    //   }
+    //
+    //   // Optionally, attach per-frame hooks while you’re here:
+    //   frame.onPop = (completion) => {
+    //     console.log("popped/suspended:", completion);
+    //   };
+    // };
+
+    console.log("foo");
+  }
+
+  dbg = null;
 
   add_state_change_listener(cb: StateChangeListener) {
     this.state_listeners.add(cb);

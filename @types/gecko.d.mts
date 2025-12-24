@@ -308,6 +308,7 @@ declare namespace MockedExports {
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
     "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");
+    "resource://gre/modules/jsdebugger.sys.mjs": typeof import("../engine/devtools/platform/jsdebugger.sys.mjs");
   }
 
   interface ChromeUtils {

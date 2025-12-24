@@ -294,6 +294,56 @@ export function make_glide_api(
         return IPC.content_fn(wrapped);
       },
       async execute(func, opts) {
+        const frame = GlideBrowser.dbg!.getNewestFrame();
+        console.log("frame", frame);
+        console.log("env", frame.environment);
+
+        // let top = null;
+        let environments = [];
+
+        for (let env = frame.environment; env; env = env.parent) {
+          environments.push(env);
+          // console.log("---------------frame");
+          // top = env;
+          // frames.push(env);
+          // for (const name of env.names()) {
+          //   try {
+          //     console.log(name, "=", env.getVariable(name));
+          //   } catch (e) {
+          //     // getVariable can throw if reading it would run debuggee code
+          //     console.log(name, "=", "<unavailable>", e);
+          //   }
+          // }
+        }
+
+        environments = environments.slice(0, -1);
+
+        const resolved_scope = Object.create(null);
+
+        for (const env of environments.toReversed()) {
+          for (const name of env.names()) {
+            try {
+              const value = env.getVariable(name);
+              resolved_scope[name] = value;
+            } catch {
+              //
+            }
+          }
+        }
+
+        console.log(resolved_scope);
+
+        // for (const name of frame.environment.names()) {
+        //   try {
+        //     console.log(name, "=", frame.environment.getVariable(name));
+        //   } catch (e) {
+        //     // getVariable can throw if reading it would run debuggee code
+        //     console.log(name, "=", "<unavailable>", e);
+        //   }
+        // }
+
+        // console.log("ruh roh", GlideBrowser.dbg.getNewestFrame());
+
         const results = await GlideBrowser.browser_proxy_api.scripting.executeScript({
           target: { tabId: typeof opts.tab_id === "number" ? opts.tab_id : opts.tab_id.id },
           func,
