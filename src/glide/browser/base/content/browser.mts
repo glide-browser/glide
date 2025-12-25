@@ -12,7 +12,9 @@ import type { Jumplist } from "./plugins/jumplist.mts";
 import type { Sandbox } from "./sandbox.mts";
 import type { ExtensionContentFunction } from "./utils/ipc.mts";
 
-const { make_glide_api } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", { global: "current" });
+const { make_glide_api, make_buffer_options } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", {
+  global: "current",
+});
 const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
 const { GlideBrowserDev } = ChromeUtils.importESModule("chrome://glide/content/browser-dev.mjs", { global: "current" });
 const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
@@ -968,7 +970,7 @@ class GlideBrowserClass {
   buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] = [];
 
   async clear_buffer() {
-    this.api.bo = {};
+    this.api.bo = make_buffer_options();
     this.key_manager.clear_buffer();
 
     const cleanups = this.buffer_cleanups;

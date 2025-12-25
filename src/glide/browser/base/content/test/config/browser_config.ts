@@ -1046,6 +1046,30 @@ add_task(async function test_hint_css_property_cleared_on_reload() {
   );
 });
 
+add_task(async function test_bo_hint_size() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.bo.hint_size = "30px";
+  });
+
+  is(glide.o.hint_size, "11px");
+  is(glide.bo.hint_size, "30px");
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "30px",
+    "setting bo.hint_size should set a css variable",
+  );
+
+  await GlideTestUtils.reload_config(function _() {});
+
+  is(glide.o.hint_size, "11px");
+  is(glide.bo.hint_size, undefined);
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "",
+    "css var should be unset after config reload",
+  );
+});
+
 add_task(async function test_add_excmd_while_commandline_is_cached() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
     // open commandline so it is cached

@@ -43,6 +43,42 @@ class GlideGlobals implements GlideG {
   }
 }
 
+/**
+ * Defines setter functions for every `glide.o` option that must mutate outer state, e.g. setting a CSS variable.
+ *
+ * This is used so that we can easily share this logic between both `glide.o`, and `glide.bo`, e.g.
+ * ```typescript
+ * glide.o.hint_size = "30px";
+ * glide.bo.hint_size = "30px";
+ * ```
+ * Both of the above lines should set the `--glide-hint-font-size` CSS variable.
+ *
+ * Note that this object is itself stateless.
+ */
+const options = {
+  hint_size(value) {
+    GlideBrowser.set_css_property("--glide-hint-font-size", value);
+  },
+
+  native_tabs(value) {
+    const id = "$glide.o.native_tabs";
+    GlideBrowser.api.styles.remove(id);
+
+    switch (value) {
+      case "hide":
+        GlideBrowser.api.styles.add(CSS.hide_tabs_toolbar_v2, { id });
+        break;
+      case "autohide":
+        GlideBrowser.api.styles.add(CSS.autohide_tabstoolbar_v2, { id });
+        break;
+      case "show":
+        break;
+      default:
+        throw assert_never(value);
+    }
+  },
+} as const satisfies { [K in keyof typeof glide["o"]]?: (value: typeof glide["o"][K]) => void };
+
 type GlideO = (typeof glide)["o"];
 class GlideOptions implements GlideO {
   mapping_timeout = 200;
@@ -66,7 +102,7 @@ class GlideOptions implements GlideO {
   }
   set hint_size(value: string) {
     this.#hint_size = value;
-    GlideBrowser.set_css_property("--glide-hint-font-size", value);
+    options.hint_size(value);
   }
 
   #hint_label_generator: glide.Options["hint_label_generator"] | null = null;
@@ -82,22 +118,34 @@ class GlideOptions implements GlideO {
     return this.#native_tabs;
   }
   set native_tabs(value: (typeof glide)["o"]["native_tabs"]) {
-    const id = "$glide.o.native_tabs";
-    GlideBrowser.api.styles.remove(id);
     this.#native_tabs = value;
-    switch (value) {
-      case "hide":
-        GlideBrowser.api.styles.add(CSS.hide_tabs_toolbar_v2, { id });
-        break;
-      case "autohide":
-        GlideBrowser.api.styles.add(CSS.autohide_tabstoolbar_v2, { id });
-        break;
-      case "show":
-        break;
-      default:
-        throw assert_never(value);
-    }
+    options.native_tabs(value);
   }
+}
+
+// above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have
+// the setters apply outer mutations properly, e.g. setting a CSS variable.
+const GLIDE_O_SETTERS = Object.entries(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(new GlideOptions())))
+  .filter(([_, descriptor]) => typeof descriptor.set !== "undefined").map(([name]) => name as keyof typeof glide["o"]);
+
+export function make_buffer_options(): typeof glide["bo"] {
+  const bo = {} as typeof glide["bo"];
+
+  for (const name of GLIDE_O_SETTERS) {
+    let value = undefined as any;
+    Object.defineProperty(bo, name, {
+      get() {
+        return value;
+      },
+      set(v) {
+        value = v;
+        // @ts-expect-error TS doesn't like the index as our key type is broader, but it doesn't matter
+        options[name]?.(v);
+      },
+    });
+  }
+
+  return bo;
 }
 
 export function make_glide_api(
@@ -106,7 +154,7 @@ export function make_glide_api(
   return {
     g: shared_api?.g ?? new GlideGlobals(),
     o: shared_api?.o ?? new GlideOptions(),
-    bo: shared_api?.bo ?? {},
+    bo: shared_api?.bo ?? make_buffer_options(),
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
         const option = GlideBrowser.api.bo[name];
