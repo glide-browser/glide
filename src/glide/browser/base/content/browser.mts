@@ -10,6 +10,7 @@ import type { GlideExcmdInfo, GlideOperator } from "./browser-excmds-registry.mt
 import type { Messenger as MessengerType } from "./browser-messenger.mts";
 import type { Jumplist } from "./plugins/jumplist.mts";
 import type { Sandbox } from "./sandbox.mts";
+import type { ExtensionContentFunction } from "./utils/ipc.mts";
 
 const { make_glide_api } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", { global: "current" });
 const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
@@ -32,6 +33,7 @@ const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/u
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 const { JSONFile } = ChromeUtils.importESModule("resource://gre/modules/JSONFile.sys.mjs");
+const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -1202,8 +1204,6 @@ class GlideBrowserClass {
   }
 
   async send_extension_query(props: { method_path: string; args: any[] }) {
-    const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
-
     const child_id = GlideBrowser.extension.backgroundContext?.childId;
     if (!child_id) {
       // TODO(glide): define an easy way to register a listener for when
@@ -1233,7 +1233,118 @@ class GlideBrowserClass {
       })
       .then(result => {
         return result != null ? result.deserialize(globalThis) : result;
+      }).then(result => {
+        if (!result) {
+          return result;
+        }
+
+        /**
+         * In some cases, the web extensions APIs will return an object that has a method() attached.
+         * This is incompatible with our setup as functions cannot be cloned across processes.
+         *
+         * So we workaround this by identifying a returned function in the child process, omit it from the
+         * return value, and add a temporary `$glide_content_functions` property that says where the function
+         * would have been on the object, and a unique ID for that particular function.
+         *
+         * We can then "reconstruct" the function in the parent process with an implementation that just forwards
+         * to the content process with the function ID, and any arguments. Of course this will only work for functions
+         * that return `Promise`s.
+         */
+
+        const functions = result.$glide_content_functions as ExtensionContentFunction[] | undefined;
+        if (!functions) {
+          return result;
+        }
+
+        for (const fn_info of functions) {
+          // the [fn_info.name] hack is to make the function name match the original one.
+          const fn = {
+            [fn_info.name]: (...args: any[]) =>
+              GlideBrowser.send_extension_content_function_query({ id: fn_info.id, name: fn_info.name, args }),
+          }[fn_info.name];
+
+          Object.defineProperty(result, fn_info.name, { value: fn });
+          GlideBrowser.#extension_content_fn_registry.register(result, fn_info.id);
+        }
+
+        delete result.$glide_content_functions;
+        return result;
       });
+  }
+
+  async send_extension_content_function_query(props: { id: number; name: string; args: any[] }) {
+    const child_id = GlideBrowser.extension.backgroundContext?.childId;
+    if (!child_id) {
+      throw new Error(
+        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
+      );
+    }
+
+    // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
+    GlideBrowser._log.debug(
+      `Sending extension content function request for \`${props.name}\` to the extension process`,
+    );
+    return ExtensionParent.ParentAPIManager.conduit
+      .queryRunListener(child_id, {
+        childId: child_id,
+        handlingUserInput: false,
+        path: "glide.invoke_content_function",
+        urgentSend: false,
+        get args() {
+          return new StructuredCloneHolder(
+            `GlideBrowser/${child_id}/proxy_chain/glide.invoke_content_function`,
+            null,
+            // first arg corresponds to the the ID of the function that
+            // should be invoked, the rest are forwarded to said function.
+            [props.id, ...IPC.serialise_args(props.args)],
+          );
+        },
+      })
+      .then(result => {
+        return result != null ? result.deserialize(globalThis) : result;
+      });
+  }
+
+  /**
+   * Used to register callbacks for when objects that hold a reference to a function
+   * in the content process are dropped, so that we can also drop the reference in the
+   * content process and avoid a memory leak.
+   */
+  #extension_content_fn_registry = new FinalizationRegistry<number>((fn_id) => {
+    this.#clear_extension_content_function({ id: fn_id });
+  });
+
+  /**
+   * Tell the extension content child process that a function reference we were holding onto has
+   * been GC'd so we don't accumulate memory in the extension process forever.
+   *
+   * See `glide_content_functions` in `engine/toolkit/components/extensions/ExtensionChild.sys.mjs`.
+   */
+  #clear_extension_content_function(props: { id: number }) {
+    const child_id = GlideBrowser.extension.backgroundContext?.childId;
+    if (!child_id) {
+      throw new Error(
+        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
+      );
+    }
+
+    // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
+    GlideBrowser._log.debug(`Clearing extension content function with ID \`${props.id}\` `);
+    ExtensionParent.ParentAPIManager.conduit
+      .queryRunListener(child_id, {
+        childId: child_id,
+        handlingUserInput: false,
+        path: "glide.clear_content_function",
+        urgentSend: false,
+        get args() {
+          return new StructuredCloneHolder(`GlideBrowser/${child_id}/proxy_chain/glide.clear_content_function`, null, [
+            props.id,
+          ]);
+        },
+      })
+      // we may get an error if the extension child process has already exited
+      // in which case we do not care about the error.
+      .catch(() => null);
   }
 
   #user_cmds: Map<

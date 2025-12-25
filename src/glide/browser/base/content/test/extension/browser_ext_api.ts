@@ -776,6 +776,71 @@ add_task(async function test_commands_api() {
   });
 }).skip();
 
+add_task(async function test_contentScripts__unregister() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.autocmds.create("ConfigLoaded", async () => {
+      var script = await browser.contentScripts.register({
+        matches: ["*://example.com/*"],
+        runAt: "document_idle",
+        js: [{ code: `document.body.setAttribute("data-content-script", "injected");` }],
+      });
+
+      glide.keymaps.set("normal", "~", async () => {
+        // register another script so we can check when the old script *should* have ran
+        await browser.contentScripts.register({
+          matches: ["*://example.com/*"],
+          runAt: "document_idle",
+          js: [{ code: `document.body.setAttribute("data-content-script2", "injected");` }],
+        });
+
+        glide.g.value = { ret: await script.unregister() };
+      });
+
+      glide.g.test_checked = true;
+    });
+  });
+
+  await until(() => glide.g.test_checked);
+
+  await BrowserTestUtils.withNewTab(
+    "http://example.com/browser/docshell/test/browser/dummy_page.html",
+    async browser => {
+      await SpecialPowers.spawn(browser, [], async () => {
+        await ContentTaskUtils.waitForCondition(
+          () => content.document.body!.getAttribute("data-content-script") === "injected",
+          "Content script should inject on the current tab",
+        );
+      });
+    },
+  );
+
+  // unregister
+  await keys("~");
+
+  await until(() => glide.g.value);
+  is(glide.g.value.ret, undefined);
+
+  await BrowserTestUtils.withNewTab(
+    "http://example.com/browser/docshell/test/browser/dummy_page.html",
+    async browser => {
+      await SpecialPowers.spawn(browser, [], async () => {
+        await ContentTaskUtils.waitForCondition(
+          () => content.document.body!.getAttribute("data-content-script2") === "injected",
+          "Other content script should inject on the current tab",
+        );
+      });
+
+      const v = await SpecialPowers.spawn(browser, [], async () => {
+        return content.document.body!.getAttribute("data-content-script");
+      });
+      is(v, null, "the content script should not be injected after being removed");
+    },
+  );
+
+  // cleanup
+  await GlideTestUtils.reload_config(function _() {});
+});
+
 add_task(async function test_sidebarAction_api() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
