@@ -378,6 +378,10 @@ class GlideCommandLineTestUtils {
     ) as HTMLElement[];
   }
 
+  row_cmd(n: number): string | null | undefined {
+    return this.visible_rows()[n]?.children[0]?.textContent;
+  }
+
   focused_row() {
     const focused_rows = this.#expect_commandline().querySelectorAll(".focused");
     if (focused_rows.length > 1) {
