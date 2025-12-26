@@ -59,7 +59,7 @@ async function main() {
   const output: string[] = [
     markdown`
       <!--
-        This file is auto-generated from \`pnpm build:docs\` and \`scripts/build-api-reference.mts\`.
+        This file is auto-generated from \`pnpm build:docs:api\` and \`scripts/build-api-reference.mts\`.
 
         Do not edit it manually! Any changes will be lost.
       -->
@@ -74,6 +74,11 @@ async function main() {
       > These reference docs are not complete yet, some symbols and types are missing completely.
       >
       > For a full reference, see the [types](./config.md#types) file that Glide generates.
+
+      > [!NOTE]
+      > Glide also exposes the \`browser\` [Web Extensions API](extensions.md),
+      > the browser UI [\`document\`](config.md#browser-ui),
+      > and the browser UI [\`window\`](https://developer.mozilla.org/en-US/docs/Web/API/Window).
     `,
     "\n\n",
     generate_index(index),
