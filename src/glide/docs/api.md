@@ -4,6 +4,7 @@
   Do not edit it manually! Any changes will be lost.
 -->
 
+{% meta title="API" %}{% /meta %}
 {% styles %}
 h1, h2 {
 font-size: revert !important;
@@ -288,9 +289,7 @@ For example:
 
 ```typescript
 glide.o.hint_label_generator = ({ hints }) =>
-  Array.from({ length: hints.length }).map((_, i) =>
-    String(i)
-  );
+  Array.from({ length: hints.length }, (_, i) => String(i));
 ```
 
 Or using data from the hinted elements through `content.execute()`:

@@ -1068,7 +1068,7 @@ declare global {
      *
      * For example:
      * ```typescript
-     * glide.o.hint_label_generator = ({ hints }) => Array.from({ length: hints.length }).map((_, i) => String(i));
+     * glide.o.hint_label_generator = ({ hints }) => Array.from({ length: hints.length }, (_, i) => String(i));
      * ```
      *
      * Or using data from the hinted elements through `content.execute()`:
