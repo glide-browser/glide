@@ -341,7 +341,10 @@ export function make_glide_api(
       fn(wrapped) {
         return IPC.content_fn(wrapped);
       },
-      async execute(func, opts) {
+      async execute(
+        func: (...args: any[]) => any,
+        opts: { tab_id: number | glide.TabWithID; args?: any[] | undefined },
+      ) {
         const results = await GlideBrowser.browser_proxy_api.scripting.executeScript({
           target: { tabId: typeof opts.tab_id === "number" ? opts.tab_id : opts.tab_id.id },
           func,
