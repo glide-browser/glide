@@ -123,6 +123,174 @@
     return window.pagefind_ui;
   };
 
+  /**
+   * TOC configuration per page
+   * Maps page filename to CSS selector for headings to include.
+   * Only headings with `id` attributes are included.
+   *
+   * @example
+   * "api.html": "h1[id], h2[id]"
+   * "keys.html": "h1[id], h2[id], h3[id]"
+   */
+  const TOC_CONFIG = {
+    "api.html": "h1[id], h2[id]",
+    "keys.html": "h1[id], h2[id], h3[id]",
+    "excmds.html": "h1[id], h2[id]",
+    "hints.html": "h1[id], h2[id]",
+    "changelog.html": "h1[id]",
+    "config.html": "h1[id], h2[id]",
+    "autocmds.html": "h1[id], h2[id]",
+  };
+
+  function init_toc() {
+    const article = document.querySelector("article");
+    if (!article) return;
+
+    const pageName = window.location.pathname.split("/").pop() || "index.html";
+    const selector = TOC_CONFIG[pageName];
+
+    if (!selector) return;
+    const headings = article.querySelectorAll(selector);
+
+    const tocSidebar = document.createElement("aside");
+    tocSidebar.className = "toc-sidebar";
+
+    const tocTitle = document.createElement("div");
+    tocTitle.className = "toc-sidebar-title";
+    tocTitle.textContent = "On this page";
+    tocSidebar.appendChild(tocTitle);
+
+    const tocNav = document.createElement("nav");
+    tocSidebar.appendChild(tocNav);
+
+    headings.forEach((heading) => {
+      const link = document.createElement("a");
+      link.href = `#${heading.id}`;
+      link.dataset.level = heading.tagName.charAt(1);
+
+      let text = heading.textContent.trim();
+      if (text.endsWith("#")) {
+        text = text.slice(0, -1).trim();
+      }
+      if (text.startsWith("•")) {
+        text = text.slice(1).trim();
+      }
+      link.textContent = text;
+      link.title = text;
+
+      tocNav.appendChild(link);
+    });
+
+    const contentContainer = document.querySelector(".content-container");
+    if (contentContainer) {
+      contentContainer.appendChild(tocSidebar);
+    }
+
+    init_toc_scroll_tracking(headings, tocNav);
+  }
+
+  function init_toc_scroll_tracking(headings, tocNav) {
+    const tocSidebar = tocNav.closest(".toc-sidebar");
+    const tocLinks = tocNav.querySelectorAll("a");
+    const visibleHeadings = new Set();
+    let lastActiveId = null;
+
+    function scrollTocToActiveLink(link) {
+      if (!link || !tocSidebar) return;
+
+      const sidebarRect = tocSidebar.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+
+      // Check if link is outside the visible area of the sidebar
+      const isAbove = linkRect.top < sidebarRect.top + 60;
+      const isBelow = linkRect.bottom > sidebarRect.bottom - 20;
+
+      if (isAbove || isBelow) {
+        // Use scrollTop instead of scrollIntoView to avoid affecting main page scroll
+        const linkOffsetTop = link.offsetTop;
+        const sidebarHeight = tocSidebar.clientHeight;
+        const targetScroll = linkOffsetTop - sidebarHeight / 2 + link.clientHeight / 2;
+
+        tocSidebar.scrollTo({
+          top: Math.max(0, targetScroll),
+          behavior: "smooth",
+        });
+      }
+    }
+
+    function updateActiveLink() {
+      tocLinks.forEach((link) => link.classList.remove("toc-active"));
+
+      let activeLink = null;
+      let activeId = null;
+
+      if (visibleHeadings.size === 0) {
+        let closestHeading = null;
+        let closestDistance = Infinity;
+
+        headings.forEach((heading) => {
+          const rect = heading.getBoundingClientRect();
+          if (rect.top < 100) {
+            const distance = Math.abs(rect.top);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestHeading = heading;
+            }
+          }
+        });
+
+        if (closestHeading) {
+          activeId = closestHeading.id;
+          activeLink = tocNav.querySelector(`a[href="#${activeId}"]`);
+          if (activeLink) activeLink.classList.add("toc-active");
+        }
+      } else {
+        let firstVisible = null;
+        headings.forEach((heading) => {
+          if (visibleHeadings.has(heading.id) && !firstVisible) {
+            firstVisible = heading;
+          }
+        });
+
+        if (firstVisible) {
+          activeId = firstVisible.id;
+          activeLink = tocNav.querySelector(`a[href="#${activeId}"]`);
+          if (activeLink) activeLink.classList.add("toc-active");
+        }
+      }
+
+      // Only scroll TOC when active section changes
+      if (activeLink && activeId !== lastActiveId) {
+        lastActiveId = activeId;
+        scrollTocToActiveLink(activeLink);
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          visibleHeadings.add(entry.target.id);
+        } else {
+          visibleHeadings.delete(entry.target.id);
+        }
+      });
+      updateActiveLink();
+    }, {
+      rootMargin: "-10% 0px -80% 0px",
+      threshold: 0,
+    });
+
+    headings.forEach((heading) => observer.observe(heading));
+
+    let scrollTimeout;
+    window.addEventListener("scroll", () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(updateActiveLink, 50);
+    }, { passive: true });
+
+    updateActiveLink();
+  }
+
   window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("search-button").addEventListener("click", () => {
       window.open_search();
@@ -154,5 +322,7 @@
 
     document.addEventListener("mousedown", on_click);
     document.addEventListener("touchstart", on_click);
+
+    init_toc();
   });
 }
