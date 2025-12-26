@@ -63,6 +63,7 @@ async function main() {
 
         Do not edit it manually! Any changes will be lost.
       -->
+      {% meta title="API" %}{% /meta %}
       {% styles %}
       ${STYLES}
       {% /styles %}

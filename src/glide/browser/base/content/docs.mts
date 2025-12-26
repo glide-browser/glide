@@ -439,10 +439,15 @@ class RenderState {
         },
         meta: {
           description: "Set custom meta tags for this page, only description is supported.",
-          attributes: { description: { type: String, required: false } },
+          attributes: { description: { type: String, required: false }, title: { type: String, required: false } },
           transform: (node, config) => {
             const attributes = node.transformAttributes(config);
             this.description = attributes["description"] ?? null;
+
+            if (attributes["title"]) {
+              this.title = attributes["title"];
+            }
+
             return "";
           },
         },
