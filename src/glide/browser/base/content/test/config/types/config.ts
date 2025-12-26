@@ -6,7 +6,12 @@
 
 /// <reference path="../../../dist/bundled.compiled.d.ts" />
 
-function assert_type<T>(_x: T) {}
+// https://stackoverflow.com/a/58779181/5195839
+type IsAny<T> = unknown extends T ? T extends {} ? T : never : never;
+type NotAny<T> = T extends IsAny<T> ? never : T;
+function assert_not_any<T>(_x: NotAny<T>) {}
+
+function assert_type<T>(_x: NotAny<T>) {}
 
 // ensure node types are not loaded
 const x: number = setTimeout(() => {}, 1);
@@ -27,29 +32,50 @@ glide.content.execute((str: string) => {}, { args: [], tab_id: 10 });
 glide.content.execute((str: string) => {}, { args: [99], tab_id: 10 });
 
 // Valid: valid func with args given
-glide.content.execute((str: string) => {}, { args: ["str"], tab_id: 10 });
+glide.content.execute((str) => {
+  // Should infer param type
+  assert_not_any(str);
+  assert_type<string>(str);
+}, { args: ["str"], tab_id: 10 });
 
-glide.content.execute((str: string) => {}, {
-  // @ts-expect-error too many args given
+// @ts-expect-error too many args given
+glide.content.execute((str) => {
+  // Should infer param type
+  assert_not_any(str);
+  assert_type<string>(str);
+}, {
   args: ["str", "foo"],
   tab_id: 10,
 });
 
-glide.content.execute((str: string, num: number) => {}, {
-  // @ts-expect-error only providing one arg
+// @ts-expect-error only providing one arg
+glide.content.execute((str, num) => {
+  // Should infer param type
+  assert_not_any(str);
+  assert_type<string>(str);
+}, {
   args: ["str"],
   tab_id: 10,
 });
 
 // Valid: providing all args
-glide.content.execute((str: string, num: number) => {}, { args: ["str", 1], tab_id: 10 });
+glide.content.execute((str, num) => {
+  // Should infer param types
+  assert_not_any(str);
+  assert_type<string>(str);
+  assert_not_any(num);
+  assert_type<number>(num);
+}, { tab_id: 10, args: ["str", 1] });
 
 // Valid: optional arguments not passed
-// TODO(glide): is it possible to make `args` not required here?
-glide.content.execute((str?: string) => {}, { args: [], tab_id: 10 });
+glide.content.execute((str?: string) => {}, { tab_id: 10 });
 
 // Valid: optional arguments passed
-glide.content.execute((str?: string) => {}, { args: ["foo"], tab_id: 10 });
+glide.content.execute((str?) => {
+  // Should infer param type
+  assert_not_any(str);
+  assert_type<string | undefined>(str);
+}, { args: ["foo"], tab_id: 10 });
 
 // @ts-expect-error optional arguments are type checked
 glide.content.execute((str?: string) => {}, { args: [1], tab_id: 10 });

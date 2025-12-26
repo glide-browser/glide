@@ -444,33 +444,40 @@ declare global {
        *
        * Note: all `args` must be JSON serialisable.
        */
-      execute<F extends (...args: any[]) => any>(
-        func: F,
-        opts:
-          & {
-            /**
-             * The ID of the tab into which to inject.
-             *
-             * Or the tab object as returned by {@link glide.tabs.active}.
-             */
-            tab_id: number | glide.TabWithID;
-          }
-          & (Parameters<F> extends [] ? {
-              /**
-               * Note: the given function doesn't take any arguments but if
-               *       it did, you could pass them here.
-               */
-              args?: undefined;
-            }
-            : {
-              /**
-               * Arguments to pass to the given function.
-               *
-               * **Must** be JSON serialisable
-               */
-              args: Parameters<F>;
-            }),
-      ): Promise<ReturnType<F>>;
+      // NOTE: This has to be a separate overload from below because using
+      // `Args extends` to allow `undefined` for `args` breaks tuple inference.
+      execute<const Return extends any>(func: () => Return, opts: {
+        /**
+         * The ID of the tab into which to inject.
+         *
+         * Or the tab object as returned by {@link glide.tabs.active}.
+         */
+        tab_id: number | glide.TabWithID;
+        /**
+         * Note: the given function doesn't take any arguments but if
+         *       it did, you could pass them here.
+         */
+        args?: undefined;
+      }): Promise<Return>;
+      execute<
+        // NOTE: `any[] | []` encourages TypeScript to infer a proper tuple
+        // type for the parameters.
+        const Args extends readonly any[] | [],
+        const Return extends any,
+      >(func: (...args: Args) => Return, opts: {
+        /**
+         * The ID of the tab into which to inject.
+         *
+         * Or the tab object as returned by {@link glide.tabs.active}.
+         */
+        tab_id: number | glide.TabWithID;
+        /**
+         * Arguments to pass to the given function.
+         *
+         * **Must** be JSON serialisable
+         */
+        args: Args;
+      }): Promise<Return>;
     };
 
     keymaps: {
