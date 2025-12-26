@@ -663,7 +663,7 @@ glide.excmds.create(
 ```
 
 {% api-heading id="glide.content.execute" %}
-glide.content.execute(func, opts): Promise<ReturnType<F>>
+glide.content.execute(func, opts): Promise<Return>
 {% /api-heading %}
 
 Execute a function in the content process for the given tab.

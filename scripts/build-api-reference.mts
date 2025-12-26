@@ -403,8 +403,17 @@ function* traverse_children(
 }
 
 function children(node: Node): Node[] {
+  const methodNames = new Set<string>();
   const nodes: Node[] = [];
   node.forEachChild(child => {
+    // Only consider the first overload of a method.
+    if (Node.isMethodSignature(child)) {
+      if (methodNames.has(child.getName())) {
+        return;
+      }
+      methodNames.add(child.getName());
+    }
+
     nodes.push(child);
   });
   return nodes;
