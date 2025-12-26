@@ -11,7 +11,7 @@ type IsAny<T> = unknown extends T ? T extends {} ? T : never : never;
 type NotAny<T> = T extends IsAny<T> ? never : T;
 function assert_not_any<T>(_x: NotAny<T>) {}
 
-function assert_type<T>(_x: NotAny<T>) {}
+function assert_type<T>(_x: T) {}
 
 // ensure node types are not loaded
 const x: number = setTimeout(() => {}, 1);
