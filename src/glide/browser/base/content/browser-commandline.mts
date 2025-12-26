@@ -53,7 +53,38 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
 
     const options: GlideCompletionOption[] = [];
 
-    for (const command of GlideBrowser.commandline_excmds) {
+    // oldest notifications appear first
+    let suggested = [];
+    for (const notification of gNotificationBox.allNotifications) {
+      const cmd = notification
+        ?.querySelectorAll("button.notification-button")
+        ?.[0]
+        ?.getAttribute("label");
+      if (cmd && cmd[0] == ":") {
+        suggested.push(cmd.slice(1));
+      }
+    }
+
+    let all_cmds = GlideBrowser.commandline_excmds;
+    if (suggested.length > 0) {
+      // move the suggested commands to the top of the list,
+      // most recent first to match the displayed order of the notifications.
+      all_cmds.sort(function(a, b) {
+        const index_a = suggested.indexOf(a.name);
+        const index_b = suggested.indexOf(b.name);
+        if (index_a >= 0 && index_b >= 0) {
+          return index_a - index_b;
+        } else if (index_a >= 0) {
+          return -1;
+        } else if (index_b >= 0) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    }
+
+    for (const command of all_cmds) {
       const keymap = excmd_keymaps.get(command.name);
 
       options.push({
