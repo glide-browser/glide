@@ -1,5 +1,7 @@
 # Contributing
 
+## Building
+
 To build Glide you must have [`Node`](https://nodejs.org/en/blog/release/v24.0.0) v24 and [`pnpm`](https://pnpm.io/installation) installed.
 
 You must also verify that your system has the dependencies that Firefox requires:
@@ -44,6 +46,11 @@ pnpm launch
 > There are lots of arguments you can pass here, run `pnpm launch --help` for the full list.
 
 ## Editor setup
+
+### Pre-push hook
+
+Glide has a pre-push hook that will run many of the lints for you automatically before each `git push`.
+To set it up, run `ln -s ../../scripts/pre-push.sh .git/hooks/pre-push`.
 
 ### Linting
 

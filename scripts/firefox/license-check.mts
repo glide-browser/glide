@@ -39,12 +39,19 @@ const FIXABLE_FILES = [
 const cli = meow({
   importMeta: import.meta,
   allowUnknownFlags: false,
-  flags: { fix: { type: "boolean", default: false } },
+  flags: { fix: { type: "boolean", default: false }, quiet: { type: "boolean", default: false } },
 });
 
 await main();
 
 async function main() {
+  let log;
+  if (cli.flags.quiet) {
+    log = (..._args: any[]) => {};
+  } else {
+    log = console.log;
+  }
+
   const missing: string[] = [];
   const fixed: string[] = [];
   const license = await fs.readFile(Path.join(SCRIPTS_DIR, "firefox", "license.txt"), "utf8").then((contents) =>
@@ -63,15 +70,15 @@ async function main() {
 
     switch (result) {
       case "skip": {
-        console.log(chalk.grey("skip"), "    ", relative_path);
+        log(chalk.grey("skip"), "    ", relative_path);
         break;
       }
       case "success": {
-        console.log(chalk.green("success"), " ", relative_path);
+        log(chalk.green("success"), " ", relative_path);
         break;
       }
       case "fix": {
-        console.log("");
+        log("");
         if (!cli.flags.fix) {
           missing.push(relative_path);
           console.error(chalk.red("missing"), relative_path);
@@ -98,7 +105,7 @@ async function main() {
 
         const abs_path = Path.join(SRC_DIR, relative_path);
         await fs.writeFile(abs_path, header + "\n\n" + (await fs.readFile(abs_path, "utf8")));
-        console.log(chalk.cyan("fixed"), "   ", relative_path);
+        log(chalk.cyan("fixed"), "   ", relative_path);
         break;
       }
       default:
@@ -107,10 +114,10 @@ async function main() {
   }
 
   if (fixed.length) {
-    console.log();
-    console.log("The following files were automatically fixed:");
-    console.log(fixed.map((p) => "  - " + p).join("\n"));
-    console.log();
+    log();
+    log("The following files were automatically fixed:");
+    log(fixed.map((p) => "  - " + p).join("\n"));
+    log();
   }
 
   if (missing.length) {
