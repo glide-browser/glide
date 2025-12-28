@@ -11,6 +11,7 @@ declare var content: TestContent;
 
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 const VIDEO_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/video_test.html";
+const AUTO_FOCUS_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/auto_focus.html";
 
 add_task(async function test_auto_disabled__input_focus() {
   await GlideTestUtils.reload_config(function _() {
@@ -87,5 +88,28 @@ add_task(async function test_auto_disabled__hints() {
 
     await keys("<esc>");
     await wait_for_mode("normal");
+  });
+});
+
+add_task(async function test_page_auto_focusing_elements() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(AUTO_FOCUS_FILE, async browser => {
+    await wait_for_mode("insert", "textarea should be focused automatically");
+
+    await keys("<esc>:");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => parseInt(content.document.getElementById("p-1")!.textContent!) >= 5,
+        "the page should be focusing and unfocusing elements multiple times",
+      );
+    });
+
+    is(
+      glide.ctx.mode,
+      "command",
+      "we should still be in command mode because the mode is determined from the focused element in the browser UI",
+    );
   });
 });
