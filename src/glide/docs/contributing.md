@@ -170,7 +170,7 @@ support-files = []
 
 You must point to the `path:dist/*.js` file instead of the `path:.ts` file as Firefox's test runner does not yet support directly running TS files.
 
-The typical naming convention is `path:browser_$name.ts` but you can choose to use a different name.
+The naming convention tests must follow is `path:browser_$name.ts`.
 
 A typical test file looks like this:
 
