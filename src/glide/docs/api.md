@@ -19,6 +19,7 @@ margin-bottom: var(--line-height);
 text-decoration: none;
 }
 {% /styles %}
+{% toc selector="h1[id], h2[id]" /%}
 
 > [!IMPORTANT]
 > These reference docs are not complete yet, some symbols and types are missing completely.

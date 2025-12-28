@@ -1046,8 +1046,7 @@ table th, table td {
   top: 0;
   right: 0;
   height: 100vh;
-  min-width: 25ch;
-  max-width: 30ch;
+  width: 30ch;
   padding: calc(var(--line-height) * 2) 1ch calc(var(--line-height)) 1ch;
   background: var(--background-color);
   font-family: var(--font-family);
@@ -1106,6 +1105,47 @@ table th, table td {
 .toc-sidebar nav a[data-level="3"] {
   padding-left: 3ch;
   font-size: 0.75rem;
+}
+
+/* Collapsible TOC groups */
+.toc-group {
+  margin-bottom: 0.25em;
+}
+
+.toc-group-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toc-group-header:hover {
+  background: var(--background-color-alt);
+}
+
+.toc-group-icon {
+  font-size: 0.6rem;
+  margin-right: 0.5ch;
+  color: var(--text-color-alt);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+  width: 1ch;
+  text-align: center;
+}
+
+.toc-group-header a {
+  flex: 1;
+  cursor: pointer;
+}
+
+.toc-group-items {
+  margin-left: 1.5ch;
+  margin-top: 0.25em;
+  overflow: hidden;
+}
+
+.toc-group-items a {
+  padding-left: 0.5ch;
 }
 
 /**
