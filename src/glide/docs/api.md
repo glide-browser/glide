@@ -672,6 +672,14 @@ glide.content.execute(func, opts): Promise<Return>
 
 Execute a function in the content process for the given tab.
 
+```ts
+await glide.content.execute(() => {
+  document.body!.appendChild(DOM.create_element("p", [
+    "this will show up at the bottom of the page!",
+  ]));
+}, { tab_id: await glide.tabs.active() });
+```
+
 The given function will be stringified before being sent across processes, which
 means it **cannot** capture any outside variables.
 
