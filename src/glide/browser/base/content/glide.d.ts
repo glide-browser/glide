@@ -286,6 +286,11 @@ declare global {
        * Returns whether or not custom CSS has been registered with the given `id`.
        */
       has(id: string): boolean;
+
+      /**
+       * Returns the CSS string for the given `id`, or `undefined` if no styles have been registered with that ID.
+       */
+      get(id: string): string | undefined;
     };
 
     prefs: {

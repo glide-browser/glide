@@ -73,6 +73,7 @@ text-decoration: none;
 [`glide.styles.add()`](#glide.styles.add)\
 [`glide.styles.remove()`](#glide.styles.remove)\
 [`glide.styles.has()`](#glide.styles.has)\
+[`glide.styles.get()`](#glide.styles.get)\
 [`glide.prefs`](#glide.prefs)\
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
@@ -502,6 +503,12 @@ glide.styles.has(id): boolean
 {% /api-heading %}
 
 Returns whether or not custom CSS has been registered with the given `id`.
+
+{% api-heading id="glide.styles.get" %}
+glide.styles.get(id): string | undefined
+{% /api-heading %}
+
+Returns the CSS string for the given `id`, or `undefined` if no styles have been registered with that ID.
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 

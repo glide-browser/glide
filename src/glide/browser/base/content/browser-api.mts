@@ -619,6 +619,9 @@ export function make_glide_api(
         has(id) {
           return elements.has(id);
         },
+        get(id) {
+          return elements.get(id)?.textContent ?? undefined;
+        },
       };
     })(),
     prefs: {
