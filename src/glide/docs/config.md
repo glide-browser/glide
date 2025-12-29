@@ -41,9 +41,9 @@ The config sandbox is _very_ similar to a standard browser page context. However
 
 ## Browser UI
 
-The browser UI itself has an HTML document, which includes things like the URL bar, refresh button, and downloads button.
+The browser UI itself is an HTML document, which includes things like the URL bar, refresh button, and downloads button.
 This is different from the HTML document of the current tab.
-For the current tab, see [`glide.tabs.active()`](api.md#glide.tabs.active) or [`glide.content`](api.md#glide.content).
+For the current tab, see [`glide.content.execute()`](api.md#glide.content.execute), or [`glide.tabs.active()`](api.md#glide.tabs.active).
 
 The browser UI can be customised through the `document` variable, however it doesn't quite work like a standard [`Document`](https://developer.mozilla.org/en-US/docs/Web/API/Document).
 
