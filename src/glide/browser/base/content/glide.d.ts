@@ -263,7 +263,7 @@ declare global {
        * If you want to remove the styles later on, you can pass an ID with `ts:glide.styles.add(..., { id: 'my-id'}`, and then
        * remove it with `ts:glide.styles.remove('my-id')`.
        */
-      add(styles: string, opts?: { id: string }): void;
+      add(styles: string, opts?: { id: string; overwrite?: boolean }): void;
 
       /**
        * Remove custom CSS that has previously been added.

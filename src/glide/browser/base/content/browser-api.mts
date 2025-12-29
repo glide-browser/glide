@@ -71,8 +71,7 @@ const options = {
         source: "glide.bo.native_tabs",
         callback() {
           if (current) {
-            glide.styles.remove(id);
-            glide.styles.add(current, { id });
+            glide.styles.add(current, { id, overwrite: true });
           } else {
             glide.styles.remove(id);
           }
@@ -609,10 +608,14 @@ export function make_glide_api(
       return {
         add(styles, opts) {
           if (opts?.id && elements.has(opts.id)) {
-            throw Cu.cloneInto(
-              new Error(`A style element has already been registered with ID '${opts.id}'`),
-              GlideBrowser.sandbox_window,
-            );
+            if (!opts.overwrite) {
+              throw Cu.cloneInto(
+                new Error(`A style element has already been registered with ID '${opts.id}'`),
+                GlideBrowser.sandbox_window,
+              );
+            }
+
+            this.remove(opts.id);
           }
 
           const element = DOM.create_element("style", { textContent: styles });

@@ -1421,7 +1421,32 @@ add_task(async function test_styles_add_duplicate_id_does_not_apply_styles() {
   is(get_tabs_bar_width(), visible_width, "duplicate style call should not apply styles");
 });
 
+add_task(async function test_styles_add_duplicate_id__overwrite() {
+  const visible_width = get_tabs_bar_width();
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.styles.add(`#TabsToolbar {}`, { id: "my-styles" });
+
+    glide.styles.add(
+      css`
+        #TabsToolbar {
+          visibility: collapse !important;
+        }
+      `,
+      { id: "my-styles", overwrite: true },
+    );
+  });
+
+  Assert.less(
+    get_tabs_bar_width(),
+    visible_width,
+    "applying the custom css with `overwrite: true` should overwrite the original empty styles",
+  );
+});
+
 add_task(async function test_styles_remove() {
+  await GlideTestUtils.reload_config(function _() {});
+
   const visible_width = get_tabs_bar_width();
 
   await GlideTestUtils.reload_config(function _() {
