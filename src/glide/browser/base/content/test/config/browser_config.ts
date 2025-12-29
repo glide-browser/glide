@@ -1068,6 +1068,57 @@ add_task(async function test_bo_hint_size() {
     "",
     "css var should be unset after config reload",
   );
+
+  await GlideTestUtils.reload_config(function _() {
+    glide.bo.hint_size = "30px";
+  });
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "30px",
+    "setting bo.hint_size should set a css variable",
+  );
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    is(
+      document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+      "",
+      "Loading a new buffer should reset the hint size",
+    );
+  });
+});
+
+add_task(async function test_bo_hint_size__resets_to_custom_size() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.hint_size = "20px";
+
+    glide.autocmds.create("UrlEnter", /input_test/, () => {
+      glide.bo.hint_size = "30px";
+    });
+  });
+
+  is(glide.o.hint_size, "20px");
+  is(glide.bo.hint_size, undefined);
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "20px",
+    "setting o.hint_size should set a css variable",
+  );
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    is(glide.bo.hint_size, "30px");
+    is(
+      document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+      "30px",
+      "Loading the input_test buffer should set the hint size",
+    );
+  });
+
+  is(glide.bo.hint_size, undefined);
+  is(
+    document.documentElement.style.getPropertyValue("--glide-hint-font-size"),
+    "20px",
+    "Leaving the input_test buffer should reset the hint size",
+  );
 });
 
 add_task(async function test_add_excmd_while_commandline_is_cached() {

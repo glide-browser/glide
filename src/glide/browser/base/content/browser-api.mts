@@ -56,8 +56,8 @@ class GlideGlobals implements GlideG {
  * Note that this object is itself stateless.
  */
 const options = {
-  hint_size(value) {
-    GlideBrowser.set_css_property("--glide-hint-font-size", value);
+  hint_size(value, buf) {
+    GlideBrowser.set_css_property("--glide-hint-font-size", value, buf);
   },
 
   native_tabs(value) {
@@ -77,7 +77,7 @@ const options = {
         throw assert_never(value);
     }
   },
-} as const satisfies { [K in keyof typeof glide["o"]]?: (value: typeof glide["o"][K]) => void };
+} as const satisfies { [K in keyof typeof glide["o"]]?: (value: typeof glide["o"][K], buf: boolean) => void };
 
 type GlideO = (typeof glide)["o"];
 class GlideOptions implements GlideO {
@@ -102,7 +102,7 @@ class GlideOptions implements GlideO {
   }
   set hint_size(value: string) {
     this.#hint_size = value;
-    options.hint_size(value);
+    options.hint_size(value, false);
   }
 
   #hint_label_generator: glide.Options["hint_label_generator"] | null = null;
@@ -140,7 +140,7 @@ export function make_buffer_options(): typeof glide["bo"] {
       set(v) {
         value = v;
         // @ts-expect-error TS doesn't like the index as our key type is broader, but it doesn't matter
-        options[name]?.(v);
+        options[name]?.(v, true);
       },
     });
   }

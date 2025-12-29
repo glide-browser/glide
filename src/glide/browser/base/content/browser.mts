@@ -406,9 +406,25 @@ class GlideBrowserClass {
   }
 
   #reload_config_clear_properties: Set<string> = new Set();
-  set_css_property(name: string, value: string) {
-    document.documentElement.style.setProperty(name, value);
+  set_css_property(name: string, value: string, buf: boolean) {
+    const style = document.documentElement.style;
+    const previous = style.getPropertyValue(name);
+
+    style.setProperty(name, value);
     this.#reload_config_clear_properties.add(name);
+
+    if (buf) {
+      this.buffer_cleanups.push({
+        callback: () => {
+          if (previous) {
+            style.setProperty(name, previous);
+          } else {
+            style.removeProperty(name);
+          }
+        },
+        source: `${name}: ${value}`,
+      });
+    }
   }
 
   reload_config_remove_elements: Set<HTMLElement> = new Set();
