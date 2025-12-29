@@ -61,6 +61,9 @@ Notably you **cannot**:
 > [!TIP]
 > You can inspect the browser DOM using the [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html).
 
+> [!TIP]
+> For more information on how the browser UI is set up and rendered, see the [Firefox docs](https://firefox-source-docs.mozilla.org/browser/overview.html).
+
 ## Web extension API
 
 Glide lets you access the web extensions browser API in your config.
