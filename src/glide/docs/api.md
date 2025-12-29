@@ -423,6 +423,9 @@ const proc = await glide.process.spawn("kitty", [
 console.log("opened kitty with pid", proc.pid);
 ```
 
+**note**: on macOS, the `PATH` environment variable is likely not set to what you'd expect, as applications do not inherit your shell environment.
+you can update it with `glide.env.set("PATH", "/usr/bin:/usr/.local/bin")`.
+
 {% api-heading id="glide.process.execute" %}
 glide.process.execute(command, args?, opts?): Promise<glide.CompletedProcess>
 {% /api-heading %}

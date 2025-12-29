@@ -106,6 +106,9 @@ declare global {
        * const proc = await glide.process.spawn('kitty', ['nvim', 'glide.ts'], { cwd: '~/.dotfiles/glide' });
        * console.log('opened kitty with pid', proc.pid);
        * ```
+       *
+       * **note**: on macOS, the `PATH` environment variable is likely not set to what you'd expect, as applications do not inherit your shell environment.
+       *           you can update it with `glide.env.set("PATH", "/usr/bin:/usr/.local/bin")`.
        */
       spawn(command: string, args?: string[] | null | undefined, opts?: glide.SpawnOptions): Promise<glide.Process>;
 
