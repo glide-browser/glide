@@ -422,6 +422,71 @@ declare interface NodeListOf<TNode extends Node> extends NodeList {
   [index: number]: TNode;
 }
 
+interface ReadableStream<R = any> {
+  [Symbol.asyncIterator](options?: ReadableStreamIteratorOptions): ReadableStreamAsyncIterator<R>;
+  values(options?: ReadableStreamIteratorOptions): ReadableStreamAsyncIterator<R>;
+}
+
+/**
+ * The `ReadableStream` interface of the Streams API represents a readable stream of byte data.
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream)
+ */
+interface ReadableStream<R = any> {
+  /**
+   * The **`locked`** read-only property of the ReadableStream interface returns whether or not the readable stream is locked to a reader.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/locked)
+   */
+  readonly locked: boolean;
+  /**
+   * The **`cancel()`** method of the ReadableStream interface returns a Promise that resolves when the stream is canceled.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/cancel)
+   */
+  cancel(reason?: any): Promise<void>;
+  /**
+   * The **`getReader()`** method of the ReadableStream interface creates a reader and locks the stream to it.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/getReader)
+   */
+  getReader(options: { mode: "byob" }): ReadableStreamBYOBReader;
+  getReader(): ReadableStreamDefaultReader<R>;
+  getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader<R>;
+  /**
+   * The **`pipeThrough()`** method of the ReadableStream interface provides a chainable way of piping the current stream through a transform stream or any other writable/readable pair.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/pipeThrough)
+   */
+  pipeThrough<T>(transform: ReadableWritablePair<T, R>, options?: StreamPipeOptions): ReadableStream<T>;
+  /**
+   * The **`pipeTo()`** method of the ReadableStream interface pipes the current `ReadableStream` to a given WritableStream and returns a Promise that fulfills when the piping process completes successfully, or rejects if any errors were encountered.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/pipeTo)
+   */
+  pipeTo(destination: WritableStream<R>, options?: StreamPipeOptions): Promise<void>;
+  /**
+   * The **`tee()`** method of the two-element array containing the two resulting branches as new ReadableStream instances.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/tee)
+   */
+  tee(): [ReadableStream<R>, ReadableStream<R>];
+}
+
+interface ReadableStreamAsyncIterator<T> extends AsyncIteratorObject<T, BuiltinIteratorReturn, unknown> {
+  [Symbol.asyncIterator](): ReadableStreamAsyncIterator<T>;
+}
+
+declare var ReadableStream: {
+  prototype: ReadableStream;
+  new(
+    underlyingSource: UnderlyingByteSource,
+    strategy?: { highWaterMark?: number },
+  ): ReadableStream<Uint8Array<ArrayBuffer>>;
+  new<R = any>(underlyingSource: UnderlyingDefaultSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+  new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+};
+
 //////////////////////////////////////////
 ////////////// typed actors //////////////
 //////////////////////////////////////////

@@ -1,8 +1,31 @@
 diff --git a/tools/@types/generated/lib.gecko.dom.d.ts b/tools/@types/generated/lib.gecko.dom.d.ts
-index 7361392796bec5caa11de4592b8a6212682aa017..8fadd9d011666e804520b95f8d874d944bec1ffa 100644
+index 25c8eae71f27251969e87ccfea14dfcc06ff73fb..9098023d1dd2834ca3fb3b8fd293239633250953 100644
 --- a/tools/@types/generated/lib.gecko.dom.d.ts
 +++ b/tools/@types/generated/lib.gecko.dom.d.ts
-@@ -24682,6 +24682,7 @@ declare var XULCommandEvent: {
+@@ -17757,22 +17757,6 @@ declare var ReadableByteStreamController: {
+     isInstance: IsInstance<ReadableByteStreamController>;
+ };
+ 
+-interface ReadableStream {
+-    readonly locked: boolean;
+-    cancel(reason?: any): Promise<void>;
+-    getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader;
+-    pipeThrough(transform: ReadableWritablePair, options?: StreamPipeOptions): ReadableStream;
+-    pipeTo(destination: WritableStream, options?: StreamPipeOptions): Promise<void>;
+-    tee(): ReadableStream[];
+-}
+-
+-declare var ReadableStream: {
+-    prototype: ReadableStream;
+-    new(underlyingSource?: any, strategy?: QueuingStrategy): ReadableStream;
+-    isInstance: IsInstance<ReadableStream>;
+-    from(asyncIterable: any): ReadableStream;
+-};
+-
+ interface ReadableStreamBYOBReader extends ReadableStreamGenericReader {
+     read(view: ArrayBufferView, options?: ReadableStreamBYOBReaderReadOptions): Promise<ReadableStreamReadResult>;
+     releaseLock(): void;
+@@ -25634,6 +25618,7 @@ declare var XULCommandEvent: {
  };
  
  interface XULElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
@@ -10,3 +33,15 @@ index 7361392796bec5caa11de4592b8a6212682aa017..8fadd9d011666e804520b95f8d874d94
  }
  
  interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+@@ -27955,11 +27940,6 @@ interface FileSystemDirectoryHandle {
+     values(): AsyncIterableIterator<FileSystemHandle>;
+ }
+ 
+-interface ReadableStream {
+-    [Symbol.asyncIterator](options?: ReadableStreamIteratorOptions): AsyncIterableIterator<any>;
+-    values(options?: ReadableStreamIteratorOptions): AsyncIterableIterator<any>;
+-}
+-
+ interface TestInterfaceAsyncIterableDouble {
+     [Symbol.asyncIterator](): AsyncIterableIterator<[string, string]>;
+     entries(): AsyncIterableIterator<[string, string]>;
