@@ -60,16 +60,34 @@ const options = {
     GlideBrowser.set_css_property("--glide-hint-font-size", value, buf);
   },
 
-  native_tabs(value) {
+  native_tabs(value, buf) {
     const id = "$glide.o.native_tabs";
-    GlideBrowser.api.styles.remove(id);
+    const glide = GlideBrowser.api;
+
+    if (buf) {
+      const current = glide.styles.get(id);
+
+      GlideBrowser.buffer_cleanups.push({
+        source: "glide.bo.native_tabs",
+        callback() {
+          if (current) {
+            glide.styles.remove(id);
+            glide.styles.add(current, { id });
+          } else {
+            glide.styles.remove(id);
+          }
+        },
+      });
+    }
+
+    glide.styles.remove(id);
 
     switch (value) {
       case "hide":
-        GlideBrowser.api.styles.add(CSS.hide_tabs_toolbar_v2, { id });
+        glide.styles.add(CSS.hide_tabs_toolbar_v2, { id });
         break;
       case "autohide":
-        GlideBrowser.api.styles.add(CSS.autohide_tabstoolbar_v2, { id });
+        glide.styles.add(CSS.autohide_tabstoolbar_v2, { id });
         break;
       case "show":
         break;
@@ -119,7 +137,7 @@ class GlideOptions implements GlideO {
   }
   set native_tabs(value: (typeof glide)["o"]["native_tabs"]) {
     this.#native_tabs = value;
-    options.native_tabs(value);
+    options.native_tabs(value, false);
   }
 }
 
