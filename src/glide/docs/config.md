@@ -41,7 +41,11 @@ The config sandbox is _very_ similar to a standard browser page context. However
 
 ## Browser UI
 
-The browser UI itself can be customised through the `document` variable, however it doesn't quite work like a standard `Document`.
+The browser UI itself is an HTML document, which includes things like the URL bar, refresh button, and downloads button.
+This is different from the HTML document of the current tab.
+For the current tab, see [`glide.content.execute()`](api.md#glide.content.execute), or [`glide.tabs.active()`](api.md#glide.tabs.active).
+
+The browser UI can be customised through the `document` variable, however it doesn't quite work like a standard [`Document`](https://developer.mozilla.org/en-US/docs/Web/API/Document).
 
 The `document` is a _mirror_ of the internal `document` that renders the browser UI for security reasons. This means only a subset of `Document` operations are supported:
 
@@ -56,6 +60,11 @@ Notably you **cannot**:
 
 > [!TIP]
 > You can inspect the browser DOM using the [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html).
+
+## Web extension API
+
+Glide lets you access the web extensions browser API in your config.
+See [Extensions](extensions.md).
 
 ## Importing types
 
