@@ -10,10 +10,15 @@
   ],
 
   "jsPlugins": [
-    "eslint-plugin-mozilla"
+    "eslint-plugin-mozilla",
+    "./.oxlint-plugin.mjs"
   ],
 
   "rules": {
+    // our rules
+    "glide/require-using-for-temp-prefs": "error",
+    // ----
+
     // we're in a unique situation where this is better
     "typescript/triple-slash-reference": "off",
 
