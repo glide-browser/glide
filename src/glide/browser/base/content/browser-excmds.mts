@@ -23,6 +23,9 @@ const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/cont
 const Args = ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
+const { tab_id_to_firefox } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", {
+  global: "current",
+});
 
 interface ExecuteProps {
   args: glide.ExcmdCallbackProps;
@@ -306,16 +309,16 @@ class GlideExcmdsClass {
       }
       case "tab_pin": {
         const {
-          args: { tab_index },
+          args: { tab_id },
         } = this.#parse_command_args(command_meta, command);
 
-        const tab = tab_index !== null && tab_index !== undefined
-          ? gBrowser.tabContainer.allTabs.at(tab_index)
+        const tab = tab_id !== null && tab_id !== undefined
+          ? tab_id_to_firefox(tab_id)
           : gBrowser.selectedTab;
 
         if (!tab) {
-          const errorMessage = tab_index !== null && tab_index !== undefined
-            ? `could not find a tab at index=${tab_index}`
+          const errorMessage = tab_id !== null && tab_id !== undefined
+            ? `could not find a tab with id=${tab_id}`
             : "could not find the selected tab";
           throw new Error(errorMessage);
         }
@@ -326,16 +329,16 @@ class GlideExcmdsClass {
 
       case "tab_unpin": {
         const {
-          args: { tab_index },
+          args: { tab_id },
         } = this.#parse_command_args(command_meta, command);
 
-        const tab = tab_index !== null && tab_index !== undefined
-          ? gBrowser.tabContainer.allTabs.at(tab_index)
+        const tab = tab_id !== null && tab_id !== undefined
+          ? tab_id_to_firefox(tab_id)
           : gBrowser.selectedTab;
 
         if (!tab) {
-          const errorMessage = tab_index !== null && tab_index !== undefined
-            ? `could not find a tab at index=${tab_index}`
+          const errorMessage = tab_id !== null && tab_id !== undefined
+            ? `could not find a tab with id=${tab_id}`
             : "could not find the selected tab";
           throw new Error(errorMessage);
         }
