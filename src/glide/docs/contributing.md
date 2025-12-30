@@ -22,7 +22,8 @@ pnpm bootstrap
 pnpm bootstrap:mach
 ```
 
-This will download a copy of the Firefox source code to the `path:engine/` directory, bundle Glide's dependencies, build the docs, and apply all of our patches to the Firefox source code.
+`pnpm bootstrap` will download a copy of the Firefox source code to the `path:engine/` directory, bundle Glide's dependencies, build the docs, apply all of our patches to the Firefox source code.
+`pnpm bootstrap:mach` will download missing system dependencies, and configure Firefox's internal `mach` tool.
 
 To actually build Glide, you can run:
 
@@ -38,7 +39,7 @@ pnpm build
 > On many systems, this means that running git commands in the `engine` directory, or running many Glide tests at once, will hit the watch limit.
 > See [the watchman docs](https://facebook.github.io/watchman/docs/install#system-specific-preparation) for how to avoid this.
 >
-> On Linux, you can add `fs.inotify.max_user_watches=524288` to /etc/sysctl.conf and then run `sudo sysctl -p`.
+> On Linux, you can add `fs.inotify.max_user_watches=524288` to `path:/etc/sysctl.conf` and then run `sudo sysctl -p`.
 > On MacOS, do the same, but the parameters are `kern.maxfiles` and `kern.maxfilesperproc`.
 
 Once you have Glide compiled, you can launch it with:
