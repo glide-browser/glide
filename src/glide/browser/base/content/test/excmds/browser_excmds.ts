@@ -265,3 +265,50 @@ add_task(async function test_copy_excmd_single_notification() {
     );
   });
 });
+
+add_task(async function test_tab_pin() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  const initial_tab_count = gBrowser.tabs.length;
+  using _tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
+  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
+
+  is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
+  await keys(":tab_pin<CR>");
+  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin");
+
+  const tab_at_index_1 = gBrowser.tabContainer.allTabs.at(1);
+  is(tab_at_index_1?.pinned, false, "Tab at index 1 should not be pinned initially");
+  await keys(":tab_pin 1<CR>");
+  is(tab_at_index_1?.pinned, true, "Tab at index 1 should be pinned after :tab_pin 1");
+
+  is(gBrowser.tabs.length, initial_tab_count + 2, "Tab count should remain the same");
+});
+
+add_task(async function test_tab_unpin() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  const initial_tab_count = gBrowser.tabs.length;
+  using _tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
+  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
+
+  gBrowser.pinTab(gBrowser.selectedTab);
+  const tab_at_index_0 = gBrowser.tabContainer.allTabs.at(0);
+  if (tab_at_index_0) {
+    gBrowser.pinTab(tab_at_index_0);
+  }
+
+  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned initially");
+  await keys(":tab_unpin<CR>");
+  is(gBrowser.selectedTab.pinned, false, "Current tab should be unpinned after :tab_unpin");
+
+  const tab_at_index_1 = gBrowser.tabContainer.allTabs.at(1);
+  is(tab_at_index_1.pinned, false, "Tab at index 1 should not be pinned initially");
+  await keys(":tab_pin 1<CR>");
+  is(tab_at_index_1.pinned, true, "Tab at index 1 should be pinned after :tab_pin 1");
+
+  await keys(":tab_unpin 1<CR>");
+  is(tab_at_index_1?.pinned, false, "Tab at index 1 should be unpinned after :tab_unpin 1");
+
+  is(gBrowser.tabs.length, initial_tab_count + 2, "Tab count should remain the same");
+});

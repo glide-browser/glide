@@ -304,6 +304,45 @@ class GlideExcmdsClass {
         gBrowser.selectedTab = gBrowser.tabContainer.allTabs.at(gBrowser.tabContainer.selectedIndex - 1);
         break;
       }
+      case "tab_pin": {
+        const {
+          args: { tab_index },
+        } = this.#parse_command_args(command_meta, command);
+
+        const tab = tab_index !== null && tab_index !== undefined
+          ? gBrowser.tabContainer.allTabs.at(tab_index)
+          : gBrowser.selectedTab;
+
+        if (!tab) {
+          const errorMessage = tab_index !== null && tab_index !== undefined
+            ? `could not find a tab at index=${tab_index}`
+            : "could not find the selected tab";
+          throw new Error(errorMessage);
+        }
+
+        gBrowser.pinTab(tab);
+        break;
+      }
+
+      case "tab_unpin": {
+        const {
+          args: { tab_index },
+        } = this.#parse_command_args(command_meta, command);
+
+        const tab = tab_index !== null && tab_index !== undefined
+          ? gBrowser.tabContainer.allTabs.at(tab_index)
+          : gBrowser.selectedTab;
+
+        if (!tab) {
+          const errorMessage = tab_index !== null && tab_index !== undefined
+            ? `could not find a tab at index=${tab_index}`
+            : "could not find the selected tab";
+          throw new Error(errorMessage);
+        }
+
+        gBrowser.unpinTab(tab);
+        break;
+      }
 
       case "commandline_show": {
         // extract the given args ourselves as `this.#parse_command_args` doesn't support
