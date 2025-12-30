@@ -1274,7 +1274,7 @@ declare global {
       /**
        * A `ReadableStream` of `string`s from the stdout pipe.
        */
-      stdout: ReadableStream<string>;
+      stdout: glide.ProcessReadStream;
 
       /**
        * A `ReadableStream` of `string`s from the stderr pipe.
@@ -1282,7 +1282,7 @@ declare global {
        * This is `null` if the `stderr: 'stdout'` option was set as the pipe will be forwarded
        * to `stdout` instead.
        */
-      stderr: ReadableStream<string> | null;
+      stderr: glide.ProcessReadStream | null;
 
       /**
        * Wait for the process to exit.
@@ -1300,6 +1300,47 @@ declare global {
        *        A timeout, in milliseconds, after which the process will be forcibly killed.
        */
       kill(timeout?: number): Promise<glide.CompletedProcess>;
+
+    export type ProcessReadStream = ReadableStream<string> & {
+      /**
+       * When `await`ed returns all of the text in the stream.
+       *
+       * When iterated, yields each text chunk in the stream as it comes in.
+       */
+      text(): {
+        [Symbol.asyncIterator](): AsyncIterator<string>;
+
+        then<TResult1 = string, TResult2 = never>(
+          onfulfilled?:
+            | ((value: string) => TResult1 | PromiseLike<TResult1>)
+            | undefined
+            | null,
+          onrejected?:
+            | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
+            | undefined
+            | null,
+        ): Promise<TResult1 | TResult2>;
+      };
+
+      /**
+       * When `await`ed returns an array of lines.
+       *
+       * When iterated, yields each line in the stream as it comes in.
+       */
+      lines(): {
+        [Symbol.asyncIterator](): AsyncIterator<string>;
+
+        then<TResult1 = string[], TResult2 = never>(
+          onfulfilled?:
+            | ((value: string[]) => TResult1 | PromiseLike<TResult1>)
+            | undefined
+            | null,
+          onrejected?:
+            | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
+            | undefined
+            | null,
+        ): Promise<TResult1 | TResult2>;
+      };
     };
 
     /**
