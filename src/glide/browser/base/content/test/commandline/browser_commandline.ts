@@ -8,6 +8,7 @@
 "use strict";
 
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/commandline/basic.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_basic_commandline() {
   await GlideTestUtils.reload_config(function _() {});
@@ -553,4 +554,96 @@ add_task(async function test_basic_commandline() {
   });
 
   await GlideTestUtils.reload_config(function _() {});
+});
+
+add_task(async function test_suggested_command_is_default() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await keys(":profile_dir<CR>");
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") !== null,
+      "Waiting for profile_dir notification to appear",
+    );
+
+    const profile_dir = PathUtils.profileDir;
+
+    await keys(":");
+    is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "copy");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+
+    await keys("<CR>");
+    await sleep_frames(10);
+
+    const clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, profile_dir, "Clipboard should contain the profile directory path");
+
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") === null,
+      "Waiting for notification to be removed after copy",
+    );
+    is(
+      gNotificationBox.getNotificationWithValue("glide-profile-dir"),
+      null,
+      "Notification should be removed after copying",
+    );
+  });
+});
+
+add_task(async function test_multiple_commands_suggested() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    // Suggest a :copy command.
+    await keys(":profile_dir<CR>");
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") !== null,
+      "Waiting for profile_dir notification to appear",
+    );
+
+    // Suggest a :clear command.
+    await keys(":set invalid_option some_value<CR>");
+
+    // Suggest a :config_reload command.
+    await GlideTestUtils.write_config(function _() {});
+    await until(() => gNotificationBox.getNotificationWithValue("glide-config-reload-notification"));
+
+    // Verify that our suggestions are shown in order.
+    await keys(":");
+    await wait_for_mode("command");
+    is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "config_reload");
+    is(GlideTestUtils.commandline.row_cmd(0), "config_reload");
+    is(GlideTestUtils.commandline.row_cmd(1), "clear");
+    is(GlideTestUtils.commandline.row_cmd(2), "copy");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+
+    // Verify that duplicates are shown in order from most recent.
+    await keys("set invalid_option some_value<CR>");
+    await keys(":");
+    await wait_for_mode("command");
+    is(GlideTestUtils.commandline.row_cmd(0), "clear");
+    is(GlideTestUtils.commandline.row_cmd(1), "config_reload");
+    is(GlideTestUtils.commandline.row_cmd(2), "copy");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+  });
+});
+
+add_task(async function test_non_command_not_suggested() {
+  await GlideTestUtils.reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    GlideBrowser.add_notification("test-notification", {
+      label: "Test notification",
+      buttons: [
+        { label: "test" },
+      ],
+      priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+    });
+
+    await keys(":");
+    await wait_for_mode("command");
+
+    is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "back");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+  });
 });
