@@ -30,15 +30,15 @@ export function redefine_getter<O, Key extends keyof O, Value extends O[Key]>(
 /**
  * Provides the same functionality as `Object.assign` but also includes non-enumerable properties.
  */
-export function object_assign<T extends Obj, U>(target: T, source: U): T & U;
-export function object_assign<T extends Obj, U, V>(target: T, source1: U, source2: V): T & U & V;
-export function object_assign<T extends Obj, U, V, W>(
+export function object_assign<T, U>(target: T, source: U): T & U;
+export function object_assign<T, U, V>(target: T, source1: U, source2: V): T & U & V;
+export function object_assign<T, U, V, W>(
   target: T,
   source1: U,
   source2: V,
   source3: W,
 ): T & U & V & W;
-export function object_assign<T extends Obj, U, V, W, X>(
+export function object_assign<T, U, V, W, X>(
   target: T,
   source1: U,
   source2: V,

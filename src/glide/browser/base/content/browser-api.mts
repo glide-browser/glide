@@ -750,8 +750,8 @@ export function make_glide_api(
           exit_code: null,
           pid: subprocess.pid,
 
-          stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
-          stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
+          stdout: inputpipe_to_processstream(assert_present(subprocess.stdout), "stdout"),
+          stderr: stderr === "pipe" ? inputpipe_to_processstream(assert_present(subprocess.stderr), "stderr") : null,
 
           async wait() {
             return await exit_promise;
@@ -760,6 +760,13 @@ export function make_glide_api(
           async kill(timeout) {
             await subprocess.kill(timeout);
             return proc as glide.CompletedProcess;
+          },
+
+          text() {
+            throw new Error("not implemented");
+          },
+          lines() {
+            throw new Error("not implemented");
           },
         };
 
@@ -780,8 +787,16 @@ export function make_glide_api(
 
         return proc;
 
-        function inputpipe_to_readablestream(input_pipe: ProcessInputPipe, name: string): ReadableStream {
-          const stream = new ReadableStream({
+        function inputpipe_to_processstream(input_pipe: ProcessInputPipe, name: string): glide.ProcessReadStream {
+          const chunks: string[] = [];
+
+          // TODO: how to reject
+          let resolve: () => void = null as any;
+          const done = new Promise<void>((r) => {
+            resolve = r;
+          });
+
+          const stream = new ReadableStream<string>({
             async pull(controller: ReadableStreamDefaultController) {
               const text = await input_pipe.readString().catch((err) => {
                 GlideBrowser._log.debug(`error encountered while reading ${name} pipe`, err);
@@ -791,8 +806,10 @@ export function make_glide_api(
               if (text === "") {
                 GlideBrowser._log.debug(`closing ${name} pipe`);
                 controller.close();
+                resolve();
               } else {
                 controller.enqueue(text);
+                chunks.push(text);
               }
             },
 
@@ -802,7 +819,55 @@ export function make_glide_api(
             },
           });
 
-          return stream;
+          return object_assign(stream, {
+            text: () => {
+              return {
+                [Symbol.asyncIterator](): AsyncIterator<string> {
+                  // TODO: replay?
+                  return stream.values();
+                },
+                // oxlint-disable-next-line no-thenable
+                then(onfulfilled: any, onrejected: any) {
+                  return (async () => {
+                    for await (const _ of stream.values()) {};
+
+                    // await done;
+                    return chunks.join("");
+                  })().then(onfulfilled, onrejected);
+                },
+              };
+            },
+
+            lines() {
+              const stream = this;
+              async function* iter() {
+                const decoder = new Strings.LineDecoder();
+
+                for await (const chunk of stream.text()) {
+                  for (const line of decoder.decode(chunk)) {
+                    yield line;
+                  }
+                }
+              }
+
+              return {
+                [Symbol.asyncIterator]() {
+                  return iter();
+                },
+                // oxlint-disable-next-line no-thenable
+                then(onfulfilled: any, onrejected: any) {
+                  const lines: string[] = [];
+
+                  return (async () => {
+                    for await (const line of iter()) {
+                      lines.push(line);
+                    }
+                    return lines;
+                  })().then(onfulfilled, onrejected);
+                },
+              };
+            },
+          });
         }
       },
       async execute(command, args, opts) {
@@ -988,4 +1053,18 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
       await addon.uninstall();
     },
   };
+}
+
+class ProcessTextStreamPromise extends Promise<string> {
+  constructor(process: glide.Process) {
+    super();
+  }
+
+  [Symbol.asyncIterator](): AsyncIterator<string> {
+    async function* foo() {
+      yield "foo";
+    }
+
+    return foo();
+  }
 }

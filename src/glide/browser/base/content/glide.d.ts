@@ -1301,6 +1301,25 @@ declare global {
        */
       kill(timeout?: number): Promise<glide.CompletedProcess>;
 
+      // /**
+      //  * When `await`ed returns all of the process output.
+      //  *
+      //  * When iterated, yields each output chunk as it comes in.
+      //  *
+      //  * **note**: this includes both stdout and stderr, if you need just one, use `.stdout.text()`, or `.stderr.text()`.
+      //  */
+      // text(): Promise<string> & { [Symbol.asyncIterator](): AsyncIterator<string> };
+      //
+      // /**
+      //  * When `await`ed returns an array of lines from the process output.
+      //  *
+      //  * When iterated, yields each line the process outputs as it comes in.
+      //  *
+      //  * **note**: this includes both stdout and stderr, if you need just one, use `.stdout.text()`, or `.stderr.text()`.
+      //  */
+      // lines(): Promise<string[]> & { [Symbol.asyncIterator](): AsyncIterator<string> };
+    };
+
     export type ProcessReadStream = ReadableStream<string> & {
       /**
        * When `await`ed returns all of the text in the stream.

@@ -262,6 +262,8 @@ add_task(async function test_minimal_env() {
   await waiter(() => glide.g.value).is("MY_ENV_VAR=glide!", "only the explicitly set env var should be present");
 });
 
+// TODO: test for can be called multiple times
+
 add_task(async function test_execute() {
   await GlideTestUtils.reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
@@ -273,3 +275,117 @@ add_task(async function test_execute() {
   await glide.keys.send("~");
   await waiter(() => glide.g.value).is(0, "execute() should wait for the process to exit before returning");
 });
+
+add_task(async function test_stdout_text() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("echo", ["hello world"]);
+      glide.g.value = await proc.stdout.text();
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).is("hello world\n", "stdout.text() should return all stdout as a string");
+});
+
+add_task(async function test_stdout_text_iterator() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("sh", ["-c", "echo first; sleep 0.1; echo second"]);
+      const chunks: string[] = [];
+      for await (const chunk of proc.stdout.text()) {
+        chunks.push(chunk);
+      }
+      glide.g.value = chunks;
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).isjson(["first\n", "second\n"], "stdout.text() iterator should yield chunks");
+});
+
+add_task(async function test_stdout_lines() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("sh", ["-c", "echo first; echo second; echo third"]);
+      glide.g.value = await proc.stdout.lines();
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).isjson(["first", "second", "third"], "stdout.lines() should return lines as an array");
+});
+
+add_task(async function test_stdout_lines_iterator() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("sh", ["-c", "echo first; sleep 0.1; echo second"]);
+      const lines: string[] = [];
+      for await (const line of proc.stdout.lines()) {
+        lines.push(line);
+      }
+      glide.g.value = lines;
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).isjson(["first", "second"], "stdout.lines() iterator should yield individual lines");
+});
+
+// add_task(async function test_process_text() {
+//   await GlideTestUtils.reload_config(function() {
+//     glide.keymaps.set("normal", "~", async () => {
+//       const proc = await glide.process.spawn("sh", ["-c", "echo out; echo err >&2"], { stderr: "pipe" });
+//       glide.g.value = await proc.text();
+//     });
+//   });
+//
+//   await glide.keys.send("~");
+//   await waiter(() => glide.g.value?.includes("out") && glide.g.value?.includes("err")).ok(
+//     "process.text() should return both stdout and stderr",
+//   );
+// });
+//
+// add_task(async function test_process_text_iterator() {
+//   await GlideTestUtils.reload_config(function() {
+//     glide.keymaps.set("normal", "~", async () => {
+//       const proc = await glide.process.spawn("sh", ["-c", "echo out; sleep 0.1; echo err >&2"], { stderr: "pipe" });
+//       const chunks: string[] = [];
+//       for await (const chunk of proc.text()) {
+//         chunks.push(chunk);
+//       }
+//       glide.g.value = chunks;
+//     });
+//   });
+//
+//   await glide.keys.send("~");
+//   await waiter(() => glide.g.value).isjson(["out\n", "err\n"], "process.text() iterator should yield chunks from both streams");
+// });
+//
+// add_task(async function test_process_lines() {
+//   await GlideTestUtils.reload_config(function() {
+//     glide.keymaps.set("normal", "~", async () => {
+//       const proc = await glide.process.spawn("sh", ["-c", "echo line1; echo line2"]);
+//       glide.g.value = await proc.lines();
+//     });
+//   });
+//
+//   await glide.keys.send("~");
+//   await waiter(() => glide.g.value).isjson(["line1", "line2"], "process.lines() should return all lines as an array");
+// });
+//
+// add_task(async function test_process_lines_iterator() {
+//   await GlideTestUtils.reload_config(function() {
+//     glide.keymaps.set("normal", "~", async () => {
+//       const proc = await glide.process.spawn("sh", ["-c", "echo line1; sleep 0.1; echo line2"]);
+//       const lines: string[] = [];
+//       for await (const line of proc.lines()) {
+//         lines.push(line);
+//       }
+//       glide.g.value = lines;
+//     });
+//   });
+//
+//   await glide.keys.send("~");
+//   await waiter(() => glide.g.value).isjson(["line1", "line2"], "process.lines() iterator should yield individual lines");
+// });
