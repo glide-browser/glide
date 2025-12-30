@@ -54,7 +54,7 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
     const options: GlideCompletionOption[] = [];
 
     // oldest notifications appear first
-    let suggested = [];
+    const suggested: string[] = [];
     for (const notification of gNotificationBox.allNotifications) {
       const cmd = notification
         ?.querySelectorAll("button.notification-button")
@@ -65,7 +65,7 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
       }
     }
 
-    let all_cmds = GlideBrowser.commandline_excmds;
+    const all_cmds = GlideBrowser.commandline_excmds;
     if (suggested.length > 0) {
       // move the suggested commands to the top of the list,
       // most recent first to match the displayed order of the notifications.
