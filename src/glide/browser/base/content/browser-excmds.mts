@@ -317,10 +317,10 @@ class GlideExcmdsClass {
           : gBrowser.selectedTab;
 
         if (!tab) {
-          const errorMessage = tab_id !== null && tab_id !== undefined
+          const error_message = tab_id !== null && tab_id !== undefined
             ? `could not find a tab with id=${tab_id}`
             : "could not find the selected tab";
-          throw new Error(errorMessage);
+          throw new Error(error_message);
         }
 
         gBrowser.pinTab(tab);
@@ -337,10 +337,10 @@ class GlideExcmdsClass {
           : gBrowser.selectedTab;
 
         if (!tab) {
-          const errorMessage = tab_id !== null && tab_id !== undefined
+          const error_message = tab_id !== null && tab_id !== undefined
             ? `could not find a tab with id=${tab_id}`
             : "could not find the selected tab";
-          throw new Error(errorMessage);
+          throw new Error(error_message);
         }
 
         gBrowser.unpinTab(tab);
