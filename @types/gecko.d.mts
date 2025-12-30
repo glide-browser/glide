@@ -62,6 +62,8 @@ declare namespace GlobalBrowser {
     selectedTab: BrowserTab | undefined;
     tabContainer: TabContainer;
     removeTab(tab: BrowserTab): void;
+    pinTab(tab: BrowserTab): void;
+    unpinTab(tab: BrowserTab): void;
     getBrowserForTab(tab: BrowserTab): Browser;
     addProgressListener(listener: Partial<nsIWebProgressListener>): void;
     // note: missing lots of opts

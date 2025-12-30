@@ -955,7 +955,7 @@ function get_firefox_splitview(id: string): any {
   return gBrowser.tabContainer.querySelector(`tab-split-view-wrapper[splitViewId="${id}"]`);
 }
 
-function tab_id_to_firefox(id: TabID): BrowserTab {
+export function tab_id_to_firefox(id: TabID): BrowserTab {
   return assert_present(
     GlideBrowser.extension?.tabManager?.get?.(id),
     "could not resolve tab, did you call this too early in startup?",
