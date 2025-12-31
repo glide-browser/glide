@@ -1,0 +1,13 @@
+diff --git a/toolkit/components/search/UserSearchEngine.sys.mjs b/toolkit/components/search/UserSearchEngine.sys.mjs
+index 061f511b531669e1ac944377ad8bee2a73348d51..aad2061905dd39b7c4acc7f4cfc069827de65e55 100644
+--- a/toolkit/components/search/UserSearchEngine.sys.mjs
++++ b/toolkit/components/search/UserSearchEngine.sys.mjs
+@@ -201,7 +201,7 @@ export class UserSearchEngine extends SearchEngine {
+       .then(iconURL => {
+         if (iconURL) {
+           this.changeIcon(iconURL.dataURI.spec);
+-        } else if (Object.keys(this._iconMapObj).length) {
++        } else if (Object.keys(this._iconMapObj || {}).length) {
+           // There was an icon before but now there is none.
+           // Remove previous icon in case the origin changed.
+           this._iconMapObj = {};

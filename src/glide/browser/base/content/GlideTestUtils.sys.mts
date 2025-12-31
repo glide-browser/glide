@@ -50,7 +50,7 @@ class GlideTestUtilsClass {
    * Behaves the same as `BrowserTestUtils.openNewForegroundTab()` but also defines
    * `[Symbol.dispose]()` so you can use it with `using`.
    */
-  async new_tab(uri: string): Promise<BrowserTab> {
+  async new_tab(uri?: string): Promise<BrowserTab> {
     const tab = await g.BrowserTestUtils.openNewForegroundTab(g.gBrowser, uri);
     return Object.assign(tab, {
       [Symbol.dispose]() {

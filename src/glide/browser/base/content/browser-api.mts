@@ -483,6 +483,112 @@ export function make_glide_api(
         return addons.map(firefox_addon_to_glide);
       },
     },
+
+    search_engines: ((): typeof glide["search_engines"] => {
+      return {
+        async add(props) {
+          await Services.search.promiseInitialized;
+
+          let suggest_url = props.suggest_url;
+          if (suggest_url && props.suggest_url_get_params) {
+            suggest_url = suggest_url + (suggest_url.includes("?") ? "&" : "?") + props.suggest_url_get_params;
+          }
+
+          const keywords = Array.isArray(props.keyword) ? props.keyword : props.keyword ? [props.keyword] : [];
+          const params = props.search_url_post_params ?? props.search_url_get_params;
+          const info = {
+            name: props.name.trim(),
+            url: props.search_url,
+            suggestUrl: suggest_url?.trim(),
+            alias: keywords[0],
+            charset: props.encoding,
+            method: props.search_url_post_params ? "POST" : "GET",
+            params: params ? new URLSearchParams(params) : undefined,
+          };
+          GlideBrowser._log.debug("[search_engines.add]: resolved props", info);
+
+          const engine = await (async (): Promise<nsISearchEngine> => {
+            const existing = Services.search.getEngineByName(props.name);
+            if (!existing) {
+              GlideBrowser._log.debug("[search_engines.add]: creating search engine with name", info.name);
+              return await Services.search.addUserEngine(info);
+            }
+
+            GlideBrowser._log.debug("[search_engines.add]: updating search engine with name", info.name);
+
+            const SearchUtils =
+              ChromeUtils.importESModule("moz-src:///toolkit/components/search/SearchUtils.sys.mjs").SearchUtils;
+
+            // reimplementation of `engine/browser/components/search/content/addEngine.js:EditEngineDialog:onAccept()`
+            // https://searchfox.org/firefox-main/rev/f9d8702e26624ab46a35bf6561a7c8143c6f246a/browser/components/search/content/addEngine.js#336
+            const engine = existing.wrappedJSObject as UserSearchEngine;
+
+            if (engine.name !== info.name) {
+              engine.rename(info.name);
+            }
+
+            if (typeof info.alias !== "undefined" && engine.alias !== info.alias) {
+              engine.alias = info.alias;
+            }
+
+            const new_postdata = info.params?.toString() || null;
+
+            const [prev_url, prev_postdata] = get_submission_template(engine, SearchUtils.URL_TYPE.SEARCH);
+            if (info.url != prev_url || prev_postdata != new_postdata) {
+              engine.changeUrl(SearchUtils.URL_TYPE.SEARCH, info.url, new_postdata);
+            }
+
+            const [prev_suggest_url] = get_submission_template(engine, SearchUtils.URL_TYPE.SUGGEST_JSON);
+            if (info.suggestUrl != prev_suggest_url) {
+              engine.changeUrl(SearchUtils.URL_TYPE.SUGGEST_JSON, info.suggestUrl!, null);
+            }
+
+            return existing;
+          })();
+          const engine_js = engine.wrappedJSObject as UserSearchEngine;
+
+          // At the time of writing, there is no public API[0] to add a user engine with multiple keywords.
+          //
+          // So this just overrides the internals[1] which seems to work...
+          //
+          // [0]: `engine/toolkit/components/search/UserSearchEngine.sys.mjs`
+          // [1]: `engine/toolkit/components/search/SearchEngine.sys.mjs`
+          if (keywords.length > 1) {
+            engine_js._definedAliases = keywords.slice(1);
+          }
+
+          if (props.favicon_url) {
+            await engine_js.changeIcon(props.favicon_url);
+          }
+
+          if (props.is_default) {
+            await Services.search.setDefault(engine, Ci.nsISearchService.CHANGE_REASON_CONFIG);
+          }
+        },
+      };
+
+      /**
+       * This is a port of the `getSubmissionTemplate()` function, updated to not replace the search params
+       * with `%s` as it would just immediately be replaced back by the caller.
+       *
+       * https://searchfox.org/firefox-main/rev/f9d8702e26624ab46a35bf6561a7c8143c6f246a/browser/components/search/content/addEngine.js#390
+       */
+      function get_submission_template(engine: UserSearchEngine, urlType: string): [string | null, string | null] {
+        const submission = engine.getSubmission("searchTerms", urlType);
+        if (!submission) {
+          return [null, null];
+        }
+        let postData = null;
+        if (submission.postData) {
+          const binaryStream = Cc["@mozilla.org/binaryinputstream;1"]!.createInstance(Ci.nsIBinaryInputStream);
+          binaryStream.setInputStream((submission.postData as any).data);
+
+          postData = binaryStream
+            .readBytes(binaryStream.available());
+        }
+        return [submission.uri.spec, postData];
+      }
+    })(),
     keys: {
       async send(input, opts) {
         const EventUtils = ChromeUtils.importESModule("chrome://glide/content/event-utils.mjs", { global: "current" });
