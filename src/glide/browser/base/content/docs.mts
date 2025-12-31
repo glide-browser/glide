@@ -30,7 +30,7 @@ interface SidebarEntry {
   target?: string;
 }
 
-const IGNORE_CODE_LANGS = new Set(["glide", "about", "file", "stderr", "auto_activate", "action"]);
+const IGNORE_CODE_LANGS = new Set(["glide", "about", "file", "stderr", "auto_activate", "action", "bootstrap"]);
 
 // GitHub-style admonition types
 const ADMONITION_TYPES = new Set([
