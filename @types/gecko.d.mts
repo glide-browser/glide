@@ -190,6 +190,7 @@ declare type _BroadcastConduit =
   import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs").BroadcastConduit;
 declare type _ExtensionCommon =
   typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs").ExtensionCommon;
+declare type UserSearchEngine = import("../engine/toolkit/components/search/UserSearchEngine.sys.mjs").UserSearchEngine;
 
 declare type GlideHintIPC = import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
 
@@ -311,6 +312,8 @@ declare namespace MockedExports {
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
     "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");
+    "moz-src:///toolkit/components/search/SearchUtils.sys.mjs":
+      typeof import("../engine/toolkit/components/search/SearchUtils.sys.mjs");
   }
 
   interface ChromeUtils {

@@ -111,6 +111,8 @@ text-decoration: none;
 [`glide.addons`](#glide.addons)\
 [`glide.addons.install()`](#glide.addons.install)\
 [`glide.addons.list()`](#glide.addons.list)\
+[`glide.search_engines`](#glide.search_engines)\
+[`glide.search_engines.add()`](#glide.search_engines.add)\
 [`glide.keys`](#glide.keys)\
 [`glide.keys.send()`](#glide.keys.send)\
 [`glide.keys.next()`](#glide.keys.next)\
@@ -806,6 +808,33 @@ The returned addons can be filtered by type, for example to only return extensio
 ```typescript
 await glide.addons.list("extension");
 ```
+
+## • `glide.search_engines` {% id="glide.search_engines" %}
+
+{% api-heading id="glide.search_engines.add" %}
+glide.search_engines.add(props): Promise<void>
+{% /api-heading %}
+
+Adds or updates a custom search engine.
+
+The format matches `chrome_settings_overrides.search_provider` [0] from WebExtension manifests.
+
+The `search_url` must contain `{searchTerms}` as a placeholder for the search query.
+
+```typescript
+glide.search_engines.add({
+  name: "Discogs",
+  keyword: "disc",
+  search_url:
+    "https://www.discogs.com/search/?q={searchTerms}",
+  favicon_url: "https://www.discogs.com/favicon.ico",
+});
+```
+
+**note**: search engines you add are not removed when this call is removed, you will need to manually remove them
+using `about:preferences#search` for now.
+
+[0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
 
 ## • `glide.keys` {% id="glide.keys" %}
 

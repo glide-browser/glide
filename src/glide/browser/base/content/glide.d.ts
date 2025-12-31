@@ -696,6 +696,31 @@ declare global {
       list(types?: glide.AddonType | glide.AddonType[]): Promise<glide.Addon[]>;
     };
 
+    search_engines: {
+      /**
+       * Adds or updates a custom search engine.
+       *
+       * The format matches `chrome_settings_overrides.search_provider`[0] from WebExtension manifests.
+       *
+       * The `search_url` must contain `{searchTerms}` as a placeholder for the search query.
+       *
+       * ```typescript
+       * glide.search_engines.add({
+       *   name: "Discogs",
+       *   keyword: "disc",
+       *   search_url: "https://www.discogs.com/search/?q={searchTerms}",
+       *   favicon_url: "https://www.discogs.com/favicon.ico",
+       * });
+       * ```
+       *
+       * **note**: search engines you add are not removed when this call is removed, you will need to manually remove them
+       *            using `about:preferences#search` for now.
+       *
+       * [0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
+       */
+      add(props: Browser.Manifest.WebExtensionManifestChromeSettingsOverridesSearchProviderType): Promise<void>;
+    };
+
     keys: {
       /**
        * Send a key sequence to the browser, simulating physical key presses.
