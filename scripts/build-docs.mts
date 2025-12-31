@@ -118,7 +118,7 @@ for (const file of SYMLINKS) {
 }
 
 async function build_tutor_docs() {
-  const tutor_docs_dist_dir = Path.join(DOCS_DIST_DIR, "tutorial");
+  const tutor_docs_dist_dir = Path.join(DOCS_DIST_DIR, "tutor");
   await fs.mkdir(tutor_docs_dist_dir, { recursive: true });
 
   const FENCE_RE = /<fence(.*)>(.*)<\/fence>/gis;
