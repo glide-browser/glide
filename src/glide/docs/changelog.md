@@ -121,7 +121,7 @@ glide.hints.show({
 
 Thanks to [@peff](https://github.com/peff) for the contribution!
 
-## Changes {% id="0.1.56a-breaking-changes" %}
+## Changes {% id="0.1.56a-changes" %}
 
 - Bumped Firefox from 146.0b9 to 147.0b3
 - Added support for nested [`glide.unstable.include()`](api.md#glide.unstable.include) calls
