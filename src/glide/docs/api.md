@@ -834,6 +834,9 @@ glide.search_engines.add({
 **note**: search engines you add are not removed when this call is removed, you will need to manually remove them
 using `about:preferences#search` for now.
 
+**note**: not all properties in the `chrome_settings_overrides.search_provider` manifest are supported, as they are not all
+supported by Firefox, e.g. `instant_url`, and `image_url`.
+
 [0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
 
 ## • `glide.keys` {% id="glide.keys" %}
