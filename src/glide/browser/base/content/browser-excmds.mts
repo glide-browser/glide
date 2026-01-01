@@ -106,11 +106,17 @@ class GlideExcmdsClass {
     command: glide.ExcmdValue,
     props?: SetOptional<ExecuteProps, "args">,
   ): Promise<void> {
+    const command_name = typeof command === "string" ? extract_command_name(command) : command.name;
+
     try {
       await this.#execute(command, {
         ...props,
         args: { ...this.#parse_args(command), tab_id: GlideBrowser.active_tab_id, ...props?.args },
       });
+
+      if (!command_name.includes("commandline_")) {
+        GlideBrowser.remove_notification("glide-excmd-error");
+      }
     } catch (err) {
       GlideBrowser._log.error(err);
 
