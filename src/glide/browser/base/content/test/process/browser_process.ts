@@ -131,7 +131,7 @@ add_task(async function test_stdin_arraybuffer() {
   
   // Write binary data
   const data = new TextEncoder().encode("Binary data test\n");
-  await proc.stdin.write(data.buffer);
+  await proc.stdin.write(data); 
   
   proc.stdin.close();
   
