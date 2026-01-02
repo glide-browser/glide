@@ -228,8 +228,7 @@ declare global {
 
       create<const Event extends glide.AutocmdEvent>(
         event: Event,
-        pattern: glide.AutocmdPatterns[Event] extends never
-          ? (args: glide.AutocmdArgs[Event]) => void
+        pattern: glide.AutocmdPatterns[Event] extends never ? (args: glide.AutocmdArgs[Event]) => void
           : glide.AutocmdPatterns[Event],
         callback?: (args: glide.AutocmdArgs[Event]) => void,
       ): void;
@@ -1905,43 +1904,44 @@ declare global {
     create_element<TagName extends keyof HTMLElementTagNameMap | (string & {})>(
       tag_name: TagName,
       props_or_children?: // props
-      | DOM.CreateElementProps<
-            TagName extends keyof HTMLElementTagNameMap ? TagName : "div"
-          >
+        | DOM.CreateElementProps<
+          TagName extends keyof HTMLElementTagNameMap ? TagName : "div"
+        >
         // children
         | Array<Node | string>,
       props?: DOM.CreateElementProps<
         TagName extends keyof HTMLElementTagNameMap ? TagName : "div"
       >,
-    ): TagName extends keyof HTMLElementTagNameMap
-      ? HTMLElementTagNameMap[TagName]
+    ): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName]
       : HTMLElement;
   };
 
   namespace DOM {
     type Utils = typeof DOM;
 
-    type CreateElementProps<K extends keyof HTMLElementTagNameMap> = Omit<
-      Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
-      "children"
-    > & {
-      /**
-       * Can be an individual child or an array of children.
-       */
-      children?: (Node | string) | Array<Node | string>;
+    type CreateElementProps<K extends keyof HTMLElementTagNameMap> =
+      & Omit<
+        Partial<NonReadonly<HTMLElementTagNameMap[K]>>,
+        "children"
+      >
+      & {
+        /**
+         * Can be an individual child or an array of children.
+         */
+        children?: (Node | string) | Array<Node | string>;
 
-      /**
-       * Set arbitrary attributes on the element.
-       */
-      attributes?: Record<string, string>;
+        /**
+         * Set arbitrary attributes on the element.
+         */
+        attributes?: Record<string, string>;
 
-      /**
-       * Set specific CSS style properties.
-       *
-       * This uses the JS style naming convention for properties, e.g. `zIndex`.
-       */
-      style?: Partial<CSSStyleDeclaration>;
-    };
+        /**
+         * Set specific CSS style properties.
+         *
+         * This uses the JS style naming convention for properties, e.g. `zIndex`.
+         */
+        style?: Partial<CSSStyleDeclaration>;
+      };
   }
 
   namespace $keymapcompletions {
@@ -1955,22 +1955,16 @@ declare global {
      * `<leader>-` -> `<leader>-a` | `<leader>-<CR>` ...
      * `g` -> `gg` | `gj` ...
      */
-    type T<LHS> = LHS extends ""
-      ? SingleKey
-      : LHS extends "<"
-        ? LHS | SpecialKey | `<${ModifierKey}-`
-        : LHS extends `${infer S}<${infer M}-`
-          ?
-              | LHS
-              | `${S}<${M}-${Exclude<StripAngles<SingleKey>, ModifierKey>}>`
-              | `${S}<${M}-${ModifierKey}-`
-          : LHS extends `${infer S}<`
-            ? LHS | `${S}${SpecialKey}`
-            : LHS extends `${infer S}-`
-              ? LHS | `${S}-${SingleKey}`
-              : LHS extends `${infer S}`
-                ? LHS | `${S}${SingleKey}`
-                : LHS;
+    type T<LHS> = LHS extends "" ? SingleKey
+      : LHS extends "<" ? LHS | SpecialKey | `<${ModifierKey}-`
+      : LHS extends `${infer S}<${infer M}-` ?
+          | LHS
+          | `${S}<${M}-${Exclude<StripAngles<SingleKey>, ModifierKey>}>`
+          | `${S}<${M}-${ModifierKey}-`
+      : LHS extends `${infer S}<` ? LHS | `${S}${SpecialKey}`
+      : LHS extends `${infer S}-` ? LHS | `${S}-${SingleKey}`
+      : LHS extends `${infer S}` ? LHS | `${S}${SingleKey}`
+      : LHS;
 
     /**
      * e.g. a, b, <leader>
@@ -2019,16 +2013,13 @@ declare global {
 
     type ModifierKey = "C" | "D" | "A" | "S";
 
-    type StringToUnion<S extends string> =
-      S extends `${infer First}${infer Rest}`
-        ? First | StringToUnion<Rest>
-        : never;
+    type StringToUnion<S extends string> = S extends `${infer First}${infer Rest}` ? First | StringToUnion<Rest>
+      : never;
 
     /**
      * `<foo>` -> `foo`
      */
-    type StripAngles<K extends SingleKey> = K extends `<${infer Inner}>`
-      ? Inner
+    type StripAngles<K extends SingleKey> = K extends `<${infer Inner}>` ? Inner
       : K;
   }
 }
