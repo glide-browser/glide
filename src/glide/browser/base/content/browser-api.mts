@@ -861,8 +861,8 @@ export function make_glide_api(
           stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
           stdin: {
             write(data: string | ArrayBuffer): Promise<void> {
-              const buffer = typeof data === "string" ? new TextEncoder().encode(data) : data;
-              return subprocess.stdin.write(buffer);
+              // Firefox handles encoding
+              return subprocess.stdin.write(data);
             },
 
             async close(opts?: { force?: boolean }) {
