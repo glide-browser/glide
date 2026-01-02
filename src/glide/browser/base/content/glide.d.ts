@@ -1313,6 +1313,23 @@ declare global {
       stderr: ReadableStream<string> | null;
 
       /**
+       * Write to the process's stdin pipe.
+       */
+      stdin: {
+        /**
+         * Write data to the process's stdin.
+         * 
+         * Accepts either a string (which will be UTF-8 encoded) or an ArrayBuffer.
+         */
+        write(data: string | ArrayBuffer): Promise<void>;
+    
+        /**
+         * Close the stdin pipe, signaling EOF to the process.
+         */
+        close(): void;
+      };
+
+      /**
        * Wait for the process to exit.
        */
       wait(): Promise<glide.CompletedProcess>;
