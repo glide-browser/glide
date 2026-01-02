@@ -117,13 +117,13 @@ add_task(async function test_stdin() {
   const reader = proc.stdout.getReader();
   const { value } = await reader.read();
 
-  Assert.equal(value, "Hello from stdin!\n", "stdin write should be echoed back");
+  is(value, "Hello from stdin!\n", "stdin write should be echoed back");
 
   proc.stdin.close();
 
   // Wait for process to exit
   const completed = await proc.wait();
-  Assert.equal(completed.exit_code, 0, "process should exit cleanly");
+  is(completed.exit_code, 0, "process should exit cleanly");
 });
 
 add_task(async function test_stdin_arraybuffer() {
@@ -138,7 +138,7 @@ add_task(async function test_stdin_arraybuffer() {
   const reader = proc.stdout.getReader();
   const { value } = await reader.read();
 
-  Assert.equal(value, "Binary data test\n", "ArrayBuffer write should work");
+  is(value, "Binary data test\n", "ArrayBuffer write should work");
 
   await proc.wait();
 });
