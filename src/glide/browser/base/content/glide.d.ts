@@ -1263,6 +1263,7 @@ declare global {
     /// @docs-skip
     export type Options = GlideOptions;
 
+    /// @docs-skip
     export type TypedArray =
       | Int8Array
       | Uint8Array

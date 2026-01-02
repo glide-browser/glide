@@ -142,7 +142,6 @@ text-decoration: none;
 [`glide.modes`](#glide.modes)\
 [`glide.modes.register()`](#glide.modes.register)\
 [`glide.modes.list()`](#glide.modes.list)\
-[`glide.TypedArray`](#glide.TypedArray)\
 [`glide.SpawnOptions`](#glide.SpawnOptions)\
 [`glide.Process`](#glide.Process)\
 [`glide.CompletedProcess`](#glide.CompletedProcess)\
@@ -1122,8 +1121,6 @@ glide.modes.list(): GlideMode[]
 List all registered modes.
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
-
-## • `glide.TypedArray: Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array` {% id="glide.TypedArray" %}
 
 ## • `glide.SpawnOptions` {% id="glide.SpawnOptions" %}
 
