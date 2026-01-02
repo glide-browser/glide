@@ -1175,6 +1175,8 @@ stdin: {
      * Write data to the process's stdin.
      *
      * Accepts either a string (which will be UTF-8 encoded) or a binary array (e.g. ArrayBuffer, Uint8Array etc).
+     *
+     * **warning**: you *must* call `.close()` once you are done writing, otherwise the process will never exit
      */
     write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
     /**
