@@ -846,6 +846,7 @@ export function make_glide_api(
         const subprocess = await Subprocess.call({
           command: await Subprocess.pathSearch(command),
           arguments: args ?? [],
+          stdin: "pipe", 
           stderr,
           workdir: opts?.cwd,
           environment: opts?.env,
@@ -858,6 +859,16 @@ export function make_glide_api(
 
           stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
           stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
+          stdin: {
+            write(data: string | ArrayBuffer): Promise<void> {
+              const buffer = typeof data === "string" ? new TextEncoder().encode(data) : data;
+              return subprocess.stdin.write(buffer);
+            },
+
+            close() {
+              subprocess.stdin.close();
+            },
+          },
 
           async wait() {
             return await exit_promise;
