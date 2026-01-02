@@ -862,7 +862,7 @@ export function make_glide_api(
             async write(data: string | ArrayBuffer): Promise<void> {
               await assert_present(subprocess.stdin, "stdin pipe not available").write(data);
             },
-            async close(opts?: { force?: boolean }): Promise<void> {
+            async close(): Promise<void> {
               await assert_present(subprocess.stdin, "stdin pipe not available").close();
             },
           },
