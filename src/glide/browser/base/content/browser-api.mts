@@ -865,8 +865,14 @@ export function make_glide_api(
               return subprocess.stdin.write(buffer);
             },
 
-            close() {
-              subprocess.stdin.close();
+            async close(opts?: { force?: boolean }) {
+              if (opts?.force) {
+                return subprocess.stdin.close();
+              }
+
+              // Wait for pending writes to complete before closing
+              await subprocess.stdin.write(new Uint8Array(0)); // Flush
+              return subprocess.stdin.close();
             },
           },
 

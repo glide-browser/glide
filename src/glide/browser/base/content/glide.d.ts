@@ -1325,8 +1325,13 @@ declare global {
     
         /**
          * Close the stdin pipe, signaling EOF to the process.
+         * 
+         * By default, waits for any pending writes to complete before closing.
+         * Pass `{ force: true }` to close immediately without waiting.
+         * 
+         * @param opts.force - If true, close immediately without waiting for pending writes
          */
-        close(): void;
+        close(opts?: { force?: boolean }): Promise<void>;
       };
 
       /**
