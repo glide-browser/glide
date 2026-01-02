@@ -1333,7 +1333,7 @@ declare global {
         /**
          * Write data to the process's stdin.
          *
-         * Accepts either a string (which will be UTF-8 encoded) or an ArrayBuffer.
+         * Accepts either a string (which will be UTF-8 encoded) or a binary array (e.g. ArrayBuffer, Uint8Array etc).
          */
         write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
 
