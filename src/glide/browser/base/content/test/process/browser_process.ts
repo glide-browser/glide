@@ -107,6 +107,42 @@ add_task(async function test_non_zero_exit_code_success_codes_disables() {
   );
 });
 
+add_task(async function test_stdin() {
+  const proc = await glide.process.spawn("/bin/cat");
+
+  // Write
+  await proc.stdin.write("Hello from stdin!\n");
+
+  // Read
+  const reader = proc.stdout.getReader();
+  const { value } = await reader.read();
+
+  is(value, "Hello from stdin!\n", "stdin write should be echoed back");
+
+  proc.stdin.close();
+
+  // Wait for process to exit
+  const completed = await proc.wait();
+  is(completed.exit_code, 0, "process should exit cleanly");
+});
+
+add_task(async function test_stdin_arraybuffer() {
+  const proc = await glide.process.spawn("/bin/cat");
+
+  // Write binary data
+  const data = new TextEncoder().encode("Binary data test\n");
+  await proc.stdin.write(data);
+
+  proc.stdin.close();
+
+  const reader = proc.stdout.getReader();
+  const { value } = await reader.read();
+
+  is(value, "Binary data test\n", "ArrayBuffer write should work");
+
+  await proc.wait();
+});
+
 add_task(async function test_stdout() {
   await GlideTestUtils.reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {

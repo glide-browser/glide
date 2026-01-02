@@ -1168,6 +1168,28 @@ stdout: ReadableStream<string>;
  */
 stderr: ReadableStream<string> | null;
 /**
+ * Write to the process's stdin pipe.
+ */
+stdin: {
+    /**
+     * Write data to the process's stdin.
+     *
+     * Accepts either a string (which will be UTF-8 encoded) or a binary array (e.g. ArrayBuffer, Uint8Array etc).
+     */
+    write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
+    /**
+     * Close the stdin pipe, signaling EOF to the process.
+     *
+     * By default, waits for any pending writes to complete before closing.
+     * Pass `{ force: true }` to close immediately without waiting.
+     *
+     * @param opts.force - If true, close immediately without waiting for pending writes
+     */
+    close(opts?: {
+        force?: boolean;
+    }): Promise<void>;
+};
+/**
  * Wait for the process to exit.
  */
 wait(): Promise<glide.CompletedProcess>;

@@ -1263,6 +1263,20 @@ declare global {
     /// @docs-skip
     export type Options = GlideOptions;
 
+    /// @docs-skip
+    export type TypedArray =
+      | Int8Array
+      | Uint8Array
+      | Uint8ClampedArray
+      | Int16Array
+      | Uint16Array
+      | Int32Array
+      | Uint32Array
+      | Float32Array
+      | Float64Array
+      | BigInt64Array
+      | BigUint64Array;
+
     export type SpawnOptions = {
       cwd?: string;
 
@@ -1311,6 +1325,28 @@ declare global {
        * to `stdout` instead.
        */
       stderr: ReadableStream<string> | null;
+
+      /**
+       * Write to the process's stdin pipe.
+       */
+      stdin: {
+        /**
+         * Write data to the process's stdin.
+         *
+         * Accepts either a string (which will be UTF-8 encoded) or a binary array (e.g. ArrayBuffer, Uint8Array etc).
+         */
+        write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
+
+        /**
+         * Close the stdin pipe, signaling EOF to the process.
+         *
+         * By default, waits for any pending writes to complete before closing.
+         * Pass `{ force: true }` to close immediately without waiting.
+         *
+         * @param opts.force - If true, close immediately without waiting for pending writes
+         */
+        close(opts?: { force?: boolean }): Promise<void>;
+      };
 
       /**
        * Wait for the process to exit.
