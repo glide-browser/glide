@@ -859,7 +859,7 @@ export function make_glide_api(
           stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
           stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
           stdin: {
-            async write() {
+            async write(data) {
               await assert_present(subprocess.stdin, "stdin pipe not available").write(data);
             },
 
