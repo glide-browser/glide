@@ -846,7 +846,6 @@ export function make_glide_api(
         const subprocess = await Subprocess.call({
           command: await Subprocess.pathSearch(command),
           arguments: args ?? [],
-          stdin: "pipe", 
           stderr,
           workdir: opts?.cwd,
           environment: opts?.env,
@@ -860,19 +859,11 @@ export function make_glide_api(
           stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
           stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
           stdin: {
-            write(data: string | ArrayBuffer): Promise<void> {
-              // Firefox handles encoding
-              return subprocess.stdin.write(data);
+            async write(data: string | ArrayBuffer): Promise<void> {
+              await assert_present(subprocess.stdin, "stdin pipe not available").write(data);
             },
-
-            async close(opts?: { force?: boolean }) {
-              if (opts?.force) {
-                return subprocess.stdin.close();
-              }
-
-              // Wait for pending writes to complete before closing
-              await subprocess.stdin.write(new Uint8Array(0)); // Flush
-              return subprocess.stdin.close();
+            async close(opts?: { force?: boolean }): Promise<void> {
+              await assert_present(subprocess.stdin, "stdin pipe not available").close();
             },
           },
 
