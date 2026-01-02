@@ -142,6 +142,7 @@ text-decoration: none;
 [`glide.modes`](#glide.modes)\
 [`glide.modes.register()`](#glide.modes.register)\
 [`glide.modes.list()`](#glide.modes.list)\
+[`glide.TypedArray`](#glide.TypedArray)\
 [`glide.SpawnOptions`](#glide.SpawnOptions)\
 [`glide.Process`](#glide.Process)\
 [`glide.CompletedProcess`](#glide.CompletedProcess)\
@@ -1122,6 +1123,8 @@ List all registered modes.
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 
+## • `glide.TypedArray: Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array` {% id="glide.TypedArray" %}
+
 ## • `glide.SpawnOptions` {% id="glide.SpawnOptions" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
@@ -1167,6 +1170,28 @@ stdout: ReadableStream<string>;
  * to `stdout` instead.
  */
 stderr: ReadableStream<string> | null;
+/**
+ * Write to the process's stdin pipe.
+ */
+stdin: {
+    /**
+     * Write data to the process's stdin.
+     *
+     * Accepts either a string (which will be UTF-8 encoded) or an ArrayBuffer.
+     */
+    write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
+    /**
+     * Close the stdin pipe, signaling EOF to the process.
+     *
+     * By default, waits for any pending writes to complete before closing.
+     * Pass `{ force: true }` to close immediately without waiting.
+     *
+     * @param opts.force - If true, close immediately without waiting for pending writes
+     */
+    close(opts?: {
+        force?: boolean;
+    }): Promise<void>;
+};
 /**
  * Wait for the process to exit.
  */
@@ -1533,7 +1558,8 @@ updating the browser UI itself. it is not available in
 content processes.
 
 {% api-heading id="DOM.create_element" %}
-DOM.create_element(tag_name, props_or_children?, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement
+DOM.create_element(tag_name, props_or_children?, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName]
+: HTMLElement
 {% /api-heading %}
 
 Wrapper over `document.createElement()` providing a more ergonomic API.
