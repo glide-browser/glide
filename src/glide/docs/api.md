@@ -1558,8 +1558,7 @@ updating the browser UI itself. it is not available in
 content processes.
 
 {% api-heading id="DOM.create_element" %}
-DOM.create_element(tag_name, props_or_children?, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName]
-: HTMLElement
+DOM.create_element(tag_name, props_or_children?, props?): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement
 {% /api-heading %}
 
 Wrapper over `document.createElement()` providing a more ergonomic API.
