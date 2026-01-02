@@ -110,11 +110,7 @@ declare global {
        * **note**: on macOS, the `PATH` environment variable is likely not set to what you'd expect, as applications do not inherit your shell environment.
        *           you can update it with `glide.env.set("PATH", "/usr/bin:/usr/.local/bin")`.
        */
-      spawn(
-        command: string,
-        args?: string[] | null | undefined,
-        opts?: glide.SpawnOptions,
-      ): Promise<glide.Process>;
+      spawn(command: string, args?: string[] | null | undefined, opts?: glide.SpawnOptions): Promise<glide.Process>;
 
       /**
        * Spawn a new process and wait for it to exit.
@@ -356,18 +352,14 @@ declare global {
        * This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/get),
        * but returns the first tab instead of an Array.
        */
-      get_first(
-        query: Browser.Tabs.QueryQueryInfoType,
-      ): Promise<Browser.Tabs.Tab | undefined>;
+      get_first(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab | undefined>;
 
       /**
        * Gets all tabs that have the specified properties, or all tabs if no properties are specified.
        *
        * This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
        */
-      query(
-        query: Browser.Tabs.QueryQueryInfoType,
-      ): Promise<Browser.Tabs.Tab[]>;
+      query(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab[]>;
     };
 
     commandline: {
@@ -441,9 +433,7 @@ declare global {
        * );
        * ```
        */
-      fn<F extends (...args: any[]) => any>(
-        wrapped: F,
-      ): glide.ContentFunction<F>;
+      fn<F extends (...args: any[]) => any>(wrapped: F): glide.ContentFunction<F>;
 
       /**
        * Execute a function in the content process for the given tab.
@@ -470,54 +460,45 @@ declare global {
        */
       // NOTE: This has to be a separate overload from below because using
       // `Args extends` to allow `undefined` for `args` breaks tuple inference.
-      execute<const Return extends any>(
-        func: () => Return,
-        opts: {
-          /**
-           * The ID of the tab into which to inject.
-           *
-           * Or the tab object as returned by {@link glide.tabs.active}.
-           */
-          tab_id: number | glide.TabWithID;
-          /**
-           * Note: the given function doesn't take any arguments but if
-           *       it did, you could pass them here.
-           */
-          args?: undefined;
-        },
-      ): Promise<Return>;
+      execute<const Return extends any>(func: () => Return, opts: {
+        /**
+         * The ID of the tab into which to inject.
+         *
+         * Or the tab object as returned by {@link glide.tabs.active}.
+         */
+        tab_id: number | glide.TabWithID;
+        /**
+         * Note: the given function doesn't take any arguments but if
+         *       it did, you could pass them here.
+         */
+        args?: undefined;
+      }): Promise<Return>;
       execute<
         // NOTE: `any[] | []` encourages TypeScript to infer a proper tuple
         // type for the parameters.
         const Args extends readonly any[] | [],
         const Return extends any,
-      >(
-        func: (...args: Args) => Return,
-        opts: {
-          /**
-           * The ID of the tab into which to inject.
-           *
-           * Or the tab object as returned by {@link glide.tabs.active}.
-           */
-          tab_id: number | glide.TabWithID;
-          /**
-           * Arguments to pass to the given function.
-           *
-           * **Must** be JSON serialisable
-           */
-          args: Args;
-        },
-      ): Promise<Return>;
+      >(func: (...args: Args) => Return, opts: {
+        /**
+         * The ID of the tab into which to inject.
+         *
+         * Or the tab object as returned by {@link glide.tabs.active}.
+         */
+        tab_id: number | glide.TabWithID;
+        /**
+         * Arguments to pass to the given function.
+         *
+         * **Must** be JSON serialisable
+         */
+        args: Args;
+      }): Promise<Return>;
     };
 
     keymaps: {
       set<const LHS>(
         modes: GlideMode | GlideMode[],
         lhs: $keymapcompletions.T<LHS>,
-        rhs:
-          | glide.ExcmdString
-          | glide.KeymapCallback
-          | glide.KeymapContentCallback,
+        rhs: glide.ExcmdString | glide.KeymapCallback | glide.KeymapContentCallback,
         opts?: glide.KeymapOpts | undefined,
       ): void;
 
@@ -675,10 +656,7 @@ declare global {
         set<const LHS>(
           modes: GlideMode | GlideMode[],
           lhs: $keymapcompletions.T<LHS>,
-          rhs:
-            | glide.ExcmdString
-            | glide.KeymapCallback
-            | glide.KeymapContentCallback,
+          rhs: glide.ExcmdString | glide.KeymapCallback | glide.KeymapContentCallback,
           opts?: Omit<glide.KeymapOpts, "buffer"> | undefined,
         ): void;
 
@@ -704,10 +682,7 @@ declare global {
        * You can obtain an XPI URL from [addons.mozilla.org](https://addons.mozilla.org) by finding
        * the extension you'd like to install, right clicking on "Add to Firefox" and selecting "Copy link".
        */
-      install(
-        xpi_url: string,
-        opts?: glide.AddonInstallOptions,
-      ): Promise<glide.AddonInstall>;
+      install(xpi_url: string, opts?: glide.AddonInstallOptions): Promise<glide.AddonInstall>;
 
       /**
        * List all installed addons.
@@ -746,9 +721,7 @@ declare global {
        *
        * [0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
        */
-      add(
-        props: Browser.Manifest.WebExtensionManifestChromeSettingsOverridesSearchProviderType,
-      ): Promise<void>;
+      add(props: Browser.Manifest.WebExtensionManifestChromeSettingsOverridesSearchProviderType): Promise<void>;
     };
 
     keys: {
@@ -848,17 +821,12 @@ declare global {
          *
          * **note**: this will not work if one of the given tabs is *pinned*.
          */
-        create(
-          tabs: Array<TabID | Browser.Tabs.Tab>,
-          opts?: glide.SplitViewCreateOpts,
-        ): glide.SplitView;
+        create(tabs: Array<TabID | Browser.Tabs.Tab>, opts?: glide.SplitViewCreateOpts): glide.SplitView;
 
         /**
          * Given a tab, tab ID, or a splitview ID, return the corresponding split view.
          */
-        get(
-          tab: SplitViewID | TabID | Browser.Tabs.Tab,
-        ): glide.SplitView | null;
+        get(tab: SplitViewID | TabID | Browser.Tabs.Tab): glide.SplitView | null;
 
         /**
          * Revert a tab in a split view to a normal tab.
@@ -1224,10 +1192,7 @@ declare global {
    *
    * Returns the value if it is truthy.
    */
-  function ensure<T>(
-    value: T,
-    message?: string,
-  ): T extends false | "" | 0 | 0n | null | undefined ? never : T;
+  function ensure<T>(value: T, message?: string): T extends false | "" | 0 | 0n | null | undefined ? never : T;
 
   /**
    * Assert an invariant. An \`AssertionError\` will be thrown if `value` is falsy.
@@ -1433,12 +1398,7 @@ declare global {
     export type AddonInstall = glide.Addon & { cached: boolean };
 
     // @docs-expand-type-body
-    export type AddonType =
-      | "extension"
-      | "theme"
-      | "locale"
-      | "dictionary"
-      | "sitepermission";
+    export type AddonType = "extension" | "theme" | "locale" | "dictionary" | "sitepermission";
 
     export type KeyEvent = KeyboardEvent & {
       /**
@@ -1492,13 +1452,9 @@ declare global {
       | glide.KeymapContentCallback;
 
     /// @docs-skip
-    export type ExcmdCallback = (
-      props: glide.ExcmdCallbackProps,
-    ) => void | Promise<void>;
+    export type ExcmdCallback = (props: glide.ExcmdCallbackProps) => void | Promise<void>;
     /// @docs-skip
-    export type ExcmdContentCallback = glide.ContentFunction<
-      (props: glide.ExcmdContentCallbackProps) => void
-    >;
+    export type ExcmdContentCallback = glide.ContentFunction<(props: glide.ExcmdContentCallbackProps) => void>;
 
     /// @docs-skip
     export type ExcmdCallbackProps = {
@@ -1548,9 +1504,7 @@ declare global {
     /// @docs-skip
     export type ResolvedHint = glide.Hint & { label: string };
 
-    export type HintLabelGenerator = (
-      ctx: HintLabelGeneratorProps,
-    ) => string[] | Promise<string[]>;
+    export type HintLabelGenerator = (ctx: HintLabelGeneratorProps) => string[] | Promise<string[]>;
 
     export type HintLabelGeneratorProps = {
       hints: glide.Hint[];
@@ -1571,9 +1525,7 @@ declare global {
       };
     };
 
-    export type HintPicker = (
-      props: glide.HintPickerProps,
-    ) => glide.Hint[] | Promise<glide.Hint[]>;
+    export type HintPicker = (props: glide.HintPickerProps) => glide.Hint[] | Promise<glide.Hint[]>;
 
     export type HintPickerProps = {
       hints: glide.Hint[];
@@ -1617,9 +1569,7 @@ declare global {
          * const href = await content.execute((target) => target.href);
          * ```
          */
-        execute<R>(
-          cb: (target: HTMLElement) => R | Promise<R>,
-        ): Promise<R extends Promise<infer U> ? U : R>;
+        execute<R>(cb: (target: HTMLElement) => R | Promise<R>): Promise<R extends Promise<infer U> ? U : R>;
       };
     };
 
@@ -1811,17 +1761,14 @@ declare global {
          *
          * **note**: unlike {@link glide.content.execute} the callback cannot be passed custom arguments
          */
-        execute: (
-          callback: (messenger: glide.ContentMessenger<Messages>) => void,
-          opts: {
-            /**
-             * The ID of the tab into which to inject.
-             *
-             * Or the tab object as returned by {@link glide.tabs.active}.
-             */
-            tab_id: number | glide.TabWithID;
-          },
-        ) => void;
+        execute: (callback: (messenger: glide.ContentMessenger<Messages>) => void, opts: {
+          /**
+           * The ID of the tab into which to inject.
+           *
+           * Or the tab object as returned by {@link glide.tabs.active}.
+           */
+          tab_id: number | glide.TabWithID;
+        }) => void;
       };
     }
 
@@ -1903,17 +1850,13 @@ declare global {
      */
     create_element<TagName extends keyof HTMLElementTagNameMap | (string & {})>(
       tag_name: TagName,
-      props_or_children?: // props
-        | DOM.CreateElementProps<
-          TagName extends keyof HTMLElementTagNameMap ? TagName : "div"
-        >
+      props_or_children?:
+        // props
+        | DOM.CreateElementProps<TagName extends keyof HTMLElementTagNameMap ? TagName : "div">
         // children
-        | Array<Node | string>,
-      props?: DOM.CreateElementProps<
-        TagName extends keyof HTMLElementTagNameMap ? TagName : "div"
-      >,
-    ): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName]
-      : HTMLElement;
+        | Array<(Node | string)>,
+      props?: DOM.CreateElementProps<TagName extends keyof HTMLElementTagNameMap ? TagName : "div">,
+    ): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement;
   };
 
   namespace DOM {
@@ -2019,8 +1962,7 @@ declare global {
     /**
      * `<foo>` -> `foo`
      */
-    type StripAngles<K extends SingleKey> = K extends `<${infer Inner}>` ? Inner
-      : K;
+    type StripAngles<K extends SingleKey> = K extends `<${infer Inner}>` ? Inner : K;
   }
 }
 
