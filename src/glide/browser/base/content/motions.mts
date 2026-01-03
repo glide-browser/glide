@@ -492,7 +492,7 @@ export function end_of_line(
 }
 
 /**
- * Used for `I`.
+ * Used for `I` and `^`.
  *
  * Goes to the first non-whitespace character in the line.
  */
@@ -504,7 +504,27 @@ export function first_non_whitespace(editor: Editor, extend: boolean = false) {
   // TODO(someday): this probably has bad / weird implications for visual mode
   beginning_of_line(editor, extend, /* inclusive */ true);
 
+  // In multiline text, beginning_of_line with inclusive=true may land us on the
+  // newline of the previous line. If so, move forward to the current line.
+  if (current_char(editor) === "\n") {
+    editor.selectionController.characterMove(true, extend);
+    // After moving forward, we're ON the first char of the line.
+    // If it's already non-whitespace, we're done.
+    if (!is_eol(editor) && !is_eof(editor) && text_obj.cls(current_char(editor)) !== text_obj.CLS_WHITESPACE) {
+      return;
+    }
+  }
+
+  // Skip past any leading whitespace by checking next_char.
+  // (We're at focusOffset=0, so next_char is the first char of line)
   while (!is_eol(editor) && !is_eof(editor) && text_obj.cls(next_char(editor)) === text_obj.CLS_WHITESPACE) {
+    editor.selectionController.characterMove(true, extend);
+  }
+
+  // The loop exits when next_char is NOT whitespace, but current_char is still
+  // the last whitespace (or empty at focusOffset=0). Move one more to land ON
+  // the first non-whitespace character.
+  if (!is_eol(editor) && !is_eof(editor)) {
     editor.selectionController.characterMove(true, extend);
   }
 }

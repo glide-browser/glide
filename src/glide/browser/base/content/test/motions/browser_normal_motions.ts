@@ -461,3 +461,43 @@ add_task(async function test_normal_I() {
     await test_edit("Ifob", "Hello\nfob\nworld", 8, "b");
   });
 });
+
+add_task(async function test_normal_caret() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: "end",
+    });
+
+    await set_text("Hello wurld", "no leading whitespace");
+    await test_motion("^", 0, "H");
+    await test_motion("^", 0, "H");
+
+    await set_text("  Hello world", "with leading spaces");
+    await test_motion("^", 2, "H");
+    await test_motion("^", 2, "H");
+
+    await set_text("hello\n  world", "multiline with leading whitespace on second line");
+    await test_motion("^", 8, "w");
+    await test_motion("^", 8, "w");
+
+    await set_text("  hello\nworld", "multiline with leading whitespace on first line");
+    await set_selection(6, "o");
+    await test_motion("^", 2, "h");
+    await test_motion("^", 2, "h");
+
+    await set_text("hello\n\nworld", "does not move on empty lines");
+    await set_selection(6, "\n");
+    await test_motion("^", 6, "\n");
+    await test_motion("^", 6, "\n");
+
+    await set_text("     ", "line with only whitespace");
+    await set_selection(4, " ");
+    await test_motion("^", 4, " ");
+
+    await set_text("hello 世界 world", "unicode characters with no leading whitespace");
+    await test_motion("^", 0, "h");
+
+    await set_text("  hello 世界 world", "unicode characters with leading whitespace");
+    await test_motion("^", 2, "h");
+  });
+});
