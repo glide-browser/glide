@@ -94,6 +94,26 @@ const options = {
         throw assert_never(value);
     }
   },
+
+  newtab_url(value, buf) {
+    const { AboutNewTab } = ChromeUtils.importESModule("resource:///modules/AboutNewTab.sys.mjs");
+    const current = AboutNewTab.newTabURL;
+
+    if (buf) {
+      GlideBrowser.buffer_cleanups.push({
+        source: "glide.bo.newtab_url",
+        callback() {
+          AboutNewTab.newTabURL = current;
+        },
+      });
+    } else {
+      GlideBrowser.on_reload_config(() => {
+        AboutNewTab.newTabURL = current;
+      });
+    }
+
+    AboutNewTab.newTabURL = value;
+  },
 } as const satisfies { [K in keyof typeof glide["o"]]?: (value: typeof glide["o"][K], buf: boolean) => void };
 
 type GlideO = (typeof glide)["o"];
@@ -137,6 +157,15 @@ class GlideOptions implements GlideO {
   set native_tabs(value: (typeof glide)["o"]["native_tabs"]) {
     this.#native_tabs = value;
     options.native_tabs(value, false);
+  }
+
+  #newtab_url = "about:newtab";
+  get newtab_url() {
+    return this.#newtab_url;
+  }
+  set newtab_url(value: string) {
+    this.#newtab_url = value;
+    options.newtab_url(value, false);
   }
 }
 

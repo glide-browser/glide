@@ -57,6 +57,7 @@ text-decoration: none;
 [`glide.o.switch_mode_on_focus`](#glide.o.switch_mode_on_focus)\
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
 [`glide.o.native_tabs`](#glide.o.native_tabs)\
+[`glide.o.newtab_url`](#glide.o.newtab_url)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -367,6 +368,15 @@ See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autoh
 **warning**: `autohide` does not work on MacOS at the moment.
 
 `ts:@default "show"`
+
+### `glide.o.newtab_url: string` {% id="glide.o.newtab_url" %}
+
+The URL to load when a new tab is created.
+
+This may be a local file (e.g. `"file:///path/to/page.html"`) or
+any other URL, e.g. `"https://example.com"`.
+
+`ts:@default "about:newtab"`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 

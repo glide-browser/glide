@@ -1185,6 +1185,16 @@ declare global {
      * @default "show"
      */
     native_tabs: "show" | "hide" | "autohide";
+
+    /**
+     * The URL to load when a new tab is created.
+     *
+     * This may be a local file (e.g. `"file:///path/to/page.html"`) or
+     * any other URL, e.g. `"https://example.com"`.
+     *
+     * @default "about:newtab"
+     */
+    newtab_url: string;
   }
 
   /**

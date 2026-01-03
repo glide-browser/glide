@@ -428,6 +428,11 @@ class GlideBrowserClass {
   }
 
   reload_config_remove_elements: Set<HTMLElement> = new Set();
+  #reload_config_callbacks: Array<() => void> = [];
+
+  on_reload_config(callback: () => void) {
+    this.#reload_config_callbacks.push(callback);
+  }
 
   async #reload_config(all_windows: boolean) {
     this.#api = null;
@@ -436,6 +441,12 @@ class GlideBrowserClass {
     this.#messengers = new Map();
     this.#user_cmds = new Map();
     this.#sandbox = null;
+
+    const callbacks = this.#reload_config_callbacks;
+    this.#reload_config_callbacks = [];
+    for (const callback of callbacks) {
+      callback();
+    }
 
     const css_properties = this.#reload_config_clear_properties;
     this.#reload_config_clear_properties = new Set();
