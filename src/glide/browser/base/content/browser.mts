@@ -141,6 +141,8 @@ class GlideBrowserClass {
     };
     Services.obs.addObserver(startup_observer, "browser-idle-startup-tasks-finished");
 
+    Services.els.addListenerChangeListener(DocumentMirror.make_listener_change_observer());
+
     this.on_startup(() => {
       // check for extension errors every 500ms as there are no listeners we can register
       // and the extension code is running with different privileges which makes setting
