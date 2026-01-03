@@ -119,6 +119,22 @@ class GlideTestUtilsClass {
   waiter(getter: () => unknown): GlideTestWaiter {
     const tries = 500;
     const interval = 10;
+
+    const frame_counter = {
+      count: -1,
+      _stopped: false,
+      start() {
+        if (this._stopped) return;
+        this.count++;
+        requestAnimationFrame(this.start.bind(this));
+      },
+      stop(): number {
+        this._stopped = true;
+        return this.count;
+      },
+    };
+    frame_counter.start();
+
     return {
       async is(value: unknown, name?: string) {
         await g.TestUtils.waitForCondition(
@@ -128,6 +144,7 @@ class GlideTestUtilsClass {
           tries,
         );
         g.is(await getter(), value, name);
+        return frame_counter.stop();
       },
       async isnot(value, name) {
         await g.TestUtils.waitForCondition(
@@ -137,6 +154,7 @@ class GlideTestUtilsClass {
           tries,
         );
         g.isnot(await getter(), value, name);
+        return frame_counter.stop();
       },
 
       async isjson(value, name) {
@@ -155,11 +173,13 @@ class GlideTestUtilsClass {
           tries,
         );
         g.isjson(await getter(), value, name);
+        return frame_counter.stop();
       },
 
       async ok(message?: string) {
         await g.TestUtils.waitForCondition(getter, message ?? (String(getter) + ` === <truthy>`), interval, tries);
         g.ok(await getter(), message);
+        return frame_counter.stop();
       },
       async notok(message?: string) {
         await g.TestUtils.waitForCondition(
@@ -169,6 +189,7 @@ class GlideTestUtilsClass {
           tries,
         );
         g.notok(await getter(), message);
+        return frame_counter.stop();
       },
     };
   }

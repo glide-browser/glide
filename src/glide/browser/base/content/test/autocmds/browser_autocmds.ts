@@ -162,12 +162,12 @@ add_task(async function test_urlenter_triggered_by_tab_switch() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(num_calls).is(1, "Initial navigation should trigger exactly once");
+    const frame_time = await waiter(num_calls).is(1, "Initial navigation should trigger exactly once");
 
     const tab1 = gBrowser.selectedTab;
 
     await BrowserTestUtils.withNewTab("about:mozilla", async _ => {
-      await sleep_frames(5);
+      await sleep_frames(frame_time * 2);
       is(num_calls(), 1, "Opening non-matching page should not trigger UrlEnter");
 
       await BrowserTestUtils.switchTab(gBrowser, tab1);
