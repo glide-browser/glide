@@ -126,4 +126,13 @@ export function init(sandbox: Sandbox) {
   //       focused in a particular tab
   glide.keymaps.set(["normal", "insert"], "<C-o>", "jumplist_back");
   glide.keymaps.set(["normal", "insert"], "<C-i>", "jumplist_forward");
+
+  glide.keymaps.set("normal", "yf", () =>
+    glide.hints.show({
+      selector: "[href]",
+      async action({ content }) {
+        const href = await content.execute((target) => (target as HTMLAnchorElement).href);
+        await navigator.clipboard.writeText(href);
+      },
+    }), { description: "Yank the URL of the selected hintable link to the clipboard" });
 }
