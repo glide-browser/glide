@@ -445,7 +445,14 @@ class GlideBrowserClass {
     const callbacks = this.#reload_config_callbacks;
     this.#reload_config_callbacks = [];
     for (const callback of callbacks) {
-      callback();
+      try {
+        callback();
+      } catch (err) {
+        // if an error happens in these callbacks we don't actually want to throw
+        // as that could result in some very weird state mismatches and make the
+        // browser not very functional, so just log them instead.
+        console.error(err);
+      }
     }
 
     const css_properties = this.#reload_config_clear_properties;
