@@ -10,6 +10,8 @@
 declare global {
   interface GlideGlobals {
     events?: any[];
+    counter?: number;
+    ready?: boolean;
   }
 }
 
@@ -798,6 +800,51 @@ add_task(async function test_addEventListener__element__keydown_with_modifiers()
   is(glide.g.events![1]!.altKey, true, "altKey should be true");
   is(glide.g.events![1]!.metaKey, true, "metaKey should be true");
 });
+
+add_task(async function test_addEventListener__multiple_listeners_same_element__same_type() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+    glide.g.counter = 0;
+
+    glide.autocmds.create("ConfigLoaded", () => {
+      const element = document.getElementById("glide-toolbar-mode-button")!;
+      element.addEventListener("click", function listener() {
+        glide.g.value++;
+
+        if (glide.g.value == 2) {
+          element.removeEventListener("click", listener);
+        }
+      });
+      element.addEventListener("click", function listener() {
+        glide.g.counter!++;
+        element.removeEventListener("click", listener);
+      });
+      glide.g.ready = true;
+    });
+  });
+
+  await waiter(() => glide.g.ready).ok();
+  await sleep_frames(10);
+
+  const element = document.getElementById("glide-toolbar-mode-button") as HTMLElement;
+  element.click();
+
+  await waiter(() => glide.g.value).is(1, "first listener should be invoked");
+  await waiter(() => glide.g.counter).is(1, "second listener should be invoked");
+
+  element.click();
+
+  const frame_time = await waiter(() => glide.g.value).is(2, "first listener should be invoked again");
+  await waiter(() => glide.g.counter).is(1, "second listener should *not* be invoked as it should've been removed");
+
+  element.click();
+
+  await sleep_frames(frame_time * 2);
+
+  is(glide.g.value, 2, "first listener should *not* be invoked as it should've been removed");
+  is(glide.g.counter, 1, "second listener should *not* be invoked as it should've been removed");
+});
+
 add_task(async function test_addEventListener__preventDefault() {
   using _ = await GlideTestUtils.new_tab();
 
