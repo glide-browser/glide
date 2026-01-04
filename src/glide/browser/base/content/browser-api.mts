@@ -18,9 +18,8 @@ const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importE
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { object_assign } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
-const { create_sandbox, FileNotFoundError, GlideProcessError } = ChromeUtils.importESModule(
-  "chrome://glide/content/sandbox.mjs",
-);
+const { create_sandbox, FileNotFoundError, FileModificationNotAllowedError, GlideProcessError } = ChromeUtils
+  .importESModule("chrome://glide/content/sandbox.mjs");
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
@@ -722,6 +721,23 @@ export function make_glide_api(
           path: stat.path,
           size: stat.size,
         };
+      },
+      async mkdir(path, props) {
+        const absolute = resolve_path(path);
+        await IOUtils.makeDirectory(absolute, { createAncestors: props?.parents, ignoreExisting: props?.exists_ok })
+          .catch((err) => {
+            if (err instanceof DOMException) {
+              switch (err.name) {
+                case "NoModificationAllowedError": {
+                  throw new FileModificationNotAllowedError(err.message, { path: absolute });
+                }
+                case "NotFoundError": {
+                  throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
+                }
+              }
+            }
+            throw err;
+          });
       },
     },
     modes: {

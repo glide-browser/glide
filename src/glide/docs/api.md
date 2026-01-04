@@ -138,6 +138,7 @@ text-decoration: none;
 [`glide.fs.write()`](#glide.fs.write)\
 [`glide.fs.exists()`](#glide.fs.exists)\
 [`glide.fs.stat()`](#glide.fs.stat)\
+[`glide.fs.mkdir()`](#glide.fs.mkdir)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
@@ -1064,6 +1065,18 @@ const stat = await glide.fs.stat("userChrome.css");
 stat.last_modified; // 1758835015092
 stat.type; // "file"
 ```
+
+{% api-heading id="glide.fs.mkdir" %}
+glide.fs.mkdir(path, props?): Promise<void>
+{% /api-heading %}
+
+Create a new directory at the given `path`.
+
+Parent directories are created by default, if desired you can turn this off with
+`ts:glide.fs.mkdir('...', { parents: false })`.
+
+By default this will _not_ error if the `path` already exists, if you would like it
+to do so, pass `ts:glide.fs.mkdir('...', { exists_ok: false })`
 
 ## • `glide.messengers` {% id="glide.messengers" %}
 

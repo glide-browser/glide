@@ -917,6 +917,31 @@ declare global {
        * ```
        */
       stat(path: string): Promise<glide.FileInfo>;
+
+      /**
+       * Create a new directory at the given `path`.
+       *
+       * Parent directories are created by default, if desired you can turn this off with
+       * `ts:glide.fs.mkdir('...', { parents: false })`.
+       *
+       * By default this will *not* error if the `path` already exists, if you would like it
+       * to do so, pass `ts:glide.fs.mkdir('...', { exists_ok: false })`
+       */
+      mkdir(path: string, props?: {
+        /**
+         * If `false`, do not create missing parent directories.
+         *
+         * @default true
+         */
+        parents?: boolean;
+
+        /**
+         * Do not error if the directory already exists.
+         *
+         * @default true
+         */
+        exists_ok?: boolean;
+      }): Promise<void>;
     };
 
     messengers: {
@@ -1231,6 +1256,12 @@ declare global {
   function assert_never(x: never, detail?: string | Error): never;
 
   class FileNotFoundError extends Error {
+    path: string;
+
+    constructor(message: string, props: { path: string });
+  }
+
+  class FileModificationNotAllowedError extends Error {
     path: string;
 
     constructor(message: string, props: { path: string });

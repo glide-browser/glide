@@ -1292,6 +1292,86 @@ add_task(async function test_fs_stat_not_found() {
   });
 });
 
+add_task(async function test_fs_mkdir() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    const test_dir = PathUtils.join(PathUtils.profileDir, "glide", "test_mkdir_dir");
+    await IOUtils.remove(test_dir, { ignoreAbsent: true });
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        await glide.fs.mkdir("test_mkdir_dir");
+        glide.g.value = await glide.fs.exists("test_mkdir_dir");
+      });
+    });
+
+    await keys("~");
+    await waiter(() => glide.g.value).is(true);
+
+    await IOUtils.remove(test_dir);
+  });
+});
+
+add_task(async function test_fs_mkdir_nested() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    const test_dir = PathUtils.join(PathUtils.profileDir, "glide", "parent");
+    await IOUtils.remove(test_dir, { recursive: true, ignoreAbsent: true });
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        const error = await glide.fs.mkdir("parent/nested_child", { parents: false }).catch((e) => e);
+        assert(error instanceof FileNotFoundError);
+        glide.g.value = String(error);
+      });
+
+      glide.keymaps.set("normal", "!", async () => {
+        await glide.fs.mkdir("parent/nested_child");
+        await glide.fs.write("parent/nested_child/foo.txt", "test.txt");
+        glide.g.value = await glide.fs.exists("parent/nested_child");
+      });
+    });
+
+    await keys("~");
+    await waiter(() => glide.g.value).is(
+      `FileNotFoundError: Could not find a file at path ${PathUtils.join(test_dir, "nested_child")}`,
+    );
+
+    await keys("!");
+    await waiter(() => glide.g.value).is(true);
+
+    await IOUtils.remove(test_dir, { recursive: true });
+  });
+});
+
+add_task(async function test_fs_mkdir_exists_ok() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
+    const test_dir = PathUtils.join(PathUtils.profileDir, "glide", "existing_dir");
+    await IOUtils.makeDirectory(test_dir, { ignoreExisting: true });
+
+    await GlideTestUtils.reload_config(async function _() {
+      glide.keymaps.set("normal", "~", async () => {
+        const error = await glide.fs.mkdir("existing_dir", { exists_ok: false }).catch((err) => err);
+        assert(error instanceof FileModificationNotAllowedError);
+        glide.g.value = String(error);
+      });
+
+      glide.keymaps.set("normal", "!", async () => {
+        await glide.fs.mkdir("existing_dir");
+        glide.g.value = "no error";
+      });
+    });
+
+    await keys("~");
+    await waiter(() => glide.g.value).is(
+      `FileModificationNotAllowedError: Could not create directory \`${test_dir}': directory already exists (NS_ERROR_FILE_ALREADY_EXISTS)`,
+    );
+
+    await keys("!");
+    await waiter(() => glide.g.value).is(`no error`);
+
+    await IOUtils.remove(test_dir);
+  });
+});
+
 add_task(async function test_path_cwd() {
   await GlideTestUtils.reload_config(function _() {
     glide.g.value = glide.path.cwd;

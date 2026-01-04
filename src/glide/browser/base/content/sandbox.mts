@@ -61,6 +61,7 @@ export type Sandbox = {
   DOM: DOM.Utils;
   DataCloneError: typeof DataCloneError;
   FileNotFoundError: typeof FileNotFoundError;
+  FileModificationNotAllowedError: typeof FileModificationNotAllowedError;
   GlideProcessError: typeof GlideProcessError;
 } & {
   readonly __brand: unique symbol;
@@ -113,6 +114,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
 
     DataCloneError,
     FileNotFoundError,
+    FileModificationNotAllowedError,
     GlideProcessError,
 
     // helper function for asserting invariants
@@ -191,6 +193,16 @@ export class FileNotFoundError extends Error {
     super(message);
     this.path = props.path;
     this.name = "FileNotFoundError";
+  }
+}
+
+export class FileModificationNotAllowedError extends Error {
+  path: string;
+
+  constructor(message: string, props: { path: string }) {
+    super(message);
+    this.path = props.path;
+    this.name = "FileModificationNotAllowedError";
   }
 }
 
