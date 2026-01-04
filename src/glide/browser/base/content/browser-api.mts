@@ -685,13 +685,7 @@ export function make_glide_api(
         }
 
         const absolute = resolve_path(path);
-        return await IOUtils.readUTF8(absolute).catch((err) => {
-          if (err instanceof DOMException && err.name === "NotFoundError") {
-            throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
-          }
-
-          throw err;
-        });
+        return await IOUtils.readUTF8(absolute).catch((err) => handle_ioutils_error(err, absolute));
       },
       async write(path, contents): Promise<void> {
         const absolute = resolve_path(path);
@@ -704,13 +698,7 @@ export function make_glide_api(
       async stat(path) {
         const absolute = resolve_path(path);
 
-        const stat = await IOUtils.stat(absolute).catch((err) => {
-          if (err instanceof DOMException && err.name === "NotFoundError") {
-            throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
-          }
-
-          throw err;
-        });
+        const stat = await IOUtils.stat(absolute).catch((err) => handle_ioutils_error(err, absolute));
 
         return {
           type: stat.type === "directory" ? "directory" : stat.type === "regular" ? "file" : null,
@@ -725,19 +713,7 @@ export function make_glide_api(
       async mkdir(path, props) {
         const absolute = resolve_path(path);
         await IOUtils.makeDirectory(absolute, { createAncestors: props?.parents, ignoreExisting: props?.exists_ok })
-          .catch((err) => {
-            if (err instanceof DOMException) {
-              switch (err.name) {
-                case "NoModificationAllowedError": {
-                  throw new FileModificationNotAllowedError(err.message, { path: absolute });
-                }
-                case "NotFoundError": {
-                  throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
-                }
-              }
-            }
-            throw err;
-          });
+          .catch((err) => handle_ioutils_error(err, absolute));
       },
     },
     modes: {
@@ -1056,6 +1032,21 @@ export function make_glide_api(
     }
 
     return PathUtils.joinRelative(PathUtils.parent(config_path) ?? "/", path);
+  }
+
+  function handle_ioutils_error(err: unknown, absolute: string): never {
+    if (err instanceof DOMException) {
+      switch (err.name) {
+        case "NoModificationAllowedError": {
+          throw new FileModificationNotAllowedError(err.message, { path: absolute });
+        }
+        case "NotFoundError": {
+          throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
+        }
+      }
+    }
+
+    throw err;
   }
 }
 
