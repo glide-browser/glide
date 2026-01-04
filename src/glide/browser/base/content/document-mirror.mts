@@ -321,6 +321,8 @@ export function import_mirrored_node(props: { mirror: Document; to_document: Doc
   return imported;
 }
 
+type ListenerObject = unknown;
+
 /**
  * Constructs an observer[1] that will be called every time code in the main process
  * executes `node.addEventListener()` or `node.removeEventListener()`.
@@ -335,57 +337,103 @@ export function import_mirrored_node(props: { mirror: Document; to_document: Doc
  * [1]: https://searchfox.org/firefox-main/source/dom/events/nsIEventListenerService.idl
  */
 export function make_listener_change_observer(): nsIListenerChangeListener {
-  const listeners = new Map<EventTarget, Map<unknown, nsIEventListenerInfo>>();
+  const all_state = new Map<
+    // key is the *mirror* target
+    EventTarget,
+    {
+      source_listeners: Map<string, ListenerObject>;
+      mirror_listeners: Map<string, Map<ListenerObject, nsIEventListenerInfo>>;
+    }
+  >();
   return {
     listenersChanged(changes) {
       const seen = new Set<EventTarget>();
       for (let i = 0; i < changes.length; i++) {
-        const target = changes.queryElementAt(i, Ci.nsIEventListenerChange).target;
-        const target_window = target.ownerGlobal;
+        const mirror_target = changes.queryElementAt(i, Ci.nsIEventListenerChange).target;
+        const target_window = mirror_target.ownerGlobal;
         if (!target_window || !target_window.document || !REGISTRY.has(target_window.document)) {
           // a listener is being added to somewhere other than a document mirror
-          return;
+          continue;
         }
 
         // if the same target has multiple change notifications then we only consider
         // the first one, as we don't actually look at any of the information on the change
         // event itself, and instead inspect the before/after state directly.
-        if (seen.has(target)) {
+        if (seen.has(mirror_target)) {
           continue;
         }
-        seen.add(target);
+        seen.add(mirror_target);
 
-        const source_target = resolve_source_target(target_window, target);
+        const source_target = resolve_source_target(target_window, mirror_target);
         if (!source_target) {
-          GlideBrowser._log.warn(`[document-mirror/listener]: could not resolve source target for node`, target);
+          GlideBrowser._log.warn(`[document-mirror/listener]: could not resolve source target for node`, mirror_target);
           continue;
         }
 
-        const leftover = new Map(listeners.getOrInsertComputed(target, () => new Map()));
+        const state = all_state.getOrInsertComputed(
+          mirror_target,
+          () => ({ source_listeners: new Map(), mirror_listeners: new Map() }),
+        );
+        const not_consumed = new Map(state.mirror_listeners);
 
-        for (const info of Services.els.getListenerInfoFor(target)) {
-          if (leftover.delete(info.listenerObject)) {
-            // no changes; this listener has already been registered.
+        for (const info of Services.els.getListenerInfoFor(mirror_target)) {
+          if (not_consumed.get(info.type)?.delete(info.listenerObject)) {
+            GlideBrowser._log.debug(
+              `[document-mirror/listener]: mirror listener for type=${info.type} has already been handled`,
+              info.listenerObject,
+            );
+            continue;
+          }
+          state.mirror_listeners.getOrInsertComputed(info.type, () => new Map()).set(info.listenerObject, info);
+
+          // we should only ever register *one* source listener for a specific type as the source listener just calls
+          // `.dispatchEvent()` which will fire the event for all mirror listeners.
+          if (state.source_listeners.has(info.type)) {
+            GlideBrowser._log.debug(
+              `[document-mirror/listener]: source listener for type=${info.type} has already been registered`,
+            );
             continue;
           }
 
-          const listener = make_listener_callback(target);
+          GlideBrowser._log.debug(
+            `[document-mirror/listener]: adding source listener for type=${info.type} because of mirror listener`,
+            info.listenerObject,
+          );
 
+          const listener = make_listener_callback(mirror_target);
           source_target.addEventListener(info.type, listener, {
             capture: info.capturing,
             mozSystemGroup: info.inSystemEventGroup,
           }, info.allowsUntrusted);
+          state.source_listeners.set(info.type, listener);
 
+          // we need to cleanup all the source and mirror listeners when the config is reloaded
+          // to avoid sending duplicate events
           GlideBrowser.on_reload_config(() => {
-            target.removeEventListener(info.type, info.listenerObject);
+            GlideBrowser._log.debug(`[document-mirror/listener]: clearing state`);
+            all_state.clear();
+            mirror_target.removeEventListener(info.type, info.listenerObject);
             source_target.removeEventListener(info.type, listener);
           });
         }
 
-        // any listeners we previously had a reference to but are no longer registered have
-        // been removed, so we need to remove our wrapper listener as well.
-        for (const info of leftover.values()) {
-          source_target.removeEventListener(info.type, info.listenerObject);
+        // handle removed listeners, i.e. listeners that were previously captured in our state
+        // but are no longer registered on the mirror node.
+        for (const [type, listeners] of not_consumed.entries()) {
+          const map = state.mirror_listeners.get(type)!;
+          for (const listener of listeners) {
+            map.delete(listener);
+          }
+
+          // all listeners have been removed, so we should remove our source listener
+          // and all associated state with this event type as it is now redundant
+          const source_listener = state.source_listeners.get(type);
+          if (source_listener && !map.size) {
+            source_target.removeEventListener(type, source_listener as EventListener);
+
+            state.mirror_listeners.delete(type);
+            state.source_listeners.delete(type);
+          }
         }
       }
     },
@@ -393,8 +441,18 @@ export function make_listener_change_observer(): nsIListenerChangeListener {
 
   function make_listener_callback(target: EventTarget) {
     return (event: Event) => {
+      if (!(event instanceof Event)) {
+        GlideBrowser._log.warn(`[document-mirror/listener]: received non-Event argument`, event);
+        return;
+      }
+
       const cloned = reconstruct_event(event, GlideBrowser.sandbox_window);
+
       target.dispatchEvent(cloned);
+
+      if (cloned.defaultPrevented) {
+        event.preventDefault();
+      }
     };
   }
 
