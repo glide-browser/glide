@@ -736,21 +736,23 @@ add_task(async function test_addEventListener__element__wheel() {
 
   await sleep_frames(10);
 
-  const wheel_event = new WheelEvent("wheel", {
-    bubbles: true,
-    cancelable: true,
-    deltaX: 0,
-    deltaY: 100,
-    deltaZ: 0,
-    deltaMode: WheelEvent.DOM_DELTA_PIXEL,
-  });
-  document.documentElement.dispatchEvent(wheel_event);
+  document.documentElement.dispatchEvent(
+    new WheelEvent("wheel", {
+      bubbles: true,
+      cancelable: true,
+      deltaX: 0,
+      deltaY: 100,
+      deltaZ: 0,
+      deltaMode: WheelEvent.DOM_DELTA_PIXEL,
+    }),
+  );
 
   await waiter(() => glide.g.events?.length).is(1, "wheel listener should be invoked");
 
   const event = glide.g.events![0]!;
   is(event.type, "wheel");
   is(event.bubbles, true);
+  is(event.cancelable, false, "wheel event should not be cancelable");
   is(event.deltaX, 0);
   is(event.deltaY, 100);
   is(event.deltaZ, 0);
@@ -759,4 +761,74 @@ add_task(async function test_addEventListener__element__wheel() {
   is(event.shiftKey, false);
   is(event.altKey, false);
   is(event.metaKey, false);
+});
+
+add_task(async function test_addEventListener__element__keydown_with_modifiers() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.events = [];
+
+    document.getElementById("urlbar-input")!.addEventListener("keydown", (event: KeyboardEvent) => {
+      glide.g.events!.push({
+        key: event.key,
+        code: event.code,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+      });
+    });
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("urlbar-input") as HTMLElement).focus();
+
+  await keys("<C-a>");
+  await waiter(() => glide.g.events?.length).is(1, "keydown listener should be invoked");
+
+  is(glide.g.events![0]!.key, "a");
+  is(glide.g.events![0]!.ctrlKey, true, "ctrlKey should be true");
+  is(glide.g.events![0]!.shiftKey, false);
+
+  await keys("<C-S-A-D-X>");
+  await waiter(() => glide.g.events?.length).is(2, "keydown listener should be invoked for all modifiers");
+
+  is(glide.g.events![1]!.key, "X");
+  is(glide.g.events![1]!.ctrlKey, true, "ctrlKey should be true");
+  is(glide.g.events![1]!.shiftKey, true, "shiftKey should be true");
+  is(glide.g.events![1]!.altKey, true, "altKey should be true");
+  is(glide.g.events![1]!.metaKey, true, "metaKey should be true");
+});
+add_task(async function test_addEventListener__preventDefault() {
+  using _ = await GlideTestUtils.new_tab();
+
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+    glide.g.events = [];
+
+    document.getElementById("urlbar-input")!.addEventListener("keydown", (event: KeyboardEvent) => {
+      if (event.key === "a") {
+        event.preventDefault();
+      }
+
+      glide.g.events!.push({ key: event.key, defaultPrevented: event.defaultPrevented });
+    });
+  });
+
+  await sleep_frames(10);
+
+  const input = document.getElementById("urlbar-input") as HTMLInputElement;
+  input.focus();
+  await wait_for_mode("insert");
+
+  await keys("ab");
+
+  await waiter(() => glide.g.events?.length).is(2, "both keys should be captured");
+
+  is(input.value, "b", "only the second key should be inserted due to .preventDefault() being called on the first key");
+
+  is(glide.g.events![0]!.key, "a");
+  is(glide.g.events![0]!.defaultPrevented, true);
+
+  is(glide.g.events![1]!.key, "b");
+  is(glide.g.events![1]!.defaultPrevented, false);
 });
