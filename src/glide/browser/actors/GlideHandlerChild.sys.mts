@@ -24,7 +24,7 @@ export interface ChildMessages {
   "Glide::ResolvedHints": {
     hints: GlideHintIPC[];
     location: glide.HintLocation;
-    auto_activate: boolean;
+    auto_activate: boolean | "always";
   };
   "Glide::HideHints": {};
   "Glide::ChangeMode": { mode: GlideMode; force?: boolean };

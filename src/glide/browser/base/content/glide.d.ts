@@ -563,9 +563,13 @@ declare global {
         /**
          * If only one hint is generated, automatically activate it.
          *
+         * If `true`, the hint will be followed if there is exactly *one* matched hint.
+         *
+         * If `"always"`, the first hint that matches will be followed.
+         *
          * @default false
          */
-        auto_activate?: boolean;
+        auto_activate?: boolean | "always";
 
         /**
          * Callback invoked when the selected hint is chosen.

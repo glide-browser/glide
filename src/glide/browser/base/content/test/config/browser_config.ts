@@ -19,6 +19,7 @@ const CONFIG_LINE_COL_REGEX = /(?<!@glide\.ts):(\d+):(\d+)/g;
 declare global {
   interface GlideGlobals {
     value?: any;
+    value2?: any;
     error_message?: unknown;
   }
 }

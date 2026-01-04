@@ -149,6 +149,32 @@ add_task(async function test_auto_activate_single_hint__action() {
   });
 });
 
+add_task(async function test_auto_activate_always() {
+  await GlideTestUtils.reload_config(function _() {
+    glide.keymaps.set("normal", "f", () =>
+      glide.hints.show({
+        auto_activate: "always",
+        pick({ hints }) {
+          glide.g.value2 = hints.length;
+          return hints;
+        },
+        action() {
+          glide.g.value = true;
+        },
+      }));
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _ => {
+    await keys("f");
+    await wait_for_mode("normal");
+
+    await waiter(() => glide.g.value2).ok();
+    Assert.greater(glide.g.value2, 1, "more than 1 hint should be generated");
+
+    await waiter(() => glide.g.value).ok("auto_activate: 'always' should execute immediately even with multiple hints");
+  });
+});
+
 add_task(async function test_include_selector() {
   await GlideTestUtils.reload_config(function _() {
     glide.keymaps.set("normal", "f", "hint");
