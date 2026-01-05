@@ -634,6 +634,7 @@ add_task(async function test_clear_no_hints_notification_on_retrigger() {
 add_task(async function test_yf_copies_link_url() {
   await GlideTestUtils.reload_config(function _() {});
 
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -642,16 +643,29 @@ add_task(async function test_yf_copies_link_url() {
       <a id="link1" href="https://example.com/page1">Link 1</a>
       <a id="link2" href="https://example.com/page2">Link 2</a>
       <a id="link3" href="https://example.com/page3">Link 3</a>
+      <a id="link4" href="mailto:test@example.com">Email Link</a>
+      <a id="link5" href="tel:1234567890">Phone Link</a>
+      <a id="link6" href="sms:1234567890">SMS Link</a>
+      <input id="input1" type="text" value="Input 1">
+      <button id="button1">Button 1</button>
+      <textarea id="textarea1">Textarea 1</textarea>
     </body>
     </html>
   `;
 
   await BrowserTestUtils.withNewTab("data:text/html," + encodeURI(html), async () => {
+    await keys("f");
+    await wait_for_hints();
+    const initial_hints = GlideHints.get_active_hints();
+    is(initial_hints.length, 9, "Hints should be visible on the page");
+    await keys("<esc>");
+
+
     await keys("yf");
     await wait_for_hints();
 
     const hints = GlideHints.get_active_hints();
-    is(hints.length, 3, "Should show hints for all links");
+    is(hints.length, 6, "Should show hints only for links with href, not for input/button/textarea");
     is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'yf'");
 
     await keys(hints[0]!.label);
@@ -669,5 +683,33 @@ add_task(async function test_yf_copies_link_url() {
 
     clipboard_text = await navigator.clipboard.readText();
     is(clipboard_text, "https://example.com/page3", "Third link URL should be copied to clipboard");
+
+    await keys("yf");
+    await wait_for_hints();
+    const hints3 = GlideHints.get_active_hints();
+    await keys(hints3[3]!.label);
+    await wait_for_mode("normal");
+
+    clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "test@example.com", "Email should be copied to clipboard");
+
+
+    await keys("yf");
+    await wait_for_hints();
+    const hints4 = GlideHints.get_active_hints();
+    await keys(hints4[4]!.label);
+    await wait_for_mode("normal");
+
+    clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "1234567890", "Phone number should be copied to clipboard");
+
+    await keys("yf");
+    await wait_for_hints();
+    const hints5 = GlideHints.get_active_hints();
+    await keys(hints5[5]!.label);
+    await wait_for_mode("normal");
+
+    clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "1234567890", "Phone number should be copied to clipboard");
   });
 });
