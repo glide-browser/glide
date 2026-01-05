@@ -131,7 +131,13 @@ export function init(sandbox: Sandbox) {
     glide.hints.show({
       selector: "[href]",
       async action({ content }) {
-        const href = await content.execute((target) => (target as HTMLAnchorElement).href);
+        let href = await content.execute((target) => (target as HTMLAnchorElement).href);
+        if (href.startsWith("mailto:")) {
+          href = href.slice(7);
+        }
+        if (href.startsWith("tel:")||href.startsWith("sms:")) {
+          href = href.slice(4);
+        }
         await navigator.clipboard.writeText(href);
       },
     }), { description: "Yank the URL of the selected hintable link to the clipboard" });
