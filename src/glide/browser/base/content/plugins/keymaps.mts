@@ -135,7 +135,7 @@ export function init(sandbox: Sandbox) {
         if (href.startsWith("mailto:")) {
           href = href.slice(7);
         }
-        if (href.startsWith("tel:")||href.startsWith("sms:")) {
+        if (href.startsWith("tel:") || href.startsWith("sms:")) {
           href = href.slice(4);
         }
         await navigator.clipboard.writeText(href);

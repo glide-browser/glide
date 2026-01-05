@@ -634,7 +634,6 @@ add_task(async function test_clear_no_hints_notification_on_retrigger() {
 add_task(async function test_yf_copies_link_url() {
   await GlideTestUtils.reload_config(function _() {});
 
-
   const html = `
     <!DOCTYPE html>
     <html>
@@ -659,7 +658,6 @@ add_task(async function test_yf_copies_link_url() {
     const initial_hints = GlideHints.get_active_hints();
     is(initial_hints.length, 9, "Hints should be visible on the page");
     await keys("<esc>");
-
 
     await keys("yf");
     await wait_for_hints();
@@ -692,7 +690,6 @@ add_task(async function test_yf_copies_link_url() {
 
     clipboard_text = await navigator.clipboard.readText();
     is(clipboard_text, "test@example.com", "Email should be copied to clipboard");
-
 
     await keys("yf");
     await wait_for_hints();
