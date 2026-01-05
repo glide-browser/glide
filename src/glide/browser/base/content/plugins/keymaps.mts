@@ -134,8 +134,7 @@ export function init(sandbox: Sandbox) {
         let href = await content.execute((target) => (target as HTMLAnchorElement).href);
         if (href.startsWith("mailto:")) {
           href = href.slice(7);
-        }
-        if (href.startsWith("tel:") || href.startsWith("sms:")) {
+        } else if (href.startsWith("tel:") || href.startsWith("sms:")) {
           href = href.slice(4);
         }
         await navigator.clipboard.writeText(href);
