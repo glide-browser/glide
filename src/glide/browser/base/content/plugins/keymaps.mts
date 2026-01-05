@@ -70,6 +70,19 @@ export function init(sandbox: Sandbox) {
   glide.keymaps.set("normal", "<leader>d", "tab_close");
   glide.keymaps.set(["normal", "insert"], "<C-j>", "tab_next");
   glide.keymaps.set(["normal", "insert"], "<C-k>", "tab_prev");
+  const togglePinTab = async () => {
+    const tab = await glide.tabs.active();
+    if (tab.pinned) {
+      await glide.excmds.execute("tab_unpin");
+    } else {
+      await glide.excmds.execute("tab_pin");
+    }
+  };
+  if (glide.ctx.os === "macosx") {
+    glide.keymaps.set("normal", "<C-p>", togglePinTab, { description: "Toggle pin state of the current tab" });
+  } else {
+    glide.keymaps.set("normal", "<A-p>", togglePinTab, { description: "Toggle pin state of the current tab" });
+  }
 
   glide.keymaps.set("normal", ".", "repeat");
   glide.keymaps.set("normal", ":", "commandline_show");
