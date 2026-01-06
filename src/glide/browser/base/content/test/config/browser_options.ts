@@ -34,7 +34,7 @@ async function newtab() {
 add_task(async function test_newtab_url() {
   is(glide.o.newtab_url, "about:newtab");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.newtab_url = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
   });
 
@@ -46,7 +46,7 @@ add_task(async function test_newtab_url() {
 });
 
 add_task(async function test_newtab_url__local_file() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.newtab_url = "file://"
       + glide.path.join(
         glide.path.cwd,
@@ -73,7 +73,7 @@ add_task(async function test_newtab_url__local_file() {
 });
 
 add_task(async function test_newtab_url__buffer() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("UrlEnter", /about:newtab/, () => {
       glide.bo.newtab_url = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
     });

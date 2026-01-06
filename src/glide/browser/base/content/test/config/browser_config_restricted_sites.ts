@@ -15,7 +15,7 @@ add_task(async function test_executeScript__restricted_domain() {
     set: [["extensions.webextensions.restrictedDomains", "example.com"]],
   });
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async ({ tab_id }) => {
       const results = await browser.scripting.executeScript({
         world: "MAIN",
@@ -50,7 +50,7 @@ add_task(async function test_contentScript_uriFilters__restricted_domain() {
     set: [["extensions.webextensions.restrictedDomains", "example.com"]],
   });
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await browser.contentScripts.register({
         matches: ["*://example.com/*"],
@@ -85,11 +85,11 @@ add_task(async function test_contentScript_uriFilters__restricted_domain() {
   );
 
   // cleanup
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 });
 
 add_task(async function test_tabs_create__resource_url() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await browser.tabs.create({ url: "resource://glide-docs/index.html#default-keymappings" });
       glide.g.test_checked = true;
@@ -115,7 +115,7 @@ add_task(async function test_tabs_create__resource_url() {
 });
 
 add_task(async function test_tabs_create__about_url() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await browser.tabs.create({ url: "about:config" });
       glide.g.test_checked = true;
@@ -141,7 +141,7 @@ add_task(async function test_tabs_create__about_url() {
 });
 
 add_task(async function test_tabs_update__resource_url() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async ({ tab_id }) => {
       await browser.tabs.update(tab_id, { url: "resource://glide-docs/index.html#default-keymappings" });
       glide.g.test_checked = true;

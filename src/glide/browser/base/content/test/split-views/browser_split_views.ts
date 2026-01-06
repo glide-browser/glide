@@ -11,7 +11,7 @@ const TEST_URI_1 = "http://mochi.test:8888/browser/glide/browser/base/content/te
 const TEST_URI_2 = "http://example.com/";
 
 add_task(async function test_split_views() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const tabs = (await glide.tabs.query({})) as Tuple<Browser.Tabs.Tab, 4>;
 
@@ -55,7 +55,7 @@ add_task(async function test_split_views() {
 });
 
 add_task(async function test_create_split_view_tab_ids() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const tabs = (await glide.tabs.query({})) as Tuple<Browser.Tabs.Tab, 4>;
 
@@ -79,7 +79,7 @@ add_task(async function test_create_split_view_tab_ids() {
 });
 
 add_task(async function test_create_split_view_custom_id() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const tabs = (await glide.tabs.query({})) as Tuple<Browser.Tabs.Tab, 4>;
 
@@ -112,7 +112,7 @@ add_task(async function test_create_split_view_custom_id() {
 });
 
 add_task(async function test_create_split_view_with_pinned_tab() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const tabs = (await glide.tabs.query({})) as Tuple<Browser.Tabs.Tab, 4>;
 

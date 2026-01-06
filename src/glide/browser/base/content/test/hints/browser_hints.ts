@@ -114,7 +114,7 @@ add_task(async function test_partial_hint_filtering() {
 });
 
 add_task(async function test_auto_activate_single_hint() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", "hint --auto");
   });
 
@@ -131,7 +131,7 @@ add_task(async function test_auto_activate_single_hint() {
 });
 
 add_task(async function test_auto_activate_single_hint__action() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>
       glide.hints.show({
         auto_activate: true,
@@ -150,7 +150,7 @@ add_task(async function test_auto_activate_single_hint__action() {
 });
 
 add_task(async function test_auto_activate_always() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>
       glide.hints.show({
         auto_activate: "always",
@@ -176,7 +176,7 @@ add_task(async function test_auto_activate_always() {
 });
 
 add_task(async function test_include_selector() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", "hint");
     glide.keymaps.set("normal", "F", "hint --include 'p'");
   });
@@ -206,7 +206,7 @@ add_task(async function test_include_selector() {
 });
 
 add_task(async function test_include_click_listeners_option() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () => glide.hints.show({}));
     glide.keymaps.set("normal", "F", () => glide.hints.show({ include_click_listeners: true }));
   });
@@ -231,7 +231,7 @@ add_task(async function test_include_click_listeners_option() {
 });
 
 add_task(async function test_pick_basic() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>
       glide.hints.show({
         pick: ({ hints }) => {
@@ -275,7 +275,7 @@ add_task(async function test_gI() {
 });
 
 add_task(async function test_expandable_content_can_be_hinted() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     var is_open = await SpecialPowers.spawn(browser, [], () => {
@@ -306,7 +306,7 @@ add_task(async function test_expandable_content_can_be_hinted() {
 });
 
 add_task(async function test_hint_keymaps_are_ignored() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("hint", "f", "keys <esc>");
     glide.keymaps.set("normal", "j", "config_edit");
   });
@@ -323,7 +323,7 @@ add_task(async function test_hint_keymaps_are_ignored() {
 });
 
 add_task(async function test_pick_hint_chars() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.hint_chars = "abc";
 
     glide.keymaps.set("normal", "f", () => {
@@ -347,7 +347,7 @@ add_task(async function test_pick_hint_chars() {
 });
 
 add_task(async function test_hint_pick__content() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () => {
       glide.hints.show({
         pick: async ({ hints, content }) => {
@@ -392,7 +392,7 @@ add_task(async function test_hint_pick__content() {
 });
 
 add_task(async function test_hint_generator_config() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.hint_label_generator = ({ hints }) => {
       return ["foo", "bar", "baz"].slice(0, hints.length);
     };
@@ -416,7 +416,7 @@ add_task(async function test_hint_generator_config() {
 });
 
 add_task(async function test_numeric_hint_generator() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.hint_label_generator = glide.hints.label_generators.numeric;
   });
 
@@ -444,7 +444,7 @@ add_task(async function test_numeric_hint_generator() {
 });
 
 add_task(async function test_hint_generator__content() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () => {
       glide.hints.show({
         label_generator: async ({ content }) => {
@@ -490,7 +490,7 @@ add_task(async function test_hint_generator__content() {
 });
 
 add_task(async function test_hint_action_function__basic() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -517,7 +517,7 @@ add_task(async function test_hint_action_function__basic() {
 });
 
 add_task(async function test_hint_action_function__multiple_calls() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -548,7 +548,7 @@ add_task(async function test_hint_action_function__multiple_calls() {
 });
 
 add_task(async function test_hint_action_function__complex_return() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -574,7 +574,7 @@ add_task(async function test_hint_action_function__complex_return() {
 });
 
 add_task(async function test_hint_action_function__bad_return() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -606,7 +606,7 @@ add_task(async function test_hint_action_function__bad_return() {
 });
 
 add_task(async function test_clear_no_hints_notification_on_retrigger() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", () => glide.hints.show({ selector: "[data-no-such-element]" }));
   });
 
@@ -632,7 +632,7 @@ add_task(async function test_clear_no_hints_notification_on_retrigger() {
 });
 
 add_task(async function test_yf_copies_link_url() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   const html = `
     <!DOCTYPE html>

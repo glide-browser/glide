@@ -13,22 +13,22 @@ add_task(async function test_native_tabs() {
   const navigator_toolbox = document!.getElementById("navigator-toolbox");
   ok(navigator_toolbox, "Element 'navigator-toolbox' should exist.");
 
-  await GlideTestUtils.reload_config(() => {});
+  await reload_config(() => {});
   const height_default = navigator_toolbox!.clientHeight;
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.native_tabs = "show";
   });
   const height_show = navigator_toolbox!.clientHeight;
   is(height_default, height_show, "glide.o.native_tabs 'show' option should keep initial toolbox dimensions.");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.native_tabs = "hide";
   });
   const height_hide = navigator_toolbox!.clientHeight;
   Assert.greater(height_default, height_hide, "glide.o.native_tabs 'hide' option should shrink the toolbox height.");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.native_tabs = "autohide";
   });
   await waiter(() => {
@@ -36,7 +36,7 @@ add_task(async function test_native_tabs() {
     return height_default > height_autohide && height_autohide > height_hide;
   }).ok("glide.o.native_tabs 'autohide' toolbox height should be in range 'show' - 'hide'.");
 
-  await GlideTestUtils.reload_config(() => {});
+  await reload_config(() => {});
   const height_reset_default = navigator_toolbox!.clientHeight;
   is(height_default, height_reset_default, "Resetting the config should yield the default window height");
 });
@@ -45,16 +45,16 @@ add_task(async function test_buf_native_tabs() {
   const navigator_toolbox = document!.getElementById("navigator-toolbox");
   ok(navigator_toolbox, "Element 'navigator-toolbox' should exist.");
 
-  await GlideTestUtils.reload_config(() => {});
+  await reload_config(() => {});
   const height_default = navigator_toolbox!.clientHeight;
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.bo.native_tabs = "hide";
   });
   const height_hide = navigator_toolbox!.clientHeight;
   Assert.greater(height_default, height_hide, "glide.bo.native_tabs 'hide' option should shrink the toolbox height.");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("UrlEnter", /input_test/, () => {
       glide.bo.native_tabs = "hide";
     });

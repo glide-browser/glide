@@ -11,7 +11,7 @@ const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs")
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_keys_send_backspace() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("insert", "~", async () => {
       await glide.keys.send("<BS>");
     });

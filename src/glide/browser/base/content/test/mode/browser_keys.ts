@@ -29,7 +29,7 @@ declare global {
 add_setup(async () => {
   GlideBrowser.key_manager.reset_sequence();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("insert", "jj", "mode_change normal");
   });
 
@@ -239,7 +239,7 @@ add_task(async function test_jj_switching_elements() {
 
 add_task(async function test_mapped_keys_no_events() {
   await BrowserTestUtils.withNewTab(KEYS_TEST_URI, async browser => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       try {
         glide.keymaps.del("normal", "m");
       } catch {}
@@ -326,7 +326,7 @@ add_task(async function test_d_op_pending_q_normal() {
 
 add_task(async function test_mapping_user_gesture_activation() {
   await BrowserTestUtils.withNewTab(CLIPBOARD_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.keymaps.set("normal", "yc", async () => {
         await glide.content.execute(async () => {
           const button = document!.getElementById("copy-button") as HTMLButtonElement;
@@ -348,7 +348,7 @@ add_task(async function test_mapping_user_gesture_activation() {
 
 add_task(async function test_buf_local_keymaps_override_global() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.invoked_buffer = 0;
       glide.g.invoked_global = 0;
 
@@ -378,7 +378,7 @@ add_task(async function test_buf_local_keymaps_override_global() {
 
 add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.invoked_buffer = 0;
       glide.g.invoked_global = 0;
 
@@ -410,7 +410,7 @@ add_task(async function test_global_keymaps_can_be_deleted_in_buf() {
 
 add_task(async function test_buf_keymaps_registered_after_config_reload() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.invoked_buffer = 0;
       glide.g.invoked_global = 0;
       glide.g.invoked_after_reload = 0;
@@ -433,7 +433,7 @@ add_task(async function test_buf_keymaps_registered_after_config_reload() {
     is(glide.g.invoked_global, 0, "Global keymap should be overridden");
 
     // Reload config with different buffer keymaps
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.invoked_buffer = 0;
       glide.g.invoked_global = 0;
       glide.g.invoked_after_reload = 0;
@@ -496,7 +496,7 @@ add_task(async function test_i_normal_mode_no_events() {
 
 add_task(async function test_shift_with_another_modifier() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.keymaps.set("normal", "<D-S-c>", () => {
         glide.g.value = true;
       });

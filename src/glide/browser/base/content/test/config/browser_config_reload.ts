@@ -8,7 +8,7 @@
 "use strict";
 
 add_task(async function test_config_reload_applies_across_windows() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.value = "initial";
   });
 
@@ -17,7 +17,7 @@ add_task(async function test_config_reload_applies_across_windows() {
   await using second_window = await GlideTestUtils.new_window();
   is(second_window.GlideBrowser.api.g.value, "initial");
 
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.value = "reloaded";
   });
 

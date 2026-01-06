@@ -15,7 +15,7 @@ declare global {
 }
 
 add_task(async function test_basic() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("ls");
       glide.g.exit_code = (await proc.wait()).exit_code;
@@ -27,7 +27,7 @@ add_task(async function test_basic() {
 });
 
 add_task(async function test_unknown_command() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       await glide.process.spawn("this_should_not_resolve").catch((err) => {
         glide.g.value = err;
@@ -43,7 +43,7 @@ add_task(async function test_unknown_command() {
 });
 
 add_task(async function test_non_zero_exit_code() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("bash", ["-c", "echo \"a bad thing happened!\"; exit 3"]);
       await proc.wait().catch((err) => {
@@ -74,7 +74,7 @@ add_task(async function test_non_zero_exit_code() {
 });
 
 add_task(async function test_non_zero_exit_code_check_exit_code_disables() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("bash", ["-c", "exit 3"], { check_exit_code: false });
       await proc.wait();
@@ -90,7 +90,7 @@ add_task(async function test_non_zero_exit_code_check_exit_code_disables() {
 });
 
 add_task(async function test_non_zero_exit_code_success_codes_disables() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("bash", ["-c", "exit 3"], {
         success_codes: [0, 3],
@@ -144,7 +144,7 @@ add_task(async function test_stdin_arraybuffer() {
 });
 
 add_task(async function test_stdout() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("sh", ["-c", "echo \"first\"; sleep 0.1; echo \"second\""]);
       glide.g.value = await Array.fromAsync(proc.stdout.values());
@@ -156,7 +156,7 @@ add_task(async function test_stdout() {
 });
 
 add_task(async function test_stderr() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("sh", ["-c", "echo \"An error\" >&2"]);
       glide.g.value = await Array.fromAsync(proc.stderr!.values());
@@ -168,7 +168,7 @@ add_task(async function test_stderr() {
 });
 
 add_task(async function test_stderr_stdout_simul() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("sh", [
         "-c",
@@ -201,7 +201,7 @@ add_task(async function test_stderr_stdout_simul() {
 });
 
 add_task(async function test_stderr_as_stdout() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("sh", [
         "-c",
@@ -216,7 +216,7 @@ add_task(async function test_stderr_as_stdout() {
 });
 
 add_task(async function test_cwd_option() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc1 = await glide.process.spawn("pwd");
       const proc2 = await glide.process.spawn("pwd", [], { cwd: glide.path.temp_dir });
@@ -236,7 +236,7 @@ add_task(async function test_cwd_option() {
 });
 
 add_task(async function test_env() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("printenv", [], { env: { "MY_ENV_VAR": "glide!" } });
       glide.g.value = (await Array.fromAsync(proc.stdout.values())).join("").trim();
@@ -257,7 +257,7 @@ add_task(async function test_env() {
 });
 
 add_task(async function test_deleting_env() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("printenv", [], { env: { "MY_ENV_VAR": null } });
       glide.g.value = (await Array.fromAsync(proc.stdout.values())).join("").trim();
@@ -276,7 +276,7 @@ add_task(async function test_deleting_env() {
 });
 
 add_task(async function test_minimal_env() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("printenv", [], { env: {}, extend_env: false });
 
@@ -287,7 +287,7 @@ add_task(async function test_minimal_env() {
   await glide.keys.send("~");
   await waiter(() => glide.g.value).is("", "env should be empty when env: {} and extend_env: false are set");
 
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.spawn("printenv", [], { env: { "MY_ENV_VAR": "glide!" }, extend_env: false });
       glide.g.value = (await Array.fromAsync(proc.stdout.values())).join("").trim();
@@ -299,7 +299,7 @@ add_task(async function test_minimal_env() {
 });
 
 add_task(async function test_execute() {
-  await GlideTestUtils.reload_config(function() {
+  await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
       const proc = await glide.process.execute("printenv");
       glide.g.value = proc.exit_code;

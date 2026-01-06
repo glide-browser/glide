@@ -19,13 +19,13 @@ declare global {
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async function setup() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     // empty placeholder config file
   });
 });
 
 add_task(async function test_tabs_functions() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     var i = 0;
 
     browser.tabs.onCreated.addListener(async () => {
@@ -58,7 +58,7 @@ add_task(async function test_tabs_functions() {
 
   // reload a new config file that doesn't include the event listener defined earlier
   // and spawn a bunch of tabs to trigger it if the listener is still registered
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     //
   });
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {});
@@ -69,7 +69,7 @@ add_task(async function test_tabs_functions() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {});
 
   // ensure event listeners can be added after reloading
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     var i = 0;
 
     browser.tabs.onCreated.addListener(async () => {
@@ -92,7 +92,7 @@ add_task(async function test_tabs_functions() {
 });
 
 add_task(async function test_dns() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     void browser.dns.resolve("example.com").then(r => {
       assert(r.addresses.length, "no DNS addresses resolved");
     });
@@ -100,7 +100,7 @@ add_task(async function test_dns() {
 });
 
 add_task(async function test_css_injection() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     var css_injection = { target: { tabId: 1 }, css: `body { border: 20px dotted pink; }` };
     var has_css_injection = false;
 
@@ -143,7 +143,7 @@ add_task(async function test_css_injection() {
 });
 
 add_task(async function test_script_injection() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
       await browser.tabs.executeScript({ code: `document.body.style.border = "20px dotted pink"` });
       glide.g.test_checked = true;
@@ -160,7 +160,7 @@ add_task(async function test_script_injection() {
 });
 
 add_task(async function test_contextual_identities() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>c", async () => {
       const containers = await browser.contextualIdentities.query({});
       assert(containers && containers.length);
@@ -179,7 +179,7 @@ add_task(async function test_contextual_identities() {
 });
 
 add_task(async function test_search_engines() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
       const engines = await browser.search.get();
       assert(engines && engines.length, "no search engines found");
@@ -197,7 +197,7 @@ add_task(async function test_search_engines() {
 });
 
 add_task(async function test_error_handling_for_unsupported_apis() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>e", async () => {
       try {
         // Try to access a non-existent API
@@ -221,7 +221,7 @@ add_task(async function test_error_handling_for_unsupported_apis() {
 });
 
 add_task(async function test_bookmarks_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>b", async () => {
       const folder = await browser.bookmarks.create({ title: "Glide Test Folder", type: "folder" });
       await browser.bookmarks.create({ title: "Glide Test Bookmark", url: "https://example.com", parentId: folder.id });
@@ -244,7 +244,7 @@ add_task(async function test_bookmarks_api() {
 });
 
 add_task(async function test_history_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>h", async () => {
       const testUrl = "https://example.com/glide-test-" + Date.now();
       await browser.history.addUrl({ url: testUrl });
@@ -267,7 +267,7 @@ add_task(async function test_history_api() {
 });
 
 add_task(async function test_permissions_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>p", async () => {
       await browser.permissions.contains({ permissions: ["geolocation"] });
 
@@ -285,7 +285,7 @@ add_task(async function test_permissions_api() {
 });
 
 add_task(async function test_runtime_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>p", async () => {
       const manifest = await browser.runtime.getManifest();
       assert(typeof manifest === "object" && manifest);
@@ -317,7 +317,7 @@ add_task(async function test_runtime_api() {
 });
 
 add_task(async function test_notifications_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
       const notification_id = await browser.notifications.create({
         type: "basic",
@@ -339,7 +339,7 @@ add_task(async function test_notifications_api() {
 });
 
 add_task(async function test_storage_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
       await browser.storage.local.set({ testKey: "testValue", complexData: { nested: true, count: 42 } });
 
@@ -371,7 +371,7 @@ add_task(async function test_storage_api() {
 });
 
 add_task(async function test_downloads_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>d", async () => {
       const download_id = await browser.downloads.download({
         url: "https://example.com/favicon.ico",
@@ -401,7 +401,7 @@ add_task(async function test_downloads_api() {
 });
 
 add_task(async function test_cookies_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>c", async () => {
       const test_cookie = {
         name: "GlideTestCookie",
@@ -436,7 +436,7 @@ add_task(async function test_cookies_api() {
 });
 
 add_task(async function test_windows_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>w", async () => {
       const current_window = await browser.windows.getCurrent();
       assert(current_window && typeof current_window.id === "number", "Failed to get current window");
@@ -463,7 +463,7 @@ add_task(async function test_windows_api() {
 });
 
 add_task(async function test_webRequest_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     let request_captured = false;
 
     const filter = { urls: ["*://example.com/*"] };
@@ -499,7 +499,7 @@ add_task(async function test_webRequest_api() {
 });
 
 add_task(async function test_sessions_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
       const recently_closed = await browser.sessions.getRecentlyClosed();
       assert(Array.isArray(recently_closed), "Expected array of recently closed sessions");
@@ -515,7 +515,7 @@ add_task(async function test_sessions_api() {
 });
 
 add_task(async function test_i18n_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>i", async () => {
       const message = await browser.i18n.getMessage("@@ui_locale");
       assert(typeof message === "string", "Expected string from getMessage");
@@ -538,7 +538,7 @@ add_task(async function test_i18n_api() {
 });
 
 add_task(async function test_theme_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>t", async () => {
       const theme = { colors: { frame: "#FFFFFF", toolbar: "#F0F0F0", toolbar_text: "#000000" } };
       await browser.theme.update(theme);
@@ -566,7 +566,7 @@ add_task(async function test_theme_api() {
 });
 
 add_task(async function test_identity_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>i", async () => {
       const id = browser.runtime.id;
       assert(typeof id === "string");
@@ -586,7 +586,7 @@ add_task(async function test_identity_api() {
 
 add_task(async function test_function_script_injection() {
   // -------------------- arrow function -------------------
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
       const tab = (await browser.tabs.query({ active: true }))[0];
       assert(tab?.id, "no active tab");
@@ -611,7 +611,7 @@ add_task(async function test_function_script_injection() {
 
   // -------------------- with args -------------------
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     const BODY_STYLE = "5px solid red";
     glide.keymaps.set("normal", "<Space>n", async () => {
       const tab = (await browser.tabs.query({ active: true }))[0];
@@ -638,7 +638,7 @@ add_task(async function test_function_script_injection() {
   });
 
   // -------------------- function syntax -------------------
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
       const tab = (await browser.tabs.query({ active: true }))[0];
       assert(tab?.id, "no active tab");
@@ -660,7 +660,7 @@ add_task(async function test_function_script_injection() {
   });
 
   // -------------------- function syntax with args -------------------
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     const BODY_STYLE = "5px solid red";
     glide.keymaps.set("normal", "<Space>n", async () => {
       const tab = (await browser.tabs.query({ active: true }))[0];
@@ -688,7 +688,7 @@ add_task(async function test_function_script_injection() {
 
   // -------------------- error handling -------------------
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>n", async () => {
       const tab = (await browser.tabs.query({ active: true }))[0];
       assert(tab?.id, "no active tab");
@@ -715,7 +715,7 @@ add_task(async function test_function_script_injection() {
 });
 
 add_task(async function test_runtime_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>r", async () => {
       browser.runtime.onMessage.addListener((...args: any[]) => {
         console.log({ args });
@@ -741,7 +741,7 @@ add_task(async function test_runtime_api() {
 }).skip();
 
 add_task(async function test_commands_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>c", async () => {
       // Get all commands
       // TODO(glide): `.commands` is not defined
@@ -777,7 +777,7 @@ add_task(async function test_commands_api() {
 }).skip();
 
 add_task(async function test_contentScripts__unregister() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       var script = await browser.contentScripts.register({
         matches: ["*://example.com/*"],
@@ -838,11 +838,11 @@ add_task(async function test_contentScripts__unregister() {
   );
 
   // cleanup
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 });
 
 add_task(async function test_sidebarAction_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>s", async () => {
       await browser.sidebarAction.setTitle({ title: "Glide Test Sidebar" });
 

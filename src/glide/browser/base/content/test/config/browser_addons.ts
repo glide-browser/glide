@@ -39,7 +39,7 @@ async function teardown() {
 add_task(async function test_install_addon_from_url() {
   await setup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       // mochitest resolves example.com to local files
       const addon = await glide.addons.install(
@@ -63,7 +63,7 @@ add_task(async function test_install_addon_from_url() {
 add_task(async function test_addons_list() {
   await setup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       // mochitest resolves example.com to local files
       glide.g.value = await glide.addons.install(
@@ -107,7 +107,7 @@ add_task(async function test_addons_list() {
 add_task(async function test_install_calls_same_url_cached() {
   await setup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       glide.g.addons = [];
 
@@ -138,7 +138,7 @@ add_task(async function test_install_calls_same_url_cached() {
 add_task(async function test_install_force_reinstall() {
   await setup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       glide.g.addons = [];
       const url = "https://example.com/browser/toolkit/mozapps/extensions/test/xpinstall/amosigned.xpi";

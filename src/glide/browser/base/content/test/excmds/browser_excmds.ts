@@ -10,7 +10,7 @@
 declare var content: TestContent;
 
 add_setup(async function setup() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 });
 
 const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
@@ -42,7 +42,7 @@ add_task(async function test_tab_switching() {
 });
 
 add_task(async function test_tab_close() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.mapleader = "<Space>";
   });
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
@@ -111,7 +111,7 @@ declare global {
 }
 
 add_task(async function test_excmd_callback_receives_tab_id() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.excmds.create(
       { name: "test_command", description: "Test command to verify tab_id parameter" },
       ({ tab_id }) => {
@@ -130,7 +130,7 @@ add_task(async function test_excmd_callback_receives_tab_id() {
 });
 
 add_task(async function test_excmd_callback_receives_unparsed_args() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.excmds.create({ name: "test_command", description: "Test command" }, ({ args_arr }) => {
       glide.g.value = args_arr;
     });
@@ -186,7 +186,7 @@ add_task(async function test_tab_new() {
 });
 
 add_task(async function test_keys() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", ";", "keys :");
   });
 
@@ -198,7 +198,7 @@ add_task(async function test_keys() {
 });
 
 add_task(async function test_clear_removes_notifications() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     GlideBrowser.add_notification("test-notification", {
@@ -237,7 +237,7 @@ add_task(async function test_clear_removes_notifications() {
 });
 
 add_task(async function test_copy_excmd_single_notification() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     await keys(":profile_dir<CR>");
@@ -267,7 +267,7 @@ add_task(async function test_copy_excmd_single_notification() {
 });
 
 add_task(async function test_tab_pin() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   const initial_tab_count = gBrowser.tabs.length;
   using tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
@@ -287,7 +287,7 @@ add_task(async function test_tab_pin() {
 });
 
 add_task(async function test_tab_unpin() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   const initial_tab_count = gBrowser.tabs.length;
   using tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");

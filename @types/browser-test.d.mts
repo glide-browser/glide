@@ -49,6 +49,9 @@ declare global {
 
   function wait_for_mode(modde: GlideMode, name?: string): Promise<void>;
 
+  const write_config: typeof GlideTestUtils["write_config"];
+  const reload_config: typeof GlideTestUtils["reload_config"];
+
   function is<V>(a: V, b: NoInfer<V>, name?: string): void;
   function todo_is(a: unknown, b: unknown, name?: string): void;
   /**

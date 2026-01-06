@@ -10,7 +10,7 @@
 const { temp_prefs } = ChromeUtils.importESModule("chrome://glide/content/utils/prefs.mjs", { global: "current" });
 
 add_task(async function test_temp_prefs() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   const previous = Services.prefs.getIntPref("toolkit.scrollbox.pagescroll.maxOverlapPercent");
 

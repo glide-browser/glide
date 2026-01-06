@@ -31,7 +31,7 @@ async function focus_address_bar() {
 add_task(async function test_add_search_engine() {
   await using _ = defer_engine_cleanup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -65,7 +65,7 @@ add_task(async function test_add_search_engine() {
 add_task(async function test_add_search_engine_with_multiple_keywords() {
   await using _ = defer_engine_cleanup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -103,7 +103,7 @@ add_task(async function test_add_search_engine_with_multiple_keywords() {
 add_task(async function test_search_engine_default() {
   await using _ = defer_engine_cleanup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -129,7 +129,7 @@ add_task(async function test_search_engine_default() {
 add_task(async function test_search_engine_post_method() {
   await using _ = defer_engine_cleanup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -165,7 +165,7 @@ add_task(async function test_repeated_add_updates_existing_engine() {
   await using _ = defer_engine_cleanup();
 
   // ------------- initial configuration
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -184,7 +184,7 @@ add_task(async function test_repeated_add_updates_existing_engine() {
   is(engine.getSubmission("test").uri.spec, "https://old.example.com/search?q=test", "Initial search URL is correct");
 
   // ------------- update the engine
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -213,7 +213,7 @@ add_task(async function test_repeated_add_updates_existing_engine() {
 add_task(async function test_search_url_get_params() {
   await using _ = defer_engine_cleanup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -242,7 +242,7 @@ add_task(async function test_update_from_get_to_post_params() {
   await using _ = defer_engine_cleanup();
 
   // ------------- start with GET params
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -260,7 +260,7 @@ add_task(async function test_update_from_get_to_post_params() {
   ok(!engine.getSubmission("test").postData, "Initially should have no POST data");
 
   // ------------- update to POST params
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",
@@ -286,7 +286,7 @@ add_task(async function test_update_from_get_to_post_params() {
 add_task(async function test_suggest_url_get_params() {
   await using _ = defer_engine_cleanup();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ConfigLoaded", async () => {
       await glide.search_engines.add({
         name: "Glide Test Engine",

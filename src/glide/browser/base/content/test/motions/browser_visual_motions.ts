@@ -150,7 +150,7 @@ add_task(async function test_visual_c() {
 });
 
 add_task(async function test_visual_yank_editable_to_clipboard() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     // lower the highlight time so our tests can be fast
     glide.o.yank_highlight_time = 1;
   });
@@ -173,7 +173,7 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
 });
 
 add_task(async function test_visual_yank_non_editable_to_clipboard() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     // lower the highlight time so our tests can be fast
     glide.o.yank_highlight_time = 1;
   });
