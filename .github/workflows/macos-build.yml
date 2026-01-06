@@ -107,6 +107,9 @@ jobs:
             brew install nasm
           fi
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Bootstrap repo
         run: |
           pnpm bootstrap

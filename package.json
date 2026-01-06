@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "bootstrap": "bash ./scripts/bootstrap.sh",
+    "bootstrap": "pnpm tsn scripts/bootstrap.mts",
     "bootstrap:mach": "pnpm mach bootstrap --application-choice=browser",
 
     "fmt": "dprint fmt",
@@ -58,7 +58,8 @@
     "@markdoc/markdoc": "^0.5.4",
     "shiki": "^3.19.0",
     "ts-blank-space": "^0.6.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "zx": "^8.8.5"
   },
   "devDependencies": {
     "@microsoft/eslint-plugin-sdl": "^1.1.0",
