@@ -24,7 +24,7 @@ import type { SetNonNullable } from "type-fest";
 const { lastx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
-
+const { AppConstants } = ChromeUtils.importESModule("resource://gre/modules/AppConstants.sys.mjs");
 type KeyMappingTrieNodeWithValue = SetNonNullable<KeyMappingTrieNode, "value">;
 
 export class KeyMappingTrieNode {
@@ -488,10 +488,27 @@ const SHIFTED_CHARACTERS = new Set([
 /**
  * A minimla version of `KeyboardEvent` that only defines the properties we rely on.
  */
-export type GlideMappingEvent = Pick<
-  KeyboardEvent,
-  "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey"
->;
+export type GlideMappingEvent =
+  & Pick<
+    KeyboardEvent,
+    "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey"
+  >
+  & {
+    code?: string;
+  };
+
+/**
+ * Extracts the physical key from event.code on macOS when Option is pressed.
+ * This handles Option+key combinations that produce Unicode characters (Vimium-like behavior).
+ */
+function extract_physical_key_from_code(code: string): string {
+  // "KeyP" -> "p"
+  if (code.startsWith("Key")) {
+    return code.slice(3).toLowerCase();
+  }
+  // TODO: handle digit keys, numpad keys, and special codes
+  return code.toLowerCase();
+}
 
 /**
  * Given a keyboard event, returns the corresponding Vim-notation for it.
@@ -520,6 +537,9 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
     modifiers.push("D");
   }
 
+  const physical_key = event.altKey && event.code && AppConstants.platform === "macosx"
+    ? extract_physical_key_from_code(event.code)
+    : null;
   const special_key = SPECIAL_KEY_MAP.get(event.key) ?? null;
 
   // Firefox handles the shift key differently under two circumstances:
@@ -528,16 +548,18 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   // 2. If the keypress includes other modifiers, e.g. cmd+shift+c then firefox would set `key` to `c`
   //
   // So we just manually make sure the given key has always been uppercased if the shift flag is set.
-  const key = special_key ?? (event.shiftKey
-      // don't transform keys like `<Bslash>`
-      && event.key.length === 1
-    ? event.key.toLocaleUpperCase()
-    : event.key);
+  const base_key = physical_key ?? event.key;
+  const key = special_key
+    ?? (event.shiftKey
+        // don't transform keys like `<Bslash>`
+        && base_key.length === 1
+      ? base_key.toLocaleUpperCase()
+      : base_key);
 
   // For inherently shifted characters (like +, !, @, etc.), we don't add the S modifier
   // because the character itself already represents the shifted state
   const is_single_char = key.length === 1;
-  const is_shifted_char = SHIFTED_CHARACTERS.has(event.key);
+  const is_shifted_char = SHIFTED_CHARACTERS.has(base_key);
   if (
     event.shiftKey
     && (!is_single_char || modifiers.length)
@@ -665,6 +687,7 @@ export function parse_modifiers(
     shiftKey: false,
     is_special: false,
     key: keyn,
+    code: "",
   };
 
   if (!keyn.startsWith("<") || !keyn.endsWith(">")) {
