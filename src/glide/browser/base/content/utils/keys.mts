@@ -540,7 +540,8 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   const physical_key = event.altKey && event.code && AppConstants.platform === "macosx"
     ? extract_physical_key_from_code(event.code)
     : null;
-  const special_key = SPECIAL_KEY_MAP.get(event.key) ?? null;
+  const base_key = physical_key ?? event.key;
+  const special_key = SPECIAL_KEY_MAP.get(base_key) ?? null;
 
   // Firefox handles the shift key differently under two circumstances:
   //
@@ -548,7 +549,6 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   // 2. If the keypress includes other modifiers, e.g. cmd+shift+c then firefox would set `key` to `c`
   //
   // So we just manually make sure the given key has always been uppercased if the shift flag is set.
-  const base_key = physical_key ?? event.key;
   const key = special_key
     ?? (event.shiftKey
         // don't transform keys like `<Bslash>`
@@ -687,7 +687,6 @@ export function parse_modifiers(
     shiftKey: false,
     is_special: false,
     key: keyn,
-    code: "",
   };
 
   if (!keyn.startsWith("<") || !keyn.endsWith(">")) {
