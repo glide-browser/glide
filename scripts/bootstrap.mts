@@ -21,4 +21,4 @@ await $`pnpm dev:once`;
 await $`pnpm build:types`;
 
 // Create an empty config file to avoid loading the global user config.
-await $`touch src/glide.ts`;
+await $.touch("src/glide.ts");
