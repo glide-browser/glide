@@ -1,5 +1,7 @@
+import fs from "fs/promises";
 import * as zx from "zx";
 import { ROOT_DIR } from "./canonical-paths.mts";
+import { exists } from "./util.mts";
 
 export * from "zx";
 
@@ -37,6 +39,7 @@ export const $ = zx.$({
 }) as zx.Shell & {
   set_root_dir(): void;
   no_stdout(cb: () => Promise<void>): Promise<void>;
+  touch(path: string): Promise<boolean>;
 };
 
 $.set_root_dir = () => {
@@ -51,4 +54,13 @@ $.no_stdout = async (cb) => {
 
   zx.defaults.stdio = DEFAULT_STDIO;
   verbose = true;
+};
+
+$.touch = async function(path) {
+  if (await exists(path)) {
+    return false;
+  }
+
+  await fs.writeFile(path, "");
+  return true;
 };
