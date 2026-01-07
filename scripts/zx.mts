@@ -40,7 +40,13 @@ export const $ = zx.$({
   set_root_dir(): void;
   no_stdout(cb: () => Promise<void>): Promise<void>;
   touch(path: string): Promise<boolean>;
+  /** equivalent to `rm -rf $path` */
+  rmdir(path: string): Promise<void>;
+
+  glob: typeof zx.glob;
 };
+
+$.glob = zx.glob;
 
 $.set_root_dir = () => {
   process.chdir(ROOT_DIR);
@@ -63,4 +69,8 @@ $.touch = async function(path) {
 
   await fs.writeFile(path, "");
   return true;
+};
+
+$.rmdir = async function(path) {
+  await fs.rm(path, { recursive: true, force: true });
 };

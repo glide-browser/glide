@@ -27,7 +27,7 @@
     "build:docs:api": "pnpm tsn ./scripts/build-api-reference.mts",
     "build:docs:assets": "pnpm tsn ./scripts/docs-asset-hashes.mts",
     "build:docs:production": "pnpm tsn ./scripts/docs-production.mts",
-    "build:types": "bash ./scripts/generate-types.sh",
+    "build:types": "pnpm tsn scripts/generate-types.mts",
     "build:ts": "pnpm tsn scripts/build-ts.mts",
     "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
 

@@ -1,4 +1,5 @@
 import { bundle } from "./bundle.mts";
+import { generate_types } from "./generate-types.mts";
 import { $ } from "./zx.mts";
 
 $.set_root_dir();
@@ -8,8 +9,7 @@ if (!process.argv.includes("--offline")) {
 }
 
 await bundle();
-
-await $`./scripts/generate-types.sh`;
+await generate_types();
 
 await $`pnpm build:ts`;
 await $`pnpm build:docs:html`;
