@@ -1,0 +1,12 @@
+diff --git a/taskcluster/scripts/misc/unpack-sdk.py b/taskcluster/scripts/misc/unpack-sdk.py
+index e17f98d6578efc85b1a474cd27b5b205ac6200aa..aa93bf7954833f58e93ce993a8c14b1f8a42da1b 100644
+--- a/taskcluster/scripts/misc/unpack-sdk.py
++++ b/taskcluster/scripts/misc/unpack-sdk.py
+@@ -15,6 +15,7 @@ from mozpack.macpkg import Pbzx, uncpio, unxar
+ 
+ 
+ def unpack_sdk(url, sha512, extract_prefix, out_dir="."):
++    print("using url", url, sha512)
+     if "MOZ_AUTOMATION" in os.environ:
+         url = f"http://taskcluster/tooltool.mozilla-releng.net/sha512/{sha512}"
+     with tempfile.TemporaryFile() as pkg:
