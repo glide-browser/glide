@@ -78,11 +78,7 @@ export function init(sandbox: Sandbox) {
       await glide.excmds.execute("tab_pin");
     }
   };
-  if (glide.ctx.os === "macosx") {
-    glide.keymaps.set("normal", "<C-p>", togglePinTab, { description: "Toggle pin state of the current tab" });
-  } else {
-    glide.keymaps.set("normal", "<A-p>", togglePinTab, { description: "Toggle pin state of the current tab" });
-  }
+  glide.keymaps.set("normal", "<A-p>", togglePinTab, { description: "Pin or unpin the current tab" });
 
   glide.keymaps.set("normal", ".", "repeat");
   glide.keymaps.set("normal", ":", "commandline_show");
