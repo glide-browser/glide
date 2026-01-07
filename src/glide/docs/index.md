@@ -151,7 +151,7 @@ title="Demo video showing Glide features including keyboard navigation and confi
       <span class="keymap-key">&lt;C-k&gt;</span>
       <span class="keymap-desc">Previous tab</span>
       <span class="keymap-key">&lt;C-p&gt;</span>
-      <span class="keymap-desc">Toggle pin state of the current tab</span>
+      <span class="keymap-desc">Pin or unpin the current tab</span>
     </div>
   </div>
 
