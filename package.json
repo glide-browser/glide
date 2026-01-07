@@ -19,7 +19,7 @@
     "launch": "./scripts/bin/mach run --purgecaches",
     "mach": "./scripts/bin/mach",
 
-    "bundle": "bash ./scripts/bundle.sh",
+    "bundle": "pnpm tsn scripts/bundle.mts",
 
     "build:docs": "pnpm build:docs:html --symlink=false && pnpm build:docs:api && pnpm build:docs:assets && pnpm build:docs:index && pnpm build:docs:assets",
     "build:docs:html": "pnpm tsn scripts/build-docs.mts",
