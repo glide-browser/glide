@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { bundle_types } from "./bundle-types.mts";
 import { $ } from "./zx.mts";
 
 $.set_root_dir();
@@ -31,7 +32,7 @@ export async function bundle() {
       --bundle "$(node -e 'console.log(require.resolve("shiki"))')"`.pipe("src/glide/bundled/shiki.mjs");
   });
 
-  await $`./scripts/bundle-types.sh`;
+  await bundle_types();
 }
 
 if (import.meta.url.endsWith(process.argv[1]!)) {
