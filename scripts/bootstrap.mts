@@ -1,36 +1,14 @@
-import { $ } from "zx";
-import { ROOT_DIR } from "./canonical-paths.mts";
+import { bundle } from "./bundle.mts";
+import { $ } from "./zx.mts";
 
-$.cwd = ROOT_DIR;
-
-$.stdio = "inherit";
-
-$.log = (entry) => {
-  switch (entry.kind) {
-    case "cd": {
-      console.log("[cd]", entry.dir);
-      break;
-    }
-    case "cmd": {
-      console.log("+", entry.cmd);
-      break;
-    }
-    case "stdout": {
-      process.stdout.write(entry.data.toString());
-      break;
-    }
-    case "stderr": {
-      process.stderr.write(entry.data.toString());
-      break;
-    }
-  }
-};
+$.set_root_dir();
 
 if (!process.argv.includes("--offline")) {
   await $`pnpm firefox:download`;
 }
 
-await $`./scripts/bundle.sh`;
+await bundle();
+
 await $`./scripts/generate-types.sh`;
 
 await $`pnpm build:ts`;
