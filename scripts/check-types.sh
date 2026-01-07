@@ -10,7 +10,7 @@ pnpm tsc:browser
 pnpm tsc:scripts
 
 (set +x; echo "============ bundling config types         ============")
-./scripts/bundle-types.sh
+pnpm tsn scripts/bundle-types.mts
 
 (set +x; echo "============ checking bundled config types ============")
 pnpm tsc:config
