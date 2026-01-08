@@ -1,3 +1,4 @@
+import esbuild from "esbuild";
 import fs from "fs/promises";
 import { fileURLToPath } from "node:url";
 import { bundle_types } from "./bundle-types.mts";
@@ -9,28 +10,23 @@ export async function bundle() {
   await $.no_stdout(async () => {
     await fs.mkdir("src/glide/bundled", { recursive: true });
 
-    await $`pnpm esbuild \
-      --format=esm \
-      --minify \
-      --bundle "$(node -e 'console.log(require.resolve("ts-blank-space"))')"`.pipe(
-      "src/glide/bundled/ts-blank-space.mjs",
-    );
+    const build = async (mod: string, filename: string) => {
+      console.log("+ bundling", mod);
+      await esbuild.build({
+        format: "esm",
+        minify: true,
+        bundle: true,
+        entryPoints: [fileURLToPath(import.meta.resolve(mod))],
+        outfile: `src/glide/bundled/${filename}`,
+      });
+    };
 
-    await $`pnpm esbuild \
-      --format=esm \
-      --minify \
-      --bundle "$(node -e 'console.log(require.resolve("@markdoc/markdoc"))')"`.pipe("src/glide/bundled/markdoc.mjs");
-
-    await $`pnpm esbuild \
-      --format=esm \
-      --minify \
-      --bundle "$(node -e 'console.log(require.resolve("fast-check"))')"`.pipe("src/glide/bundled/fast-check.mjs");
+    await build("ts-blank-space", "ts-blank-space.mjs");
+    await build("@markdoc/markdoc", "markdoc.mjs");
+    await build("fast-check", "fast-check.mjs");
 
     // TODO(glide): only bundle the themes + languages we need
-    await $`pnpm esbuild \
-      --format=esm \
-      --minify \
-      --bundle "$(node -e 'console.log(require.resolve("shiki"))')"`.pipe("src/glide/bundled/shiki.mjs");
+    await build("shiki", "shiki.mjs");
   });
 
   await bundle_types();
