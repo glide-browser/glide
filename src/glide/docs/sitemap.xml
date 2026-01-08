@@ -6,7 +6,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://glide-browser.app/tutorial</loc>
+    <loc>https://glide-browser.app/tutor</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -76,7 +76,7 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://glide-browser.app/tutorial/</loc>
+    <loc>https://glide-browser.app/tutorial</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
