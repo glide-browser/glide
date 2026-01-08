@@ -13,6 +13,7 @@ let verbose = true;
 
 export const $ = zx.$({
   cwd: ROOT_DIR,
+  quote: process.platform === "win32" ? zx.quotePowerShell : zx.quote,
   log: (entry) => {
     switch (entry.kind) {
       case "cd": {
