@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import config from "../../firefox.json" with { type: "json" };
 import { is_present } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
-import { ensure_symlink, exists } from "../util.mts";
+import { chain, ensure_symlink, exists } from "../util.mts";
 import { get_platform, GLOB_ALL_FILES } from "./util.mts";
 
 interface Context {
@@ -45,7 +45,12 @@ async function main() {
 }
 
 async function apply_git_patches(ctx: Context, patch_args: string[]) {
-  for await (const entry of fs.glob("**/*.patch", { cwd: SRC_DIR, withFileTypes: true })) {
+  const patches = chain(
+    fs.glob("*.patch", { cwd: Path.join(ROOT_DIR, "patches"), withFileTypes: true }),
+    fs.glob("**/*.patch", { cwd: SRC_DIR, withFileTypes: true }),
+  );
+
+  for await (const entry of patches) {
     if (entry.isDirectory()) {
       continue;
     }

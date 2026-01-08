@@ -47,3 +47,13 @@ export function indent(text: string, spaces: number = 2): string {
     .map(line => indentation + line)
     .join("\n");
 }
+
+export async function* chain<T>(
+  ...iters: AsyncIterable<T>[]
+): AsyncIterableIterator<T> {
+  for (const iter of iters) {
+    for await (const item of iter) {
+      yield item;
+    }
+  }
+}
