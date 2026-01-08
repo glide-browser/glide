@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { fileURLToPath } from "node:url";
 import { bundle_types } from "./bundle-types.mts";
 import { $ } from "./zx.mts";
 
@@ -35,6 +36,6 @@ export async function bundle() {
   await bundle_types();
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await bundle();
 }

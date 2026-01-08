@@ -1,6 +1,7 @@
 import chokidar from "chokidar";
 import { execa } from "execa";
 import Path from "path";
+import { fileURLToPath } from "url";
 import {
   DOCS_DIR,
   DOCS_DIST_DIR,
@@ -96,6 +97,6 @@ export async function main() {
   });
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }

@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import Path from "path";
+import { fileURLToPath } from "url";
 import { SCRIPTS_DIR } from "./canonical-paths.mts";
 import { $ } from "./zx.mts";
 
@@ -83,6 +84,6 @@ export async function generate_types() {
   }
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await generate_types();
 }

@@ -1,4 +1,5 @@
 import PQueue from "p-queue";
+import { fileURLToPath } from "url";
 import { main as build_ts } from "./build-ts.mts";
 import { main as copy_files } from "./copy-src.mts";
 import { main as watch_docs } from "./watch-docs.mts";
@@ -23,6 +24,6 @@ async function main() {
   void copy_files();
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }

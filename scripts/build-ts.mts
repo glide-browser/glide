@@ -2,6 +2,7 @@ import chokidar from "chokidar";
 import fs from "fs/promises";
 import Path from "path";
 import ts_blank_space from "ts-blank-space";
+import { fileURLToPath } from "url";
 import { SRC_DIR } from "./canonical-paths.mts";
 import { queue } from "./dev.mts";
 
@@ -109,6 +110,6 @@ export async function main() {
   });
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }

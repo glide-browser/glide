@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
 import config from "../firefox.json" with { type: "json" };
 import { dedent } from "../src/glide/browser/base/content/utils/dedent.mts";
 import { $ } from "./zx.mts";
@@ -25,6 +26,6 @@ export async function bundle_types() {
   await fs.writeFile(BUNDLED_FILE, HEADER + "\n" + content);
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await bundle_types();
 }
