@@ -1279,6 +1279,12 @@ readonly version: string;
 readonly active: boolean;
 readonly source_uri: URL | null;
 uninstall(): Promise<void>;
+/**
+ * Reload the addon.
+ *
+ * This is similar to uninstalling / reinstalling, but less destructive.
+ */
+reload(): Promise<void>;
 ```
 
 ## • `glide.AddonInstall` {% id="glide.AddonInstall" %}

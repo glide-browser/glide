@@ -276,6 +276,8 @@ declare namespace MockedExports {
 
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
       typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
+    "resource://testing-common/AddonTestUtils.sys.mjs":
+      typeof import("../engine/toolkit/mozapps/extensions/internal/AddonTestUtils.sys.mjs");
     "resource://testing-common/GlideTestUtils.sys.mjs":
       typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
     "resource://testing-common/fast-check.mjs": typeof import("fast-check");

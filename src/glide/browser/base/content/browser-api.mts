@@ -1138,5 +1138,9 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
     async uninstall() {
       await addon.uninstall();
     },
+
+    async reload() {
+      await addon.reload();
+    },
   };
 }

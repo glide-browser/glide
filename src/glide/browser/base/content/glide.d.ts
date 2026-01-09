@@ -1443,6 +1443,13 @@ declare global {
       readonly source_uri: URL | null;
 
       uninstall(): Promise<void>;
+
+      /**
+       * Reload the addon.
+       *
+       * This is similar to uninstalling / reinstalling, but less destructive.
+       */
+      reload(): Promise<void>;
     };
 
     export type AddonInstall = glide.Addon & { cached: boolean };
