@@ -310,7 +310,7 @@ add_task(async function test_tab_unpin() {
 });
 
 add_task(async function test_tab_pin_toggle_excmd() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   using _tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
@@ -324,7 +324,7 @@ add_task(async function test_tab_pin_toggle_excmd() {
 });
 
 add_task(async function test_tab_pin_toggle_keymap() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   using _tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
