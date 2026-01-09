@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import Path from "path";
 import * as zx from "zx";
 import { ROOT_DIR } from "./canonical-paths.mts";
 import { exists } from "./util.mts";
@@ -42,11 +43,15 @@ export const $ = zx.$({
   touch(path: string): Promise<boolean>;
   /** equivalent to `rm -rf $path` */
   rmdir(path: string): Promise<void>;
+  /** returns a shell tagged template that invokes a command from node_modules/.bin */
+  bin(cmd: string): zx.Shell;
 
   glob: typeof zx.glob;
 };
 
 $.glob = zx.glob;
+
+$.bin = (cmd: string) => $({ prefix: Path.join("node_modules", ".bin", cmd) });
 
 $.set_root_dir = () => {
   process.chdir(ROOT_DIR);

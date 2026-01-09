@@ -12,7 +12,7 @@ export async function generate_types() {
   // Generate `.d.ts` files from source JS files
   // This is mainly intended for symbol discovery through LSPs as
   // it will end up generating a lot of `any`s
-  await $`./node_modules/.bin/tsc \
+  await $.bin("tsc")`\
     --declaration \
     --allowJs \
     --emitDeclarationOnly \
@@ -80,7 +80,7 @@ export async function generate_types() {
     );
 
     await fs.writeFile(path, license + "\n\n" + content);
-    await $`node_modules/.bin/dprint fmt --log-level=error ${path}`;
+    await $.bin("dprint")` fmt --log-level=error ${path}`;
   }
 }
 

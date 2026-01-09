@@ -14,7 +14,7 @@ const HEADER = dedent`
 `;
 
 export async function bundle_types() {
-  await $`./node_modules/.bin/dts-bundle-generator \
+  await $.bin("dts-bundle-generator")`\
     src/glide/browser/base/content/bundled.d.ts \
     -o ${BUNDLED_FILE} \
     --inline-declare-global \
