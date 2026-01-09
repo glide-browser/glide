@@ -235,6 +235,56 @@ add_task(async function test_cwd_option() {
   isnot(result.specified, result.default, "process should be spawned in a different directory");
 });
 
+add_task(async function test_cwd_tilde_expansion() {
+  await reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("pwd", [], { cwd: "~" });
+      const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+      glide.g.value = output;
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).is(glide.path.home_dir, "~ should expand to home directory");
+  isnot(glide.g.value, glide.path.cwd, "expanded ~ should be different from default cwd");
+});
+
+add_task(async function test_cwd_tilde_slash_expansion() {
+  await reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const test_subdir = "test_tilde_expansion";
+      const expected_path = glide.path.join(glide.path.home_dir, test_subdir);
+
+      if (!(await glide.fs.exists(expected_path))) {
+        await glide.fs.mkdir(expected_path);
+      }
+
+      const proc = await glide.process.spawn("pwd", [], { cwd: `~/${test_subdir}` });
+      const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+      glide.g.value = output;
+    });
+  });
+
+  await glide.keys.send("~");
+  const test_subdir = "test_tilde_expansion";
+  const expected_path = glide.path.join(glide.path.home_dir, test_subdir);
+  await waiter(() => glide.g.value).is(expected_path, "~/path should expand to home directory + path");
+});
+
+add_task(async function test_cwd_no_tilde_expansion() {
+  await reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const absolute_path = glide.path.home_dir;
+      const proc = await glide.process.spawn("pwd", [], { cwd: absolute_path });
+      const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+      glide.g.value = output;
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).is(glide.path.home_dir, "absolute paths without ~ should remain unchanged");
+});
+
 add_task(async function test_env() {
   await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
