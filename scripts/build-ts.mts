@@ -32,7 +32,7 @@ const BUILD_FILES = new Set<string>();
 // TS files we don't care about building
 const IGNORED_FILES = new Set([
   "glide.ts",
-  "glide/browser/base/content/test/config/types/config.ts",
+  Path.normalize("glide/browser/base/content/test/config/types/config.ts"),
 ]);
 
 export async function main() {
@@ -40,6 +40,7 @@ export async function main() {
     const watcher = chokidar
       .watch([SRC_DIR], {
         ignored: (abs_path, stats) => {
+          abs_path = Path.normalize(abs_path);
           if (abs_path.includes("node_modules") || abs_path.includes(".venv")) {
             return true;
           }
@@ -57,12 +58,12 @@ export async function main() {
 
           if (
             // ignore scripts as they'll never be built
-            rel_path.startsWith("glide/scripts/")
+            rel_path.startsWith(Path.normalize("glide/scripts/"))
             // these are just used internally in-tree for checking docs types
-            || rel_path.includes("/docs/dist/snippets/")
+            || rel_path.includes(Path.normalize("/docs/dist/snippets/"))
             // ignore .d.ts as they'll never be built
-            || rel_path.startsWith("glide/generated/")
-            || rel_path.startsWith("glide/@types/")
+            || rel_path.startsWith(Path.normalize("glide/generated/"))
+            || rel_path.startsWith(Path.normalize("glide/@types/"))
             || rel_path.endsWith(".d.ts")
           ) {
             return true;

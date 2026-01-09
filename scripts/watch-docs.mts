@@ -31,6 +31,7 @@ export async function main() {
         Path.join(SCRIPTS_DIR, "build-docs.mts"),
       ], {
         ignored: (abs_path, stats) => {
+          abs_path = Path.normalize(abs_path);
           if (
             abs_path.includes("node_modules")
             || abs_path.includes(".venv")
@@ -57,7 +58,7 @@ export async function main() {
           }
 
           const rel_path = Path.relative(DOCS_DIR, abs_path);
-          if (rel_path.includes("dist/snippets/")) {
+          if (rel_path.includes(Path.join("dist", "snippets"))) {
             // these are just used internally in-tree for checking docs types
             return true;
           }
