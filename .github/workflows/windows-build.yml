@@ -1,9 +1,9 @@
 name: Windows Build
 
 on:
-  push:
-    branches:
-      - feat/windows-support
+  # push:
+  #   branches:
+  #     - feat/windows-support
   workflow_dispatch:
     inputs:
       tag:
