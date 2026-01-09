@@ -57,6 +57,7 @@ add_task(async function test_install_addon_from_url() {
   const addon = glide.g.value as glide.Addon;
   is(addon.id, ADDON_ID);
   is(addon.name, ADDON_NAME);
+  is(addon.type, "extension");
   ok(addon.active);
 
   await addon.uninstall();
@@ -78,6 +79,8 @@ add_task(async function test_addons_list() {
 
       var addons = await glide.addons.list();
       assert(addons.find((addon) => addon.name === ADDON_NAME));
+      // ensure at least none of the builtin addons have an unknown type
+      assert(addons.every((addon) => addon.type));
 
       var addons = await glide.addons.list("extension");
       assert(addons.find((addon) => addon.name === ADDON_NAME));

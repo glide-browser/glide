@@ -1135,6 +1135,23 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
     description: addon.description,
     source_uri: addon.sourceURI ? new GlideBrowser.sandbox_window.URL(addon.sourceURI.spec) : null,
 
+    get type() {
+      switch (addon.type) {
+        case "extension":
+        case "plugin":
+        case "theme":
+        case "locale":
+        case "dictionary":
+        case "sitepermission":
+        case "mlmodel": {
+          return addon.type;
+        }
+        default: {
+          throw new Error(`Unknown addon type ${addon.type}`);
+        }
+      }
+    },
+
     async uninstall() {
       await addon.uninstall();
     },

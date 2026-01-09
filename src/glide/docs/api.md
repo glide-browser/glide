@@ -1278,6 +1278,7 @@ readonly description: string;
 readonly version: string;
 readonly active: boolean;
 readonly source_uri: URL | null;
+readonly type: "extension" | "plugin" | "theme" | "locale" | "dictionary" | "sitepermission" | "mlmodel";
 uninstall(): Promise<void>;
 /**
  * Reload the addon.
