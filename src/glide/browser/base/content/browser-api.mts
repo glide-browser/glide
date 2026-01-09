@@ -864,11 +864,13 @@ export function make_glide_api(
         const success_codes = opts?.success_codes ?? [0];
         const check_exit_code = opts?.check_exit_code ?? true;
 
+        const workdir = opts?.cwd ? expand_tilde(opts.cwd) : undefined;
+
         const subprocess = await Subprocess.call({
           command: await Subprocess.pathSearch(command),
           arguments: args ?? [],
           stderr,
-          workdir: opts?.cwd,
+          workdir,
           environment: opts?.env,
           environmentAppend: opts?.extend_env ?? true,
         }) as BaseProcess;
@@ -1020,6 +1022,17 @@ export function make_glide_api(
       },
     },
   };
+
+  function expand_tilde(path: string): string {
+    const home_dir = Services.dirsvc.get("Home", Ci.nsIFile).path;
+    if (path === "~") {
+      return home_dir;
+    }
+    if (path.startsWith("~/")) {
+      return PathUtils.join(home_dir, path.slice(2));
+    }
+    return path;
+  }
 
   function resolve_path(path: string): string {
     if (PathUtils.isAbsolute(path)) {
