@@ -43,7 +43,7 @@
     "check:license": "pnpm tsn scripts/firefox/license-check.mts",
     "fix:license": "pnpm tsn scripts/firefox/license-check.mts --fix",
 
-    "tsc": "./scripts/check-types.sh",
+    "tsc": "pnpm tsn scripts/check-types.mts",
     "tsc:browser": "tsc -p tsconfig.check.json",
     "tsc:scripts": "tsc -p scripts/tsconfig.json",
     "tsc:config": "tsc -p src/glide/browser/base/content/test/config/types/tsconfig.json",
