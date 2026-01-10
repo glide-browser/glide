@@ -1,0 +1,35 @@
+# vim: syntax=conf
+
+unset MOZ_STDCXX_COMPAT
+
+export VERBOSE=1
+
+ac_add_options --disable-dmd
+ac_add_options --enable-eme=widevine
+
+if test "$GLIDE_LTO"; then
+  export MOZ_LTO=cross,thin
+  ac_add_options --enable-lto=cross,thin
+else
+  ac_add_options --disable-lto
+fi
+
+if test "$GLIDE_COMPAT" = "x86_64"; then
+  ac_add_options --target=x86_64-pc-windows-msvc
+fi
+
+if test "$GLIDE_COMPAT" = "aarch64"; then
+  ac_add_options --target=aarch64-pc-windows-msvc
+
+  # we run aarch64 builds on an x86_64 host machine, which means that `./mach bootstrap` will
+  # bootstrap x86_64 dependencies instead of aarch64 ones, so we enable automatically bootstrapping
+  # dependencies when they're needed to resolve this discrepancy.
+  ac_add_options --enable-bootstrap
+fi
+
+if test "$GLIDE_RELEASE"; then
+  if test -z "$GLIDE_DISABLE_PGO"; then
+    export MOZ_PGO=1
+    ac_add_options MOZ_PGO=1
+  fi
+fi

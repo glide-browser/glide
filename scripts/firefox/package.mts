@@ -6,7 +6,14 @@ import config from "../../firefox.json" with { type: "json" };
 import { assert_never } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { DIST_DIR } from "../canonical-paths.mts";
 import { does_not_exist, exists } from "../util.mts";
-import { engine_run, generate_file_hash, get_compat_mode, get_platform, resolve_obj_dir } from "./util.mts";
+import {
+  engine_run,
+  expect_compat_mode,
+  generate_file_hash,
+  get_compat_mode,
+  get_platform,
+  resolve_obj_dir,
+} from "./util.mts";
 
 interface ReleaseInfo {
   displayVersion: string;
@@ -53,8 +60,11 @@ async function main() {
     .map((entry) => entry.name);
 
   for (const file of files) {
-    const dest_file = Path.join(DIST_DIR, file);
-    console.log(`Copying ${file}`);
+    const dest_file = Path.join(
+      DIST_DIR,
+      file.includes(".installer.exe") ? `glide.windows-${expect_compat_mode()}.installer.exe` : file,
+    );
+    console.log(`Copying ${file} to ${Path.basename(dest_file)}`);
 
     if (await exists(dest_file)) {
       await fs.unlink(dest_file);
@@ -83,9 +93,14 @@ async function get_locales() {
 async function create_mar_file(
   { obj_dir, version, channel }: { obj_dir: string; version: string; channel: string },
 ): Promise<string | null> {
-  if (get_platform() === "linux") {
+  switch (get_platform()) {
     // updates are disabled
-    return null;
+    case "linux":
+      return null;
+
+    // TODO(windows): support auto-updates
+    case "windows":
+      return null;
   }
 
   const mar_binary = Path.join(obj_dir, "dist/host/bin", "mar");
@@ -193,6 +208,9 @@ function get_release_mar_name(): string {
           throw assert_never(compat);
       }
     }
+    case "windows": {
+      throw new Error("TODO(windows): support auto updates");
+    }
     default:
       throw assert_never(platform);
   }
@@ -233,6 +251,9 @@ function get_targets(): string[] {
         default:
           throw assert_never(compat);
       }
+    }
+    case "windows": {
+      throw new Error("TODO(windows): support auto updates");
     }
     default:
       throw assert_never(platform);
