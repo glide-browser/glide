@@ -10,6 +10,7 @@ const DEFAULT_STDIO = "inherit" as const;
 zx.defaults.stdio = DEFAULT_STDIO;
 
 let verbose = true;
+let log_commands = true;
 
 export const $ = zx.$({
   cwd: ROOT_DIR,
@@ -21,6 +22,7 @@ export const $ = zx.$({
         break;
       }
       case "cmd": {
+        if (!log_commands) return;
         console.log("+", entry.cmd);
         break;
       }
@@ -40,6 +42,7 @@ export const $ = zx.$({
   },
 }) as zx.Shell & {
   set_root_dir(): void;
+  disable_command_logging(): void;
   no_stdout(cb: () => Promise<void>): Promise<void>;
   touch(path: string): Promise<boolean>;
   /** equivalent to `rm -rf $path` */
@@ -60,6 +63,10 @@ $.bin = (cmd: string) => $({ prefix: Path.join("node_modules", ".bin", cmd) });
 
 $.set_root_dir = () => {
   process.chdir(ROOT_DIR);
+};
+
+$.disable_command_logging = () => {
+  log_commands = false;
 };
 
 $.no_stdout = async (cb) => {

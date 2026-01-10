@@ -1,7 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env node --no-warnings --experimental-strip-types
 
-# run typescript files with node.js, presumes v23+
+// run typescript files with node.js, presumes v23+
 
-set -e
+// @ts-check
 
-node --no-warnings --experimental-strip-types "$@"
+import { $ } from "../zx.mts";
+
+$.disable_command_logging();
+
+const args = process.argv.slice(2);
+await $`node --no-warnings --experimental-strip-types ${args}`.catch($.handle_error);
