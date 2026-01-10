@@ -28,5 +28,5 @@ export async function check_config() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await check_config();
+  await check_config().catch($.handle_error);
 }

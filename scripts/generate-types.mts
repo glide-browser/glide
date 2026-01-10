@@ -85,5 +85,5 @@ export async function generate_types() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await generate_types();
+  await generate_types().catch($.handle_error);
 }

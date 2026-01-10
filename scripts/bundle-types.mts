@@ -27,5 +27,5 @@ export async function bundle_types() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await bundle_types();
+  await bundle_types().catch($.handle_error);
 }

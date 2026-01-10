@@ -45,6 +45,8 @@ export const $ = zx.$({
   rmdir(path: string): Promise<void>;
   /** returns a shell tagged template that invokes a command from node_modules/.bin */
   bin(cmd: string): zx.Shell;
+  /** uses process.exit() for zx errors to avoid noisy JS stack traces */
+  handle_error(err: unknown): never;
 
   glob: typeof zx.glob;
   which: typeof zx.which;
@@ -81,3 +83,17 @@ $.touch = async function(path) {
 $.rmdir = async function(path) {
   await fs.rm(path, { recursive: true, force: true });
 };
+
+$.handle_error = function(error) {
+  if (is_zx_error(error)) {
+    // just propagate the exit code as our logger should've forwarded the
+    // process output already.
+    process.exit(error.exitCode || 1);
+  }
+
+  throw error;
+};
+
+function is_zx_error(error: unknown): error is zx.ProcessOutput {
+  return error != null && typeof error === "object" && "exitCode" in error;
+}

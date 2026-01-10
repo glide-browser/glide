@@ -21,5 +21,5 @@ export async function check_types() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await check_types();
+  await check_types().catch($.handle_error);
 }

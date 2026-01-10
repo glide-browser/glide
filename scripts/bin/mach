@@ -34,6 +34,4 @@ function normalize_path(arg) {
 
 const args = process.argv.slice(2).map(normalize_path);
 
-await $({ cwd: ENGINE_DIR })`./mach ${args}`.catch((err) => {
-  process.exit(err.exitCode || 1);
-});
+await $({ cwd: ENGINE_DIR })`./mach ${args}`.catch($.handle_error);

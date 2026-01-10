@@ -30,5 +30,5 @@ export async function lint() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await lint();
+  await lint().catch($.handle_error);
 }

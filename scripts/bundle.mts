@@ -33,5 +33,5 @@ export async function bundle() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await bundle();
+  await bundle().catch($.handle_error);
 }
