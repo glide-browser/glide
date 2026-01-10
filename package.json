@@ -31,7 +31,7 @@
     "build:ts": "pnpm tsn scripts/build-ts.mts",
     "build:js": "pnpm tsn ./scripts/generate-js.mts src/glide/browser/base/content/sandbox-properties.mjs",
 
-    "lint": "./scripts/lint.sh",
+    "lint": "pnpm tsn ./scripts/lint.mts",
     "fix": "pnpm fmt",
 
     "export": "pnpm tsn scripts/firefox/export.mts",

@@ -47,9 +47,11 @@ export const $ = zx.$({
   bin(cmd: string): zx.Shell;
 
   glob: typeof zx.glob;
+  which: typeof zx.which;
 };
 
 $.glob = zx.glob;
+$.which = zx.which;
 
 $.bin = (cmd: string) => $({ prefix: Path.join("node_modules", ".bin", cmd) });
 
