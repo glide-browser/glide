@@ -1,8 +1,11 @@
 import { bundle } from "./bundle.mts";
+import { check_config } from "./check-config.mts";
 import { generate_types } from "./generate-types.mts";
 import { $ } from "./zx.mts";
 
 $.set_root_dir();
+
+await check_config();
 
 if (!process.argv.includes("--offline")) {
   await $`pnpm firefox:download`;
