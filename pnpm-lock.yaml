@@ -20,9 +20,6 @@ importers:
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
-      zx:
-        specifier: ^8.8.5
-        version: 8.8.5
     devDependencies:
       '@microsoft/eslint-plugin-sdl':
         specifier: ^1.1.0
@@ -108,6 +105,9 @@ importers:
       xmlbuilder2:
         specifier: ^4.0.0
         version: 4.0.0
+      zx:
+        specifier: ^8.8.5
+        version: 8.8.5
 
   scripts/bin: {}
 

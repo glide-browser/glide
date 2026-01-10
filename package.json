@@ -56,8 +56,7 @@
     "@markdoc/markdoc": "^0.5.4",
     "shiki": "^3.19.0",
     "ts-blank-space": "^0.6.2",
-    "typescript": "^5.9.2",
-    "zx": "^8.8.5"
+    "typescript": "^5.9.2"
   },
   "devDependencies": {
     "@microsoft/eslint-plugin-sdl": "^1.1.0",
@@ -87,7 +86,8 @@
     "type-fest": "^5.2.0",
     "webextension-polyfill": "github:glide-browser/webextension-types",
     "webidl2": "^24.5.0",
-    "xmlbuilder2": "^4.0.0"
+    "xmlbuilder2": "^4.0.0",
+    "zx": "^8.8.5"
   },
   "packageManager": "pnpm@10.17.0",
   "private": true
