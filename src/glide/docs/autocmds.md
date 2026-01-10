@@ -1,3 +1,5 @@
+{% toc selector="h1[id], h2[id]" /%}
+
 # Autocmds
 
 Auto commands let you register functions that will be automatically invoked when a certain event happens within Glide.

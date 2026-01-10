@@ -98,6 +98,13 @@ export async function markdown_to_html(
     } while (did_replace);
   }
 
+  // Wrap content in article element with data-toc attribute if toc selector is set
+  if (state.toc_selector) {
+    html_body = `<article data-toc="${state.toc_selector}">${html_body}</article>`;
+  } else {
+    html_body = `<article>${html_body}</article>`;
+  }
+
   const rel_to_dist = "../".repeat(props.nested_count - 1).slice(0, -1) || ".";
   const current_href = rel_to_dist + "/" + props.relative_dist_path;
 
@@ -262,6 +269,7 @@ class RenderState {
   head: string[];
   title: string | null = null;
   description: string | null = null;
+  toc_selector: string | null = null;
 
   // this is required to easily support syntax highlighting with markdoc
   //
@@ -309,6 +317,16 @@ class RenderState {
               // @ts-ignore
               config,
             ));
+          },
+        },
+        toc: {
+          description: "Sets the TOC selector for the page",
+          attributes: {
+            selector: { type: String, required: true },
+          },
+          transform: (node) => {
+            this.toc_selector = node.attributes["selector"] as string;
+            return "";
           },
         },
         "api-heading": {
