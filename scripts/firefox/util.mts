@@ -27,7 +27,7 @@ export async function engine_run(
   return run(file, args, { ...options, cwd: ENGINE_DIR });
 }
 
-export type Platform = "macos" | "linux";
+export type Platform = "macos" | "linux" | "windows";
 
 export function get_platform(): Platform {
   const env = process.env["GLIDE_PLATFORM"];
@@ -35,6 +35,7 @@ export function get_platform(): Platform {
     switch (env) {
       case "macos":
       case "linux":
+      case "windows":
         return env;
       default:
         throw new Error(`Unexpected GLIDE_PLATFORM value: ${env}; expected 'macos' | 'linux'`);
@@ -46,12 +47,24 @@ export function get_platform(): Platform {
       return "macos";
     case "linux":
       return "linux";
+    case "win32":
+      return "windows";
     default:
       throw new Error(`Unsupported platform ${process.platform}; Only macos & linux are supported.`);
   }
 }
 
-export function get_compat_mode(): "aarch64" | "x86_64" | null {
+type CompatMode = "aarch64" | "x86_64";
+
+export function expect_compat_mode(): CompatMode {
+  const mode = get_compat_mode();
+  if (!mode) {
+    throw new Error("Expected GLIDE_COMPAT environment variable to be set");
+  }
+  return mode;
+}
+
+export function get_compat_mode(): CompatMode | null {
   const env = process.env["GLIDE_COMPAT"];
   if (env) {
     switch (env) {

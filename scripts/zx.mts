@@ -59,7 +59,16 @@ export const $ = zx.$({
 $.glob = zx.glob;
 $.which = zx.which;
 
-$.bin = (cmd: string) => $({ prefix: Path.join("node_modules", ".bin", cmd) });
+$.bin = (cmd: string) => {
+  return $({
+    // for some unknown reason, the \ syntax does *not* work in our windows
+    // CI builds, but the / does. the inverse is true for my local windows
+    // builds. I have no idea why.
+    prefix: process.platform === "win32" && process.env["CI"] !== "true"
+      ? `node_modules\\.bin\\${cmd}`
+      : `node_modules/.bin/${cmd}`,
+  });
+};
 
 $.set_root_dir = () => {
   process.chdir(ROOT_DIR);
