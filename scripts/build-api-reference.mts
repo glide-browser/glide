@@ -67,6 +67,7 @@ async function main() {
       {% styles %}
       ${STYLES}
       {% /styles %}
+      {% toc selector="h1[id], h2[id]" /%}
     `,
     "\n\n",
     markdown`

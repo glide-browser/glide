@@ -15,6 +15,8 @@ padding: 0.3em;
 }
 {% /styles %}
 
+{% toc selector="h1[id]" /%}
+
 # Changelog
 
 # 0.1.57a
