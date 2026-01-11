@@ -356,6 +356,18 @@ class GlideTestUtilsClass {
     };
   }
 
+  make_temp_directory(...parts: string[]): nsIFile {
+    const file = Services.dirsvc.get("TmpD", Ci.nsIFile);
+    for (const part of parts) {
+      file.append(part);
+      if (!file.exists()) {
+        file.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
+      }
+    }
+    file.normalize();
+    return file;
+  }
+
   /**
    * This function is only expected to be called from `testing/mochitets/browser-test.js` so
    * that we can add all of the global variables that are defined in the test functions, into

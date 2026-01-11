@@ -7,6 +7,9 @@
 
 "use strict";
 
+const { AddonTestUtils } = ChromeUtils.importESModule("resource://testing-common/AddonTestUtils.sys.mjs", {
+  global: "current",
+});
 declare global {
   interface GlideGlobals {
     exit_code?: number;
@@ -233,6 +236,74 @@ add_task(async function test_cwd_option() {
 
   const result = glide.g.value as { default: string; specified: string };
   isnot(result.specified, result.default, "process should be spawned in a different directory");
+});
+
+add_task(async function test_cwd_tilde_expansion() {
+  await reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("pwd", [], { cwd: "~" });
+      const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+      glide.g.value = output;
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).ok("process should exit");
+
+  is(glide.g.value, glide.path.home_dir, "~ should expand to the home directory");
+});
+
+add_task(async function test_cwd_tilde_slash_expansion() {
+  const original_home = Services.dirsvc.get("Home", Ci.nsIFile);
+
+  const tmpdir = GlideTestUtils.make_temp_directory("glide", "test-home-" + Date.now());
+  AddonTestUtils.registerDirectory("Home", tmpdir);
+
+  try {
+    await reload_config(function() {
+      glide.keymaps.set("normal", "~", async () => {
+        const test_subdir = "test_tilde_expansion";
+        const expected_path = glide.path.join(glide.path.home_dir, test_subdir);
+
+        if (!(await glide.fs.exists(expected_path))) {
+          await glide.fs.mkdir(expected_path);
+        }
+
+        const proc = await glide.process.spawn("pwd", [], { cwd: `~/${test_subdir}` });
+        const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+        glide.g.value = output;
+      });
+    });
+
+    await glide.keys.send("~");
+    const test_subdir = "test_tilde_expansion";
+    const expected_path = glide.path.join(glide.path.home_dir, test_subdir);
+
+    await waiter(() => glide.g.value).ok("process should exit");
+
+    is(glide.g.value, expected_path, "~/path should expand to home directory + path");
+  } finally {
+    AddonTestUtils.registerDirectory("Home", original_home);
+  }
+});
+
+add_task(async function test_cwd_no_tilde_expansion() {
+  await reload_config(function() {});
+
+  const path =
+    GlideTestUtils.make_temp_directory("test-no-tilde-expansion-" + Date.now(), "with", "~", "in", "the", "middle")
+      .path;
+
+  glide.keymaps.set("normal", "~", async () => {
+    const proc = await glide.process.spawn("pwd", [], { cwd: path });
+    const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+    glide.g.value = output;
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).ok("process should exit");
+
+  is(glide.g.value, path, "paths with ~ in the middle should not be expanded");
 });
 
 add_task(async function test_env() {
