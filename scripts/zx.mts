@@ -1,5 +1,4 @@
 import fs from "fs/promises";
-import Path from "path";
 import * as zx from "zx";
 import { ROOT_DIR } from "./canonical-paths.mts";
 import { exists } from "./util.mts";
