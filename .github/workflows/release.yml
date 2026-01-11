@@ -3,10 +3,14 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "dry run"
+      create_release:
+        description: "create release"
         type: boolean
-        default: true
+        default: false
+      push_update_manifests:
+        description: "push update manifests"
+        type: boolean
+        default: false
       sign:
         description: "sign"
         type: boolean
@@ -63,7 +67,7 @@ jobs:
           echo "build_id=${build_date}"
 
       - name: Create draft release
-        if: ${{ !inputs.dry_run }}
+        if: ${{ inputs.create_release }}
         run: |
           if gh release view $VERSION > /dev/null 2>&1; then
             gh release edit $VERSION --draft --title "$VERSION" --target "$RELEASE_SHA"
@@ -162,7 +166,7 @@ jobs:
           path: ./glide.source.tar.zst
 
   release:
-    if: ${{ !inputs.dry_run }}
+    if: ${{ inputs.create_release }}
 
     name: Release
     runs-on: ubuntu-latest
@@ -235,7 +239,7 @@ jobs:
           VERSION: ${{ needs.metadata.outputs.version }}
 
   push-update-manifests:
-    if: ${{ !inputs.dry_run }}
+    if: ${{ inputs.push_update_manifests }}
 
     name: Push update manifests
     runs-on: ubuntu-latest
