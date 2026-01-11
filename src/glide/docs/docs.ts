@@ -23,6 +23,8 @@ interface PageFindUI {
 
 declare var PagefindUI: any;
 
+declare var document: Document;
+
 {
   const docs = window as any as DocsWindow;
 
@@ -30,7 +32,7 @@ declare var PagefindUI: any;
     // error early if pagefind hasn't been loaded yet
     docs.get_pagefind_ui();
 
-    const search = document.getElementById("search")!;
+    const search = document.getElementById("search")! as HTMLElement;
     search.style.display = "unset";
 
     query_selector(".pagefind-ui__search-clear")!.style.display = "none";
@@ -41,7 +43,7 @@ declare var PagefindUI: any;
   };
 
   docs.close_search = function() {
-    const search = document.getElementById("search");
+    const search = document.getElementById("search") as HTMLElement | null;
     if (search) {
       search.style.display = "none";
 
@@ -53,7 +55,7 @@ declare var PagefindUI: any;
   };
 
   docs.toggle_search = function() {
-    const search = document.getElementById("search")!;
+    const search = document.getElementById("search")! as HTMLElement;
     if (search.style.display === "" || search.style.display === "none") {
       console.debug("[toggle]: opening search");
       docs.open_search();
@@ -69,7 +71,7 @@ declare var PagefindUI: any;
       return;
     }
 
-    const search = document.getElementById("search");
+    const search = document.getElementById("search") as HTMLElement;
     if (
       !search
       || search.style.display === ""
@@ -85,13 +87,13 @@ declare var PagefindUI: any;
   }
 
   docs.copy_codeblock = async function copy_codeblock(button) {
-    const codeblock = button.closest("pre");
+    const codeblock = button.closest("pre") as HTMLElement | null;
     if (!codeblock) {
       console.error("Could not find code block element");
       return;
     }
 
-    await navigator.clipboard.writeText(codeblock.textContent.trimEnd() + "\n");
+    await navigator.clipboard.writeText(codeblock.textContent!.trimEnd() + "\n");
 
     button.classList.add("copied");
     setTimeout(() => {
@@ -105,7 +107,7 @@ declare var PagefindUI: any;
     sidebar.classList.add("mobile-menu-open");
     overlay.classList.add("show");
     // prevent body scroll when menu is open
-    document.body.style.overflow = "hidden";
+    document.body!.style.overflow = "hidden";
   };
 
   docs.close_mobile_menu = function() {
@@ -114,7 +116,7 @@ declare var PagefindUI: any;
     sidebar.classList.remove("mobile-menu-open");
     overlay.classList.remove("show");
     // Restore body scroll
-    document.body.style.overflow = "";
+    document.body!.style.overflow = "";
   };
 
   docs.toggle_mobile_menu = function() {
@@ -151,16 +153,14 @@ declare var PagefindUI: any;
       return;
     }
 
-    const toc_sidebar = document.createElement("aside");
-    toc_sidebar.className = "toc-sidebar";
-
-    const toc_title = document.createElement("div");
-    toc_title.className = "toc-sidebar-title";
-    toc_title.textContent = "On this page";
-    toc_sidebar.appendChild(toc_title);
-
-    const toc_nav = document.createElement("nav");
-    toc_sidebar.appendChild(toc_nav);
+    const toc_nav = create_element("nav");
+    const toc_sidebar = create_element("aside", [
+      create_element("div", {
+        className: "toc-sidebar-title",
+        textContent: "On this page",
+      }),
+      toc_nav,
+    ], { className: "toc-sidebar" });
 
     let first_group: HTMLElement | null = null as any;
     let current_group: HTMLElement | null = null;
@@ -168,55 +168,49 @@ declare var PagefindUI: any;
 
     headings.forEach((heading) => {
       const level = parseInt(heading.tagName.charAt(1));
-      const link = document.createElement("a");
-      link.href = `#${heading.id}`;
-      link.dataset.level = level.toString();
-      link.dataset.headingId = heading.id;
 
-      let text = heading.textContent.trim();
+      let text = heading.textContent!.trim();
       if (text.endsWith("#")) {
         text = text.slice(0, -1).trim();
       }
       if (text.startsWith("•")) {
         text = text.slice(1).trim();
       }
-      link.textContent = text;
-      link.title = text;
+
+      const link = create_element("a", { href: `#${heading.id}`, textContent: text, title: text });
+      link.dataset["level"] = level.toString();
 
       // If it's a top-level heading (h1), create a new group
       if (level === 1) {
-        const group_container = document.createElement("div");
-        group_container.className = "toc-group";
-        group_container.dataset.groupId = heading.id;
+        const group_header = create_element("div", {
+          className: "toc-group-header",
+          children: [
+            create_element("span", { className: "toc-group-icon", textContent: "▶" }),
+            link,
+          ],
+          onclick(e) {
+            if (e.target === link || link.contains(e.target as Node | null)) {
+              return; // Let the link handle navigation
+            }
 
-        const group_header = document.createElement("div");
-        group_header.className = "toc-group-header";
-
-        const expand_icon = document.createElement("span");
-        expand_icon.className = "toc-group-icon";
-        expand_icon.textContent = "▶";
-        group_header.appendChild(expand_icon);
-
-        group_header.appendChild(link);
-        group_header.addEventListener("click", (e) => {
-          if (e.target === link || link.contains(e.target as Node | null)) {
-            return; // Let the link handle navigation
-          }
-
-          // Only toggle if the group has items
-          const group_items = group_container.querySelector(".toc-group-items");
-          if (group_items && group_items.children.length > 0) {
-            e.preventDefault();
-            toggle_toc_group(group_container);
-          }
+            // Only toggle if the group has items
+            const group_items = group_container.querySelector(".toc-group-items");
+            if (group_items && group_items.children.length > 0) {
+              e.preventDefault();
+              toggle_toc_group(group_container);
+            }
+          },
         });
 
-        const group_items = document.createElement("div");
-        group_items.className = "toc-group-items";
-        group_items.style.display = "none"; // Collapsed by default
+        const group_items = create_element("div", { className: "toc-group-items", style: { display: "none" } });
+        const group_container = create_element("div", {
+          className: "toc-group",
+          children: [
+            group_header,
+            group_items,
+          ],
+        });
 
-        group_container.appendChild(group_header);
-        group_container.appendChild(group_items);
         toc_nav.appendChild(group_container);
 
         if (first_group == null) {
@@ -382,7 +376,7 @@ declare var PagefindUI: any;
           }
         } else {
           // check if the active link is inside a group
-          const group_container = active_link.closest<HTMLElement>(".toc-group");
+          const group_container = active_link.closest(".toc-group") as HTMLElement | null;
           if (group_container) {
             const group_items = group_container.querySelector<HTMLElement>(".toc-group-items");
             if (group_items && group_items.style.display === "none") {
@@ -434,7 +428,7 @@ declare var PagefindUI: any;
         docs.close_mobile_menu();
       });
 
-    document.addEventListener("keydown", event => {
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
       if (event.key.toLowerCase() === "/") {
         event.preventDefault();
         docs.toggle_search();
@@ -453,5 +447,82 @@ declare var PagefindUI: any;
 
   function query_selector<E extends HTMLElement = HTMLElement>(selectors: string): E | null {
     return document.querySelector<E>(selectors) as any;
+  }
+
+  /**
+   * Wrapper over `document.createElement()` providing a more composable API.
+   *
+   * Element properties that can be assigned directly can be provided as props:
+   *
+   * ```ts
+   * create_element('img', { src: '...' });
+   * ```
+   *
+   * You can also pass a `children` property, which will use `.replaceChildren()`:
+   *
+   * ```ts
+   * create_element("div", {
+   *   children: ["text content", create_element("img", { alt: "hint" })],
+   * });
+   * ```
+   */
+  function create_element<K extends keyof HTMLElementTagNameMap | (string & {})>(
+    tag_name: K,
+    props_or_children?:
+      // props
+      | DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">
+      // children
+      | Array<(Node | string)>,
+    props?: DOM.CreateElementProps<K extends keyof HTMLElementTagNameMap ? K : "div">,
+  ): K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement {
+    if (Array.isArray(props_or_children)) {
+      if (props?.children) {
+        throw new Error("Cannot pass both a `children` array and `props.children`");
+      }
+
+      props = { ...props, children: props_or_children } as DOM.CreateElementProps<
+        K extends keyof HTMLElementTagNameMap ? K : "div"
+      >;
+    } else if (typeof props_or_children === "object" && props_or_children) {
+      if (props) {
+        throw new Error("Cannot pass props twice");
+      }
+
+      props = props_or_children;
+    }
+
+    const element = document.createElement(tag_name);
+
+    for (const [key, value] of Object.entries(props ?? {})) {
+      if (key === "children" || key === "style" || key === "attributes") {
+        // custom properties that require custom handling and can't be directly assigned
+        continue;
+      }
+
+      // @ts-ignore
+      element[key] = value;
+    }
+
+    if (props?.children) {
+      if (Array.isArray(props.children)) {
+        element.replaceChildren(...props.children);
+      } else {
+        element.replaceChildren(props.children);
+      }
+    }
+
+    for (const [prop, value] of Object.entries(props?.style ?? {})) {
+      // @ts-ignore
+      element.style[prop] = value;
+    }
+
+    if (props?.attributes) {
+      for (const [name, value] of Object.entries(props.attributes)) {
+        element.setAttribute(name, value);
+      }
+    }
+
+    // @ts-ignore
+    return element;
   }
 }
