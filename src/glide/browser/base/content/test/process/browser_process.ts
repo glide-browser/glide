@@ -248,15 +248,15 @@ add_task(async function test_cwd_tilde_expansion() {
   });
 
   await glide.keys.send("~");
-  await waiter(() => glide.g.value).is(glide.path.home_dir, "~ should expand to home directory");
-  isnot(glide.g.value, glide.path.cwd, "expanded ~ should be different from default cwd");
+  await waiter(() => glide.g.value).ok("process should exit");
+
+  is(glide.g.value, glide.path.home_dir, "~ should expand to the home directory");
 });
 
 add_task(async function test_cwd_tilde_slash_expansion() {
   const original_home = Services.dirsvc.get("Home", Ci.nsIFile);
-  const tmpdir = Services.dirsvc.get("TmpD", Ci.nsIFile);
-  tmpdir.append("test-home-" + Date.now());
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
+
+  const tmpdir = GlideTestUtils.make_temp_directory("glide", "test-home-" + Date.now());
   AddonTestUtils.registerDirectory("Home", tmpdir);
 
   try {
@@ -278,38 +278,32 @@ add_task(async function test_cwd_tilde_slash_expansion() {
     await glide.keys.send("~");
     const test_subdir = "test_tilde_expansion";
     const expected_path = glide.path.join(glide.path.home_dir, test_subdir);
-    await waiter(() => glide.g.value).is(expected_path, "~/path should expand to home directory + path");
+
+    await waiter(() => glide.g.value).ok("process should exit");
+
+    is(glide.g.value, expected_path, "~/path should expand to home directory + path");
   } finally {
     AddonTestUtils.registerDirectory("Home", original_home);
   }
 });
 
 add_task(async function test_cwd_no_tilde_expansion() {
-  const tmpdir = Services.dirsvc.get("TmpD", Ci.nsIFile);
-  tmpdir.append("test-no-tilde-expansion-" + Date.now());
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
-  tmpdir.append("with");
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
-  tmpdir.append("~");
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
-  tmpdir.append("in");
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
-  tmpdir.append("the");
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
-  tmpdir.append("middle");
-  tmpdir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
-  const path_with_tilde_in_middle = tmpdir.path;
+  await reload_config(function() {});
 
-  await reload_config(function() {
-    glide.keymaps.set("normal", "~", async () => {
-      const proc = await glide.process.spawn("pwd", [], { cwd: path_with_tilde_in_middle });
-      const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
-      glide.g.value = output;
-    });
+  const path =
+    GlideTestUtils.make_temp_directory("test-no-tilde-expansion-" + Date.now(), "with", "~", "in", "the", "middle")
+      .path;
+
+  glide.keymaps.set("normal", "~", async () => {
+    const proc = await glide.process.spawn("pwd", [], { cwd: path });
+    const output = (await Array.fromAsync(proc.stdout.values())).join("").trim();
+    glide.g.value = output;
   });
 
   await glide.keys.send("~");
-  await waiter(() => glide.g.value).is(path_with_tilde_in_middle, "paths with ~ in the middle should not be expanded");
+  await waiter(() => glide.g.value).ok("process should exit");
+
+  is(glide.g.value, path, "paths with ~ in the middle should not be expanded");
 });
 
 add_task(async function test_env() {
