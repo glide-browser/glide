@@ -43,6 +43,7 @@
     "node_modules",
     "src/glide/bundled",
     "src/glide/docs/dist/snippets",
+    "src/glide/docs/docs.ts",
 
     "scripts",
 

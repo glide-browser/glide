@@ -30,7 +30,6 @@ const cli = meow({
 });
 
 const SYMLINKS = [
-  "docs.js",
   "docs.css",
   "reset.css",
   "index.css",
