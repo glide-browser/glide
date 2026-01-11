@@ -7,7 +7,6 @@
 
 "use strict";
 
-// @ts-expect-error
 const { AddonTestUtils } = ChromeUtils.importESModule("resource://testing-common/AddonTestUtils.sys.mjs", {
   global: "current",
 });
