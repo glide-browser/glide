@@ -2,55 +2,73 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-{
-  window.open_search = function() {
-    // error early if pagefind hasn't been loaded yet
-    window.get_pagefind_ui();
+interface DocsWindow extends Window {
+  open_search(): void;
+  close_search(): void;
+  toggle_search(): void;
 
-    const search = document.getElementById("search");
+  open_mobile_menu(): void;
+  close_mobile_menu(): void;
+  toggle_mobile_menu(): void;
+
+  copy_codeblock(button: HTMLButtonElement): void;
+
+  pagefind_ui: PageFindUI | undefined;
+  get_pagefind_ui(): PageFindUI;
+}
+
+interface PageFindUI {
+  triggerSearch(input: string): void;
+}
+
+declare var PagefindUI: any;
+
+{
+  const docs = window as any as DocsWindow;
+
+  docs.open_search = function() {
+    // error early if pagefind hasn't been loaded yet
+    docs.get_pagefind_ui();
+
+    const search = document.getElementById("search")!;
     search.style.display = "unset";
 
-    document.querySelector(".pagefind-ui__search-clear").style.display = "none";
+    query_selector(".pagefind-ui__search-clear")!.style.display = "none";
 
-    window.get_pagefind_ui().triggerSearch("");
+    docs.get_pagefind_ui().triggerSearch("");
 
-    document.querySelector(".pagefind-ui__search-input").focus();
+    query_selector(".pagefind-ui__search-input")!.focus();
   };
 
-  window.close_search = function() {
+  docs.close_search = function() {
     const search = document.getElementById("search");
     if (search) {
       search.style.display = "none";
 
-      /** @type {HTMLElement} */
-      const input = document.querySelector(".pagefind-ui__search-input");
+      const input = query_selector<HTMLInputElement>(".pagefind-ui__search-input");
       if (input) {
         input.value = "";
       }
     }
   };
 
-  window.toggle_search = function() {
-    const search = document.getElementById("search");
+  docs.toggle_search = function() {
+    const search = document.getElementById("search")!;
     if (search.style.display === "" || search.style.display === "none") {
       console.debug("[toggle]: opening search");
-      window.open_search();
+      docs.open_search();
     } else {
       console.debug("[toggle]: closing search");
-      window.close_search();
+      docs.close_search();
     }
   };
 
-  /**
-   * @param {Event} event
-   */
-  function on_click(event) {
-    if (event.buttons & 2) {
+  function on_click(event: MouseEvent | TouchEvent) {
+    if ("buttons" in event && event.buttons & 2) {
       // don't close on right click
       return;
     }
 
-    /** @type {HTMLElement} */
     const search = document.getElementById("search");
     if (
       !search
@@ -60,14 +78,13 @@
       return;
     }
 
-    /** @type {HTMLElement} */
-    const ui = document.querySelector(".pagefind-ui");
-    if (ui && !ui.contains(event.target)) {
-      window.close_search();
+    const ui = query_selector(".pagefind-ui");
+    if (ui && !ui.contains(event.target as Node | null)) {
+      docs.close_search();
     }
   }
 
-  window.copy_codeblock = async function copy_codeblock(button) {
+  docs.copy_codeblock = async function copy_codeblock(button) {
     const codeblock = button.closest("pre");
     if (!codeblock) {
       console.error("Could not find code block element");
@@ -82,36 +99,36 @@
     }, 1000);
   };
 
-  window.open_mobile_menu = function() {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("mobile-nav-overlay");
+  docs.open_mobile_menu = function() {
+    const sidebar = document.getElementById("sidebar")!;
+    const overlay = document.getElementById("mobile-nav-overlay")!;
     sidebar.classList.add("mobile-menu-open");
     overlay.classList.add("show");
     // prevent body scroll when menu is open
     document.body.style.overflow = "hidden";
   };
 
-  window.close_mobile_menu = function() {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("mobile-nav-overlay");
+  docs.close_mobile_menu = function() {
+    const sidebar = document.getElementById("sidebar")!;
+    const overlay = document.getElementById("mobile-nav-overlay")!;
     sidebar.classList.remove("mobile-menu-open");
     overlay.classList.remove("show");
     // Restore body scroll
     document.body.style.overflow = "";
   };
 
-  window.toggle_mobile_menu = function() {
+  docs.toggle_mobile_menu = function() {
     const sidebar = document.getElementById("sidebar");
     if (sidebar && sidebar.classList.contains("mobile-menu-open")) {
-      window.close_mobile_menu();
+      docs.close_mobile_menu();
     } else {
-      window.open_mobile_menu();
+      docs.open_mobile_menu();
     }
   };
 
-  window.get_pagefind_ui = function() {
-    if (window.pagefind_ui) {
-      return window.pagefind_ui;
+  docs.get_pagefind_ui = function() {
+    if (docs.pagefind_ui) {
+      return docs.pagefind_ui;
     }
 
     if (typeof PagefindUI === "undefined") {
@@ -119,17 +136,17 @@
       throw new Error("The pagefind script has not loaded yet");
     }
 
-    window.pagefind_ui = new PagefindUI({ element: "#search", showSubResults: true, resetStyles: false });
-    return window.pagefind_ui;
+    docs.pagefind_ui = new PagefindUI({ element: "#search", showSubResults: true, resetStyles: false });
+    return docs.pagefind_ui!;
   };
 
   function init_toc() {
-    const article = document.querySelector("article");
+    const article = query_selector("article");
     if (!article) {
       return;
     }
 
-    const headings = article.querySelectorAll(article.getAttribute("data-toc"));
+    const headings = article.querySelectorAll<HTMLElement>(article.getAttribute("data-toc")!);
     if (headings.length === 0) {
       return;
     }
@@ -145,9 +162,9 @@
     const toc_nav = document.createElement("nav");
     toc_sidebar.appendChild(toc_nav);
 
-    let current_group = null;
-    const groups = new Map(); // Map heading id to group container
-    let first_group = null; // Track the first group
+    let first_group: HTMLElement | null = null as any;
+    let current_group: HTMLElement | null = null;
+    const groups = new Map<string, HTMLElement>();
 
     headings.forEach((heading) => {
       const level = parseInt(heading.tagName.charAt(1));
@@ -182,7 +199,7 @@
 
         group_header.appendChild(link);
         group_header.addEventListener("click", (e) => {
-          if (e.target === link || link.contains(e.target)) {
+          if (e.target === link || link.contains(e.target as Node | null)) {
             return; // Let the link handle navigation
           }
 
@@ -202,7 +219,7 @@
         group_container.appendChild(group_items);
         toc_nav.appendChild(group_container);
 
-        if (first_group === null) {
+        if (first_group == null) {
           first_group = group_container;
         }
 
@@ -220,11 +237,11 @@
       const has_items = group_items && group_items.children.length > 0;
 
       if (!has_items) {
-        const icon = group_container.querySelector(".toc-group-icon");
+        const icon = group_container.querySelector<HTMLElement>(".toc-group-icon");
         if (icon) {
           icon.style.display = "none";
         }
-        const group_header = group_container.querySelector(".toc-group-header");
+        const group_header = group_container.querySelector<HTMLElement>(".toc-group-header");
         if (group_header) {
           group_header.style.cursor = "default";
         }
@@ -236,7 +253,7 @@
 
     // expand the first group by default if it has items
     if (first_group) {
-      const group_items = first_group.querySelector(".toc-group-items");
+      const group_items = first_group.querySelector<HTMLElement>(".toc-group-items");
       if (group_items && group_items.children.length > 0) {
         group_items.style.display = "block";
         const icon = first_group.querySelector(".toc-group-icon");
@@ -247,7 +264,7 @@
       }
     }
 
-    const content_container = document.querySelector(".content-container");
+    const content_container = query_selector(".content-container");
     if (content_container) {
       content_container.appendChild(toc_sidebar);
     }
@@ -255,8 +272,8 @@
     init_toc_scroll_tracking(headings, toc_nav, groups);
   }
 
-  function toggle_toc_group(group_container) {
-    const group_items = group_container.querySelector(".toc-group-items");
+  function toggle_toc_group(group_container: HTMLElement) {
+    const group_items = group_container.querySelector<HTMLElement>(".toc-group-items");
     const icon = group_container.querySelector(".toc-group-icon");
 
     if (!group_items || group_items.children.length === 0) {
@@ -277,18 +294,22 @@
     }
   }
 
-  function init_toc_scroll_tracking(headings, toc_nav, groups = null) {
+  function init_toc_scroll_tracking(
+    headings: NodeListOf<HTMLElement>,
+    toc_nav: HTMLElement,
+    groups: Map<string, HTMLElement>,
+  ) {
     const toc_sidebar = toc_nav.closest(".toc-sidebar");
     const toc_links = toc_nav.querySelectorAll("a");
-    let last_active_id = null;
+    let last_active_id: string | null = null;
 
     // small buffer for scrolling calculation for smoother scrolls
     const padding = 10;
     const top_buffer = 15;
     const bottom_buffer = 10;
 
-    let scroll_animation_frame = null;
-    function scroll_toc_to_active_link(link) {
+    let scroll_animation_frame: number | null = null;
+    function scroll_toc_to_active_link(link: HTMLElement) {
       if (!link || !toc_sidebar) return;
 
       if (scroll_animation_frame) {
@@ -325,12 +346,12 @@
     function update_active_link() {
       toc_links.forEach((link) => link.classList.remove("toc-active"));
 
-      let active_link = null;
-      let active_id = null;
+      let active_id: string | null = null as any;
+      let active_link: HTMLElement | null = null;
 
       // Find the heading closest to the top of the viewport that has scrolled past the threshold.
       const threshold = 100;
-      let best_heading = null;
+      let best_heading: HTMLElement | null = null as any;
       let best_distance = -Infinity;
 
       headings.forEach((heading) => {
@@ -350,20 +371,20 @@
       }
 
       // expand group if active link is inside it, or if the group header itself is active
-      if (active_link && groups) {
+      if (active_link && active_id && groups) {
         // check if this is a group header (h1)
         const group_container = groups.get(active_id);
         if (group_container) {
           // the active item is a group header, expand it
-          const group_items = group_container.querySelector(".toc-group-items");
+          const group_items = group_container.querySelector<HTMLElement>(".toc-group-items");
           if (group_items && group_items.style.display === "none") {
             toggle_toc_group(group_container);
           }
         } else {
           // check if the active link is inside a group
-          const group_container = active_link.closest(".toc-group");
+          const group_container = active_link.closest<HTMLElement>(".toc-group");
           if (group_container) {
-            const group_items = group_container.querySelector(".toc-group-items");
+            const group_items = group_container.querySelector<HTMLElement>(".toc-group-items");
             if (group_items && group_items.style.display === "none") {
               toggle_toc_group(group_container);
             }
@@ -377,7 +398,7 @@
       }
     }
 
-    let update_animation_frame = null;
+    let update_animation_frame: number | null = null;
     function schedule_update() {
       if (update_animation_frame) {
         return;
@@ -388,39 +409,39 @@
       });
     }
 
-    window.addEventListener("scroll", () => {
+    docs.addEventListener("scroll", () => {
       schedule_update();
     }, { passive: true });
 
     update_active_link();
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("search-button").addEventListener("click", () => {
-      window.open_search();
+  docs.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("search-button")!.addEventListener("click", () => {
+      docs.open_search();
     });
 
     document
-      .getElementById("mobile-menu-toggle")
+      .getElementById("mobile-menu-toggle")!
       .addEventListener("click", () => {
-        window.toggle_mobile_menu();
+        docs.toggle_mobile_menu();
       });
 
     // close menu when clicking outside
     document
-      .getElementById("mobile-nav-overlay")
+      .getElementById("mobile-nav-overlay")!
       .addEventListener("click", () => {
-        window.close_mobile_menu();
+        docs.close_mobile_menu();
       });
 
     document.addEventListener("keydown", event => {
       if (event.key.toLowerCase() === "/") {
         event.preventDefault();
-        window.toggle_search();
+        docs.toggle_search();
       } else if (event.key === "Escape") {
         event.preventDefault();
-        window.close_search();
-        window.close_mobile_menu();
+        docs.close_search();
+        docs.close_mobile_menu();
       }
     });
 
@@ -429,4 +450,8 @@
 
     init_toc();
   });
+
+  function query_selector<E extends HTMLElement = HTMLElement>(selectors: string): E | null {
+    return document.querySelector<E>(selectors) as any;
+  }
 }
