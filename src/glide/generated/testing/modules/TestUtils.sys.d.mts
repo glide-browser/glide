@@ -10,12 +10,12 @@ declare namespace TestUtils {
      *        notification is the expected one, or false if it should be ignored
      *        and listening should continue.
      *
-     * @note Because this function is intended for testing, any error in checkFn
+     * Note: Because this function is intended for testing, any error in checkFn
      *       will cause the returned promise to be rejected instead of waiting for
      *       the next notification, since this is probably a bug in the test.
      *
      * @return {Promise}
-     * @resolves The message from the observed notification.
+     *   Resolved with the message from the observed notification.
      */
     function consoleMessageObserved(checkFn: Function): Promise<any>;
     /**
@@ -39,14 +39,14 @@ declare namespace TestUtils {
      *        and listening should continue. If not specified, the first
      *        notification for the specified topic resolves the returned promise.
      *
-     * @note Because this function is intended for testing, any error in checkFn
+     * Note: Because this function is intended for testing, any error in checkFn
      *       will cause the returned promise to be rejected instead of waiting for
      *       the next notification, since this is probably a bug in the test.
      *
-     * @return {Promise}
-     * @resolves The array [subject, data] from the observed notification.
+     * @return {Promise<[nsISupports, string]>}
+     *   Resolved with the array ``[subject, data]`` from the observed notification.
      */
-    function topicObserved(topic: string, checkFn: Function): Promise<any>;
+    function topicObserved(topic: string, checkFn: Function): Promise<[nsISupports, string]>;
     /**
      * Waits for the specified preference to be change.
      *
@@ -58,14 +58,14 @@ declare namespace TestUtils {
      *        and listening should continue. If not specified, the first
      *        notification for the specified topic resolves the returned promise.
      *
-     * @note Because this function is intended for testing, any error in checkFn
+     * Note: Because this function is intended for testing, any error in checkFn
      *       will cause the returned promise to be rejected instead of waiting for
      *       the next notification, since this is probably a bug in the test.
      *
-     * @return {Promise}
-     * @resolves The value of the preference.
+     * @return {Promise<number|string|boolean>}
+     *   The value of the preference.
      */
-    function waitForPrefChange(prefName: string, checkFn: Function): Promise<any>;
+    function waitForPrefChange(prefName: string, checkFn: Function): Promise<number | string | boolean>;
     /**
      * Takes a screenshot of an area and returns it as a data URL.
      *

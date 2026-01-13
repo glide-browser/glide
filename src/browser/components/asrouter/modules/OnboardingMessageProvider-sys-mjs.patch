@@ -1,5 +1,5 @@
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index f32ffe131d5ca51d580b74933171865ccadbf475..69e3f4914b32b19172209fe59a8e06da647ec474 100644
+index d447d2f3858a9943996b26ef74e2feb575b790f1..9063daffa325c80010b36a090a78bfcb8cba0192 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 @@ -60,6 +60,7 @@ const isMSIX =
@@ -10,9 +10,9 @@ index f32ffe131d5ca51d580b74933171865ccadbf475..69e3f4914b32b19172209fe59a8e06da
  const BASE_MESSAGES = () => [
    {
      id: "BROWSER_BACKUP_OPTIN_SPOTLIGHT",
-@@ -2959,7 +2960,7 @@ const BASE_MESSAGES = () => [
-       id: "selectableProfilesUpdated",
-     },
+@@ -3035,7 +3036,7 @@ const BASE_MESSAGES = () => [
+     targeting:
+       "('termsofuse.acceptedDate'|preferenceValue != '0') && (('termsofuse.acceptedDate'|preferenceValue * 1) < 1765972800000)",
    },
 -];
 +].filter((msg) => !msg.id.toLowerCase().includes('promo'));

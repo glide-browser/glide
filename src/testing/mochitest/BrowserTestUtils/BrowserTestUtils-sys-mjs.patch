@@ -1,17 +1,26 @@
 diff --git a/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs b/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
-index badc466bd2068fa3213fd4ae961f4c4a7cb8eb87..8a4ed1bc1b3161aaf096929f2f8c156448ec5573 100644
+index 6590008dae26ca16fed8d1c6e6dc99624848b27e..b80a8ffbdcda1bc9519716a88f71f0317f515592 100644
 --- a/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
 +++ b/testing/mochitest/BrowserTestUtils/BrowserTestUtils.sys.mjs
-@@ -98,7 +98,7 @@ export var BrowserTestUtils = {
+@@ -92,7 +92,7 @@ export var BrowserTestUtils = {
+   /**
+    * @template T
+    * @typedef {Function} withNewTabTaskFn
+-   * @param {MozBrowser} browser
++   * @param {MozBrow} browser
+    * @returns {Promise<T> | T}
+    */
+ 
+@@ -108,7 +108,7 @@ export var BrowserTestUtils = {
     *        be opened,
     * @param {string} options.url
     *        The URL of the page to load.
--   * @param {Function} taskFn
+-   * @param {withNewTabTaskFn<T>} taskFn
 +   * @param {(browser: any) => void} taskFn
     *        Async function representing that will be executed while
     *        the tab is loaded. The first argument passed to the function is a
     *        reference to the browser object for the new tab.
-@@ -948,7 +948,7 @@ export var BrowserTestUtils = {
+@@ -960,7 +960,7 @@ export var BrowserTestUtils = {
     *        A xul:browser.
     * @param {string} uri
     *        The URI to load.
