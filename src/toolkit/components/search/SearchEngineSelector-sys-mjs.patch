@@ -1,0 +1,15 @@
+diff --git a/toolkit/components/search/SearchEngineSelector.sys.mjs b/toolkit/components/search/SearchEngineSelector.sys.mjs
+index 85c9d83282a62f4e23c6a0a65e7ccd8c29872ea0..bb24432b1677cc065e93c2f1e8044f8a3f17bdf6 100644
+--- a/toolkit/components/search/SearchEngineSelector.sys.mjs
++++ b/toolkit/components/search/SearchEngineSelector.sys.mjs
+@@ -43,6 +43,10 @@ export class SearchEngineSelector {
+    */
+   constructor(listener) {
+     this.#remoteConfig = lazy.RemoteSettings(lazy.SearchUtils.SETTINGS_KEY);
++    // we have patched the `services/settings/dumps/main/search-config-v2.json` file which means it
++    // won't match the signature from the mozilla services endpoint anymore, so just disable it.
++    this.#remoteConfig.verifySignature = false;
++
+     this.#remoteConfigOverrides = lazy.RemoteSettings(
+       lazy.SearchUtils.SETTINGS_OVERRIDES_KEY
+     );

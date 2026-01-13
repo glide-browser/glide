@@ -24,14 +24,14 @@ declare global {
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async function setup() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
     glide.g.triggered = false;
   });
 });
 
 add_task(async function test_autocmd_regexp_filter() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", /input_test\.html/, () => {
@@ -49,7 +49,7 @@ add_task(async function test_autocmd_regexp_filter() {
 });
 
 add_task(async function test_autocmd_host_filter() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", { hostname: "mochi.test" }, () => {
@@ -70,7 +70,7 @@ add_task(async function test_autocmd_host_filter() {
 });
 
 add_task(async function test_multiple_autocmd_callbacks_all_fire() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", /input_test/, () => {
@@ -107,7 +107,7 @@ add_task(async function test_multiple_autocmd_callbacks_all_fire() {
 });
 
 add_task(async function test_autocmd_error() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("UrlEnter", /input_test/, () => {
       throw new Error("ruh roh");
     });
@@ -128,7 +128,7 @@ add_task(async function test_autocmd_error() {
 });
 
 add_task(async function test_autocmd_cleanup_error() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("UrlEnter", /input_test/, () => {
       return () => {
         throw new Error("dead");
@@ -153,7 +153,7 @@ add_task(async function test_autocmd_cleanup_error() {
 });
 
 add_task(async function test_urlenter_triggered_by_tab_switch() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", /input_test/, () => {
@@ -162,12 +162,12 @@ add_task(async function test_urlenter_triggered_by_tab_switch() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(num_calls).is(1, "Initial navigation should trigger exactly once");
+    const frame_time = await waiter(num_calls).is(1, "Initial navigation should trigger exactly once");
 
     const tab1 = gBrowser.selectedTab;
 
     await BrowserTestUtils.withNewTab("about:mozilla", async _ => {
-      await sleep_frames(5);
+      await sleep_frames(frame_time * 2);
       is(num_calls(), 1, "Opening non-matching page should not trigger UrlEnter");
 
       await BrowserTestUtils.switchTab(gBrowser, tab1);
@@ -177,7 +177,7 @@ add_task(async function test_urlenter_triggered_by_tab_switch() {
 });
 
 add_task(async function test_autocmd_multiple_matching_tabs_triggers_once_each() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", /input_test/, () => {
@@ -204,7 +204,7 @@ add_task(async function test_autocmd_multiple_matching_tabs_triggers_once_each()
 });
 
 add_task(async function test_about_blank_with_hostname_filter() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", { hostname: "example.com" }, () => {
@@ -220,7 +220,7 @@ add_task(async function test_about_blank_with_hostname_filter() {
 });
 
 add_task(async function test_mode_changed_autocmd() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("ModeChanged", "*", args => {
@@ -263,7 +263,7 @@ add_task(async function test_mode_changed_autocmd() {
 });
 
 add_task(async function test_mode_changed_autocmd_config_reload() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("ModeChanged", "*", args => {
@@ -280,7 +280,7 @@ add_task(async function test_mode_changed_autocmd_config_reload() {
 });
 
 add_task(async function test_mode_changed_specific_pattern() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("ModeChanged", "normal:insert", () => {
@@ -321,7 +321,7 @@ add_task(async function test_mode_changed_specific_pattern() {
 });
 
 add_task(async function test_mode_changed_multiple_callbacks() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("ModeChanged", "*", () => {
@@ -351,7 +351,7 @@ add_task(async function test_mode_changed_multiple_callbacks() {
 });
 
 add_task(async function test_mode_changed_error_handling() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.autocmds.create("ModeChanged", "*", () => {
       throw new Error("mode change failed");
     });
@@ -377,7 +377,7 @@ add_task(async function test_mode_changed_error_handling() {
 
 add_task(async function test_urlenter_triggered_on_config_reload() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.calls = [];
 
       glide.autocmds.create("UrlEnter", /input_test/, () => {
@@ -394,7 +394,7 @@ add_task(async function test_urlenter_triggered_on_config_reload() {
 
 add_task(async function test_urlenter_tab_id() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.calls = [];
 
       glide.autocmds.create("UrlEnter", /input_test/, ({ tab_id }) => {
@@ -411,7 +411,7 @@ add_task(async function test_urlenter_tab_id() {
 
 add_task(async function test_startup_triggered_on_config_reload() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.g.calls = [];
 
       glide.autocmds.create("ConfigLoaded", () => {
@@ -427,7 +427,7 @@ add_task(async function test_startup_triggered_on_config_reload() {
 });
 
 add_task(async function test_window_loaded() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("WindowLoaded", () => {
@@ -435,7 +435,7 @@ add_task(async function test_window_loaded() {
     });
   });
 
-  const win: Window = await BrowserTestUtils.openNewBrowserWindow();
+  await using win = await GlideTestUtils.new_window();
 
   await until(() => win.GlideBrowser?.api?.g?.calls?.length === 1);
 
@@ -444,12 +444,10 @@ add_task(async function test_window_loaded() {
     ["window-loaded"],
     "WindowLoaded autocmd should be triggered on initial window startup",
   );
-
-  await BrowserTestUtils.closeWindow(win);
 });
 
 add_task(async function test_window_loaded_not_called_on_reload() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("WindowLoaded", () => {
@@ -461,7 +459,7 @@ add_task(async function test_window_loaded_not_called_on_reload() {
 });
 
 add_task(async function test_key_state_changed_autocmd() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.autocmds = [];
 
     glide.autocmds.create("KeyStateChanged", args => {
@@ -492,7 +490,7 @@ add_task(async function test_key_state_changed_autocmd() {
 });
 
 add_task(async function test_autocmd_remove() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
 
     glide.autocmds.create("UrlEnter", /input_test\.html/, function autocmd() {

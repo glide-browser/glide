@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { execa, ExecaError } from "execa";
 import fs from "fs/promises";
 import Path from "node:path";
+import { fileURLToPath } from "node:url";
 import config from "../../firefox.json" with { type: "json" };
 import { is_present } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
@@ -12,7 +13,7 @@ interface Context {
   errors: string[];
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }
 

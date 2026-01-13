@@ -8,12 +8,12 @@ declare global {
   }
 
   interface GlideTestWaiter<V = unknown> {
-    is(value: V, name?: string): Promise<void>;
-    isnot(value: unknown, name?: string): Promise<void>;
-    isjson(value: V, name?: string): Promise<void>;
+    is(value: V, name?: string): Promise<number>;
+    isnot(value: unknown, name?: string): Promise<number>;
+    isjson(value: V, name?: string): Promise<number>;
 
-    ok(name?: string): Promise<void>;
-    notok(name?: string): Promise<void>;
+    ok(name?: string): Promise<number>;
+    notok(name?: string): Promise<number>;
   }
 
   /**
@@ -21,6 +21,13 @@ declare global {
    * a certain condition is met.
    *
    * This checks the condition every 10ms, up to 500 times.
+   *
+   * Each function on the returned `GlideTestWaiter` object returns a promise that resolves
+   * with the number of frames it took to complete.
+   *
+   * This is useful for cases where you need to test that something *doesn't* happen. As you can
+   * store how long it took to happen originally, and then wait for that number of frames in the
+   * negative case.
    */
   function waiter<V>(getter: () => V): GlideTestWaiter<V extends Promise<infer U> ? U : V>;
 
@@ -41,6 +48,9 @@ declare global {
   function keys<const Keys>(keyseq: $keymapcompletions.T<Keys>): Promise<void>;
 
   function wait_for_mode(modde: GlideMode, name?: string): Promise<void>;
+
+  const write_config: typeof GlideTestUtils["write_config"];
+  const reload_config: typeof GlideTestUtils["reload_config"];
 
   function is<V>(a: V, b: NoInfer<V>, name?: string): void;
   function todo_is(a: unknown, b: unknown, name?: string): void;

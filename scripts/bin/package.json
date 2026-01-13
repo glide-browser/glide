@@ -1,0 +1,15 @@
+{
+  "name": "bin",
+  "version": "1.0.0",
+  "description": "Used to add scripts to node_modules/.bin to make them more easily accessible",
+  "bin": {
+    "mach": "mach",
+    "tsn": "tsn"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MPL-2.0",
+  "dependencies": {},
+  "packageManager": "pnpm@10.17.0",
+  "private": true
+}

@@ -8,9 +8,10 @@
 "use strict";
 
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/commandline/basic.html";
+const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_task(async function test_basic_commandline() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -29,7 +30,7 @@ add_task(async function test_basic_commandline() {
 });
 
 add_task(async function test_basic_filtering() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -58,7 +59,7 @@ add_task(async function test_basic_filtering() {
 });
 
 add_task(async function test_basic_tabbing() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -96,7 +97,7 @@ add_task(async function test_basic_tabbing() {
 });
 
 add_task(async function test_tabs() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -134,7 +135,7 @@ add_task(async function test_tabs() {
 });
 
 add_task(async function test_excmd_enter() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -165,7 +166,7 @@ add_task(async function test_excmd_enter() {
 });
 
 add_task(async function test_commandline_closes_on_blur() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await GlideTestUtils.commandline.open();
@@ -187,10 +188,10 @@ add_task(async function test_commandline_closes_on_blur() {
 });
 
 add_task(async function test_commandline_custom_excmd_arguments() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
         glide.g.value = args_arr;
         glide.g.test_checked = true;
@@ -209,7 +210,7 @@ add_task(async function test_commandline_custom_excmd_arguments() {
 });
 
 add_task(async function test_commandline_tab_reopen() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
     await keys("<space><space>");
@@ -224,9 +225,9 @@ add_task(async function test_commandline_tab_reopen() {
 });
 
 add_task(async function test_commandline_keymaps() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.excmds.create({ name: "foobarbaz" }, () => {});
     glide.keymaps.set("normal", "<leader>~~~", "foobarbaz" as any);
   });
@@ -240,10 +241,10 @@ add_task(async function test_commandline_keymaps() {
 });
 
 add_task(async function test_commandline_focus_to_content() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.excmds.create({ name: "my_long_command_name", description: "bar" }, ({ args_arr }) => {
         glide.g.value = args_arr;
         glide.g.test_checked = true;
@@ -265,10 +266,10 @@ add_task(async function test_commandline_focus_to_content() {
 });
 
 add_task(async function test_commandline_exit_autocmd() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       glide.autocmds.create("CommandLineExit", () => {
         glide.g.test_checked = true;
         glide.g.test_state = glide.ctx.mode;
@@ -285,7 +286,7 @@ add_task(async function test_commandline_exit_autocmd() {
 });
 
 add_task(async function test_commandline_show_api() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await glide.commandline.show();
       glide.g.test_checked = true;
@@ -301,7 +302,7 @@ add_task(async function test_commandline_show_api() {
 });
 
 add_task(async function test_commandline_show_api__input() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await glide.commandline.show({ input: "foobarbazbing" });
       glide.g.test_checked = true;
@@ -322,7 +323,7 @@ add_task(async function test_commandline_show_api__input() {
 });
 
 add_task(async function test_commandline_show_api__options() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await glide.commandline.show({
         options: Array.from({ length: 10 }, (_, i) => i + 1).map((num) => ({
@@ -381,7 +382,7 @@ add_task(async function test_commandline_show_api__options() {
 });
 
 add_task(async function test_commandline_show_api__options_matches() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await glide.commandline.show({
         options: Array.from({ length: 10 }, (_, i) => i + 1).map((num) => ({
@@ -415,7 +416,7 @@ add_task(async function test_commandline_show_api__options_matches() {
 });
 
 add_task(async function test_commandline_show_api__options_render() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       await glide.commandline.show({
         title: "custom rendered options",
@@ -474,7 +475,7 @@ add_task(async function test_commandline_show_api__options_render() {
 });
 
 add_task(async function test_commandline_show_api__options_render__mutations_work() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const option_a = DOM.create_element("div", {
         attributes: { "data-testid": "custom-render-a" },
@@ -536,7 +537,7 @@ add_task(async function test_commandline_show_api__options_render__mutations_wor
 });
 
 add_task(async function test_basic_commandline() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("command", "<esc>", "mode_change normal");
 
     glide.keymaps.set("normal", "~", () => {
@@ -552,5 +553,97 @@ add_task(async function test_basic_commandline() {
     await waiter(() => glide.g.value).is(true);
   });
 
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
+});
+
+add_task(async function test_suggested_command_is_default() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await keys(":profile_dir<CR>");
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") !== null,
+      "Waiting for profile_dir notification to appear",
+    );
+
+    const profile_dir = PathUtils.profileDir;
+
+    await keys(":");
+    is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "copy");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+
+    await keys("<CR>");
+    await sleep_frames(10);
+
+    const clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, profile_dir, "Clipboard should contain the profile directory path");
+
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") === null,
+      "Waiting for notification to be removed after copy",
+    );
+    is(
+      gNotificationBox.getNotificationWithValue("glide-profile-dir"),
+      null,
+      "Notification should be removed after copying",
+    );
+  });
+});
+
+add_task(async function test_multiple_commands_suggested() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    // Suggest a :copy command.
+    await keys(":profile_dir<CR>");
+    await TestUtils.waitForCondition(
+      () => gNotificationBox.getNotificationWithValue("glide-profile-dir") !== null,
+      "Waiting for profile_dir notification to appear",
+    );
+
+    // Suggest a :clear command.
+    await keys(":set invalid_option some_value<CR>");
+
+    // Suggest a :config_reload command.
+    await write_config(function _() {});
+    await until(() => gNotificationBox.getNotificationWithValue("glide-config-reload-notification"));
+
+    // Verify that our suggestions are shown in order.
+    await keys(":");
+    await wait_for_mode("command");
+    is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "config_reload");
+    is(GlideTestUtils.commandline.row_cmd(0), "config_reload");
+    is(GlideTestUtils.commandline.row_cmd(1), "clear");
+    is(GlideTestUtils.commandline.row_cmd(2), "copy");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+
+    // Verify that duplicates are shown in order from most recent.
+    await keys("set invalid_option some_value<CR>");
+    await keys(":");
+    await wait_for_mode("command");
+    is(GlideTestUtils.commandline.row_cmd(0), "clear");
+    is(GlideTestUtils.commandline.row_cmd(1), "config_reload");
+    is(GlideTestUtils.commandline.row_cmd(2), "copy");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+  });
+});
+
+add_task(async function test_non_command_not_suggested() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    GlideBrowser.add_notification("test-notification", {
+      label: "Test notification",
+      buttons: [
+        { label: "test" },
+      ],
+      priority: MozElements.NotificationBox.prototype.PRIORITY_INFO_HIGH,
+    });
+
+    await keys(":");
+    await wait_for_mode("command");
+
+    is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "back");
+    is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+  });
 });

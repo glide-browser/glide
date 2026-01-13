@@ -22,7 +22,7 @@ function toolbar_button(): HTMLElement {
 add_setup(async () => {
   GlideBrowser.key_manager.reset_sequence();
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.test_executed = false;
 
     // Add a test mapping that has display_keyseq

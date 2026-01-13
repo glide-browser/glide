@@ -1,0 +1,110 @@
+name: Windows Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      MOZ_BUILD_DATE:
+        type: string
+        default: ""
+        description: "Set the build id"
+  workflow_call:
+    inputs:
+      MOZ_BUILD_DATE:
+        type: string
+        default: ""
+        description: "Set the build id"
+
+jobs:
+  windows-build:
+    name: Build
+
+    runs-on: depot-windows-2025-16
+    env:
+      CARGO_TERM_COLOR: always
+      GLIDE_PLATFORM: windows
+      GLIDE_RELEASE: true
+      GLIDE_LTO: 1
+      GLIDE_DISABLE_PGO: 1
+      GLIDE_COMPAT: ${{ matrix.arch }}
+      MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, aarch64]
+
+    steps:
+      - name: Disable Windows Defender for performance
+        run: |
+          Add-MpPreference -ExclusionPath "${{ github.workspace }}"
+          Add-MpPreference -ExclusionPath "C:\mozilla-build"
+          Add-MpPreference -ExclusionPath "$env:TEMP"
+
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
+        with:
+          disable_annotations: true
+
+      - name: Expose actions cache variables
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6.4.1
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+
+      # MozillaBuild is a unix-like shell that is required for builds to work on windows
+      - name: Install MozillaBuild
+        run: |
+          $mozillaBuildUrl = "https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe"
+          $installerPath = "$env:TEMP\MozillaBuildSetup.exe"
+          Invoke-WebRequest -Uri $mozillaBuildUrl -OutFile $installerPath
+          Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait
+          echo "C:\mozilla-build" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Install system dependencies
+        run: |
+          rustup default 1.82
+
+          if ($env:GLIDE_COMPAT -eq "aarch64") {
+            rustup target add aarch64-pc-windows-msvc
+          }
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Bootstrap repo
+        run: |
+          pnpm bootstrap
+
+      - name: Bootstrap Firefox dependencies
+        working-directory: engine
+        run: |
+          ./mach --no-interactive bootstrap --application-choice browser --no-system-changes
+
+      - name: Build
+        run: |
+          pnpm build
+
+      - name: Package
+        run: |
+          pnpm package
+
+      - name: Upload installer
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 10
+          name: glide.windows-${{ matrix.arch }}.installer.exe
+          path: ./dist/glide.windows-${{ matrix.arch }}.installer.exe

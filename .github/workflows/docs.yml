@@ -9,7 +9,7 @@ on:
         description: branch to deploy to
   push:
     branches:
-      - docs
+      - docs-production
 
 jobs:
   deploy:

@@ -1,5 +1,7 @@
 # Contributing
 
+## Building
+
 To build Glide you must have [`Node`](https://nodejs.org/en/blog/release/v24.0.0) v24 and [`pnpm`](https://pnpm.io/installation) installed.
 
 You must also verify that your system has the dependencies that Firefox requires:
@@ -19,9 +21,11 @@ you can set up your local repo with:
 ```bash
 pnpm install
 pnpm bootstrap
+pnpm bootstrap:mach
 ```
 
-This will download a copy of the Firefox source code to the `path:engine/` directory, bundle Glide's dependencies, build the docs, and apply all of our patches to the Firefox source code.
+`pnpm bootstrap` will download a copy of the Firefox source code to the `path:engine/` directory, bundle Glide's dependencies, build the docs, apply all of our patches to the Firefox source code.
+`pnpm bootstrap:mach` will download missing system dependencies, and configure Firefox's internal `mach` tool.
 
 To actually build Glide, you can run:
 
@@ -31,8 +35,14 @@ pnpm build
 
 > [!IMPORTANT]
 > This can take quite a long time, a fresh build takes ~30 mins on an M4 Max.
+
+> [!NOTE]
+> `pnpm bootstrap:mach` configures git to use `watchman` for tracking file access.
+> On many systems, this means that running git commands in the `engine` directory, or running many Glide tests at once, will hit the watch limit.
+> See [the watchman docs](https://facebook.github.io/watchman/docs/install#system-specific-preparation) for how to avoid this.
 >
-> If you run into any build errors, you may also have to run `pnpm bootstrap:mach`, which invokes the Firefox system bootstrap.
+> On Linux, you can add `fs.inotify.max_user_watches=524288` to `path:/etc/sysctl.conf` and then run `sudo sysctl -p`.
+> On MacOS, do the same, but the parameters are `kern.maxfiles` and `kern.maxfilesperproc`.
 
 Once you have Glide compiled, you can launch it with:
 
@@ -45,6 +55,11 @@ pnpm launch
 
 ## Editor setup
 
+### Pre-push hook
+
+Glide has a pre-push hook that will run many of the lints for you automatically before each `git push`.
+To set it up, run `ln -s ../../scripts/pre-push.sh .git/hooks/pre-push`.
+
 ### Linting
 
 Glide uses [oxlint](https://oxc.rs/docs/guide/usage/linter.html) for linting, there is a [VSCode extension](https://oxc.rs/docs/guide/usage/linter.html#vscode-extension), [Zed extension](https://oxc.rs/docs/guide/usage/linter.html#zed-extension), and a `oxc_language_server` LSP available for oxlint.
@@ -53,6 +68,18 @@ Alternatively, you can run all lint checks with:
 
 ```bash
 pnpm lint
+```
+
+To enable oxlint in Nvim 11, you can use the following config:
+
+```lua
+vim.lsp.config('oxc', {
+  cmd = {"npx", "oxc_language_server"},
+  root_dir = function(buf, on_dir)
+    local dir = vim.fs.root(0, { 'package.json', 'tsconfig.json' })
+    if dir then on_dir(dir) end
+  end,
+})
 ```
 
 ### Formatting
@@ -100,6 +127,28 @@ This handles:
 
 If you have the watcher running, you should hardly ever have to explicitly rebuild.
 
+### `.mts` reloading
+
+Most of glide is implemented in bundled Typescript files.
+These files are loaded on browser start, but not on new tabs or windows.
+You can reload them by closing the browser and rerunning `pnpm launch`.
+
+### Logging
+
+Generally, use `GlideBrowser._log`.
+Some parts of the code use a more specific logger; search for `console.createInstance()`.
+
+By default, only `error` level logging is shown.
+You can enable more verbose logging by passing `--setpref="glide.logging.loglevel=Debug"` to `pnpm launch`.
+See `ConsoleLogLevel` for a list of available levels.
+
+For more information on Firefox's logging system, see [the upstream Firefox docs](https://firefox-source-docs.mozilla.org/xpcom/logging.html).
+
+### User config
+
+The config file in `src/glide.ts` will take precedence over the user-wide config.
+`pnpm bootstrap` creates an empty config automatically, but you can edit it manually for testing.
+
 ### Tests
 
 Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html) and located in [`path:src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
@@ -129,7 +178,7 @@ support-files = []
 
 You must point to the `path:dist/*.js` file instead of the `path:.ts` file as Firefox's test runner does not yet support directly running TS files.
 
-The typical naming convention is `path:browser_$name.ts` but you can choose to use a different name.
+The naming convention tests must follow is `path:browser_$name.ts`.
 
 A typical test file looks like this:
 
@@ -189,6 +238,17 @@ pnpm mach test glide/browser/base/content/test/config/dist/browser_include.js
 
 > [!NOTE]
 > The file has to be the `dist/$file.js` version, you cannot pass TypeScript files yet.
+
+> [!NOTE]
+> Tests sometimes fail with this message:
+>
+> ```
+> "FAIL uncaught exception - NotFoundError: Node.insertBefore:
+> Child to insert before is not a child of this node
+> at apply_mutations/<@chrome://glide/content/document-mirror.mjs:170:23"
+> ```
+>
+> This is a known flakiness and does not indicate an issue with your local environment.
 
 ### Docs
 

@@ -10,8 +10,11 @@ import type { GlideExcmdInfo, GlideOperator } from "./browser-excmds-registry.mt
 import type { Messenger as MessengerType } from "./browser-messenger.mts";
 import type { Jumplist } from "./plugins/jumplist.mts";
 import type { Sandbox } from "./sandbox.mts";
+import type { ExtensionContentFunction } from "./utils/ipc.mts";
 
-const { make_glide_api } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", { global: "current" });
+const { make_glide_api, make_buffer_options } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", {
+  global: "current",
+});
 const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
 const { GlideBrowserDev } = ChromeUtils.importESModule("chrome://glide/content/browser-dev.mjs", { global: "current" });
 const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
@@ -32,6 +35,7 @@ const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/u
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
 const { JSONFile } = ChromeUtils.importESModule("resource://gre/modules/JSONFile.sys.mjs");
+const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -144,7 +148,10 @@ class GlideBrowserClass {
       setInterval(this.flush_pending_error_notifications.bind(this), 500);
     });
 
-    const config_promise = this.reload_config();
+    // set all_windows to false as this code is ran when new windows are created, which could otherwise
+    // cause weird issues, e.g. setting an option in one window, and then creating a new window
+    // would reset the previously set option; this behaviour only makes sense when explicitly reloading the config.
+    const config_promise = this.reload_config(/* all_windows */ false);
 
     // copy the glide.d.ts file to the profile dir so it's easy to
     // refer to it in the config file
@@ -206,13 +213,13 @@ class GlideBrowserClass {
     });
   }
 
-  async reload_config() {
+  async reload_config(all_windows = true) {
     // note: we have to initialise this promise as early as possible so that we don't
     //       register the listener *after* the extension has started up, therefore
     //       resulting in the listener never firing.
     const extension_startup = this._extension_startup_promise;
 
-    await this.#reload_config();
+    await this.#reload_config(all_windows);
 
     this.on_startup(async () => {
       await extension_startup;
@@ -306,6 +313,18 @@ class GlideBrowserClass {
         }
       }, 500);
     });
+
+    if (all_windows) {
+      // reload the config in other windows as well to avoid potential mismatches
+      const promises: Array<Promise<void>> = [];
+      for (const win of Services.wm.getEnumerator("navigator:browser")) {
+        if (win === window) {
+          continue;
+        }
+        promises.push(win.GlideBrowser.reload_config(/* all_windows */ false));
+      }
+      await Promise.allSettled(promises);
+    }
   }
 
   #config_watcher_id: number | undefined;
@@ -387,20 +406,54 @@ class GlideBrowserClass {
   }
 
   #reload_config_clear_properties: Set<string> = new Set();
-  set_css_property(name: string, value: string) {
-    document.documentElement.style.setProperty(name, value);
+  set_css_property(name: string, value: string, buf: boolean) {
+    const style = document.documentElement.style;
+    const previous = style.getPropertyValue(name);
+
+    style.setProperty(name, value);
     this.#reload_config_clear_properties.add(name);
+
+    if (buf) {
+      this.buffer_cleanups.push({
+        callback: () => {
+          if (previous) {
+            style.setProperty(name, previous);
+          } else {
+            style.removeProperty(name);
+          }
+        },
+        source: `${name}: ${value}`,
+      });
+    }
   }
 
   reload_config_remove_elements: Set<HTMLElement> = new Set();
+  #reload_config_callbacks: Array<() => void> = [];
 
-  async #reload_config() {
+  on_reload_config(callback: () => void) {
+    this.#reload_config_callbacks.push(callback);
+  }
+
+  async #reload_config(all_windows: boolean) {
     this.#api = null;
     this.config_path = null;
     this._modes = {} as any;
     this.#messengers = new Map();
     this.#user_cmds = new Map();
     this.#sandbox = null;
+
+    const callbacks = this.#reload_config_callbacks;
+    this.#reload_config_callbacks = [];
+    for (const callback of callbacks) {
+      try {
+        callback();
+      } catch (err) {
+        // if an error happens in these callbacks we don't actually want to throw
+        // as that could result in some very weird state mismatches and make the
+        // browser not very functional, so just log them instead.
+        console.error(err);
+      }
+    }
 
     const css_properties = this.#reload_config_clear_properties;
     this.#reload_config_clear_properties = new Set();
@@ -446,9 +499,14 @@ class GlideBrowserClass {
     this.jumplist = new JumplistPlugin.Jumplist(sandbox);
 
     if (this.#startup_finished) {
-      // clear all registered event listeners and any custom state on the `browser` object
-      const addon = await AddonManager.getAddonByID("glide-internal@mozilla.org");
-      await addon.reload();
+      // clear all registered event listeners and any custom state on the `browser` object.
+      //
+      // note: we only do this when `all_windows` is `true` because the addon state is global and shared
+      //       across windows, so we should only reload it when we are mutating the global state.
+      if (all_windows) {
+        const addon = await AddonManager.getAddonByID("glide-internal@mozilla.org");
+        await addon.reload();
+      }
 
       // TODO(glide): only do this if we need to
       redefine_getter(this, "browser_parent_api", this.#create_browser_parent_api());
@@ -946,7 +1004,7 @@ class GlideBrowserClass {
   buffer_cleanups: { callback: () => void | Promise<void>; source: string }[] = [];
 
   async clear_buffer() {
-    this.api.bo = {};
+    this.api.bo = make_buffer_options();
     this.key_manager.clear_buffer();
 
     const cleanups = this.buffer_cleanups;
@@ -1182,8 +1240,6 @@ class GlideBrowserClass {
   }
 
   async send_extension_query(props: { method_path: string; args: any[] }) {
-    const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
-
     const child_id = GlideBrowser.extension.backgroundContext?.childId;
     if (!child_id) {
       // TODO(glide): define an easy way to register a listener for when
@@ -1213,7 +1269,118 @@ class GlideBrowserClass {
       })
       .then(result => {
         return result != null ? result.deserialize(globalThis) : result;
+      }).then(result => {
+        if (!result) {
+          return result;
+        }
+
+        /**
+         * In some cases, the web extensions APIs will return an object that has a method() attached.
+         * This is incompatible with our setup as functions cannot be cloned across processes.
+         *
+         * So we workaround this by identifying a returned function in the child process, omit it from the
+         * return value, and add a temporary `$glide_content_functions` property that says where the function
+         * would have been on the object, and a unique ID for that particular function.
+         *
+         * We can then "reconstruct" the function in the parent process with an implementation that just forwards
+         * to the content process with the function ID, and any arguments. Of course this will only work for functions
+         * that return `Promise`s.
+         */
+
+        const functions = result.$glide_content_functions as ExtensionContentFunction[] | undefined;
+        if (!functions) {
+          return result;
+        }
+
+        for (const fn_info of functions) {
+          // the [fn_info.name] hack is to make the function name match the original one.
+          const fn = {
+            [fn_info.name]: (...args: any[]) =>
+              GlideBrowser.send_extension_content_function_query({ id: fn_info.id, name: fn_info.name, args }),
+          }[fn_info.name];
+
+          Object.defineProperty(result, fn_info.name, { value: fn });
+          GlideBrowser.#extension_content_fn_registry.register(result, fn_info.id);
+        }
+
+        delete result.$glide_content_functions;
+        return result;
       });
+  }
+
+  async send_extension_content_function_query(props: { id: number; name: string; args: any[] }) {
+    const child_id = GlideBrowser.extension.backgroundContext?.childId;
+    if (!child_id) {
+      throw new Error(
+        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
+      );
+    }
+
+    // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
+    GlideBrowser._log.debug(
+      `Sending extension content function request for \`${props.name}\` to the extension process`,
+    );
+    return ExtensionParent.ParentAPIManager.conduit
+      .queryRunListener(child_id, {
+        childId: child_id,
+        handlingUserInput: false,
+        path: "glide.invoke_content_function",
+        urgentSend: false,
+        get args() {
+          return new StructuredCloneHolder(
+            `GlideBrowser/${child_id}/proxy_chain/glide.invoke_content_function`,
+            null,
+            // first arg corresponds to the the ID of the function that
+            // should be invoked, the rest are forwarded to said function.
+            [props.id, ...IPC.serialise_args(props.args)],
+          );
+        },
+      })
+      .then(result => {
+        return result != null ? result.deserialize(globalThis) : result;
+      });
+  }
+
+  /**
+   * Used to register callbacks for when objects that hold a reference to a function
+   * in the content process are dropped, so that we can also drop the reference in the
+   * content process and avoid a memory leak.
+   */
+  #extension_content_fn_registry = new FinalizationRegistry<number>((fn_id) => {
+    this.#clear_extension_content_function({ id: fn_id });
+  });
+
+  /**
+   * Tell the extension content child process that a function reference we were holding onto has
+   * been GC'd so we don't accumulate memory in the extension process forever.
+   *
+   * See `glide_content_functions` in `engine/toolkit/components/extensions/ExtensionChild.sys.mjs`.
+   */
+  #clear_extension_content_function(props: { id: number }) {
+    const child_id = GlideBrowser.extension.backgroundContext?.childId;
+    if (!child_id) {
+      throw new Error(
+        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
+      );
+    }
+
+    // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
+    GlideBrowser._log.debug(`Clearing extension content function with ID \`${props.id}\` `);
+    ExtensionParent.ParentAPIManager.conduit
+      .queryRunListener(child_id, {
+        childId: child_id,
+        handlingUserInput: false,
+        path: "glide.clear_content_function",
+        urgentSend: false,
+        get args() {
+          return new StructuredCloneHolder(`GlideBrowser/${child_id}/proxy_chain/glide.clear_content_function`, null, [
+            props.id,
+          ]);
+        },
+      })
+      // we may get an error if the extension child process has already exited
+      // in which case we do not care about the error.
+      .catch(() => null);
   }
 
   #user_cmds: Map<

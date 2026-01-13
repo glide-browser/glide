@@ -34,7 +34,7 @@ declare global {
 // TODO: more tests
 
 add_task(async function test_chrome_window_not_accessible() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.sandbox_tests = [
       { message: "document.defaultView should not be a chrome window", success: !document.defaultView?.isChromeWindow },
       {
@@ -78,7 +78,7 @@ add_task(async function test_config_cannot_pollute_browser_prototypes() {
   const original_map_set = Map.prototype.set;
   const original_set_add = Set.prototype.add;
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     // Attempt various prototype pollution attacks
     // @ts-expect-error
     Object.prototype.polluted = "polluted";
@@ -211,7 +211,7 @@ add_task(async function test_basic_elements_are_copied_to_the_browser() {
 });
 
 add_task(async function test_page_visibility_signal_exists() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.g.value = document.visibilityState;
     });
@@ -226,7 +226,7 @@ add_task(async function test_page_visibility_signal_exists() {
 });
 
 add_task(async function test_setTimeout() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       setTimeout(() => {
         glide.g.value = "from setTimeout";
@@ -241,7 +241,7 @@ add_task(async function test_setTimeout() {
 });
 
 add_task(async function test_requestAnimationFrame() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       requestAnimationFrame(() => {
         glide.g.value = "from requestAnimationFrame";
@@ -256,7 +256,7 @@ add_task(async function test_requestAnimationFrame() {
 });
 
 add_task(async function test_setInterval() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const id = setInterval(() => {
         glide.g.value = (glide.g.value || 0) + 1;
@@ -272,7 +272,7 @@ add_task(async function test_setInterval() {
 });
 
 add_task(async function test_queueMicrotask() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       queueMicrotask(() => {
         glide.g.value = "from queueMicrotask";
@@ -287,7 +287,7 @@ add_task(async function test_queueMicrotask() {
 });
 
 add_task(async function test_requestIdleCallback_with_timeout() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       requestIdleCallback(() => {
         glide.g.value = "from requestIdleCallback";
@@ -302,7 +302,7 @@ add_task(async function test_requestIdleCallback_with_timeout() {
 });
 
 add_task(async function test_performance_now_monotonicity() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       const t0 = performance.now();
 
@@ -365,7 +365,7 @@ function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
 }
 
 add_task(async function test_correct_realm_instances() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", () => {
       glide.g.value = {
         ["glide.ctx.url"]: glide.ctx.url instanceof URL,
@@ -382,7 +382,7 @@ add_task(async function test_correct_realm_instances() {
 });
 
 add_task(async function test_static_methods() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", () => {
       glide.g.value = URL.canParse("foo");
     });

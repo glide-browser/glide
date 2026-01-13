@@ -1,0 +1,26 @@
+diff --git a/browser/components/extensions/parent/ext-tabs.js b/browser/components/extensions/parent/ext-tabs.js
+index bff93996b42aa1f88f1bfcbd813c3af4a5806f13..2b85cee3a98f2d57c495c981739b0d814c304bc5 100644
+--- a/browser/components/extensions/parent/ext-tabs.js
++++ b/browser/components/extensions/parent/ext-tabs.js
+@@ -766,7 +766,10 @@ this.tabs = class extends ExtensionAPIPersistent {
+           }).then(window => {
+             let url;
+ 
+-            let options = { triggeringPrincipal: context.principal };
++            let options = {
++              triggeringPrincipal:
++                context.extension?.loaderPrincipal || context.principal,
++            };
+             if (createProperties.cookieStoreId) {
+               // May throw if validation fails.
+               options.userContextId = getUserContextIdForCookieStoreId(
+@@ -938,7 +941,8 @@ this.tabs = class extends ExtensionAPIPersistent {
+               flags: updateProperties.loadReplace
+                 ? Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY
+                 : Ci.nsIWebNavigation.LOAD_FLAGS_NONE,
+-              triggeringPrincipal: context.principal,
++              triggeringPrincipal:
++                context.extension?.loaderPrincipal || context.principal,
+             };
+ 
+             if (!context.checkLoadURL(url, { dontReportErrors: true })) {

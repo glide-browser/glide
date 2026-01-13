@@ -1,9 +1,10 @@
 <!--
-  This file is auto-generated from `pnpm build:docs` and `scripts/build-api-reference.mts`.
+  This file is auto-generated from `pnpm build:docs:api` and `scripts/build-api-reference.mts`.
 
   Do not edit it manually! Any changes will be lost.
 -->
 
+{% meta title="API" %}{% /meta %}
 {% styles %}
 h1, h2 {
 font-size: revert !important;
@@ -19,11 +20,17 @@ margin-bottom: var(--line-height);
 text-decoration: none;
 }
 {% /styles %}
+{% toc selector="h1[id], h2[id]" /%}
 
 > [!IMPORTANT]
 > These reference docs are not complete yet, some symbols and types are missing completely.
 >
 > For a full reference, see the [types](./config.md#types) file that Glide generates.
+
+> [!NOTE]
+> Glide also exposes the `browser` [Web Extensions API](extensions.md),
+> the browser UI [`document`](config.md#browser-ui),
+> and the browser UI [`window`](https://developer.mozilla.org/en-US/docs/Web/API/Window).
 
 {% html %}
 
@@ -50,6 +57,8 @@ text-decoration: none;
 [`glide.o.hint_label_generator`](#glide.o.hint_label_generator)\
 [`glide.o.switch_mode_on_focus`](#glide.o.switch_mode_on_focus)\
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
+[`glide.o.native_tabs`](#glide.o.native_tabs)\
+[`glide.o.newtab_url`](#glide.o.newtab_url)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -66,6 +75,7 @@ text-decoration: none;
 [`glide.styles.add()`](#glide.styles.add)\
 [`glide.styles.remove()`](#glide.styles.remove)\
 [`glide.styles.has()`](#glide.styles.has)\
+[`glide.styles.get()`](#glide.styles.get)\
 [`glide.prefs`](#glide.prefs)\
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
@@ -103,6 +113,8 @@ text-decoration: none;
 [`glide.addons`](#glide.addons)\
 [`glide.addons.install()`](#glide.addons.install)\
 [`glide.addons.list()`](#glide.addons.list)\
+[`glide.search_engines`](#glide.search_engines)\
+[`glide.search_engines.add()`](#glide.search_engines.add)\
 [`glide.keys`](#glide.keys)\
 [`glide.keys.send()`](#glide.keys.send)\
 [`glide.keys.next()`](#glide.keys.next)\
@@ -127,6 +139,7 @@ text-decoration: none;
 [`glide.fs.write()`](#glide.fs.write)\
 [`glide.fs.exists()`](#glide.fs.exists)\
 [`glide.fs.stat()`](#glide.fs.stat)\
+[`glide.fs.mkdir()`](#glide.fs.mkdir)\
 [`glide.messengers`](#glide.messengers)\
 [`glide.messengers.create()`](#glide.messengers.create)\
 [`glide.modes`](#glide.modes)\
@@ -135,6 +148,7 @@ text-decoration: none;
 [`glide.SpawnOptions`](#glide.SpawnOptions)\
 [`glide.Process`](#glide.Process)\
 [`glide.CompletedProcess`](#glide.CompletedProcess)\
+[`glide.ProcessStdinPipe`](#glide.ProcessStdinPipe)\
 [`glide.RGBString`](#glide.RGBString)\
 [`glide.TabWithID`](#glide.TabWithID)\
 [`glide.AddonInstallOptions`](#glide.AddonInstallOptions)\
@@ -287,9 +301,7 @@ For example:
 
 ```typescript
 glide.o.hint_label_generator = ({ hints }) =>
-  Array.from({ length: hints.length }).map((_, i) =>
-    String(i)
-  );
+  Array.from({ length: hints.length }, (_, i) => String(i));
 ```
 
 Or using data from the hinted elements through `content.execute()`:
@@ -330,6 +342,43 @@ This is exposed as the current `keys` implementation can result in non-ideal beh
 This will be removed in the future when the kinks with the `keys` implementation are ironed out.
 
 `ts:@default "keys"`
+
+### `glide.o.native_tabs` {% id="glide.o.native_tabs" %}
+
+Configure the behavior of the native tab bar.
+
+- `show`
+- `hide`
+- `autohide` (animated) shows the bar when the cursor is hovering over its default position
+
+This works for both horizontal and vertical tabs.
+
+For **vertical** tabs, the default collapsed width can be adjusted like this:
+
+```typescript
+glide.o.native_tabs = "autohide";
+// fully collapse vertical tabs
+glide.styles.add(css`
+  :root {
+    --uc-tab-collapsed-width: 2px;
+  }
+`);
+```
+
+See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
+
+**warning**: `autohide` does not work on MacOS at the moment.
+
+`ts:@default "show"`
+
+### `glide.o.newtab_url: string` {% id="glide.o.newtab_url" %}
+
+The URL to load when a new tab is created.
+
+This may be a local file (e.g. `"file:///path/to/page.html"`) or
+any other URL, e.g. `"https://example.com"`.
+
+`ts:@default "about:newtab"`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
@@ -389,6 +438,9 @@ const proc = await glide.process.spawn("kitty", [
 ], { cwd: "~/.dotfiles/glide" });
 console.log("opened kitty with pid", proc.pid);
 ```
+
+**note**: on macOS, the `PATH` environment variable is likely not set to what you'd expect, as applications do not inherit your shell environment.
+you can update it with `glide.env.set("PATH", "/usr/bin:/usr/.local/bin")`.
 
 {% api-heading id="glide.process.execute" %}
 glide.process.execute(command, args?, opts?): Promise<glide.CompletedProcess>
@@ -466,6 +518,12 @@ glide.styles.has(id): boolean
 {% /api-heading %}
 
 Returns whether or not custom CSS has been registered with the given `id`.
+
+{% api-heading id="glide.styles.get" %}
+glide.styles.get(id): string | undefined
+{% /api-heading %}
+
+Returns the CSS string for the given `id`, or `undefined` if no styles have been registered with that ID.
 
 ## • `glide.prefs` {% id="glide.prefs" %}
 
@@ -634,10 +692,18 @@ glide.excmds.create(
 ```
 
 {% api-heading id="glide.content.execute" %}
-glide.content.execute(func, opts): Promise<ReturnType<F>>
+glide.content.execute(func, opts): Promise<Return>
 {% /api-heading %}
 
 Execute a function in the content process for the given tab.
+
+```ts
+await glide.content.execute(() => {
+  document.body!.appendChild(DOM.create_element("p", [
+    "this will show up at the bottom of the page!",
+  ]));
+}, { tab_id: await glide.tabs.active() });
+```
 
 The given function will be stringified before being sent across processes, which
 means it **cannot** capture any outside variables.
@@ -755,6 +821,36 @@ The returned addons can be filtered by type, for example to only return extensio
 ```typescript
 await glide.addons.list("extension");
 ```
+
+## • `glide.search_engines` {% id="glide.search_engines" %}
+
+{% api-heading id="glide.search_engines.add" %}
+glide.search_engines.add(props): Promise<void>
+{% /api-heading %}
+
+Adds or updates a custom search engine.
+
+The format matches `chrome_settings_overrides.search_provider` [0] from WebExtension manifests.
+
+The `search_url` must contain `{searchTerms}` as a placeholder for the search query.
+
+```typescript
+glide.search_engines.add({
+  name: "Discogs",
+  keyword: "disc",
+  search_url:
+    "https://www.discogs.com/search/?q={searchTerms}",
+  favicon_url: "https://www.discogs.com/favicon.ico",
+});
+```
+
+**note**: search engines you add are not removed when this call is removed, you will need to manually remove them
+using `about:preferences#search` for now.
+
+**note**: not all properties in the `chrome_settings_overrides.search_provider` manifest are supported, as they are not all
+supported by Firefox, e.g. `instant_url`, and `image_url`.
+
+[0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
 
 ## • `glide.keys` {% id="glide.keys" %}
 
@@ -971,6 +1067,18 @@ stat.last_modified; // 1758835015092
 stat.type; // "file"
 ```
 
+{% api-heading id="glide.fs.mkdir" %}
+glide.fs.mkdir(path, props?): Promise<void>
+{% /api-heading %}
+
+Create a new directory at the given `path`.
+
+Parent directories are created by default, if desired you can turn this off with
+`ts:glide.fs.mkdir('...', { parents: false })`.
+
+By default this will _not_ error if the `path` already exists, if you would like it
+to do so, pass `ts:glide.fs.mkdir('...', { exists_ok: false })`
+
 ## • `glide.messengers` {% id="glide.messengers" %}
 
 {% api-heading id="glide.messengers.create" %}
@@ -1085,6 +1193,10 @@ stdout: ReadableStream<string>;
  */
 stderr: ReadableStream<string> | null;
 /**
+ * Write to the process's stdin pipe.
+ */
+stdin: glide.ProcessStdinPipe;
+/**
  * Wait for the process to exit.
  */
 wait(): Promise<glide.CompletedProcess>;
@@ -1109,6 +1221,30 @@ Represents a process that has exited.
 glide.Process & {
     exit_code: number;
 }
+```
+
+## • `glide.ProcessStdinPipe` {% id="glide.ProcessStdinPipe" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * Write data to the process's stdin.
+ *
+ * Accepts either a string (which will be UTF-8 encoded) or
+ * a binary array (e.g. ArrayBuffer, Uint8Array etc).
+ *
+ * **warning**: you *must* call `.close()` once you are done writing,
+ *              otherwise the process will never exit.
+ */
+write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
+/**
+ * Close the stdin pipe, signaling EOF to the process.
+ *
+ * By default, waits for any pending writes to complete before closing.
+ * Pass `{ force: true }` to close immediately without waiting.
+ */
+close(opts?: {
+    force?: boolean;
+}): Promise<void>;
 ```
 
 ## • `glide.RGBString: '#${string}` | `rgb(${string})'` {% id="glide.RGBString" %}
@@ -1143,7 +1279,14 @@ readonly description: string;
 readonly version: string;
 readonly active: boolean;
 readonly source_uri: URL | null;
+readonly type: "extension" | "plugin" | "theme" | "locale" | "dictionary" | "sitepermission" | "mlmodel";
 uninstall(): Promise<void>;
+/**
+ * Reload the addon.
+ *
+ * This is similar to uninstalling / reinstalling, but less destructive.
+ */
+reload(): Promise<void>;
 ```
 
 ## • `glide.AddonInstall` {% id="glide.AddonInstall" %}

@@ -7,13 +7,13 @@
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 add_setup(async function setup() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     // empty placeholder config file
   });
 });
 
 add_task(async function test_tabs_active() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
     glide.keymaps.set("normal", "<Space>n", async () => {
@@ -61,7 +61,7 @@ add_task(async function test_tabs_active() {
 });
 
 add_task(async function test_tabs_get_first() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>f", async () => {
       assert(await glide.tabs.get_first({ title: "Test for auto mode switching" }));
 
@@ -79,7 +79,7 @@ add_task(async function test_tabs_get_first() {
 });
 
 add_task(async function test_tabs_query() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>f", async () => {
       let tabs = await glide.tabs.query({ title: "Test for auto mode switching" });
       assert(tabs.length > 0);

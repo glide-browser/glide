@@ -62,6 +62,8 @@ declare namespace GlobalBrowser {
     selectedTab: BrowserTab | undefined;
     tabContainer: TabContainer;
     removeTab(tab: BrowserTab): void;
+    pinTab(tab: BrowserTab): void;
+    unpinTab(tab: BrowserTab): void;
     getBrowserForTab(tab: BrowserTab): Browser;
     addProgressListener(listener: Partial<nsIWebProgressListener>): void;
     // note: missing lots of opts
@@ -166,6 +168,11 @@ interface MozElements {
   };
 }
 
+interface nsIWindowMediator {
+  // avoid `Iterable<any>` for known cases
+  getEnumerator(aWindowType: "navigator:browser"): Iterable<Window>;
+}
+
 declare var MozElements: MozElements;
 
 // TODO(glide-types)
@@ -183,6 +190,7 @@ declare type _BroadcastConduit =
   import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs").BroadcastConduit;
 declare type _ExtensionCommon =
   typeof import("../engine/toolkit/components/extensions/ExtensionCommon.sys.mjs").ExtensionCommon;
+declare type UserSearchEngine = import("../engine/toolkit/components/search/UserSearchEngine.sys.mjs").UserSearchEngine;
 
 declare type GlideHintIPC = import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
 
@@ -208,12 +216,15 @@ declare namespace MockedExports {
     "chrome://glide/content/utils/html.mjs": typeof import("../src/glide/browser/base/content/utils/html.mts");
     "chrome://glide/content/utils/keys.mjs": typeof import("../src/glide/browser/base/content/utils/keys.mts");
     "chrome://glide/content/utils/args.mjs": typeof import("../src/glide/browser/base/content/utils/args.mts");
+    "chrome://glide/content/utils/prefs.mjs": typeof import("../src/glide/browser/base/content/utils/prefs.mts");
     "chrome://glide/content/utils/arrays.mjs": typeof import("../src/glide/browser/base/content/utils/arrays.mts");
     "chrome://glide/content/utils/guards.mjs": typeof import("../src/glide/browser/base/content/utils/guards.mts");
     "chrome://glide/content/utils/dedent.mjs": typeof import("../src/glide/browser/base/content/utils/dedent.mts");
     "chrome://glide/content/utils/objects.mjs": typeof import("../src/glide/browser/base/content/utils/objects.mts");
     "chrome://glide/content/utils/strings.mjs": typeof import("../src/glide/browser/base/content/utils/strings.mts");
     "chrome://glide/content/utils/promises.mjs": typeof import("../src/glide/browser/base/content/utils/promises.mts");
+    "chrome://glide/content/utils/browser-ui.mjs":
+      typeof import("../src/glide/browser/base/content/utils/browser-ui.mts");
     "chrome://glide/content/utils/resources.mjs":
       typeof import("../src/glide/browser/base/content/utils/resources.mts");
     "chrome://glide/content/browser.mjs": typeof import("../src/glide/browser/base/content/browser.mts");
@@ -265,6 +276,8 @@ declare namespace MockedExports {
 
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
       typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
+    "resource://testing-common/AddonTestUtils.sys.mjs":
+      typeof import("../engine/toolkit/mozapps/extensions/internal/AddonTestUtils.sys.mjs");
     "resource://testing-common/GlideTestUtils.sys.mjs":
       typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
     "resource://testing-common/fast-check.mjs": typeof import("fast-check");
@@ -301,6 +314,9 @@ declare namespace MockedExports {
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
     "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");
+    "resource:///modules/AboutNewTab.sys.mjs": typeof import("../engine/browser/modules/AboutNewTab.sys.mjs");
+    "moz-src:///toolkit/components/search/SearchUtils.sys.mjs":
+      typeof import("../engine/toolkit/components/search/SearchUtils.sys.mjs");
   }
 
   interface ChromeUtils {
@@ -414,6 +430,71 @@ declare interface NodeListOf<TNode extends Node> extends NodeList {
   ): void;
   [index: number]: TNode;
 }
+
+interface ReadableStream<R = any> {
+  [Symbol.asyncIterator](options?: ReadableStreamIteratorOptions): ReadableStreamAsyncIterator<R>;
+  values(options?: ReadableStreamIteratorOptions): ReadableStreamAsyncIterator<R>;
+}
+
+/**
+ * The `ReadableStream` interface of the Streams API represents a readable stream of byte data.
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream)
+ */
+interface ReadableStream<R = any> {
+  /**
+   * The **`locked`** read-only property of the ReadableStream interface returns whether or not the readable stream is locked to a reader.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/locked)
+   */
+  readonly locked: boolean;
+  /**
+   * The **`cancel()`** method of the ReadableStream interface returns a Promise that resolves when the stream is canceled.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/cancel)
+   */
+  cancel(reason?: any): Promise<void>;
+  /**
+   * The **`getReader()`** method of the ReadableStream interface creates a reader and locks the stream to it.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/getReader)
+   */
+  getReader(options: { mode: "byob" }): ReadableStreamBYOBReader;
+  getReader(): ReadableStreamDefaultReader<R>;
+  getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader<R>;
+  /**
+   * The **`pipeThrough()`** method of the ReadableStream interface provides a chainable way of piping the current stream through a transform stream or any other writable/readable pair.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/pipeThrough)
+   */
+  pipeThrough<T>(transform: ReadableWritablePair<T, R>, options?: StreamPipeOptions): ReadableStream<T>;
+  /**
+   * The **`pipeTo()`** method of the ReadableStream interface pipes the current `ReadableStream` to a given WritableStream and returns a Promise that fulfills when the piping process completes successfully, or rejects if any errors were encountered.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/pipeTo)
+   */
+  pipeTo(destination: WritableStream<R>, options?: StreamPipeOptions): Promise<void>;
+  /**
+   * The **`tee()`** method of the two-element array containing the two resulting branches as new ReadableStream instances.
+   *
+   * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStream/tee)
+   */
+  tee(): [ReadableStream<R>, ReadableStream<R>];
+}
+
+interface ReadableStreamAsyncIterator<T> extends AsyncIteratorObject<T, BuiltinIteratorReturn, unknown> {
+  [Symbol.asyncIterator](): ReadableStreamAsyncIterator<T>;
+}
+
+declare var ReadableStream: {
+  prototype: ReadableStream;
+  new(
+    underlyingSource: UnderlyingByteSource,
+    strategy?: { highWaterMark?: number },
+  ): ReadableStream<Uint8Array<ArrayBuffer>>;
+  new<R = any>(underlyingSource: UnderlyingDefaultSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+  new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+};
 
 //////////////////////////////////////////
 ////////////// typed actors //////////////

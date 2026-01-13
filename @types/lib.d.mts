@@ -41,3 +41,27 @@ interface ArrayConstructor {
     thisArg?: any,
   ): Promise<Awaited<U>[]>;
 }
+
+interface Map<K, V> {
+  /**
+   * The getOrInsert() method of Map instances returns the value corresponding to the specified key in this Map.
+   *
+   * If the key is not present, it inserts a new entry with the key and a given default value, and returns the inserted value.
+   *
+   * If the computation of the default value is expensive, consider using Map.prototype.getOrInsertComputed() instead, which takes a callback to compute the default value only if it's actually needed.
+   *
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/getOrInsert
+   */
+  getOrInsert(key: K, defaultValue: V): V;
+
+  /**
+   * The getOrInsertComputed() method of Map instances returns the value corresponding to the specified key in this Map.
+   *
+   * If the key is not present, it inserts a new entry with the key and a default value computed from a given callback, and returns the inserted value.
+   *
+   * Use this method instead of Map.prototype.getOrInsert() when the default value is expensive to compute, and you want to avoid computing it unless it's actually needed.
+   *
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/getOrInsertComputed
+   */
+  getOrInsertComputed(key: K, callback: (key: K) => V): V;
+}

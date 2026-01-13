@@ -3,14 +3,14 @@
   "binaryName": "glide",
   "version": {
     "product": "firefox-dev",
-    "tag": "FIREFOX_147_0b5_RELEASE",
-    "version": "147.0b5",
-    "candidate": "147.0b5"
+    "tag": "FIREFOX_147_0b9_RELEASE",
+    "version": "147.0b9",
+    "candidate": "147.0b9"
   },
   "brands": {
     "glide": {
       "release": {
-        "displayVersion": "0.1.56a",
+        "displayVersion": "0.1.57a",
         "github": {
           "repo": "glide-browser/glide"
         }

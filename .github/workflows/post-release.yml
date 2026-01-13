@@ -23,6 +23,6 @@ jobs:
       - name: Reset docs branch
         run: |
           git fetch
-          git checkout -b docs origin/docs
+          git checkout -b docs-production origin/docs-production
           git reset --hard origin/main
           git push --force-with-lease

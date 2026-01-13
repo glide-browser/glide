@@ -114,7 +114,7 @@ add_task(async function test_partial_hint_filtering() {
 });
 
 add_task(async function test_auto_activate_single_hint() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", "hint --auto");
   });
 
@@ -131,7 +131,7 @@ add_task(async function test_auto_activate_single_hint() {
 });
 
 add_task(async function test_auto_activate_single_hint__action() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>
       glide.hints.show({
         auto_activate: true,
@@ -149,8 +149,34 @@ add_task(async function test_auto_activate_single_hint__action() {
   });
 });
 
+add_task(async function test_auto_activate_always() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "f", () =>
+      glide.hints.show({
+        auto_activate: "always",
+        pick({ hints }) {
+          glide.g.value2 = hints.length;
+          return hints;
+        },
+        action() {
+          glide.g.value = true;
+        },
+      }));
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async _ => {
+    await keys("f");
+    await wait_for_mode("normal");
+
+    await waiter(() => glide.g.value2).ok();
+    Assert.greater(glide.g.value2, 1, "more than 1 hint should be generated");
+
+    await waiter(() => glide.g.value).ok("auto_activate: 'always' should execute immediately even with multiple hints");
+  });
+});
+
 add_task(async function test_include_selector() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", "hint");
     glide.keymaps.set("normal", "F", "hint --include 'p'");
   });
@@ -180,7 +206,7 @@ add_task(async function test_include_selector() {
 });
 
 add_task(async function test_include_click_listeners_option() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () => glide.hints.show({}));
     glide.keymaps.set("normal", "F", () => glide.hints.show({ include_click_listeners: true }));
   });
@@ -205,7 +231,7 @@ add_task(async function test_include_click_listeners_option() {
 });
 
 add_task(async function test_pick_basic() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () =>
       glide.hints.show({
         pick: ({ hints }) => {
@@ -249,7 +275,7 @@ add_task(async function test_gI() {
 });
 
 add_task(async function test_expandable_content_can_be_hinted() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async browser => {
     var is_open = await SpecialPowers.spawn(browser, [], () => {
@@ -280,7 +306,7 @@ add_task(async function test_expandable_content_can_be_hinted() {
 });
 
 add_task(async function test_hint_keymaps_are_ignored() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("hint", "f", "keys <esc>");
     glide.keymaps.set("normal", "j", "config_edit");
   });
@@ -297,7 +323,7 @@ add_task(async function test_hint_keymaps_are_ignored() {
 });
 
 add_task(async function test_pick_hint_chars() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.hint_chars = "abc";
 
     glide.keymaps.set("normal", "f", () => {
@@ -321,7 +347,7 @@ add_task(async function test_pick_hint_chars() {
 });
 
 add_task(async function test_hint_pick__content() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () => {
       glide.hints.show({
         pick: async ({ hints, content }) => {
@@ -366,7 +392,7 @@ add_task(async function test_hint_pick__content() {
 });
 
 add_task(async function test_hint_generator_config() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.hint_label_generator = ({ hints }) => {
       return ["foo", "bar", "baz"].slice(0, hints.length);
     };
@@ -390,7 +416,7 @@ add_task(async function test_hint_generator_config() {
 });
 
 add_task(async function test_numeric_hint_generator() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.hint_label_generator = glide.hints.label_generators.numeric;
   });
 
@@ -418,7 +444,7 @@ add_task(async function test_numeric_hint_generator() {
 });
 
 add_task(async function test_hint_generator__content() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "f", () => {
       glide.hints.show({
         label_generator: async ({ content }) => {
@@ -464,7 +490,7 @@ add_task(async function test_hint_generator__content() {
 });
 
 add_task(async function test_hint_action_function__basic() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -491,7 +517,7 @@ add_task(async function test_hint_action_function__basic() {
 });
 
 add_task(async function test_hint_action_function__multiple_calls() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -522,7 +548,7 @@ add_task(async function test_hint_action_function__multiple_calls() {
 });
 
 add_task(async function test_hint_action_function__complex_return() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -548,7 +574,7 @@ add_task(async function test_hint_action_function__complex_return() {
 });
 
 add_task(async function test_hint_action_function__bad_return() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.hints.show({
         selector: "a",
@@ -580,7 +606,7 @@ add_task(async function test_hint_action_function__bad_return() {
 });
 
 add_task(async function test_clear_no_hints_notification_on_retrigger() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", () => glide.hints.show({ selector: "[data-no-such-element]" }));
   });
 
@@ -602,5 +628,76 @@ add_task(async function test_clear_no_hints_notification_on_retrigger() {
     Assert.greater(get_hints().length, 0, "Hints should be visible");
 
     await keys("<esc>");
+  });
+});
+
+add_task(async function test_yf_copies_link_url() {
+  await reload_config(function _() {});
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><title>Test</title></head>
+    <body>
+      <a id="link1" href="https://example.com/page1">Link 1</a>
+      <a id="link2" href="https://example.com/page2">Link 2</a>
+      <a id="link3" href="https://example.com/page3">Link 3</a>
+      <a id="link4" href="mailto:test@example.com">Email Link</a>
+      <a id="link5" href="tel:2234567890">Phone Link</a>
+      <a id="link6" href="sms:1234567890">SMS Link</a>
+      <input id="input1" type="text" value="Input 1">
+      <button id="button1">Button 1</button>
+      <textarea id="textarea1">Textarea 1</textarea>
+    </body>
+    </html>
+  `;
+
+  await BrowserTestUtils.withNewTab("data:text/html," + encodeURI(html), async () => {
+    await keys("f");
+    await wait_for_hints();
+    let hints = GlideHints.get_active_hints();
+    is(hints.length, 9, "Hints should be visible on the page");
+    await keys("<esc>");
+
+    await keys("yf");
+    await wait_for_hints();
+
+    hints = GlideHints.get_active_hints();
+    is(hints.length, 6, "Should show hints only for links with href, not for input/button/textarea");
+    is(GlideBrowser.state.mode, "hint", "Mode should be 'hint' after pressing 'yf'");
+
+    await keys(hints.find((hint) => hint.element_id === "link1")!.label);
+    await wait_for_mode("normal");
+
+    let clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "https://example.com/page1", "First link URL should be copied to clipboard");
+    is(GlideBrowser.state.mode, "normal", "Should return to normal mode after copying");
+
+    await keys("yf");
+    await wait_for_hints();
+    hints = GlideHints.get_active_hints();
+    await keys(hints.find((hint) => hint.element_id === "link4")!.label);
+    await wait_for_mode("normal");
+
+    clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "test@example.com", "Email should be copied to clipboard");
+
+    await keys("yf");
+    await wait_for_hints();
+    hints = GlideHints.get_active_hints();
+    await keys(hints.find((hint) => hint.element_id === "link5")!.label);
+    await wait_for_mode("normal");
+
+    clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "2234567890", "Phone number should be copied to clipboard");
+
+    await keys("yf");
+    await wait_for_hints();
+    hints = GlideHints.get_active_hints();
+    await keys(hints.find((hint) => hint.element_id === "link6")!.label);
+    await wait_for_mode("normal");
+
+    clipboard_text = await navigator.clipboard.readText();
+    is(clipboard_text, "1234567890", "Phone number should be copied to clipboard");
   });
 });

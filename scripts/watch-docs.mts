@@ -1,6 +1,7 @@
 import chokidar from "chokidar";
 import { execa } from "execa";
 import Path from "path";
+import { fileURLToPath } from "url";
 import {
   DOCS_DIR,
   DOCS_DIST_DIR,
@@ -30,6 +31,7 @@ export async function main() {
         Path.join(SCRIPTS_DIR, "build-docs.mts"),
       ], {
         ignored: (abs_path, stats) => {
+          abs_path = Path.normalize(abs_path);
           if (
             abs_path.includes("node_modules")
             || abs_path.includes(".venv")
@@ -56,7 +58,7 @@ export async function main() {
           }
 
           const rel_path = Path.relative(DOCS_DIR, abs_path);
-          if (rel_path.includes("dist/snippets/")) {
+          if (rel_path.includes(Path.join("dist", "snippets"))) {
             // these are just used internally in-tree for checking docs types
             return true;
           }
@@ -96,6 +98,6 @@ export async function main() {
   });
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }

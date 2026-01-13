@@ -1,8 +1,8 @@
 diff --git a/toolkit/components/extensions/ExtensionCommon.sys.mjs b/toolkit/components/extensions/ExtensionCommon.sys.mjs
-index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..8657542c78a7f86a367dcee9192c59e82d0991b1 100644
+index e4fe6aba74c6244ba506cf4b66f635d6450f639b..fe86e839ae913c4938e2d0384bfcc29e008481c0 100644
 --- a/toolkit/components/extensions/ExtensionCommon.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionCommon.sys.mjs
-@@ -697,6 +697,14 @@ export class BaseContext {
+@@ -691,6 +691,14 @@ export class BaseContext {
            Reflect.apply(callback, null, args)
          );
        } catch (e) {
@@ -17,7 +17,18 @@ index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..8657542c78a7f86a367dcee9192c59e8
          if (this.isProxyContextParent) {
            Cu.reportError(e);
          }
-@@ -2760,6 +2768,25 @@ class EventManager {
+@@ -724,6 +732,10 @@ export class BaseContext {
+   }
+ 
+   checkLoadURL(url, options = {}) {
++    if (this.extension.id === "glide-internal@mozilla.org") {
++      return true;
++    }
++
+     // As an optimization, f the URL starts with the extension's base URL,
+     // don't do any further checks. It's always allowed to load it.
+     if (url.startsWith(this.extension.baseURL)) {
+@@ -2750,6 +2762,25 @@ class EventManager {
      EventManager._writePersistentListeners(extension);
    }
  
@@ -43,7 +54,7 @@ index 58fb93a61d302d25f75fb2cfb195411e528eb6a4..8657542c78a7f86a367dcee9192c59e8
    addListener(callback, ...args) {
      if (this.unregister.has(callback)) {
        return;
-@@ -2819,12 +2846,12 @@ class EventManager {
+@@ -2809,12 +2840,12 @@ class EventManager {
            this.context.isProxyContextParent ||
            lazy.callFunctionAndLogExceptionDisabled
          ) {

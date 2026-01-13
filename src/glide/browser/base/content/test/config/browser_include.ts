@@ -11,15 +11,15 @@ declare global {
 }
 
 add_setup(async function setup() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 });
 
 add_task(async function test_include_basic_functionality() {
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.include_called = true;
   }, "included.ts");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.unstable.include("included.ts");
   });
 
@@ -29,11 +29,11 @@ add_task(async function test_include_basic_functionality() {
 });
 
 add_task(async function test_include_absolute_path() {
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.include_called = true;
   }, "included.ts");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.unstable.include(glide.path.join(glide.path.profile_dir, "glide", "included.ts"));
   });
 
@@ -43,16 +43,16 @@ add_task(async function test_include_absolute_path() {
 });
 
 add_task(async function test_include_nested_absolute() {
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.calls!.push("included.ts");
     glide.unstable.include(glide.path.join(glide.path.profile_dir, "glide", "other.glide.ts"));
   }, "included.ts");
 
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.calls!.push("other.glide.ts");
   }, "other.glide.ts");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
     glide.unstable.include(glide.path.join(glide.path.profile_dir, "glide", "included.ts"));
   });
@@ -61,16 +61,16 @@ add_task(async function test_include_nested_absolute() {
 });
 
 add_task(async function test_include_nested_relative() {
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.calls!.push("my-plugin/glide.ts");
     glide.unstable.include("opts.glide.ts");
   }, "plugins/my-plugin/glide.ts");
 
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.g.calls!.push("my-plugin/opts.glide.ts");
   }, "plugins/my-plugin/opts.glide.ts");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.calls = [];
     glide.unstable.include(glide.path.join(glide.path.profile_dir, "glide", "plugins", "my-plugin", "glide.ts"));
   });
@@ -88,13 +88,13 @@ add_task(async function test_include_fs_relative_api() {
     "Data from my-plugin",
   );
 
-  await GlideTestUtils.write_config(function _() {
+  await write_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       glide.g.value = await glide.fs.read("data.txt", "utf8");
     });
   }, "plugins/my-plugin/glide.ts");
 
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "P", async () => {
       glide.g.value = await glide.fs.read("data.txt", "utf8");
     });

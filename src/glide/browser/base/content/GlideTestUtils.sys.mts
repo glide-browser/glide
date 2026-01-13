@@ -50,11 +50,26 @@ class GlideTestUtilsClass {
    * Behaves the same as `BrowserTestUtils.openNewForegroundTab()` but also defines
    * `[Symbol.dispose]()` so you can use it with `using`.
    */
-  async new_tab(uri: string): Promise<BrowserTab> {
+  async new_tab(uri?: string): Promise<BrowserTab> {
     const tab = await g.BrowserTestUtils.openNewForegroundTab(g.gBrowser, uri);
     return Object.assign(tab, {
       [Symbol.dispose]() {
         g.BrowserTestUtils.removeTab(tab);
+      },
+    });
+  }
+
+  /**
+   * Create a new foreground window.
+   *
+   * Behaves the same as `BrowserTestUtils.openNewBrowserWindow()` but also defines
+   * `[Symbol.dispose]()` so you can use it with `using`.
+   */
+  async new_window(): Promise<Window & { [Symbol.asyncDispose](): Promise<void> }> {
+    const win = await g.BrowserTestUtils.openNewBrowserWindow();
+    return Object.assign(win, {
+      [Symbol.asyncDispose]() {
+        g.BrowserTestUtils.closeWindow(win);
       },
     });
   }
@@ -104,6 +119,22 @@ class GlideTestUtilsClass {
   waiter(getter: () => unknown): GlideTestWaiter {
     const tries = 500;
     const interval = 10;
+
+    const frame_counter = {
+      count: -1,
+      _stopped: false,
+      start() {
+        if (this._stopped) return;
+        this.count++;
+        requestAnimationFrame(this.start.bind(this));
+      },
+      stop(): number {
+        this._stopped = true;
+        return this.count;
+      },
+    };
+    frame_counter.start();
+
     return {
       async is(value: unknown, name?: string) {
         await g.TestUtils.waitForCondition(
@@ -113,6 +144,7 @@ class GlideTestUtilsClass {
           tries,
         );
         g.is(await getter(), value, name);
+        return frame_counter.stop();
       },
       async isnot(value, name) {
         await g.TestUtils.waitForCondition(
@@ -122,6 +154,7 @@ class GlideTestUtilsClass {
           tries,
         );
         g.isnot(await getter(), value, name);
+        return frame_counter.stop();
       },
 
       async isjson(value, name) {
@@ -140,11 +173,13 @@ class GlideTestUtilsClass {
           tries,
         );
         g.isjson(await getter(), value, name);
+        return frame_counter.stop();
       },
 
       async ok(message?: string) {
         await g.TestUtils.waitForCondition(getter, message ?? (String(getter) + ` === <truthy>`), interval, tries);
         g.ok(await getter(), message);
+        return frame_counter.stop();
       },
       async notok(message?: string) {
         await g.TestUtils.waitForCondition(
@@ -154,6 +189,7 @@ class GlideTestUtilsClass {
           tries,
         );
         g.notok(await getter(), message);
+        return frame_counter.stop();
       },
     };
   }
@@ -320,6 +356,18 @@ class GlideTestUtilsClass {
     };
   }
 
+  make_temp_directory(...parts: string[]): nsIFile {
+    const file = Services.dirsvc.get("TmpD", Ci.nsIFile);
+    for (const part of parts) {
+      file.append(part);
+      if (!file.exists()) {
+        file.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
+      }
+    }
+    file.normalize();
+    return file;
+  }
+
   /**
    * This function is only expected to be called from `testing/mochitets/browser-test.js` so
    * that we can add all of the global variables that are defined in the test functions, into
@@ -376,6 +424,10 @@ class GlideCommandLineTestUtils {
     return Array.from(this.#expect_commandline().querySelectorAll(".gcl-option")).filter(row =>
       row && !(row as HTMLElement).hidden && !((row.parentElement?.parentElement as HTMLElement)?.hidden)
     ) as HTMLElement[];
+  }
+
+  row_cmd(n: number): string | null | undefined {
+    return this.visible_rows()[n]?.children[0]?.textContent;
   }
 
   focused_row() {

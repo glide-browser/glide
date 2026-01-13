@@ -35,6 +35,7 @@ glide.jar:
   content/utils/html.mjs                       (content/utils/dist/html.mjs)
   content/utils/keys.mjs                       (content/utils/dist/keys.mjs)
   content/utils/args.mjs                       (content/utils/dist/args.mjs)
+  content/utils/prefs.mjs                      (content/utils/dist/prefs.mjs)
   content/utils/arrays.mjs                     (content/utils/dist/arrays.mjs)
   content/utils/guards.mjs                     (content/utils/dist/guards.mjs)
   content/utils/dedent.mjs                     (content/utils/dist/dedent.mjs)
@@ -42,6 +43,7 @@ glide.jar:
   content/utils/strings.mjs                    (content/utils/dist/strings.mjs)
   content/utils/promises.mjs                   (content/utils/dist/promises.mjs)
   content/utils/resources.mjs                  (content/utils/dist/resources.mjs)
+  content/utils/browser-ui.mjs                  (content/utils/dist/browser-ui.mjs)
 
 # default plugins
   content/plugins/shims.mjs                    (content/plugins/dist/shims.mjs)

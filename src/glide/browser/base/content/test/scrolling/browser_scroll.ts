@@ -154,7 +154,7 @@ add_task(async function test_scrolling() {
 });
 
 add_task(async function test_scrolling_legacy() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.o.scroll_implementation = "legacy";
   });
 

@@ -11,7 +11,7 @@ const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/conten
 
 add_task(async function test_basic_message_usage() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       const messenger = glide.messengers.create<{ my_message: never }>((message) => {
         switch (message.name) {
           case "my_message": {
@@ -41,7 +41,7 @@ add_task(async function test_basic_message_usage() {
 
 add_task(async function test_recv_error_handling() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await GlideTestUtils.reload_config(function _() {
+    await reload_config(function _() {
       var messenger = glide.messengers.create<{ my_message: never }>(() => {
         throw new Error("error in recv handler");
       });

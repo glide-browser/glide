@@ -41,15 +41,15 @@ title="Demo video showing Glide features including keyboard navigation and confi
   <div class="download-platform">
     <span class="platform-label">macOS</span>
     <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.56a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.56a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel</a>
     </div>
   </div>
   <div class="download-platform">
     <span class="platform-label">Linux</span>
     <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.56a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank" rel="noopener">x64.tar</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.56a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank" rel="noopener">aarch64.tar</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank" rel="noopener">x64.tar</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank" rel="noopener">aarch64.tar</a>
     </div>
   </div>
 </div>
@@ -115,6 +115,8 @@ title="Demo video showing Glide features including keyboard navigation and confi
       <span class="keymap-desc">Follow link (hint mode)</span>
       <span class="keymap-key">F</span>
       <span class="keymap-desc">Follow link in new tab</span>
+      <span class="keymap-key">yf</span>
+      <span class="keymap-desc">Copy link URL to clipboard (hint mode)</span>
       <span class="keymap-key">&lt;leader&gt;f</span>
       <span class="keymap-desc">Hint browser UI elements</span>
       <span class="keymap-key">gi</span>

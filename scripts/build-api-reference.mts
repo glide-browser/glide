@@ -59,13 +59,15 @@ async function main() {
   const output: string[] = [
     markdown`
       <!--
-        This file is auto-generated from \`pnpm build:docs\` and \`scripts/build-api-reference.mts\`.
+        This file is auto-generated from \`pnpm build:docs:api\` and \`scripts/build-api-reference.mts\`.
 
         Do not edit it manually! Any changes will be lost.
       -->
+      {% meta title="API" %}{% /meta %}
       {% styles %}
       ${STYLES}
       {% /styles %}
+      {% toc selector="h1[id], h2[id]" /%}
     `,
     "\n\n",
     markdown`
@@ -73,6 +75,11 @@ async function main() {
       > These reference docs are not complete yet, some symbols and types are missing completely.
       >
       > For a full reference, see the [types](./config.md#types) file that Glide generates.
+
+      > [!NOTE]
+      > Glide also exposes the \`browser\` [Web Extensions API](extensions.md),
+      > the browser UI [\`document\`](config.md#browser-ui),
+      > and the browser UI [\`window\`](https://developer.mozilla.org/en-US/docs/Web/API/Window).
     `,
     "\n\n",
     generate_index(index),
@@ -403,8 +410,18 @@ function* traverse_children(
 }
 
 function children(node: Node): Node[] {
+  const method_names = new Set<string>();
   const nodes: Node[] = [];
   node.forEachChild(child => {
+    // Only consider the first overload of a method to avoid confusing
+    // duplicative docs generation.
+    if (Node.isMethodSignature(child)) {
+      if (method_names.has(child.getName())) {
+        return;
+      }
+      method_names.add(child.getName());
+    }
+
     nodes.push(child);
   });
   return nodes;

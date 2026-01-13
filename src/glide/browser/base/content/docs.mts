@@ -30,7 +30,7 @@ interface SidebarEntry {
   target?: string;
 }
 
-const IGNORE_CODE_LANGS = new Set(["glide", "about", "file", "stderr", "auto_activate", "action"]);
+const IGNORE_CODE_LANGS = new Set(["glide", "about", "file", "stderr", "auto_activate", "action", "bootstrap"]);
 
 // GitHub-style admonition types
 const ADMONITION_TYPES = new Set([
@@ -96,6 +96,12 @@ export async function markdown_to_html(
         return assert_present(state.patches[substr]?.html, `could not resolve a highlight patch for ${substr}`);
       });
     } while (did_replace);
+  }
+
+  if (state.toc_selector) {
+    html_body = `<article data-toc="${state.toc_selector}">${html_body}</article>`;
+  } else {
+    html_body = `<article>${html_body}</article>`;
   }
 
   const rel_to_dist = "../".repeat(props.nested_count - 1).slice(0, -1) || ".";
@@ -262,6 +268,7 @@ class RenderState {
   head: string[];
   title: string | null = null;
   description: string | null = null;
+  toc_selector: string | null = null;
 
   // this is required to easily support syntax highlighting with markdoc
   //
@@ -309,6 +316,16 @@ class RenderState {
               // @ts-ignore
               config,
             ));
+          },
+        },
+        toc: {
+          description: "Sets the TOC selector for the page",
+          attributes: {
+            selector: { type: String, required: true },
+          },
+          transform: (node) => {
+            this.toc_selector = node.attributes["selector"] as string;
+            return "";
           },
         },
         "api-heading": {
@@ -439,10 +456,15 @@ class RenderState {
         },
         meta: {
           description: "Set custom meta tags for this page, only description is supported.",
-          attributes: { description: { type: String, required: false } },
+          attributes: { description: { type: String, required: false }, title: { type: String, required: false } },
           transform: (node, config) => {
             const attributes = node.transformAttributes(config);
             this.description = attributes["description"] ?? null;
+
+            if (attributes["title"]) {
+              this.title = attributes["title"];
+            }
+
             return "";
           },
         },
@@ -966,6 +988,8 @@ export function code_to_html(
     options.lang = "bash";
   }
 
+  // If this gives a "Language not found, you may need to load it first" error,
+  // you can add the language in `scripts/build-docs.mts` when creating the `highlighter`.
   return highlighter.codeToHtml(code, options);
 }
 

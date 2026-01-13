@@ -15,7 +15,7 @@ class GlideHintsClass {
     location: glide.HintLocation,
     action: glide.HintAction,
     pick: glide.HintPicker | undefined,
-    auto_activate: boolean,
+    auto_activate: boolean | "always",
   ) {
     this.#clear_hints();
 
@@ -85,6 +85,10 @@ class GlideHintsClass {
     gBrowser.$hints_action = action;
     gBrowser.$hints_location = location;
 
+    if (auto_activate === "always") {
+      this.execute(hints[0]!.id);
+      return;
+    }
     if (auto_activate && hints.length === 1) {
       this.execute(hints[0]!.id);
       return;

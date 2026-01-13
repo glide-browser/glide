@@ -15,7 +15,61 @@ padding: 0.3em;
 }
 {% /styles %}
 
+{% toc selector="h1[id]" /%}
+
 # Changelog
+
+# 0.1.57a
+
+## Search engine configuration {% id="0.1.57a-search-engine-configuration" %}
+
+You can now configure new search engines directly in the Glide config, for example:
+
+```typescript
+glide.search_engines.add({
+  name: "Discogs",
+  keyword: "disc",
+  search_url:
+    "https://www.discogs.com/search/?q={searchTerms}",
+
+  // optional
+  favicon_url: "https://www.discogs.com/favicon.ico",
+  is_default: false,
+});
+```
+
+With this example you could search using Discogs by focusing the address bar and typing `disc<space>`!
+
+The [`glide.search_engines.add()`](api.md#glide.search_engines.add) function takes the same arguments as the `chrome_settings_overrides.search_provider` web extension manifest v2 [object](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#browser_compatibility).
+
+## Changes {% id="0.1.57a-changes" %}
+
+- Bumped Firefox from 147.0b3 to 147.0b8
+- [Improved](https://github.com/glide-browser/glide/pull/193) type inference for [`ts:glide.content.execute()`](api.md#glide.content.execute) params
+  - Thanks [@TomerAberbach](https://github.com/TomerAberbach) for the contribution!
+- Added support for [hiding](https://github.com/glide-browser/glide/pull/156) the native tab bar with [`ts:glide.o.native_tabs = "hide"`](api.md#glide.o.native_tabs), or with `"autohide"` to show the tab bar on hover on Linux
+  - Thanks [@45Hnri](https://github.com/45Hnri) for the contribution!
+- Added [`ts:glide.styles.has()`](api.md#glide.styles.has)
+- Added [`ts:glide.styles.get()`](api.md#glide.styles.get)
+- Added support for overwriting existing styles with [`ts:glide.styles.add('css', { id: '...', overwrite: true })`](api.md#glide.styles.add)
+- Added `:tab_pin` and `:tab_unpin` commands
+  - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Updated `:config_reload` to apply across all open windows
+- Updated the commandline to show [suggested](https://github.com/glide-browser/glide/pull/170#issuecomment-3691684770) commands first
+  - Thanks [@jyn514](https://github.com/jyn514) for the contribution!
+- Updated hint generation to clear previous "No hints found" notifications when hints are eventually found
+  - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Removed Perplexity as a default search engine
+- Fixed usage of the `browser` API on privileged pages
+- Fixed permissions error when creating or updating tabs with a privileged URI, e.g. `browser.tabs.create({ url: "resource://glide-docs/index.html" })`
+- Fixed [`glide.bo.hint_size`](api.md#glide.o.hint_size) so that it correctly applies the styling for the current buffer
+- Fixed `i` sending an unnecessary `<left>` key event
+- Fixed serialisation of the [`browser.contentScripts.register()`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/contentScripts/register) return value. You can now access it, and call [`script.unregister()`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/contentScripts/RegisteredContentScript).
+- Misc
+  - Many thanks to [@jyn514](https://github.com/jyn514) for updating lots of docs and improving the contributing experience!
+  - Set up a [Zulip chat](https://glide.zulipchat.com) for realtime discussion
+  - [Reduced](https://github.com/glide-browser/glide/pull/157) the number of redundant DOM mutations inside the commandline
+    - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 
 # 0.1.56a
 
@@ -121,7 +175,7 @@ glide.hints.show({
 
 Thanks to [@peff](https://github.com/peff) for the contribution!
 
-## Changes {% id="0.1.56a-breaking-changes" %}
+## Changes {% id="0.1.56a-changes" %}
 
 - Bumped Firefox from 146.0b9 to 147.0b3
 - Added support for nested [`glide.unstable.include()`](api.md#glide.unstable.include) calls

@@ -1040,6 +1040,108 @@ table th, table td {
   line-height: 1.2;
 }
 
+/* Table of Contents sidebar (right side) */
+.toc-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 30ch;
+  padding: calc(var(--line-height) * 2) 1ch calc(var(--line-height)) 1ch;
+  background: var(--background-color);
+  font-family: var(--font-family);
+  overflow-y: auto;
+  border-left: 1px solid var(--background-color-alt);
+}
+
+.toc-sidebar-title {
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-color-alt);
+  margin-bottom: calc(var(--line-height) * 0.75);
+  padding-left: 0.5ch;
+}
+
+.toc-sidebar nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.toc-sidebar nav a {
+  display: block;
+  padding: 0.2em 0.5ch;
+  font-size: 0.8rem;
+  color: var(--text-color-alt);
+  text-decoration: none;
+  line-height: 1.4;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  /* Truncate long titles */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toc-sidebar nav a:hover {
+  color: var(--text-color);
+  background: var(--background-color-alt);
+}
+
+.toc-sidebar nav a.toc-active {
+  color: var(--text-color);
+  border-left-color: var(--text-color);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Indentation for heading levels */
+.toc-sidebar nav a[data-level="2"] {
+  padding-left: 1.5ch;
+}
+
+.toc-sidebar nav a[data-level="3"] {
+  padding-left: 3ch;
+  font-size: 0.75rem;
+}
+
+/* Collapsible TOC groups */
+.toc-group {
+  margin-bottom: 0.25em;
+}
+
+.toc-group-header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toc-group-header:hover {
+  background: var(--background-color-alt);
+}
+
+.toc-group-icon {
+  font-size: 0.6rem;
+  margin-right: 0.5ch;
+  color: var(--text-color-alt);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+  width: 1ch;
+  text-align: center;
+}
+
+.toc-group-header a {
+  flex: 1;
+  cursor: pointer;
+}
+
+.toc-group-items {
+  margin-left: 1.5ch;
+  margin-top: 0.25em;
+  overflow: hidden;
+}
+
 /**
  * only show the copy code button when the codeblock
  * is focused on touch devices, as first of all you're less
@@ -1053,6 +1155,13 @@ table th, table td {
 
   .shiki:focus-within .copy-button {
     display: flex !important;
+  }
+}
+
+/* Hide TOC on smaller screens */
+@media screen and (max-width: 1400px) {
+  .toc-sidebar {
+    display: none;
   }
 }
 

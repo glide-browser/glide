@@ -31,6 +31,9 @@
       "chrome://glide/content/browser-excmds.mjs": ["./src/glide/browser/base/content/browser-excmds.mts"],
       "chrome://glide/content/browser-excmds-registry.mjs": [
         "./src/glide/browser/base/content/browser-excmds-registry.mts"
+      ],
+      "moz-src:///toolkit/components/search/SearchEngine.sys.mjs": [
+        "./engine/toolkit/components/search/SearchEngine.sys.mjs"
       ]
     }
   },

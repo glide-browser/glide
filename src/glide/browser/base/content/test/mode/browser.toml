@@ -9,6 +9,7 @@ support-files = [
   "input_test.html",
   "fullscreen_test.html",
   "video_test.html",
+  "auto_focus.html",
 ]
 
 ["dist/browser_mode_input.js"]

@@ -10,6 +10,7 @@
 import chokidar from "chokidar";
 import fs from "fs/promises";
 import Path from "path";
+import { fileURLToPath } from "url";
 import { ENGINE_DIR, SRC_DIR } from "./canonical-paths.mts";
 import { queue } from "./dev.mts";
 
@@ -41,6 +42,7 @@ export async function main() {
     const watcher = chokidar
       .watch([SRC_DIR], {
         ignored: (abs_path, stats) => {
+          abs_path = Path.normalize(abs_path);
           if (abs_path.includes("node_modules") || abs_path.includes(".venv")) {
             return true;
           }
@@ -56,7 +58,7 @@ export async function main() {
           }
 
           const rel_path = Path.relative(SRC_DIR, abs_path);
-          if (rel_path.includes("/docs/dist/snippets/")) {
+          if (rel_path.includes(Path.normalize("/docs/dist/snippets/"))) {
             // these are just used internally in-tree for checking docs types
             return true;
           }
@@ -123,6 +125,6 @@ export async function main() {
   });
 }
 
-if (import.meta.url.endsWith(process.argv[1]!)) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }

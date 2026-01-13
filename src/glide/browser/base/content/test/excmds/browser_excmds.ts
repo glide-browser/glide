@@ -10,7 +10,7 @@
 declare var content: TestContent;
 
 add_setup(async function setup() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 });
 
 const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
@@ -42,7 +42,7 @@ add_task(async function test_tab_switching() {
 });
 
 add_task(async function test_tab_close() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.g.mapleader = "<Space>";
   });
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
@@ -111,7 +111,7 @@ declare global {
 }
 
 add_task(async function test_excmd_callback_receives_tab_id() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.excmds.create(
       { name: "test_command", description: "Test command to verify tab_id parameter" },
       ({ tab_id }) => {
@@ -130,7 +130,7 @@ add_task(async function test_excmd_callback_receives_tab_id() {
 });
 
 add_task(async function test_excmd_callback_receives_unparsed_args() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.excmds.create({ name: "test_command", description: "Test command" }, ({ args_arr }) => {
       glide.g.value = args_arr;
     });
@@ -186,7 +186,7 @@ add_task(async function test_tab_new() {
 });
 
 add_task(async function test_keys() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", ";", "keys :");
   });
 
@@ -198,7 +198,7 @@ add_task(async function test_keys() {
 });
 
 add_task(async function test_clear_removes_notifications() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     GlideBrowser.add_notification("test-notification", {
@@ -237,7 +237,7 @@ add_task(async function test_clear_removes_notifications() {
 });
 
 add_task(async function test_copy_excmd_single_notification() {
-  await GlideTestUtils.reload_config(function _() {});
+  await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     await keys(":profile_dir<CR>");
@@ -264,4 +264,47 @@ add_task(async function test_copy_excmd_single_notification() {
       "Notification should be removed after copying",
     );
   });
+});
+
+add_task(async function test_tab_pin() {
+  await reload_config(function _() {});
+
+  const initial_tab_count = gBrowser.tabs.length;
+  using tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
+  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
+
+  is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
+  await keys(":tab_pin<CR>");
+  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin");
+
+  const tab1_id = GlideBrowser.extension?.tabManager?.getWrapper?.(tab1)?.id;
+  isnot(tab1_id, undefined, "Tab ID should be available");
+  is(tab1.pinned, false, "Tab 1 should not be pinned initially");
+  await keys(`:tab_pin ${tab1_id}<CR>`);
+  is(tab1.pinned, true, "Tab 1 should be pinned after :tab_pin with tab ID");
+
+  is(gBrowser.tabs.length, initial_tab_count + 2, "Tab count should remain the same");
+});
+
+add_task(async function test_tab_unpin() {
+  await reload_config(function _() {});
+
+  const initial_tab_count = gBrowser.tabs.length;
+  using tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
+  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
+
+  gBrowser.pinTab(gBrowser.selectedTab);
+
+  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned initially");
+  await keys(":tab_unpin<CR>");
+  is(gBrowser.selectedTab.pinned, false, "Current tab should be unpinned after :tab_unpin");
+
+  gBrowser.pinTab(tab1);
+  const tab1_id = GlideBrowser.extension?.tabManager?.getWrapper?.(tab1)?.id;
+  isnot(tab1_id, undefined, "Tab ID should be available");
+  is(tab1.pinned, true, "Tab 1 should be pinned initially");
+  await keys(`:tab_unpin ${tab1_id}<CR>`);
+  is(tab1.pinned, false, "Tab 1 should be unpinned after :tab_unpin with tab ID");
+
+  is(gBrowser.tabs.length, initial_tab_count + 2, "Tab count should remain the same");
 });

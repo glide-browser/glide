@@ -56,6 +56,8 @@ globalThis.ChromeUtils = {
         return a_require(`${SRC_DIR}/glide/browser/base/content/utils/resources.mts`);
       case "chrome://glide/content/utils/ipc.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/utils/ipc.mts`);
+      case "chrome://glide/content/utils/browser-ui.mjs":
+        return a_require(`${SRC_DIR}/glide/browser/base/content/utils/browser-ui.mts`);
       case "chrome://glide/content/please.mjs":
         return a_require(`${SRC_DIR}/glide/browser/base/content/please.mts`);
       case "chrome://glide/content/event-utils.mjs":

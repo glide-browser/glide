@@ -11,15 +11,15 @@ const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-c
 const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
+const CSS = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
 const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs",
 );
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { object_assign } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
-const { create_sandbox, FileNotFoundError, GlideProcessError } = ChromeUtils.importESModule(
-  "chrome://glide/content/sandbox.mjs",
-);
+const { create_sandbox, FileNotFoundError, FileModificationNotAllowedError, GlideProcessError } = ChromeUtils
+  .importESModule("chrome://glide/content/sandbox.mjs");
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
@@ -41,6 +41,79 @@ class GlideGlobals implements GlideG {
     this.#mapleader = Keys.normalize(value);
   }
 }
+
+/**
+ * Defines setter functions for every `glide.o` option that must mutate outer state, e.g. setting a CSS variable.
+ *
+ * This is used so that we can easily share this logic between both `glide.o`, and `glide.bo`, e.g.
+ * ```typescript
+ * glide.o.hint_size = "30px";
+ * glide.bo.hint_size = "30px";
+ * ```
+ * Both of the above lines should set the `--glide-hint-font-size` CSS variable.
+ *
+ * Note that this object is itself stateless.
+ */
+const options = {
+  hint_size(value, buf) {
+    GlideBrowser.set_css_property("--glide-hint-font-size", value, buf);
+  },
+
+  native_tabs(value, buf) {
+    const id = "$glide.o.native_tabs";
+    const glide = GlideBrowser.api;
+
+    if (buf) {
+      const current = glide.styles.get(id);
+
+      GlideBrowser.buffer_cleanups.push({
+        source: "glide.bo.native_tabs",
+        callback() {
+          if (current) {
+            glide.styles.add(current, { id, overwrite: true });
+          } else {
+            glide.styles.remove(id);
+          }
+        },
+      });
+    }
+
+    glide.styles.remove(id);
+
+    switch (value) {
+      case "hide":
+        glide.styles.add(CSS.hide_tabs_toolbar_v2, { id });
+        break;
+      case "autohide":
+        glide.styles.add(CSS.autohide_tabstoolbar_v2, { id });
+        break;
+      case "show":
+        break;
+      default:
+        throw assert_never(value);
+    }
+  },
+
+  newtab_url(value, buf) {
+    const { AboutNewTab } = ChromeUtils.importESModule("resource:///modules/AboutNewTab.sys.mjs");
+    const current = AboutNewTab.newTabURL;
+
+    if (buf) {
+      GlideBrowser.buffer_cleanups.push({
+        source: "glide.bo.newtab_url",
+        callback() {
+          AboutNewTab.newTabURL = current;
+        },
+      });
+    } else {
+      GlideBrowser.on_reload_config(() => {
+        AboutNewTab.newTabURL = current;
+      });
+    }
+
+    AboutNewTab.newTabURL = value;
+  },
+} as const satisfies { [K in keyof typeof glide["o"]]?: (value: typeof glide["o"][K], buf: boolean) => void };
 
 type GlideO = (typeof glide)["o"];
 class GlideOptions implements GlideO {
@@ -65,7 +138,7 @@ class GlideOptions implements GlideO {
   }
   set hint_size(value: string) {
     this.#hint_size = value;
-    GlideBrowser.set_css_property("--glide-hint-font-size", value);
+    options.hint_size(value, false);
   }
 
   #hint_label_generator: glide.Options["hint_label_generator"] | null = null;
@@ -75,6 +148,49 @@ class GlideOptions implements GlideO {
   set hint_label_generator(value: glide.Options["hint_label_generator"]) {
     this.#hint_label_generator = value;
   }
+
+  #native_tabs: (typeof glide)["o"]["native_tabs"] = "show";
+  get native_tabs() {
+    return this.#native_tabs;
+  }
+  set native_tabs(value: (typeof glide)["o"]["native_tabs"]) {
+    this.#native_tabs = value;
+    options.native_tabs(value, false);
+  }
+
+  #newtab_url = "about:newtab";
+  get newtab_url() {
+    return this.#newtab_url;
+  }
+  set newtab_url(value: string) {
+    this.#newtab_url = value;
+    options.newtab_url(value, false);
+  }
+}
+
+// above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have
+// the setters apply outer mutations properly, e.g. setting a CSS variable.
+const GLIDE_O_SETTERS = Object.entries(Object.getOwnPropertyDescriptors(Object.getPrototypeOf(new GlideOptions())))
+  .filter(([_, descriptor]) => typeof descriptor.set !== "undefined").map(([name]) => name as keyof typeof glide["o"]);
+
+export function make_buffer_options(): typeof glide["bo"] {
+  const bo = {} as typeof glide["bo"];
+
+  for (const name of GLIDE_O_SETTERS) {
+    let value = undefined as any;
+    Object.defineProperty(bo, name, {
+      get() {
+        return value;
+      },
+      set(v) {
+        value = v;
+        // @ts-expect-error TS doesn't like the index as our key type is broader, but it doesn't matter
+        options[name]?.(v, true);
+      },
+    });
+  }
+
+  return bo;
 }
 
 export function make_glide_api(
@@ -83,7 +199,7 @@ export function make_glide_api(
   return {
     g: shared_api?.g ?? new GlideGlobals(),
     o: shared_api?.o ?? new GlideOptions(),
-    bo: shared_api?.bo ?? {},
+    bo: shared_api?.bo ?? make_buffer_options(),
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
         const option = GlideBrowser.api.bo[name];
@@ -270,7 +386,10 @@ export function make_glide_api(
       fn(wrapped) {
         return IPC.content_fn(wrapped);
       },
-      async execute(func, opts) {
+      async execute(
+        func: (...args: any[]) => any,
+        opts: { tab_id: number | glide.TabWithID; args?: any[] | undefined },
+      ) {
         const results = await GlideBrowser.browser_proxy_api.scripting.executeScript({
           target: { tabId: typeof opts.tab_id === "number" ? opts.tab_id : opts.tab_id.id },
           func,
@@ -392,6 +511,112 @@ export function make_glide_api(
         return addons.map(firefox_addon_to_glide);
       },
     },
+
+    search_engines: ((): typeof glide["search_engines"] => {
+      return {
+        async add(props) {
+          await Services.search.promiseInitialized;
+
+          let suggest_url = props.suggest_url;
+          if (suggest_url && props.suggest_url_get_params) {
+            suggest_url = suggest_url + (suggest_url.includes("?") ? "&" : "?") + props.suggest_url_get_params;
+          }
+
+          const keywords = Array.isArray(props.keyword) ? props.keyword : props.keyword ? [props.keyword] : [];
+          const params = props.search_url_post_params ?? props.search_url_get_params;
+          const info = {
+            name: props.name.trim(),
+            url: props.search_url,
+            suggestUrl: suggest_url?.trim(),
+            alias: keywords[0],
+            charset: props.encoding,
+            method: props.search_url_post_params ? "POST" : "GET",
+            params: params ? new URLSearchParams(params) : undefined,
+          };
+          GlideBrowser._log.debug("[search_engines.add]: resolved props", info);
+
+          const engine = await (async (): Promise<nsISearchEngine> => {
+            const existing = Services.search.getEngineByName(props.name);
+            if (!existing) {
+              GlideBrowser._log.debug("[search_engines.add]: creating search engine with name", info.name);
+              return await Services.search.addUserEngine(info);
+            }
+
+            GlideBrowser._log.debug("[search_engines.add]: updating search engine with name", info.name);
+
+            const SearchUtils =
+              ChromeUtils.importESModule("moz-src:///toolkit/components/search/SearchUtils.sys.mjs").SearchUtils;
+
+            // reimplementation of `engine/browser/components/search/content/addEngine.js:EditEngineDialog:onAccept()`
+            // https://searchfox.org/firefox-main/rev/f9d8702e26624ab46a35bf6561a7c8143c6f246a/browser/components/search/content/addEngine.js#336
+            const engine = existing.wrappedJSObject as UserSearchEngine;
+
+            if (engine.name !== info.name) {
+              engine.rename(info.name);
+            }
+
+            if (typeof info.alias !== "undefined" && engine.alias !== info.alias) {
+              engine.alias = info.alias;
+            }
+
+            const new_postdata = info.params?.toString() || null;
+
+            const [prev_url, prev_postdata] = get_submission_template(engine, SearchUtils.URL_TYPE.SEARCH);
+            if (info.url != prev_url || prev_postdata != new_postdata) {
+              engine.changeUrl(SearchUtils.URL_TYPE.SEARCH, info.url, new_postdata);
+            }
+
+            const [prev_suggest_url] = get_submission_template(engine, SearchUtils.URL_TYPE.SUGGEST_JSON);
+            if (info.suggestUrl != prev_suggest_url) {
+              engine.changeUrl(SearchUtils.URL_TYPE.SUGGEST_JSON, info.suggestUrl!, null);
+            }
+
+            return existing;
+          })();
+          const engine_js = engine.wrappedJSObject as UserSearchEngine;
+
+          // At the time of writing, there is no public API[0] to add a user engine with multiple keywords.
+          //
+          // So this just overrides the internals[1] which seems to work...
+          //
+          // [0]: `engine/toolkit/components/search/UserSearchEngine.sys.mjs`
+          // [1]: `engine/toolkit/components/search/SearchEngine.sys.mjs`
+          if (keywords.length > 1) {
+            engine_js._definedAliases = keywords.slice(1);
+          }
+
+          if (props.favicon_url) {
+            await engine_js.changeIcon(props.favicon_url);
+          }
+
+          if (props.is_default) {
+            await Services.search.setDefault(engine, Ci.nsISearchService.CHANGE_REASON_CONFIG);
+          }
+        },
+      };
+
+      /**
+       * This is a port of the `getSubmissionTemplate()` function, updated to not replace the search params
+       * with `%s` as it would just immediately be replaced back by the caller.
+       *
+       * https://searchfox.org/firefox-main/rev/f9d8702e26624ab46a35bf6561a7c8143c6f246a/browser/components/search/content/addEngine.js#390
+       */
+      function get_submission_template(engine: UserSearchEngine, urlType: string): [string | null, string | null] {
+        const submission = engine.getSubmission("searchTerms", urlType);
+        if (!submission) {
+          return [null, null];
+        }
+        let postData = null;
+        if (submission.postData) {
+          const binaryStream = Cc["@mozilla.org/binaryinputstream;1"]!.createInstance(Ci.nsIBinaryInputStream);
+          binaryStream.setInputStream((submission.postData as any).data);
+
+          postData = binaryStream
+            .readBytes(binaryStream.available());
+        }
+        return [submission.uri.spec, postData];
+      }
+    })(),
     keys: {
       async send(input, opts) {
         const EventUtils = ChromeUtils.importESModule("chrome://glide/content/event-utils.mjs", { global: "current" });
@@ -460,13 +685,7 @@ export function make_glide_api(
         }
 
         const absolute = resolve_path(path);
-        return await IOUtils.readUTF8(absolute).catch((err) => {
-          if (err instanceof DOMException && err.name === "NotFoundError") {
-            throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
-          }
-
-          throw err;
-        });
+        return await IOUtils.readUTF8(absolute).catch((err) => handle_ioutils_error(err, absolute));
       },
       async write(path, contents): Promise<void> {
         const absolute = resolve_path(path);
@@ -479,13 +698,7 @@ export function make_glide_api(
       async stat(path) {
         const absolute = resolve_path(path);
 
-        const stat = await IOUtils.stat(absolute).catch((err) => {
-          if (err instanceof DOMException && err.name === "NotFoundError") {
-            throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
-          }
-
-          throw err;
-        });
+        const stat = await IOUtils.stat(absolute).catch((err) => handle_ioutils_error(err, absolute));
 
         return {
           type: stat.type === "directory" ? "directory" : stat.type === "regular" ? "file" : null,
@@ -496,6 +709,11 @@ export function make_glide_api(
           path: stat.path,
           size: stat.size,
         };
+      },
+      async mkdir(path, props) {
+        const absolute = resolve_path(path);
+        await IOUtils.makeDirectory(absolute, { createAncestors: props?.parents, ignoreExisting: props?.exists_ok })
+          .catch((err) => handle_ioutils_error(err, absolute));
       },
     },
     modes: {
@@ -517,10 +735,14 @@ export function make_glide_api(
       return {
         add(styles, opts) {
           if (opts?.id && elements.has(opts.id)) {
-            throw Cu.cloneInto(
-              new Error(`A style element has already been registered with ID '${opts.id}'`),
-              GlideBrowser.sandbox_window,
-            );
+            if (!opts.overwrite) {
+              throw Cu.cloneInto(
+                new Error(`A style element has already been registered with ID '${opts.id}'`),
+                GlideBrowser.sandbox_window,
+              );
+            }
+
+            this.remove(opts.id);
           }
 
           const element = DOM.create_element("style", { textContent: styles });
@@ -544,6 +766,9 @@ export function make_glide_api(
         },
         has(id) {
           return elements.has(id);
+        },
+        get(id) {
+          return elements.get(id)?.textContent ?? undefined;
         },
       };
     })(),
@@ -639,11 +864,13 @@ export function make_glide_api(
         const success_codes = opts?.success_codes ?? [0];
         const check_exit_code = opts?.check_exit_code ?? true;
 
+        const workdir = opts?.cwd ? expand_tilde(opts.cwd) : undefined;
+
         const subprocess = await Subprocess.call({
           command: await Subprocess.pathSearch(command),
           arguments: args ?? [],
           stderr,
-          workdir: opts?.cwd,
+          workdir,
           environment: opts?.env,
           environmentAppend: opts?.extend_env ?? true,
         }) as BaseProcess;
@@ -654,6 +881,15 @@ export function make_glide_api(
 
           stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
           stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
+          stdin: {
+            async write(data) {
+              await assert_present(subprocess.stdin, "stdin pipe not available").write(data);
+            },
+
+            async close(opts) {
+              await assert_present(subprocess.stdin, "stdin pipe not available").close(opts?.force);
+            },
+          },
 
           async wait() {
             return await exit_promise;
@@ -787,6 +1023,17 @@ export function make_glide_api(
     },
   };
 
+  function expand_tilde(path: string): string {
+    const home_dir = Services.dirsvc.get("Home", Ci.nsIFile).path;
+    if (path === "~") {
+      return home_dir;
+    }
+    if (path.startsWith("~/")) {
+      return PathUtils.join(home_dir, path.slice(2));
+    }
+    return path;
+  }
+
   function resolve_path(path: string): string {
     if (PathUtils.isAbsolute(path)) {
       return path;
@@ -798,6 +1045,21 @@ export function make_glide_api(
     }
 
     return PathUtils.joinRelative(PathUtils.parent(config_path) ?? "/", path);
+  }
+
+  function handle_ioutils_error(err: unknown, absolute: string): never {
+    if (err instanceof DOMException) {
+      switch (err.name) {
+        case "NoModificationAllowedError": {
+          throw new FileModificationNotAllowedError(err.message, { path: absolute });
+        }
+        case "NotFoundError": {
+          throw new FileNotFoundError(`Could not find a file at path ${absolute}`, { path: absolute });
+        }
+      }
+    }
+
+    throw err;
   }
 }
 
@@ -857,7 +1119,7 @@ function get_firefox_splitview(id: string): any {
   return gBrowser.tabContainer.querySelector(`tab-split-view-wrapper[splitViewId="${id}"]`);
 }
 
-function tab_id_to_firefox(id: TabID): BrowserTab {
+export function tab_id_to_firefox(id: TabID): BrowserTab {
   return assert_present(
     GlideBrowser.extension?.tabManager?.get?.(id),
     "could not resolve tab, did you call this too early in startup?",
@@ -886,8 +1148,29 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
     description: addon.description,
     source_uri: addon.sourceURI ? new GlideBrowser.sandbox_window.URL(addon.sourceURI.spec) : null,
 
+    get type() {
+      switch (addon.type) {
+        case "extension":
+        case "plugin":
+        case "theme":
+        case "locale":
+        case "dictionary":
+        case "sitepermission":
+        case "mlmodel": {
+          return addon.type;
+        }
+        default: {
+          throw new Error(`Unknown addon type ${addon.type}`);
+        }
+      }
+    },
+
     async uninstall() {
       await addon.uninstall();
+    },
+
+    async reload() {
+      await addon.reload();
     },
   };
 }

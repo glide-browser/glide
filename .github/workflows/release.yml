@@ -3,10 +3,14 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "dry run"
+      create_release:
+        description: "create release"
         type: boolean
-        default: true
+        default: false
+      push_update_manifests:
+        description: "push update manifests"
+        type: boolean
+        default: false
       sign:
         description: "sign"
         type: boolean
@@ -63,7 +67,7 @@ jobs:
           echo "build_id=${build_date}"
 
       - name: Create draft release
-        if: ${{ !inputs.dry_run }}
+        if: ${{ inputs.create_release }}
         run: |
           if gh release view $VERSION > /dev/null 2>&1; then
             gh release edit $VERSION --draft --title "$VERSION" --target "$RELEASE_SHA"
@@ -162,7 +166,7 @@ jobs:
           path: ./glide.source.tar.zst
 
   release:
-    if: ${{ !inputs.dry_run }}
+    if: ${{ inputs.create_release && !failure() && !cancelled() }}
 
     name: Release
     runs-on: ubuntu-latest
@@ -185,31 +189,37 @@ jobs:
           persist-credentials: false
 
       - name: Download Linux build (aarch64)
+        if: ${{ inputs.linux }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: glide.linux-aarch64.tar.xz
 
       - name: Download Linux build (x86_64)
+        if: ${{ inputs.linux }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: glide.linux-x86_64.tar.xz
 
       - name: Download signed macOS DMG (aarch64)
+        if: ${{ inputs.macos }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: glide.macos-aarch64.signed.dmg
 
       - name: Download signed macOS DMG (x86_64)
+        if: ${{ inputs.macos }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: glide.macos-x86_64.signed.dmg
 
       - name: Download macOS MAR (aarch64)
+        if: ${{ inputs.macos }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: macos-aarch64.mar
 
       - name: Download macOS MAR (x86_64)
+        if: ${{ inputs.macos }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: macos-x86_64.mar
@@ -221,21 +231,36 @@ jobs:
 
       - name: Upload artifacts to the release
         run: |
-          gh release upload $VERSION ./glide.linux-aarch64.tar.xz --clobber
-          gh release upload $VERSION ./glide.linux-x86_64.tar.xz --clobber
-          gh release upload $VERSION ./glide.macos-aarch64.dmg --clobber
-          gh release upload $VERSION ./glide.macos-x86_64.dmg --clobber
-          gh release upload $VERSION ./glide.source.tar.zst --clobber
+          upload() {
+            enabled="$1"
+            filename="$2"
+
+            if [[ $enabled == "true" ]]; then
+              echo "uploading $filename"
+              gh release upload $VERSION $filename --clobber
+            else
+              echo "not uploading $filename as it was skipped"
+            fi
+          }
+
+          upload $LINUX ./glide.linux-aarch64.tar.xz
+          upload $LINUX ./glide.linux-x86_64.tar.xz
+          upload $MACOS ./glide.macos-aarch64.dmg
+          upload $MACOS ./glide.macos-x86_64.dmg
+          upload true ./glide.source.tar.zst
 
           # MAR files
-          gh release upload $VERSION ./macos-aarch64.mar --clobber
-          gh release upload $VERSION ./macos-x86_64.mar --clobber
+          upload $MACOS ./macos-aarch64.mar
+          upload $MACOS ./macos-x86_64.mar
         env:
+          MACOS: ${{ inputs.macos }}
+          LINUX: ${{ inputs.linux }}
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
           VERSION: ${{ needs.metadata.outputs.version }}
 
   push-update-manifests:
-    if: ${{ !inputs.dry_run }}
+    # macos is the only platform with auto updates for now
+    if: ${{ inputs.push_update_manifests && inputs.macos }}
 
     name: Push update manifests
     runs-on: ubuntu-latest

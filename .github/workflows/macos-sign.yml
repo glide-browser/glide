@@ -132,6 +132,9 @@ jobs:
           echo 'export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"' >> ~/.zsh
           source ~/.bash_profile
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Bootstrap repo
         run: |
           pnpm bootstrap

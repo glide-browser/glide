@@ -10,7 +10,7 @@ declare var document: Document;
 declare var content: TestContent;
 
 add_task(async function test_create_element_attributes() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       document.body!.appendChild(DOM.create_element("div", { attributes: { foo: "bar" } }));
       glide.g.value = document.body!.lastElementChild!.getAttribute("foo");
@@ -22,7 +22,7 @@ add_task(async function test_create_element_attributes() {
 });
 
 add_task(async function test_create_element_children_shorthand() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       document.body!.appendChild(DOM.create_element("div", ["foo", DOM.create_element("span", ["text"])]));
 
@@ -41,7 +41,7 @@ add_task(async function test_create_element_children_shorthand() {
 });
 
 add_task(async function test_create_element_children_shorthand_with_props() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       document.body!.appendChild(
         DOM.create_element("div", [DOM.create_element("span", ["text"])], { attributes: { foo: "modified" } }),
@@ -62,7 +62,7 @@ add_task(async function test_create_element_children_shorthand_with_props() {
 });
 
 add_task(async function test_create_element_children_shorthand_mutually_exclusive() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       try {
         DOM.create_element("div", ["child"], { children: ["bar"] });
@@ -77,7 +77,7 @@ add_task(async function test_create_element_children_shorthand_mutually_exclusiv
 });
 
 add_task(async function test_create_element_props_cannot_pass_both() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set("normal", "~", async () => {
       try {
         DOM.create_element("div", { id: "other" }, { id: "bar" });
@@ -92,7 +92,7 @@ add_task(async function test_create_element_props_cannot_pass_both() {
 });
 
 add_task(async function test_available_in_content() {
-  await GlideTestUtils.reload_config(function _() {
+  await reload_config(function _() {
     glide.keymaps.set(
       "normal",
       "~",

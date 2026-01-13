@@ -1,4 +1,5 @@
 {
+  "newLineKind": "lf",
   "typescript": {
     "arguments.preferSingleLine": true,
   },

@@ -179,6 +179,20 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: true,
   },
+  {
+    name: "tab_pin",
+    description: "Pin the current tab, or the tab with the given ID",
+    content: false,
+    args_schema: { tab_id: { type: "integer", required: false, position: 0 } } as const satisfies ArgumentsSchema,
+    repeatable: false,
+  },
+  {
+    name: "tab_unpin",
+    description: "Unpin the current tab, or the tab with the given ID",
+    content: false,
+    args_schema: { tab_id: { type: "integer", required: false, position: 0 } } as const satisfies ArgumentsSchema,
+    repeatable: false,
+  },
 
   {
     name: "commandline_show",

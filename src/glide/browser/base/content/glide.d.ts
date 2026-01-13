@@ -106,6 +106,9 @@ declare global {
        * const proc = await glide.process.spawn('kitty', ['nvim', 'glide.ts'], { cwd: '~/.dotfiles/glide' });
        * console.log('opened kitty with pid', proc.pid);
        * ```
+       *
+       * **note**: on macOS, the `PATH` environment variable is likely not set to what you'd expect, as applications do not inherit your shell environment.
+       *           you can update it with `glide.env.set("PATH", "/usr/bin:/usr/.local/bin")`.
        */
       spawn(command: string, args?: string[] | null | undefined, opts?: glide.SpawnOptions): Promise<glide.Process>;
 
@@ -260,7 +263,7 @@ declare global {
        * If you want to remove the styles later on, you can pass an ID with `ts:glide.styles.add(..., { id: 'my-id'}`, and then
        * remove it with `ts:glide.styles.remove('my-id')`.
        */
-      add(styles: string, opts?: { id: string }): void;
+      add(styles: string, opts?: { id: string; overwrite?: boolean }): void;
 
       /**
        * Remove custom CSS that has previously been added.
@@ -283,6 +286,11 @@ declare global {
        * Returns whether or not custom CSS has been registered with the given `id`.
        */
       has(id: string): boolean;
+
+      /**
+       * Returns the CSS string for the given `id`, or `undefined` if no styles have been registered with that ID.
+       */
+      get(id: string): string | undefined;
     };
 
     prefs: {
@@ -430,6 +438,12 @@ declare global {
       /**
        * Execute a function in the content process for the given tab.
        *
+       * ```ts
+       * await glide.content.execute(() => {
+       *  document.body!.appendChild(DOM.create_element("p", ["this will show up at the bottom of the page!"]));
+       * }, { tab_id: await glide.tabs.active() });
+       * ```
+       *
        * The given function will be stringified before being sent across processes, which
        * means it **cannot** capture any outside variables.
        *
@@ -444,33 +458,40 @@ declare global {
        *
        * Note: all `args` must be JSON serialisable.
        */
-      execute<F extends (...args: any[]) => any>(
-        func: F,
-        opts:
-          & {
-            /**
-             * The ID of the tab into which to inject.
-             *
-             * Or the tab object as returned by {@link glide.tabs.active}.
-             */
-            tab_id: number | glide.TabWithID;
-          }
-          & (Parameters<F> extends [] ? {
-              /**
-               * Note: the given function doesn't take any arguments but if
-               *       it did, you could pass them here.
-               */
-              args?: undefined;
-            }
-            : {
-              /**
-               * Arguments to pass to the given function.
-               *
-               * **Must** be JSON serialisable
-               */
-              args: Parameters<F>;
-            }),
-      ): Promise<ReturnType<F>>;
+      // NOTE: This has to be a separate overload from below because using
+      // `Args extends` to allow `undefined` for `args` breaks tuple inference.
+      execute<const Return extends any>(func: () => Return, opts: {
+        /**
+         * The ID of the tab into which to inject.
+         *
+         * Or the tab object as returned by {@link glide.tabs.active}.
+         */
+        tab_id: number | glide.TabWithID;
+        /**
+         * Note: the given function doesn't take any arguments but if
+         *       it did, you could pass them here.
+         */
+        args?: undefined;
+      }): Promise<Return>;
+      execute<
+        // NOTE: `any[] | []` encourages TypeScript to infer a proper tuple
+        // type for the parameters.
+        const Args extends readonly any[] | [],
+        const Return extends any,
+      >(func: (...args: Args) => Return, opts: {
+        /**
+         * The ID of the tab into which to inject.
+         *
+         * Or the tab object as returned by {@link glide.tabs.active}.
+         */
+        tab_id: number | glide.TabWithID;
+        /**
+         * Arguments to pass to the given function.
+         *
+         * **Must** be JSON serialisable
+         */
+        args: Args;
+      }): Promise<Return>;
     };
 
     keymaps: {
@@ -542,9 +563,13 @@ declare global {
         /**
          * If only one hint is generated, automatically activate it.
          *
+         * If `true`, the hint will be followed if there is exactly *one* matched hint.
+         *
+         * If `"always"`, the first hint that matches will be followed.
+         *
          * @default false
          */
-        auto_activate?: boolean;
+        auto_activate?: boolean | "always";
 
         /**
          * Callback invoked when the selected hint is chosen.
@@ -673,6 +698,34 @@ declare global {
        * ```
        */
       list(types?: glide.AddonType | glide.AddonType[]): Promise<glide.Addon[]>;
+    };
+
+    search_engines: {
+      /**
+       * Adds or updates a custom search engine.
+       *
+       * The format matches `chrome_settings_overrides.search_provider`[0] from WebExtension manifests.
+       *
+       * The `search_url` must contain `{searchTerms}` as a placeholder for the search query.
+       *
+       * ```typescript
+       * glide.search_engines.add({
+       *   name: "Discogs",
+       *   keyword: "disc",
+       *   search_url: "https://www.discogs.com/search/?q={searchTerms}",
+       *   favicon_url: "https://www.discogs.com/favicon.ico",
+       * });
+       * ```
+       *
+       * **note**: search engines you add are not removed when this call is removed, you will need to manually remove them
+       *            using `about:preferences#search` for now.
+       *
+       * **note**: not all properties in the `chrome_settings_overrides.search_provider` manifest are supported, as they are not all
+       *           supported by Firefox, e.g. `instant_url`, and `image_url`.
+       *
+       * [0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
+       */
+      add(props: Browser.Manifest.WebExtensionManifestChromeSettingsOverridesSearchProviderType): Promise<void>;
     };
 
     keys: {
@@ -868,6 +921,31 @@ declare global {
        * ```
        */
       stat(path: string): Promise<glide.FileInfo>;
+
+      /**
+       * Create a new directory at the given `path`.
+       *
+       * Parent directories are created by default, if desired you can turn this off with
+       * `ts:glide.fs.mkdir('...', { parents: false })`.
+       *
+       * By default this will *not* error if the `path` already exists, if you would like it
+       * to do so, pass `ts:glide.fs.mkdir('...', { exists_ok: false })`
+       */
+      mkdir(path: string, props?: {
+        /**
+         * If `false`, do not create missing parent directories.
+         *
+         * @default true
+         */
+        parents?: boolean;
+
+        /**
+         * Do not error if the directory already exists.
+         *
+         * @default true
+         */
+        exists_ok?: boolean;
+      }): Promise<void>;
     };
 
     messengers: {
@@ -1068,7 +1146,7 @@ declare global {
      *
      * For example:
      * ```typescript
-     * glide.o.hint_label_generator = ({ hints }) => Array.from({ length: hints.length }).map((_, i) => String(i));
+     * glide.o.hint_label_generator = ({ hints }) => Array.from({ length: hints.length }, (_, i) => String(i));
      * ```
      *
      * Or using data from the hinted elements through `content.execute()`:
@@ -1108,6 +1186,44 @@ declare global {
      * @default "keys"
      */
     scroll_implementation: "keys" | "legacy";
+
+    /**
+     * Configure the behavior of the native tab bar.
+     *
+     *  - `show`
+     *  - `hide`
+     *  - `autohide` (animated) shows the bar when the cursor is hovering over its default position
+     *
+     * This works for both horizontal and vertical tabs.
+     *
+     * For **vertical** tabs, the default collapsed width can be adjusted like this:
+     * ```typescript
+     * glide.o.native_tabs = "autohide";
+     * // fully collapse vertical tabs
+     * glide.styles.add(css`
+     *   :root {
+     *     --uc-tab-collapsed-width: 2px;
+     *   }
+     * `);
+     * ```
+     *
+     * See [firefox-csshacks](https://mrotherguy.github.io/firefox-csshacks/?file=autohide_tabstoolbar_v2.css) for more information.
+     *
+     * **warning**: `autohide` does not work on MacOS at the moment.
+     *
+     * @default "show"
+     */
+    native_tabs: "show" | "hide" | "autohide";
+
+    /**
+     * The URL to load when a new tab is created.
+     *
+     * This may be a local file (e.g. `"file:///path/to/page.html"`) or
+     * any other URL, e.g. `"https://example.com"`.
+     *
+     * @default "about:newtab"
+     */
+    newtab_url: string;
   }
 
   /**
@@ -1149,6 +1265,12 @@ declare global {
     constructor(message: string, props: { path: string });
   }
 
+  class FileModificationNotAllowedError extends Error {
+    path: string;
+
+    constructor(message: string, props: { path: string });
+  }
+
   class DataCloneError extends Error {}
 
   class GlideProcessError extends Error {
@@ -1185,6 +1307,20 @@ declare global {
     //       the `Options` type as well would be redundant.
     /// @docs-skip
     export type Options = GlideOptions;
+
+    /// @docs-skip
+    export type TypedArray =
+      | Int8Array
+      | Uint8Array
+      | Uint8ClampedArray
+      | Int16Array
+      | Uint16Array
+      | Int32Array
+      | Uint32Array
+      | Float32Array
+      | Float64Array
+      | BigInt64Array
+      | BigUint64Array;
 
     export type SpawnOptions = {
       cwd?: string;
@@ -1236,6 +1372,11 @@ declare global {
       stderr: ReadableStream<string> | null;
 
       /**
+       * Write to the process's stdin pipe.
+       */
+      stdin: glide.ProcessStdinPipe;
+
+      /**
        * Wait for the process to exit.
        */
       wait(): Promise<glide.CompletedProcess>;
@@ -1258,6 +1399,27 @@ declare global {
      */
     export type CompletedProcess = glide.Process & { exit_code: number };
 
+    export type ProcessStdinPipe = {
+      /**
+       * Write data to the process's stdin.
+       *
+       * Accepts either a string (which will be UTF-8 encoded) or
+       * a binary array (e.g. ArrayBuffer, Uint8Array etc).
+       *
+       * **warning**: you *must* call `.close()` once you are done writing,
+       *              otherwise the process will never exit.
+       */
+      write(data: string | ArrayBuffer | glide.TypedArray): Promise<void>;
+
+      /**
+       * Close the stdin pipe, signaling EOF to the process.
+       *
+       * By default, waits for any pending writes to complete before closing.
+       * Pass `{ force: true }` to close immediately without waiting.
+       */
+      close(opts?: { force?: boolean }): Promise<void>;
+    };
+
     export type RGBString = `#${string}` | `rgb(${string})`;
 
     /** A web extension tab that is guaranteed to have the `ts:id` property present. */
@@ -1279,8 +1441,16 @@ declare global {
       readonly version: string;
       readonly active: boolean;
       readonly source_uri: URL | null;
+      readonly type: "extension" | "plugin" | "theme" | "locale" | "dictionary" | "sitepermission" | "mlmodel";
 
       uninstall(): Promise<void>;
+
+      /**
+       * Reload the addon.
+       *
+       * This is similar to uninstalling / reinstalling, but less destructive.
+       */
+      reload(): Promise<void>;
     };
 
     export type AddonInstall = glide.Addon & { cached: boolean };
