@@ -189,11 +189,12 @@ export function select_motion(
       }
 
       const starting_cls = text_obj.cls(current_char(editor));
-      if (is_eof(editor)) {
-        break;
-      }
+
       forward_word(editor, false, "visual");
       if (selection_has_cls_white_space(editor) || text_obj.cls(current_char(editor)) !== starting_cls) {
+        editor.selectionController.characterMove(false, true);
+      }
+      if (!is_bof(editor, "left") && is_eol(editor)) {
         editor.selectionController.characterMove(false, true);
       }
       break;

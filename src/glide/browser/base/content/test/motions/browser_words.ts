@@ -128,7 +128,7 @@ add_task(async function test_normal_dw() {
 
     await set_text("hello\nworld", "dw treats newline as whitespace and deletes it with the word");
     await set_selection(0);
-    await test_edit("dw", "world", 0, "w");
+    await test_edit("dw", "\nworld", -1, "");
 
     await set_text("hello?.world", "dw on punctuation run deletes punctuation up to next word");
     await set_selection(5);
@@ -137,6 +137,10 @@ add_task(async function test_normal_dw() {
     await set_text("h h h", "dw deletes a single-letter word + following space");
     await set_selection(2);
     await test_edit("dw", "h h", 2, "h");
+
+    await set_text("\nworld", "dw at start deletes leading newline (treats newline as whitespace)");
+    await set_selection(0);
+    await test_edit("dw", "world", 0, "w");
   });
 });
 
