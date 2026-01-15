@@ -16,7 +16,7 @@ glide.jar:
   res/glide-docs/tutorial                 (./dist/tutorial/**/*)
 
   # scripts
-  res/glide-docs/docs.js                  (./docs.js)
+  res/glide-docs/docs.js                  (./dist/docs.js)
 
   # assets
   res/glide-docs/                         (./*.png)
