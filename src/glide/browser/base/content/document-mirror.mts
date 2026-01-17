@@ -338,7 +338,7 @@ type ListenerObject = unknown & {};
  * [1]: https://searchfox.org/firefox-main/source/dom/events/nsIEventListenerService.idl
  */
 export function make_listener_change_observer(): nsIListenerChangeListener {
-  const all_state = new Map<
+  let all_state = new WeakMap<
     // key is the *mirror* target
     EventTarget,
     Map<EventType, {
@@ -359,7 +359,7 @@ export function make_listener_change_observer(): nsIListenerChangeListener {
 
         // if the same target has multiple change notifications then we only consider
         // the first one, as we don't actually look at any of the information on the change
-        // event itself, and instead inspect the before/after state directly.
+        // event itself, and instead inspect the before/after state on the element directly.
         if (seen.has(mirror_target)) {
           continue;
         }
@@ -411,7 +411,7 @@ export function make_listener_change_observer(): nsIListenerChangeListener {
           // to avoid sending duplicate events
           GlideBrowser.on_reload_config(() => {
             GlideBrowser._log.debug(`[document-mirror/listener]: clearing state`);
-            all_state.clear();
+            all_state = new WeakMap();
             mirror_target.removeEventListener(info.type, info.listenerObject);
             source_target.removeEventListener(info.type, listener);
           });
