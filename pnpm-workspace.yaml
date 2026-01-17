@@ -1,4 +1,6 @@
 minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeExclude:
+  - undici
 onlyBuiltDependencies:
   - core-js-pure
   - dprint
