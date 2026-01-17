@@ -879,3 +879,31 @@ add_task(async function test_addEventListener__preventDefault() {
   is(glide.g.events![1]!.key, "b");
   is(glide.g.events![1]!.defaultPrevented, false);
 });
+
+add_task(async function test_onclick_property() {
+  await GlideTestUtils.reload_config(() => {
+    const store = window as any as { $glide_counter: number };
+    store.$glide_counter = 0;
+
+    glide.g.value = 0;
+    (document.getElementById("glide-toolbar-mode-button")! as HTMLElement).onclick = () => {
+      glide.g.value++;
+      store.$glide_counter++;
+    };
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+
+  const frame_time = await waiter(() => glide.g.value).is(1, "onclick listener should be invoked");
+  is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should be invoked after config reload");
+
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+  });
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+  await sleep_frames(frame_time * 2);
+
+  is(glide.g.value, 0, "onclick listener should not be invoked after config reload");
+  is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should not be invoked after config reload");
+});
