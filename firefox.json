@@ -1,6 +1,6 @@
 {
   "name": "Glide Browser",
-  "binaryName": "glide",
+  "binary_name": "glide",
   "version": {
     "product": "firefox-dev",
     "tag": "FIREFOX_148_0b3_RELEASE",
@@ -9,7 +9,7 @@
   "brands": {
     "glide": {
       "release": {
-        "displayVersion": "0.1.57a",
+        "display_version": "0.1.57a",
         "github": {
           "repo": "glide-browser/glide"
         }

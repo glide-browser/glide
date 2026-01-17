@@ -9,7 +9,7 @@ $.set_root_dir();
 const BUNDLED_FILE = "src/glide/browser/base/content/dist/bundled.compiled.d.ts";
 const HEADER = dedent`
 /* ======================================================
-                Glide version: ${config.brands.glide.release.displayVersion}
+                Glide version: ${config.brands.glide.release.display_version}
    ====================================================== */
 `;
 

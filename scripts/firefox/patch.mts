@@ -187,7 +187,7 @@ export async function patch_mozconfig() {
     ].join("\n"),
   );
 
-  const version = config.brands.glide.release.displayVersion;
+  const version = config.brands.glide.release.display_version;
   await fs.writeFile(Path.join(ENGINE_DIR, "browser/config/version.txt"), version);
   await fs.writeFile(Path.join(ENGINE_DIR, "browser/config/version_display.txt"), version);
 }

@@ -16,7 +16,7 @@ import {
 } from "./util.mts";
 
 interface ReleaseInfo {
-  displayVersion: string;
+  display_version: string;
   github: {
     repo: string;
   };
@@ -43,7 +43,7 @@ const AUS_PLATFORMS_MAP = {
 
 async function main() {
   const channel = "glide";
-  const version = config.brands[channel].release.displayVersion;
+  const version = config.brands[channel].release.display_version;
 
   const obj_dir = await resolve_obj_dir();
   console.log("Resolved obj dir to", obj_dir);
@@ -105,8 +105,8 @@ async function create_mar_file(
 
   const mar_binary = Path.join(obj_dir, "dist/host/bin", "mar");
   const binary = get_platform() == "macos"
-    ? Path.join(obj_dir, "dist", config.binaryName, "Glide.app")
-    : Path.join(obj_dir, "dist", config.binaryName);
+    ? Path.join(obj_dir, "dist", config.binary_name, "Glide.app")
+    : Path.join(obj_dir, "dist", config.binary_name);
 
   const mar_path = Path.resolve(DIST_DIR, "output.mar");
   console.debug(`Writing MAR to ${mar_path} from ${binary}`);
@@ -127,7 +127,7 @@ async function generate_browser_update_files(
   console.info("Creating browser AUS update files");
 
   const release_info = config.brands[channel].release;
-  const version = release_info.displayVersion;
+  const version = release_info.display_version;
   const platform_config = await get_platform_config({ obj_dir });
 
   const update_object = {
@@ -173,7 +173,7 @@ async function write_update_file_to_disk(
 }
 
 async function get_platform_config({ obj_dir }: { obj_dir: string }) {
-  let platform_ini = Path.join(obj_dir, "dist", config.binaryName, "platform.ini");
+  let platform_ini = Path.join(obj_dir, "dist", config.binary_name, "platform.ini");
   if (await does_not_exist(platform_ini)) {
     platform_ini = Path.join(obj_dir, "dist", "bin", "platform.ini");
   }
@@ -219,7 +219,7 @@ function get_release_mar_name(): string {
 function get_release_mar_url(releaseInfo: ReleaseInfo) {
   const mar_name = get_release_mar_name();
   const mar_url =
-    `https://github.com/${releaseInfo.github.repo}/releases/download/${releaseInfo.displayVersion}/${mar_name}`;
+    `https://github.com/${releaseInfo.github.repo}/releases/download/${releaseInfo.display_version}/${mar_name}`;
   console.info(`Using '${mar_url}' as the MAR url`);
   return mar_url;
 }
