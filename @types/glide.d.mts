@@ -21,7 +21,7 @@ declare interface GlideCommandLineInterface {
   show(opts?: GlideCommandLineShowOptions): void;
   toggle(): void;
 
-  accept_focused(): Promise<void>;
+  accept_focused(): void;
   delete_focused(): Promise<void>;
 
   focus_next(): void;

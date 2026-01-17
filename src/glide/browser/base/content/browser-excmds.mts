@@ -384,7 +384,7 @@ class GlideExcmdsClass {
 
       case "commandline_accept": {
         const commandline = GlideBrowser.expect_commandline();
-        await commandline.accept_focused();
+        commandline.accept_focused();
         break;
       }
 

@@ -7,6 +7,12 @@
 
 "use strict";
 
+declare global {
+  interface GlideGlobals {
+    resolve_promise?: () => void;
+  }
+}
+
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/commandline/basic.html";
 const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
@@ -645,5 +651,37 @@ add_task(async function test_non_command_not_suggested() {
 
     is(GlideTestUtils.commandline.focused_row()?.children[0]?.textContent, "back");
     is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
+  });
+});
+
+add_task(async function test_commandline_closes_immediately() {
+  await reload_config(function _() {
+    glide.excmds.create({ name: "test_command" }, async () => {
+      const promise = new Promise<void>((r) => {
+        glide.g.resolve_promise = r;
+      });
+      await promise;
+      glide.g.value = "done";
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await glide.keys.send(":test_");
+
+    is(GlideTestUtils.commandline.get_element()?.hidden, false, "commandline should be open");
+
+    await glide.keys.send("command<CR>");
+
+    const resolve = await until(() => glide.g.resolve_promise, "excmd should be partially executed");
+
+    is(
+      GlideTestUtils.commandline.get_element()?.hidden,
+      true,
+      "commandline should be closed even while the excmd is still executing",
+    );
+
+    resolve();
+
+    await waiter(() => glide.g.value).is("done", "excmd should complete succesffully");
   });
 });

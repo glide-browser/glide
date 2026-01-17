@@ -123,8 +123,8 @@
       source.container.children[1]!.replaceChildren(...options.map((option) => option.element));
     }
 
-    async accept_focused(): Promise<void> {
-      await this.#last_focused_option?.accept({ input: this.#get_input()?.value ?? "" });
+    accept_focused(): void {
+      void this.#last_focused_option?.accept({ input: this.#get_input()?.value ?? "" });
       this.close();
     }
 
