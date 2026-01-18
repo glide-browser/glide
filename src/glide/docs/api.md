@@ -121,13 +121,13 @@ text-decoration: none;
 [`glide.keys.next_passthrough()`](#glide.keys.next_passthrough)\
 [`glide.keys.next_str()`](#glide.keys.next_str)\
 [`glide.keys.parse()`](#glide.keys.parse)\
+[`glide.include()`](#glide.include)\
 [`glide.unstable`](#glide.unstable)\
 [`glide.unstable.split_views`](#glide.unstable.split_views)\
 [`glide.unstable.split_views.create()`](#glide.unstable.split_views.create)\
 [`glide.unstable.split_views.get()`](#glide.unstable.split_views.get)\
 [`glide.unstable.split_views.separate()`](#glide.unstable.split_views.separate)\
 [`glide.unstable.split_views.has_split_view()`](#glide.unstable.split_views.has_split_view)\
-[`glide.unstable.include()`](#glide.unstable.include)\
 [`glide.path`](#glide.path)\
 [`glide.path.cwd`](#glide.path.cwd)\
 [`glide.path.home_dir`](#glide.path.home_dir)\
@@ -943,6 +943,15 @@ in in the input.
 
 `ts:@example "<M-a>" -> { key: "a", meta: true }`
 
+{% api-heading id="glide.include" %}
+glide.include(path): Promise<void>
+{% /api-heading %}
+
+Include another file as part of your config. The given file is evluated as if it
+was just another Glide config file.
+
+`ts:@example glide.include("shared.glide.ts")`
+
 ## • `glide.unstable` {% id="glide.unstable" %}
 
 ### `glide.unstable.split_views` {% id="glide.unstable.split_views" %}
@@ -980,18 +989,6 @@ glide.unstable.split_views.has_split_view(tab): boolean
 {% /api-heading %}
 
 Whether or not the given tab is in a split view.
-
-{% api-heading id="glide.unstable.include" %}
-glide.unstable.include(path): Promise<void>
-{% /api-heading %}
-
-Include another file as part of your config. The given file is evluated as if it
-was just another Glide config file.
-
-**note**: this function cannot be called from inside a file that has been included
-itself, i.e. nested {% link href="#glide.unstable.include" class="go-to-def" %} `ts:glide.unstable.include`{% /link %} calls are not supported.
-
-`ts:@example glide.unstable.include("shared.glide.ts")`
 
 ## • `glide.path` {% id="glide.path" %}
 

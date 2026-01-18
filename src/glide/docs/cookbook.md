@@ -69,7 +69,7 @@ glide.autocmds.create("UrlEnter", {
 
 ```typescript
 // glide.ts
-glide.unstable.include("opts.glide.ts");
+glide.include("opts.glide.ts");
 
 // opts.glide.ts
 glide.g.mapleader = "~";

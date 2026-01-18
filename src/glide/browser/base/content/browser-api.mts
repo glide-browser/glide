@@ -948,6 +948,11 @@ export function make_glide_api(
         return await process.wait();
       },
     },
+
+    async include(path) {
+      await load_config_at_path({ absolute: resolve_path(path), relative: path });
+    },
+
     unstable: {
       split_views: {
         create(tabs, opts) {
