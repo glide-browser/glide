@@ -1,5 +1,5 @@
 diff --git a/testing/mochitest/ignorePrefs.json b/testing/mochitest/ignorePrefs.json
-index 47ab1ddf8d14091366c78984c4790e79d994da10..cb8f37297136c14fedcb87e70281869b61963886 100644
+index 47ab1ddf8d14091366c78984c4790e79d994da10..162208291b491c1867c1c082aa79d87928c13e2b 100644
 --- a/testing/mochitest/ignorePrefs.json
 +++ b/testing/mochitest/ignorePrefs.json
 @@ -35,6 +35,7 @@
@@ -10,10 +10,11 @@ index 47ab1ddf8d14091366c78984c4790e79d994da10..cb8f37297136c14fedcb87e70281869b
    "extensions.ui.dictionary.hidden",
    "extensions.ui.extension.hidden",
    "extensions.ui.lastCategory",
-@@ -42,6 +43,8 @@
+@@ -42,6 +43,9 @@
    "extensions.ui.mlmodel.hidden",
    "extensions.ui.sitepermission.hidden",
    "extensions.webextensions.ExtensionStorageIDB.migrated.*",
++  "extensions.webextensions.uuids",
 +  "glide.caret.style",
 +  "glide.notifications.scroll_instant_to_smooth",
    "mail.*",
