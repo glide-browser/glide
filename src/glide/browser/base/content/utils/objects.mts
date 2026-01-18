@@ -47,8 +47,8 @@ export function object_assign<T, U, V, W, X>(
 ): T & U & V & W & X;
 export function object_assign(target: Obj, ...sources: Obj[]): any {
   for (const source of sources) {
-    for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(source))) {
-      Object.defineProperty(target, name, descriptor);
+    for (const key of Reflect.ownKeys(source)) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)!);
     }
   }
   return target;
