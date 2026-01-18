@@ -76,7 +76,7 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          rustup default 1.82
+          rustup default 1.89
 
           if ($env:GLIDE_COMPAT -eq "aarch64") {
             rustup target add aarch64-pc-windows-msvc
