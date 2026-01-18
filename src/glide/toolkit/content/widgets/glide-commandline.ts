@@ -124,8 +124,8 @@
     }
 
     accept_focused(): void {
-      void this.#last_focused_option?.accept({ input: this.#get_input()?.value ?? "" });
       this.close();
+      void this.#last_focused_option?.accept({ input: this.#get_input()?.value ?? "" });
     }
 
     async delete_focused(): Promise<void> {

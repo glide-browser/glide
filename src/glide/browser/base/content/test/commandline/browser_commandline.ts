@@ -685,3 +685,29 @@ add_task(async function test_commandline_closes_immediately() {
     await waiter(() => glide.g.value).is("done", "excmd should complete succesffully");
   });
 });
+
+add_task(async function test_commandline_within_commandline() {
+  await reload_config(function _() {
+    glide.excmds.create({ name: "test_command" }, () => {
+      glide.commandline.show({
+        title: "test",
+        options: [{
+          label: "foo",
+          execute() {
+            glide.g.value = "foo";
+          },
+        }],
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
+    await glide.keys.send(":test_command<CR>");
+
+    await until(() => GlideTestUtils.commandline.visible_rows().length === 1, "nested commandline calls should work");
+
+    is(glide.ctx.mode, "command");
+    await glide.keys.send("<CR>");
+    await waiter(() => glide.g.value).is("foo", "the custom option execute() should be invoked");
+  });
+});
