@@ -169,8 +169,15 @@ var _: string = ensure("" as any as string | undefined);
 async function stream_is_iterable() {
   const proc = await glide.process.spawn("printenv");
   for await (const chunk of proc.stdout) {
-    var _: string = chunk;
+    assert_not_any(chunk);
+    assert_type<string>(chunk);
   }
+  for await (const chunk of proc.stdout.lines()) {
+    assert_not_any(chunk);
+    assert_type<string>(chunk);
+  }
+  assert_not_any(await proc.stdout.lines());
+  assert_type<string[]>(await proc.stdout.lines());
 }
 
 // custom options

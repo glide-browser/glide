@@ -1367,17 +1367,17 @@ declare global {
       exit_code: number | null;
 
       /**
-       * A `ReadableStream` of `string`s from the stdout pipe.
+       * A `ReadableStream` of `string`s from the stdout pipe with helpers for processing the output.
        */
-      stdout: ReadableStream<string>;
+      stdout: glide.ProcessReadStream;
 
       /**
-       * A `ReadableStream` of `string`s from the stderr pipe.
+       * A `ReadableStream` of `string`s from the stderr pipe with helpers for processing the output.
        *
        * This is `null` if the `stderr: 'stdout'` option was set as the pipe will be forwarded
        * to `stdout` instead.
        */
-      stderr: ReadableStream<string> | null;
+      stderr: glide.ProcessReadStream | null;
 
       /**
        * Write to the process's stdin pipe.
@@ -1400,6 +1400,21 @@ declare global {
        *        A timeout, in milliseconds, after which the process will be forcibly killed.
        */
       kill(timeout?: number): Promise<glide.CompletedProcess>;
+    };
+
+    export type ProcessReadStream = ReadableStream<string> & {
+      /**
+       * When `await`ed returns all of the text in the stream.
+       *
+       * When iterated, yields each text chunk in the stream as it comes in.
+       */
+      text(): Promise<string> & { [Symbol.asyncIterator](): AsyncIterator<string> };
+      /**
+       * When `await`ed returns an array of lines.
+       *
+       * When iterated, yields each line in the stream as it comes in.
+       */
+      lines(): Promise<string[]> & { [Symbol.asyncIterator](): AsyncIterator<string> };
     };
 
     /**
