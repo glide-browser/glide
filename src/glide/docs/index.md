@@ -79,7 +79,21 @@ paru -S glide-browser-bin
 </download-details>
 
 <download-details windows>
-  <span>Windows support is coming soon. See <a href="https://github.com/glide-browser/glide/discussions/17">#17</a>.</span>
+  <div class="download-buttons">
+    <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.windows-x86_64.installer.exe" class="download-link" target="_blank" rel="noopener">x86 Installer.exe</a>
+    <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.windows-aarch64.installer.exe" class="download-link" target="_blank" rel="noopener">ARM Installer.exe</a>
+  </div>
+{% /html %}
+
+> [!WARNING]
+> Windows support is experimental. The binaries are not signed _yet_.
+>
+> Windows will warn you that you're installing an app from an "unknown publisher".
+>
+> You'll have to click through these warnings to install Glide.
+
+{% html %}
+
 </download-details>
 
 </div>
