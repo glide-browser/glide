@@ -49,6 +49,7 @@
 
 .platform-switch-label {
   cursor: pointer;
+  padding-left: 0.25em;
 }
 
 #platform-macos:checked ~ .platform-switch label[for="platform-macos"],
