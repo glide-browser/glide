@@ -26,3 +26,46 @@ jobs:
           git checkout -b docs-production origin/docs-production
           git reset --hard origin/main
           git push --force-with-lease
+  update-nix:
+    name: Update glide nix flake
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: install nix
+        uses: DeterminateSystems/determinate-nix-action@v3.15.1 # or v3.15.1 to pin to a release
+      - name: clone glide.nix repo
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+           token: ${{ secrets.REPO_ACCESS_TOKEN }}
+           persist-credentials: true
+           repository : "glide-browser/glide.nix"
+        
+      - name: update hashes
+        run: |
+          VERSION=${{ github.event.release.tag_name }}
+          # edit version in package.nix
+          sed -i 's/version = ".*"/version = "$VERSION"/' package.nix
+
+          #x86 linux
+          RELEASE_LINK="https://github.com/glide-browser/glide/releases/download/$VERSION/glide.linux-x86_64.tar.xz"
+          NEW_HASH=$(nix hash to-sri --type sha256 $(nix-prefetch-url "$RELEASE_LINK"))
+          sed -zi 's/sha256 = ".*"/sha256 = "$NEW_HASH"/1m' package.nix
+
+          #aarch64 linux
+          RELEASE_LINK="https://github.com/glide-browser/glide/releases/download/$VERSION/glide.linux-aarch64.tar.xz"
+          NEW_HASH=$(nix hash to-sri --type sha256 $(nix-prefetch-url "$RELEASE_LINK"))
+          sed -zi 's/sha256 = ".*"/sha256 = "$NEW_HASH"/2m' package.nix
+
+          #x86 macos 
+          RELEASE_LINK="https://github.com/glide-browser/glide/releases/download/$VERSION/glide.macos-x86_64.dmg"
+          NEW_HASH=$(nix hash to-sri --type sha256 $(nix-prefetch-url "$RELEASE_LINK"))
+          sed -zi 's/sha256 = ".*"/sha256 = "$NEW_HASH"/3m' package.nix
+
+          #aarch64 macos 
+          RELEASE_LINK="https://github.com/glide-browser/glide/releases/download/$VERSION/glide.macos-aarch64.dmg"
+          NEW_HASH=$(nix hash to-sri --type sha256 $(nix-prefetch-url "$RELEASE_LINK"))
+          sed -zi 's/sha256 = ".*"/sha256 = "$NEW_HASH"/4m' package.nix
+
+          echo $(cat package.nix) >> $GITHUB_OUTPUT
+          #TODO: verify this works
+          #TODO: setup making PR's to glide.nix
