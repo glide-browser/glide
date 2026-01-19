@@ -419,7 +419,7 @@ declare var document: Document;
           .toLowerCase();
       const is_linux = platform.includes("linux");
       const is_macos = platform.includes("mac");
-      const is_windows = platform.includes("windows") || true;
+      const is_windows = platform.includes("windows");
 
       if (is_linux) {
         (document.getElementById("platform-linux") as HTMLInputElement).checked = true;
