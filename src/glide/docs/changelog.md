@@ -19,6 +19,48 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.58a
+
+## Experimental windows support {% id="0.1.58a-experimental-windows-support" %}
+
+This release adds support for Windows!
+
+This support is marked as experimental as it has not been tested as thoroughly as Linux or macOS.
+If you run into any issues please [report](https://github.com/glide-browser/glide/discussions/new?category=issue-triage) them!
+
+> [!IMPORTANT]
+> The Windows binaries are not signed _yet_. This means that Windows will warn you that you're installing an
+> app from an "unknown publisher"; you'll have to click through these warnings if you want to try out Glide on Windows right now.
+
+## Changes {% id="0.1.58a-changes" %}
+
+- Bumped Firefox from 147.0b8 to 148.0b4
+- Added process output helpers, `ts:await process.stdout.text()`, `ts:await process.stdout.lines()`
+  - These will resolve when the process exits, if you want to consume output as soon as it is available you can async iterate instead of `await`ing
+  - `ts:for await (const line of process.stdout.lines()) { ... }`
+- Added support for writing to process stdin with `ts:await process.stdin.write("data")`
+  - Thanks [@philocalyst](https://github.com/philocalyst) for the contribution!
+  - note: you _must_ call `ts:await process.stdin.close()` for the process to exit
+- Added support for registering event listeners in the browser UI
+  - e.g. `ts:window.addEventListener("click", (event) => { ... })`
+- Added [`ts:glide.o.newtab_url`](api.md#glide.o.newtab_url) for customising the newtab page
+- Added [`ts:glide.fs.mkdir()`](api.md#glide.fs.mkdir) for customising the newtab page
+- Added [`ts:Addon.reload()`](api.md#glide.Addon) for reloading an installed addon
+- Added [`ts:Addon.type`](api.md#glide.Addon) for identifying the type of an addon, e.g. `extension`, `theme`, etc
+- Added `yf` keymapping to copy the `href` of an element to the clipboard
+  - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Added `auto_activate: "always"` to [`ts:glide.hints.show()`](api.md#glide.hints.show) for always activating the first hint found, instead of only auto activating when there is a single hint found
+- Promoted `ts:glide.unstable.include()` to [`ts:glide.include()`](api.md#glide.include)
+  - note: `ts:glide.unstable.include()` still exists for backwards compatibility but it will be removed in a future release
+- Fixed calling `ts:glide.commandline.show()` within an excmd
+- Fixed the commandline not closing immediately if an excmd takes a long time to complete
+- Fixed expanding `~` in the process `cwd`, e.g. `ts:glide.process.execute("pwd", [], { cwd: "~/.dotfiles" })`
+  - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Fixed errors while reloading the config from potentially corrupting internal state
+- docs: added table of contents sidebar to [reference](api.md) pages
+  - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- docs: fixed clashing `/tutorial` pages
+
 # 0.1.57a
 
 ## Search engine configuration {% id="0.1.57a-search-engine-configuration" %}
