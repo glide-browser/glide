@@ -16,6 +16,7 @@ const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importE
   "chrome://glide/content/utils/guards.mjs",
 );
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
+const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const { human_join } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { object_assign } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 const { create_sandbox, FileNotFoundError, FileModificationNotAllowedError, GlideProcessError } = ChromeUtils
@@ -879,8 +880,8 @@ export function make_glide_api(
           exit_code: null,
           pid: subprocess.pid,
 
-          stdout: inputpipe_to_readablestream(assert_present(subprocess.stdout), "stdout"),
-          stderr: stderr === "pipe" ? inputpipe_to_readablestream(assert_present(subprocess.stderr), "stderr") : null,
+          stdout: inputpipe_to_processstream(assert_present(subprocess.stdout), "stdout"),
+          stderr: stderr === "pipe" ? inputpipe_to_processstream(assert_present(subprocess.stderr), "stderr") : null,
           stdin: {
             async write(data) {
               await assert_present(subprocess.stdin, "stdin pipe not available").write(data);
@@ -918,16 +919,19 @@ export function make_glide_api(
 
         return proc;
 
-        function inputpipe_to_readablestream(input_pipe: ProcessInputPipe, name: string): ReadableStream {
-          const stream = new ReadableStream({
+        function inputpipe_to_processstream(input_pipe: ProcessInputPipe, name: string): glide.ProcessReadStream {
+          let consumed = false;
+
+          const stream = new ReadableStream<string>({
             async pull(controller: ReadableStreamDefaultController) {
               const text = await input_pipe.readString().catch((err) => {
-                GlideBrowser._log.debug(`error encountered while reading ${name} pipe`, err);
+                GlideBrowser._log.error(`error encountered while reading ${name} pipe`, err);
                 return "";
               });
 
               if (text === "") {
                 GlideBrowser._log.debug(`closing ${name} pipe`);
+                consumed = true;
                 controller.close();
               } else {
                 controller.enqueue(text);
@@ -940,7 +944,70 @@ export function make_glide_api(
             },
           });
 
-          return stream;
+          return object_assign(stream, {
+            text: () => {
+              return object_assign(
+                new Promises.LazyPromise<string>(async () => {
+                  if (consumed) {
+                    throw new GlideBrowser.sandbox_window.TypeError(`${name} pipe has already been read`);
+                  }
+                  consumed = true;
+
+                  const chunks: string[] = [];
+                  for await (const chunk of stream.values()) {
+                    chunks.push(chunk);
+                  }
+
+                  return chunks.join("");
+                }),
+                {
+                  [Symbol.asyncIterator](): AsyncIterator<string> {
+                    if (consumed) {
+                      throw new GlideBrowser.sandbox_window.TypeError(`${name} pipe has already been read`);
+                    }
+                    consumed = true;
+
+                    return stream.values();
+                  },
+                },
+              );
+            },
+
+            lines() {
+              const stream = this;
+              async function* iter() {
+                const decoder = new Strings.LineDecoder();
+
+                for await (const chunk of stream.text()) {
+                  for (const line of decoder.decode(chunk)) {
+                    yield line;
+                  }
+                }
+              }
+
+              return object_assign(
+                new Promises.LazyPromise(async () => {
+                  const lines: string[] = [];
+                  if (consumed) {
+                    throw new GlideBrowser.sandbox_window.TypeError(`${name} pipe has already been read`);
+                  }
+
+                  for await (const line of iter()) {
+                    lines.push(line);
+                  }
+                  return lines;
+                }),
+                {
+                  [Symbol.asyncIterator]() {
+                    if (consumed) {
+                      throw new GlideBrowser.sandbox_window.TypeError(`${name} pipe has already been read`);
+                    }
+                    return iter();
+                  },
+                },
+              );
+            },
+          });
         }
       },
       async execute(command, args, opts) {

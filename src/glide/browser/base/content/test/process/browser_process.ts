@@ -380,3 +380,115 @@ add_task(async function test_execute() {
   await glide.keys.send("~");
   await waiter(() => glide.g.value).is(0, "execute() should wait for the process to exit before returning");
 });
+
+add_task(async function test_stdout_text() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("echo", ["hello world"]);
+      glide.g.value = await proc.stdout.text();
+      glide.g.value2 = await proc.stdout.text().catch((e) => e);
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).is("hello world\n", "stdout.text() should return all stdout as a string");
+
+  const error = await until(() => glide.g.value2, "consuming multiple times should error");
+  is(String(error), "TypeError: stdout pipe has already been read");
+});
+
+add_task(async function test_stdout_text_iterator() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("sh", ["-c", "echo first; sleep 0.1; echo second"]);
+      const chunks: string[] = [];
+      for await (const chunk of proc.stdout.text()) {
+        chunks.push(chunk);
+      }
+      glide.g.value = chunks;
+
+      try {
+        for await (const _ of proc.stdout.text()) {}
+      } catch (error) {
+        glide.g.value2 = error;
+      }
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).isjson(["first\n", "second\n"], "stdout.text() iterator should yield chunks");
+
+  const error = await until(() => glide.g.value2, "consuming multiple times should error");
+  is(String(error), "TypeError: stdout pipe has already been read");
+});
+
+add_task(async function test_stdout_lines() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("sh", ["-c", "echo first; echo second; echo third"]);
+      glide.g.value = await proc.stdout.lines();
+      glide.g.value2 = await proc.stdout.lines().catch((e) => e);
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).isjson(
+    ["first", "second", "third"],
+    "stdout.lines() should return lines as an array",
+  );
+
+  const error = await until(() => glide.g.value2, "consuming multiple times should error");
+  is(String(error), "TypeError: stdout pipe has already been read");
+});
+
+add_task(async function test_stdout_lines_iterator() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("sh", ["-c", "echo first; sleep 0.1; echo second"]);
+      const lines: string[] = [];
+      for await (const line of proc.stdout.lines()) {
+        lines.push(line);
+      }
+      glide.g.value = lines;
+
+      try {
+        for await (const _ of proc.stdout.lines()) {}
+      } catch (error) {
+        glide.g.value2 = error;
+      }
+    });
+  });
+
+  await glide.keys.send("~");
+  await waiter(() => glide.g.value).isjson(
+    ["first", "second"],
+    "stdout.lines() iterator should yield individual lines",
+  );
+
+  const error = await until(() => glide.g.value2, "consuming multiple times should error");
+  is(String(error), "TypeError: stdout pipe has already been read");
+});
+
+add_task(async function test_stderr_text() {
+  await GlideTestUtils.reload_config(function() {
+    glide.keymaps.set("normal", "~", async () => {
+      console.log("-");
+      const proc = await glide.process.spawn("sh", [
+        "-c",
+        "echo \"hello world\" >&2; echo \"from stdout\"",
+      ]);
+      console.log("2");
+      glide.g.value = await proc.stderr!.text();
+      glide.g.value2 = await proc.stdout!.text();
+      console.log("4");
+    });
+  });
+
+  await glide.keys.send("~");
+
+  const stderr = await until(() => glide.g.value);
+  is(stderr, "hello world\n", "stderr.text() should return all stdout as a string");
+
+  const stdout = await until(() => glide.g.value2);
+  is(stdout, "from stdout\n", "stdout.text() should return all stdout as a string");
+});
