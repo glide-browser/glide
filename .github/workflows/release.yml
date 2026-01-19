@@ -39,7 +39,7 @@ jobs:
 
     steps:
       - name: Inputs
-        run: echo '$INPUTS'
+        run: echo $INPUTS
         env:
           INPUTS: ${{ toJSON(inputs) }}
 
