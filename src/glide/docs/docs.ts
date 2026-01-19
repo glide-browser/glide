@@ -411,6 +411,25 @@ declare var document: Document;
   }
 
   docs.addEventListener("DOMContentLoaded", () => {
+    // update the download instructions to preselect the current platform instead of macos
+    // note: should only apply to the index page
+    if (document.querySelector(".platform-switch-input")) {
+      const platform =
+        ((navigator as { userAgentData?: { platform: string } }).userAgentData?.platform || navigator.platform)
+          .toLowerCase();
+      const is_linux = platform.includes("linux");
+      const is_macos = platform.includes("mac");
+      const is_windows = platform.includes("windows") || true;
+
+      if (is_linux) {
+        (document.getElementById("platform-linux") as HTMLInputElement).checked = true;
+      } else if (is_windows) {
+        (document.getElementById("platform-windows") as HTMLInputElement).checked = true;
+      } else if (is_macos) {
+        (document.getElementById("platform-macos") as HTMLInputElement).checked = true;
+      }
+    }
+
     document.getElementById("search-button")!.addEventListener("click", () => {
       docs.open_search();
     });

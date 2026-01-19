@@ -37,21 +37,51 @@ title="Demo video showing Glide features including keyboard navigation and confi
 
 {% html %}
 
-<div class="grid">
-  <div class="download-platform">
-    <span class="platform-label">macOS</span>
-    <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel</a>
-    </div>
+<div id="download-box">
+  <input type="radio" name="download-platform" id="platform-macos" class="platform-switch-input" checked />
+  <input type="radio" name="download-platform" id="platform-linux" class="platform-switch-input" />
+  <input type="radio" name="download-platform" id="platform-windows" class="platform-switch-input" />
+  <div class="platform-switch" role="radiogroup" aria-label="Available platforms">
+    <label for="platform-macos" class="platform-switch-label">macOS</label>
+    <label for="platform-linux" class="platform-switch-label">Linux</label>
+    <label for="platform-windows" class="platform-switch-label">Windows</label>
   </div>
-  <div class="download-platform">
-    <span class="platform-label">Linux</span>
+
+<download-details macos>
+    <div class="download-buttons">
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon.dmg</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel.dmg</a>
+    </div>
+    <span class="package-name">Homebrew</span>
+{% /html %}
+
+```bash
+brew install --cask glide-browser
+```
+
+{% html %}
+</download-details>
+
+<download-details linux>
     <div class="download-buttons">
       <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank" rel="noopener">x64.tar</a>
       <a href="https://github.com/glide-browser/glide/releases/download/0.1.57a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank" rel="noopener">aarch64.tar</a>
     </div>
-  </div>
+    <span class="package-name"><a href="https://aur.archlinux.org/packages/glide-browser-bin">AUR</a></span>
+{% /html %}
+
+```bash
+paru -S glide-browser-bin
+# or yay -S glide-browser-bin
+```
+
+{% html %}
+</download-details>
+
+<download-details windows>
+  <span>Windows support is coming soon. See <a href="https://github.com/glide-browser/glide/discussions/17">#17</a>.</span>
+</download-details>
+
 </div>
 {% /html %}
 

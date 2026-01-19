@@ -4,22 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-.download-platform {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.platform-label {
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
 .download-buttons {
   display: flex;
-  gap: 0.5rem;
-  justify-content: center;
+  gap: 1rem;
 }
 
 .download-link {
@@ -51,6 +38,57 @@
     background-color: #404040 !important;
     border-color: #606060;
   }
+}
+
+.platform-switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.platform-switch-label {
+  cursor: pointer;
+}
+
+#platform-macos:checked ~ .platform-switch label[for="platform-macos"],
+#platform-linux:checked ~ .platform-switch label[for="platform-linux"],
+#platform-windows:checked ~ .platform-switch label[for="platform-windows"] {
+  background-color: #fff;
+  color: #111827;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.15);
+}
+
+download-details {
+  display: none;
+}
+
+#platform-macos:checked ~ download-details[macos], /* dprint-ignore */
+#platform-linux:checked ~ download-details[linux], /* dprint-ignore */
+#platform-windows:checked ~ download-details[windows] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#download-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+#download-box .platform-switch {
+  flex: 0 0 120px;
+}
+
+download-details pre {
+  margin: 0 !important;
+}
+
+.package-name {
+  font-weight: 500;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 #demo-video {
