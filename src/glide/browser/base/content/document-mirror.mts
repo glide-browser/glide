@@ -320,3 +320,170 @@ export function import_mirrored_node(props: { mirror: Document; to_document: Doc
   store_node_mappings(props.node, imported, mirror.mirror_to_source, mirror.source_to_mirror);
   return imported;
 }
+
+type EventType = string & {};
+type ListenerObject = unknown & {};
+
+/**
+ * Constructs an observer[1] that will be called every time code in the main process
+ * executes `node.addEventListener()` or `node.removeEventListener()`.
+ *
+ * This is then used for the mirrored document so that you can register events on nodes in
+ * the mirrored window.
+ *
+ * This works by listening for event listener changes in the mirrored window, and for any new
+ * listeners, we register a corresponding listener in the source window, and forward any events
+ * it receives to the mirror window.
+ *
+ * [1]: https://searchfox.org/firefox-main/source/dom/events/nsIEventListenerService.idl
+ */
+export function make_listener_change_observer(): nsIListenerChangeListener {
+  let all_state = new WeakMap<
+    // key is the *mirror* target
+    EventTarget,
+    Map<EventType, {
+      source_listener?: ListenerObject;
+      mirror_listeners: Map<ListenerObject, nsIEventListenerInfo>;
+    }>
+  >();
+  return {
+    listenersChanged(changes) {
+      const seen = new Set<EventTarget>();
+      for (let i = 0; i < changes.length; i++) {
+        const mirror_target = changes.queryElementAt(i, Ci.nsIEventListenerChange).target;
+        const target_window = mirror_target.ownerGlobal;
+        if (!target_window || !target_window.document || !REGISTRY.has(target_window.document)) {
+          // a listener is being added to somewhere other than a document mirror
+          continue;
+        }
+
+        // if the same target has multiple change notifications then we only consider
+        // the first one, as we don't actually look at any of the information on the change
+        // event itself, and instead inspect the before/after state on the element directly.
+        if (seen.has(mirror_target)) {
+          continue;
+        }
+        seen.add(mirror_target);
+
+        const source_target = resolve_source_target(target_window, mirror_target);
+        if (!source_target) {
+          GlideBrowser._log.warn(`[document-mirror/listener]: could not resolve source target for node`, mirror_target);
+          continue;
+        }
+
+        const state = all_state.getOrInsertComputed(mirror_target, () => new Map());
+        const not_consumed = new Map(state);
+
+        for (const info of Services.els.getListenerInfoFor(mirror_target)) {
+          const type_state = state.getOrInsertComputed(info.type, () => ({ mirror_listeners: new Map() }));
+
+          if (not_consumed.get(info.type)?.mirror_listeners.delete(info.listenerObject)) {
+            GlideBrowser._log.debug(
+              `[document-mirror/listener]: mirror listener for type=${info.type} has already been handled`,
+              info.listenerObject,
+            );
+            continue;
+          }
+          type_state.mirror_listeners.set(info.listenerObject, info);
+
+          // we should only ever register *one* source listener for a specific type as the source listener just calls
+          // `.dispatchEvent()` which will fire the event for all mirror listeners.
+          if (type_state.source_listener) {
+            GlideBrowser._log.debug(
+              `[document-mirror/listener]: source listener for type=${info.type} has already been registered`,
+            );
+            continue;
+          }
+
+          GlideBrowser._log.debug(
+            `[document-mirror/listener]: adding source listener for type=${info.type} because of mirror listener`,
+            info.listenerObject,
+          );
+
+          const listener = make_listener_callback(mirror_target);
+          source_target.addEventListener(info.type, listener, {
+            capture: info.capturing,
+            mozSystemGroup: info.inSystemEventGroup,
+          }, info.allowsUntrusted);
+          type_state.source_listener = listener;
+
+          // we need to cleanup all the source and mirror listeners when the config is reloaded
+          // to avoid sending duplicate events
+          GlideBrowser.on_reload_config(() => {
+            GlideBrowser._log.debug(`[document-mirror/listener]: clearing state`);
+            all_state = new WeakMap();
+            mirror_target.removeEventListener(info.type, info.listenerObject);
+            source_target.removeEventListener(info.type, listener);
+          });
+        }
+
+        // handle removed listeners, i.e. listeners that were previously captured in our state
+        // but are no longer registered on the mirror node.
+        for (const [type, type_state] of not_consumed.entries()) {
+          const map = state.get(type)!.mirror_listeners;
+          for (const listener of type_state.mirror_listeners) {
+            map.delete(listener);
+          }
+
+          // all listeners have been removed, so we should remove our source listener
+          // and all associated state with this event type as it is now redundant
+          const source_listener = state.get(type)?.source_listener;
+          if (source_listener && !map.size) {
+            source_target.removeEventListener(type, source_listener as EventListener);
+            state.delete(type);
+          }
+        }
+      }
+    },
+  };
+
+  function make_listener_callback(target: EventTarget) {
+    return (event: Event) => {
+      if (!(event instanceof Event)) {
+        GlideBrowser._log.warn(`[document-mirror/listener]: received non-Event argument`, event);
+        return;
+      }
+
+      const cloned = reconstruct_event(event, GlideBrowser.sandbox_window);
+
+      target.dispatchEvent(cloned);
+
+      if (cloned.defaultPrevented) {
+        event.preventDefault();
+      }
+    };
+  }
+
+  /**
+   * We need to reconstruct the event in the mirrored window so that `event instanceof KeyboardEvent`
+   * would be correct.
+   */
+  function reconstruct_event(original_event: Event, target_window: HiddenWindow) {
+    const EventConstructor = (target_window[original_event.constructor.name] ?? target_window.Event) as typeof Event;
+
+    return new EventConstructor(
+      original_event.type,
+      // keyboard events store their `initDict` explicitly, so we might as well pass it directly.
+      //
+      // for other events, the constructed `Event` should generally match the `initDict`; there may
+      // be cases where they diverge, in which case we'll just handle them specially.
+      (original_event as KeyboardEvent).initDict ?? original_event,
+    );
+  }
+
+  function resolve_source_target(target_window: WindowProxy, target: EventTarget): EventTarget | undefined {
+    return target === target_window
+      ? window
+      : target === target_window.document
+      ? document!
+      : get_source_node_from_mirror_node(target_window.document! as MirroredDocument, target as Node);
+  }
+}
+
+function get_source_node_from_mirror_node(mirror: MirroredDocument, node: Node): Node | undefined {
+  const state = REGISTRY.get(mirror);
+  if (!state) {
+    return;
+  }
+  return state.mirror_to_source.get(node);
+}

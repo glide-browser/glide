@@ -7,6 +7,14 @@
 
 "use strict";
 
+declare global {
+  interface GlideGlobals {
+    events?: any[];
+    counter?: number;
+    ready?: boolean;
+  }
+}
+
 declare var document: Document & { documentElement: HTMLElement };
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
@@ -520,4 +528,382 @@ add_task(async function test_replace_node_type() {
   ok(replaced, "New div should exist");
   is(replaced!.tagName, "DIV", "Should be a DIV element");
   is(replaced!.textContent, "I'm a div now", "Content should match");
+});
+
+add_task(async function test_addEventListener__element() {
+  await GlideTestUtils.reload_config(() => {
+    // we store the counter on the window so that we can be certain the listener
+    // isn't invoked after the config is reloaded as `glide.g` will not point to
+    // the same `glide.g` as in our test env.
+    //
+    // we don't have a blessed way to store data across config reloads so this will
+    // have to do for now.
+    const store = window as any as { $glide_counter: number };
+    store.$glide_counter = 0;
+
+    glide.g.value = 0;
+    document.getElementById("glide-toolbar-mode-button")!.addEventListener("click", () => {
+      glide.g.value++;
+      store.$glide_counter++;
+    });
+  });
+
+  await sleep_frames(10); // TODO: sad
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+
+  const frame_time = await waiter(() => glide.g.value).is(1, "click listener should be invoked");
+  is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should be invoked after config reload");
+
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+  });
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+  await sleep_frames(frame_time * 2);
+
+  is(glide.g.value, 0, "listener should not be invoked after config reload");
+  is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should not be invoked after config reload");
+});
+
+add_task(async function test_addEventListener__element__keydown() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.events = [];
+
+    document.getElementById("urlbar-input")!.addEventListener("keydown", (event: KeyboardEvent) => {
+      assert(event instanceof KeyboardEvent, "instanceof KeyboardEvent");
+
+      glide.g.events!.push({
+        key: event.key,
+        code: event.code,
+        type: event.type,
+        bubbles: event.bubbles,
+        cancelable: event.cancelable,
+        repeat: event.repeat,
+        isComposing: event.isComposing,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+        location: event.location,
+        target_id: (event.target as Element)?.id,
+      });
+    });
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("urlbar-input") as HTMLElement).focus();
+
+  await keys("foo");
+
+  await waiter(() => glide.g.events?.length).is(3, "keydown listener should be invoked 3 times");
+
+  const events = glide.g.events!;
+
+  for (const event of events) {
+    is(event.type, "keydown");
+    is(event.bubbles, true);
+    is(event.cancelable, true);
+    is(event.repeat, false);
+    is(event.isComposing, false);
+    is(event.ctrlKey, false);
+    is(event.shiftKey, false);
+    is(event.altKey, false);
+    is(event.metaKey, false);
+    is(event.location, KeyboardEvent.DOM_KEY_LOCATION_STANDARD);
+    is(event.target_id, "urlbar-input");
+  }
+
+  is(events[0]!.key, "f");
+  is(events[0]!.code, "KeyF");
+
+  is(events[1]!.key, "o");
+  is(events[1]!.code, "KeyO");
+
+  is(events[2]!.key, "o");
+  is(events[2]!.code, "KeyO");
+});
+
+add_task(async function test_addEventListener__element__click() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.events = [];
+
+    document.getElementById("glide-toolbar-mode-button")!.addEventListener("click", (event: MouseEvent) => {
+      assert(event instanceof MouseEvent, "instanceof MouseEvent");
+
+      glide.g.events!.push({
+        type: event.type,
+        bubbles: event.bubbles,
+        cancelable: event.cancelable,
+        button: event.button,
+        buttons: event.buttons,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        screenX: event.screenX,
+        screenY: event.screenY,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+        detail: event.detail,
+        target_id: (event.target as Element)?.id,
+      });
+    });
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+
+  await waiter(() => glide.g.events?.length).is(1, "click listener should be invoked");
+
+  const event = glide.g.events![0]!;
+
+  is(event.type, "click");
+  is(event.bubbles, true);
+  is(event.cancelable, true);
+  is(event.button, 0, "button should be 0 (left click)");
+  is(event.buttons, 0, "buttons should be 0 after click");
+  is(event.ctrlKey, false);
+  is(event.shiftKey, false);
+  is(event.altKey, false);
+  is(event.metaKey, false);
+  is(event.target_id, "glide-toolbar-mode-button");
+  // clientX/clientY/screenX/screenY are 0 for synthetic clicks
+  is(event.clientX, 0);
+  is(event.clientY, 0);
+});
+
+add_task(async function test_addEventListener__element__input() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.events = [];
+
+    document.getElementById("urlbar-input")!.addEventListener("input", (event: InputEvent) => {
+      assert(event instanceof InputEvent, "instanceof InputEvent");
+
+      glide.g.events!.push({
+        type: event.type,
+        bubbles: event.bubbles,
+        cancelable: event.cancelable,
+        data: event.data,
+        inputType: event.inputType,
+        isComposing: event.isComposing,
+        target_id: (event.target as Element)?.id,
+      });
+    });
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("urlbar-input") as HTMLElement).focus();
+
+  await keys("ab");
+
+  await waiter(() => glide.g.events?.length).is(2, "input listener should be invoked twice");
+
+  const events = glide.g.events!;
+
+  is(events[0]!.data, "a");
+  is(events[0]!.type, "input");
+  is(events[0]!.bubbles, true);
+  is(events[0]!.cancelable, false, "input events are not cancelable");
+  is(events[0]!.inputType, "insertText");
+  is(events[0]!.isComposing, false);
+  is(events[0]!.target_id, "urlbar-input");
+
+  is(events[1]!.data, "b");
+  is(events[1]!.type, "input");
+  is(events[1]!.inputType, "insertText");
+});
+
+add_task(async function test_addEventListener__element__wheel() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.events = [];
+
+    document.documentElement.addEventListener("wheel", (event: WheelEvent) => {
+      assert(event instanceof WheelEvent, "instanceof WheelEvent");
+
+      glide.g.events!.push({
+        type: event.type,
+        bubbles: event.bubbles,
+        cancelable: event.cancelable,
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+        deltaZ: event.deltaZ,
+        deltaMode: event.deltaMode,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+        target_tag: (event.target as Element)?.tagName,
+      });
+    });
+  });
+
+  await sleep_frames(10);
+
+  document.documentElement.dispatchEvent(
+    new WheelEvent("wheel", {
+      bubbles: true,
+      cancelable: true,
+      deltaX: 0,
+      deltaY: 100,
+      deltaZ: 0,
+      deltaMode: WheelEvent.DOM_DELTA_PIXEL,
+    }),
+  );
+
+  await waiter(() => glide.g.events?.length).is(1, "wheel listener should be invoked");
+
+  const event = glide.g.events![0]!;
+  is(event.type, "wheel");
+  is(event.bubbles, true);
+  is(event.cancelable, false, "wheel event should not be cancelable");
+  is(event.deltaX, 0);
+  is(event.deltaY, 100);
+  is(event.deltaZ, 0);
+  is(event.deltaMode, WheelEvent.DOM_DELTA_PIXEL);
+  is(event.ctrlKey, false);
+  is(event.shiftKey, false);
+  is(event.altKey, false);
+  is(event.metaKey, false);
+});
+
+add_task(async function test_addEventListener__element__keydown_with_modifiers() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.events = [];
+
+    document.getElementById("urlbar-input")!.addEventListener("keydown", (event: KeyboardEvent) => {
+      glide.g.events!.push({
+        key: event.key,
+        code: event.code,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+      });
+    });
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("urlbar-input") as HTMLElement).focus();
+
+  await keys("<C-a>");
+  await waiter(() => glide.g.events?.length).is(1, "keydown listener should be invoked");
+
+  is(glide.g.events![0]!.key, "a");
+  is(glide.g.events![0]!.ctrlKey, true, "ctrlKey should be true");
+  is(glide.g.events![0]!.shiftKey, false);
+
+  await keys("<C-S-A-D-X>");
+  await waiter(() => glide.g.events?.length).is(2, "keydown listener should be invoked for all modifiers");
+
+  is(glide.g.events![1]!.key, "X");
+  is(glide.g.events![1]!.ctrlKey, true, "ctrlKey should be true");
+  is(glide.g.events![1]!.shiftKey, true, "shiftKey should be true");
+  is(glide.g.events![1]!.altKey, true, "altKey should be true");
+  is(glide.g.events![1]!.metaKey, true, "metaKey should be true");
+});
+
+add_task(async function test_addEventListener__multiple_listeners_same_element__same_type() {
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+    glide.g.counter = 0;
+
+    glide.autocmds.create("ConfigLoaded", () => {
+      const element = document.getElementById("glide-toolbar-mode-button")!;
+      element.addEventListener("click", function listener() {
+        glide.g.value++;
+
+        if (glide.g.value == 2) {
+          element.removeEventListener("click", listener);
+        }
+      });
+      element.addEventListener("click", function listener() {
+        glide.g.counter!++;
+        element.removeEventListener("click", listener);
+      });
+      glide.g.ready = true;
+    });
+  });
+
+  await waiter(() => glide.g.ready).ok();
+  await sleep_frames(10);
+
+  const element = document.getElementById("glide-toolbar-mode-button") as HTMLElement;
+  element.click();
+
+  await waiter(() => glide.g.value).is(1, "first listener should be invoked");
+  await waiter(() => glide.g.counter).is(1, "second listener should be invoked");
+
+  element.click();
+
+  const frame_time = await waiter(() => glide.g.value).is(2, "first listener should be invoked again");
+  await waiter(() => glide.g.counter).is(1, "second listener should *not* be invoked as it should've been removed");
+
+  element.click();
+
+  await sleep_frames(frame_time * 2);
+
+  is(glide.g.value, 2, "first listener should *not* be invoked as it should've been removed");
+  is(glide.g.counter, 1, "second listener should *not* be invoked as it should've been removed");
+});
+
+add_task(async function test_addEventListener__preventDefault() {
+  using _ = await GlideTestUtils.new_tab();
+
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+    glide.g.events = [];
+
+    document.getElementById("urlbar-input")!.addEventListener("keydown", (event: KeyboardEvent) => {
+      if (event.key === "a") {
+        event.preventDefault();
+      }
+
+      glide.g.events!.push({ key: event.key, defaultPrevented: event.defaultPrevented });
+    });
+  });
+
+  await sleep_frames(10);
+
+  const input = document.getElementById("urlbar-input") as HTMLInputElement;
+  input.focus();
+  await wait_for_mode("insert");
+
+  await keys("ab");
+
+  await waiter(() => glide.g.events?.length).is(2, "both keys should be captured");
+
+  is(input.value, "b", "only the second key should be inserted due to .preventDefault() being called on the first key");
+
+  is(glide.g.events![0]!.key, "a");
+  is(glide.g.events![0]!.defaultPrevented, true);
+
+  is(glide.g.events![1]!.key, "b");
+  is(glide.g.events![1]!.defaultPrevented, false);
+});
+
+add_task(async function test_onclick_property() {
+  await GlideTestUtils.reload_config(() => {
+    const store = window as any as { $glide_counter: number };
+    store.$glide_counter = 0;
+
+    glide.g.value = 0;
+    (document.getElementById("glide-toolbar-mode-button")! as HTMLElement).onclick = () => {
+      glide.g.value++;
+      store.$glide_counter++;
+    };
+  });
+
+  await sleep_frames(10);
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+
+  const frame_time = await waiter(() => glide.g.value).is(1, "onclick listener should be invoked");
+  is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should be invoked after config reload");
+
+  await GlideTestUtils.reload_config(() => {
+    glide.g.value = 0;
+  });
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+  await sleep_frames(frame_time * 2);
+
+  is(glide.g.value, 0, "onclick listener should not be invoked after config reload");
+  is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should not be invoked after config reload");
 });

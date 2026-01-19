@@ -52,11 +52,9 @@ The `document` is a _mirror_ of the internal `document` that renders the browser
 - Setting [attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes)
 - Adding / removing nodes
 - Upating character data
+- Adding event listeners
 
-Notably you **cannot**:
-
-- Add event listeners
-- Fire events
+Notably you **cannot** fire events yourself, e.g. `element.click()` will not actually fire a click event in the browser UI. See [#231](https://github.com/glide-browser/glide/issues/231) for tracking support.
 
 > [!TIP]
 > You can inspect the browser DOM using the [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html).
