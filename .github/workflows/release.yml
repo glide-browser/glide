@@ -11,6 +11,10 @@ on:
         description: "push update manifests"
         type: boolean
         default: false
+      updates_branch:
+        description: "updates branch"
+        type: string
+        default: "main"
       sign:
         description: "sign"
         type: boolean
@@ -310,7 +314,7 @@ jobs:
           repository: glide-browser/update-server
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           path: update-server
-          ref: main
+          ref: ${{ inputs.updates_branch }}
           persist-credentials: true
           # zizmor: ignore[artipacked]
           # we push to the repo, so we do need to persist credentials
