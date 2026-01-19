@@ -293,7 +293,7 @@ jobs:
 
   push-update-manifests:
     # macos is the only platform with auto updates for now
-    if: ${{ inputs.push_update_manifests && inputs.macos }}
+    if: ${{ inputs.push_update_manifests && !failure() && !cancelled() && inputs.macos }}
 
     name: Push update manifests
     runs-on: ubuntu-latest
