@@ -99,8 +99,13 @@ jobs:
           pnpm build
 
       - name: Package
+        shell: C:\mozilla-build\msys2\usr\bin\bash.exe -e {0}
         run: |
           pnpm package
+
+      - name: Rename MAR
+        run: |
+          Move-Item -Path "dist/output.mar" -Destination "dist/windows-$env:GLIDE_COMPAT.mar"
 
       - name: Upload installer
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -108,3 +113,17 @@ jobs:
           retention-days: 10
           name: windows-${{ matrix.arch }}.installer.exe
           path: ./dist/glide.windows-${{ matrix.arch }}.installer.exe
+
+      - name: Upload MAR
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 10
+          name: windows-${{ matrix.arch }}.mar
+          path: ./dist/windows-${{ matrix.arch }}.mar
+
+      - name: Upload browser update manifests
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 10
+          name: windows-${{ matrix.arch }}-updates
+          path: ./dist/update/

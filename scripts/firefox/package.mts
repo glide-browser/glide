@@ -39,6 +39,8 @@ const AUS_PLATFORMS_MAP = {
     "Darwin_x86_64-gcc3",
   ],
   macos_arm: ["Darwin_aarch64-gcc3"],
+  windows_64: ["WINNT_x86_64-msvc-x64"],
+  windows_arm: ["WINNT_aarch64-msvc-aarch64"],
 };
 
 async function main() {
@@ -93,27 +95,26 @@ async function get_locales() {
 async function create_mar_file(
   { obj_dir, version, channel }: { obj_dir: string; version: string; channel: string },
 ): Promise<string | null> {
-  switch (get_platform()) {
+  const platform = get_platform();
+  switch (platform) {
     // updates are disabled
     case "linux":
       return null;
-
-    // TODO(windows): support auto-updates
-    case "windows":
-      return null;
   }
 
-  const mar_binary = Path.join(obj_dir, "dist/host/bin", "mar");
-  const binary = get_platform() == "macos"
+  const mar_binary = Path.join(obj_dir, "dist/host/bin", platform === "windows" ? "mar.exe" : "mar");
+  const binary = platform === "macos"
     ? Path.join(obj_dir, "dist", config.binary_name, "Glide.app")
     : Path.join(obj_dir, "dist", config.binary_name);
 
   const mar_path = Path.resolve(DIST_DIR, "output.mar");
   console.debug(`Writing MAR to ${mar_path} from ${binary}`);
 
-  await engine_run("./tools/update-packaging/make_full_update.sh", [DIST_DIR, binary], {
+  const to_shell_path = (p: string) => platform === "windows" ? p.replace(/\\/g, "/") : p;
+
+  await engine_run("./tools/update-packaging/make_full_update.sh", [to_shell_path(DIST_DIR), to_shell_path(binary)], {
     env: {
-      MAR: mar_binary,
+      MAR: to_shell_path(mar_binary),
       MAR_CHANNEL_ID: channel,
       MOZ_PRODUCT_VERSION: version,
     },
@@ -209,7 +210,16 @@ function get_release_mar_name(): string {
       }
     }
     case "windows": {
-      throw new Error("TODO(windows): support auto updates");
+      switch (compat) {
+        case "x86_64":
+          return "windows-x86_64.mar";
+        case "aarch64":
+          return "windows-aarch64.mar";
+        case null:
+          return "windows.mar";
+        default:
+          throw assert_never(compat);
+      }
     }
     default:
       throw assert_never(platform);
@@ -253,7 +263,15 @@ function get_targets(): string[] {
       }
     }
     case "windows": {
-      throw new Error("TODO(windows): support auto updates");
+      switch (compat) {
+        case "aarch64":
+          return AUS_PLATFORMS_MAP.windows_arm;
+        case "x86_64":
+        case null:
+          return AUS_PLATFORMS_MAP.windows_64;
+        default:
+          throw assert_never(compat);
+      }
     }
     default:
       throw assert_never(platform);

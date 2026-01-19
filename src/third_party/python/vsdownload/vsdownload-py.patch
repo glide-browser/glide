@@ -1,0 +1,24 @@
+diff --git a/third_party/python/vsdownload/vsdownload.py b/third_party/python/vsdownload/vsdownload.py
+index 37cda0413807d5ffe8e446e1a3664126c77ef676..4f028f9d0fc40ad25a475068691d147ae3ed8ea9 100755
+--- a/third_party/python/vsdownload/vsdownload.py
++++ b/third_party/python/vsdownload/vsdownload.py
+@@ -685,9 +685,19 @@ def unpackWin10SDK(src, payloads, dest):
+     if sys.platform != "win32" and not os.access(os.path.join(dest, "Program Files"), os.F_OK):
+         os.symlink(".", os.path.join(dest, "Program Files"), target_is_directory=True)
+ 
++    # Filter out Windows App Certification Kit MSIs - they are broken but we can't
++    # apply the patch[1] directly because Firefox hashes certain files and we end
++    # up with a hash that is not known to Firefox's build system and also fails.
++    #
++    # [1]: https://github.com/mozilla-firefox/firefox/commit/495cece1c7abe94982d89d26ac6c7d27611d17c3
++    SKIP_PATTERNS = ["Windows App Certification Kit Native Components"]
++
+     for payload in payloads:
+         name = getPayloadName(payload)
+         if name.endswith(".msi"):
++            if any(skip in name for skip in SKIP_PATTERNS):
++                print("Skipping " + name)
++                continue
+             print("Extracting " + name)
+             srcfile = os.path.join(src, name)
+             if sys.platform == "win32":

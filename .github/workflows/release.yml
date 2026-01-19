@@ -258,6 +258,18 @@ jobs:
         with:
           name: windows-aarch64.installer.exe
 
+      - name: Download Windows MAR (x86_64)
+        if: ${{ inputs.windows }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: windows-x86_64.mar
+
+      - name: Download Windows MAR (aarch64)
+        if: ${{ inputs.windows }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: windows-aarch64.mar
+
       - name: Download source tarball
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -288,6 +300,8 @@ jobs:
           # MAR files
           upload $MACOS ./macos-aarch64.mar
           upload $MACOS ./macos-x86_64.mar
+          upload $WINDOWS ./windows-aarch64.mar
+          upload $WINDOWS ./windows-x86_64.mar
         env:
           MACOS: ${{ inputs.macos }}
           LINUX: ${{ inputs.linux }}
@@ -296,8 +310,7 @@ jobs:
           VERSION: ${{ needs.metadata.outputs.version }}
 
   push-update-manifests:
-    # macos is the only platform with auto updates for now
-    if: ${{ inputs.push_update_manifests && !failure() && !cancelled() && inputs.macos }}
+    if: ${{ inputs.push_update_manifests && !failure() && !cancelled() && (inputs.macos || inputs.windows) }}
 
     name: Push update manifests
     runs-on: ubuntu-latest
@@ -320,16 +333,32 @@ jobs:
           # we push to the repo, so we do need to persist credentials
 
       - name: Download macOS updates (aarch64)
+        if: ${{ inputs.macos }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: macos-aarch64-updates
           path: artifacts/macos-aarch64/
 
       - name: Download macOS updates (x86_64)
+        if: ${{ inputs.macos }}
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: macos-x86_64-updates
           path: artifacts/macos-x86_64/
+
+      - name: Download Windows updates (x86_64)
+        if: ${{ inputs.windows }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: windows-x86_64-updates
+          path: artifacts/windows-x86_64/
+
+      - name: Download Windows updates (aarch64)
+        if: ${{ inputs.windows }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: windows-aarch64-updates
+          path: artifacts/windows-aarch64/
 
       - name: Debug
         run: |
@@ -337,9 +366,21 @@ jobs:
 
       - name: Copy update files to update-server
         run: |
-          mkdir -p update-server/public/updates/
-          cp -r artifacts/macos-aarch64/* update-server/public/versions/latest/
-          cp -r artifacts/macos-x86_64/* update-server/public/versions/latest/
+          set -ex
+          mkdir -p update-server/public/versions/latest/
+
+          if [[ "$MACOS" == "true" ]]; then
+            cp -r artifacts/macos-aarch64/* update-server/public/versions/latest/
+            cp -r artifacts/macos-x86_64/* update-server/public/versions/latest/
+          fi
+
+          if [[ "$WINDOWS" == "true" ]]; then
+            cp -r artifacts/windows-x86_64/* update-server/public/versions/latest/
+            cp -r artifacts/windows-aarch64/* update-server/public/versions/latest/
+          fi
+        env:
+          MACOS: ${{ inputs.macos }}
+          WINDOWS: ${{ inputs.windows }}
 
       - name: Debug
         run: |
