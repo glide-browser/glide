@@ -77,7 +77,9 @@ jobs:
           git commit -m "update: v$VERSION"
 
           # make pull request
-          gh -R "glide-browser/glide.nix" pr create --title "update to version $VERSION"  --body ""
+          gh -R "glide-browser/glide.nix" pr create --title "update to version $VERSION"  --body "" --head "$update-$VERSION"
           
+          # auto-merge
           gh -R "glide-browser/glide.nix" pr merge "update-$VERSION" --auto --rebase
           #TODO: check if this works
+
