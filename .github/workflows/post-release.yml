@@ -76,9 +76,6 @@ jobs:
           git add package.nix
           git commit -m "update: v$VERSION"
 
-          # setup gh for working with another repository
-          gh repo set-default origin
-
           # make pull request
-          gh pr create --base "update-$VERSION" --body "update to version $VERSION" 
+          gh -R "glide-browser/glide.nix" pr create --title "update to version $VERSION"  --body ""
           #TODO: check if this works, also look into `gh pr merge --auto` for setting this as an auto-merge
