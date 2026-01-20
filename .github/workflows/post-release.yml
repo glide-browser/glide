@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: install nix
-        uses: DeterminateSystems/determinate-nix-action@v3.15.1 # or v3.15.1 to pin to a release
+        uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # or v3.15.1 to pin to a release
       - name: clone glide.nix repo
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
@@ -41,7 +41,10 @@ jobs:
            repository : "glide-browser/glide.nix"
         
       - name: update hashes
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
         run: |
+          .github/scripts/update_nix.sh 
           VERSION=${{ github.event.release.tag_name }}
           # edit version in package.nix
           sed -i 's/version = ".*"/version = "$VERSION"/' package.nix
