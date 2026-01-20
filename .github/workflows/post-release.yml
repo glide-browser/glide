@@ -33,6 +33,7 @@ jobs:
     steps:
       - name: install nix
         uses: DeterminateSystems/determinate-nix-action@1d699fc25db3f9e079cd2f168ca007a4183389be # or v3.15.1 to pin to a release
+
       - name: clone glide.nix repo
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
@@ -43,7 +44,9 @@ jobs:
       - name: update hashes
         env:
           VERSION: inputs.tag_name || ${{ github.event.release.tag_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git switch -c "update-$VERSION"
           .github/scripts/update_nix.sh 
           # edit version in package.nix
           sed -i 's/version = ".*"/version = "$VERSION"/' package.nix
@@ -68,6 +71,14 @@ jobs:
           NEW_HASH=$(nix hash to-sri --type sha256 $(nix-prefetch-url "$RELEASE_LINK"))
           sed -zi 's/sha256 = ".*"/sha256 = "$NEW_HASH"/4m' package.nix
 
-          echo $(cat package.nix) >> $GITHUB_OUTPUT
-          #TODO: verify this works
-          #TODO: setup making PR's to glide.nix
+
+          # modification done
+          git add package.nix
+          git commit -m "update: v$VERSION"
+
+          # setup gh for working with another repository
+          gh repo set-default origin
+
+          # make pull request
+          gh pr create --base "update-$VERSION" --body "update to version $VERSION" 
+          #TODO: check if this works, also look into `gh pr merge --auto` for setting this as an auto-merge
