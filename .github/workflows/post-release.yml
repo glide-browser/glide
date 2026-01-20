@@ -78,4 +78,6 @@ jobs:
 
           # make pull request
           gh -R "glide-browser/glide.nix" pr create --title "update to version $VERSION"  --body ""
-          #TODO: check if this works, also look into `gh pr merge --auto` for setting this as an auto-merge
+          
+          gh -R "glide-browser/glide.nix" pr merge "update-$VERSION" --auto --rebase
+          #TODO: check if this works
