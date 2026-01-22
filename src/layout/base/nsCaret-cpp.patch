@@ -1,5 +1,5 @@
 diff --git a/layout/base/nsCaret.cpp b/layout/base/nsCaret.cpp
-index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1077a08a3 100644
+index 1f4a57551479f092dbf931d4f774ceef1c588375..0e2ed1696eeda4023c2e90715f10241101ebb1ac 100644
 --- a/layout/base/nsCaret.cpp
 +++ b/layout/base/nsCaret.cpp
 @@ -13,11 +13,13 @@
@@ -59,8 +59,8 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
 +
    selection->AddSelectionListener(this);
    mDomSelectionWeak = selection;
-   UpdateCaretPositionFromSelectionIfNeeded();
-@@ -95,6 +120,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
+   UpdateHiddenDuringSelection();
+@@ -96,6 +121,69 @@ nsCaret::Metrics nsCaret::ComputeMetrics(nsIFrame* aFrame, int32_t aOffset,
        nsPresContext::CSSPixelsToAppUnits(
            LookAndFeel::GetInt(LookAndFeel::IntID::CaretWidth, 1));
  
@@ -130,7 +130,7 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
    if (DrawCJKCaret(aFrame, aOffset)) {
      caretWidth += nsPresContext::CSSPixelsToAppUnits(1);
    }
-@@ -118,6 +206,11 @@ void nsCaret::Terminate() {
+@@ -119,6 +207,11 @@ void nsCaret::Terminate() {
    StopBlinking();
    mBlinkTimer = nullptr;
  
@@ -142,7 +142,7 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
    // unregiser ourselves as a selection listener
    if (mDomSelectionWeak) {
      mDomSelectionWeak->RemoveSelectionListener(this);
-@@ -232,7 +325,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
+@@ -234,7 +327,11 @@ static nsPoint AdjustRectForClipping(const nsRect& aRect, nsIFrame* aFrame,
  
  /* static */
  nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
@@ -155,7 +155,7 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
    nsPoint framePos(0, 0);
    nsRect rect;
    nsresult rv = aFrame->GetPointFromOffset(aFrameOffset, &framePos);
-@@ -278,6 +375,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -280,6 +377,17 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      }
    }
  
@@ -173,7 +173,7 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
    // on RTL frames the right edge of mCaretRect must be equal to framePos
    if (aFrame->StyleVisibility()->mDirection == StyleDirection::Rtl) {
      if (vertical) {
-@@ -295,10 +403,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
+@@ -297,10 +405,29 @@ nsRect nsCaret::GetGeometryForFrame(nsIFrame* aFrame, int32_t aFrameOffset,
      framePos.y = caretBlockAxisMetrics.mOffset;
    }
  
@@ -207,7 +207,7 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
  
    rect.MoveBy(AdjustRectForClipping(rect, aFrame, vertical));
    if (aBidiIndicatorSize) {
-@@ -342,11 +469,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
+@@ -344,11 +471,19 @@ CaretFrameData nsCaret::GetFrameAndOffset(const CaretPosition& aPosition) {
  }
  
  /* static */
@@ -229,7 +229,7 @@ index 417b29d573bad0263d6fab45238384924c5f26f2..fa6b822837498163807c1a875f9058e1
    }
    return data.mFrame;
  }
-@@ -589,7 +724,12 @@ void nsCaret::ResetBlinking() {
+@@ -594,7 +729,12 @@ void nsCaret::ResetBlinking() {
    }
  
    const int32_t oldBlinkTime = mBlinkTime;
