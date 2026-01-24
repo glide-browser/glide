@@ -44,7 +44,7 @@ If you run into any issues please [report](https://github.com/glide-browser/glid
 - Added support for registering event listeners in the browser UI
   - e.g. `ts:window.addEventListener("click", (event) => { ... })`
 - Added [`ts:glide.o.newtab_url`](api.md#glide.o.newtab_url) for customising the newtab page
-- Added [`ts:glide.fs.mkdir()`](api.md#glide.fs.mkdir) for customising the newtab page
+- Added [`ts:glide.fs.mkdir()`](api.md#glide.fs.mkdir)
 - Added [`ts:Addon.reload()`](api.md#glide.Addon) for reloading an installed addon
 - Added [`ts:Addon.type`](api.md#glide.Addon) for identifying the type of an addon, e.g. `extension`, `theme`, etc
 - Added `yf` keymapping to copy the `href` of an element to the clipboard
