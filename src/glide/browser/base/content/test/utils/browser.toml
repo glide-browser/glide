@@ -7,8 +7,5 @@
 ["dist/browser_keys.js"]
 https_first_disabled = true
 
-["dist/browser_prefs.js"]
-https_first_disabled = true
-
 ["dist/browser_strings.js"]
 https_first_disabled = true

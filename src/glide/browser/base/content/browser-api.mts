@@ -853,6 +853,34 @@ export function make_glide_api(
       clear(name) {
         Services.prefs.clearUserPref(name);
       },
+      scoped() {
+        const prefs = this;
+        const stack: { name: string; value: string | number | boolean | undefined }[] = [];
+
+        return {
+          [Symbol.dispose]() {
+            for (const { name, value } of stack.toReversed()) {
+              if (typeof value === "undefined") {
+                prefs.clear(name);
+              } else {
+                prefs.set(name, value);
+              }
+            }
+          },
+
+          set(name, value) {
+            stack.push({ name, value: prefs.get(name) });
+            return prefs.set(name, value);
+          },
+          clear(name) {
+            stack.push({ name, value: prefs.get(name) });
+            return prefs.clear(name);
+          },
+          get(name) {
+            return prefs.get(name);
+          },
+        };
+      },
     },
     messengers: {
       create(receiver) {

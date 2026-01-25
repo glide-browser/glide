@@ -35,7 +35,6 @@ glide.jar:
   content/utils/html.mjs                       (content/utils/dist/html.mjs)
   content/utils/keys.mjs                       (content/utils/dist/keys.mjs)
   content/utils/args.mjs                       (content/utils/dist/args.mjs)
-  content/utils/prefs.mjs                      (content/utils/dist/prefs.mjs)
   content/utils/arrays.mjs                     (content/utils/dist/arrays.mjs)
   content/utils/guards.mjs                     (content/utils/dist/guards.mjs)
   content/utils/dedent.mjs                     (content/utils/dist/dedent.mjs)

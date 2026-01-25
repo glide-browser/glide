@@ -7,17 +7,17 @@
 
 "use strict";
 
-const { temp_prefs } = ChromeUtils.importESModule("chrome://glide/content/utils/prefs.mjs", { global: "current" });
-
-add_task(async function test_temp_prefs() {
+add_task(async function test_scoped_prefs() {
   await reload_config(function _() {});
 
   const previous = Services.prefs.getIntPref("toolkit.scrollbox.pagescroll.maxOverlapPercent");
+  Services.prefs.setBoolPref("thing", true);
 
   {
-    using prefs = temp_prefs();
+    using prefs = glide.prefs.scoped();
     prefs.set("foo", true);
     prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
+    prefs.clear("thing");
 
     is(Services.prefs.getBoolPref("foo"), true, "The foo pref should be set");
     is(
@@ -30,6 +30,7 @@ add_task(async function test_temp_prefs() {
       true,
       "The scrollbox pref should be marked as customised",
     );
+    is(glide.prefs.get("thing"), undefined, "The thing pref should be cleared");
   }
 
   is(glide.prefs.get("foo"), undefined, "the foo pref should be cleared entirely as it was not originally set");
@@ -43,4 +44,8 @@ add_task(async function test_temp_prefs() {
     false,
     "The scrollbox pref should not be marked as customised",
   );
+  is(glide.prefs.get("thing"), true, "the thing pref should be reset");
+
+  // cleanup
+  glide.prefs.clear("thing");
 });

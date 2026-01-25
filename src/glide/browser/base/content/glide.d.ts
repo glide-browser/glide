@@ -316,6 +316,24 @@ declare global {
        * Reset the pref value back to its default.
        */
       clear(name: string): void;
+
+      /**
+       * Helper for temporarily setting prefs.
+       *
+       * You **must** assign this with the `using` keyword, e.g. `using prefs = glide.prefs.scoped()`.
+       *
+       * *temporary* is determined by the lifetime of the return value, e.g.
+       * ```typescript
+       *  {
+       *    using prefs = glide.prefs.scoped();
+       *    prefs.set("foo", true);
+       *    // .... for the rest of this block `foo` is set to `true`
+       *  }
+       *
+       *  // ... now outside the block, `foo` is set to its previous value
+       * ```
+       */
+      scoped(): glide.ScopedPrefs;
     };
 
     /**
@@ -1456,6 +1474,8 @@ declare global {
 
     /** A web extension tab that is guaranteed to have the `ts:id` property present. */
     export type TabWithID = Omit<Browser.Tabs.Tab, "id"> & { id: number };
+
+    export type ScopedPrefs = Omit<(typeof glide.prefs), "scoped"> & { [Symbol.dispose](): void };
 
     export type AddonInstallOptions = {
       /**

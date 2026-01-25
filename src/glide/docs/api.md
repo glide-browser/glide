@@ -80,6 +80,7 @@ text-decoration: none;
 [`glide.prefs.set()`](#glide.prefs.set)\
 [`glide.prefs.get()`](#glide.prefs.get)\
 [`glide.prefs.clear()`](#glide.prefs.clear)\
+[`glide.prefs.scoped()`](#glide.prefs.scoped)\
 [`glide.g`](#glide.g)\
 [`glide.g.mapleader`](#glide.g.mapleader)\
 [`glide.tabs`](#glide.tabs)\
@@ -153,6 +154,7 @@ text-decoration: none;
 [`glide.ProcessStdinPipe`](#glide.ProcessStdinPipe)\
 [`glide.RGBString`](#glide.RGBString)\
 [`glide.TabWithID`](#glide.TabWithID)\
+[`glide.ScopedPrefs`](#glide.ScopedPrefs)\
 [`glide.AddonInstallOptions`](#glide.AddonInstallOptions)\
 [`glide.Addon`](#glide.Addon)\
 [`glide.AddonInstall`](#glide.AddonInstall)\
@@ -554,6 +556,26 @@ glide.prefs.clear(name): void
 {% /api-heading %}
 
 Reset the pref value back to its default.
+
+{% api-heading id="glide.prefs.scoped" %}
+glide.prefs.scoped(): glide.ScopedPrefs
+{% /api-heading %}
+
+Helper for temporarily setting prefs.
+
+You **must** assign this with the `using` keyword, e.g. `using prefs = glide.prefs.scoped()`.
+
+_temporary_ is determined by the lifetime of the return value, e.g.
+
+```typescript
+{
+  using prefs = glide.prefs.scoped();
+  prefs.set("foo", true);
+  // .... for the rest of this block `foo` is set to `true`
+}
+
+// ... now outside the block, `foo` is set to its previous value
+```
 
 ## • `glide.g: GlideGlobals` {% id="glide.g" %}
 
@@ -1289,6 +1311,14 @@ A web extension tab that is guaranteed to have the `ts:id` property present.
 Omit<Browser.Tabs.Tab, "id"> & {
     id: number;
 }
+```
+
+## • `glide.ScopedPrefs` {% id="glide.ScopedPrefs" %}
+
+```typescript {% highlight_prefix="type x = " %}
+Omit<(typeof glide.prefs), "scoped"> & {
+  [Symbol.dispose](): void;,
+};
 ```
 
 ## • `glide.AddonInstallOptions` {% id="glide.AddonInstallOptions" %}
