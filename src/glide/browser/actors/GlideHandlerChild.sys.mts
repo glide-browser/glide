@@ -541,11 +541,16 @@ export class GlideHandlerChild extends JSWindowActorChild<
           }
           case "I": {
             motions.first_non_whitespace(editor, false);
+            motions.back_char(editor, false);
             this.#change_mode("insert");
             break;
           }
           case "0": {
             motions.beginning_of_line(editor, false);
+            break;
+          }
+          case "^": {
+            motions.first_non_whitespace(editor, false);
             break;
           }
           case "$": {
@@ -679,6 +684,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
   ): boolean {
     switch (keyseq) {
       case "0":
+      case "^":
       case "w":
       case "W":
       case "e":
