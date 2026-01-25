@@ -360,6 +360,15 @@ declare global {
        * This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
        */
       query(query: Browser.Tabs.QueryQueryInfoType): Promise<Browser.Tabs.Tab[]>;
+
+      /**
+       * Unload[0] the given tabs.
+       *
+       * Note that you *cannot* unload the currently active tab, if you try to do so, an error will be thrown.
+       *
+       * [0]: https://support.mozilla.org/kb/unload-tabs-reduce-memory-usage-firefox
+       */
+      unload(...tabs: Array<number | Browser.Tabs.Tab>): Promise<void>;
     };
 
     commandline: {

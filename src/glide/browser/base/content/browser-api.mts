@@ -342,6 +342,26 @@ export function make_glide_api(
         const tabs = await GlideBrowser.browser_proxy_api.tabs.query(query);
         return tabs;
       },
+      async unload(...tabs) {
+        const tab_ids: number[] = [];
+
+        for (const tab of tabs) {
+          const tab_id = typeof tab === "number"
+            ? tab
+            : ensure(tab.id, `Could not resolve ID for tab with URL ${tab.url}`);
+
+          const resolved = await GlideBrowser.browser_proxy_api.tabs.get(tab_id).catch(() => null);
+          if (resolved?.active) {
+            throw new GlideBrowser.sandbox_window.Error(
+              `Tab with id=${tab_id} is active, active tabs cannot be unloaded`,
+            );
+          }
+
+          tab_ids.push(tab_id);
+        }
+
+        await GlideBrowser.browser_proxy_api.tabs.discard(tab_ids);
+      },
     },
     commandline: {
       async show(opts) {

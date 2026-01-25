@@ -86,6 +86,7 @@ text-decoration: none;
 [`glide.tabs.active()`](#glide.tabs.active)\
 [`glide.tabs.get_first()`](#glide.tabs.get_first)\
 [`glide.tabs.query()`](#glide.tabs.query)\
+[`glide.tabs.unload()`](#glide.tabs.unload)\
 [`glide.commandline`](#glide.commandline)\
 [`glide.commandline.show()`](#glide.commandline.show)\
 [`glide.commandline.is_active()`](#glide.commandline.is_active)\
@@ -612,6 +613,16 @@ glide.tabs.query(query): Promise<Browser.Tabs.Tab[]>
 Gets all tabs that have the specified properties, or all tabs if no properties are specified.
 
 This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
+
+{% api-heading id="glide.tabs.unload" %}
+glide.tabs.unload(...tabs): Promise<void>
+{% /api-heading %}
+
+Unload[0] the given tabs.
+
+Note that you _cannot_ unload the currently active tab, if you try to do so, an error will be thrown.
+
+[0]: https://support.mozilla.org/kb/unload-tabs-reduce-memory-usage-firefox
 
 ## • `glide.commandline` {% id="glide.commandline" %}
 

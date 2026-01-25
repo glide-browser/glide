@@ -96,3 +96,51 @@ add_task(async function test_tabs_query() {
     await waiter(() => glide.g.test_checked).ok();
   });
 });
+
+add_task(async function test_tabs_unload() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      const tabs: Browser.Tabs.Tab[] = [];
+
+      try {
+        tabs.push(await browser.tabs.create({ active: false }));
+        tabs.push(await browser.tabs.create({ active: false }));
+
+        await glide.tabs.unload(tabs[0]!.id!, tabs[1]!);
+
+        assert((await browser.tabs.get(tabs[0]!.id!))!.discarded, "tab 0 should be marked as discarded");
+        assert((await browser.tabs.get(tabs[1]!.id!))!.discarded, "tab 1 should be marked as discarded");
+        assert(!(await glide.tabs.active()).discarded, "active tab should not be discarded");
+
+        glide.g.test_checked = true;
+      } finally {
+        await browser.tabs.remove(tabs.map(tab => tab.id!));
+      }
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await keys("~");
+    await waiter(() => glide.g.test_checked).ok();
+  });
+});
+
+add_task(async function test_tabs_unload__current_tab() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      try {
+        await glide.tabs.unload(await glide.tabs.active());
+      } catch (err) {
+        glide.g.value = String(err);
+        glide.g.test_checked = true;
+      }
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await keys("~");
+    await waiter(() => glide.g.test_checked).ok();
+
+    Assert.stringContains(glide.g.value, "active tabs cannot be unloaded");
+  });
+});
