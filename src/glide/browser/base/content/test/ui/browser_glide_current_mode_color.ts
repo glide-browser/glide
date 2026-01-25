@@ -7,31 +7,30 @@
 
 "use strict";
 
-
 add_task(async function test_glide_current_mode_color() {
-	function css_var_value(name: string) {
-		window.getComputedStyle(document!.documentElement!)!
-			.getPropertyValue(name)
-	}
+  function css_var_value(name: string) {
+    window.getComputedStyle(document!.documentElement!)!
+      .getPropertyValue(name);
+  }
 
-	const initial_current_color = css_var_value("--glide-current-mode-color")
+  const initial_current_color = css_var_value("--glide-current-mode-color");
 
-	isnot(initial_current_color, "", "--glide-current-mode-color should not be empty.");
+  isnot(initial_current_color, "", "--glide-current-mode-color should not be empty.");
 
-	const initial_mode = glide.ctx.mode
-	const mode_color = css_var_value(`--glide-mode-${initial_mode}`)
+  const initial_mode = glide.ctx.mode;
+  const mode_color = css_var_value(`--glide-mode-${initial_mode}`);
 
-	is(initial_current_color, mode_color, "--glide-current-mode-color should be set to the current modes color");
+  is(initial_current_color, mode_color, "--glide-current-mode-color should be set to the current modes color");
 
-	const modes = glide.modes.list()
-	for (const mode of modes) {
-		const mode_color = css_var_value(`--glide-mode-${mode}`)
-		isnot(mode_color, "", `--glide-mode-${mode} should not be empty.`);
+  const modes = glide.modes.list();
+  for (const mode of modes) {
+    const mode_color = css_var_value(`--glide-mode-${mode}`);
+    isnot(mode_color, "", `--glide-mode-${mode} should not be empty.`);
 
-		await glide.excmds.execute(`mode_change ${mode}`)
+    await glide.excmds.execute(`mode_change ${mode}`);
 
-		const current_color = css_var_value("--glide-current-mode-color")
+    const current_color = css_var_value("--glide-current-mode-color");
 
-		is(current_color, mode_color, `--glide-current-mode-color should be set to --glide-mode-${mode}.`);
-	}
+    is(current_color, mode_color, `--glide-current-mode-color should be set to --glide-mode-${mode}.`);
+  }
 });
