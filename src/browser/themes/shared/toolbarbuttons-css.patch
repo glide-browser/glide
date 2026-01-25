@@ -21,13 +21,13 @@ index a8df2d5cd8b3009daa033a9bf06908be78adeb3b..e84cd55c0e1b1026ce34a4ffbb57a979
 +  /* TODO(glide): does this work with localisation? */
 +  width: 10ch;
 +  height: 2px;
-+  background-color: var(--toolbarbutton-icon-fill-attention, #0060df);
++  background-color: var(--glide-current-mode-color, #0060df);
 +  border-radius: 1px;
 +}
 +
 +@media (prefers-color-scheme: dark) {
 +  .glide-mode-button::after {
-+    background-color: var(--toolbarbutton-icon-fill-attention, #45a9ff);
++    background-color: var(--glide-current-mode-color, #45a9ff);
 +  }
 +}
 +
