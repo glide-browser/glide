@@ -1508,11 +1508,11 @@ class GlideBrowserClass {
   #update_mode_ui() {
     GlideBrowser.api.styles.add(
       `
-			:root {
-				--glide-current-mode-color: var(--glide-mode-${this.state.mode})
-			}
-		`,
-      { id: "glide-current-mode-color", overwrite: true },
+				:root {
+					--glide-current-mode-color: var(--glide-mode-${this.state.mode})
+				}
+			`,
+      { id: "$glide-current-mode-color", overwrite: true },
     );
 
     const element = document!.getElementById("glide-toolbar-mode-button");
