@@ -1,8 +1,8 @@
 diff --git a/browser/themes/shared/toolbarbuttons.css b/browser/themes/shared/toolbarbuttons.css
-index a8df2d5cd8b3009daa033a9bf06908be78adeb3b..e84cd55c0e1b1026ce34a4ffbb57a97971103e51 100644
+index f681decf193605b633f1cffa493ac3b000b542bd..e021a4c53151fb843490e1c4478d162905b62604 100644
 --- a/browser/themes/shared/toolbarbuttons.css
 +++ b/browser/themes/shared/toolbarbuttons.css
-@@ -638,6 +638,37 @@ toolbar:not(#TabsToolbar) > #personal-bookmarks {
+@@ -646,6 +646,37 @@ toolbarseparator {
    }
  }
  
