@@ -5,4 +5,5 @@
 [DEFAULT]
 support-files = []
 
+["dist/browser_css.js"]
 ["dist/browser_native_tabs.js"]
