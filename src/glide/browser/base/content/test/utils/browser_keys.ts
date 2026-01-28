@@ -410,3 +410,85 @@ add_task(function normalize_is_idempotent() {
     { seed: 1, numRuns: 1000, verbose: true },
   );
 });
+
+add_task(async function test_macos_option_key_events() {
+  is(
+    to_key_notation({
+      key: "π",
+      code: "KeyP",
+      altKey: true,
+    }),
+    "<A-p>",
+    "Option+P on macOS should produce <A-p> using code property",
+  );
+
+  is(
+    to_key_notation({
+      key: "π",
+      code: "",
+      altKey: true,
+    }),
+    "<A-π>",
+    "Option+P with empty code string should fall back to Unicode character in key",
+  );
+
+  is(
+    to_key_notation({
+      key: "π",
+      code: "InvalidCode",
+      altKey: true,
+    }),
+    "<A-invalidcode>",
+    "Option+key with invalid code should use code.toLowerCase() as fallback",
+  );
+
+  is(
+    to_key_notation({
+      key: "˙",
+      code: "KeyH",
+      altKey: true,
+    }),
+    "<A-h>",
+    "Option+H on macOS should produce <A-h> using code property",
+  );
+
+  is(
+    to_key_notation({
+      key: "¬",
+      code: "KeyL",
+      altKey: true,
+    }),
+    "<A-l>",
+    "Option+L on macOS should produce <A-l> using code property",
+  );
+
+  is(
+    to_key_notation({
+      key: "∏",
+      code: "KeyP",
+      altKey: true,
+      shiftKey: true,
+    }),
+    "<A-S-P>",
+    "Option+Shift+P on macOS should produce <A-S-P> using code property",
+  );
+
+  is(
+    to_key_notation({
+      key: "p",
+      code: "KeyP",
+    }),
+    "p",
+    "Non-Alt key with code should ignore code and use key normally",
+  );
+
+  is(
+    to_key_notation({
+      key: " ",
+      code: "Space",
+      altKey: true,
+    }),
+    "<A-space>",
+    "Option+Space should use code.toLowerCase() when code doesn't start with 'Key'",
+  );
+});
