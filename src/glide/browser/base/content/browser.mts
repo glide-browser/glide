@@ -172,6 +172,33 @@ class GlideBrowserClass {
     this.on_startup(async () => {
       await config_promise;
 
+      const glide = GlideBrowser.api;
+
+      await Promise.allSettled(
+        this.api.options.get("plugin_search_roots").map(async (root) => {
+          const children = await IOUtils.getChildren(root).catch(() => []);
+
+          for (const child of children) {
+            const stat = await glide.fs.stat(child);
+            if (stat.type !== "directory") {
+              continue;
+            }
+
+            const config_path = glide.path.join(child, "glide.ts");
+            if (!(await glide.fs.exists(config_path))) {
+              continue;
+            }
+
+            GlideBrowser._log.debug(`Loading plugin config file at ${config_path}`);
+            await glide.unstable.include(config_path);
+          }
+        }),
+      );
+    });
+
+    this.on_startup(async () => {
+      await config_promise;
+
       const results = await Promise.allSettled((GlideBrowser.autocmds.WindowLoaded ?? []).map(cmd =>
         (async () => {
           const cleanup = await cmd.callback({});
