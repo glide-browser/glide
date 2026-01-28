@@ -1484,6 +1484,13 @@ declare global {
        * @default false
        */
       force?: boolean;
+
+      /**
+       * If the addon will be enabled in private browsing mode.
+       *
+       * @default false
+       */
+      private_browsing_allowed?: boolean;
     };
 
     export type Addon = {
@@ -1493,6 +1500,7 @@ declare global {
       readonly version: string;
       readonly active: boolean;
       readonly source_uri: URL | null;
+      readonly private_browsing_allowed: boolean;
       readonly type: "extension" | "plugin" | "theme" | "locale" | "dictionary" | "sitepermission" | "mlmodel";
 
       uninstall(): Promise<void>;

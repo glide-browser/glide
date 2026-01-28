@@ -297,6 +297,8 @@ declare namespace MockedExports {
           };
         };
       };
+    "resource://gre/modules/ExtensionPermissions.sys.mjs":
+      typeof import("../engine/toolkit/components/extensions/ExtensionPermissions.sys.mjs");
     "resource://gre/modules/ConduitsParent.sys.mjs":
       typeof import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs");
     "resource://gre/modules/AppConstants.sys.mjs":

@@ -508,7 +508,7 @@ export function make_glide_api(
           );
           if (existing) {
             GlideBrowser._log.debug(`Addon install with url='${xpi_url}' is cached; id='${existing.id}'`);
-            return object_assign(firefox_addon_to_glide(existing), { cached: true });
+            return await configure(object_assign(firefox_addon_to_glide(existing), { cached: true }));
           }
         }
 
@@ -520,7 +520,37 @@ export function make_glide_api(
         cache.data.addons[xpi_url] = { id: ff_addon.id };
         cache.saveSoon();
 
-        return object_assign(firefox_addon_to_glide(ff_addon), { cached: false });
+        return await configure(object_assign(firefox_addon_to_glide(ff_addon), { cached: false }));
+
+        async function configure(addon: glide.AddonInstall): Promise<glide.AddonInstall> {
+          if (
+            opts?.private_browsing_allowed == null || opts.private_browsing_allowed === addon.private_browsing_allowed
+          ) {
+            // nothing to do
+            return addon;
+          }
+
+          const { ExtensionPermissions } = ChromeUtils.importESModule(
+            "resource://gre/modules/ExtensionPermissions.sys.mjs",
+          );
+
+          if (opts.private_browsing_allowed) {
+            await ExtensionPermissions.add(addon.id, {
+              permissions: ["internal:privateBrowsingAllowed"],
+              origins: [],
+            });
+          } else {
+            await ExtensionPermissions.remove(addon.id, {
+              permissions: ["internal:privateBrowsingAllowed"],
+              origins: [],
+            });
+          }
+
+          // we have to reload the addon for any permissions changes to actually apply
+          await addon.reload();
+
+          return addon;
+        }
       },
 
       async list(types: glide.AddonType | glide.AddonType[]): Promise<glide.Addon[]> {
@@ -1283,6 +1313,11 @@ function firefox_addon_to_glide(addon: Addon): glide.Addon {
           throw new Error(`Unknown addon type ${addon.type}`);
         }
       }
+    },
+
+    get private_browsing_allowed() {
+      const policy = WebExtensionPolicy.getByID(addon.id);
+      return policy?.privateBrowsingAllowed ?? false;
     },
 
     async uninstall() {
