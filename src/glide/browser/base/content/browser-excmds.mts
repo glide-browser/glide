@@ -347,6 +347,16 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "tab_pin_toggle": {
+        const tab = gBrowser.selectedTab;
+        if (tab.pinned) {
+          gBrowser.unpinTab(tab);
+        } else {
+          gBrowser.pinTab(tab);
+        }
+        break;
+      }
+
       case "commandline_show": {
         // extract the given args ourselves as `this.#parse_command_args` doesn't support
         // not trimming the args input and empty spaces have significant meaning here.
