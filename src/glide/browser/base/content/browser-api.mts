@@ -487,6 +487,24 @@ export function make_glide_api(
       },
     },
 
+    containers: {
+      create(props): glide.Container {
+        const container = ContextualIdentityService.create(props.name, props.icon, props.color);
+        return {
+          icon: container.icon,
+          name: container.name,
+          id: container.userContextId,
+          color: container.color,
+
+          // toolkit/components/extensions/parent/ext-toolkit.js::getCookieStoreIdForContainer
+          cookie_store_id: `firefox-container-${container.userContextId}`,
+        };
+      },
+      remove(id) {
+        return ContextualIdentityService.remove(id);
+      },
+    },
+
     addons: {
       async install(xpi_url, opts): Promise<glide.AddonInstall> {
         const cache = GlideBrowser.resolved_addons_cache_file;

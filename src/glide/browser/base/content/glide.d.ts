@@ -983,6 +983,18 @@ declare global {
       }): Promise<void>;
     };
 
+    containers: {
+      /**
+       * Create a new container.
+       */
+      create(props: { name: string; icon: glide.ContainerIcon; color: glide.ContainerColor }): glide.Container;
+
+      /**
+       * Remove a container.
+       */
+      remove(id: number): boolean;
+    };
+
     messengers: {
       /**
        * Create a {@link glide.ParentMessenger} that can be used to communicate with the content process.
@@ -1906,6 +1918,44 @@ declare global {
       path: string | undefined;
       size: number | undefined;
     };
+
+    export type Container = {
+      id: number;
+
+      name: string;
+      icon: string;
+      color: string;
+
+      cookie_store_id: string;
+    };
+
+    // browser/components/preferences/dialogs/containers.js::gContainersManager.icons
+    export type ContainerIcon =
+      | "fingerprint"
+      | "briefcase"
+      | "dollar"
+      | "cart"
+      | "vacation"
+      | "gift"
+      | "food"
+      | "fruit"
+      | "pet"
+      | "tree"
+      | "chill"
+      | "circle"
+      | "fence";
+
+    // browser/components/preferences/dialogs/containers.js::gContainersManager.colors
+    export type ContainerColor =
+      | "blue"
+      | "turquoise"
+      | "green"
+      | "yellow"
+      | "orange"
+      | "red"
+      | "pink"
+      | "purple"
+      | "toolbar";
   }
 
   type TabID = number;
