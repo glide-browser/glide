@@ -43,7 +43,7 @@ jobs:
         
       - name: update hashes
         env:
-          VERSION: inputs.tag_name || ${{ github.event.release.tag_name }}
+          VERSION: ${{ inputs.tag_name github.event.release.tag_name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git switch -c "update-$VERSION"
