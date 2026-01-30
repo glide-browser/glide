@@ -1,14 +1,26 @@
-# Browser branding
-ac_add_options --with-app-name=glide
-ac_add_options --with-app-basename=glide
-ac_add_options --with-branding=browser/branding/glide
+if test "$GLIDE_RELEASE"; then
+  USER_DIR="Glide Browser"
+  BASENAME="glide"
+  DISPLAYNAME="Glide"
+  BRANDING_DIR="browser/branding/glide"
+else
+  USER_DIR="Glide Debug Browser"
+  BASENAME="glide-debug"
+  DISPLAYNAME="Glide Debug"
+  BRANDING_DIR="browser/branding/glide-debug"
+fi
 
-export MOZ_USER_DIR="Glide Browser"
-export MOZ_APP_BASENAME=glide
-export MOZ_BRANDING_DIRECTORY=browser/branding/glide
-export MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/glide
+# Browser branding
+ac_add_options --with-app-name=$BASENAME
+ac_add_options --with-app-basename=$BASENAME
+ac_add_options --with-branding=$BRANDING_DIR
+
+export MOZ_USER_DIR=$USER_DIR
+export MOZ_APP_BASENAME=$BASENAME
+export MOZ_BRANDING_DIRECTORY=$BRANDING_DIR
+export MOZ_OFFICIAL_BRANDING_DIRECTORY=$BRANDING_DIR
 # macos only
-export MOZ_MACBUNDLE_NAME="Glide.app"
+export MOZ_MACBUNDLE_NAME="$BASENAME.app"
 
 ac_add_options --with-distribution-id=app.glide-browser
 
