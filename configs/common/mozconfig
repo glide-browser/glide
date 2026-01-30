@@ -1,26 +1,14 @@
-if test "$GLIDE_RELEASE"; then
-  USER_DIR="Glide Browser"
-  BASENAME="glide"
-  DISPLAYNAME="Glide"
-  BRANDING_DIR="browser/branding/glide"
-else
-  USER_DIR="Glide Debug Browser"
-  BASENAME="glide-debug"
-  DISPLAYNAME="Glide Debug"
-  BRANDING_DIR="browser/branding/glide-debug"
-fi
+# Browser branding (values injected by patch.mts)
+ac_add_options --with-app-name=${basename}
+ac_add_options --with-app-basename=${basename}
+ac_add_options --with-branding=${branding_dir}
 
-# Browser branding
-ac_add_options --with-app-name=$BASENAME
-ac_add_options --with-app-basename=$BASENAME
-ac_add_options --with-branding=$BRANDING_DIR
-
-export MOZ_USER_DIR=$USER_DIR
-export MOZ_APP_BASENAME=$BASENAME
-export MOZ_BRANDING_DIRECTORY=$BRANDING_DIR
-export MOZ_OFFICIAL_BRANDING_DIRECTORY=$BRANDING_DIR
+export MOZ_USER_DIR="${user_dir}"
+export MOZ_APP_BASENAME=${basename}
+export MOZ_BRANDING_DIRECTORY=${branding_dir}
+export MOZ_OFFICIAL_BRANDING_DIRECTORY=${branding_dir}
 # macos only
-export MOZ_MACBUNDLE_NAME="$BASENAME.app"
+export MOZ_MACBUNDLE_NAME="${basename}.app"
 
 ac_add_options --with-distribution-id=app.glide-browser
 
