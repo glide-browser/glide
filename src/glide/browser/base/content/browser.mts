@@ -118,8 +118,21 @@ class GlideBrowserClass {
       observe() {
         GlideBrowser._log.debug("browser-idle-startup-tasks-finished observer called");
 
-        GlideBrowser.#_check_mirrored_document_mutations();
-        DocumentMirror.mirror_into_document(document, GlideBrowser._hidden_browser.browsingContext.window!.document!);
+        // this pref is set to `true` when running the mochitest tests, we branch
+        // on it for error handling so that tests will hard error on any errors so
+        // they aren't just lost to the ether like they would be when running the browser
+        // normally, as we don't want to error early and not register some state.
+        const testing = Services.prefs.getBoolPref("devtools.testing", false);
+
+        try {
+          GlideBrowser.#_check_mirrored_document_mutations();
+          DocumentMirror.mirror_into_document(document, GlideBrowser._hidden_browser.browsingContext.window!.document!);
+        } catch (err) {
+          if (testing) {
+            throw err;
+          }
+          console.error(err);
+        }
 
         GlideBrowser.#startup_finished = true;
 
@@ -127,14 +140,15 @@ class GlideBrowserClass {
         GlideBrowser.#startup_listeners.clear();
 
         for (const listener of listeners) {
-          listener();
+          try {
+            listener();
+          } catch (err) {
+            if (testing) {
+              throw err;
+            }
+            console.error(err);
+          }
         }
-
-        GlideBrowser.add_state_change_listener(GlideBrowser.#state_change_autocmd);
-
-        GlideBrowserDev.init();
-
-        gBrowser.addProgressListener(GlideBrowser.progress_listener);
 
         Services.obs.removeObserver(startup_observer, "browser-idle-startup-tasks-finished");
       },
@@ -142,6 +156,18 @@ class GlideBrowserClass {
     Services.obs.addObserver(startup_observer, "browser-idle-startup-tasks-finished");
 
     Services.els.addListenerChangeListener(DocumentMirror.make_listener_change_observer());
+
+    this.on_startup(() => {
+      GlideBrowser.add_state_change_listener(GlideBrowser.#state_change_autocmd);
+    });
+
+    this.on_startup(() => {
+      GlideBrowserDev.init();
+    });
+
+    this.on_startup(() => {
+      gBrowser.addProgressListener(GlideBrowser.progress_listener);
+    });
 
     this.on_startup(() => {
       // check for extension errors every 500ms as there are no listeners we can register

@@ -21,13 +21,15 @@ class GlideBrowserDevClass {
   }
 
   maybe_toggle_fs_watchers() {
+    if (this.#fs_watcher_id) {
+      clearInterval(this.#fs_watcher_id);
+    }
+
     if (Services.prefs.getBoolPref(this.#fs_watcher_pref)) {
       this.#fs_watcher_id = setInterval(() => {
         this.#check_docs_change();
         this.#check_tutor_change();
       }, 200);
-    } else if (this.#fs_watcher_id) {
-      clearInterval(this.#fs_watcher_id);
     }
   }
 
