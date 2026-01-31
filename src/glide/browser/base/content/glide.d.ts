@@ -1975,6 +1975,17 @@ declare global {
         | Array<(Node | string)>,
       props?: DOM.CreateElementProps<TagName extends keyof HTMLElementTagNameMap ? TagName : "div">,
     ): TagName extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[TagName] : HTMLElement;
+
+    listeners: {
+      /**
+       * Returns true if a event target has any listener for the given type.
+       *
+       * ```typescript
+       * DOM.listeners.has(element, "click");
+       * ```
+       */
+      has(target: EventTarget, type: string): boolean;
+    };
   };
 
   namespace DOM {

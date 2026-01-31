@@ -180,7 +180,9 @@ text-decoration: none;
 [`glide.CommandLineShowOpts`](#glide.CommandLineShowOpts)\
 [`glide.CommandLineCustomOption`](#glide.CommandLineCustomOption)\
 [`glide.FileInfo`](#glide.FileInfo)\
-[`DOM.create_element()`](#DOM.create_element)
+[`DOM.create_element()`](#DOM.create_element)\
+[`DOM.listeners`](#DOM.listeners)\
+[`DOM.listeners.has()`](#DOM.listeners.has)
 
 {% html %}
 
@@ -1687,4 +1689,16 @@ DOM.create_element("div", {
     DOM.create_element("img", { alt: "hint" }),
   ],
 });
+```
+
+## • `DOM.listeners` {% id="DOM.listeners" %}
+
+{% api-heading id="DOM.listeners.has" %}
+DOM.listeners.has(target, type): boolean
+{% /api-heading %}
+
+Returns true if a event target has any listener for the given type.
+
+```typescript
+DOM.listeners.has(element, "click");
 ```

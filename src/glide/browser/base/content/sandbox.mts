@@ -96,6 +96,11 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     ): K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement {
       return DOMUtils.create_element(tag_name, props_or_children, props, document);
     },
+    listeners: {
+      has(target, type) {
+        return Services.els.hasListenersFor(target, type);
+      },
+    },
   };
 
   // options pass here correspond to:

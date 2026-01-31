@@ -1,8 +1,8 @@
 diff --git a/toolkit/components/extensions/ExtensionContent.sys.mjs b/toolkit/components/extensions/ExtensionContent.sys.mjs
-index 988c32980bca19128ad893a188862d535f1e0017..08148625d3dedef636428ad585080bcc996e9f6c 100644
+index 8c83ec3d2eabe8e51aabf59a330c37df22d7c813..7dcd951f16a516f664eb939f858bd2e5dee530bc 100644
 --- a/toolkit/components/extensions/ExtensionContent.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionContent.sys.mjs
-@@ -1115,6 +1115,53 @@ export class ContentScriptContextChild extends BaseContext {
+@@ -1116,6 +1116,58 @@ export class ContentScriptContextChild extends BaseContext {
      );
      lazy.Schemas.exportLazyGetter(this.sandbox, "chrome", () => this.chromeObj);
  
@@ -48,6 +48,11 @@ index 988c32980bca19128ad893a188862d535f1e0017..08148625d3dedef636428ad585080bcc
 +            this.contentWindow.document
 +          );
 +        };
++
++        obj.listeners = Cu.createObjectIn(this.sandbox);
++        obj.listeners.has = (target, type) => {
++          return Services.els.hasListenersFor(target, type);
++        }
 +
 +        return obj;
 +      });

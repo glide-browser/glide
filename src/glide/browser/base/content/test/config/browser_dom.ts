@@ -91,7 +91,7 @@ add_task(async function test_create_element_props_cannot_pass_both() {
   await waiter(() => glide.g.value).is("Error: Cannot pass props twice");
 });
 
-add_task(async function test_available_in_content() {
+add_task(async function test_create_element__available_in_content() {
   await reload_config(function _() {
     glide.keymaps.set(
       "normal",
@@ -111,5 +111,55 @@ add_task(async function test_available_in_content() {
         "Waiting for keymapping fn to create element",
       );
     });
+  });
+});
+
+add_task(async function test_listeners_has() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      const element = DOM.create_element("div");
+      const before = DOM.listeners.has(element, "click");
+
+      element.addEventListener("click", () => {});
+
+      glide.g.value = {
+        before,
+        after: DOM.listeners.has(element, "click"),
+      };
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await glide.keys.send("~");
+
+    const result = await until(() => glide.g.value, "keymap function should execute successfully");
+    is(result.before, false, "listeners.has() should return false when there are no listeners registered");
+    is(result.after, true, "listeners.has() should return true when there is a listener registered");
+  });
+});
+
+add_task(async function test_listeners_has__available_in_content() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "~", async ({ tab_id }) => {
+      glide.g.value = await glide.content.execute(() => {
+        const element = DOM.create_element("div");
+        const before = DOM.listeners.has(element, "click");
+
+        element.addEventListener("click", () => {});
+
+        return {
+          before,
+          after: DOM.listeners.has(element, "click"),
+        };
+      }, { tab_id });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await glide.keys.send("~");
+
+    const result = await until(() => glide.g.value, "content function should execute successfully");
+    is(result.before, false, "listeners.has() should return false when there are no listeners registered");
+    is(result.after, true, "listeners.has() should return true when there is a listener registered");
   });
 });
