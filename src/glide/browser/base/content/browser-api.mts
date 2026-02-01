@@ -167,6 +167,9 @@ class GlideOptions implements GlideO {
     this.#newtab_url = value;
     options.newtab_url(value, false);
   }
+
+  go_next_patterns: string[] = ["next", "more", "newer", ">", ">", "›", "→", "»", "≫", ">>"];
+  go_previous_patterns: string[] = ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"];
 }
 
 // above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have

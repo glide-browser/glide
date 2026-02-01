@@ -1259,6 +1259,24 @@ declare global {
      * @default "about:newtab"
      */
     newtab_url: string;
+
+    /**
+     * The element text patterns to search for in the `:go_next` excmd.
+     *
+     * For example, with the default patterns, `html:<button>next page</button>` would be matched.
+     *
+     * @default ["next", "more", "newer", ">", ">", "›", "→", "»", "≫", ">>"]
+     */
+    go_next_patterns: string[];
+
+    /**
+     * The element text patterns to search for in the `:go_previous` excmd.
+     *
+     * For example, with the default patterns, `html:<button>previous page</button>` would be matched.
+     *
+     * @default ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"]
+     */
+    go_previous_patterns: string[];
   }
 
   /**

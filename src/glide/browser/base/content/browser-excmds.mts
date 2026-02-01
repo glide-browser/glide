@@ -407,6 +407,24 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "go_next": {
+        const Navigation = ChromeUtils.importESModule("chrome://glide/content/browser-navigation.mjs");
+        await GlideBrowser.api.content.execute(Navigation.content.activate_link, {
+          tab_id: props.args.tab_id,
+          args: [{ patterns: GlideBrowser.api.options.get("go_next_patterns"), rel: "next" }],
+        });
+        break;
+      }
+
+      case "go_previous": {
+        const Navigation = ChromeUtils.importESModule("chrome://glide/content/browser-navigation.mjs");
+        await GlideBrowser.api.content.execute(Navigation.content.activate_link, {
+          tab_id: props.args.tab_id,
+          args: [{ patterns: GlideBrowser.api.options.get("go_previous_patterns"), rel: "prev" }],
+        });
+        break;
+      }
+
       case "mode_change": {
         const { args } = this.#parse_command_args(command_meta, command);
         const { mode, "--automove": automove, "--operator": operator } = args;

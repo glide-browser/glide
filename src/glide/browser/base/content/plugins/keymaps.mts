@@ -51,6 +51,8 @@ export function init(sandbox: Sandbox) {
 
   // page navigation
   glide.keymaps.set("normal", "gi", "focusinput last");
+  glide.keymaps.set("normal", "[[", "go_previous");
+  glide.keymaps.set("normal", "]]", "go_next");
   glide.keymaps.set(["normal", "insert"], "<C-,>", "blur");
   glide.keymaps.set("normal", "gu", "go_up");
   glide.keymaps.set("normal", "gU", "go_to_root");

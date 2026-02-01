@@ -9,3 +9,5 @@ support-files = [
 
 ["dist/browser_excmds.js"]
 https_first_disabled = true
+["dist/browser_navigation.js"]
+https_first_disabled = true

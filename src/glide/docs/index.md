@@ -167,6 +167,10 @@ paru -S glide-browser-bin
       <span class="keymap-desc">Focus last input field</span>
       <span class="keymap-key">gI</span>
       <span class="keymap-desc">Focus the biggest editable element</span>
+      <span class="keymap-key">[[</span>
+      <span class="keymap-desc">Follow the link labeled previous or &lt;</span>
+      <span class="keymap-key">]]</span>
+      <span class="keymap-desc">Follow the link labeled next or &gt;</span>
       <span class="keymap-key">&lt;C-,&gt;</span>
       <span class="keymap-desc">Move focus back to the page</span>
     </div>

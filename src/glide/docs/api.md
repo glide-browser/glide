@@ -59,6 +59,8 @@ text-decoration: none;
 [`glide.o.scroll_implementation`](#glide.o.scroll_implementation)\
 [`glide.o.native_tabs`](#glide.o.native_tabs)\
 [`glide.o.newtab_url`](#glide.o.newtab_url)\
+[`glide.o.go_next_patterns`](#glide.o.go_next_patterns)\
+[`glide.o.go_previous_patterns`](#glide.o.go_previous_patterns)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -385,6 +387,22 @@ This may be a local file (e.g. `"file:///path/to/page.html"`) or
 any other URL, e.g. `"https://example.com"`.
 
 `ts:@default "about:newtab"`
+
+### `glide.o.go_next_patterns` {% id="glide.o.go_next_patterns" %}
+
+The element text patterns to search for in the `:go_next` excmd.
+
+For example, with the default patterns, `html:<button>next page</button>` would be matched.
+
+`ts:@default ["next", "more", "newer", ">", ">", "›", "→", "»", "≫", ">>"]`
+
+### `glide.o.go_previous_patterns` {% id="glide.o.go_previous_patterns" %}
+
+The element text patterns to search for in the `:go_previous` excmd.
+
+For example, with the default patterns, `html:<button>previous page</button>` would be matched.
+
+`ts:@default ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"]`
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 
