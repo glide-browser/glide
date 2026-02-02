@@ -26,6 +26,7 @@ pref("browser.ml.pageAssist.enabled", false);
 pref("browser.ml.smartAssist.enabled", false);
 pref("browser.ml.smartAssist.overrideNewTab", false);
 pref("browser.ai.control.linkPreviewKeyPoints", "blocked");
+pref("browser.preferences.aiControls", true); // experimental UI for configuring AI features
 
 // extensions
 // these should be the same as browser/app/profile/firefox.js, but with the app version replaced with FIREFOX_VERSION
