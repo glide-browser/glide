@@ -293,6 +293,36 @@ export function make_glide_api(
         return GlideBrowser.key_manager.list(modes);
       },
     },
+    findbar: {
+      async open(opts) {
+        const findbar = await gFindBarPromise;
+
+        const mode = (() => {
+          const mode = opts?.mode;
+          switch (mode) {
+            case "links":
+              return findbar.FIND_LINKS;
+            case "normal":
+              return findbar.FIND_NORMAL;
+            case "typeahead":
+              return findbar.FIND_TYPEAHEAD;
+            case undefined:
+              return undefined;
+            default:
+              throw assert_never(
+                mode,
+                new Error(`Unexpected findbar mode: ${mode}, expected "links", "normal", "typeahead" or undefined`),
+              );
+          }
+        })();
+
+        findbar.open(mode);
+      },
+      async close() {
+        const findbar = await gFindBarPromise;
+        findbar.close();
+      },
+    },
     buf: {
       prefs: {
         set: (name, value) => {

@@ -108,6 +108,9 @@ text-decoration: none;
 [`glide.hints.label_generators`](#glide.hints.label_generators)\
 [`glide.hints.label_generators.prefix_free`](#glide.hints.label_generators.prefix_free)\
 [`glide.hints.label_generators.numeric`](#glide.hints.label_generators.numeric)\
+[`glide.findbar`](#glide.findbar)\
+[`glide.findbar.open()`](#glide.findbar.open)\
+[`glide.findbar.close()`](#glide.findbar.close)\
 [`glide.buf`](#glide.buf)\
 [`glide.buf.prefs`](#glide.buf.prefs)\
 [`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
@@ -173,6 +176,7 @@ text-decoration: none;
 [`glide.HintLocation`](#glide.HintLocation)\
 [`glide.HintAction`](#glide.HintAction)\
 [`glide.HintActionProps`](#glide.HintActionProps)\
+[`glide.FindbarOpenOpts`](#glide.FindbarOpenOpts)\
 [`glide.SplitViewCreateOpts`](#glide.SplitViewCreateOpts)\
 [`glide.SplitView`](#glide.SplitView)\
 [`glide.KeyNotation`](#glide.KeyNotation)\
@@ -823,6 +827,20 @@ prefix-free combinations of the characters in
 Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:glide.o.hint_label_generator`{% /link %} to generate
 sequential numeric labels, starting at `1` and counting up.
 Ignores {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint_chars`{% /link %}.
+
+## • `glide.findbar` {% id="glide.findbar" %}
+
+{% api-heading id="glide.findbar.open" %}
+glide.findbar.open(opts?): Promise<void>
+{% /api-heading %}
+
+Open the findbar. Does nothing if the findbar is already open.
+
+{% api-heading id="glide.findbar.close" %}
+glide.findbar.close(): Promise<void>
+{% /api-heading %}
+
+Close the findbar. Does nothing if the findbar is already closed.
 
 ## • `glide.buf` {% id="glide.buf" %}
 
@@ -1509,6 +1527,21 @@ content: {
     execute<R>(cb: (target: HTMLElement) => R | Promise<R>): Promise<R extends Promise<infer U> ? U : R>;
 };
 ````
+
+## • `glide.FindbarOpenOpts` {% id="glide.FindbarOpenOpts" %}
+
+```typescript {% highlight_prefix="type x = {" %}
+/**
+ * The findbar can be opened in 3 different "modes":
+ *
+ * - "links"    : the findbar will only show results for links, pressing enter will click the link
+ * - "typeahead": the findbar will exit as soon as you press enter
+ * - "normal"   : the classic experience
+ *
+ * @default "normal"
+ */
+mode?: "normal" | "typeahead" | "links";
+```
 
 ## • `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
 

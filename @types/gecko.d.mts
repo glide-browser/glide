@@ -421,6 +421,35 @@ declare var AddonManager: AddonManager;
 
 declare class MozXULElement extends XULElement {}
 
+type FindMode = MozFindbarConstants[keyof MozFindbarConstants];
+
+interface MozFindbarConstants {
+  readonly FIND_NORMAL: 0;
+  readonly FIND_TYPEAHEAD: 1;
+  readonly FIND_LINKS: 2;
+}
+
+interface MozFindbar extends MozXULElement, MozFindbarConstants {
+  findMode: FindMode;
+  prefillWithSelection: boolean;
+  readonly hasTransactions: boolean;
+  browser: XULBrowserElement | null;
+  hidden: boolean;
+  quickFindTimeoutLength: number;
+
+  open(mode?: FindMode): boolean;
+  close(noAnim?: boolean): void;
+  clear(): void;
+  startFind(mode?: FindMode): Promise<void>;
+  onFindCommand(): Promise<void>;
+  onFindAgainCommand(findPrevious: boolean): Promise<void> | undefined;
+  onFindSelectionCommand(): void;
+  toggleHighlight(highlight: boolean, fromPrefObserver?: boolean): void;
+  toggleEntireWord(entireWord: boolean, fromPrefObserver?: boolean): void;
+}
+
+declare const gFindBarPromise: Promise<MozFindbar>;
+
 declare interface NodeListOf<TNode extends Node> extends NodeList {
   item(index: number): TNode | null;
   /**

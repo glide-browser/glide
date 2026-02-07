@@ -672,6 +672,18 @@ declare global {
       };
     };
 
+    findbar: {
+      /**
+       * Open the findbar. Does nothing if the findbar is already open.
+       */
+      open(opts?: glide.FindbarOpenOpts): Promise<void>;
+
+      /**
+       * Close the findbar. Does nothing if the findbar is already closed.
+       */
+      close(): Promise<void>;
+    };
+
     buf: {
       prefs: {
         /**
@@ -1707,6 +1719,19 @@ declare global {
          */
         execute<R>(cb: (target: HTMLElement) => R | Promise<R>): Promise<R extends Promise<infer U> ? U : R>;
       };
+    };
+
+    export type FindbarOpenOpts = {
+      /**
+       * The findbar can be opened in 3 different "modes":
+       *
+       * - "links"    : the findbar will only show results for links, pressing enter will click the link
+       * - "typeahead": the findbar will exit as soon as you press enter
+       * - "normal"   : the classic experience
+       *
+       * @default "normal"
+       */
+      mode?: "normal" | "typeahead" | "links";
     };
 
     export type SplitViewCreateOpts = {
