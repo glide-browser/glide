@@ -82,7 +82,7 @@
     "oxlint-tsgolint": "^0.11.1",
     "p-queue": "^9.0.0",
     "pagefind": "^1.4.0",
-    "ts-morph": "^27.0.0",
+    "ts-morph": "^27.0.2",
     "type-fest": "^5.2.0",
     "webextension-polyfill": "github:glide-browser/webextension-types",
     "webidl2": "^24.5.0",
