@@ -339,7 +339,7 @@ export function make_glide_api(
         findbar.close();
       },
       is_open() {
-        return gFindBar?.hidden ? false : true;
+        return !gFindBar || gFindBar?.hidden ? false : true;
       },
     },
     buf: {

@@ -13,7 +13,7 @@ add_task(async function test_findbar_open_close_basic() {
   await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
-    ok(glide.findbar.is_open(), "findbar should be closed initially");
+    notok(glide.findbar.is_open(), "findbar should be closed initially");
 
     await glide.findbar.open();
 
