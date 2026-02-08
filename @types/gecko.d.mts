@@ -436,6 +436,9 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
   browser: XULBrowserElement | null;
   hidden: boolean;
   quickFindTimeoutLength: number;
+  _highlightAll?: boolean;
+  _entireWord?: boolean;
+  _typeAheadCaseSensitive?: 0 | 1 | 2;
 
   open(mode?: FindMode): boolean;
   close(noAnim?: boolean): void;
@@ -446,6 +449,29 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
   onFindSelectionCommand(): void;
   toggleHighlight(highlight: boolean, fromPrefObserver?: boolean): void;
   toggleEntireWord(entireWord: boolean, fromPrefObserver?: boolean): void;
+
+  /**
+   * Sets the findbar case-sensitivity mode.
+   *
+   * @param {number} caseSensitivity 0 - case insensitive,
+   *                                 1 - case sensitive,
+   *                                 2 - auto = case sensitive if the matching
+   *                                     string contains upper case letters.
+   * @see _shouldBeCaseSensitive
+   */
+  _setCaseSensitivity(caseSensitivity: 0 | 1 | 2): void;
+
+  /**
+   * Sets the findbar diacritic-matching mode
+   *
+   * @param {number} diacriticMatching 0 - ignore diacritics,
+   *                                   1 - match diacritics,
+   *                                   2 - auto = match diacritics if the
+   *                                       matching string contains
+   *                                       diacritics.
+   * @see _shouldMatchDiacritics
+   */
+  _setDiacriticMatching(diacriticMatching): void;
 }
 
 declare const gFindBarPromise: Promise<MozFindbar>;

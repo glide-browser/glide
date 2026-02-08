@@ -316,6 +316,22 @@ export function make_glide_api(
           }
         })();
 
+        if (typeof opts?.highlight_all !== "undefined") {
+          findbar.toggleHighlight(opts.highlight_all);
+        }
+
+        if (typeof opts?.whole_words !== "undefined") {
+          findbar.toggleEntireWord(opts.whole_words);
+        }
+
+        if (typeof opts?.match_casing !== "undefined") {
+          findbar._setCaseSensitivity(opts.match_casing ? 1 : 0);
+        }
+
+        if (typeof opts?.match_diacritics !== "undefined") {
+          findbar._setDiacriticMatching(opts.match_diacritics ? 1 : 0);
+        }
+
         findbar.open(mode);
       },
       async close() {

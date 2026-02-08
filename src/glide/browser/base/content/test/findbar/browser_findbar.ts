@@ -90,3 +90,103 @@ add_task(async function test_findbar_open_idempotent() {
     await until(() => findbar.hidden, "Waiting for findbar to close");
   });
 });
+
+add_task(async function test_findbar_open_highlight_all() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ highlight_all: true });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    ok(findbar._highlightAll, "highlight all should be enabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+
+    await glide.findbar.open({ highlight_all: false });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    ok(!findbar._highlightAll, "highlight all should be disabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+
+  glide.prefs.clear("findbar.highlightAll");
+});
+
+add_task(async function test_findbar_open_whole_words() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ whole_words: true });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    ok(findbar._entireWord, "entire word matching should be enabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+
+    await glide.findbar.open({ whole_words: false });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    ok(!findbar._entireWord, "entire word matching should be disabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+
+  glide.prefs.clear("findbar.entireword");
+});
+
+add_task(async function test_findbar_open_match_casing() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ match_casing: true });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    is(findbar._typeAheadCaseSensitive, 1, "case sensitive matching should be enabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+
+    await glide.findbar.open({ match_casing: false });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    is(findbar._typeAheadCaseSensitive, 0, "case sensitive matching should be disabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
+add_task(async function test_findbar_open_match_diacritics() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ match_diacritics: true });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    is(findbar.browser.finder._matchDiacritics, true, "diacritics matching should be enabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+
+    await glide.findbar.open({ match_diacritics: false });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    is(findbar.browser.finder._matchDiacritics, false, "diacritics matching should be disabled");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});

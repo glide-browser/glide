@@ -1541,6 +1541,40 @@ content: {
  * @default "normal"
  */
 mode?: "normal" | "typeahead" | "links";
+/**
+ * Highlight all terms that match the search you've entered
+ *
+ * When not specified, this retains whatever value was last set—either through the API or by manually
+ * toggling the highlight button in the findbar.
+ */
+highlight_all?: boolean | undefined;
+/**
+ * Make searches case-sensitive.
+ *
+ * Normally if you search for "search phrase", instances of "Search Phrase" on the page will also be found.
+ *
+ * If this is set to `false`, only instances of the phrase exactly as you've typed it will be found.
+ *
+ * When not specified, this retains whatever value was last set—either through the API or by manually
+ * toggling the casing button in the findbar.
+ */
+match_casing?: boolean | undefined;
+/**
+ * When this option is `true` the search will distinguish between accented letters and their base letters.
+ *
+ * For example, the search for "résumé" will not find a match for "resume".
+ *
+ * When not specified, this retains whatever value was last set—either through the API or by manually
+ * toggling the diacritics button in the findbar.
+ */
+match_diacritics?: boolean | undefined;
+/**
+ * This highlights only entire words that match your search.
+ *
+ * When not specified, this retains whatever value was last set—either through the API or by manually
+ * toggling the whole words button in the findbar.
+ */
+whole_words?: boolean | undefined;
 ```
 
 ## • `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
