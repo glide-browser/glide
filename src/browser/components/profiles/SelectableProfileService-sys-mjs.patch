@@ -1,8 +1,8 @@
 diff --git a/browser/components/profiles/SelectableProfileService.sys.mjs b/browser/components/profiles/SelectableProfileService.sys.mjs
-index 1e62fc9395acceb57049e75db8f967d334a83ab4..9a3577fb8af833b2c0254951eb949d90aed959f9 100644
+index 6cce63e1f8..448a7fba92 100644
 --- a/browser/components/profiles/SelectableProfileService.sys.mjs
 +++ b/browser/components/profiles/SelectableProfileService.sys.mjs
-@@ -227,6 +227,10 @@ class SelectableProfileServiceClass extends EventEmitter {
+@@ -150,6 +150,10 @@ class SelectableProfileServiceClass extends EventEmitter {
      this.#profileService = ProfilesDatastoreService.toolkitProfileService;
      this.#isEnabled = this.#getEnabledState();
  
@@ -13,7 +13,7 @@ index 1e62fc9395acceb57049e75db8f967d334a83ab4..9a3577fb8af833b2c0254951eb949d90
      // We have to check the state again after the policy service may have disabled us.
      Services.obs.addObserver(
        () => this.updateEnabledState(),
-@@ -687,6 +691,29 @@ class SelectableProfileServiceClass extends EventEmitter {
+@@ -610,6 +614,29 @@ class SelectableProfileServiceClass extends EventEmitter {
    }
  
    async #updateTaskbar() {
@@ -43,3 +43,12 @@ index 1e62fc9395acceb57049e75db8f967d334a83ab4..9a3577fb8af833b2c0254951eb949d90
      try {
        // We don't want the startup profile selector to badge the dock icon.
        if (!gSupportsBadging || Services.startup.startingUp) {
+@@ -618,7 +645,7 @@ class SelectableProfileServiceClass extends EventEmitter {
+ 
+       let count = await this.getProfileCount();
+ 
+-      if (count > 1 && !this.#badge) {
++      if ((count>=1 && AppConstants.MOZ_APP_BASENAME==='glide-debug') || (count > 1 && !this.#badge)) {
+         this.#badge = {
+           image: await loadImage(this.#currentProfile),
+           iconPaintContext: this.#currentProfile.iconPaintContext,

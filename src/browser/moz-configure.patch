@@ -1,8 +1,8 @@
 diff --git a/browser/moz.configure b/browser/moz.configure
-index c3ebe718fdea69caa6dc9da4a4063e24eade9df2..29bfafa79e6d2644925fbf71687b530bd20ca039 100644
+index e0946a23cd..b2abbfd74b 100644
 --- a/browser/moz.configure
 +++ b/browser/moz.configure
-@@ -13,7 +13,11 @@ imply_option("MOZ_NORMANDY", True)
+@@ -13,7 +13,27 @@ imply_option("MOZ_NORMANDY", True)
  imply_option("MOZ_PROFILE_MIGRATOR", True)
  
  
@@ -12,6 +12,22 @@ index c3ebe718fdea69caa6dc9da4a4063e24eade9df2..29bfafa79e6d2644925fbf71687b530b
 +# glide-original
 +# imply_option("MOZ_APP_VENDOR", "Mozilla")
 +# glide-override-end
++
++option(
++    env="GLIDE_RELEASE",
++    nargs="?",
++    help="Set to 1 or true to define GLIDE_RELEASE (release build)",
++)
++
++@depends("GLIDE_RELEASE")
++def glide_release(value):
++    if not value or not len(value):
++        return False
++    v = value[0]
++    return isinstance(v, str) and v.lower() in ("1", "true")
++
++set_define("GLIDE_RELEASE", glide_release)
++
  imply_option("MOZ_APP_ID", "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}")
  # Include the DevTools client, not just the server (which is the default)
  imply_option("MOZ_DEVTOOLS", "all")

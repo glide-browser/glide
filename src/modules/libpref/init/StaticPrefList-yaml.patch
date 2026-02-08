@@ -1,8 +1,23 @@
 diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
-index a6c49438aaf3464e70bf9c75c2849a6062bd096a..c3876e665fdf048360b1c6ab45288ec61f850b59 100644
+index 5c7ed2b441..ede63fd63b 100644
 --- a/modules/libpref/init/StaticPrefList.yaml
 +++ b/modules/libpref/init/StaticPrefList.yaml
-@@ -8086,6 +8086,35 @@
+@@ -218,6 +218,14 @@
+ #define IS_NOT_MOBILE true
+ #endif
+ 
++#ifdef GLIDE_RELEASE
++#define IS_GLIDE_RELEASE true
++#define IS_NOT_GLIDE_RELEASE false
++#else
++#define IS_GLIDE_RELEASE false
++#define IS_NOT_GLIDE_RELEASE true
++#endif
++
+ #---------------------------------------------------------------------------
+ # Prefs starting with "accessibility."
+ #---------------------------------------------------------------------------
+@@ -8316,6 +8324,35 @@
    value: 0
    mirror: always
  
@@ -31,7 +46,7 @@ index a6c49438aaf3464e70bf9c75c2849a6062bd096a..c3876e665fdf048360b1c6ab45288ec6
 +
 +- name: glide.firefox.taskbar.badge.enabled
 +  type: bool
-+  value: false
++  value: @IS_GLIDE_RELEASE@
 +  mirror: always
 +
 +# glide-injection-end
