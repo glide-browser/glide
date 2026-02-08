@@ -474,6 +474,8 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
   _setDiacriticMatching(diacriticMatching): void;
 }
 
+/** may be `undefined` if the findbar has never been opened */
+declare const gFindBar: MozFindbar | undefined;
 declare const gFindBarPromise: Promise<MozFindbar>;
 
 declare interface NodeListOf<TNode extends Node> extends NodeList {

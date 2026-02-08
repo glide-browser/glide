@@ -111,6 +111,7 @@ text-decoration: none;
 [`glide.findbar`](#glide.findbar)\
 [`glide.findbar.open()`](#glide.findbar.open)\
 [`glide.findbar.close()`](#glide.findbar.close)\
+[`glide.findbar.is_open()`](#glide.findbar.is_open)\
 [`glide.buf`](#glide.buf)\
 [`glide.buf.prefs`](#glide.buf.prefs)\
 [`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
@@ -841,6 +842,12 @@ glide.findbar.close(): Promise<void>
 {% /api-heading %}
 
 Close the findbar. Does nothing if the findbar is already closed.
+
+{% api-heading id="glide.findbar.is_open" %}
+glide.findbar.is_open(): boolean
+{% /api-heading %}
+
+If the findbar UI is currently visible.
 
 ## • `glide.buf` {% id="glide.buf" %}
 

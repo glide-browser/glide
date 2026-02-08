@@ -682,6 +682,11 @@ declare global {
        * Close the findbar. Does nothing if the findbar is already closed.
        */
       close(): Promise<void>;
+
+      /**
+       * If the findbar UI is currently visible.
+       */
+      is_open(): boolean;
     };
 
     buf: {

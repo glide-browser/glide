@@ -13,16 +13,15 @@ add_task(async function test_findbar_open_close_basic() {
   await reload_config(function _() {});
 
   await BrowserTestUtils.withNewTab(FILE, async () => {
-    const findbar = await gFindBarPromise;
-    ok(findbar.hidden, "findbar should be hidden initially");
+    ok(glide.findbar.is_open(), "findbar should be closed initially");
 
     await glide.findbar.open();
 
-    ok(!findbar.hidden, "findbar should be visible after calling open()");
-    is(findbar.findMode, findbar.FIND_NORMAL, "findbar should be in normal mode");
+    ok(glide.findbar.is_open(), "findbar should be open after calling open()");
+    is(gFindBar!.findMode, gFindBar!.FIND_NORMAL, "findbar should be in normal mode");
 
     await glide.findbar.close();
-    await until(() => findbar.hidden, "Waiting for findbar to close");
+    await until(() => !glide.findbar.is_open(), "Waiting for findbar to close");
   });
 });
 

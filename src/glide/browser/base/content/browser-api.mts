@@ -338,6 +338,9 @@ export function make_glide_api(
         const findbar = await gFindBarPromise;
         findbar.close();
       },
+      is_open() {
+        return gFindBar?.hidden ? false : true;
+      },
     },
     buf: {
       prefs: {
