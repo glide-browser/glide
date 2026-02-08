@@ -687,6 +687,11 @@ declare global {
        * If the findbar UI is currently visible.
        */
       is_open(): boolean;
+
+      /**
+       * If the findbar UI is currently visible *and* focused.
+       */
+      is_focused(): boolean;
     };
 
     buf: {

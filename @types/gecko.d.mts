@@ -439,6 +439,7 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
   _highlightAll?: boolean;
   _entireWord?: boolean;
   _typeAheadCaseSensitive?: 0 | 1 | 2;
+  _findField: HTMLInputElement;
 
   open(mode?: FindMode): boolean;
   close(noAnim?: boolean): void;

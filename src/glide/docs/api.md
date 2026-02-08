@@ -112,6 +112,7 @@ text-decoration: none;
 [`glide.findbar.open()`](#glide.findbar.open)\
 [`glide.findbar.close()`](#glide.findbar.close)\
 [`glide.findbar.is_open()`](#glide.findbar.is_open)\
+[`glide.findbar.is_focused()`](#glide.findbar.is_focused)\
 [`glide.buf`](#glide.buf)\
 [`glide.buf.prefs`](#glide.buf.prefs)\
 [`glide.buf.prefs.set()`](#glide.buf.prefs.set)\
@@ -835,7 +836,7 @@ Ignores {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint
 glide.findbar.open(opts?): Promise<void>
 {% /api-heading %}
 
-Open the findbar. Does nothing if the findbar is already open.
+Open the findbar.
 
 {% api-heading id="glide.findbar.close" %}
 glide.findbar.close(): Promise<void>
@@ -848,6 +849,12 @@ glide.findbar.is_open(): boolean
 {% /api-heading %}
 
 If the findbar UI is currently visible.
+
+{% api-heading id="glide.findbar.is_focused" %}
+glide.findbar.is_focused(): boolean
+{% /api-heading %}
+
+If the findbar UI is currently visible _and_ focused.
 
 ## • `glide.buf` {% id="glide.buf" %}
 

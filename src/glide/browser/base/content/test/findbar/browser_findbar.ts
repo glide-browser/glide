@@ -18,10 +18,12 @@ add_task(async function test_findbar_open_close_basic() {
     await glide.findbar.open();
 
     ok(glide.findbar.is_open(), "findbar should be open after calling open()");
+    ok(glide.findbar.is_focused(), "findbar should be focused after calling open()");
     is(gFindBar!.findMode, gFindBar!.FIND_NORMAL, "findbar should be in normal mode");
 
     await glide.findbar.close();
     await until(() => !glide.findbar.is_open(), "Waiting for findbar to close");
+    notok(glide.findbar.is_focused(), "findbar should not be focused after calling close()");
   });
 });
 
@@ -187,5 +189,23 @@ add_task(async function test_findbar_open_match_diacritics() {
 
     await glide.findbar.close();
     await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
+add_task(async function test_findbar_is_focused() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await glide.findbar.open();
+
+    ok(glide.findbar.is_focused(), "findbar should be focused after calling open()");
+
+    (document!.getElementById("urlbar-input") as HTMLElement).focus();
+
+    notok(glide.findbar.is_focused(), "findbar should not be focused after focusing another UI element");
+    ok(glide.findbar.is_open(), "findbar should still be open after focusing another UI element");
+
+    await glide.findbar.close();
+    await until(() => !glide.findbar.is_open(), "Waiting for findbar to close");
   });
 });

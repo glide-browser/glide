@@ -341,6 +341,13 @@ export function make_glide_api(
       is_open() {
         return !gFindBar || gFindBar?.hidden ? false : true;
       },
+      is_focused() {
+        if (!gFindBar || gFindBar.hidden) {
+          return false;
+        }
+
+        return document.activeElement === gFindBar._findField;
+      },
     },
     buf: {
       prefs: {
