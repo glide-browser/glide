@@ -332,7 +332,7 @@ export function make_glide_api(
           findbar._setDiacriticMatching(opts.match_diacritics ? 1 : 0);
         }
 
-        findbar.open(mode);
+        await findbar.startFind(mode);
       },
       async close() {
         const findbar = await gFindBarPromise;
