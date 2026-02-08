@@ -136,7 +136,7 @@ async function setup_symlinks(ctx: Context) {
   }
 }
 
-async function branding_patch(ctx: Context) {
+export async function branding_patch(ctx: Context) {
   const brands = await fs.readdir(BRANDING_DIR, { withFileTypes: true }).then((entries) =>
     entries.filter((entry) => entry.isDirectory())
   );
