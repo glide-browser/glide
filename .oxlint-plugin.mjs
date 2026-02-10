@@ -1,6 +1,6 @@
 // @ts-check
 // glide-plugin.js
-import { definePlugin, defineRule } from "oxlint";
+import { definePlugin, defineRule } from "@oxlint/plugins";
 
 const plugin = definePlugin({
   meta: {
