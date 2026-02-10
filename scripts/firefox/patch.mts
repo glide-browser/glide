@@ -188,7 +188,6 @@ export async function patch_mozconfig() {
 
   const basename = IS_RELEASE ? "glide" : "glide-debug";
   const user_dir = IS_RELEASE ? "Glide Browser" : "Glide Debug Browser";
-  const branding_dir = "browser/branding/glide";
 
   const common_config = await fs.readFile(Path.join(CONFIGS_DIR, "common", "mozconfig"), "utf8").then((contents) =>
     contents
@@ -196,7 +195,6 @@ export async function patch_mozconfig() {
       .replaceAll("${firefox_version}", config.version.version)
       .replaceAll("${basename}", basename)
       .replaceAll("${user_dir}", user_dir)
-      .replaceAll("${branding_dir}", branding_dir)
   );
   const os_config = await fs.readFile(Path.join(CONFIGS_DIR, get_platform(), "mozconfig"), "utf8");
   await fs.writeFile(

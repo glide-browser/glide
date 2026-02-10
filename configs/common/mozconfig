@@ -1,12 +1,12 @@
 # Browser branding (values injected by patch.mts)
 ac_add_options --with-app-name=${basename}
 ac_add_options --with-app-basename=${basename}
-ac_add_options --with-branding=${branding_dir}
+ac_add_options --with-branding=browser/branding/glide
 
 export MOZ_USER_DIR="${user_dir}"
 export MOZ_APP_BASENAME=${basename}
-export MOZ_BRANDING_DIRECTORY=${branding_dir}
-export MOZ_OFFICIAL_BRANDING_DIRECTORY=${branding_dir}
+export MOZ_BRANDING_DIRECTORY=browser/branding/glide
+export MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/glide
 # macos only
 export MOZ_MACBUNDLE_NAME="${basename}.app"
 
