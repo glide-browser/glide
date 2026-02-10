@@ -3,7 +3,7 @@ ac_add_options --with-app-name=${basename}
 ac_add_options --with-app-basename=${basename}
 ac_add_options --with-branding=browser/branding/glide
 
-export MOZ_USER_DIR="${user_dir}"
+export MOZ_USER_DIR="Glide Browser"
 export MOZ_APP_BASENAME=${basename}
 export MOZ_BRANDING_DIRECTORY=browser/branding/glide
 export MOZ_OFFICIAL_BRANDING_DIRECTORY=browser/branding/glide
