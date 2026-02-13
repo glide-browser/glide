@@ -100,7 +100,7 @@ Fired when the focused URL changes, which can happen under the following circums
 
 The `pattern` is either a `RegExp` that matches against the entire URL, or an object with `{ hostname: string }`.
 
-The callback can also `return` a function that will be called when _another_ `UrlEnter` event would be fired.
+The callback can also `return` a function that will be called when _another_ `UrlEnter` event would be fired so that you can run any necessary cleanup.
 
 ```typescript
 glide.autocmds.create("UrlEnter", {
@@ -121,13 +121,11 @@ Callback arguments:
 
 ## TabEnter
 
-Fired when the focused tab changes, which can happen under the following circumstances:
-
-- switching tabs
+Fired when the focused tab changes.
 
 The `pattern` is either a `RegExp` that matches against the entire URL, or an object with `{ hostname: string }`.
 
-The callback can also `return` a function that will be called when _another_ `TabEnter` event would be fired.
+The callback can also `return` a function that will be called when _another_ `TabEnter` event would be fired so that you can run any necessary cleanup.
 
 ```typescript
 glide.autocmds.create("TabEnter", {
