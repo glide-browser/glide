@@ -141,9 +141,6 @@ declare global {
 
       /**
        * Create an autocmd that will be invoked whenever the focused tab changes.
-       *
-       * This includes:
-       *   1. Switching tabs
        */
       create<const Event extends "TabEnter">(
         event: Event,
