@@ -198,6 +198,8 @@ paru -S glide-browser-bin
       <span class="keymap-desc">Next tab</span>
       <span class="keymap-key">&lt;C-k&gt;</span>
       <span class="keymap-desc">Previous tab</span>
+      <span class="keymap-key">&lt;A-p&gt;</span>
+      <span class="keymap-desc">Pin or unpin the current tab</span>
     </div>
   </div>
 
