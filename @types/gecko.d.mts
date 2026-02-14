@@ -185,6 +185,8 @@ declare var Cc: nsXPCComponents_Classes;
 declare var Cu: nsXPCComponents_Utils & nsIXPCComponents_Utils;
 declare var Services: JSServices;
 declare var PlacesUtils: typeof import("../engine/toolkit/components/places/PlacesUtils.sys.mjs").PlacesUtils;
+declare var SessionWindowUI:
+  typeof import("../engine/browser/components/sessionstore/SessionWindowUI.sys.mjs").SessionWindowUI;
 
 declare type _BroadcastConduit =
   import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs").BroadcastConduit;

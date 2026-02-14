@@ -193,6 +193,12 @@ export const GLIDE_EXCOMMANDS = [
     args_schema: { tab_id: { type: "integer", required: false, position: 0 } } as const satisfies ArgumentsSchema,
     repeatable: false,
   },
+  {
+    name: "tab_reopen",
+    description: "Open the last closed tab",
+    content: false,
+    repeatable: true,
+  },
 
   {
     name: "commandline_show",

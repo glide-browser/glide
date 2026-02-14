@@ -308,3 +308,26 @@ add_task(async function test_tab_unpin() {
 
   is(gBrowser.tabs.length, initial_tab_count + 2, "Tab count should remain the same");
 });
+
+add_task(async function test_tab_reopen() {
+  await reload_config(function _() {});
+
+  const initial_tab_count = gBrowser.tabs.length;
+  const test_url = INPUT_TEST_FILE + "?reopen_test";
+
+  const tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, test_url);
+  is(gBrowser.tabs.length, initial_tab_count + 1, "New tab should be created");
+  is(current_url(), test_url, "New tab should have the test URL");
+
+  BrowserTestUtils.removeTab(tab);
+  is(gBrowser.tabs.length, initial_tab_count, "Tab should be closed");
+
+  await keys(":tab_reopen<CR>");
+  await waiter(() => gBrowser.tabs.length).is(initial_tab_count + 1, "Waiting for tab to be reopened");
+  await BrowserTestUtils.browserLoaded(gBrowser.selectedBrowser);
+
+  is(gBrowser.tabs.length, initial_tab_count + 1, "Tab should be reopened");
+  is(current_url(), test_url, "Reopened tab should have the original URL");
+
+  BrowserTestUtils.removeTab(gBrowser.selectedTab);
+});
