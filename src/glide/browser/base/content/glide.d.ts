@@ -675,6 +675,8 @@ declare global {
     findbar: {
       /**
        * Open the findbar.
+       *
+       * This can also be used to update the findbar options if it is already open.
        */
       open(opts?: glide.FindbarOpenOpts): Promise<void>;
 

@@ -838,6 +838,8 @@ glide.findbar.open(opts?): Promise<void>
 
 Open the findbar.
 
+This can also be used to update the findbar options if it is already open.
+
 {% api-heading id="glide.findbar.close" %}
 glide.findbar.close(): Promise<void>
 {% /api-heading %}
