@@ -33,7 +33,7 @@ export interface Editor {
 /**
  * An exhaustive list of all currently supported motion operations.
  */
-export const MOTIONS = ["iw", "h", "j", "k", "l", "d"] as const;
+export const MOTIONS = ["iw", "h", "j", "k", "l", "d", "w"] as const;
 type GlideMotion = (typeof MOTIONS)[number];
 
 export function select_motion(
@@ -180,11 +180,29 @@ export function select_motion(
         },
       };
     }
+    case "w": {
+      if (is_bof(editor)) {
+        editor.selectionController.characterMove(true, true);
+      } else {
+        editor.selectionController.characterMove(false, false);
+        editor.selectionController.characterMove(true, true);
+      }
+
+      const starting_cls = text_obj.cls(current_char(editor));
+
+      forward_word(editor, false, "visual");
+      if (selection_has_cls_white_space(editor) || text_obj.cls(current_char(editor)) !== starting_cls) {
+        editor.selectionController.characterMove(false, true);
+      }
+      if (!is_bof(editor, "left") && is_eol(editor)) {
+        editor.selectionController.characterMove(false, true);
+      }
+      break;
+    }
     default:
       throw assert_never(motion, `Unknown motion: ${motion}`);
   }
 }
-
 /**
  * Returns the offset of the caret in the current line.
  *
@@ -556,6 +574,28 @@ function selection_direction(
   }
 
   return "backwards";
+}
+
+/**
+ * Returns the currently selected text (single-node selections).
+ * Falls back to empty string if collapsed or no text node.
+ */
+export function selection_text(editor: Editor): string {
+  if (editor.selection.isCollapsed) {
+    return "";
+  }
+  const content = editor.selection.focusNode?.textContent ?? "";
+  const start = Math.min(editor.selection.anchorOffset, editor.selection.focusOffset);
+  const end = Math.max(editor.selection.anchorOffset, editor.selection.focusOffset);
+  return content.slice(start, end);
+}
+
+/**
+ * Whether the current selection contains a space character.
+ */
+export function selection_has_cls_white_space(editor: Editor): boolean {
+  const text = selection_text(editor);
+  return text.includes(" ") || text.includes("\t") || text.includes("\n") || text.includes("\r");
 }
 
 export function preceding_char(editor: Editor): string | null {
