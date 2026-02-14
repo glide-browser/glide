@@ -288,6 +288,14 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
       case "Glide::Scroll": {
         switch (message.data.to) {
+          case "half_page_up": {
+            DOM.scroll(this.contentWindow!, { type: "page", y: -0.5 });
+            break;
+          }
+          case "half_page_down": {
+            DOM.scroll(this.contentWindow!, { type: "page", y: 0.5 });
+            break;
+          }
           case "page_up": {
             DOM.scroll(this.contentWindow!, { type: "page", y: -1 });
             break;
@@ -308,6 +316,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
             window.scroll(window.scrollX, window.scrollMaxY);
             break;
           }
+          default:
+            throw assert_never(message.data.to);
         }
 
         break;

@@ -134,9 +134,9 @@ paru -S glide-browser-bin
       <span class="keymap-key">G</span>
       <span class="keymap-desc">Scroll to bottom of page</span>
       <span class="keymap-key">&lt;C-d&gt;</span>
-      <span class="keymap-desc">Scroll page down</span>
+      <span class="keymap-desc">Scroll half a page down</span>
       <span class="keymap-key">&lt;C-u&gt;</span>
-      <span class="keymap-desc">Scroll page up</span>
+      <span class="keymap-desc">Scroll half a page up</span>
       <span class="keymap-key">&lt;C-h&gt;</span>
       <span class="keymap-desc">Go back in history</span>
       <span class="keymap-key">&lt;C-l&gt;</span>

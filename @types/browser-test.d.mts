@@ -58,6 +58,7 @@ declare global {
    * Like `is()` but compares by stringifying to JSON first.
    */
   function isjson<V>(a: V, b: NoInfer<V>, name?: string): void;
+  function isfuzzy(a: number, b: number, epsilon: number, name?: string): void;
   function isnot(a: unknown, b: unknown, name?: string): void;
   function ok(a: unknown, name?: string): asserts a;
   function notok(

@@ -60,7 +60,7 @@ export interface ParentMessages {
       | null;
   };
   "Glide::Move": { direction: "left" | "right" | "up" | "down" | "endline" };
-  "Glide::Scroll": { to: "page_up" | "page_down" | "top" | "bottom" };
+  "Glide::Scroll": { to: "half_page_up" | "half_page_down" | "page_up" | "page_down" | "top" | "bottom" };
   "Glide::Debug": null;
 }
 

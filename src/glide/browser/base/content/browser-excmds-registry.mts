@@ -343,6 +343,19 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
 
+  {
+    name: "scroll_half_page_down",
+    description: "Scroll down by half a page (0.5 * the size of the viewport)",
+    content: false,
+    repeatable: false,
+  },
+  {
+    name: "scroll_half_page_up",
+    description: "Scroll up by half a page (0.5 * the size of the viewport)",
+    content: false,
+    repeatable: false,
+  },
+
   // TODO
   // {
   //   name: "bookmark",

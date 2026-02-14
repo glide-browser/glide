@@ -517,7 +517,7 @@ class GlideExcmdsClass {
         if (
           GlideBrowser.api.options.get("scroll_implementation") === "legacy"
           // if an input element is focused, <pagedown> would scroll the element instead of actually scrolling
-          // the page up so we have to use our own API for scrolling to actually go down the page.
+          // the page down so we have to use our own API for scrolling to actually go down the page.
           || await GlideBrowser.api.ctx.is_editing()
         ) {
           GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_down" });
@@ -527,6 +527,54 @@ class GlideExcmdsClass {
         GlideBrowser.notify_scroll_breaking_change?.();
 
         await GlideBrowser.api.keys.send("<pagedown>", { skip_mappings: true });
+        break;
+      }
+
+      case "scroll_half_page_up": {
+        const glide = GlideBrowser.api;
+        if (
+          glide.options.get("scroll_implementation") === "legacy"
+          // if an input element is focused, <pageup> would scroll the element instead of actually scrolling
+          // the page up so we have to use our own API for scrolling to actually go up the page.
+          || await glide.ctx.is_editing()
+        ) {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "half_page_up" });
+          return;
+        }
+
+        {
+          // this works by forcing Firefox's scroll calculation logic to collapse down to
+          // `effectiveScrollPortSize.height * 0.5` instead of something close to just the height.
+          //
+          // see `ScrollContainerFrame::GetPageScrollAmount()` in `layout/generic/ScrollContainerFrame.cpp`
+          using prefs = glide.prefs.scoped();
+          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
+          await glide.keys.send("<pageup>", { skip_mappings: true });
+        }
+        break;
+      }
+
+      case "scroll_half_page_down": {
+        const glide = GlideBrowser.api;
+        if (
+          glide.options.get("scroll_implementation") === "legacy"
+          // if an input element is focused, <pagedown> would scroll the element instead of actually scrolling
+          // the page down so we have to use our own API for scrolling to actually go down the page.
+          || await glide.ctx.is_editing()
+        ) {
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "half_page_down" });
+          return;
+        }
+
+        {
+          // this works by forcing Firefox's scroll calculation logic to collapse down to
+          // `effectiveScrollPortSize.height * 0.5` instead of something close to just the height.
+          //
+          // see `ScrollContainerFrame::GetPageScrollAmount()` in `layout/generic/ScrollContainerFrame.cpp`
+          using prefs = glide.prefs.scoped();
+          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
+          await glide.keys.send("<pagedown>", { skip_mappings: true });
+        }
         break;
       }
 

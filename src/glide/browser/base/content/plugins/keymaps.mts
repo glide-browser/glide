@@ -20,8 +20,8 @@ export function init(sandbox: Sandbox) {
 
   glide.keymaps.set("normal", "gg", "scroll_top");
   glide.keymaps.set("normal", "G", "scroll_bottom");
-  glide.keymaps.set(["insert", "normal"], "<C-d>", "scroll_page_down");
-  glide.keymaps.set(["normal", "insert"], "<C-u>", "scroll_page_up");
+  glide.keymaps.set(["insert", "normal"], "<C-d>", "scroll_half_page_down");
+  glide.keymaps.set(["normal", "insert"], "<C-u>", "scroll_half_page_up");
 
   // ignore mode
   glide.keymaps.set(["normal", "insert", "visual"], "<S-Esc>", "mode_change ignore");
