@@ -209,3 +209,7 @@ add_task(async function test_findbar_is_focused() {
     await until(() => !glide.findbar.is_open(), "Waiting for findbar to close");
   });
 });
+
+registerCleanupFunction(function _() {
+  glide.prefs.clear("accessibility.typeaheadfind.flashBar");
+});

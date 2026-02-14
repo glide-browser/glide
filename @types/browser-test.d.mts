@@ -67,6 +67,7 @@ declare global {
   ): asserts a is false | 0 | 0n | "" | null | undefined;
   function add_task(fn: (() => void) | (() => Promise<void>)): BoundTestTask;
   function add_setup(fn: (() => void) | (() => Promise<void>)): void;
+  function registerCleanupFunction(fn: () => void): void;
 
   function sleep_frames(count: number): Promise<void>;
   function sleep_forever(): Promise<void>;
