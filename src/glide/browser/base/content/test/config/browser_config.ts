@@ -362,6 +362,31 @@ add_task(async function test_keys_next_special_keys() {
   });
 });
 
+add_task(async function test_keys_next_rejected_on_config_reload() {
+  await reload_config(function _() {
+    glide.autocmds.create("ConfigLoaded", async () => {
+      while (true) {
+        const event = await glide.keys.next();
+        glide.g.calls ??= [];
+        glide.g.calls.push(event.glide_key);
+      }
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await keys("b");
+
+    await waiter(() => glide.g.calls).isjson(["b"], "glide.keys.next() should capture the 'b' key correctly");
+
+    const calls = glide.g.calls!;
+    await reload_config(function _() {});
+
+    await keys("c");
+    await sleep_frames(20);
+    isjson(calls, ["b"], "next waiter should not be resolved again");
+  });
+});
+
 add_task(async function test_keys_next_passthrough_api() {
   await reload_config(function _() {
     glide.keymaps.set("normal", "<Space>z", async () => {
@@ -380,16 +405,44 @@ add_task(async function test_keys_next_passthrough_api() {
 
     await keys("b");
 
-    await TestUtils.waitForCondition(
-      () => glide.g.received_key === "b",
+    await waiter(() => glide.g.received_key).is(
+      "b",
       "glide.keys.next_passthrough() should capture the 'b' key correctly",
-      10,
     );
     is(
       glide.g.value,
       "b triggered",
       "glide.keys.next_passthrough() should pass keys through to their original mappings",
     );
+  });
+});
+
+add_task(async function test_keys_next_passthrough_rejected_on_config_reload() {
+  await reload_config(function _() {
+    glide.autocmds.create("ConfigLoaded", async () => {
+      while (true) {
+        const event = await glide.keys.next_passthrough();
+        console.log(event);
+        glide.g.calls ??= [];
+        glide.g.calls.push(event.glide_key);
+      }
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await keys("b");
+
+    await waiter(() => glide.g.calls).isjson(
+      ["b"],
+      "glide.keys.next_passthrough() should capture the 'b' key correctly",
+    );
+
+    const calls = glide.g.calls!;
+    await reload_config(function _() {});
+
+    await keys("c");
+    await sleep_frames(20);
+    isjson(calls, ["b"], "next waiter should not be resolved again");
   });
 });
 

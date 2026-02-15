@@ -772,8 +772,8 @@ export function make_glide_api(
           throw new Error("`glide.keys.next()` can only be registered one at a time");
         }
 
-        return new Promise<glide.KeyEvent>(resolve => {
-          GlideBrowser.next_key_waiter = { resolve };
+        return new Promise<glide.KeyEvent>((resolve, reject) => {
+          GlideBrowser.next_key_waiter = { resolve, reject };
         }).finally(() => {
           GlideBrowser.next_key_waiter = null;
         });
@@ -782,8 +782,8 @@ export function make_glide_api(
         return this.next().then(event => event.glide_key);
       },
       async next_passthrough() {
-        return new Promise<glide.KeyEvent>(resolve => {
-          GlideBrowser.next_key_passthrough_waiters.push({ resolve });
+        return new Promise<glide.KeyEvent>((resolve, reject) => {
+          GlideBrowser.next_key_passthrough_waiters.push({ resolve, reject });
           // note: the array here is cleaned up inside the key input handler
         });
       },

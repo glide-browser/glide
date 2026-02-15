@@ -470,6 +470,16 @@ class GlideBrowserClass {
     this.#user_cmds = new Map();
     this.#sandbox = null;
 
+    const key_passthrough_waiters = this.next_key_passthrough_waiters;
+    this.next_key_passthrough_waiters = [];
+    for (const waiter of key_passthrough_waiters) {
+      waiter.reject(new Error("Pending `keys.next_passthrough()` promise was cancelled due to a config reload"));
+    }
+    if (this.next_key_waiter) {
+      this.next_key_waiter.reject(new Error("Pending `keys.next()` promise was cancelled due to a config reload"));
+      this.next_key_waiter = null;
+    }
+
     const callbacks = this.#reload_config_callbacks;
     this.#reload_config_callbacks = [];
     for (const callback of callbacks) {
@@ -1577,9 +1587,11 @@ class GlideBrowserClass {
   keydown_event_results = new Map<string, { default_prevented: boolean }>();
   next_key_waiter: {
     resolve: (event: glide.KeyEvent) => void;
+    reject: (reason?: unknown) => void;
   } | null = null;
   next_key_passthrough_waiters: Array<{
     resolve: (event: glide.KeyEvent) => void;
+    reject: (reason?: unknown) => void;
   }> = [];
 
   /**
