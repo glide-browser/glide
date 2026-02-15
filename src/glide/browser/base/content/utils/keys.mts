@@ -486,12 +486,14 @@ const SHIFTED_CHARACTERS = new Set([
 ]);
 
 /**
- * A minimla version of `KeyboardEvent` that only defines the properties we rely on.
+ * A minimal version of `KeyboardEvent` that only defines the properties we rely on.
  */
-export type GlideMappingEvent = Pick<
-  KeyboardEvent,
-  "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey"
->;
+export type GlideMappingEvent =
+  & Pick<
+    KeyboardEvent,
+    "key" | "ctrlKey" | "metaKey" | "shiftKey" | "altKey"
+  >
+  & { code?: string };
 
 /**
  * Given a keyboard event, returns the corresponding Vim-notation for it.

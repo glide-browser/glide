@@ -7,6 +7,7 @@
 
 "use strict";
 
+import type { ValueOf } from "type-fest";
 import type { KeyMappingTrieNode } from "../../utils/keys.mjs";
 
 const fc = ChromeUtils.importESModule("resource://testing-common/fast-check.mjs", { global: "current" }).default;
@@ -15,6 +16,142 @@ const { split, event_to_key_notation, KeyManager, normalize, parse_modifiers } =
   "chrome://glide/content/utils/keys.mjs",
   { global: "current" },
 );
+
+function make_keys<K extends string>(
+  keys: Record<K, { code: string; key?: string; shiftKey?: boolean }>,
+): Record<K, { code: string; key: string; shiftKey?: boolean }> {
+  return Object.fromEntries(
+    Object.entries(keys).map((
+      [key, event],
+    ) => [key, { key: (event as ValueOf<typeof keys>).key ?? key, ...(event as ValueOf<typeof keys>) }]),
+  ) as Record<K, { code: string; key: string; shiftKey?: boolean }>;
+}
+
+// en-US layout
+const KEYS = make_keys({
+  "`": { code: "Backquote" },
+  "~": { code: "Backquote", shiftKey: true },
+  "!": { code: "Digit1", shiftKey: true },
+  "@": { code: "Digit2", shiftKey: true },
+  "#": { code: "Digit3", shiftKey: true },
+  "$": { code: "Digit4", shiftKey: true },
+  "%": { code: "Digit5", shiftKey: true },
+  "^": { code: "Digit6", shiftKey: true },
+  "&": { code: "Digit7", shiftKey: true },
+  "*": { code: "Digit8", shiftKey: true },
+  "(": { code: "Digit9", shiftKey: true },
+  ")": { code: "Digit0", shiftKey: true },
+  "-": { code: "Minus" },
+  "_": { code: "Minus", shiftKey: true },
+  "=": { code: "Equal" },
+  "+": { code: "Equal", shiftKey: true },
+  "\\": { code: "Backslash" },
+  "|": { code: "Backslash", shiftKey: true },
+  "[": { code: "BracketLeft" },
+  "{": { code: "BracketLeft", shiftKey: true },
+  "]": { code: "BracketRight" },
+  "}": { code: "BracketRight", shiftKey: true },
+  ";": { code: "Semicolon" },
+  ":": { code: "Semicolon", shiftKey: true },
+  "'": { code: "Quote" },
+  "\"": { code: "Quote", shiftKey: true },
+  ",": { code: "Comma" },
+  "<": { code: "Comma", shiftKey: true },
+  ".": { code: "Period" },
+  ">": { code: "Period", shiftKey: true },
+  "/": { code: "Slash" },
+  "?": { code: "Slash", shiftKey: true },
+  " ": { code: "Space" },
+  "Tab": { code: "Tab" },
+  "Enter": { code: "Enter" },
+  "Escape": { code: "Escape" },
+  "ArrowUp": { code: "ArrowUp" },
+  "ArrowDown": { code: "ArrowDown" },
+  "ArrowLeft": { code: "ArrowLeft" },
+  "ArrowRight": { code: "ArrowRight" },
+  "Home": { code: "Home" },
+  "Backspace": { code: "Backspace" },
+  "Delete": { code: "Delete" },
+  "End": { code: "End" },
+  "PageUp": { code: "PageUp" },
+  "PageDown": { code: "PageDown" },
+  "F1": { code: "F1" },
+  "F2": { code: "F2" },
+  "F3": { code: "F3" },
+  "F4": { code: "F4" },
+  "F5": { code: "F5" },
+  "F6": { code: "F6" },
+  "F7": { code: "F7" },
+  "F8": { code: "F8" },
+  "F9": { code: "F9" },
+  "F10": { code: "F10" },
+  "F11": { code: "F11" },
+  "F12": { code: "F12" },
+
+  // standard
+  "a": { code: "KeyA" },
+  "A": { code: "KeyA", shiftKey: true },
+  "b": { code: "KeyB" },
+  "B": { code: "KeyB", shiftKey: true },
+  "c": { code: "KeyC" },
+  "C": { code: "KeyC", shiftKey: true },
+  "d": { code: "KeyD" },
+  "D": { code: "KeyD", shiftKey: true },
+  "e": { code: "KeyE" },
+  "E": { code: "KeyE", shiftKey: true },
+  "f": { code: "KeyF" },
+  "F": { code: "KeyF", shiftKey: true },
+  "g": { code: "KeyG" },
+  "G": { code: "KeyG", shiftKey: true },
+  "h": { code: "KeyH" },
+  "H": { code: "KeyH", shiftKey: true },
+  "i": { code: "KeyI" },
+  "I": { code: "KeyI", shiftKey: true },
+  "j": { code: "KeyJ" },
+  "J": { code: "KeyJ", shiftKey: true },
+  "k": { code: "KeyK" },
+  "K": { code: "KeyK", shiftKey: true },
+  "l": { code: "KeyL" },
+  "L": { code: "KeyL", shiftKey: true },
+  "m": { code: "KeyM" },
+  "M": { code: "KeyM", shiftKey: true },
+  "n": { code: "KeyN" },
+  "N": { code: "KeyN", shiftKey: true },
+  "o": { code: "KeyO" },
+  "O": { code: "KeyO", shiftKey: true },
+  "p": { code: "KeyP" },
+  "P": { code: "KeyP", shiftKey: true },
+  "q": { code: "KeyQ" },
+  "Q": { code: "KeyQ", shiftKey: true },
+  "r": { code: "KeyR" },
+  "R": { code: "KeyR", shiftKey: true },
+  "s": { code: "KeyS" },
+  "S": { code: "KeyS", shiftKey: true },
+  "t": { code: "KeyT" },
+  "T": { code: "KeyT", shiftKey: true },
+  "u": { code: "KeyU" },
+  "U": { code: "KeyU", shiftKey: true },
+  "v": { code: "KeyV" },
+  "V": { code: "KeyV", shiftKey: true },
+  "w": { code: "KeyW" },
+  "W": { code: "KeyW", shiftKey: true },
+  "x": { code: "KeyX" },
+  "X": { code: "KeyX", shiftKey: true },
+  "y": { code: "KeyY" },
+  "Y": { code: "KeyY", shiftKey: true },
+  "z": { code: "KeyZ" },
+  "Z": { code: "KeyZ", shiftKey: true },
+  "0": { code: "Digit0" },
+  "1": { code: "Digit1" },
+  "2": { code: "Digit2" },
+  "3": { code: "Digit3" },
+  "4": { code: "Digit4" },
+  "5": { code: "Digit5" },
+  "6": { code: "Digit6" },
+  "7": { code: "Digit7" },
+  "8": { code: "Digit8" },
+  "9": { code: "Digit9" },
+});
 
 add_setup(async function setup() {
   await reload_config(function _() {});
@@ -59,7 +196,7 @@ add_task(async function test_normalize() {
   is(normalize(">"), ">");
   is(normalize("<leader>"), "<leader>");
   is(
-    event_to_key_notation({ key: "Space", ctrlKey: false, shiftKey: false, altKey: false, metaKey: false }),
+    event_to_key_notation({ ...KEYS[" "], ctrlKey: false, shiftKey: false, altKey: false, metaKey: false }),
     "<Space>",
   );
 
@@ -105,47 +242,46 @@ add_task(async function test_normalize() {
 });
 
 function to_key_notation(
-  event: Partial<KeyboardEvent> & { key: string },
+  event: Partial<KeyboardEvent> & { key: string; code: string },
 ): string {
   return event_to_key_notation({ ctrlKey: false, shiftKey: false, altKey: false, metaKey: false, ...event });
 }
 
 add_task(async function test_event_to_ident() {
-  is(to_key_notation({ key: "a" }), "a");
-  is(to_key_notation({ key: "A", shiftKey: true }), "A");
-  is(to_key_notation({ key: "a", shiftKey: true }), "A");
-  is(to_key_notation({ key: "c", ctrlKey: true }), "<C-c>");
-  is(to_key_notation({ key: "c", ctrlKey: true, shiftKey: true }), "<C-S-C>");
-  is(to_key_notation({ key: "Escape" }), "<Esc>");
-  is(to_key_notation({ key: "Escape", ctrlKey: true }), "<C-Esc>");
-  is(to_key_notation({ key: "<", ctrlKey: true }), "<C-lt>");
-  is(to_key_notation({ key: "d", altKey: true }), "<A-d>");
-  is(to_key_notation({ key: "x", metaKey: true }), "<D-x>");
+  is(to_key_notation(KEYS["a"]), "a");
+  is(to_key_notation(KEYS["A"]), "A");
+  is(to_key_notation({ ...KEYS["c"], ctrlKey: true }), "<C-c>");
+  is(to_key_notation({ ...KEYS["C"], ctrlKey: true }), "<C-S-C>");
+  is(to_key_notation(KEYS["Escape"]), "<Esc>");
+  is(to_key_notation({ ...KEYS["Escape"], ctrlKey: true }), "<C-Esc>");
+  is(to_key_notation({ ...KEYS["<"], ctrlKey: true }), "<C-lt>");
+  is(to_key_notation({ ...KEYS["d"], altKey: true }), "<A-d>");
+  is(to_key_notation({ ...KEYS["x"], metaKey: true }), "<D-x>");
 
   // Multiple modifiers
-  is(to_key_notation({ key: "P", ctrlKey: true, shiftKey: true }), "<C-S-P>");
-  is(to_key_notation({ key: "S", ctrlKey: true, shiftKey: true, altKey: true }), "<C-A-S-S>");
-  is(to_key_notation({ key: "l", ctrlKey: true, altKey: true, metaKey: true }), "<C-A-D-l>");
-  is(to_key_notation({ key: "P", metaKey: true, shiftKey: true }), "<D-S-P>");
+  is(to_key_notation({ ...KEYS["P"], ctrlKey: true }), "<C-S-P>");
+  is(to_key_notation({ ...KEYS["S"], ctrlKey: true, altKey: true }), "<C-A-S-S>");
+  is(to_key_notation({ ...KEYS["l"], ctrlKey: true, altKey: true, metaKey: true }), "<C-A-D-l>");
+  is(to_key_notation({ ...KEYS["P"], metaKey: true }), "<D-S-P>");
 
   // Special keys
-  is(to_key_notation({ key: "Tab" }), "<Tab>");
-  is(to_key_notation({ key: "Tab", shiftKey: true }), "<S-Tab>");
-  is(to_key_notation({ key: "Enter" }), "<CR>");
-  is(to_key_notation({ key: " " }), "<Space>");
-  is(to_key_notation({ key: "ArrowUp" }), "<Up>");
-  is(to_key_notation({ key: "ArrowDown", ctrlKey: true }), "<C-Down>");
-  is(to_key_notation({ key: "Backspace" }), "<BS>");
-  is(to_key_notation({ key: "Delete" }), "<Del>");
-  is(to_key_notation({ key: "F1" }), "<F1>");
-  is(to_key_notation({ key: "F12" }), "<F12>");
-  is(to_key_notation({ key: "F2", ctrlKey: true, shiftKey: true }), "<C-S-F2>");
+  is(to_key_notation(KEYS["Tab"]), "<Tab>");
+  is(to_key_notation({ ...KEYS["Tab"], shiftKey: true }), "<S-Tab>");
+  is(to_key_notation(KEYS["Enter"]), "<CR>");
+  is(to_key_notation(KEYS[" "]), "<Space>");
+  is(to_key_notation(KEYS["ArrowUp"]), "<Up>");
+  is(to_key_notation({ ...KEYS["ArrowDown"], ctrlKey: true }), "<C-Down>");
+  is(to_key_notation(KEYS["Backspace"]), "<BS>");
+  is(to_key_notation(KEYS["Delete"]), "<Del>");
+  is(to_key_notation(KEYS["F1"]), "<F1>");
+  is(to_key_notation(KEYS["F12"]), "<F12>");
+  is(to_key_notation({ ...KEYS["F2"], ctrlKey: true, shiftKey: true }), "<C-S-F2>");
 
   // Special downcast keys
-  is(to_key_notation({ key: "\\" }), "\\");
-  is(to_key_notation({ key: "\\", ctrlKey: true }), "<C-Bslash>");
-  is(to_key_notation({ key: "|" }), "|");
-  is(to_key_notation({ key: "|", ctrlKey: true, metaKey: true }), "<C-D-Bar>");
+  is(to_key_notation(KEYS["\\"]), "\\");
+  is(to_key_notation({ ...KEYS["\\"], ctrlKey: true }), "<C-Bslash>");
+  is(to_key_notation(KEYS["|"]), "|");
+  is(to_key_notation({ ...KEYS["|"], ctrlKey: true, metaKey: true }), "<C-D-Bar>");
 });
 
 add_task(async function test_parse_modifiers() {
@@ -233,119 +369,119 @@ add_task(async function test_shifted_characters() {
   // note: this currently has only been tested on a US keyboard.
 
   // number row
-  is(to_key_notation({ key: "!", shiftKey: true }), "!");
-  is(to_key_notation({ key: "@", shiftKey: true }), "@");
-  is(to_key_notation({ key: "#", shiftKey: true }), "#");
-  is(to_key_notation({ key: "$", shiftKey: true }), "$");
-  is(to_key_notation({ key: "%", shiftKey: true }), "%");
-  is(to_key_notation({ key: "^", shiftKey: true }), "^");
-  is(to_key_notation({ key: "&", shiftKey: true }), "&");
-  is(to_key_notation({ key: "*", shiftKey: true }), "*");
-  is(to_key_notation({ key: "(", shiftKey: true }), "(");
-  is(to_key_notation({ key: ")", shiftKey: true }), ")");
+  is(to_key_notation(KEYS["!"]), "!");
+  is(to_key_notation(KEYS["@"]), "@");
+  is(to_key_notation(KEYS["#"]), "#");
+  is(to_key_notation(KEYS["$"]), "$");
+  is(to_key_notation(KEYS["%"]), "%");
+  is(to_key_notation(KEYS["^"]), "^");
+  is(to_key_notation(KEYS["&"]), "&");
+  is(to_key_notation(KEYS["*"]), "*");
+  is(to_key_notation(KEYS["("]), "(");
+  is(to_key_notation(KEYS[")"]), ")");
 
   // others
-  is(to_key_notation({ key: "_", shiftKey: true }), "_");
-  is(to_key_notation({ key: "+", shiftKey: true }), "+");
-  is(to_key_notation({ key: "{", shiftKey: true }), "{");
-  is(to_key_notation({ key: "}", shiftKey: true }), "}");
-  is(to_key_notation({ key: ":", shiftKey: true }), ":");
-  is(to_key_notation({ key: "\"", shiftKey: true }), "\"");
-  is(to_key_notation({ key: ">", shiftKey: true }), ">");
-  is(to_key_notation({ key: "?", shiftKey: true }), "?");
-  is(to_key_notation({ key: "~", shiftKey: true }), "~");
+  is(to_key_notation(KEYS["_"]), "_");
+  is(to_key_notation(KEYS["+"]), "+");
+  is(to_key_notation(KEYS["{"]), "{");
+  is(to_key_notation(KEYS["}"]), "}");
+  is(to_key_notation(KEYS[":"]), ":");
+  is(to_key_notation(KEYS["\""]), "\"");
+  is(to_key_notation(KEYS[">"]), ">");
+  is(to_key_notation(KEYS["?"]), "?");
+  is(to_key_notation(KEYS["~"]), "~");
 
   // keys with special handling
-  is(to_key_notation({ key: "<", shiftKey: true }), "<");
-  is(to_key_notation({ key: "|", shiftKey: true }), "|");
+  is(to_key_notation(KEYS["<"]), "<");
+  is(to_key_notation(KEYS["|"]), "|");
 });
 
 add_task(async function test_shifted_characters_with_modifiers() {
   // single
-  is(to_key_notation({ key: "+", ctrlKey: true, shiftKey: true }), "<C-+>");
-  is(to_key_notation({ key: "!", ctrlKey: true, shiftKey: true }), "<C-!>");
-  is(to_key_notation({ key: "@", ctrlKey: true, shiftKey: true }), "<C-@>");
-  is(to_key_notation({ key: "#", ctrlKey: true, shiftKey: true }), "<C-#>");
-  is(to_key_notation({ key: "$", ctrlKey: true, shiftKey: true }), "<C-$>");
-  is(to_key_notation({ key: "%", ctrlKey: true, shiftKey: true }), "<C-%>");
-  is(to_key_notation({ key: "^", ctrlKey: true, shiftKey: true }), "<C-^>");
-  is(to_key_notation({ key: "&", ctrlKey: true, shiftKey: true }), "<C-&>");
-  is(to_key_notation({ key: "*", ctrlKey: true, shiftKey: true }), "<C-*>");
-  is(to_key_notation({ key: "(", ctrlKey: true, shiftKey: true }), "<C-(>");
-  is(to_key_notation({ key: ")", ctrlKey: true, shiftKey: true }), "<C-)>");
-  is(to_key_notation({ key: "_", ctrlKey: true, shiftKey: true }), "<C-_>");
-  is(to_key_notation({ key: "{", ctrlKey: true, shiftKey: true }), "<C-{>");
-  is(to_key_notation({ key: "}", ctrlKey: true, shiftKey: true }), "<C-}>");
-  is(to_key_notation({ key: ":", ctrlKey: true, shiftKey: true }), "<C-:>");
-  is(to_key_notation({ key: "\"", ctrlKey: true, shiftKey: true }), "<C-\">");
-  is(to_key_notation({ key: "<", ctrlKey: true, shiftKey: true }), "<C-lt>");
-  is(to_key_notation({ key: ">", ctrlKey: true, shiftKey: true }), "<C->>");
-  is(to_key_notation({ key: "?", ctrlKey: true, shiftKey: true }), "<C-?>");
-  is(to_key_notation({ key: "~", ctrlKey: true, shiftKey: true }), "<C-~>");
+  is(to_key_notation({ ...KEYS["+"], ctrlKey: true }), "<C-+>");
+  is(to_key_notation({ ...KEYS["!"], ctrlKey: true }), "<C-!>");
+  is(to_key_notation({ ...KEYS["@"], ctrlKey: true }), "<C-@>");
+  is(to_key_notation({ ...KEYS["#"], ctrlKey: true }), "<C-#>");
+  is(to_key_notation({ ...KEYS["$"], ctrlKey: true }), "<C-$>");
+  is(to_key_notation({ ...KEYS["%"], ctrlKey: true }), "<C-%>");
+  is(to_key_notation({ ...KEYS["^"], ctrlKey: true }), "<C-^>");
+  is(to_key_notation({ ...KEYS["&"], ctrlKey: true }), "<C-&>");
+  is(to_key_notation({ ...KEYS["*"], ctrlKey: true }), "<C-*>");
+  is(to_key_notation({ ...KEYS["("], ctrlKey: true }), "<C-(>");
+  is(to_key_notation({ ...KEYS[")"], ctrlKey: true }), "<C-)>");
+  is(to_key_notation({ ...KEYS["_"], ctrlKey: true }), "<C-_>");
+  is(to_key_notation({ ...KEYS["{"], ctrlKey: true }), "<C-{>");
+  is(to_key_notation({ ...KEYS["}"], ctrlKey: true }), "<C-}>");
+  is(to_key_notation({ ...KEYS[":"], ctrlKey: true }), "<C-:>");
+  is(to_key_notation({ ...KEYS["\""], ctrlKey: true }), "<C-\">");
+  is(to_key_notation({ ...KEYS["<"], ctrlKey: true }), "<C-lt>");
+  is(to_key_notation({ ...KEYS[">"], ctrlKey: true }), "<C->>");
+  is(to_key_notation({ ...KEYS["?"], ctrlKey: true }), "<C-?>");
+  is(to_key_notation({ ...KEYS["~"], ctrlKey: true }), "<C-~>");
 
   // multiple
-  is(to_key_notation({ key: "+", ctrlKey: true, altKey: true, shiftKey: true }), "<C-A-+>");
-  is(to_key_notation({ key: "!", ctrlKey: true, altKey: true, shiftKey: true }), "<C-A-!>");
-  is(to_key_notation({ key: "@", ctrlKey: true, metaKey: true, shiftKey: true }), "<C-D-@>");
-  is(to_key_notation({ key: "#", ctrlKey: true, altKey: true, metaKey: true, shiftKey: true }), "<C-A-D-#>");
+  is(to_key_notation({ ...KEYS["+"], ctrlKey: true, altKey: true }), "<C-A-+>");
+  is(to_key_notation({ ...KEYS["!"], ctrlKey: true, altKey: true }), "<C-A-!>");
+  is(to_key_notation({ ...KEYS["@"], ctrlKey: true, metaKey: true }), "<C-D-@>");
+  is(to_key_notation({ ...KEYS["#"], ctrlKey: true, altKey: true, metaKey: true }), "<C-A-D-#>");
 });
 
 add_task(async function test_non_shifted_versions_of_characters_with_shift() {
   const render = to_key_notation;
-  todo_is(render({ key: "-", shiftKey: true }), "_");
-  todo_is(render({ key: "-", ctrlKey: true, shiftKey: true }), "<C-_>");
-  todo_is(render({ key: "=", ctrlKey: true, shiftKey: true }), "<C-+>");
-  todo_is(render({ key: "[", ctrlKey: true, shiftKey: true }), "<C-{>");
-  todo_is(render({ key: "]", ctrlKey: true, shiftKey: true }), "<C-}>");
-  todo_is(render({ key: ";", ctrlKey: true, shiftKey: true }), "<C-:>");
-  todo_is(render({ key: "'", ctrlKey: true, shiftKey: true }), "<C-\">");
-  todo_is(render({ key: ",", ctrlKey: true, shiftKey: true }), "<C-<>");
-  todo_is(render({ key: ".", ctrlKey: true, shiftKey: true }), "<C->>");
-  todo_is(render({ key: "/", ctrlKey: true, shiftKey: true }), "<C-|>");
-  todo_is(render({ key: "`", ctrlKey: true, shiftKey: true }), "<C-~>");
+  todo_is(render({ key: "-", code: "Minus", shiftKey: true }), "_");
+  todo_is(render({ key: "-", code: "Minus", ctrlKey: true, shiftKey: true }), "<C-_>");
+  todo_is(render({ key: "=", code: "Equal", ctrlKey: true, shiftKey: true }), "<C-+>");
+  todo_is(render({ key: "[", code: "BracketLeft", ctrlKey: true, shiftKey: true }), "<C-{>");
+  todo_is(render({ key: "]", code: "BracketRight", ctrlKey: true, shiftKey: true }), "<C-}>");
+  todo_is(render({ key: ";", code: "Semicolon", ctrlKey: true, shiftKey: true }), "<C-:>");
+  todo_is(render({ key: "'", code: "Quote", ctrlKey: true, shiftKey: true }), "<C-\">");
+  todo_is(render({ key: ",", code: "Comma", ctrlKey: true, shiftKey: true }), "<C-<>");
+  todo_is(render({ key: ".", code: "Period", ctrlKey: true, shiftKey: true }), "<C->>");
+  todo_is(render({ key: "/", code: "Slash", ctrlKey: true, shiftKey: true }), "<C-?>");
+  todo_is(render({ key: "`", code: "Backquote", ctrlKey: true, shiftKey: true }), "<C-~>");
 });
 
 add_task(async function test_non_shifted_characters_with_shift() {
-  is(to_key_notation({ key: "a", ctrlKey: true, shiftKey: true }), "<C-S-A>");
-  is(to_key_notation({ key: "z", ctrlKey: true, shiftKey: true }), "<C-S-Z>");
-  is(to_key_notation({ key: "h", altKey: true, shiftKey: true }), "<A-S-H>");
-  is(to_key_notation({ key: "x", metaKey: true, shiftKey: true }), "<D-S-X>");
+  is(to_key_notation({ key: "a", code: "KeyA", ctrlKey: true, shiftKey: true }), "<C-S-A>");
+  is(to_key_notation({ key: "z", code: "KeyZ", ctrlKey: true, shiftKey: true }), "<C-S-Z>");
+  is(to_key_notation({ key: "h", code: "KeyH", altKey: true, shiftKey: true }), "<A-S-H>");
+  is(to_key_notation({ key: "x", code: "KeyX", metaKey: true, shiftKey: true }), "<D-S-X>");
 });
 
 add_task(async function test_special_keys_with_shift() {
-  is(to_key_notation({ key: "Tab", shiftKey: true }), "<S-Tab>");
-  is(to_key_notation({ key: "Tab", ctrlKey: true, shiftKey: true }), "<C-S-Tab>");
-  is(to_key_notation({ key: "Enter", shiftKey: true }), "<S-CR>");
-  is(to_key_notation({ key: "Enter", ctrlKey: true, shiftKey: true }), "<C-S-CR>");
-  is(to_key_notation({ key: "Escape", shiftKey: true }), "<S-Esc>");
-  is(to_key_notation({ key: "Escape", altKey: true, shiftKey: true }), "<A-S-Esc>");
-  is(to_key_notation({ key: "Space", shiftKey: true }), "<S-Space>");
-  is(to_key_notation({ key: "Space", metaKey: true, shiftKey: true }), "<D-S-Space>");
-  is(to_key_notation({ key: "ArrowUp", shiftKey: true }), "<S-Up>");
-  is(to_key_notation({ key: "ArrowDown", ctrlKey: true, shiftKey: true }), "<C-S-Down>");
-  is(to_key_notation({ key: "ArrowLeft", altKey: true, shiftKey: true }), "<A-S-Left>");
-  is(to_key_notation({ key: "ArrowRight", metaKey: true, shiftKey: true }), "<D-S-Right>");
-  is(to_key_notation({ key: "F1", shiftKey: true }), "<S-F1>");
-  is(to_key_notation({ key: "F12", ctrlKey: true, shiftKey: true }), "<C-S-F12>");
-  is(to_key_notation({ key: "Backspace", shiftKey: true }), "<S-BS>");
-  is(to_key_notation({ key: "Delete", shiftKey: true }), "<S-Del>");
-  is(to_key_notation({ key: "Home", shiftKey: true }), "<S-Home>");
-  is(to_key_notation({ key: "End", shiftKey: true }), "<S-End>");
-  is(to_key_notation({ key: "PageUp", shiftKey: true }), "<S-PageUp>");
-  is(to_key_notation({ key: "PageDown", shiftKey: true }), "<S-PageDown>");
+  is(to_key_notation({ ...KEYS["Tab"], shiftKey: true }), "<S-Tab>");
+  is(to_key_notation({ ...KEYS["Tab"], ctrlKey: true, shiftKey: true }), "<C-S-Tab>");
+  is(to_key_notation({ ...KEYS["Enter"], shiftKey: true }), "<S-CR>");
+  is(to_key_notation({ ...KEYS["Enter"], ctrlKey: true, shiftKey: true }), "<C-S-CR>");
+  is(to_key_notation({ ...KEYS["Escape"], shiftKey: true }), "<S-Esc>");
+  is(to_key_notation({ ...KEYS["Escape"], altKey: true, shiftKey: true }), "<A-S-Esc>");
+  is(to_key_notation({ ...KEYS[" "], shiftKey: true }), "<S-Space>");
+  is(to_key_notation({ ...KEYS[" "], metaKey: true, shiftKey: true }), "<D-S-Space>");
+  is(to_key_notation({ ...KEYS["ArrowUp"], shiftKey: true }), "<S-Up>");
+  is(to_key_notation({ ...KEYS["ArrowDown"], ctrlKey: true, shiftKey: true }), "<C-S-Down>");
+  is(to_key_notation({ ...KEYS["ArrowLeft"], altKey: true, shiftKey: true }), "<A-S-Left>");
+  is(to_key_notation({ ...KEYS["ArrowRight"], metaKey: true, shiftKey: true }), "<D-S-Right>");
+  is(to_key_notation({ ...KEYS["F1"], shiftKey: true }), "<S-F1>");
+  is(to_key_notation({ ...KEYS["F12"], ctrlKey: true, shiftKey: true }), "<C-S-F12>");
+  is(to_key_notation({ ...KEYS["Backspace"], shiftKey: true }), "<S-BS>");
+  is(to_key_notation({ ...KEYS["Delete"], shiftKey: true }), "<S-Del>");
+  is(to_key_notation({ ...KEYS["Home"], shiftKey: true }), "<S-Home>");
+  is(to_key_notation({ ...KEYS["End"], shiftKey: true }), "<S-End>");
+  is(to_key_notation({ ...KEYS["PageUp"], shiftKey: true }), "<S-PageUp>");
+  is(to_key_notation({ ...KEYS["PageDown"], shiftKey: true }), "<S-PageDown>");
 });
 
 add_task(async function test_shift_edge_cases() {
   // uppercase letters don't get double-shifted
-  is(to_key_notation({ key: "A", shiftKey: true }), "A");
-  is(to_key_notation({ key: "A", ctrlKey: true, shiftKey: true }), "<C-S-A>");
-  is(to_key_notation({ key: "Z", ctrlKey: true, shiftKey: true }), "<C-S-Z>");
+  is(to_key_notation({ key: "A", code: "KeyA", shiftKey: true }), "A");
+  is(to_key_notation({ key: "A", code: "KeyA", ctrlKey: true, shiftKey: true }), "<C-S-A>");
+  is(to_key_notation({ key: "Z", code: "KeyZ", ctrlKey: true, shiftKey: true }), "<C-S-Z>");
 
   // Test that shifted characters work without the shift key too
-  is(to_key_notation({ key: "+" }), "+");
-  is(to_key_notation({ key: "!", ctrlKey: true }), "<C-!>");
-  is(to_key_notation({ key: "@", altKey: true }), "<A-@>");
-  is(to_key_notation({ key: "#", metaKey: true }), "<D-#>");
+  is(to_key_notation({ key: "+", code: "Equal" }), "+");
+  is(to_key_notation({ key: "!", code: "Digit1", ctrlKey: true }), "<C-!>");
+  is(to_key_notation({ key: "@", code: "Digit2", altKey: true }), "<A-@>");
+  is(to_key_notation({ key: "#", code: "Digit3", metaKey: true }), "<D-#>");
 });
 
 add_task(async function test_shifted_character_normalization() {
