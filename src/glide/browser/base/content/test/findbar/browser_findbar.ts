@@ -9,6 +9,10 @@
 
 const FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
+add_setup(function _() {
+  glide.prefs.set("accessibility.typeaheadfind.enablesound", false);
+});
+
 add_task(async function test_findbar_open_close_basic() {
   await reload_config(function _() {});
 
@@ -339,4 +343,5 @@ function get_match_counts(findbar: MozFindbar): { current: number; total: number
 
 registerCleanupFunction(function _() {
   glide.prefs.clear("accessibility.typeaheadfind.flashBar");
+  glide.prefs.clear("accessibility.typeaheadfind.enablesound");
 });
