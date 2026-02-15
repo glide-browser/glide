@@ -332,7 +332,16 @@ export function make_glide_api(
           findbar._setDiacriticMatching(opts.match_diacritics ? 1 : 0);
         }
 
-        await findbar.startFind(mode);
+        if (typeof opts?.query !== "undefined") {
+          await findbar.startFind(mode, /* userWantsPrefill */ false, opts.query);
+
+          // this *actually* starts the finder and shows results, we only do this for the
+          // explicit `query` case because its more likely that the user explicitly wants
+          // to see results immediately.
+          findbar._find();
+        } else {
+          await findbar.startFind(mode);
+        }
       },
       async close() {
         const findbar = await gFindBarPromise;

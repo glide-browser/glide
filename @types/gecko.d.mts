@@ -442,11 +442,14 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
   _entireWord?: boolean;
   _typeAheadCaseSensitive?: 0 | 1 | 2;
   _findField: HTMLInputElement;
+  _foundMatches: HTMLLabelElement;
+  _findStatusDesc: HTMLElement;
+  _findStatusIcon: HTMLElement;
 
   open(mode?: FindMode): boolean;
   close(noAnim?: boolean): void;
   clear(): void;
-  startFind(mode?: FindMode): Promise<void>;
+  startFind(mode?: FindMode, userWantsPrefill?: boolean, currentSelection?: string): Promise<void>;
   onFindCommand(): Promise<void>;
   onFindAgainCommand(findPrevious: boolean): Promise<void> | undefined;
   onFindSelectionCommand(): void;
@@ -475,6 +478,8 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
    * @see _shouldMatchDiacritics
    */
   _setDiacriticMatching(diacriticMatching): void;
+
+  _find(): void;
 }
 
 /** may be `undefined` if the findbar has never been opened */

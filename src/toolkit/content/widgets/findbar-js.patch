@@ -1,0 +1,69 @@
+diff --git a/toolkit/content/widgets/findbar.js b/toolkit/content/widgets/findbar.js
+index b66dce5bea757fdf6a9bbd656551d876e47aa8a3..cf7ab84de8826cd75a23af583e53ec1c0649e48e 100644
+--- a/toolkit/content/widgets/findbar.js
++++ b/toolkit/content/widgets/findbar.js
+@@ -1133,12 +1133,13 @@
+      *                      FIND_NORMAL, FIND_TYPEAHEAD or FIND_LINKS. If not
+      *                      passed, we revert to the last find mode if any or
+      *                      FIND_NORMAL.
++     * @param {boolean} [userWantsPrefill=true]
++     * @param {string} [currentSelection]
+      * @return {Promise} A promise that will be resolved when the findbar is
+      *                   fully opened.
+      */
+-    startFind(mode) {
++    startFind(mode, userWantsPrefill = true, currentSelection) {
+       let prefsvc = Services.prefs;
+-      let userWantsPrefill = true;
+       this.open(mode);
+ 
+       if (this._flashFindBar) {
+@@ -1178,7 +1179,7 @@
+       // then we might need to check the selection clipboard. Call
+       // onCurrentSelection to do so.
+       // Note: this.onCurrentSelection clears this._startFindDeferred.
+-      this.onCurrentSelection("", true);
++      this.onCurrentSelection(currentSelection, true, true);
+       return startFindPromise;
+     }
+ 
+@@ -1339,7 +1340,14 @@
+       // Noop.
+     }
+ 
+-    onCurrentSelection(selectionString, isInitialSelection) {
++    // glide: we add the `stringCanBeUndefined` param and use it to differentiate the "zero value" for `selectionString`
++    //        so that we can explicitly set the selection string to an empty string without having to update all of the other
++    //        places that can call this function that treat an empty string as the zero value.
++    onCurrentSelection(
++      selectionString,
++      isInitialSelection,
++      stringCanBeUndefined = false
++    ) {
+       // Ignore the prefill if the user has already typed in the findbar,
+       // it would have been overwritten anyway. See bug 1198465.
+       if (isInitialSelection && !this._startFindDeferred) {
+@@ -1349,15 +1357,21 @@
+       if (
+         AppConstants.platform == "macosx" &&
+         isInitialSelection &&
+-        !selectionString
++        (stringCanBeUndefined
++          ? typeof selectionString === "undefined"
++          : !selectionString)
+       ) {
+         let clipboardSearchString = this.browser.finder.clipboardSearchString;
++        console.log({ clipboardSearchString });
+         if (clipboardSearchString) {
+           selectionString = clipboardSearchString;
+         }
+       }
+ 
+-      if (selectionString) {
++      if (
++        (stringCanBeUndefined && typeof selectionString !== "undefined") ||
++        selectionString
++      ) {
+         this._findField.value = selectionString;
+       }
+ 

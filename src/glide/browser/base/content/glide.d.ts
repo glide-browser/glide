@@ -1735,6 +1735,14 @@ declare global {
 
     export type FindbarOpenOpts = {
       /**
+       * Search for the given string.
+       *
+       * When not specified, the findbar opens with the most recently used search query. To open the findbar
+       * with an empty query, pass an empty string `""`.
+       */
+      query?: string;
+
+      /**
        * The findbar can be opened in 3 different "modes":
        *
        * - "links"    : the findbar will only show results for links, pressing enter will click the link

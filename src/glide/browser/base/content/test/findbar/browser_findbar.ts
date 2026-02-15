@@ -192,6 +192,68 @@ add_task(async function test_findbar_open_match_diacritics() {
   });
 });
 
+add_task(async function test_findbar_open_query() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ query: "word" });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    is(findbar._findField.value, "word", "findbar input should be the query");
+    await until(() => get_match_counts(findbar) !== null, "Waiting for find results");
+
+    const counts = get_match_counts(findbar)!;
+    Assert.greater(counts.total, 0, "should find matches for the query");
+    is(counts.current, 1, "should be at first match");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
+add_task(async function test_findbar_open_query_empty_string() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ query: "word" });
+    await until(() => get_match_counts(findbar) !== null, "Waiting for find results");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+
+    await glide.findbar.open({ query: "" });
+
+    ok(!findbar.hidden, "findbar should be visible");
+    is(findbar._findField.value, "", "findbar input should be empty");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
+add_task(async function test_findbar_open_query_no_matches() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ query: "xyznonexistent123" });
+
+    await until(
+      () =>
+        findbar._findStatusDesc?.textContent !== "" || findbar._findStatusIcon?.getAttribute("status") === "notfound",
+      "Waiting for no-match status",
+    );
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
 add_task(async function test_findbar_is_focused() {
   await reload_config(function _() {});
 
@@ -209,6 +271,11 @@ add_task(async function test_findbar_is_focused() {
     await until(() => !glide.findbar.is_open(), "Waiting for findbar to close");
   });
 });
+
+function get_match_counts(findbar: MozFindbar): { current: number; total: number } | null {
+  const args = findbar._foundMatches?.dataset?.["l10nArgs"];
+  return args ? JSON.parse(args) as any : null;
+}
 
 registerCleanupFunction(function _() {
   glide.prefs.clear("accessibility.typeaheadfind.flashBar");
