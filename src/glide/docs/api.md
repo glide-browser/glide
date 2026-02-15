@@ -834,6 +834,8 @@ Ignores {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint
 
 ## • `glide.findbar` {% id="glide.findbar" %}
 
+APIs for interacting with the native [findbar](https://support.mozilla.org/kb/search-contents-current-page-text-or-links).
+
 {% api-heading id="glide.findbar.open" %}
 glide.findbar.open(opts?): Promise<void>
 {% /api-heading %}

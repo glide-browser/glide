@@ -672,6 +672,9 @@ declare global {
       };
     };
 
+    /**
+     * APIs for interacting with the native [findbar](https://support.mozilla.org/kb/search-contents-current-page-text-or-links).
+     */
     findbar: {
       /**
        * Open the findbar.
