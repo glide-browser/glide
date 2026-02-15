@@ -272,6 +272,66 @@ add_task(async function test_findbar_is_focused() {
   });
 });
 
+add_task(async function test_findbar_next_previous_match() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ query: "word" });
+    await until(() => get_match_counts(findbar) !== null, "Waiting for find results");
+
+    const initial = get_match_counts(findbar)!;
+    Assert.greater(initial.total, 1, "should be multiple matches");
+    is(initial.current, 1, "should start at first match");
+
+    await glide.findbar.next_match();
+    await waiter(() => get_match_counts(findbar)?.current).is(2, "Waiting to go to next match");
+
+    await glide.findbar.previous_match();
+    await waiter(() => get_match_counts(findbar)?.current).is(1, "Waiting to go to previous match");
+
+    const counts = get_match_counts(findbar)!;
+    is(counts.current, 1, "should move back to first match");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
+add_task(async function test_findbar_next_previous_match_opens_findbar_if_closed() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    const findbar = await gFindBarPromise;
+
+    await glide.findbar.open({ query: "word" });
+    await until(() => get_match_counts(findbar) !== null, "Waiting for find results");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+    notok(glide.findbar.is_open(), "findbar should be closed");
+
+    await glide.findbar.next_match();
+    await waiter(() => get_match_counts(findbar)?.current).is(1, "Waiting to go to first match");
+    ok(glide.findbar.is_open(), "findbar should be opened by next_match()");
+
+    await sleep_frames(10);
+    await glide.findbar.next_match();
+    await waiter(() => get_match_counts(findbar)?.current).is(2, "Waiting to go to second match");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+
+    await glide.findbar.previous_match();
+    ok(glide.findbar.is_open(), "findbar should be opened by next_match()");
+    await waiter(() => get_match_counts(findbar)?.current).is(2, "Waiting to go to previous match");
+
+    await glide.findbar.close();
+    await until(() => findbar.hidden, "Waiting for findbar to close");
+  });
+});
+
 function get_match_counts(findbar: MozFindbar): { current: number; total: number } | null {
   const args = findbar._foundMatches?.dataset?.["l10nArgs"];
   return args ? JSON.parse(args) as any : null;

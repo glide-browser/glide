@@ -681,6 +681,20 @@ declare global {
       open(opts?: glide.FindbarOpenOpts): Promise<void>;
 
       /**
+       * Select the next match for the findbar query.
+       *
+       * If the findbar is not currently open, then it is opened with the last searched query.
+       */
+      next_match(): Promise<void>;
+
+      /**
+       * Select the previous match for the findbar query.
+       *
+       * If the findbar is not currently open, then it is opened with the last searched query.
+       */
+      previous_match(): Promise<void>;
+
+      /**
        * Close the findbar. Does nothing if the findbar is already closed.
        */
       close(): Promise<void>;

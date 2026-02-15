@@ -343,6 +343,26 @@ export function make_glide_api(
           await findbar.startFind(mode);
         }
       },
+      async next_match() {
+        const findbar = await gFindBarPromise;
+        if (!this.is_open()) {
+          // we intentionally use .open() instead of .startFind() so that the input field in
+          // the findbar is not automatically focused, as that can change modes and mess with
+          // keymappings.
+          findbar.open();
+        }
+        findbar.onFindAgainCommand(false);
+      },
+      async previous_match() {
+        const findbar = await gFindBarPromise;
+        if (!this.is_open()) {
+          // we intentionally use .open() instead of .startFind() so that the input field in
+          // the findbar is not automatically focused, as that can change modes and mess with
+          // keymappings.
+          findbar.open();
+        }
+        findbar.onFindAgainCommand(true);
+      },
       async close() {
         const findbar = await gFindBarPromise;
         findbar.close();

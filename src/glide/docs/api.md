@@ -110,6 +110,8 @@ text-decoration: none;
 [`glide.hints.label_generators.numeric`](#glide.hints.label_generators.numeric)\
 [`glide.findbar`](#glide.findbar)\
 [`glide.findbar.open()`](#glide.findbar.open)\
+[`glide.findbar.next_match()`](#glide.findbar.next_match)\
+[`glide.findbar.previous_match()`](#glide.findbar.previous_match)\
 [`glide.findbar.close()`](#glide.findbar.close)\
 [`glide.findbar.is_open()`](#glide.findbar.is_open)\
 [`glide.findbar.is_focused()`](#glide.findbar.is_focused)\
@@ -839,6 +841,22 @@ glide.findbar.open(opts?): Promise<void>
 Open the findbar.
 
 This can also be used to update the findbar options if it is already open.
+
+{% api-heading id="glide.findbar.next_match" %}
+glide.findbar.next_match(): Promise<void>
+{% /api-heading %}
+
+Select the next match for the findbar query.
+
+If the findbar is not currently open, then it is opened with the last searched query.
+
+{% api-heading id="glide.findbar.previous_match" %}
+glide.findbar.previous_match(): Promise<void>
+{% /api-heading %}
+
+Select the previous match for the findbar query.
+
+If the findbar is not currently open, then it is opened with the last searched query.
 
 {% api-heading id="glide.findbar.close" %}
 glide.findbar.close(): Promise<void>
