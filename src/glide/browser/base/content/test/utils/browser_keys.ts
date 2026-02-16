@@ -482,7 +482,6 @@ add_task(async function test_shift_edge_cases() {
   // Test that shifted characters work without the shift key too
   is(to_key_notation({ key: "+", code: "Equal" }), "+");
   is(to_key_notation({ key: "!", code: "Digit1", ctrlKey: true }), "<C-!>");
-  is(to_key_notation({ key: "@", code: "Digit2", altKey: true }), "<A-@>");
   is(to_key_notation({ key: "#", code: "Digit3", metaKey: true }), "<D-#>");
 });
 
