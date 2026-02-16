@@ -249,6 +249,8 @@ declare namespace MockedExports {
       typeof import("../src/glide/browser/base/content/browser-messenger.mts");
     "chrome://glide/content/browser-navigation.mjs":
       typeof import("../src/glide/browser/base/content/browser-navigation.mts");
+    "chrome://glide/content/browser-keyboard.mjs":
+      typeof import("../src/glide/browser/base/content/browser-keyboard.mts");
     "chrome://glide/content/browser-api.mjs": typeof import("../src/glide/browser/base/content/browser-api.mts");
     "chrome://glide/content/browser-dev.mjs": typeof import("../src/glide/browser/base/content/browser-dev.mts");
     "chrome://glide/content/event-utils.mjs": typeof import("../src/glide/browser/base/content/event-utils.mts");
