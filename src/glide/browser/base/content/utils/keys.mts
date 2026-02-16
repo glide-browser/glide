@@ -567,7 +567,12 @@ function resolve_event_key(event: GlideMappingEvent): string {
 
   let key = event.key;
 
-  if (event.code && glide.options.get("keymaps_use_physical_layout") === "force") {
+  if (
+    event.code
+    && (glide.options.get("keymaps_use_physical_layout") === "force"
+      || (event.altKey && glide.ctx.os === "macosx"
+        && glide.options.get("keymaps_use_physical_layout") === "for_macos_option_modifier"))
+  ) {
     const layout = glide.options.get("keyboard_layouts")[glide.options.get("keyboard_layout")];
     const translation = layout[event.code as keyof typeof layout];
     if (translation) {

@@ -1889,6 +1889,9 @@ class GlideBrowserClass {
     return sandbox_event;
   }
 
+  /** properties that are and should only be used for testing purposes */
+  testing: { override_os?: typeof glide["ctx"]["os"] } = {};
+
   is_mode_switching_disabled(): boolean {
     return this.state.mode === "ignore" || !this.api.options.get("switch_mode_on_focus");
   }
