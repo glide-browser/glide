@@ -172,7 +172,19 @@ class GlideOptions implements GlideO {
   go_next_patterns: string[] = ["next", "more", "newer", ">", ">", "›", "→", "»", "≫", ">>"];
   go_previous_patterns: string[] = ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"];
 
-  keyboard_layout: keyof GlideKeyboardLayouts = "qwerty";
+  #keyboard_layout: keyof GlideKeyboardLayouts = "qwerty";
+  get keyboard_layout() {
+    return this.#keyboard_layout;
+  }
+  set keyboard_layout(value: keyof GlideKeyboardLayouts) {
+    if (!Object.hasOwn(this.keyboard_layouts, value)) {
+      throw new Error(
+        `Cannot set \`keyboard_layout\` to a layout that has not been defined yet. See https://glide-browser.app/api#glide.o.keyboard_layouts`,
+      );
+    }
+    this.#keyboard_layout = value;
+  }
+
   keyboard_layouts: GlideKeyboardLayouts = Keyboard.get_layouts();
 
   keymaps_use_physical_layout: glide.Options["keymaps_use_physical_layout"] = "for_macos_option_modifier";

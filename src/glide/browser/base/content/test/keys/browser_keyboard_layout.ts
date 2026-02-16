@@ -263,6 +263,25 @@ add_task(async function test_keymap_matching_without_physical_layout() {
   await reload_config(function _() {});
 });
 
+add_task(async function test_physical_layout__qwerty() {
+  await reload_config(function _() {
+    // @ts-expect-error
+    glide.o.keyboard_layout = "my invalid layout";
+  });
+
+  const notification = await until(() => gNotificationBox.getNotificationWithValue("glide-config-error"));
+
+  ok(notification, "Error notification should be shown");
+  is(
+    // @ts-ignore
+    notification.shadowRoot.querySelector(".message").textContent.trim().replace(
+      /\/browser-api\.mjs:\d+:\d+\n/,
+      "/browser-api.mjs:X:X\n",
+    ),
+    "An error occurred while evaluating `set keyboard_layout@chrome://glide/content/browser-api.mjs:X:X\n@glide.ts:2:1` - Error: Cannot set `keyboard_layout` to a layout that has not been defined yet. See https://glide-browser.app/api#glide.o.keyboard_layouts",
+  );
+});
+
 add_task(async function test_macos_option_key() {
   try {
     GlideBrowser.testing.override_os = "macosx";
