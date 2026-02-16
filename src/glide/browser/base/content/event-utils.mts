@@ -5,7 +5,7 @@
 import type { SetRequired } from "type-fest";
 import type { GlideMappingEvent } from "./utils/keys.mts";
 
-const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs");
+const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
 const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 /**

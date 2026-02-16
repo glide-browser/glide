@@ -6,7 +6,7 @@
 
 declare var content: TestContent;
 
-const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs");
+const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
 
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 

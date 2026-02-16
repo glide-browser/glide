@@ -17,7 +17,7 @@ import type { ParseResult } from "./utils/args.mjs";
 import type { KeyMappingTrieNode } from "./utils/keys.mts";
 
 const MozUtils = ChromeUtils.importESModule("chrome://glide/content/utils/moz.mjs");
-const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs");
+const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 const Args = ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
