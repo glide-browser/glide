@@ -15,6 +15,7 @@ glide.jar:
   content/browser-excmds-registry.mjs          (content/dist/browser-excmds-registry.mjs)
   content/browser-messenger.mjs                (content/dist/browser-messenger.mjs)
   content/browser-navigation.mjs               (content/dist/browser-navigation.mjs)
+  content/browser-keyboard.mjs                 (content/dist/browser-keyboard.mjs)
   content/browser-hints.mjs                    (content/dist/browser-hints.mjs)
   content/browser-api.mjs                      (content/dist/browser-api.mjs)
   content/browser-dev.mjs                      (content/dist/browser-dev.mjs)

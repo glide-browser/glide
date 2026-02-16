@@ -1318,6 +1318,257 @@ declare global {
      * @default ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"]
      */
     go_previous_patterns: string[];
+
+    /**
+     * Determines whether keymappings should resolve from the key event `code`[0] or `key`[1].
+     *
+     * The `code` is the string for the *physical* key that you pressed, whereas the `key` is the string that your OS resolved to.
+     *
+     * For example, with a german layout pressing the key with the `BracketLeft` code, `[` on a US layout, would result in `key` being set to `ü`.
+     *
+     * - `ts:"never"` always use `event.key`
+     * - `ts:"force"` always use `event.code`
+     *
+     * Codes are translated to keys using {@link glide.o.keyboard_layout}, the default is `ts:"qwerty"` but you can add arbitrary layouts with {@link glide.o.keyboard_layouts}.
+     *
+     * Setting this to `ts:"force"` is recommended for everyone with multiple, or non-english keyboard layouts.
+     *
+     * [0]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code
+     * [1]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key
+     *
+     * @default "never"
+     */
+    keymaps_use_physical_layout: "never" | "force";
+
+    /**
+     * The keyboard layout to use when {@link glide.o.keymaps_use_physical_layout} is set to `ts:"force"`.
+     *
+     * The only keyboard layout supported by default is `ts:"qwerty"`. See {@link glide.o.keyboard_layouts} for how to add your own.
+     */
+    keyboard_layout: keyof GlideKeyboardLayouts;
+
+    /**
+     * The supported keyboard layouts. Each entry in this object should map a key [`code`](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code) to the string, and shifted string, used in glide keymappings.
+     *
+     * If your layout is missing, you can create one with the help of [https://gistpreview.github.io/?348d752bfaec70b703cc809d34e0462b](https://gistpreview.github.io/?348d752bfaec70b703cc809d34e0462b), and then add it to glide with:
+     *
+     * ```typescript
+     * declare global {
+     *   interface GlideKeyboardLayouts {
+     *     dvorak: GlideKeyboardLayout;
+     *   }
+     * }
+     * glide.o.keyboard_layouts.dvorak = {
+     *   // `[` by default, `{` when shift is held
+     *   Minus: ["[", "{"],
+     *   // ...
+     * };
+     * glide.o.keyboard_layout = "dvorak";
+     * ```
+     *
+     * note: please contribute your layout into Glide so that others can benefit from it!
+     *       you'll have to add it to `get_layouts()` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser-keyboard.mts
+     *       and `GlideKeyboardLayouts` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/glide.d.ts
+     */
+    keyboard_layouts: GlideKeyboardLayouts;
+  }
+
+  /**
+   * Builtin keyboard layouts.
+   *
+   * If your layout is missing, you can create one with the help of [https://gistpreview.github.io/?348d752bfaec70b703cc809d34e0462b](https://gistpreview.github.io/?348d752bfaec70b703cc809d34e0462b), and then add it to glide with:
+   *
+   * ```typescript
+   * declare global {
+   *   interface GlideKeyboardLayouts {
+   *     dvorak: GlideKeyboardLayout;
+   *   }
+   * }
+   * glide.o.keyboard_layouts.dvorak = {
+   *   // `[` by default, `{` when shift is held
+   *   Minus: ["[", "{"],
+   *   // ...
+   * };
+   * glide.o.keyboard_layout = "dvorak";
+   * glide.o.keymaps_use_physical_layout = "force";
+   * ```
+   *
+   * note: please contribute your layout into glide so that others can benefit from it!
+   *       you'll have to add it to `get_layouts()` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser-keyboard.mts
+   *       and `GlideKeyboardLayouts` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/glide.d.ts
+   */
+  interface GlideKeyboardLayouts {
+    "qwerty": GlideKeyboardLayout;
+  }
+
+  type GlideKeyboardLayout = Partial<Record<keyof GlideKeyCodes, [key: string, shifted: string]>>;
+
+  /**
+   * All key code values mentioned in https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values
+   */
+  interface GlideKeyCodes {
+    // <most common keys>
+    KeyA: {};
+    KeyB: {};
+    KeyC: {};
+    KeyD: {};
+    KeyE: {};
+    KeyF: {};
+    KeyG: {};
+    KeyH: {};
+    KeyI: {};
+    KeyJ: {};
+    KeyK: {};
+    KeyL: {};
+    KeyM: {};
+    KeyN: {};
+    KeyO: {};
+    KeyP: {};
+    KeyQ: {};
+    KeyR: {};
+    KeyS: {};
+    KeyT: {};
+    KeyU: {};
+    KeyV: {};
+    KeyW: {};
+    KeyX: {};
+    KeyY: {};
+    KeyZ: {};
+    Digit0: {};
+    Digit1: {};
+    Digit2: {};
+    Digit3: {};
+    Digit4: {};
+    Digit5: {};
+    Digit6: {};
+    Digit7: {};
+    Digit8: {};
+    Digit9: {};
+    Equal: {};
+    Comma: {};
+    Slash: {};
+    Quote: {};
+    Minus: {};
+    Period: {};
+    Backquote: {};
+    Backslash: {};
+    Semicolon: {};
+    BracketLeft: {};
+    BracketRight: {};
+    // <most common keys />
+
+    IntlBackslash: {};
+    IntlRo: {};
+    IntlYen: {};
+    AltLeft: {};
+    AltRight: {};
+    Backspace: {};
+    CapsLock: {};
+    ContextMenu: {};
+    ControlLeft: {};
+    ControlRight: {};
+    Enter: {};
+    Escape: {};
+    MetaLeft: {};
+    MetaRight: {};
+    ShiftLeft: {};
+    ShiftRight: {};
+    Space: {};
+    Tab: {};
+    F1: {};
+    F2: {};
+    F3: {};
+    F4: {};
+    F5: {};
+    F6: {};
+    F7: {};
+    F8: {};
+    F9: {};
+    F10: {};
+    F11: {};
+    F12: {};
+    F13: {};
+    F14: {};
+    F15: {};
+    F16: {};
+    F17: {};
+    F18: {};
+    F19: {};
+    F20: {};
+    F21: {};
+    F22: {};
+    F23: {};
+    F24: {};
+    Delete: {};
+    End: {};
+    Help: {};
+    Home: {};
+    Insert: {};
+    PageDown: {};
+    PageUp: {};
+    ArrowDown: {};
+    ArrowLeft: {};
+    ArrowRight: {};
+    ArrowUp: {};
+    NumLock: {};
+    Numpad0: {};
+    Numpad1: {};
+    Numpad2: {};
+    Numpad3: {};
+    Numpad4: {};
+    Numpad5: {};
+    Numpad6: {};
+    Numpad7: {};
+    Numpad8: {};
+    Numpad9: {};
+    NumpadAdd: {};
+    NumpadComma: {};
+    NumpadDecimal: {};
+    NumpadDivide: {};
+    NumpadEnter: {};
+    NumpadEqual: {};
+    NumpadMultiply: {};
+    NumpadSubtract: {};
+    ScrollLock: {};
+    Pause: {};
+    PrintScreen: {};
+    AudioVolumeMute: {};
+    Eject: {};
+    MediaPlayPause: {};
+    MediaSelect: {};
+    MediaStop: {};
+    MediaTrackNext: {};
+    MediaTrackPrevious: {};
+    VolumeDown: {};
+    VolumeMute: {};
+    VolumeUp: {};
+    BrowserBack: {};
+    BrowserFavorites: {};
+    BrowserForward: {};
+    BrowserHome: {};
+    BrowserRefresh: {};
+    BrowserSearch: {};
+    BrowserStop: {};
+    LaunchApp1: {};
+    LaunchApp2: {};
+    LaunchMail: {};
+    Convert: {};
+    KanaMode: {};
+    Lang1: {};
+    Lang2: {};
+    NonConvert: {};
+    Again: {};
+    Copy: {};
+    Cut: {};
+    Find: {};
+    Open: {};
+    Paste: {};
+    Props: {};
+    Select: {};
+    Undo: {};
+    Power: {};
+    WakeUp: {};
+    Fn: {};
   }
 
   /**

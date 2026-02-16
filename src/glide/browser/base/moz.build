@@ -17,6 +17,7 @@ BROWSER_CHROME_MANIFESTS += [
     "content/test/extension/browser.toml",
     "content/test/findbar/browser.toml",
     "content/test/hints/browser.toml",
+    "content/test/keys/browser.toml",
     "content/test/messenger/browser.toml",
     "content/test/mode/browser.toml",
     "content/test/motions/browser.toml",

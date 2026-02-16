@@ -12,6 +12,7 @@ const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const CSS = ChromeUtils.importESModule("chrome://glide/content/utils/browser-ui.mjs");
+const Keyboard = ChromeUtils.importESModule("chrome://glide/content/browser-keyboard.mjs");
 const { ensure, assert_never, assert_present, is_present } = ChromeUtils.importESModule(
   "chrome://glide/content/utils/guards.mjs",
 );
@@ -170,6 +171,11 @@ class GlideOptions implements GlideO {
 
   go_next_patterns: string[] = ["next", "more", "newer", ">", ">", "›", "→", "»", "≫", ">>"];
   go_previous_patterns: string[] = ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"];
+
+  keyboard_layout: keyof GlideKeyboardLayouts = "qwerty";
+  keyboard_layouts: GlideKeyboardLayouts = Keyboard.get_layouts();
+
+  keymaps_use_physical_layout: glide.Options["keymaps_use_physical_layout"] = "never";
 }
 
 // above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have

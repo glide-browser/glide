@@ -61,6 +61,9 @@ text-decoration: none;
 [`glide.o.newtab_url`](#glide.o.newtab_url)\
 [`glide.o.go_next_patterns`](#glide.o.go_next_patterns)\
 [`glide.o.go_previous_patterns`](#glide.o.go_previous_patterns)\
+[`glide.o.keymaps_use_physical_layout`](#glide.o.keymaps_use_physical_layout)\
+[`glide.o.keyboard_layout`](#glide.o.keyboard_layout)\
+[`glide.o.keyboard_layouts`](#glide.o.keyboard_layouts)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -411,6 +414,56 @@ The element text patterns to search for in the `:go_previous` excmd.
 For example, with the default patterns, `html:<button>previous page</button>` would be matched.
 
 `ts:@default ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"]`
+
+### `glide.o.keymaps_use_physical_layout` {% id="glide.o.keymaps_use_physical_layout" %}
+
+Determines whether keymappings should resolve from the key event `code` [0] or `key` [1].
+
+The `code` is the string for the _physical_ key that you pressed, whereas the `key` is the string that your OS resolved to.
+
+For example, with a german layout pressing the key with the `BracketLeft` code, `[` on a US layout, would result in `key` being set to `ü`.
+
+- `ts:"never"` always use `event.key`
+- `ts:"force"` always use `event.code`
+
+Codes are translated to keys using {% link href="#glide.o.keyboard_layout" class="go-to-def" %} `ts:glide.o.keyboard_layout`{% /link %}, the default is `ts:"qwerty"` but you can add arbitrary layouts with {% link href="#glide.o.keyboard_layouts" class="go-to-def" %} `ts:glide.o.keyboard_layouts`{% /link %}.
+
+Setting this to `ts:"force"` is recommended for everyone with multiple, or non-english keyboard layouts.
+
+[0]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code
+[1]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key
+
+`ts:@default "never"`
+
+### `glide.o.keyboard_layout` {% id="glide.o.keyboard_layout" %}
+
+The keyboard layout to use when {% link href="#glide.o.keymaps_use_physical_layout" class="go-to-def" %} `ts:glide.o.keymaps_use_physical_layout`{% /link %} is set to `ts:"force"`.
+
+The only keyboard layout supported by default is `ts:"qwerty"`. See {% link href="#glide.o.keyboard_layouts" class="go-to-def" %} `ts:glide.o.keyboard_layouts`{% /link %} for how to add your own.
+
+### `glide.o.keyboard_layouts: GlideKeyboardLayouts` {% id="glide.o.keyboard_layouts" %}
+
+The supported keyboard layouts. Each entry in this object should map a key [`code`](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code) to the string, and shifted string, used in glide keymappings.
+
+If your layout is missing, you can create one with the help of [https://gistpreview.github.io/?348d752bfaec70b703cc809d34e0462b](https://gistpreview.github.io/?348d752bfaec70b703cc809d34e0462b), and then add it to glide with:
+
+```typescript
+declare global {
+  interface GlideKeyboardLayouts {
+    dvorak: GlideKeyboardLayout;
+  }
+}
+glide.o.keyboard_layouts.dvorak = {
+  // `[` by default, `{` when shift is held
+  Minus: ["[", "{"],
+  // ...
+};
+glide.o.keyboard_layout = "dvorak";
+```
+
+note: please contribute your layout into Glide so that others can benefit from it!
+you'll have to add it to `get_layouts()` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser-keyboard.mts
+and `GlideKeyboardLayouts` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/glide.d.ts
 
 ## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
 

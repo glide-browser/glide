@@ -563,7 +563,19 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
 }
 
 function resolve_event_key(event: GlideMappingEvent): string {
-  const special_key = SPECIAL_KEY_MAP.get(event.key) ?? null;
+  const glide = GlideBrowser.api;
+
+  let key = event.key;
+
+  if (event.code && glide.options.get("keymaps_use_physical_layout") === "force") {
+    const layout = glide.options.get("keyboard_layouts")[glide.options.get("keyboard_layout")];
+    const translation = layout[event.code as keyof typeof layout];
+    if (translation) {
+      key = event.shiftKey ? translation[1] : translation[0];
+    }
+  }
+
+  const special_key = SPECIAL_KEY_MAP.get(key) ?? null;
 
   // Firefox handles the shift key differently under two circumstances:
   //
@@ -573,9 +585,9 @@ function resolve_event_key(event: GlideMappingEvent): string {
   // So we just manually make sure the given key has always been uppercased if the shift flag is set.
   return special_key ?? (event.shiftKey
       // don't transform keys like `<Bslash>`
-      && event.key.length === 1
-    ? event.key.toLocaleUpperCase()
-    : event.key);
+      && key.length === 1
+    ? key.toLocaleUpperCase()
+    : key);
 }
 
 /**
