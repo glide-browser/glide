@@ -41,7 +41,7 @@ glide.keymaps.del("normal", "f");
 
 ## Key codes
 
-By default, Glide matches keymaps from the [`KeyboardEvent.key`](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key) property, which corresponds to the key that would be inserted into a text editor if you typed it directly.
+By default, Glide matches keymaps from the [`KeyboardEvent.key`](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key) property*, which corresponds to the key that would be inserted into a text editor if you typed it directly.
 However this can be undesirable if you have multiple keyboard layouts, or a non-english keyboard layout as you would have to add a separate key mapping for each keyboard layout you use.
 
 In that case, you can [configure](api.md#glide.o.keymaps_use_physical_layout) Glide to use the [`KeyboardEvent.code`](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code) property instead, which corresponds to the _physical_ key that you pressed, regardless of any software layout.
@@ -55,6 +55,11 @@ Note that Glide needs a way to map the key code to the corresponding key string 
 The answer can change depending on your specific keyboard. On a US keyboard with a qwerty layout you would expect it to match against keymaps using `@`, but on a German keyboard it should be `"`.
 
 The default keyboard layout is US qwerty. If you use a different layout, see the [`ts:glide.o.keyboard_layouts`](api.md#glide.o.keyboard_layouts) option.
+
+> [!NOTE]
+> By default, on macOS, Glide resolves keymaps from the `code` property when the `Option` key is pressed to avoid surprising behaviour with [diacritics](https://support.apple.com/guide/mac-help/mh27474/mac#:~:text=Use%20key%20combinations).
+>
+> If this is undesirable, set the [`ts:glide.o.keymaps_use_physical_layout`](api.md#glide.o.keymaps_use_physical_layout) property to `"never"`.
 
 ## Syntax
 
