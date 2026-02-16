@@ -483,6 +483,10 @@ const SHIFTED_CHARACTERS = new Set([
   ">",
   "?",
   "~",
+  // transformed special keys
+  "lt",
+  "Bar",
+  "Bslash",
 ]);
 
 /**
@@ -522,24 +526,13 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
     modifiers.push("D");
   }
 
-  const special_key = SPECIAL_KEY_MAP.get(event.key) ?? null;
-
-  // Firefox handles the shift key differently under two circumstances:
-  //
-  // 1. If the keypress is *just* shift+c then firefox would set `key` to `C`
-  // 2. If the keypress includes other modifiers, e.g. cmd+shift+c then firefox would set `key` to `c`
-  //
-  // So we just manually make sure the given key has always been uppercased if the shift flag is set.
-  const key = special_key ?? (event.shiftKey
-      // don't transform keys like `<Bslash>`
-      && event.key.length === 1
-    ? event.key.toLocaleUpperCase()
-    : event.key);
+  const key = resolve_event_key(event);
+  const special_key = REVERSE_SPECIAL_KEY_MAP.get(key) ?? null;
 
   // For inherently shifted characters (like +, !, @, etc.), we don't add the S modifier
   // because the character itself already represents the shifted state
   const is_single_char = key.length === 1;
-  const is_shifted_char = SHIFTED_CHARACTERS.has(event.key);
+  const is_shifted_char = SHIFTED_CHARACTERS.has(key);
   if (
     event.shiftKey
     && (!is_single_char || modifiers.length)
@@ -567,6 +560,22 @@ export function event_to_key_notation(event: GlideMappingEvent): string {
   }
 
   return key;
+}
+
+function resolve_event_key(event: GlideMappingEvent): string {
+  const special_key = SPECIAL_KEY_MAP.get(event.key) ?? null;
+
+  // Firefox handles the shift key differently under two circumstances:
+  //
+  // 1. If the keypress is *just* shift+c then firefox would set `key` to `C`
+  // 2. If the keypress includes other modifiers, e.g. cmd+shift+c then firefox would set `key` to `c`
+  //
+  // So we just manually make sure the given key has always been uppercased if the shift flag is set.
+  return special_key ?? (event.shiftKey
+      // don't transform keys like `<Bslash>`
+      && event.key.length === 1
+    ? event.key.toLocaleUpperCase()
+    : event.key);
 }
 
 /**
