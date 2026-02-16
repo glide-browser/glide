@@ -1304,7 +1304,7 @@ declare global {
     /**
      * The element text patterns to search for in the `:go_next` excmd.
      *
-     * For example, with the default patterns, `html:<button>next page</button>` would be matched.
+     * For example, with the default patterns, `html:<a href="...">next page</a>` would be matched.
      *
      * @default ["next", "more", "newer", ">", ">", "›", "→", "»", "≫", ">>"]
      */
@@ -1313,7 +1313,7 @@ declare global {
     /**
      * The element text patterns to search for in the `:go_previous` excmd.
      *
-     * For example, with the default patterns, `html:<button>previous page</button>` would be matched.
+     * For example, with the default patterns, `html:<a href="...">next page</a>` would be matched.
      *
      * @default ["prev", "previous", "back", "older", "<", "‹", "←", "«", "≪", "<<"]
      */
