@@ -49,8 +49,8 @@ title="Demo video showing Glide features including keyboard navigation and confi
 
 <download-details macos>
     <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.58a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon.dmg</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.58a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel.dmg</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.59a/glide.macos-aarch64.dmg" class="download-link" target="_blank" rel="noopener">Apple Silicon.dmg</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.59a/glide.macos-x86_64.dmg" class="download-link" target="_blank" rel="noopener">Intel.dmg</a>
     </div>
     <span class="package-name">Homebrew</span>
 {% /html %}
@@ -64,8 +64,8 @@ brew install --cask glide-browser
 
 <download-details linux>
     <div class="download-buttons">
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.58a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank" rel="noopener">x64.tar</a>
-      <a href="https://github.com/glide-browser/glide/releases/download/0.1.58a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank" rel="noopener">aarch64.tar</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.59a/glide.linux-x86_64.tar.xz" class="download-link" target="_blank" rel="noopener">x64.tar</a>
+      <a href="https://github.com/glide-browser/glide/releases/download/0.1.59a/glide.linux-aarch64.tar.xz" class="download-link" target="_blank" rel="noopener">aarch64.tar</a>
     </div>
     <span class="package-name"><a href="https://aur.archlinux.org/packages/glide-browser-bin">AUR</a></span>
 {% /html %}
@@ -80,8 +80,8 @@ paru -S glide-browser-bin
 
 <download-details windows>
   <div class="download-buttons">
-    <a href="https://github.com/glide-browser/glide/releases/download/0.1.58a/glide.windows-x86_64.installer.exe" class="download-link" target="_blank" rel="noopener">x86 Installer.exe</a>
-    <a href="https://github.com/glide-browser/glide/releases/download/0.1.58a/glide.windows-aarch64.installer.exe" class="download-link" target="_blank" rel="noopener">ARM Installer.exe</a>
+    <a href="https://github.com/glide-browser/glide/releases/download/0.1.59a/glide.windows-x86_64.installer.exe" class="download-link" target="_blank" rel="noopener">x86 Installer.exe</a>
+    <a href="https://github.com/glide-browser/glide/releases/download/0.1.59a/glide.windows-aarch64.installer.exe" class="download-link" target="_blank" rel="noopener">ARM Installer.exe</a>
   </div>
 {% /html %}
 

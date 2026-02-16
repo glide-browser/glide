@@ -19,6 +19,116 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.59a
+
+## Breaking change: diacritic keymaps on macOS {% id="0.1.59a-diacritics" %}
+
+Previously on macOS if you wanted to define a keymap with the Option key, then you would have to use the diacritic version of the key as macOS uses Option to enable [diacritics](https://support.apple.com/guide/mac-help/mh27474/mac#:~:text=Use%20key%20combinations).
+
+By default Glide will now use the physical key pressed instead of the diacritic, for example:
+
+```typescript
+/// before
+glide.keymaps.set("normal", "<A-π>", "tab_pin");
+
+/// after
+glide.keymaps.set("normal", "<A-p>", "tab_pin");
+```
+
+For more information see the [Key codes](keys.md#key-codes) docs.
+
+## Findbar API {% id="0.1.59a-findbar" %}
+
+This release includes support for programmatically operating the Firefox findbar. You can now open / close the findbar, and traverse through findbar matches directly from the config.
+
+For example, a keymap that opens the findbar to search for the text that is currently selected:
+
+```typescript
+glide.keymaps.set("normal", "~", async ({ tab_id }) => {
+  const selected = await glide.content.execute(
+    () => window.getSelection()?.toString(),
+    { tab_id },
+  );
+  if (!selected) {
+    throw new Error("No text selected in the page");
+  }
+  await glide.findbar.open({ query: selected });
+});
+```
+
+The full API includes:
+
+- [`ts:glide.findbar.open()`](api.md#glide.findbar.open)
+- [`ts:glide.findbar.next_match()`](api.md#glide.findbar.next_match)
+- [`ts:glide.findbar.previous_match()`](api.md#glide.findbar.previous_match)
+- [`ts:glide.findbar.close()`](api.md#glide.findbar.close)
+- [`ts:glide.findbar.is_open()`](api.md#glide.findbar.is_open)
+- [`ts:glide.findbar.is_focused()`](api.md#glide.findbar.is_focused)
+
+## Previous / next link following {% id="0.1.59a-previous-next-links" %}
+
+This release adds the `[[` and `]]` default keymappings in `normal` mode that will automatically follow "previous" and "next" links respectively.
+
+For example, entering `]]` while on https://lobste.rs/active will take you to https://lobste.rs/page/2, then `[[` will take you to https://lobste.rs/page/1.
+
+This works by searching for link elements (e.g. `html:<a>`, `html:<div role="link">`) that contain specific text (e.g. `"next"`, `"more"`). If multiple elements are found, then the element at the _bottom_ of the page is selected.
+
+You can customise the text strings to search for with [`ts:glide.o.go_next_patterns`](api.md#glide.o.go_next_patterns) and [`ts:glide.o.go_previous_patterns`](api.md#glide.o.go_previous_patterns).
+Or use different keymappings by mapping `:go_next` and `:go_previous`.
+
+## Customisable keyboard layouts {% id="0.1.59a-keyboard-layouts" %}
+
+Added support for resolving keymaps from the _physical_ key pressed instead of whatever key string your software layout resolved it to.
+
+This is particularly important for users with multiple keyboard layouts, as you no longer have to define keymaps multiple times for each layout, e.g.
+
+```typescript
+/// before
+// english
+glide.keymaps.set("normal", "<C-t>", "tab_prev");
+// russian
+glide.keymaps.set("normal", "<C-т>", "tab_prev");
+```
+
+You can now tell Glide to use the physical key [`code`](https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code) instead:
+
+```typescript
+/// after
+glide.o.keyboard_layout = "qwerty";
+glide.o.keymaps_use_physical_layout = "force";
+
+glide.keymaps.set("normal", "<C-t>", "tab_prev");
+```
+
+> [!NOTE]
+> Glide still needs a way to map the key code to the corresponding key string in mappings. For example, what should pressing `Shift` + [`Digit2`](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values#code_values_on_linux_x11:~:text=0x000B,-%22Digit2) be matched against?
+>
+> The answer can change depending on your specific keyboard. On a US keyboard with a qwerty layout you would expect it to match against keymaps using `@`, but on a German keyboard it should be `"`.
+>
+> The default keyboard layout is US qwerty. If you use a different layout, see the [`ts:glide.o.keyboard_layouts`](api.md#glide.o.keyboard_layouts) option.
+
+## Half page scrolling {% id="0.1.59a-half-page-scrolling" %}
+
+The `<C-d>` and `<C-u>` keymaps now scroll _half_ pages instead of full pages like they did before. This was changed to match Vim behaviour more closely.
+
+## Changes {% id="0.1.59a-changes" %}
+
+- Bumped Firefox from 148.0b4 to 148.0b15
+- Blocked AI link previews by default
+- Enabled Firefox's experimental AI controls UI
+- Added [`ts:glide.tabs.unload()`](api.md#glide.tabs.unload)
+- Added [`ts:glide.prefs.scoped()`](api.md#glide.prefs.scoped) for temporarily settings prefs with the new [`using`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/using) keyword
+- Added [`ts:DOM.listeners.has()`](api.md#DOM.listeners.has) for checking if an element has a specific event listener type registered
+- Added support for installing addons in private browsing mode with [`ts:glide.addons.install('...', { private_browsing_allowed: true })`](api.md#glide.addons.install)
+- Added a `--glide-current-mode-color` CSS variable for easier mode-specific UI customisation
+  - Thanks to [@45Hnri](https://github.com/45Hnri) for the contribution!
+- Added `:tab_reopen` to open the most recently closed tab
+- Added the `^` motion in normal mode
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Fixed the `I` motion crossing multiple lines
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Fixed (partially) an issue where [`ts:glide.keys.next()`](api.md#glide.keys.next) promises could hang around after config reloads
+
 # 0.1.58a
 
 ## Experimental windows support {% id="0.1.58a-experimental-windows-support" %}
