@@ -199,6 +199,8 @@ add_task(async function test_normalize() {
     event_to_key_notation({ ...KEYS[" "], ctrlKey: false, shiftKey: false, altKey: false, metaKey: false }),
     "<Space>",
   );
+  is(normalize("<D-!>"), "<D-!>");
+  is(normalize("<D-S-!>"), "<D-!>");
 
   // special keys
   is(normalize("<Esc>"), "<Esc>");
@@ -223,7 +225,7 @@ add_task(async function test_normalize() {
   is(normalize("<D-Bar>"), "<D-Bar>");
   is(normalize("<D-|>"), "<D-Bar>");
   is(normalize("<D-\\>"), "<D-Bslash>");
-  is(normalize("<D-S-Bslash>"), "<D-S-Bslash>");
+  is(normalize("<D-Bslash>"), "<D-Bslash>");
 
   // special keys are case insensitive
   is(normalize("<BAR>"), "|");
