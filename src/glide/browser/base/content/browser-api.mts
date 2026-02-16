@@ -175,7 +175,7 @@ class GlideOptions implements GlideO {
   keyboard_layout: keyof GlideKeyboardLayouts = "qwerty";
   keyboard_layouts: GlideKeyboardLayouts = Keyboard.get_layouts();
 
-  keymaps_use_physical_layout: glide.Options["keymaps_use_physical_layout"] = "never";
+  keymaps_use_physical_layout: glide.Options["keymaps_use_physical_layout"] = "for_macos_option_modifier";
 }
 
 // above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have
@@ -241,7 +241,7 @@ export function make_glide_api(
 
       get os() {
         const { AppConstants } = ChromeUtils.importESModule("resource://gre/modules/AppConstants.sys.mjs");
-        return AppConstants.platform;
+        return GlideBrowser.testing.override_os ?? AppConstants.platform;
       },
 
       async is_editing() {

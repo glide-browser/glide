@@ -262,3 +262,25 @@ add_task(async function test_keymap_matching_without_physical_layout() {
 
   await reload_config(function _() {});
 });
+
+add_task(async function test_macos_option_key() {
+  try {
+    GlideBrowser.testing.override_os = "macosx";
+
+    is(
+      to_key_notation({ key: "π", code: "KeyP", altKey: true }),
+      "<A-p>",
+      "Option + p on macOS should be resolved from the physical keyboard layout",
+    );
+
+    GlideBrowser.testing.override_os = "linux";
+
+    is(
+      to_key_notation({ key: "π", code: "KeyP", altKey: true }),
+      "<A-π>",
+      "Alt + π on linux should **not** be resolved from the physical keyboard layout",
+    );
+  } finally {
+    delete GlideBrowser.testing.override_os;
+  }
+});

@@ -1328,6 +1328,9 @@ declare global {
      *
      * - `ts:"never"` always use `event.key`
      * - `ts:"force"` always use `event.code`
+     * - `ts:"for_macos_option_modifier"` use `event.code` on macOS when the Option modifier is held, `event.key` otherwise.
+     *   this is useful, as macOS uses Option for diacritics support, e.g. Option + p => π, which can be surprising as you'd have to
+     *   map `<A-π>` instead of `<A-p>`.
      *
      * Codes are translated to keys using {@link glide.o.keyboard_layout}, the default is `ts:"qwerty"` but you can add arbitrary layouts with {@link glide.o.keyboard_layouts}.
      *
@@ -1336,9 +1339,9 @@ declare global {
      * [0]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code
      * [1]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key
      *
-     * @default "never"
+     * @default "for_macos_option_modifier"
      */
-    keymaps_use_physical_layout: "never" | "force";
+    keymaps_use_physical_layout: "never" | "for_macos_option_modifier" | "force";
 
     /**
      * The keyboard layout to use when {@link glide.o.keymaps_use_physical_layout} is set to `ts:"force"`.

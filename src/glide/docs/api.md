@@ -425,6 +425,9 @@ For example, with a german layout pressing the key with the `BracketLeft` code, 
 
 - `ts:"never"` always use `event.key`
 - `ts:"force"` always use `event.code`
+- `ts:"for_macos_option_modifier"` use `event.code` on macOS when the Option modifier is held, `event.key` otherwise.
+  this is useful, as macOS uses Option for diacritics support, e.g. Option + p => π, which can be surprising as you'd have to
+  map `<A-π>` instead of `<A-p>`.
 
 Codes are translated to keys using {% link href="#glide.o.keyboard_layout" class="go-to-def" %} `ts:glide.o.keyboard_layout`{% /link %}, the default is `ts:"qwerty"` but you can add arbitrary layouts with {% link href="#glide.o.keyboard_layouts" class="go-to-def" %} `ts:glide.o.keyboard_layouts`{% /link %}.
 
@@ -433,7 +436,7 @@ Setting this to `ts:"force"` is recommended for everyone with multiple, or non-e
 [0]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/code
 [1]: https://developer.mozilla.org/docs/Web/API/KeyboardEvent/key
 
-`ts:@default "never"`
+`ts:@default "for_macos_option_modifier"`
 
 ### `glide.o.keyboard_layout` {% id="glide.o.keyboard_layout" %}
 
