@@ -65,46 +65,78 @@ async function main() {
     }
   }
 
-  const errors: string[] = [];
+  const parsed_errors = new Map<string, string[]>();
 
-  await Promise.all(
-    snippets.map(async ({ path, location }) => {
-      const result = await execa(Path.join(ROOT_DIR, "node_modules", ".bin", "tsc"), [
-        "--noEmit",
-        "--pretty",
-        "false",
-        path,
-        bundled_types_path,
-      ], { cwd: snippets_dir, stdio: "pipe", all: true }).catch((err) => err as ExecaError);
+  const result = await execa(Path.join(ROOT_DIR, "node_modules", ".bin", "tsc"), [
+    "--noEmit",
+    "--pretty",
+    ...snippets.map((s) => s.path),
+    bundled_types_path,
+  ], { cwd: snippets_dir, stdio: "pipe", all: true }).catch((err) => err as ExecaError);
 
-      return { result, location };
-    }).map((promise) =>
-      promise.then(({ result, location }) => {
-        if (result.exitCode === 0) {
-          console.log(chalk.green("pass"), "", location);
-        } else {
-          assert(typeof result.all === "string");
-          console.log(chalk.red("error"), location);
-          console.log(indent(result.all));
-          errors.push(location);
-        }
-      })
-    ),
-  );
+  const path_to_location = new Map(snippets.map((s) => [Path.relative(snippets_dir, s.path), s.location]));
 
-  if (errors.length) {
+  if (result.exitCode !== 0) {
+    assert(typeof result.all === "string");
+
+    const ansi = "(?:\x1b\\[[0-9;]*m)*";
+    const error_regex = new RegExp(`^${ansi}(.+?\\.ts)${ansi}:${ansi}\\d+${ansi}:${ansi}\\d+${ansi} - `);
+    for (const line of result.all.split("\n")) {
+      const match = line.match(error_regex);
+      if (!match) {
+        continue;
+      }
+
+      const error_path = match[1]!;
+      const location = path_to_location.get(error_path);
+      if (!location) {
+        continue;
+      }
+
+      var lines = parsed_errors.get(location);
+      if (!lines) {
+        lines = [];
+        parsed_errors.set(location, lines);
+      }
+      lines.push(line);
+    }
+  }
+
+  for (const { location } of snippets) {
+    const error = parsed_errors.get(location);
+    if (error) {
+      console.log(chalk.red("error"), location);
+      console.log(indent(error.join("\n")));
+    } else {
+      console.log(chalk.green("pass"), "", location);
+    }
+  }
+
+  if (parsed_errors.size > 0) {
+    console.log();
+    console.log("====== logs  ======");
+    console.log(result.all);
+    console.log("====== /logs ======");
     console.log();
     console.log(
-      `The following ${errors.length} docs example snippet${errors.length !== 1 ? "s" : ""} did not type check:`,
+      `The following ${parsed_errors.size} docs example snippet${
+        parsed_errors.size !== 1 ? "s" : ""
+      } did not type check:`,
     );
 
-    for (const error of errors) {
-      console.log(`- ${error}`);
+    for (const location of parsed_errors.keys()) {
+      console.log(`- ${location}`);
     }
 
     console.log(`To fix these, you should either add {% check="false" %} or fix the example snippet`);
 
     process.exit(1);
+  }
+
+  if (result.exitCode !== 0) {
+    console.log(`tsc exited 0 but we could not figure out why; logs below:`);
+    console.log(result.all);
+    process.exit(2);
   }
 }
 
