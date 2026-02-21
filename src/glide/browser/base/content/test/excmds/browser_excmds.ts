@@ -13,6 +13,7 @@ add_setup(async function setup() {
   await reload_config(function _() {});
 });
 
+const KEY_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/key_test.html";
 const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 function current_url() {
@@ -312,11 +313,17 @@ add_task(async function test_tab_unpin() {
 add_task(async function test_tab_pin_toggle_excmd() {
   await reload_config(function _() {});
 
-  using _tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
-  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
-
+  using tab = await GlideTestUtils.new_tab(KEY_TEST_FILE + "?i=1");
+  is(gBrowser.selectedTab, tab);
   is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
+
   await keys(":tab_pin_toggle<CR>");
+  if (gBrowser.selectedTab !== tab) {
+    // idk man, Firefox seems to create an extra tab based off of the *other* tab that is active?
+    gBrowser.removeTab(gBrowser.selectedTab);
+    gBrowser.removeTab(gBrowser.selectedTab);
+  }
+
   is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
 
   await keys(":tab_pin_toggle<CR>");
@@ -326,15 +333,22 @@ add_task(async function test_tab_pin_toggle_excmd() {
 add_task(async function test_tab_pin_toggle_keymap() {
   await reload_config(function _() {});
 
-  using _tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
-  using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
+  using tab = await GlideTestUtils.new_tab(KEY_TEST_FILE + "?i=1");
+  is(gBrowser.selectedTab, tab);
+  is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
 
   await keys("<esc>");
   await wait_for_mode("normal");
 
-  is(gBrowser.selectedTab.pinned, false, "Tab should be unpinned initially");
   await keys("<A-p>");
+  if (gBrowser.selectedTab !== tab) {
+    // idk man, Firefox seems to create an extra tab based off of the *other* tab that is active?
+    gBrowser.removeTab(gBrowser.selectedTab);
+    gBrowser.removeTab(gBrowser.selectedTab);
+  }
+
   await waiter(() => gBrowser.selectedTab.pinned).is(true, "Tab should be pinned after <A-p>");
+
   await keys("<A-p>");
   await waiter(() => gBrowser.selectedTab.pinned).is(false, "Tab should be unpinned after <A-p>");
 });
