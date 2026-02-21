@@ -347,6 +347,15 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "tab_pin_toggle": {
+        const tab = gBrowser.selectedTab;
+        if (tab.pinned) {
+          gBrowser.unpinTab(tab);
+        } else {
+          gBrowser.pinTab(tab);
+        }
+      }
+
       case "tab_reopen": {
         SessionWindowUI.undoCloseTab(window);
         break;

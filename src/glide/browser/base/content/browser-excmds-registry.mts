@@ -194,6 +194,12 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
   {
+    name: "tab_pin_toggle",
+    description: "Pin or unpin the current tab",
+    content: false,
+    repeatable: true,
+  },
+  {
     name: "tab_reopen",
     description: "Open the last closed tab",
     content: false,
