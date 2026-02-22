@@ -3,8 +3,10 @@ name: macOS Release Build
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Release tag to sign"
+      # expected to be copied from the summary page of a github CI run, e.g.
+      # https://github.com/glide-browser/glide/actions/runs/22274651329/artifacts/5606349131
+      artifact_url:
+        description: "artifact url"
         required: true
         type: string
   workflow_call:
@@ -79,13 +81,13 @@ jobs:
           p12-password: ${{ secrets.MACOS_P12_PASSWORD }}
 
       - name: Download built DMG
-        if: inputs.tag
+        if: inputs.artifact_url
         run: |
           mkdir -p dist
           ./.github/scripts/github-download-artifact.sh
         env:
-          TAG: ${{ inputs.tag }}
-          ASSET_NAME: "glide.macos-${{ matrix.arch }}.dmg"
+          ARTIFACT_URL: ${{ inputs.artifact_url }}
+          ARTIFACT_NAME: "glide.macos-${{ matrix.arch }}.dmg"
           OUTPUT_FILE: "dist/glide.dmg"
           GITHUB_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
 
@@ -158,14 +160,6 @@ jobs:
           P12_PASSWORD: ${{ secrets.MACOS_P12_PASSWORD }}
           DMG_PATH: ./dist/glide.dmg
           PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
-
-      - name: Upload signed DMG to release
-        if: inputs.tag
-        run: |
-          gh release upload $TAG ./engine/glide.macos-$GLIDE_COMPAT.dmg#glide.macos-$GLIDE_COMPAT-signed.dmg --clobber
-        env:
-          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-          TAG: ${{ inputs.tag }}
 
       - name: Upload DMG
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

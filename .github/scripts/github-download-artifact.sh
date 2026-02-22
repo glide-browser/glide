@@ -3,8 +3,8 @@
 set -eux
 
 required_vars=(
-  "TAG"
-  "ASSET_NAME"
+  "ARTIFACT_URL"
+  "ARTIFACT_NAME"
   "OUTPUT_FILE"
 )
 
@@ -24,23 +24,24 @@ if [[ ${#missing_vars[@]} -gt 0 ]]; then
 fi
 
 GITHUB_TOKEN="${GITHUB_TOKEN}"
-OWNER="glide-browser"
-REPO="glide"
 
-RELEASE_DATA=$(gh release view ${TAG:-latest} --json assets,body,name,tagName,url)
-
-ASSET_ID=$(echo "$RELEASE_DATA" | jq -r ".assets[] | select(.name==\"$ASSET_NAME\") | .id")
-
-if [ -z "$ASSET_ID" ] || [ "$ASSET_ID" = "null" ]; then
-  echo "Asset not found: $ASSET_NAME"
+# the artifact url when copied from the github UI will look like:
+#   https://github.com/OWNER/REPO/actions/runs/RUN_ID/artifacts/ARTIFACT_ID
+if [[ "$ARTIFACT_URL" =~ ^https://github.com/([^/]+)/([^/]+)/actions/runs/([0-9]+)/artifacts/([0-9]+)$ ]]; then
+  REPO="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+  RUN_ID="${BASH_REMATCH[3]}"
+  ARTIFACT_ID="${BASH_REMATCH[4]}"
+else
+  echo "Invalid artifact URL format: $ARTIFACT_URL"
+  echo "Expected: https://github.com/OWNER/REPO/actions/runs/RUN_ID/artifacts/ARTIFACT_ID"
   exit 1
 fi
 
-curl -L \
-  -H "Accept: application/octet-stream" \
-  -H "Authorization: Bearer $GITHUB_TOKEN" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
-  "https://api.github.com/repos/$OWNER/$REPO/releases/assets/$ASSET_ID" \
-  -o "$OUTPUT_FILE"
+TEMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TEMP_DIR"' EXIT
 
-echo "Downloaded $ASSET_NAME to $OUTPUT_FILE"
+gh run download "$RUN_ID" --repo "$REPO" --name "$ARTIFACT_NAME" --dir "$TEMP_DIR"
+
+cp "$TEMP_DIR/$ARTIFACT_NAME" "$OUTPUT_FILE"
+
+echo "Successfully downloaded $ARTIFACT_NAME to $OUTPUT_FILE"
