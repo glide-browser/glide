@@ -45,7 +45,10 @@ declare global {
    *
    * This is the same as `glide.keys.send()`.
    */
-  function keys<const Keys>(keyseq: $keymapcompletions.T<Keys>): Promise<void>;
+  function keys<const Keys>(
+    keyseq: $keymapcompletions.T<Keys>,
+    opts?: glide.KeySendOptions & { interval_frames?: number },
+  ): Promise<void>;
 
   function wait_for_mode(modde: GlideMode, name?: string): Promise<void>;
 

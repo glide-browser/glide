@@ -90,18 +90,18 @@ add_task(async function test_gi_focuses_last_used_input() {
 });
 
 add_task(async function test_set_string_option() {
-  await keys(":set yank_highlight #ff0000<CR>");
+  await keys(":set yank_highlight #ff0000<CR>", { interval_frames: 4 });
   is(glide.o.yank_highlight, "#ff0000", "String option should be updated to new value");
 
-  await keys(":set yank_highlight rgb(255,0,0)<CR>");
+  await keys(":set yank_highlight rgb(255,0,0)<CR>", { interval_frames: 4 });
   is(glide.o.yank_highlight, "rgb(255,0,0)", "String option should accept complex string values");
 });
 
 add_task(async function test_set_number_option() {
-  await keys(":set mapping_timeout 500<CR>");
+  await keys(":set mapping_timeout 500<CR>", { interval_frames: 4 });
   is(glide.o.mapping_timeout, 500, "Number option should be updated to new value");
 
-  await keys(":set mapping_timeout 0<CR>");
+  await keys(":set mapping_timeout 0<CR>", { interval_frames: 4 });
   is(glide.o.mapping_timeout, 0, "Number option should accept zero");
 });
 
@@ -159,7 +159,7 @@ add_task(async function test_excmd_callback_receives_unparsed_args() {
 add_task(async function test_tab_new() {
   const initial_tab_count = gBrowser.tabs.length;
 
-  await keys(":tab_new<CR>");
+  await keys(":tab_new<CR>", { interval_frames: 4 });
   await TestUtils.waitForCondition(
     () => gBrowser.tabs.length === initial_tab_count + 1,
     "Waiting for new tab to be created",

@@ -15,14 +15,16 @@ const { assert_present } = ChromeUtils.importESModule("chrome://glide/content/ut
  */
 export async function synthesize_keyseq(
   keyseq: string,
-  opts?: glide.KeySendOptions,
+  opts?: glide.KeySendOptions & { interval_frames?: number },
 ) {
+  const frames = opts?.interval_frames ?? 2;
   for (let keyn of Keys.split(keyseq).map(Keys.normalize)) {
     // sleep one frame as Firefox cannot process key events in parallel
     // so if this was called inside a keymap callback, firefox will still
     // be handling the previous key event
-    await new Promise(r => requestAnimationFrame(r));
-    await new Promise(r => requestAnimationFrame(r));
+    for (let i = 0; i < frames; i++) {
+      await new Promise(r => requestAnimationFrame(r));
+    }
 
     if (keyn === "<leader>") {
       keyn = GlideBrowser.api.g.mapleader;
