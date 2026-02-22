@@ -375,3 +375,21 @@ add_task(async function test_tab_reopen() {
 
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
 });
+
+add_task(async function test_tab_duplicate() {
+  await reload_config(function _() {});
+
+  const initial_tab_count = gBrowser.tabs.length;
+  const test_url = INPUT_TEST_FILE + "?duplicate_test";
+
+  using _tab = await GlideTestUtils.new_tab(test_url);
+  is(gBrowser.tabs.length, initial_tab_count + 1);
+  is(current_url(), test_url);
+
+  await keys(":tab_duplicate<CR>");
+  await waiter(() => gBrowser.tabs.length).is(initial_tab_count + 2, "Waiting for tab to be duplicated");
+  is(current_url(), test_url, "Duplicated tab should have the original URL");
+
+  await sleep_frames(10);
+  BrowserTestUtils.removeTab(gBrowser.selectedTab);
+});

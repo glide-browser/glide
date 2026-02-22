@@ -361,6 +361,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "tab_duplicate": {
+        gBrowser.duplicateTab(gBrowser.selectedTab, undefined, { inBackground: false });
+        break;
+      }
+
       case "commandline_show": {
         // extract the given args ourselves as `this.#parse_command_args` doesn't support
         // not trimming the args input and empty spaces have significant meaning here.

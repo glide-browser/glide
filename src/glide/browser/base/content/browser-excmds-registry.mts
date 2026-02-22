@@ -205,6 +205,12 @@ export const GLIDE_EXCOMMANDS = [
     content: false,
     repeatable: true,
   },
+  {
+    name: "tab_duplicate",
+    description: "Duplicate the current tab",
+    content: false,
+    repeatable: true,
+  },
 
   {
     name: "commandline_show",

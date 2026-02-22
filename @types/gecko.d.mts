@@ -64,6 +64,11 @@ declare namespace GlobalBrowser {
     removeTab(tab: BrowserTab): void;
     pinTab(tab: BrowserTab): void;
     unpinTab(tab: BrowserTab): void;
+    duplicateTab(
+      tab: BrowserTab,
+      aRestoreTabImmediately?: boolean,
+      aOptions?: { inBackground?: boolean; tabIndex?: number },
+    ): void;
     getBrowserForTab(tab: BrowserTab): Browser;
     addProgressListener(listener: Partial<nsIWebProgressListener>): void;
     // note: missing lots of opts
