@@ -493,6 +493,16 @@ export function make_glide_api(
 
         await GlideBrowser.upsert_commandline({ prefill: opts?.input, sources });
       },
+      async close() {
+        const commandline = GlideBrowser.get_commandline();
+        if (!commandline) {
+          return false;
+        }
+
+        const was_open = !commandline.hidden;
+        commandline.close();
+        return was_open;
+      },
       is_active() {
         return GlideBrowser.is_commandline_focused();
       },

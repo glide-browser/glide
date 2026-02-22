@@ -95,6 +95,7 @@ text-decoration: none;
 [`glide.tabs.unload()`](#glide.tabs.unload)\
 [`glide.commandline`](#glide.commandline)\
 [`glide.commandline.show()`](#glide.commandline.show)\
+[`glide.commandline.close()`](#glide.commandline.close)\
 [`glide.commandline.is_active()`](#glide.commandline.is_active)\
 [`glide.excmds`](#glide.excmds)\
 [`glide.excmds.execute()`](#glide.excmds.execute)\
@@ -753,6 +754,14 @@ glide.commandline.show({
   })),
 });
 ```
+
+{% api-heading id="glide.commandline.close" %}
+glide.commandline.close(): Promise<boolean>
+{% /api-heading %}
+
+Close the commandline UI.
+
+Returns `ts:true` if the commandline was previously open, `ts:false` if it was already closed.
 
 {% api-heading id="glide.commandline.is_active" %}
 glide.commandline.is_active(): boolean

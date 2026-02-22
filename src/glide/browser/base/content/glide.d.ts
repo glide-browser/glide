@@ -410,6 +410,13 @@ declare global {
       show(opts?: glide.CommandLineShowOpts): Promise<void>;
 
       /**
+       * Close the commandline UI.
+       *
+       * Returns `ts:true` if the commandline was previously open, `ts:false` if it was already closed.
+       */
+      close(): Promise<boolean>;
+
+      /**
        * If the commandline is open and focused.
        */
       is_active(): boolean;

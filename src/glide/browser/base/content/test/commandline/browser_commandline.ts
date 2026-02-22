@@ -711,3 +711,17 @@ add_task(async function test_commandline_within_commandline() {
     await waiter(() => glide.g.value).is("foo", "the custom option execute() should be invoked");
   });
 });
+
+add_task(async function test_commandline_close() {
+  await reload_config(function _() {});
+
+  var result = await glide.commandline.close();
+  is(result, false, "close() should return false when the commandline is already closed");
+
+  await glide.keys.send(":");
+  await wait_for_mode("command");
+
+  var result = await glide.commandline.close();
+  is(result, true, "close() should return true when the commandline was open");
+  await wait_for_mode("normal");
+});
