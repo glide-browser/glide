@@ -69,7 +69,7 @@ step "Cleaning extended attrs"
 xattr -cr "./obj-$ARCH-apple-darwin/dist/Glide.app"
 
 step "Signing .app"
-./mach macos-sign -v -r -c "release" -e "production-without-restricted" -a "./obj-$ARCH-apple-darwin/dist/Glide.app" --rcodesign-p12-file glideCert.p12 --rcodesign-p12-password-file glidePassword.passwd
+./mach macos-sign -v -r -c "release" -e "production" -a "./obj-$ARCH-apple-darwin/dist/Glide.app" --rcodesign-p12-file glideCert.p12 --rcodesign-p12-password-file glidePassword.passwd
 
 step "Creating DMG"
 ./mach python -m mozbuild.action.make_dmg \
