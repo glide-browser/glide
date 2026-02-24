@@ -41,35 +41,36 @@ function queue_timeout(ms: number, fn: () => void) {
 }
 
 class Modal {
-  #element: HTMLDivElement;
+  #element: HTMLElement;
   #glide: Glide;
   #dom: Sandbox["DOM"];
 
   constructor(sandbox: Sandbox) {
     this.#dom = sandbox.DOM;
     this.#glide = sandbox.glide;
-    this.#element = sandbox.DOM.create_element("div", {
-      id: "which-key",
-      style: {
-        display: "none",
-        position: "fixed",
-        bottom: "2rem",
-        right: "2rem",
-        background: "var(--glide-cmdl-bg)",
-        fontFamily: "var(--glide-cmdl-font-family)",
-        fontSize: "var(--glide-cmdl-font-size)",
-        lineHeight: "var(--glide-cmdl-line-height)",
-        color: "var(--glide-cmdl-fg)",
-        zIndex: "2147483646",
-        boxShadow: "0 -8px 32px hsla(0, 0%, 0%, 0.4)",
-        minWidth: "300px",
-        maxWidth: "600px",
-        maxHeight: "60vh",
-        overflow: "hidden",
-        borderRadius: "4px",
-        border: "1px solid hsla(0, 0%, 100%, 0.1)",
-      },
-    });
+    this.#element = (sandbox.document.getElementById("which-key") as HTMLElement | undefined)
+      ?? sandbox.DOM.create_element("div", {
+        id: "which-key",
+        style: {
+          display: "none",
+          position: "fixed",
+          bottom: "2rem",
+          right: "2rem",
+          background: "var(--glide-cmdl-bg)",
+          fontFamily: "var(--glide-cmdl-font-family)",
+          fontSize: "var(--glide-cmdl-font-size)",
+          lineHeight: "var(--glide-cmdl-line-height)",
+          color: "var(--glide-cmdl-fg)",
+          zIndex: "2147483646",
+          boxShadow: "0 -8px 32px hsla(0, 0%, 0%, 0.4)",
+          minWidth: "300px",
+          maxWidth: "600px",
+          maxHeight: "60vh",
+          overflow: "hidden",
+          borderRadius: "4px",
+          border: "1px solid hsla(0, 0%, 100%, 0.1)",
+        },
+      });
 
     sandbox.glide.autocmds.create("WindowLoaded", () => {
       sandbox.document.children[0]!.appendChild(this.#element);
