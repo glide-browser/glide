@@ -869,6 +869,7 @@ class GlideBrowserClass {
         "nsISupportsWeakReference",
       ]),
 
+      $last_selected_tab: null as BrowserTab | null,
       $last_location: null as string | null,
 
       /**
@@ -911,8 +912,31 @@ class GlideBrowserClass {
           return; // ignore iframes etc.
         }
 
+        if (location.schemeIs("about") && location.spec === "about:blank") {
+          return;
+        }
+
         GlideBrowser._log.debug("onLocationChange - clearing buffer");
         await GlideBrowser.clear_buffer();
+
+        const current_tab = gBrowser.selectedTab;
+
+        if (current_tab) {
+          const is_tab_switch = this.$last_selected_tab == null || this.$last_selected_tab !== current_tab;
+
+          GlideBrowser._log.debug("TabEnter check:", {
+            last_tab: this.$last_selected_tab,
+            current_tab,
+            is_tab_switch,
+          });
+
+          if (is_tab_switch) {
+            GlideBrowser._log.debug("TabEnter: firing for", location.spec);
+            await GlideBrowser.#invoke_tabenter_autocmd(location);
+          }
+
+          this.$last_selected_tab = current_tab;
+        }
 
         await GlideBrowser.#invoke_urlenter_autocmd(location);
       },
@@ -1005,8 +1029,64 @@ class GlideBrowserClass {
     }
   }
 
+  async #invoke_tabenter_autocmd(location: nsIURI) {
+    const cmds = GlideBrowser.autocmds.TabEnter ?? [];
+    GlideBrowser._log.debug("TabEnter autocmds registered:", cmds.length);
+
+    if (!cmds.length) {
+      GlideBrowser._log.debug("TabEnter: no autocmds registered, skipping");
+      return;
+    }
+
+    if (!GlideBrowser.extension?.tabManager) {
+      GlideBrowser._log.debug("TabEnter autocmd skipped: extension not ready yet");
+      return;
+    }
+
+    const args: glide.AutocmdArgs["TabEnter"] = {
+      url: location.spec,
+      get tab_id() {
+        return assert_present(
+          GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
+          "could not resolve tab wrapper",
+        ).id;
+      },
+    };
+
+    const results = await Promise.allSettled(cmds.map((cmd) =>
+      (async () => {
+        if (!GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)) {
+          return;
+        }
+
+        const cleanup = await cmd.callback(args);
+        if (typeof cleanup === "function") {
+          GlideBrowser.buffer_cleanups.push({ callback: cleanup, source: "TabEnter cleanup" });
+        }
+      })()
+    ));
+
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        continue;
+      }
+
+      GlideBrowser._log.error(result.reason);
+
+      // TODO: if there are many errors this would be overwhelming...
+      //       maybe limit the number of errors we display at once?
+
+      const loc = GlideBrowser.#clean_stack(result.reason, "#invoke_tabenter_autocmd") ?? "<unknown>";
+      GlideBrowser.add_notification("glide-autocmd-error", {
+        label: `Error occurred in TabEnter autocmd \`${loc}\` - ${result.reason}`,
+        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
+        buttons: [GlideBrowser.remove_all_notifications_button],
+      });
+    }
+  }
+
   #test_url_autocmd_pattern(
-    pattern: glide.AutocmdPatterns["UrlEnter"],
+    pattern: glide.AutocmdPatterns["UrlEnter"] | glide.AutocmdPatterns["TabEnter"],
     location: nsIURI,
   ): boolean {
     if ("test" in pattern) {
