@@ -912,13 +912,17 @@ class GlideBrowserClass {
           return; // ignore iframes etc.
         }
 
+        if (location.schemeIs("about") && location.spec === "about:blank") {
+          return;
+        }
+
         GlideBrowser._log.debug("onLocationChange - clearing buffer");
         await GlideBrowser.clear_buffer();
 
         const current_tab = gBrowser.selectedTab;
 
         if (current_tab) {
-          const is_tab_switch = this.$last_selected_tab !== null && this.$last_selected_tab !== current_tab;
+          const is_tab_switch = this.$last_selected_tab == null || this.$last_selected_tab !== current_tab;
 
           GlideBrowser._log.debug("TabEnter check:", {
             last_tab: this.$last_selected_tab,

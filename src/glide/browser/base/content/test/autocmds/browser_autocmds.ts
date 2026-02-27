@@ -538,23 +538,23 @@ add_task(async function test_tabenter_only_fires_on_tab_switch() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await waiter(() => glide.g.calls).isjson(["urlenter"]);
-    is(num_calls(), 1, "Initial navigation should only trigger UrlEnter, not TabEnter");
+    await waiter(() => glide.g.calls).isjson(["tabenter", "urlenter"]);
+    is(num_calls(), 2, "Initial navigation should trigger both TabEnter and UrlEnter");
 
     const tab1 = gBrowser.selectedTab;
 
     BrowserTestUtils.startLoadingURIString(gBrowser.selectedBrowser, INPUT_TEST_URI + "?navigate");
     await BrowserTestUtils.browserLoaded(gBrowser.selectedBrowser);
-    await waiter(() => glide.g.calls).isjson(["urlenter", "urlenter"]);
-    is(num_calls(), 2, "Same-tab navigation should only trigger UrlEnter");
+    await waiter(() => glide.g.calls).isjson(["tabenter", "urlenter", "urlenter"]);
+    is(num_calls(), 3, "Same-tab navigation should only trigger UrlEnter");
 
     await BrowserTestUtils.withNewTab("about:mozilla", async _ => {
       await sleep_frames(5);
-      is(num_calls(), 2, "Opening non-matching page should not trigger any autocmd");
+      is(num_calls(), 3, "Opening non-matching page should not trigger any autocmd");
 
       await BrowserTestUtils.switchTab(gBrowser, tab1);
-      await waiter(() => glide.g.calls).isjson(["urlenter", "urlenter", "tabenter", "urlenter"]);
-      is(num_calls(), 4, "Switching tabs should trigger both TabEnter and UrlEnter");
+      await waiter(() => glide.g.calls).isjson(["tabenter", "urlenter", "urlenter", "tabenter", "urlenter"]);
+      is(num_calls(), 5, "Switching tabs should trigger both TabEnter and UrlEnter");
     });
   });
 });
