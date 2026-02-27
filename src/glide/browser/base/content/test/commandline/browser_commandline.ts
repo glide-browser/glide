@@ -725,3 +725,237 @@ add_task(async function test_commandline_close() {
   is(result, true, "close() should return true when the commandline was open");
   await wait_for_mode("normal");
 });
+
+add_task(async function test_error_notification_tab_missing_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":tab<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    const notification = gNotificationBox.getNotificationWithValue("glide-excmd-error")!;
+    ok(
+      notification.shadowRoot.querySelector(".message")?.textContent?.includes("tab_index"),
+      "error message should mention missing 'tab_index' argument",
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
+add_task(async function test_error_notification_tab_invalid_index() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":tab 999<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    const notification = gNotificationBox.getNotificationWithValue("glide-excmd-error")!;
+    ok(
+      notification.shadowRoot.querySelector(".message")?.textContent?.includes("could not find a tab"),
+      "error message should indicate tab not found",
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
+add_task(async function test_error_notification_set_missing_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":set<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    gNotificationBox.removeNotification(gNotificationBox.getNotificationWithValue("glide-excmd-error")!);
+  });
+});
+
+add_task(async function test_error_notification_set_invalid_option() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":set invalid_option_name 123<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    const notification = gNotificationBox.getNotificationWithValue("glide-excmd-error")!;
+    ok(
+      notification.shadowRoot.querySelector(".message")?.textContent?.includes("not a valid option"),
+      "error message should indicate invalid option",
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
+add_task(async function test_error_notification_mode_change_missing_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":mode_change<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    gNotificationBox.removeNotification(gNotificationBox.getNotificationWithValue("glide-excmd-error")!);
+  });
+});
+
+add_task(async function test_error_notification_keys_missing_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":keys<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    const notification = gNotificationBox.getNotificationWithValue("glide-excmd-error")!;
+    ok(
+      notification.shadowRoot.querySelector(".message")?.textContent?.includes("keyseq"),
+      "error message should mention missing 'keyseq' argument",
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
+add_task(async function test_error_notification_unmap_missing_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":unmap<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    const notification = gNotificationBox.getNotificationWithValue("glide-excmd-error")!;
+    ok(
+      notification.shadowRoot.querySelector(".message")?.textContent?.includes("lhs"),
+      "error message should mention missing 'lhs' argument",
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
+add_task(async function test_error_notification_caret_move_missing_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":caret_move<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    const notification = gNotificationBox.getNotificationWithValue("glide-excmd-error")!;
+    ok(
+      notification.shadowRoot.querySelector(".message")?.textContent?.includes("direction"),
+      "error message should mention missing 'direction' argument",
+    );
+    gNotificationBox.removeNotification(notification);
+  });
+});
+
+add_task(async function test_error_notification_cleared_tab_succeeds() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":tab<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await keys(":tab 0<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error") === null).ok();
+
+    is(
+      gNotificationBox.getNotificationWithValue("glide-excmd-error"),
+      null,
+      "error notification should be cleared after successful tab command",
+    );
+  });
+});
+
+add_task(async function test_error_notification_cleared_mode_change_succeeds() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":mode_change<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await keys(":mode_change normal<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error") === null).ok();
+
+    is(
+      gNotificationBox.getNotificationWithValue("glide-excmd-error"),
+      null,
+      "error notification should be cleared after successful mode_change command",
+    );
+  });
+});
+
+add_task(async function test_error_notification_cleared_by_different_command() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":tab<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await keys(":reload<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error") === null).ok();
+
+    is(
+      gNotificationBox.getNotificationWithValue("glide-excmd-error"),
+      null,
+      "error notification should be cleared after a different successful command",
+    );
+  });
+});
+
+add_task(async function test_error_notification_cleared_by_different_command_with_args() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":set<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await keys(":mode_change normal<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error") === null).ok();
+
+    is(
+      gNotificationBox.getNotificationWithValue("glide-excmd-error"),
+      null,
+      "error notification should be cleared after a different successful command with args",
+    );
+  });
+});
+
+add_task(async function test_error_notification_cleared_via_tab_completion() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":tab<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await GlideTestUtils.commandline.open();
+    await keys("tab ");
+    await waiter(() => GlideTestUtils.commandline.current_source_header()).is("tabs");
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length > 0).ok();
+    await keys("<CR>");
+
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error") === null).ok();
+
+    is(
+      gNotificationBox.getNotificationWithValue("glide-excmd-error"),
+      null,
+      "error notification should be cleared after selecting tab via completion",
+    );
+  });
+});
+
+add_task(async function test_multiple_errors_cleared_by_one_success() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await keys(":tab<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await keys(":set<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error")).ok();
+
+    await keys(":tab 0<CR>");
+    await waiter(() => gNotificationBox.getNotificationWithValue("glide-excmd-error") === null).ok();
+
+    is(
+      gNotificationBox.getNotificationWithValue("glide-excmd-error"),
+      null,
+      "error notification should be cleared after any successful command",
+    );
+  });
+});
