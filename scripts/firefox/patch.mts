@@ -13,6 +13,7 @@ interface Context {
   errors: string[];
 }
 
+const IS_RELEASE = !!process.env["GLIDE_RELEASE"];
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }
@@ -135,10 +136,13 @@ async function setup_symlinks(ctx: Context) {
   }
 }
 
-async function branding_patch(ctx: Context) {
+export async function branding_patch(ctx: Context) {
   const brands = await fs.readdir(BRANDING_DIR, { withFileTypes: true }).then((entries) =>
     entries.filter((entry) => entry.isDirectory())
   );
+  const display_name = IS_RELEASE ? "Glide" : "Glide Debug";
+  const mac_bundle_id = IS_RELEASE ? "glide" : "glide-debug";
+
   for (const brand of brands) {
     if (!brand.isDirectory()) {
       continue;
@@ -151,6 +155,13 @@ async function branding_patch(ctx: Context) {
     try {
       await fs.rm(engine_path, { force: true }).catch(() => null);
       await fs.cp(abs_path, engine_path, { recursive: true });
+
+      const config_path = Path.join(engine_path, "configure.sh");
+      let config_content = await fs.readFile(config_path, "utf8");
+      config_content = config_content
+        .replaceAll("${MOZ_APP_DISPLAYNAME}", display_name)
+        .replaceAll("${MOZ_MACBUNDLE_ID}", mac_bundle_id);
+      await fs.writeFile(config_path, config_content);
     } catch (e) {
       ctx.errors.push(relative_path);
       console.error(chalk.red("brand"), " ", relative_path);
@@ -175,10 +186,13 @@ export async function patch_mozconfig() {
       return "";
     });
 
+  const basename = IS_RELEASE ? "glide" : "glide-debug";
+
   const common_config = await fs.readFile(Path.join(CONFIGS_DIR, "common", "mozconfig"), "utf8").then((contents) =>
     contents
       .replaceAll("${changeset}", changeset)
       .replaceAll("${firefox_version}", config.version.version)
+      .replaceAll("${basename}", basename)
   );
   const os_config = await fs.readFile(Path.join(CONFIGS_DIR, get_platform(), "mozconfig"), "utf8");
   await fs.writeFile(
