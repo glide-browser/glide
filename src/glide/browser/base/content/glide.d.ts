@@ -2071,11 +2071,11 @@ declare global {
     };
 
     export type SplitViewCreateOpts = {
-      id?: string;
+      id?: number;
     };
 
     export type SplitView = {
-      id: string;
+      id: number;
       tabs: Browser.Tabs.Tab[];
     };
 
@@ -2288,7 +2288,7 @@ declare global {
   }
 
   type TabID = number;
-  type SplitViewID = string;
+  type SplitViewID = number;
 
   /**
    * Dedent template function.

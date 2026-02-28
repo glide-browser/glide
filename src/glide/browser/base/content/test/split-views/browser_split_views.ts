@@ -22,9 +22,12 @@ add_task(async function test_split_views() {
       assert(glide.unstable.split_views.has_split_view(tabs[2]));
       assert(!glide.unstable.split_views.has_split_view(tabs[3]));
 
-      for (const getter of [glide.g.value.id, tabs[1].id, tabs[1]]) {
+      for (
+        const [getter, name] of [[glide.g.value.id, "splitview id"], [tabs[1].id, "tab id"], [tabs[1], "tab"]] as const
+      ) {
+        console.log("testing", name);
         const splitview = glide.unstable.split_views.get(getter);
-        assert(splitview, `split_views.get() should return for ${getter}`);
+        assert(splitview, `split_views.get() should return for ${name}`);
         assert(splitview.id === glide.g.value.id);
         assert(splitview.tabs.length === 2);
         assert(splitview.tabs[0]!.id === tabs[1].id);
@@ -49,7 +52,7 @@ add_task(async function test_split_views() {
   await until(() => glide.g.test_checked, "Split view created successfully");
 
   const splitview = glide.g.value as glide.SplitView;
-  is(typeof splitview.id, "string");
+  is(typeof splitview.id, "number");
   isjson(splitview.tabs.map((tab) => tab.id), [3, 4]);
   isjson(splitview.tabs.map((tab) => tab.url), [TEST_URI_1, TEST_URI_2]);
 });
@@ -84,14 +87,14 @@ add_task(async function test_create_split_view_custom_id() {
       const tabs = (await glide.tabs.query({})) as Tuple<Browser.Tabs.Tab, 4>;
 
       const splitview_tabs = [tabs[1].id!, tabs[2].id!];
-      const splitview = glide.unstable.split_views.create(splitview_tabs, { id: "my-splitview" });
-      assert(splitview.id === "my-splitview");
+      const splitview = glide.unstable.split_views.create(splitview_tabs, { id: 1234 });
+      assert(splitview.id === 1234);
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      assert(glide.unstable.split_views.get("my-splitview"));
+      assert(glide.unstable.split_views.get(1234));
 
       try {
-        glide.unstable.split_views.create(splitview_tabs, { id: "my-splitview" });
+        glide.unstable.split_views.create(splitview_tabs, { id: 1234 });
       } catch (err) {
         glide.g.value = err;
       }
@@ -108,7 +111,7 @@ add_task(async function test_create_split_view_custom_id() {
   await keys("~");
   await until(() => glide.g.test_checked, "Split view created with custom ID");
 
-  is(String(glide.g.value), "Error: Could not create a splitview; The 'my-splitview' ID is already in use");
+  is(String(glide.g.value), "Error: Could not create a splitview; The 1234 ID is already in use");
 });
 
 add_task(async function test_create_split_view_with_pinned_tab() {
@@ -136,4 +139,8 @@ add_task(async function test_create_split_view_with_pinned_tab() {
   await until(() => glide.g.test_checked, "Test to finish");
 
   is(String(glide.g.value), "Error: Could not create a splitview; Is one of the tabs pinned?");
+});
+
+registerCleanupFunction(function _() {
+  glide.prefs.clear("browser.tabs.splitview.hasUsed");
 });

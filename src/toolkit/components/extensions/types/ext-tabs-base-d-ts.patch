@@ -1,0 +1,12 @@
+diff --git a/toolkit/components/extensions/types/ext-tabs-base.d.ts b/toolkit/components/extensions/types/ext-tabs-base.d.ts
+index 7fd1ad3358ac1f9945414263f2a80c541b67b96a..5c342b4e6a06ec5872241b9753e3289696b8da55 100644
+--- a/toolkit/components/extensions/types/ext-tabs-base.d.ts
++++ b/toolkit/components/extensions/types/ext-tabs-base.d.ts
+@@ -1198,6 +1198,7 @@ declare class TabManagerBase {
+      * @abstract
+      */
+     get(tabId: integer): TabBase;
++    get<D>(tabId: integer, default_: D): TabBase | D;
+     /**
+      * Returns a new TabBase instance wrapping the given native tab.
+      *

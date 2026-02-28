@@ -85,7 +85,7 @@ declare namespace GlobalBrowser {
 
     // split views
     unsplitTabs(splitview: any): void;
-    addTabSplitView(tabs: BrowserTab[], opts?: { id?: string }): { splitViewId: string; tabs: BrowserTab[] } | null;
+    addTabSplitView(tabs: BrowserTab[], opts?: { id?: number }): { splitViewId: number; tabs: BrowserTab[] } | null;
 
     // notifications
     getNotificationBox(): NotificationBox;

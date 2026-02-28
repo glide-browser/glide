@@ -1198,6 +1198,7 @@ declare class TabManagerBase {
      * @abstract
      */
     get(tabId: integer): TabBase;
+    get<D>(tabId: integer, default_: D): TabBase | D;
     /**
      * Returns a new TabBase instance wrapping the given native tab.
      *

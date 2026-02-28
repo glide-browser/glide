@@ -1224,7 +1224,7 @@ export function make_glide_api(
             const existing = this.get(opts.id);
             if (existing) {
               throw Cu.cloneInto(
-                new Error(`Could not create a splitview; The '${opts.id}' ID is already in use`),
+                new Error(`Could not create a splitview; The ${opts.id} ID is already in use`),
                 GlideBrowser.sandbox_window,
               );
             }
@@ -1245,22 +1245,21 @@ export function make_glide_api(
         },
 
         separate(tab) {
-          if (typeof tab === "string") {
-            const splitview = get_firefox_splitview(tab);
-            if (!splitview) {
-              throw Cu.cloneInto(new Error(`No splitview with ID '${tab}'`), GlideBrowser.sandbox_window);
+          const splitview = (() => {
+            const splitview = typeof tab === "number" ? get_firefox_splitview(tab) : null;
+            if (splitview) {
+              return splitview;
             }
 
-            gBrowser.unsplitTabs(splitview);
-            return;
-          }
+            const ff_tab = web_tab_to_firefox(tab);
+            if (!ff_tab.splitview) {
+              throw Cu.cloneInto(new Error("Tab is not in a split view"), GlideBrowser.sandbox_window);
+            }
 
-          const ff_tab = web_tab_to_firefox(tab);
-          if (!ff_tab.splitview) {
-            throw Cu.cloneInto(new Error("Tab is not in a split view"), GlideBrowser.sandbox_window);
-          }
+            return ff_tab.splitview;
+          })();
 
-          gBrowser.unsplitTabs(ff_tab.splitview);
+          gBrowser.unsplitTabs(splitview);
         },
 
         has_split_view(tab) {
@@ -1269,9 +1268,7 @@ export function make_glide_api(
 
         get(tab) {
           const splitview = typeof tab === "number"
-            ? tab_id_to_firefox(tab).splitview
-            : typeof tab === "string"
-            ? get_firefox_splitview(tab)
+            ? get_firefox_splitview(tab) ?? maybe_tab_id_to_firefox(tab)?.splitview
             : tab_id_to_firefox(assert_present(tab.id, "tab given with no id")).splitview;
           if (!splitview) {
             return null;
@@ -1380,8 +1377,13 @@ async function load_config_at_path({ absolute, relative }: { absolute: string; r
   }
 }
 
-function get_firefox_splitview(id: string): any {
+function get_firefox_splitview(id: number): any {
   return gBrowser.tabContainer.querySelector(`tab-split-view-wrapper[splitViewId="${id}"]`);
+}
+
+function maybe_tab_id_to_firefox(id: TabID): BrowserTab | null {
+  const manager = assert_present(GlideBrowser.extension?.tabManager);
+  return manager.get(id, null)?.nativeTab;
 }
 
 export function tab_id_to_firefox(id: TabID): BrowserTab {

@@ -1688,13 +1688,13 @@ whole_words?: boolean | undefined;
 ## • `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
-id?: string;
+id?: number;
 ```
 
 ## • `glide.SplitView` {% id="glide.SplitView" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
-id: string;
+id: number;
 tabs: Browser.Tabs.Tab[];
 ```
 
