@@ -328,6 +328,8 @@ declare namespace MockedExports {
     "resource://gre/modules/Timer.sys.mjs": { setTimeout: typeof setTimeout };
     "resource://gre/modules/NetUtil.sys.mjs": typeof import("../engine/netwerk/base/NetUtil.sys.mjs");
     "resource:///modules/AboutNewTab.sys.mjs": typeof import("../engine/browser/modules/AboutNewTab.sys.mjs");
+    "moz-src:///toolkit/components/search/SearchService.sys.mjs":
+      typeof import("../engine/toolkit/components/search/SearchService.sys.mjs");
     "moz-src:///toolkit/components/search/SearchUtils.sys.mjs":
       typeof import("../engine/toolkit/components/search/SearchUtils.sys.mjs");
   }

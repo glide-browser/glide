@@ -7,14 +7,16 @@
 
 "use strict";
 
+const Search = ChromeUtils.importESModule("moz-src:///toolkit/components/search/SearchService.sys.mjs").SearchService;
+
 const ENGINE_NAME = "Glide Test Engine";
 
 function defer_engine_cleanup() {
   return {
     async [Symbol.asyncDispose]() {
-      const engine = Services.search.getEngineByName(ENGINE_NAME);
+      const engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
       if (engine) {
-        await Services.search.removeEngine(engine);
+        await Search.removeEngine(engine, Search.CHANGE_REASON.UNKNOWN);
       }
     },
   };
@@ -45,7 +47,7 @@ add_task(async function test_add_search_engine() {
 
   await waiter(() => glide.g.value).ok();
 
-  const engine = Services.search.getEngineByName(ENGINE_NAME);
+  const engine = Search.getEngineByName(ENGINE_NAME);
   ok(engine, "Engine was added");
   is(engine.name, ENGINE_NAME);
   ok(engine.aliases.includes("@test"), "Keyword was set");
@@ -78,7 +80,7 @@ add_task(async function test_add_search_engine_with_multiple_keywords() {
 
   await waiter(() => glide.g.value).ok();
 
-  const engine = Services.search.getEngineByName(ENGINE_NAME);
+  const engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine was added");
   ok(engine.aliases.includes("@first"), "First keyword was set");
   ok(engine.aliases.includes("@second"), "Second keyword was set");
@@ -117,7 +119,7 @@ add_task(async function test_search_engine_default() {
 
   await waiter(() => glide.g.value).ok();
 
-  const engine = Services.search.getEngineByName(ENGINE_NAME);
+  const engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine was added");
 
   await focus_address_bar();
@@ -143,13 +145,13 @@ add_task(async function test_search_engine_post_method() {
 
   await waiter(() => glide.g.value).ok();
 
-  const engine = Services.search.getEngineByName(ENGINE_NAME);
+  const engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine was added");
 
-  const url = (engine.wrappedJSObject as any).getURLOfType("text/html");
+  const url = engine.getURLOfType("text/html")!;
   is(url.method, "POST", "Should use POST method");
 
-  const submission = engine.getSubmission("test");
+  const submission = engine.getSubmission("test")!;
   ok(submission.postData, "Should have POST data");
 
   const stream = Cc["@mozilla.org/scriptableinputstream;1"]!.createInstance(Ci.nsIScriptableInputStream);
@@ -178,10 +180,10 @@ add_task(async function test_repeated_add_updates_existing_engine() {
   });
   await waiter(() => glide.g.value).is(1);
 
-  var engine = Services.search.getEngineByName(ENGINE_NAME);
+  var engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine was added");
   ok(engine.aliases.includes("@old"), "Initial keyword was set");
-  is(engine.getSubmission("test").uri.spec, "https://old.example.com/search?q=test", "Initial search URL is correct");
+  is(engine.getSubmission("test")!.uri.spec, "https://old.example.com/search?q=test", "Initial search URL is correct");
 
   // ------------- update the engine
   await reload_config(function _() {
@@ -197,14 +199,14 @@ add_task(async function test_repeated_add_updates_existing_engine() {
   });
   await waiter(() => glide.g.value).is(2);
 
-  var engine = Services.search.getEngineByName(ENGINE_NAME);
+  var engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine still exists");
   ok(engine.aliases.includes("@new"), "New keyword was set");
   ok(engine.aliases.includes("@also"), "Additional keyword was set");
   ok(!engine.aliases.includes("@old"), "Old keyword was removed");
-  is(engine.getSubmission("test").uri.spec, "https://new.example.com/search?q=test", "Search URL was updated");
+  is(engine.getSubmission("test")!.uri.spec, "https://new.example.com/search?q=test", "Search URL was updated");
   Assert.stringContains(
-    engine.getSubmission("test", "application/x-suggestions+json").uri.spec,
+    engine.getSubmission("test", "application/x-suggestions+json")!.uri.spec,
     "new.example.com",
     "Suggest URL was updated",
   );
@@ -226,13 +228,13 @@ add_task(async function test_search_url_get_params() {
 
   await waiter(() => glide.g.value).ok();
 
-  const engine = Services.search.getEngineByName(ENGINE_NAME);
+  const engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine was added");
 
-  const url = (engine.wrappedJSObject as any).getURLOfType("text/html");
+  const url = engine.getURLOfType("text/html")!;
   is(url.method, "GET", "Should use GET method");
   is(
-    engine.getSubmission("test").uri.spec,
+    engine.getSubmission("test")!.uri.spec,
     "https://example.com/search?q=test&format=json&lang=en",
     "GET params should be appended to URL",
   );
@@ -254,10 +256,10 @@ add_task(async function test_update_from_get_to_post_params() {
   });
   await waiter(() => glide.g.value).is(1);
 
-  var engine = Services.search.getEngineByName(ENGINE_NAME);
-  var url = (engine.wrappedJSObject as any).getURLOfType("text/html");
+  var engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
+  var url = engine.getURLOfType("text/html")!;
   is(url.method, "GET", "Initially should use GET method");
-  ok(!engine.getSubmission("test").postData, "Initially should have no POST data");
+  ok(!engine.getSubmission("test")!.postData, "Initially should have no POST data");
 
   // ------------- update to POST params
   await reload_config(function _() {
@@ -272,11 +274,11 @@ add_task(async function test_update_from_get_to_post_params() {
   });
   await waiter(() => glide.g.value).is(2);
 
-  var engine = Services.search.getEngineByName(ENGINE_NAME);
-  var url = (engine.wrappedJSObject as any).getURLOfType("text/html");
+  var engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
+  var url = engine.getURLOfType("text/html")!;
   is(url.method, "POST", "After update should use POST method");
 
-  const submission = engine.getSubmission("test");
+  const submission = engine.getSubmission("test")!;
   ok(submission.postData, "Should have POST data after update");
   const stream = Cc["@mozilla.org/scriptableinputstream;1"]!.createInstance(Ci.nsIScriptableInputStream);
   stream.init(submission.postData!);
@@ -300,10 +302,10 @@ add_task(async function test_suggest_url_get_params() {
 
   await waiter(() => glide.g.value).ok();
 
-  const engine = Services.search.getEngineByName(ENGINE_NAME);
+  const engine = Search.getEngineByName(ENGINE_NAME) as UserSearchEngine;
   ok(engine, "Engine was added");
   is(
-    engine.getSubmission("test", "application/x-suggestions+json").uri.spec,
+    engine.getSubmission("test", "application/x-suggestions+json")!.uri.spec,
     "https://example.com/suggest?q=test&type=json",
     "Suggest URL GET params should be appended",
   );

@@ -16,6 +16,14 @@ declare namespace BrowserCommands {
     function closeTabOrWindow(event: any): void;
     function tryToCloseWindow(event: any): void;
     /**
+     * This is part of the Document Picture-in-Picture API.
+     * Close this window and bring the opener tab back to foreground.
+     *
+     * @param event
+     *        Used to determine how close was triggered.
+     */
+    function returnToOpenerFromPiP(event: any): void;
+    /**
      * Open the View Source dialog.
      *
      * @param args

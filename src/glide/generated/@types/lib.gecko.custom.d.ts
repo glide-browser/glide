@@ -22,6 +22,8 @@ declare global {
     | { service: string; iid: nsIID }
     | { pref: string; default?; onUpdate?; transform? }
   >;
+
+  type Values<T> = T[keyof T];
 }
 
 type Exports<M, P> = M extends keyof Modules ? IfKey<Modules[M], P> : never;

@@ -43,7 +43,6 @@ interface JSServices {
   rfp: nsIRFPService;
   scriptSecurityManager: nsIScriptSecurityManager;
   scriptloader: mozIJSSubScriptLoader;
-  search: nsISearchService;
   sessionStorage: nsISessionStorageService;
   startup: nsIAppStartup;
   storage: mozIStorageService;

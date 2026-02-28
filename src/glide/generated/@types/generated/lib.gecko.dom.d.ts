@@ -80,6 +80,10 @@ interface AnimationPropertyValueDetails {
     value?: string;
 }
 
+interface AriaNotificationOptions {
+    priority?: AriaNotifyPriority;
+}
+
 interface AssignedNodesOptions {
     flatten?: boolean;
 }
@@ -611,6 +615,8 @@ interface CopyOptions {
 }
 
 interface CredentialCreationOptions {
+    digital?: DigitalCredentialCreationOptions;
+    mediation?: CredentialMediationRequirement;
     publicKey?: PublicKeyCredentialCreationOptions;
     signal?: AbortSignal;
 }
@@ -620,6 +626,7 @@ interface CredentialPropertiesOutput {
 }
 
 interface CredentialRequestOptions {
+    digital?: DigitalCredentialRequestOptions;
     identity?: IdentityCredentialRequestOptions;
     mediation?: CredentialMediationRequirement;
     publicKey?: PublicKeyCredentialRequestOptions;
@@ -751,6 +758,24 @@ interface DictWithAllowSharedBufferSource {
     allowSharedArrayBufferView?: ArrayBufferView;
     arrayBuffer?: ArrayBuffer;
     arrayBufferView?: ArrayBufferView;
+}
+
+interface DigitalCredentialCreateRequest {
+    data: any;
+    protocol: string;
+}
+
+interface DigitalCredentialCreationOptions {
+    requests?: DigitalCredentialCreateRequest[];
+}
+
+interface DigitalCredentialGetRequest {
+    data: any;
+    protocol: string;
+}
+
+interface DigitalCredentialRequestOptions {
+    requests: DigitalCredentialGetRequest[];
 }
 
 interface DisplayMediaStreamConstraints {
@@ -1163,7 +1188,7 @@ interface GPUExternalTextureDescriptor extends GPUObjectDescriptorBase {
 }
 
 interface GPUFragmentState extends GPUProgrammableStage {
-    targets: GPUColorTargetState[];
+    targets: (GPUColorTargetState | null)[];
 }
 
 interface GPUMultisampleState {
@@ -1251,14 +1276,14 @@ interface GPURenderPassDepthStencilAttachment {
 }
 
 interface GPURenderPassDescriptor extends GPUObjectDescriptorBase {
-    colorAttachments: GPURenderPassColorAttachment[];
+    colorAttachments: (GPURenderPassColorAttachment | null)[];
     depthStencilAttachment?: GPURenderPassDepthStencilAttachment;
     occlusionQuerySet?: GPUQuerySet;
     timestampWrites?: GPURenderPassTimestampWrites;
 }
 
 interface GPURenderPassLayout extends GPUObjectDescriptorBase {
-    colorFormats: GPUTextureFormat[];
+    colorFormats: (GPUTextureFormat | null)[];
     depthStencilFormat?: GPUTextureFormat;
     sampleCount?: GPUSize32;
 }
@@ -1365,6 +1390,7 @@ interface GPUTextureViewDescriptor extends GPUObjectDescriptorBase {
     dimension?: GPUTextureViewDimension;
     format?: GPUTextureFormat;
     mipLevelCount?: GPUIntegerCoordinate;
+    usage?: GPUTextureUsageFlags;
 }
 
 interface GPUUncapturedErrorEventInit extends EventInit {
@@ -1551,6 +1577,7 @@ interface ImageBitmapOptions {
     imageOrientation?: ImageOrientation;
     premultiplyAlpha?: PremultiplyAlpha;
     resizeHeight?: number;
+    resizeQuality?: ResizeQuality;
     resizeWidth?: number;
 }
 
@@ -1634,9 +1661,15 @@ interface InputEventInit extends UIEventInit {
 }
 
 interface InputPickerColor {
+    alpha: number;
     component1: number;
     component2: number;
     component3: number;
+}
+
+interface InspectorAnchorElement {
+    element: Element;
+    type: InspectorAnchorType;
 }
 
 interface InspectorCSSPropertyDefinition {
@@ -2943,6 +2976,7 @@ interface PointerEventInit extends MouseEventInit {
 }
 
 interface PopStateEventInit extends EventInit {
+    hasUAVisualTransition?: boolean;
     state?: any;
 }
 
@@ -3061,7 +3095,6 @@ interface PublicKeyCredentialCreationOptions {
 
 interface PublicKeyCredentialCreationOptionsJSON {
     attestation?: string;
-    attestationFormats?: string[];
     authenticatorSelection?: AuthenticatorSelectionCriteria;
     challenge: Base64URLString;
     excludeCredentials?: PublicKeyCredentialDescriptorJSON[];
@@ -3680,10 +3713,10 @@ interface ReceiveMessageArgument {
     data?: any;
     json?: any;
     name: string;
-    ports?: MessagePort[];
+    ports: MessagePort[];
     sync: boolean;
     target: nsISupports;
-    targetFrameLoader?: FrameLoader;
+    targetFrameLoader?: FrameLoader | null;
 }
 
 interface RedirectBlockedEventInit extends EventInit {
@@ -3970,22 +4003,46 @@ interface SvcOutputMetadata {
     temporalLayerId?: number;
 }
 
-interface SynthesizeMouseEventData {
+interface SynthesizeEventData {
+    identifier?: number;
+}
+
+interface SynthesizeEventOptions {
+    isAsyncEnabled?: boolean;
+    toWindow?: boolean;
+}
+
+interface SynthesizeMouseEventData extends SynthesizeEventData {
     button?: number;
     buttons?: number;
     clickCount?: number;
-    identifier?: number;
     inputSource?: number;
     modifiers?: number;
     pressure?: number;
 }
 
-interface SynthesizeMouseEventOptions {
+interface SynthesizeMouseEventOptions extends SynthesizeEventOptions {
     ignoreRootScrollFrame?: boolean;
-    isAsyncEnabled?: boolean;
     isDOMEventSynthesized?: boolean;
     isWidgetEventSynthesized?: boolean;
-    toWindow?: boolean;
+}
+
+interface SynthesizeTouchEventData extends SynthesizeEventData {
+    altitudeAngle?: number;
+    azimuthAngle?: number;
+    offsetX: number;
+    offsetY: number;
+    pressure?: number;
+    radiiX?: number;
+    radiiY?: number;
+    rotationAngle?: number;
+    tiltX?: number;
+    tiltY?: number;
+    twist?: number;
+}
+
+interface SynthesizeTouchEventOptions extends SynthesizeEventOptions {
+    isPen?: boolean;
 }
 
 interface TCPServerSocketEventInit extends EventInit {
@@ -4395,6 +4452,7 @@ interface WebExtensionInit {
     readyPromise?: Promise<WebExtensionPolicy | null>;
     temporarilyInstalled?: boolean;
     type?: string;
+    version?: string;
     webAccessibleResources?: WebAccessibleResourceInit[];
 }
 
@@ -4720,6 +4778,10 @@ interface ARIAMixin {
     ariaValueNow: string | null;
     ariaValueText: string | null;
     role: string | null;
+}
+
+interface ARIANotifyMixin {
+    ariaNotify(announcement: string, options?: AriaNotificationOptions): void;
 }
 
 interface AbortController {
@@ -5569,6 +5631,7 @@ declare var BroadcastChannel: {
 interface BrowsingContext extends LoadContextMixin {
     allowJavascript: boolean;
     readonly ancestorsAreCurrent: boolean;
+    animationsPlayBackRateMultiplier: number;
     authorStyleDisabledDefault: boolean;
     browserId: number;
     readonly childOffset: number;
@@ -6171,10 +6234,14 @@ declare var CSSOKLab: {
 
 interface CSSPageDescriptors extends CSSStyleDeclaration {
     margin: string;
+    marginBlock: string;
     marginBottom: string;
+    marginInline: string;
     marginLeft: string;
     marginRight: string;
     marginTop: string;
+    paddingBlock: string;
+    paddingInline: string;
     pageOrientation: string;
     size: string;
 }
@@ -6201,6 +6268,8 @@ declare var CSSPerspective: {
 };
 
 interface CSSPositionTryDescriptors extends CSSStyleDeclaration {
+    MozMarginEnd: string;
+    MozMarginStart: string;
     alignSelf: string;
     blockSize: string;
     bottom: string;
@@ -6234,11 +6303,14 @@ interface CSSPositionTryDescriptors extends CSSStyleDeclaration {
     minHeight: string;
     minInlineSize: string;
     minWidth: string;
+    paddingBlock: string;
+    paddingInline: string;
     placeSelf: string;
     positionAnchor: string;
     positionArea: string;
     right: string;
     top: string;
+    webkitAlignSelf: string;
     width: string;
 }
 
@@ -6451,7 +6523,15 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     MozAnimationTimingFunction: string;
     MozAppearance: string;
     MozBackfaceVisibility: string;
+    MozBorderEnd: string;
+    MozBorderEndColor: string;
+    MozBorderEndStyle: string;
+    MozBorderEndWidth: string;
     MozBorderImage: string;
+    MozBorderStart: string;
+    MozBorderStartColor: string;
+    MozBorderStartStyle: string;
+    MozBorderStartWidth: string;
     MozBoxAlign: string;
     MozBoxCollapse: string;
     MozBoxDirection: string;
@@ -6467,11 +6547,17 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     MozFontFeatureSettings: string;
     MozFontLanguageOverride: string;
     MozForceBrokenImageIcon: string;
+    MozHyphens: string;
+    MozMarginEnd: string;
+    MozMarginStart: string;
     MozOrient: string;
     MozOsxFontSmoothing: string;
+    MozPaddingEnd: string;
+    MozPaddingStart: string;
     MozPerspective: string;
     MozPerspectiveOrigin: string;
     MozSubtreeHiddenOnlyVisually: string;
+    MozTabSize: string;
     MozTextSizeAdjust: string;
     MozTheme: string;
     MozTransform: string;
@@ -6483,6 +6569,7 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     MozTransitionProperty: string;
     MozTransitionTimingFunction: string;
     MozUserFocus: string;
+    MozUserSelect: string;
     MozWindowDragging: string;
     MozWindowInputRegionMargin: string;
     MozWindowOpacity: string;
@@ -6492,6 +6579,7 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     alignContent: string;
     alignItems: string;
     alignSelf: string;
+    alignmentBaseline: string;
     all: string;
     anchorName: string;
     anchorScope: string;
@@ -6522,6 +6610,7 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     backgroundPositionY: string;
     backgroundRepeat: string;
     backgroundSize: string;
+    baselineShift: string;
     baselineSource: string;
     blockSize: string;
     border: string;
@@ -6599,6 +6688,7 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     clipPath: string;
     clipRule: string;
     color: string;
+    colorAdjust: string;
     colorInterpolation: string;
     colorInterpolationFilters: string;
     colorScheme: string;
@@ -6684,9 +6774,12 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     gridAutoRows: string;
     gridColumn: string;
     gridColumnEnd: string;
+    gridColumnGap: string;
     gridColumnStart: string;
+    gridGap: string;
     gridRow: string;
     gridRowEnd: string;
+    gridRowGap: string;
     gridRowStart: string;
     gridTemplate: string;
     gridTemplateAreas: string;
@@ -6882,6 +6975,9 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     textAlignLast: string;
     textAnchor: string;
     textAutospace: string;
+    textBox: string;
+    textBoxEdge: string;
+    textBoxTrim: string;
     textCombineUpright: string;
     textDecoration: string;
     textDecorationColor: string;
@@ -6930,20 +7026,84 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     viewTransitionClass: string;
     viewTransitionName: string;
     visibility: string;
+    webkitAlignContent: string;
+    webkitAlignItems: string;
+    webkitAlignSelf: string;
+    webkitAnimation: string;
+    webkitAnimationDelay: string;
+    webkitAnimationDirection: string;
+    webkitAnimationDuration: string;
+    webkitAnimationFillMode: string;
+    webkitAnimationIterationCount: string;
+    webkitAnimationName: string;
+    webkitAnimationPlayState: string;
+    webkitAnimationTimingFunction: string;
+    webkitAppearance: string;
+    webkitBackfaceVisibility: string;
+    webkitBackgroundClip: string;
+    webkitBackgroundOrigin: string;
+    webkitBackgroundSize: string;
+    webkitBorderBottomLeftRadius: string;
+    webkitBorderBottomRightRadius: string;
+    webkitBorderImage: string;
+    webkitBorderRadius: string;
+    webkitBorderTopLeftRadius: string;
+    webkitBorderTopRightRadius: string;
+    webkitBoxAlign: string;
+    webkitBoxDirection: string;
+    webkitBoxFlex: string;
+    webkitBoxOrdinalGroup: string;
+    webkitBoxOrient: string;
+    webkitBoxPack: string;
+    webkitBoxShadow: string;
+    webkitBoxSizing: string;
+    webkitClipPath: string;
+    webkitFilter: string;
+    webkitFlex: string;
+    webkitFlexBasis: string;
+    webkitFlexDirection: string;
+    webkitFlexFlow: string;
+    webkitFlexGrow: string;
+    webkitFlexShrink: string;
+    webkitFlexWrap: string;
+    webkitFontFeatureSettings: string;
+    webkitJustifyContent: string;
     webkitLineClamp: string;
+    webkitMask: string;
+    webkitMaskClip: string;
+    webkitMaskComposite: string;
+    webkitMaskImage: string;
+    webkitMaskOrigin: string;
+    webkitMaskPosition: string;
+    webkitMaskPositionX: string;
+    webkitMaskPositionY: string;
+    webkitMaskRepeat: string;
+    webkitMaskSize: string;
+    webkitOrder: string;
     webkitPerspective: string;
+    webkitPerspectiveOrigin: string;
     webkitTextFillColor: string;
     webkitTextSecurity: string;
+    webkitTextSizeAdjust: string;
     webkitTextStroke: string;
     webkitTextStrokeColor: string;
     webkitTextStrokeWidth: string;
     webkitTransform: string;
+    webkitTransformOrigin: string;
+    webkitTransformStyle: string;
+    webkitTransition: string;
+    webkitTransitionDelay: string;
+    webkitTransitionDuration: string;
+    webkitTransitionProperty: string;
+    webkitTransitionTimingFunction: string;
+    webkitUserSelect: string;
     whiteSpace: string;
     whiteSpaceCollapse: string;
     width: string;
     willChange: string;
     wordBreak: string;
     wordSpacing: string;
+    wordWrap: string;
     writingMode: string;
     x: string;
     y: string;
@@ -8492,6 +8652,20 @@ interface DeviceRotationRate {
     readonly gamma: number | null;
 }
 
+/** Available only in secure contexts. */
+interface DigitalCredential extends Credential {
+    readonly data: any;
+    readonly protocol: string;
+    toJSON(): any;
+}
+
+declare var DigitalCredential: {
+    prototype: DigitalCredential;
+    new(): DigitalCredential;
+    isInstance: IsInstance<DigitalCredential>;
+    userAgentAllowsProtocol(protocol: string): boolean;
+};
+
 interface Directory {
     readonly name: string;
     readonly path: string;
@@ -8514,7 +8688,7 @@ interface DocumentEventMap extends GlobalEventHandlersEventMap, OnErrorEventHand
     "visibilitychange": Event;
 }
 
-interface Document extends Node, DocumentOrShadowRoot, FontFaceSource, GeometryUtils, GlobalEventHandlers, NonElementParentNode, OnErrorEventHandlerForNodes, ParentNode, TouchEventHandlers, XPathEvaluatorMixin {
+interface Document extends Node, ARIANotifyMixin, DocumentOrShadowRoot, FontFaceSource, GeometryUtils, GlobalEventHandlers, NonElementParentNode, OnErrorEventHandlerForNodes, ParentNode, TouchEventHandlers, XPathEvaluatorMixin {
     readonly URL: string;
     readonly activeViewTransition: ViewTransition | null;
     alinkColor: string;
@@ -8617,7 +8791,6 @@ interface Document extends Node, DocumentOrShadowRoot, FontFaceSource, GeometryU
     clear(): void;
     clearUserGestureActivation(): void;
     close(): void;
-    completeStorageAccessRequestFromSite(serializedSite: string): Promise<void>;
     consumeTransientUserGestureActivation(): boolean;
     createAttribute(name: string): Attr;
     createAttributeNS(namespace: string | null, name: string): Attr;
@@ -8783,7 +8956,6 @@ interface Document extends Node, DocumentOrShadowRoot, FontFaceSource, GeometryU
     removeAnonymousContent(aContent: AnonymousContent): void;
     requestStorageAccess(): Promise<void>;
     requestStorageAccessForOrigin(thirdPartyOrigin: string, requireUserInteraction?: boolean): Promise<void>;
-    requestStorageAccessUnderSite(serializedSite: string): Promise<void>;
     setKeyPressEventModel(aKeyPressEventModel: number): void;
     setNotifyFetchSuccess(aShouldNotify: boolean): void;
     setNotifyFormOrPasswordRemoved(aShouldNotify: boolean): void;
@@ -9021,7 +9193,7 @@ interface ElementEventMap {
     "fullscreenerror": Event;
 }
 
-interface Element extends Node, ARIAMixin, Animatable, ChildNode, GeometryUtils, NonDocumentTypeChildNode, ParentNode {
+interface Element extends Node, ARIAMixin, ARIANotifyMixin, Animatable, ChildNode, GeometryUtils, NonDocumentTypeChildNode, ParentNode {
     readonly assignedSlot: HTMLSlotElement | null;
     readonly attributes: NamedNodeMap;
     readonly classList: DOMTokenList;
@@ -11863,11 +12035,13 @@ declare var HTMLImageElement: {
 interface HTMLInputElement extends HTMLElement, MozEditableElement, MozImageLoadingContent, PopoverInvokerElement {
     accept: string;
     align: string;
+    alpha: boolean;
     alt: string;
     autocomplete: string;
     autofillState: string;
     capture: string;
     checked: boolean;
+    colorSpace: string;
     readonly controllers: XULControllers | null;
     readonly dateTimeBoxElement: Element | null;
     defaultChecked: boolean;
@@ -12142,6 +12316,7 @@ interface HTMLMediaElement extends HTMLElement {
     volume: number;
     addTextTrack(kind: TextTrackKind, label?: string, language?: string): TextTrack;
     canPlayType(type: string): string;
+    captureStream(): MediaStream;
     fastSeek(time: number): void;
     hasSuspendTaint(): boolean;
     load(): void;
@@ -13562,6 +13737,20 @@ declare var InspectorFontFace: {
     readonly NAME_ID_COMPATIBLE_FULL: 18;
     readonly NAME_ID_SAMPLE_TEXT: 19;
     isInstance: IsInstance<InspectorFontFace>;
+};
+
+interface IntegrityViolationReportBody extends ReportBody {
+    readonly blockedURL: string;
+    readonly destination: string;
+    readonly documentURL: string;
+    readonly reportOnly: boolean;
+    toJSON(): any;
+}
+
+declare var IntegrityViolationReportBody: {
+    prototype: IntegrityViolationReportBody;
+    new(): IntegrityViolationReportBody;
+    isInstance: IsInstance<IntegrityViolationReportBody>;
 };
 
 interface IntersectionObserver {
@@ -15246,9 +15435,7 @@ declare var MessageListenerManager: {
 
 interface MessageListenerManagerMixin {
     addMessageListener(messageName: string, listener: MessageListener, listenWhenClosed?: boolean): void;
-    addWeakMessageListener(messageName: string, listener: MessageListener): void;
     removeMessageListener(messageName: string, listener: MessageListener): void;
-    removeWeakMessageListener(messageName: string, listener: MessageListener): void;
 }
 
 interface MessageManagerGlobal {
@@ -15722,6 +15909,7 @@ declare var NavigationHistoryEntry: {
 };
 
 interface NavigationPrecommitController {
+    addHandler(handler: NavigationInterceptHandler): void;
     redirect(url: string | URL, options?: NavigationNavigateOptions): void;
 }
 
@@ -17170,6 +17358,7 @@ declare var PointerEvent: {
 };
 
 interface PopStateEvent extends Event {
+    readonly hasUAVisualTransition: boolean;
     readonly state: any;
 }
 
@@ -22701,6 +22890,7 @@ interface WebExtensionPolicy {
     readonly readyPromise: any;
     readonly temporarilyInstalled: boolean;
     readonly type: string;
+    readonly version: string;
     canAccessURI(uri: URI, explicit?: boolean, checkRestricted?: boolean, allowFilePermission?: boolean): boolean;
     canAccessWindow(window: WindowProxy): boolean;
     getURL(path?: string): string;
@@ -24689,7 +24879,7 @@ interface WebTransport {
     readonly reliability: WebTransportReliabilityMode;
     close(closeInfo?: WebTransportCloseInfo): void;
     createBidirectionalStream(options?: WebTransportSendStreamOptions): Promise<WebTransportBidirectionalStream>;
-    createUnidirectionalStream(options?: WebTransportSendStreamOptions): Promise<WritableStream>;
+    createUnidirectionalStream(options?: WebTransportSendStreamOptions): Promise<WebTransportSendStream>;
     getStats(): Promise<WebTransportStats>;
 }
 
@@ -24912,6 +25102,7 @@ interface Window extends EventTarget, AnimationFrameProvider, GlobalCrypto, Glob
     maximize(): void;
     minimize(): void;
     moveBy(x: number, y: number): void;
+    moveResize(x: number, y: number, w: number, h: number): void;
     moveTo(x: number, y: number): void;
     moveToWorkspace(workspaceID: string): void;
     mozScrollSnap(): void;
@@ -24944,6 +25135,7 @@ interface Window extends EventTarget, AnimationFrameProvider, GlobalCrypto, Glob
     sizeToContent(constraints?: SizeToContentConstraints): void;
     stop(): void;
     synthesizeMouseEvent(type: string, offsetX: number, offsetY: number, mouseEventData?: SynthesizeMouseEventData, options?: SynthesizeMouseEventOptions, callback?: VoidFunction): boolean;
+    synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions): boolean;
     updateCommands(action: string): void;
     readonly STATE_MAXIMIZED: 1;
     readonly STATE_MINIMIZED: 2;
@@ -25003,6 +25195,7 @@ interface WindowEventHandlersEventMap {
     "offline": Event;
     "online": Event;
     "pagehide": Event;
+    "pagereveal": Event;
     "pageshow": Event;
     "popstate": Event;
     "rejectionhandled": Event;
@@ -25024,6 +25217,7 @@ interface WindowEventHandlers {
     onoffline: ((this: WindowEventHandlers, ev: Event) => any) | null;
     ononline: ((this: WindowEventHandlers, ev: Event) => any) | null;
     onpagehide: ((this: WindowEventHandlers, ev: Event) => any) | null;
+    onpagereveal: ((this: WindowEventHandlers, ev: Event) => any) | null;
     onpageshow: ((this: WindowEventHandlers, ev: Event) => any) | null;
     onpopstate: ((this: WindowEventHandlers, ev: Event) => any) | null;
     onrejectionhandled: ((this: WindowEventHandlers, ev: Event) => any) | null;
@@ -25993,7 +26187,7 @@ declare namespace ChromeUtils {
     var domProcessChild: nsIDOMProcessChild | null;
     var recentJSDevError: any;
     function CreateOriginAttributesFromOriginSuffix(suffix: string): OriginAttributesDictionary;
-    function addProfilerMarker(name: string, options?: ProfilerMarkerOptions | number, text?: string): void;
+    function addProfilerMarker(name: string, options?: ProfilerMarkerOptions | number, data?: any): void;
     function androidMoveTaskToBack(): void;
     function base64URLDecode(string: string, options: Base64URLDecodeOptions): ArrayBuffer;
     function base64URLEncode(source: BufferSource, options: Base64URLEncodeOptions): string;
@@ -26058,6 +26252,7 @@ declare namespace ChromeUtils {
     function originAttributesToSuffix(originAttrs?: OriginAttributesDictionary): string;
     function privateNoteIntentionalCrash(): void;
     function readHeapSnapshot(filePath: string): HeapSnapshot;
+    function registerMarkerSchema(schema: any): void;
     function registerProcessActor(aName: string, aOptions?: ProcessActorOptions): void;
     function registerWindowActor(aName: string, aOptions?: WindowActorOptions): void;
     function releaseAssert(condition: boolean, message?: string): void;
@@ -26145,6 +26340,7 @@ declare namespace InspectorUtils {
     function cssPropertyIsShorthand(property: string): boolean;
     function cssPropertySupportsType(property: string, type: InspectorPropertyType): boolean;
     function getAllStyleSheets(document: Document, documentOnly?: boolean): StyleSheet[];
+    function getAnchorFor(element: Element, anchorName?: string | null): InspectorAnchorElement | null;
     function getBlockLineCounts(element: Element): number[] | null;
     function getCSSPropertyNames(options?: PropertyNamesOptions): string[];
     function getCSSPropertyPrefs(): PropertyPref[];
@@ -26280,6 +26476,8 @@ declare namespace UniFFIScaffolding {
     function callAsync(id: UniFFIFunctionId, ...args: UniFFIScaffoldingValue[]): Promise<UniFFIScaffoldingCallResult>;
     function callAsyncWrapper(id: UniFFIFunctionId, ...args: UniFFIScaffoldingValue[]): Promise<UniFFIScaffoldingCallResult>;
     function callSync(id: UniFFIFunctionId, ...args: UniFFIScaffoldingValue[]): UniFFIScaffoldingCallResult;
+    function callbackHandleCreate(): number;
+    function callbackHandleRelease(handle: number): number;
     function deregisterCallbackHandler(interfaceId: UniFFICallbackInterfaceId): void;
     function readPointer(id: UniFFIPointerId, buff: ArrayBuffer, position: number): UniFFIPointer;
     function registerCallbackHandler(interfaceId: UniFFICallbackInterfaceId, handler: UniFFICallbackHandler): void;
@@ -26886,6 +27084,7 @@ declare function matchMedia(query: string): MediaQueryList | null;
 declare function maximize(): void;
 declare function minimize(): void;
 declare function moveBy(x: number, y: number): void;
+declare function moveResize(x: number, y: number, w: number, h: number): void;
 declare function moveTo(x: number, y: number): void;
 declare function moveToWorkspace(workspaceID: string): void;
 declare function mozScrollSnap(): void;
@@ -26918,6 +27117,7 @@ declare function shouldReportForServiceWorkerScope(aScope: string): boolean;
 declare function sizeToContent(constraints?: SizeToContentConstraints): void;
 declare function stop(): void;
 declare function synthesizeMouseEvent(type: string, offsetX: number, offsetY: number, mouseEventData?: SynthesizeMouseEventData, options?: SynthesizeMouseEventOptions, callback?: VoidFunction): boolean;
+declare function synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions): boolean;
 declare function updateCommands(action: string): void;
 declare function toString(): string;
 declare var ownerGlobal: WindowProxy | null;
@@ -27046,6 +27246,7 @@ declare var onmessageerror: ((this: Window, ev: Event) => any) | null;
 declare var onoffline: ((this: Window, ev: Event) => any) | null;
 declare var ononline: ((this: Window, ev: Event) => any) | null;
 declare var onpagehide: ((this: Window, ev: Event) => any) | null;
+declare var onpagereveal: ((this: Window, ev: Event) => any) | null;
 declare var onpageshow: ((this: Window, ev: Event) => any) | null;
 declare var onpopstate: ((this: Window, ev: Event) => any) | null;
 declare var onrejectionhandled: ((this: Window, ev: Event) => any) | null;
@@ -27228,6 +27429,7 @@ type AlignSetting = "center" | "end" | "left" | "right" | "start";
 type AlphaOption = "discard" | "keep";
 type AnimationPlayState = "finished" | "idle" | "paused" | "running";
 type AnimationReplaceState = "active" | "persisted" | "removed";
+type AriaNotifyPriority = "high" | "normal";
 type AudioContextState = "closed" | "running" | "suspended";
 type AudioSampleFormat = "f32" | "f32-planar" | "s16" | "s16-planar" | "s32" | "s32-planar" | "u8" | "u8-planar";
 type AutoKeyword = "auto";
@@ -27347,6 +27549,7 @@ type IDBTransactionMode = "cleanup" | "readonly" | "readwrite" | "readwriteflush
 type IdentityCredentialRequestOptionsMode = "active" | "passive";
 type ImageOrientation = "flipY" | "from-image" | "none";
 type ImportESModuleTargetGlobal = "contextual" | "current" | "devtools" | "shared";
+type InspectorAnchorType = "explicit" | "popover" | "pseudo-element";
 type InspectorPropertyType = "color" | "gradient" | "timing-function";
 type IterationCompositeOperation = "accumulate" | "replace";
 type JSRFPTarget = "CSSPrefersColorScheme" | "HttpUserAgent" | "JSLocalePrompt" | "RoundWindowSize" | "SiteSpecificZoom";
@@ -27447,6 +27650,7 @@ type RequestMode = "cors" | "navigate" | "no-cors" | "same-origin";
 type RequestPriority = "auto" | "high" | "low";
 type RequestRedirect = "error" | "follow" | "manual";
 type ResizeObserverBoxOptions = "border-box" | "content-box" | "device-pixel-content-box";
+type ResizeQuality = "high" | "low" | "medium" | "pixelated";
 type ResourceCacheTarget = "chrome" | "content";
 type ResourceCacheType = "image" | "script" | "stylesheet";
 type ResponseType = "basic" | "cors" | "default" | "error" | "opaque" | "opaqueredirect";
@@ -27490,7 +27694,7 @@ type VisibilityState = "hidden" | "visible";
 type WakeLockType = "screen";
 type WebGLPowerPreference = "default" | "high-performance" | "low-power";
 type WebIDLProcType = "browser" | "extension" | "file" | "forkServer" | "gmpPlugin" | "gpu" | "inference" | "ipdlUnitTest" | "preallocated" | "privilegedabout" | "privilegedmozilla" | "rdd" | "socket" | "unknown" | "utility" | "vr" | "web" | "webIsolated" | "webServiceWorker" | "withCoopCoep";
-type WebIDLUtilityActorName = "audioDecoder_AppleMedia" | "audioDecoder_Generic" | "audioDecoder_WMF" | "jSOracle" | "mfMediaEngineCDM" | "unknown" | "windowsFileDialog" | "windowsUtils";
+type WebIDLUtilityActorName = "audioDecoder_AppleMedia" | "audioDecoder_Generic" | "audioDecoder_WMF" | "jSOracle" | "mfMediaEngineCDM" | "pkcs11Module" | "unknown" | "windowsFileDialog" | "windowsUtils";
 type WebTransportCongestionControl = "default" | "low-latency" | "throughput";
 type WebTransportErrorSource = "session" | "stream";
 type WebTransportReliabilityMode = "pending" | "reliable-only" | "supports-unreliable";
@@ -28052,6 +28256,7 @@ interface WebGLRenderingContextBase {
 interface Window {
     postMessage(message: any, targetOrigin: string, transfer?: Iterable<any>): void;
     setScrollMarks(marks: Iterable<number>, onHorizontalScrollbar?: boolean): void;
+    synthesizeTouchEvent(type: string, touches: Iterable<SynthesizeTouchEventData>, modifiers?: number, options?: SynthesizeTouchEventOptions): boolean;
 }
 
 interface Worker {

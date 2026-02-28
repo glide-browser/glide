@@ -1,5 +1,5 @@
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index d447d2f3858a9943996b26ef74e2feb575b790f1..9063daffa325c80010b36a090a78bfcb8cba0192 100644
+index 35f5507ea75be974d45b5adfbb5e5c0daeece38a..ed655060b0a2f07e3b7003a2e0baee627ddba6fe 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 @@ -60,6 +60,7 @@ const isMSIX =
@@ -9,8 +9,8 @@ index d447d2f3858a9943996b26ef74e2feb575b790f1..9063daffa325c80010b36a090a78bfcb
 +// prettier-ignore
  const BASE_MESSAGES = () => [
    {
-     id: "BROWSER_BACKUP_OPTIN_SPOTLIGHT",
-@@ -3035,7 +3036,7 @@ const BASE_MESSAGES = () => [
+     id: "AI_WINDOW_TOU_EXISTING_USERS_MODAL",
+@@ -3162,7 +3163,7 @@ const BASE_MESSAGES = () => [
      targeting:
        "('termsofuse.acceptedDate'|preferenceValue != '0') && (('termsofuse.acceptedDate'|preferenceValue * 1) < 1765972800000)",
    },

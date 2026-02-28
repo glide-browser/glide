@@ -156,7 +156,7 @@ export const AppConstants: Readonly<{
   ENABLE_WEBDRIVER: boolean;
 
   // #ifdef !MOZ_THUNDERBIRD
-  REMOTE_SETTINGS_SERVER_URL: "https://firefox.settings.services.mozilla.com/v1";
+  REMOTE_SETTINGS_SERVER_URLS: string[];
 
   // #ifdef !MOZ_THUNDERBIRD
   REMOTE_SETTINGS_VERIFY_SIGNATURE: boolean;

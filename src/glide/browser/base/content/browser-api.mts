@@ -682,7 +682,9 @@ export function make_glide_api(
     search_engines: ((): typeof glide["search_engines"] => {
       return {
         async add(props) {
-          await Services.search.promiseInitialized;
+          const Search =
+            ChromeUtils.importESModule("moz-src:///toolkit/components/search/SearchService.sys.mjs").SearchService;
+          await Search.promiseInitialized;
 
           let suggest_url = props.suggest_url;
           if (suggest_url && props.suggest_url_get_params) {
@@ -702,11 +704,11 @@ export function make_glide_api(
           };
           GlideBrowser._log.debug("[search_engines.add]: resolved props", info);
 
-          const engine = await (async (): Promise<nsISearchEngine> => {
-            const existing = Services.search.getEngineByName(props.name);
-            if (!existing) {
+          const engine = await (async (): Promise<UserSearchEngine> => {
+            const engine = Search.getEngineByName(props.name) as UserSearchEngine | undefined;
+            if (!engine) {
               GlideBrowser._log.debug("[search_engines.add]: creating search engine with name", info.name);
-              return await Services.search.addUserEngine(info);
+              return await Search.addUserEngine(info);
             }
 
             GlideBrowser._log.debug("[search_engines.add]: updating search engine with name", info.name);
@@ -716,8 +718,6 @@ export function make_glide_api(
 
             // reimplementation of `engine/browser/components/search/content/addEngine.js:EditEngineDialog:onAccept()`
             // https://searchfox.org/firefox-main/rev/f9d8702e26624ab46a35bf6561a7c8143c6f246a/browser/components/search/content/addEngine.js#336
-            const engine = existing.wrappedJSObject as UserSearchEngine;
-
             if (engine.name !== info.name) {
               engine.rename(info.name);
             }
@@ -738,9 +738,8 @@ export function make_glide_api(
               engine.changeUrl(SearchUtils.URL_TYPE.SUGGEST_JSON, info.suggestUrl!, null);
             }
 
-            return existing;
+            return engine;
           })();
-          const engine_js = engine.wrappedJSObject as UserSearchEngine;
 
           // At the time of writing, there is no public API[0] to add a user engine with multiple keywords.
           //
@@ -749,15 +748,15 @@ export function make_glide_api(
           // [0]: `engine/toolkit/components/search/UserSearchEngine.sys.mjs`
           // [1]: `engine/toolkit/components/search/SearchEngine.sys.mjs`
           if (keywords.length > 1) {
-            engine_js._definedAliases = keywords.slice(1);
+            engine._definedAliases = keywords.slice(1);
           }
 
           if (props.favicon_url) {
-            await engine_js.changeIcon(props.favicon_url);
+            await engine.changeIcon(props.favicon_url);
           }
 
           if (props.is_default) {
-            await Services.search.setDefault(engine, Ci.nsISearchService.CHANGE_REASON_CONFIG);
+            await Search.setDefault(engine, Search.CHANGE_REASON.CONFIG);
           }
         },
       };
