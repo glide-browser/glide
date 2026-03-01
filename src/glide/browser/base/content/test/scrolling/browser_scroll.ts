@@ -308,7 +308,9 @@ async function vertical_scroll_tests(
     before_second_ctrl_u_y - y,
     half_page,
     half_page_tolerance,
-    `Second <C-u> should also scroll approximately half a page (expected ~${half_page}, got ${before_second_ctrl_u_y - y})`,
+    `Second <C-u> should also scroll approximately half a page (expected ~${half_page}, got ${
+      before_second_ctrl_u_y - y
+    })`,
   );
 
   await keys("gg");
