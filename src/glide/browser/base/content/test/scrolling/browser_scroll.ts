@@ -150,11 +150,17 @@ add_task(async function test_scrolling() {
       });
     }
 
+    async function get_viewport_height(): Promise<number> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return content.window.innerHeight;
+      });
+    }
+
     const max_y = await SpecialPowers.spawn(browser, [], async () => {
       return content.window.scrollMaxY;
     });
 
-    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll });
+    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll, get_viewport_height });
   });
 
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
@@ -172,11 +178,17 @@ add_task(async function test_scrolling_legacy() {
       });
     }
 
+    async function get_viewport_height(): Promise<number> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return content.window.innerHeight;
+      });
+    }
+
     const max_y = await SpecialPowers.spawn(browser, [], async () => {
       return content.window.scrollMaxY;
     });
 
-    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll });
+    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll, get_viewport_height });
   });
 
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
@@ -193,6 +205,13 @@ add_task(async function test_scrolling_pdf() {
         });
       }
 
+      async function get_viewport_height(): Promise<number> {
+        return await SpecialPowers.spawn(browser, [], async () => {
+          const container = content.document.getElementById("viewerContainer")!;
+          return container.clientHeight;
+        });
+      }
+
       const { max_y, min_y } = await SpecialPowers.spawn(browser, [], async () => {
         const container = content.document.getElementById("viewerContainer")!;
         return { max_y: container.scrollTopMax, min_y: container.scrollTop };
@@ -202,6 +221,7 @@ add_task(async function test_scrolling_pdf() {
         min_y,
         max_y,
         get_scroll,
+        get_viewport_height,
         // for some reason, G goes *almost* to the actual bottom of the PDF
         // I *think* this is a Firefox/PDF.js bug but I haven't investigated deeply
         G_wip: true,
@@ -211,10 +231,11 @@ add_task(async function test_scrolling_pdf() {
 }).skip(); // the PDF tests are very flaky
 
 async function vertical_scroll_tests(
-  { min_y, max_y, get_scroll, G_wip }: {
+  { min_y, max_y, get_scroll, get_viewport_height, G_wip }: {
     min_y: number;
     max_y: number;
     get_scroll(): Promise<[number, number]>;
+    get_viewport_height: () => Promise<number>;
     G_wip?: boolean;
   },
 ) {
@@ -229,11 +250,24 @@ async function vertical_scroll_tests(
 
   const wait_for_scroll_stop = await GlideTestUtils.scroll_waiter(get_scroll);
 
+  const viewport_height = await get_viewport_height();
+
+  // note: we use a 10% tolerance for pixel scroll checks, as the exact pixel amount we scroll is
+  //       unfortunately not deterministic and it can vary slightly.
+  const half_page = viewport_height / 2;
+  const half_page_tolerance = Math.ceil(half_page * 0.1);
+
   await keys("<C-d>");
   await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-d> should retain the x position`);
   Assert.greater(y, last_y, `<C-d> should increase y (last=${last_y}, y=${y})`);
+  isfuzzy(
+    y,
+    half_page,
+    half_page_tolerance,
+    `<C-d> should scroll approximately half a page (expected ~${half_page}, got ${y})`,
+  );
 
   last_y = y;
 
@@ -242,18 +276,40 @@ async function vertical_scroll_tests(
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-d> should retain the x position`);
   Assert.greater(y, last_y, `Second <C-d> should increase y (last=${last_y}, y=${y})`);
+  isfuzzy(
+    y - last_y,
+    half_page,
+    half_page_tolerance,
+    `Second <C-d> should also scroll approximately half a page (expected ~${half_page}, got ${y - last_y})`,
+  );
+
+  const before_ctrl_u_y = y;
 
   await keys("<C-u>");
   await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-u> should retain the x position`);
   isfuzzy(y, last_y, 1, `<C-u> should decrease y to the previous <C-d> (+- 1)`);
+  isfuzzy(
+    before_ctrl_u_y - y,
+    half_page,
+    half_page_tolerance,
+    `<C-u> should scroll approximately half a page (expected ~${half_page}, got ${before_ctrl_u_y - y})`,
+  );
+
+  const before_second_ctrl_u_y = y;
 
   await keys("<C-u>");
   await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `<C-u> should retain the x position`);
   is(y, min_y, `Second <C-u> should decrease y to the minimum`);
+  isfuzzy(
+    before_second_ctrl_u_y - y,
+    half_page,
+    half_page_tolerance,
+    `Second <C-u> should also scroll approximately half a page (expected ~${half_page}, got ${before_second_ctrl_u_y - y})`,
+  );
 
   await keys("gg");
   await wait_for_scroll_stop();
