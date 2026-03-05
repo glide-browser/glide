@@ -7,7 +7,7 @@ import config from "../../firefox.json" with { type: "json" };
 import { is_present } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
 import { chain, ensure_symlink, exists } from "../util.mts";
-import { get_platform, GLOB_ALL_FILES } from "./util.mts";
+import { get_platform, GLOB_ALL_FILES, IS_RELEASE } from "./util.mts";
 
 interface Context {
   errors: string[];
@@ -135,10 +135,13 @@ async function setup_symlinks(ctx: Context) {
   }
 }
 
-async function branding_patch(ctx: Context) {
+export async function branding_patch(ctx: Context) {
   const brands = await fs.readdir(BRANDING_DIR, { withFileTypes: true }).then((entries) =>
     entries.filter((entry) => entry.isDirectory())
   );
+  const display_name = IS_RELEASE ? "Glide" : "Glide Debug";
+  const mac_bundle_id = IS_RELEASE ? "glide" : "glide-debug";
+
   for (const brand of brands) {
     if (!brand.isDirectory()) {
       continue;
@@ -151,6 +154,14 @@ async function branding_patch(ctx: Context) {
     try {
       await fs.rm(engine_path, { force: true }).catch(() => null);
       await fs.cp(abs_path, engine_path, { recursive: true });
+
+      const config_path = Path.join(engine_path, "configure.sh");
+      await fs.writeFile(
+        config_path,
+        (await fs.readFile(config_path, "utf-8"))
+          .replaceAll("${MOZ_APP_DISPLAYNAME}", display_name)
+          .replaceAll("${MOZ_MACBUNDLE_ID}", mac_bundle_id),
+      );
     } catch (e) {
       ctx.errors.push(relative_path);
       console.error(chalk.red("brand"), " ", relative_path);
@@ -175,10 +186,15 @@ export async function patch_mozconfig() {
       return "";
     });
 
+  const app_basename = IS_RELEASE ? "glide" : "glide-debug";
+  const macbundle_name = IS_RELEASE ? "Glide" : "Glide Debug";
+
   const common_config = await fs.readFile(Path.join(CONFIGS_DIR, "common", "mozconfig"), "utf8").then((contents) =>
     contents
       .replaceAll("${changeset}", changeset)
       .replaceAll("${firefox_version}", config.version.version)
+      .replaceAll("${basename}", app_basename)
+      .replaceAll("${macbundle_name}", macbundle_name)
   );
   const os_config = await fs.readFile(Path.join(CONFIGS_DIR, get_platform(), "mozconfig"), "utf8");
   await fs.writeFile(
