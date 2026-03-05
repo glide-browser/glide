@@ -12,6 +12,7 @@ import {
   generate_file_hash,
   get_compat_mode,
   get_platform,
+  IS_RELEASE,
   resolve_obj_dir,
 } from "./util.mts";
 
@@ -104,7 +105,7 @@ async function create_mar_file(
 
   const mar_binary = Path.join(obj_dir, "dist/host/bin", platform === "windows" ? "mar.exe" : "mar");
   const binary = platform === "macos"
-    ? Path.join(obj_dir, "dist", config.binary_name, "Glide.app")
+    ? Path.join(obj_dir, "dist", config.binary_name, IS_RELEASE ? "Glide.app" : "Glide Debug.app")
     : Path.join(obj_dir, "dist", config.binary_name);
 
   const mar_path = Path.resolve(DIST_DIR, "output.mar");
