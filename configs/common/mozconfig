@@ -1,4 +1,4 @@
-# Browser branding (values injected by patch.mts)
+# Browser branding (variables are injected by scripts/firefox/patch.mts)
 ac_add_options --with-app-name=${basename}
 ac_add_options --with-app-basename=${basename}
 ac_add_options --with-branding=browser/branding/glide

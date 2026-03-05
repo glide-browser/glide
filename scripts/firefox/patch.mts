@@ -7,13 +7,12 @@ import config from "../../firefox.json" with { type: "json" };
 import { is_present } from "../../src/glide/browser/base/content/utils/guards.mts";
 import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../canonical-paths.mts";
 import { chain, ensure_symlink, exists } from "../util.mts";
-import { get_platform, GLOB_ALL_FILES } from "./util.mts";
+import { get_platform, GLOB_ALL_FILES, IS_RELEASE } from "./util.mts";
 
 interface Context {
   errors: string[];
 }
 
-const IS_RELEASE = !!process.env["GLIDE_RELEASE"];
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }

@@ -5,6 +5,7 @@ import { ENGINE_DIR } from "../canonical-paths.mts";
 import "@total-typescript/ts-reset";
 
 export const GLOB_ALL_FILES = ["**/*", "**/.*", ".*"];
+export const IS_RELEASE = !!process.env["GLIDE_RELEASE"];
 
 export async function run(file: string, args: string[], options?: execa.Options): Promise<execa.Result> {
   if (options?.env) {

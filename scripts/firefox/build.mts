@@ -11,6 +11,7 @@ async function main() {
     console.error(ctx.errors.map((err) => `- ${err}`).join("\n"));
     process.exit(1);
   }
+
   await patch_mozconfig();
 
   await execa("./mach", ["build"], { stdio: "inherit", cwd: ENGINE_DIR });
