@@ -13,6 +13,13 @@ interface Context {
   errors: string[];
 }
 
+const TEMPLATE_VARIABLES = {
+  basename: IS_RELEASE ? "glide" : "glide-debug",
+  macbundle_name: IS_RELEASE ? "Glide" : "Glide Debug",
+  MOZ_MACBUNDLE_ID: IS_RELEASE ? "glide" : "glide-debug",
+  MOZ_APP_DISPLAYNAME: IS_RELEASE ? "Glide" : "Glide Debug",
+};
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }
@@ -139,8 +146,6 @@ export async function branding_patch(ctx: Context) {
   const brands = await fs.readdir(BRANDING_DIR, { withFileTypes: true }).then((entries) =>
     entries.filter((entry) => entry.isDirectory())
   );
-  const display_name = IS_RELEASE ? "Glide" : "Glide Debug";
-  const mac_bundle_id = IS_RELEASE ? "glide" : "glide-debug";
 
   for (const brand of brands) {
     if (!brand.isDirectory()) {
@@ -156,12 +161,7 @@ export async function branding_patch(ctx: Context) {
       await fs.cp(abs_path, engine_path, { recursive: true });
 
       const config_path = Path.join(engine_path, "configure.sh");
-      await fs.writeFile(
-        config_path,
-        (await fs.readFile(config_path, "utf-8"))
-          .replaceAll("${MOZ_APP_DISPLAYNAME}", display_name)
-          .replaceAll("${MOZ_MACBUNDLE_ID}", mac_bundle_id),
-      );
+      await fs.writeFile(config_path, replace_template_vars(await fs.readFile(config_path, "utf-8")));
     } catch (e) {
       ctx.errors.push(relative_path);
       console.error(chalk.red("brand"), " ", relative_path);
@@ -186,15 +186,9 @@ export async function patch_mozconfig() {
       return "";
     });
 
-  const app_basename = IS_RELEASE ? "glide" : "glide-debug";
-  const macbundle_name = IS_RELEASE ? "Glide" : "Glide Debug";
-
-  const common_config = await fs.readFile(Path.join(CONFIGS_DIR, "common", "mozconfig"), "utf8").then((contents) =>
-    contents
-      .replaceAll("${changeset}", changeset)
-      .replaceAll("${firefox_version}", config.version.version)
-      .replaceAll("${basename}", app_basename)
-      .replaceAll("${macbundle_name}", macbundle_name)
+  const common_config = replace_template_vars(
+    await fs.readFile(Path.join(CONFIGS_DIR, "common", "mozconfig"), "utf8"),
+    { changeset, firefox_version: config.version.version },
   );
   const os_config = await fs.readFile(Path.join(CONFIGS_DIR, get_platform(), "mozconfig"), "utf8");
   await fs.writeFile(
@@ -215,4 +209,14 @@ export async function patch_mozconfig() {
 
 function indent(str: string, prefix: string): string {
   return str.split("\n").map((s) => prefix + s).join("\n");
+}
+
+function replace_template_vars(contents: string, extra_vars?: Record<string, string>): string {
+  for (const [key, value] of Object.entries(TEMPLATE_VARIABLES)) {
+    contents = contents.replaceAll(`\${${key}}`, value);
+  }
+  for (const [key, value] of Object.entries(extra_vars ?? {})) {
+    contents = contents.replaceAll(`\${${key}}`, value);
+  }
+  return contents;
 }
