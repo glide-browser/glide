@@ -32,7 +32,7 @@ jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
 
-    runs-on: depot-macos-14
+    runs-on: depot-macos-15
     env:
       CARGO_TERM_COLOR: always
       GLIDE_PLATFORM: macos
@@ -42,34 +42,32 @@ jobs:
       GLIDE_COMPAT: ${{ matrix.arch }}
       MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
 
+    defaults:
+      run:
+        shell: nix develop --command bash -e {0}
+
     strategy:
       fail-fast: false
       matrix:
         arch: [aarch64, x86_64]
 
     steps:
-      - name: Debug
-        run: |
-          xcrun --show-sdk-version
-
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           persist-credentials: false
+
+      - uses: ./.github/actions/setup-nix
+
+      - name: Debug
+        run: |
+          xcrun --show-sdk-version
 
       - name: Configure git
         run: |
           git config --global \
             url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
             "git@github.com:mozilla-firefox/firefox.git"
-
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: "24"
-          cache: "pnpm"
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
@@ -83,31 +81,12 @@ jobs:
             core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
 
-      - name: Install system dependencies
+      - name: Configure rust
         run: |
-          brew update
-          brew install cairo gnu-tar mercurial
-
-          brew uninstall --ignore-dependencies python3.12 -f
-
-          export PATH="$(python3 -m site --user-base)/bin":$PATH
-
-          rm '/usr/local/bin/2to3-3.11' '/usr/local/bin/2to3-3.12' '/usr/local/bin/2to3' || true
-          rm '/usr/local/bin/idle3.11' '/usr/local/bin/idle3.12' '/usr/local/bin/idle3' || true
-          rm '/usr/local/bin/pydoc3.11' '/usr/local/bin/pydoc3.12' '/usr/local/bin/pydoc3' || true
-          rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3' || true
-          rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config' || true
-
-          brew install watchman
-
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.89
-          source $HOME/.cargo/env
-
           if test "$GLIDE_COMPAT" = "aarch64"; then
             rustup target add aarch64-apple-darwin
           else
             rustup target add x86_64-apple-darwin
-            brew install nasm
           fi
 
       - name: Install dependencies
@@ -118,7 +97,6 @@ jobs:
           pnpm bootstrap
 
           cd engine
-          export PATH="$(python3 -m site --user-base)/bin":$PATH
           ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
           cd ..
 
