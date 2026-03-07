@@ -1,21 +1,32 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
-    rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils?ref=main";
   };
 
   outputs = {
     nixpkgs,
     flake-utils,
-    rust-overlay,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        overlays = [(import rust-overlay)];
         pkgs = import nixpkgs {
-          inherit system overlays;
+          inherit system;
+        };
+
+        # Target the LLVM version that rustc is built with for LTO.
+        llvmPackages0 = pkgs.rustc.llvmPackages;
+        llvmPackagesBuildBuild0 = pkgs.pkgsBuildBuild.rustc.llvmPackages;
+
+        # Force the use of lld and other llvm tools for LTO
+        llvmPackages = llvmPackages0.override {
+          bootBintoolsNoLibc = null;
+          bootBintools = null;
+        };
+        llvmPackagesBuildBuild = llvmPackagesBuildBuild0.override {
+          bootBintoolsNoLibc = null;
+          bootBintools = null;
         };
       in {
         devShell = pkgs.mkShell {
@@ -25,7 +36,8 @@
               nodejs_24
               python314
               uv
-              rust-bin.beta.latest.default
+              rustc
+              cargo
               watchman
               cairo
               gnutar
@@ -60,6 +72,11 @@
               xvfb-run
               dos2unix
             ]);
+
+          shellHook = ''
+            export HOST_CC="${llvmPackagesBuildBuild.stdenv.cc}/bin/cc"
+            export HOST_CXX="${llvmPackagesBuildBuild.stdenv.cc}/bin/c++"
+          '';
         };
       }
     );
