@@ -12,6 +12,7 @@ import type { Jumplist } from "./plugins/jumplist.mts";
 import type { Sandbox } from "./sandbox.mts";
 import type { ExtensionContentFunction } from "./utils/ipc.mts";
 
+const { CONFIG_URI } = ChromeUtils.importESModule("chrome://glide/content/browser-constants.mjs");
 const { make_glide_api, make_buffer_options } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", {
   global: "current",
 });
@@ -34,6 +35,7 @@ const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-bl
 const { redefine_getter } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
 const { create_sandbox } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser-messenger.mjs", { global: "current" });
+const Autocmds = ChromeUtils.importESModule("chrome://glide/content/browser-autocmds.mjs", { global: "current" });
 const { JSONFile } = ChromeUtils.importESModule("resource://gre/modules/JSONFile.sys.mjs");
 const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
 
@@ -79,11 +81,6 @@ class GlideBrowserClass {
 
   #startup_listeners = new Set<() => void>();
   #startup_finished: boolean = false;
-
-  // note: this URI doesn't actually exist but defining it like this
-  //       means that devtools can resolve stack traces and show the
-  //       config contents
-  #config_uri = "chrome://glide/config/glide.ts";
 
   autocmds: {
     [K in glide.AutocmdEvent]?: {
@@ -197,29 +194,7 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await config_promise;
-
-      const results = await Promise.allSettled((GlideBrowser.autocmds.WindowLoaded ?? []).map(cmd =>
-        (async () => {
-          const cleanup = await cmd.callback({});
-          if (typeof cleanup === "function") {
-            throw new Error("WindowLoaded autocmds cannot define cleanup functions");
-          }
-        })()
-      ));
-
-      for (const result of results) {
-        if (result.status === "fulfilled") {
-          continue;
-        }
-
-        GlideBrowser._log.error(result.reason);
-        const loc = GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
-        GlideBrowser.add_notification("glide-autocmd-error", {
-          label: `Error occurred in WindowLoaded autocmd \`${loc}\` - ${result.reason}`,
-          priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-          buttons: [GlideBrowser.remove_all_notifications_button],
-        });
-      }
+      await Autocmds.invoke("WindowLoaded", { register_cleanup: null, args: {} });
     });
 
     // store a bit indicating all Glide versions the current profile has used so that
@@ -261,30 +236,7 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await extension_startup;
-
-      this._log.debug("[autocmds] emitting ConfigLoaded");
-      const results = await Promise.allSettled((GlideBrowser.autocmds.ConfigLoaded ?? []).map(cmd =>
-        (async () => {
-          const cleanup = await cmd.callback({});
-          if (typeof cleanup === "function") {
-            throw new Error("ConfigLoaded autocmds cannot define cleanup functions");
-          }
-        })()
-      ));
-
-      for (const result of results) {
-        if (result.status === "fulfilled") {
-          continue;
-        }
-
-        GlideBrowser._log.error(result.reason);
-        const loc = GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
-        GlideBrowser.add_notification("glide-autocmd-error", {
-          label: `Error occurred in ConfigLoaded autocmd \`${loc}\` - ${result.reason}`,
-          priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-          buttons: [GlideBrowser.remove_all_notifications_button],
-        });
-      }
+      await Autocmds.invoke("ConfigLoaded", { register_cleanup: null, args: {} });
     });
 
     this.on_startup(() => {
@@ -564,7 +516,7 @@ class GlideBrowserClass {
 
     try {
       const config_js = TSBlank.default(config_str);
-      Cu.evalInSandbox(config_js, sandbox, null, this.#config_uri, 1, false);
+      Cu.evalInSandbox(config_js, sandbox, null, CONFIG_URI, 1, false);
     } catch (err) {
       this._log.error(err);
 
@@ -700,58 +652,25 @@ class GlideBrowserClass {
     new_state: State,
     old_state: Omit<State, "mode"> & { mode: GlideMode | null },
   ) {
-    const cmds = GlideBrowser.autocmds.ModeChanged ?? [];
-    if (!cmds.length) {
-      return;
-    }
+    await Autocmds.invoke("ModeChanged", {
+      register_cleanup: null,
+      args: { new_mode: new_state.mode, old_mode: old_state.mode },
 
-    const args: glide.AutocmdArgs["ModeChanged"] = { new_mode: new_state.mode, old_mode: old_state.mode };
-
-    // TODO: display errors as they come in
-    const results = await Promise.allSettled(cmds.map(cmd =>
-      (async () => {
-        if (cmd.pattern !== "*") {
-          const [left, right] = cmd.pattern.split(":") as Split<
-            typeof cmd.pattern,
-            ":"
-          >;
-
-          if (left !== "*" && left !== old_state.mode) {
-            // no match
-            return;
-          }
-
-          if (right !== "*" && right !== new_state.mode) {
-            // no match
-            return;
-          }
+      matches(pattern): boolean {
+        if (pattern === "*") {
+          return true;
         }
 
-        const cleanup = await cmd.callback(args);
-        if (typeof cleanup === "function") {
-          throw new Error("ModeChanged autocmds cannot define cleanup functions");
+        const [left, right] = pattern.split(":") as Split<typeof pattern, ":">;
+        if (left !== "*" && left !== old_state.mode) {
+          return false;
         }
-      })()
-    ));
-
-    for (const result of results) {
-      if (result.status === "fulfilled") {
-        continue;
-      }
-
-      GlideBrowser._log.error(result.reason);
-
-      // TODO: if there are many errors this would be overwhelming...
-      //       maybe limit the number of errors we display at once?
-
-      const loc = GlideBrowser.#clean_stack(result.reason, "#state_change_autocmd")
-        ?? "<unknown>";
-      GlideBrowser.add_notification("glide-autocmd-error", {
-        label: `Error occurred in ModeChanged autocmd \`${loc}\` - ${result.reason}`,
-        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [GlideBrowser.remove_all_notifications_button],
-      });
-    }
+        if (right !== "*" && right !== new_state.mode) {
+          return false;
+        }
+        return true;
+      },
+    });
   }
 
   flush_pending_error_notifications() {
@@ -932,77 +851,29 @@ class GlideBrowserClass {
   }
 
   async invoke_commandlineexit_autocmd() {
-    const results = await Promise.allSettled((GlideBrowser.autocmds.CommandLineExit ?? []).map(cmd =>
-      (async () => {
-        const cleanup = await cmd.callback({});
-        if (typeof cleanup === "function") {
-          throw new Error("CommandLineExit autocmds cannot define cleanup functions");
-        }
-      })()
-    ));
-
-    for (const result of results) {
-      if (result.status === "fulfilled") {
-        continue;
-      }
-
-      GlideBrowser._log.error(result.reason);
-      const loc = GlideBrowser.#clean_stack(result.reason, "init/") ?? "<unknown>";
-      GlideBrowser.add_notification("glide-autocmd-error", {
-        label: `Error occurred in CommandLineExit autocmd \`${loc}\` - ${result.reason}`,
-        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [GlideBrowser.remove_all_notifications_button],
-      });
-    }
+    await Autocmds.invoke("CommandLineExit", { register_cleanup: null, args: {} });
   }
 
   async #invoke_urlenter_autocmd(location: nsIURI) {
-    const cmds = GlideBrowser.autocmds.UrlEnter ?? [];
-    if (!cmds.length) {
-      return;
-    }
-
-    const args: glide.AutocmdArgs["UrlEnter"] = {
-      url: location.spec,
-      get tab_id() {
-        return assert_present(
-          GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
-          "could not resolve tab wrapper",
-        ).id;
+    await Autocmds.invoke("UrlEnter", {
+      args: {
+        url: location.spec,
+        get tab_id() {
+          return assert_present(
+            GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
+            "could not resolve tab wrapper",
+          ).id;
+        },
       },
-    };
 
-    const results = await Promise.allSettled(cmds.map(cmd =>
-      (async () => {
-        if (!GlideBrowser.#test_url_autocmd_pattern(cmd.pattern, location)) {
-          return;
-        }
+      matches(pattern) {
+        return GlideBrowser.#test_url_autocmd_pattern(pattern, location);
+      },
 
-        const cleanup = await cmd.callback(args);
-        if (typeof cleanup === "function") {
-          GlideBrowser.buffer_cleanups.push({ callback: cleanup, source: "UrlEnter cleanup" });
-        }
-      })()
-    ));
-
-    for (const result of results) {
-      if (result.status === "fulfilled") {
-        continue;
-      }
-
-      GlideBrowser._log.error(result.reason);
-
-      // TODO: if there are many errors this would be overwhelming...
-      //       maybe limit the number of errors we display at once?
-
-      const loc = GlideBrowser.#clean_stack(result.reason, "#invoke_urlenter_autocmd")
-        ?? "<unknown>";
-      GlideBrowser.add_notification("glide-autocmd-error", {
-        label: `Error occurred in UrlEnter autocmd \`${loc}\` - ${result.reason}`,
-        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [GlideBrowser.remove_all_notifications_button],
-      });
-    }
+      register_cleanup(cleanup) {
+        GlideBrowser.buffer_cleanups.push({ callback: cleanup, source: "UrlEnter cleanup" });
+      },
+    });
   }
 
   #test_url_autocmd_pattern(
@@ -1091,7 +962,7 @@ class GlideBrowserClass {
       )
       ? err.stack
         .slice(0, err.stack.indexOf(`\n${up_to_func_name}`))
-        .replace(this.#config_uri, "glide.ts")
+        .replace(CONFIG_URI, "glide.ts")
       : null;
   }
 
@@ -1644,37 +1515,13 @@ class GlideBrowserClass {
   #partial_mapping_waiter_id: number | null = null;
 
   async #invoke_keystatechanged_autocmd(props: glide.AutocmdArgs["KeyStateChanged"]) {
-    const cmds = GlideBrowser.autocmds.KeyStateChanged ?? [];
-    if (!cmds.length) {
-      return;
-    }
-
-    const results = await Promise.allSettled(cmds.map(cmd =>
-      (async () => {
-        const cleanup = await cmd.callback({
-          ...props,
-          sequence: props.sequence.map(element => element === GlideBrowser.api.g.mapleader ? "<leader>" : element),
-        });
-        if (cleanup) {
-          throw new Error("ModeChanged autocmds cannot define cleanup functions");
-        }
-      })()
-    ));
-
-    for (const result of results) {
-      if (result.status === "fulfilled") {
-        continue;
-      }
-
-      GlideBrowser._log.error(result.reason);
-
-      const loc = GlideBrowser.#clean_stack(result.reason, "#invoke_keystatechanged_autocmd") ?? "<unknown>";
-      GlideBrowser.add_notification("glide-autocmd-error", {
-        label: `Error occurred in KeyStateChanged autocmd \`${loc}\` - ${result.reason}`,
-        priority: MozElements.NotificationBox.prototype.PRIORITY_CRITICAL_HIGH,
-        buttons: [GlideBrowser.remove_all_notifications_button],
-      });
-    }
+    await Autocmds.invoke("KeyStateChanged", {
+      register_cleanup: null,
+      args: {
+        ...props,
+        sequence: props.sequence.map(element => element === GlideBrowser.api.g.mapleader ? "<leader>" : element),
+      },
+    });
   }
 
   async #on_keydown(event: KeyboardEvent) {
