@@ -1,6 +1,9 @@
 name: macOS Build
 
 on:
+  push:
+    branches:
+      - feat/nix-flake-devshell
   workflow_dispatch:
     inputs:
       tag:
