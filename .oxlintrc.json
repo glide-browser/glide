@@ -16,7 +16,7 @@
 
   "rules": {
     // our rules
-    "glide/require-using-for-temp-prefs": "error",
+    "glide/require-using-for-scoped-prefs": "error",
     // ----
 
     // we're in a unique situation where this is better
