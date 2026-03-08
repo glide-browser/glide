@@ -180,6 +180,18 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: true,
   },
   {
+    name: "tab_next_visual",
+    description: "Switch to the next tab, taking into account vertical/horizontal tabs",
+    content: false,
+    repeatable: true,
+  },
+  {
+    name: "tab_prev_visual",
+    description: "Switch to the previous tab, taking into account vertical/horizontal tabs",
+    content: false,
+    repeatable: true,
+  },
+  {
     name: "tab_pin",
     description: "Pin the current tab, or the tab with the given ID",
     content: false,
