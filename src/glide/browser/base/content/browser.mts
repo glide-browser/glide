@@ -565,15 +565,24 @@ class GlideBrowserClass {
       this,
       "_extension_startup_promise",
       new Promise<void>((resolve) => {
+        const extension = this.extension;
+
+        // If the extension background context is available then the extension is already ready,
+        // so resolve immediately as our listener below would never be called.
+        if (extension.backgroundContext) {
+          resolve();
+          return;
+        }
+
         const listener = (_: unknown, context: WebExtensionBackgroundContext) => {
           this._log.debug(`extension-proxy-context-load called with viewType = ${context.viewType}`);
           if (context.viewType === "background") {
             resolve();
-            this.extension.off("extension-proxy-context-load", listener);
+            extension.off("extension-proxy-context-load", listener);
           }
         };
 
-        this.extension.on("extension-proxy-context-load", listener);
+        extension.on("extension-proxy-context-load", listener);
       }),
     );
   }
