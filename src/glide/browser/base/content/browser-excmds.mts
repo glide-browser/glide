@@ -1046,7 +1046,9 @@ export const GlideExcmds = new GlideExcmdsClass();
 function launch_as_text(file: nsIFile): void {
   try {
     const mime_service = Cc["@mozilla.org/mime;1"]!.getService(Ci.nsIMIMEService);
-    const mime_info = mime_service.getFromTypeAndExtension("text/plain", "");
+    const found = { value: false };
+    const mime_info = mime_service.getMIMEInfoFromOS("application/typescript", "ts", found);
+    mime_service.updateDefaultAppInfo(mime_info);
     mime_info.preferredAction = Ci.nsIHandlerInfo.useSystemDefault;
     mime_info.launchWithFile(file);
   } catch {
