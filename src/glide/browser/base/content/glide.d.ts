@@ -215,6 +215,29 @@ declare global {
       ): void;
 
       /**
+       * Create an autocmd that will be invoked whenever an addon is installed.
+       *
+       * The `pattern` is matched against the addon `id`. You can also use `*` as a placeholder to match _any_ addon.
+       *
+       * For example, to define an autocmd that will be fired when uBlock Origin is installed, use `ts:"uBlock0@raymondhill.net"`.
+       *
+       * ```typescript
+       * glide.autocmds.create(
+       *   "AddonInstalled",
+       *   "string",
+       *   ({ addon }) => {
+       *     //
+       *   },
+       * );
+       * ```
+       */
+      create<const Event extends "AddonInstalled">(
+        event: Event,
+        pattern: glide.AutocmdPatterns[Event],
+        callback: (args: glide.AutocmdArgs[Event]) => void,
+      ): void;
+
+      /**
        * Create an autocmd that will be invoked when the commandline is closed.
        */
       create<const Event extends "CommandLineExit">(
@@ -2212,6 +2235,7 @@ declare global {
       | "ModeChanged"
       | "ConfigLoaded"
       | "WindowLoaded"
+      | "AddonInstalled"
       | "CommandLineExit"
       | "KeyStateChanged";
     type AutocmdPatterns = {
@@ -2219,6 +2243,7 @@ declare global {
       ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
       ConfigLoaded: null;
       WindowLoaded: null;
+      AddonInstalled: string | ("*" & {});
       CommandLineExit: null;
       KeyStateChanged: null;
     };
@@ -2233,6 +2258,9 @@ declare global {
       };
       ConfigLoaded: {};
       WindowLoaded: {};
+      AddonInstalled: {
+        readonly addon: glide.Addon;
+      };
       CommandLineExit: {};
       KeyStateChanged: {
         readonly mode: GlideMode;

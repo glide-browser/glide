@@ -1,8 +1,8 @@
 diff --git a/toolkit/mozapps/extensions/AddonManager.sys.mjs b/toolkit/mozapps/extensions/AddonManager.sys.mjs
-index 4fe6aaa127d12bfebb9b246cf1bcaeb78aeef506..0ed265fbebd20938611cd07d8a89ffaebe742a45 100644
+index ba8a534bf857e35a46ff4ce7e140828c4ed3b081..2f1510c508424427cd317fb38815a782144c9524 100644
 --- a/toolkit/mozapps/extensions/AddonManager.sys.mjs
 +++ b/toolkit/mozapps/extensions/AddonManager.sys.mjs
-@@ -1279,6 +1279,9 @@ var AddonManagerInternal = {
+@@ -1290,6 +1290,9 @@ var AddonManagerInternal = {
          ITEM_STATUS: addonStatus,
          APP_ID: Services.appinfo.ID,
          APP_VERSION: aAppVersion ? aAppVersion : Services.appinfo.version,
@@ -12,7 +12,7 @@ index 4fe6aaa127d12bfebb9b246cf1bcaeb78aeef506..0ed265fbebd20938611cd07d8a89ffae
          REQ_VERSION: UPDATE_REQUEST_VERSION,
          APP_OS: Services.appinfo.OS,
          APP_ABI: Services.appinfo.XPCOMABI,
-@@ -1780,6 +1783,7 @@ var AddonManagerInternal = {
+@@ -1791,6 +1794,7 @@ var AddonManagerInternal = {
     * @param  {object} [aOptions.telemetryInfo]
     *         An optional object which provides details about the installation source
     *         included in the addon manager telemetry events.
@@ -20,11 +20,24 @@ index 4fe6aaa127d12bfebb9b246cf1bcaeb78aeef506..0ed265fbebd20938611cd07d8a89ffae
     * @throws if aUrl is not specified or if an optional argument of
     *         an improper type is passed.
     */
-@@ -4368,6 +4372,7 @@ export var AddonManager = {
+@@ -4379,6 +4383,7 @@ export var AddonManager = {
      return "unknown";
    },
  
 +  /** @type {AddonManagerInternal['getInstallForURL']} */
    getInstallForURL(aUrl, aOptions) {
      return AddonManagerInternal.getInstallForURL(aUrl, aOptions);
+   },
+@@ -4571,6 +4576,12 @@ export var AddonManager = {
+     return AddonManagerInternal.addExternalExtensionLoader(loader);
+   },
+ 
++  /**
++   * Adds a new AddonListener if the listener is not already registered.
++   *
++   * @param {AddonManagerListener} aListener
++   *        The AddonListener to add.
++   */
+   addAddonListener(aListener) {
+     AddonManagerInternal.addAddonListener(aListener);
    },

@@ -489,6 +489,43 @@ add_task(async function test_key_state_changed_autocmd() {
   });
 });
 
+add_task(async function test_addoninstalled_autocmd() {
+  await reload_config(function _() {
+    glide.g.autocmds = [];
+
+    glide.autocmds.create("AddonInstalled", "*", ({ addon }) => {
+      glide.g.autocmds!.push({ pattern: "*", id: addon.id });
+    });
+    glide.autocmds.create("AddonInstalled", "amosigned-xpi@tests.mozilla.org", ({ addon }) => {
+      glide.g.autocmds!.push({ pattern: "amosigned-xpi@tests.mozilla.org", id: addon.id });
+    });
+    glide.autocmds.create("AddonInstalled", "should_not_match", ({ addon }) => {
+      glide.g.autocmds!.push({ pattern: "should_not_match", id: addon.id });
+    });
+    glide.autocmds.create("AddonInstalled", "tests.mozilla.org", ({ addon }) => {
+      // should not match substrings
+      glide.g.autocmds!.push({ pattern: "tests.mozilla.org", id: addon.id });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    await SpecialPowers.pushPrefEnv({
+      set: [
+        ["extensions.install.requireBuiltInCerts", false],
+      ],
+    });
+
+    await glide.addons.install("https://example.com/browser/toolkit/mozapps/extensions/test/xpinstall/amosigned.xpi");
+
+    await until(() => glide.g.autocmds?.length === 2);
+
+    isjson(glide.g.autocmds, [
+      { pattern: "*", id: "amosigned-xpi@tests.mozilla.org" },
+      { pattern: "amosigned-xpi@tests.mozilla.org", id: "amosigned-xpi@tests.mozilla.org" },
+    ]);
+  });
+});
+
 add_task(async function test_autocmd_remove() {
   await reload_config(function _() {
     glide.g.calls = [];

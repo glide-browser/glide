@@ -1406,7 +1406,7 @@ function web_tab_to_firefox(tab: Browser.Tabs.Tab | number): BrowserTab {
   ).nativeTab;
 }
 
-function firefox_addon_to_glide(addon: Addon): glide.Addon {
+export function firefox_addon_to_glide(addon: Addon): glide.Addon {
   return {
     id: addon.id,
     name: addon.name,

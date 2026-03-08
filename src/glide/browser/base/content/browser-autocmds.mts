@@ -16,7 +16,7 @@ export async function invoke<Event extends glide.AutocmdEvent>(
   event: Event,
   props: {
     args: glide.AutocmdArgs[Event];
-    matches?: (pattern: glide.AutocmdPatterns[Event]) => boolean;
+    matches?: (pattern: glide.AutocmdPatterns[Event], args: glide.AutocmdArgs[Event]) => boolean;
 
     /**
      * Called when an autocmd function returns another function, so that
@@ -34,7 +34,7 @@ export async function invoke<Event extends glide.AutocmdEvent>(
 
   const results = await Promise.allSettled(cmds.map(cmd =>
     (async () => {
-      if (props.matches && !props.matches(cmd.pattern)) {
+      if (props.matches && !props.matches(cmd.pattern, props.args)) {
         return;
       }
 

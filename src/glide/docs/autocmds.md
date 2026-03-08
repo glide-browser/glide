@@ -153,6 +153,32 @@ Callback arguments:
 }
 ```
 
+## AddonInstalled
+
+Fired whenever an addon is installed.
+
+The `pattern` is matched against the addon `id`. You can also use `*` as a placeholder to match _any_ addon.
+
+For example, to define an autocmd that will be fired when uBlock Origin is installed, use `ts:"uBlock0@raymondhill.net"`.
+
+```typescript
+glide.autocmds.create(
+  "AddonInstalled",
+  "string",
+  ({ addon }) => {
+    //
+  },
+);
+```
+
+Callback arguments:
+
+```typescript {% highlight_prefix="interface x " %}
+{
+  readonly addon: glide.Addon;
+}
+```
+
 ## CommandLineExit
 
 Fired whenever the commandline is closed.

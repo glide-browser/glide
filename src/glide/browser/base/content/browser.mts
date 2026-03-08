@@ -13,9 +13,10 @@ import type { Sandbox } from "./sandbox.mts";
 import type { ExtensionContentFunction } from "./utils/ipc.mts";
 
 const { CONFIG_URI } = ChromeUtils.importESModule("chrome://glide/content/browser-constants.mjs");
-const { make_glide_api, make_buffer_options } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", {
-  global: "current",
-});
+const { make_glide_api, make_buffer_options, firefox_addon_to_glide } = ChromeUtils.importESModule(
+  "chrome://glide/content/browser-api.mjs",
+  { global: "current" },
+);
 const DefaultKeymaps = ChromeUtils.importESModule("chrome://glide/content/plugins/keymaps.mjs", { global: "current" });
 const { GlideBrowserDev } = ChromeUtils.importESModule("chrome://glide/content/browser-dev.mjs", { global: "current" });
 const Keys = ChromeUtils.importESModule("chrome://glide/content/utils/keys.mjs", { global: "current" });
@@ -213,6 +214,29 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await this._setup_scroll_breaking_change_notification();
+    });
+
+    this.on_startup(async () => {
+      const listener: AddonManagerListener = {
+        async onInstalled(addon) {
+          await config_promise;
+
+          Autocmds.invoke("AddonInstalled", {
+            register_cleanup: null,
+            args: { addon: firefox_addon_to_glide(addon) },
+            matches(pattern, args) {
+              if (pattern === "*") {
+                return true;
+              }
+              return pattern === args.addon.id;
+            },
+          });
+        },
+      };
+
+      AddonManager.addAddonListener(listener);
+      // note: unsure if this is strictly necessary or not
+      window.addEventListener("unload", () => AddonManager.removeAddonListener(listener));
     });
   }
 

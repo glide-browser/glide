@@ -423,6 +423,19 @@ interface WebExtensionPolicy {
   extension: WebExtension;
 }
 
+// see toolkit/mozapps/extensions/amManager.sys.mjs::_addAddonListener()
+interface AddonManagerListener {
+  onEnabling?(addon: Addon): void;
+  onEnabled?(addon: Addon): void;
+  onDisabling?(addon: Addon): void;
+  onDisabled?(addon: Addon): void;
+  onInstalling?(addon: Addon): void;
+  onInstalled?(addon: Addon): void;
+  onUninstalling?(addon: Addon): void;
+  onUninstalled?(addon: Addon): void;
+  onOperationCancelled?(addon: Addon): void;
+}
+
 declare var ChromeUtils: MockedExports.ChromeUtils;
 
 // note extends types in `glide/generated/@types/lib.gecko.dom.d.ts`
