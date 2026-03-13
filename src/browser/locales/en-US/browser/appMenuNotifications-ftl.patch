@@ -1,8 +1,8 @@
 diff --git a/browser/locales/en-US/browser/appMenuNotifications.ftl b/browser/locales/en-US/browser/appMenuNotifications.ftl
-index 1c2c740744049de44a14664f90191a788c88340f..9ce414d799b67167b9626298516cdc1c38ec818a 100644
+index 1c2c740744049de44a14664f90191a788c88340f..bc16806e683fd0c68d6d93f5209c4c6fe6eae2ec 100644
 --- a/browser/locales/en-US/browser/appMenuNotifications.ftl
 +++ b/browser/locales/en-US/browser/appMenuNotifications.ftl
-@@ -2,6 +2,15 @@
+@@ -2,6 +2,23 @@
  # License, v. 2.0. If a copy of the MPL was not distributed with this
  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
@@ -14,6 +14,14 @@ index 1c2c740744049de44a14664f90191a788c88340f..9ce414d799b67167b9626298516cdc1c
 +    .secondarybuttonaccesskey = C
 +
 +appmenu-glide-smooth-scroll-default-message = Smooth scrolling is now enabled by default.
++
++appmenu-glide-visual-tabs-default =
++    .buttonlabel = Learn more
++    .buttonaccesskey = L
++    .secondarybuttonlabel = :clear
++    .secondarybuttonaccesskey = C
++
++appmenu-glide-visual-tabs-default-message = Tab change keymap directions are now resolved from the vertical/horizontal tabs setting.
 +
  appmenu-update-available2 =
      .label = Update available

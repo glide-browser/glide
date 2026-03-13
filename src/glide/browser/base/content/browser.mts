@@ -217,6 +217,10 @@ class GlideBrowserClass {
     });
 
     this.on_startup(async () => {
+      await this.#setup_tabs_breaking_change_notification();
+    });
+
+    this.on_startup(async () => {
       const listener: AddonManagerListener = {
         async onInstalled(addon) {
           await config_promise;
@@ -627,33 +631,12 @@ class GlideBrowserClass {
       return;
     }
 
-    const oldest_version_file = GlideBrowser.api.path.join(
-      GlideBrowser.api.path.profile_dir,
-      "glide__compatibility_oldest_version.txt",
-    );
-    if (!(await GlideBrowser.api.fs.exists(oldest_version_file))) {
-      // this can happen the *very first* time the browser is launched
-      return;
-    }
-    const version_full = await GlideBrowser.api.fs.read(oldest_version_file, "utf8").then((version) =>
-      version.trimEnd()
-    ).catch((err) => {
-      this._log.error("error while reading ", oldest_version_file, err);
-      return null;
-    });
-    if (!version_full) {
-      // something very weird happened if we couldn't read the version file, so just bail
+    const result = await this.#has_version_older_than("0.1.54a");
+    if (result === false) {
       Services.prefs.setBoolPref(pref, true);
       return;
     }
-
-    // strip out the build id, we only care about the actual version
-    const oldest_version = version_full.slice(0, version_full.indexOf("_"));
-    this._log.debug("oldest used version", oldest_version);
-
-    if (Services.vc.compare(oldest_version, "0.1.53a") > 0) {
-      Services.prefs.setBoolPref(pref, true);
-      // oldest version is newer than 0.1.53a, nothing to do as the user never saw the previous instant scroll behaviour
+    if (result == null) {
       return;
     }
 
@@ -679,6 +662,73 @@ class GlideBrowserClass {
         { callback: () => AppMenuNotifications.removeNotification(notification_id) },
       );
     };
+  }
+
+  notify_tabs_breaking_change: (() => void) | null = null;
+
+  async #setup_tabs_breaking_change_notification() {
+    const pref = "glide.notifications.tabs_explicit_to_visual";
+    if (Services.prefs.getBoolPref(pref, false)) {
+      // already notified
+      return;
+    }
+
+    const result = await this.#has_version_older_than("0.1.60a");
+    if (result === false) {
+      Services.prefs.setBoolPref(pref, true);
+      return;
+    }
+    if (result == null) {
+      return;
+    }
+
+    this.notify_tabs_breaking_change = () => {
+      this.notify_tabs_breaking_change = null;
+      Services.prefs.setBoolPref(pref, true);
+
+      // corresponds to the id in engine/browser/components/customizableui/content/panelUI.inc.xhtml
+      const notification_id = "glide-visual-tabs-default";
+
+      AppMenuNotifications.showNotification(
+        notification_id,
+        // main action, the "learn more" button
+        {
+          // note: for some reason, using the `resource://glide-docs/changelog.html` version completely breaks the browser.
+          docs_url: "https://glide-browser.app/changelog#0.1.60a",
+          callback() {
+            AppMenuNotifications.removeNotification(notification_id);
+            gBrowser.addTrustedTab(this.docs_url, { inBackground: false });
+          },
+        },
+        // :clear
+        { callback: () => AppMenuNotifications.removeNotification(notification_id) },
+      );
+    };
+  }
+
+  async #has_version_older_than(compare_version: string): Promise<boolean | null> {
+    const glide = GlideBrowser.api;
+    const oldest_version_file = glide.path.join(glide.path.profile_dir, "glide__compatibility_oldest_version.txt");
+    if (!(await glide.fs.exists(oldest_version_file))) {
+      // this can happen the *very first* time the browser is launched
+      return null;
+    }
+    const version_full = await glide.fs.read(oldest_version_file, "utf8").then((version) => version.trimEnd()).catch(
+      (err) => {
+        this._log.error("error while reading ", oldest_version_file, err);
+        return null;
+      },
+    );
+    if (!version_full) {
+      // something very weird happened if we couldn't read the version file, so just bail
+      return false;
+    }
+
+    // strip out the build id, we only care about the actual version
+    const oldest_version = version_full.slice(0, version_full.indexOf("_"));
+    this._log.debug("oldest used version", oldest_version);
+
+    return Services.vc.compare(oldest_version, compare_version) >= 0;
   }
 
   async #state_change_autocmd(
