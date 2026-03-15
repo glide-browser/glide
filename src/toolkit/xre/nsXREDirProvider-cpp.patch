@@ -1,5 +1,5 @@
 diff --git a/toolkit/xre/nsXREDirProvider.cpp b/toolkit/xre/nsXREDirProvider.cpp
-index 1b346ce2e62b6947e9f6b5f5f88ec16454847e09..4fcb2a4c572a5ba74913c52ad5845dda6904e971 100644
+index 1b346ce2e62b6947e9f6b5f5f88ec16454847e09..934a75824d27bdd38a99b58f2c244beb52ec5111 100644
 --- a/toolkit/xre/nsXREDirProvider.cpp
 +++ b/toolkit/xre/nsXREDirProvider.cpp
 @@ -332,8 +332,8 @@ nsresult nsXREDirProvider::GetBackgroundTasksProfilesRootDir(
@@ -86,7 +86,7 @@ index 1b346ce2e62b6947e9f6b5f5f88ec16454847e09..4fcb2a4c572a5ba74913c52ad5845dda
    rv = aFile->AppendNative(nsDependentCString(sXR));
    NS_ENSURE_SUCCESS(rv, rv);
  
-@@ -1579,7 +1580,34 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
+@@ -1579,7 +1580,56 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
      // Note that MacOS ignores the vendor when creating the profile hierarchy -
      // all application preferences directories live alongside one another in
      // ~/Library/Application Support/
@@ -114,6 +114,28 @@ index 1b346ce2e62b6947e9f6b5f5f88ec16454847e09..4fcb2a4c572a5ba74913c52ad5845dda
 +    bool legacyExists = false;
 +    legacyDir->Exists(&legacyExists);
 +
++    nsAutoCString legacyPath;
++    legacyDir->GetNativePath(legacyPath);
++
++    nsCOMPtr<nsIFile> resolvedDir;
++    rv = aFile->Clone(getter_AddRefs(resolvedDir));
++    NS_ENSURE_SUCCESS(rv, rv);
++    if (legacyExists) {
++      rv = resolvedDir->AppendNative(appName);
++    } else {
++      rv = resolvedDir->AppendNative("Glide Browser"_ns);
++    }
++    NS_ENSURE_SUCCESS(rv, rv);
++
++    nsAutoCString resolvedPath;
++    resolvedDir->GetNativePath(resolvedPath);
++
++    PR_fprintf(PR_STDERR,
++               "glide: AppendProfilePath macOS appName=%s legacyExists=%d "
++               "legacyPath=%s resolvedPath=%s\n",
++               appName.get(), legacyExists, legacyPath.get(),
++               resolvedPath.get());
++
 +    if (legacyExists) {
 +      rv = aFile->AppendNative(appName);
 +    } else {
@@ -122,7 +144,7 @@ index 1b346ce2e62b6947e9f6b5f5f88ec16454847e09..4fcb2a4c572a5ba74913c52ad5845dda
    }
    NS_ENSURE_SUCCESS(rv, rv);
  
-@@ -1600,7 +1628,7 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
+@@ -1600,7 +1650,7 @@ nsresult nsXREDirProvider::AppendProfilePath(nsIFile* aFile, bool aLocal) {
    // The parent of this directory is set in GetUserDataDirectoryHome
    // XXX: handle gAppData->profile properly
    // XXXsmaug ...and the rest of the profile creation!
