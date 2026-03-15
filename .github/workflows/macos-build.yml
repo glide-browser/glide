@@ -3,9 +3,6 @@ name: macOS Build
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Release tag to upload the DMG to"
-        type: string
       artifacts:
         description: "Upload built artifacts"
         type: boolean
@@ -131,14 +128,6 @@ jobs:
         run: |
           mv dist/glide-*.dmg "dist/glide.macos-$GLIDE_COMPAT.dmg"
           mv dist/output.mar "dist/macos-$GLIDE_COMPAT.mar"
-
-      - name: Upload DMG to release
-        if: inputs.tag
-        run: |
-          gh release upload $TAG ./dist/glide.macos-$GLIDE_COMPAT.dmg --clobber
-        env:
-          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-          TAG: ${{ inputs.tag }}
 
       - name: Upload DMG
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

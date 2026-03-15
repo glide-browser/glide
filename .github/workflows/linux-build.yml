@@ -3,9 +3,6 @@ name: Linux Build
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Release tag to upload tar to"
-        type: string
       upload:
         description: "Upload built artifacts"
         type: boolean
@@ -122,14 +119,6 @@ jobs:
       - name: Rename artifacts
         run: |
           mv dist/glide-*.tar.xz "dist/glide.linux-$GLIDE_COMPAT.tar.xz"
-
-      - name: Upload tar to release
-        if: inputs.tag
-        run: |
-          gh release upload $TAG ./dist/glide.linux-$GLIDE_COMPAT.tar.xz --clobber
-        env:
-          GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-          TAG: ${{ inputs.tag }}
 
       - name: Upload tar
         if: inputs.upload
