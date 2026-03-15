@@ -19,6 +19,24 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.60a
+
+## Changes {% id="0.1.60a-changes" %}
+
+- Bumped Firefox from 148.0b15 to 149.0b8
+- Added [`AddonInstalled`](autocmds.md#addoninstalled) autocmd
+- Added [`ts:glide.commandline.close()`](api.md#glide.commandline.close)
+- Added `:tab_duplicate` excmd
+- Added `yt` normal mode keymapping to duplicate the current tab
+- Added `<A-p>` normal mode keymapping to pin / unpin the current tab
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Fixed macOS distribution missing passkey entitlements
+- Fixed the `:whichkey` UI disappearing after reloading the config
+- Fixed `<C-d>` / `<C-u>` so they _actually_ scroll half pages instead of full pages
+- Fixed (hopefully) a race condition preventing the `ConfigLoaded` autocmd from firing
+- Breaking change: the [`ts:glide.unstable.split_views`](api.md#glide.unstable.split_views) API now requires numeric IDs
+  - This was an upstream Firefox change.
+
 # 0.1.59a
 
 ## Breaking change: diacritic keymaps on macOS {% id="0.1.59a-diacritics" %}
