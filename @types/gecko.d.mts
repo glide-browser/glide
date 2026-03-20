@@ -58,7 +58,7 @@ declare namespace GlobalBrowser {
   interface GlobalBrowser {
     // tabs
     tabs: BrowserTab[];
-    selectedBrowser: BrowserTab | undefined;
+    selectedBrowser: Browser | undefined;
     selectedTab: BrowserTab | undefined;
     tabContainer: TabContainer;
     removeTab(tab: BrowserTab): void;
@@ -108,9 +108,12 @@ declare namespace GlobalBrowser {
   }
 
   /** Corresponds to the `<browser>` element */
-  interface Browser extends HTMLElement {
-    parentNode: HTMLElement;
-  }
+  declare type Browser =
+    & Omit<import("../engine/toolkit/content/widgets/browser-custom-element.mjs").MozBrowser, "currentURI">
+    & XULFrameElement
+    & {
+      readonly currentURI: nsIURI | null;
+    };
 
   /**
    * See `toolkit/content/widgets/notificationbox.js`

@@ -47,10 +47,10 @@ add_task(async function test_tabs_functions() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
+    is(gBrowser.selectedBrowser?.currentURI?.spec, INPUT_TEST_URI);
 
     await keys("<Space>n");
-    await waiter(() => gBrowser.selectedBrowser?.currentURI.spec).is("about:blank");
+    await waiter(() => gBrowser.selectedBrowser?.currentURI?.spec).is("about:blank");
 
     await keys("<Space>d");
     await waiter(() => glide.g.test_checked).ok();
@@ -85,7 +85,7 @@ add_task(async function test_tabs_functions() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
+    is(gBrowser.selectedBrowser?.currentURI?.spec, INPUT_TEST_URI);
     await keys("<Space>n");
     await until(() => glide.g.test_checked);
   });

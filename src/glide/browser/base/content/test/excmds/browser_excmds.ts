@@ -17,7 +17,7 @@ const KEY_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content
 const INPUT_TEST_FILE = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 function current_url() {
-  return gBrowser.selectedBrowser?.currentURI.spec;
+  return gBrowser.selectedBrowser?.currentURI?.spec;
 }
 
 add_task(async function test_tab_switching() {
@@ -167,7 +167,7 @@ add_task(async function test_tab_new() {
 
   is(gBrowser.tabs.length, initial_tab_count + 1, "tab_new should create a new tab");
   is(gBrowser.selectedTab, gBrowser.tabs[gBrowser.tabs.length - 1], "New tab should be focused");
-  is(gBrowser.selectedBrowser.currentURI.spec, "about:newtab", "New tab should open with blank or newtab page");
+  is(gBrowser.selectedBrowser?.currentURI?.spec, "about:newtab", "New tab should open with blank or newtab page");
 
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
 
@@ -181,7 +181,7 @@ add_task(async function test_tab_new() {
 
   is(gBrowser.tabs.length, initial_tab_count + 1, "tab_new with URL should create a new tab");
   is(gBrowser.selectedTab, gBrowser.tabs[gBrowser.tabs.length - 1], "New tab with URL should be focused");
-  is(gBrowser.selectedBrowser.currentURI.spec, INPUT_TEST_FILE, "New tab should load the specified URL");
+  is(gBrowser.selectedBrowser?.currentURI?.spec, INPUT_TEST_FILE, "New tab should load the specified URL");
 
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
 });

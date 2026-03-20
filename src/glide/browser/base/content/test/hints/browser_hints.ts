@@ -124,7 +124,7 @@ add_task(async function test_auto_activate_single_hint() {
     await sleep_frames(5);
     await wait_for_mode("normal");
 
-    await waiter(() => gBrowser.selectedBrowser?.currentURI.spec).is(FILE);
+    await waiter(() => gBrowser.selectedBrowser?.currentURI?.spec).is(FILE);
 
     await sleep_frames(3);
   });

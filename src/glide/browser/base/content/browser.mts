@@ -1819,7 +1819,7 @@ class GlideBrowserClass {
   }
 
   get_content_actor(): GlideHandlerParent {
-    let tab_browser = gBrowser.selectedBrowser;
+    const tab_browser = assert_present(gBrowser.selectedBrowser);
     let content_wgp = assert_present(
       tab_browser.browsingContext
         .currentWindowGlobal as typeof windowGlobalChild,
@@ -1832,7 +1832,7 @@ class GlideBrowserClass {
   }
 
   get_docs_actor(): GlideDocsParent {
-    let tab_browser = gBrowser.selectedBrowser;
+    const tab_browser = assert_present(gBrowser.selectedBrowser);
     let content_wgp = assert_present(
       tab_browser.browsingContext
         .currentWindowGlobal as typeof windowGlobalChild,
@@ -1912,8 +1912,8 @@ class GlideBrowserClass {
     let browser = gBrowser.getBrowserForTab(tab);
 
     let glide_commandline = document!.createXULElement("glide-commandline") as GlideCommandLine;
-
-    browser.parentNode.insertAdjacentElement("afterend", glide_commandline);
+    const parent_node = browser.parentNode as HTMLElement | null;
+    parent_node?.insertAdjacentElement("afterend", glide_commandline);
 
     await new Promise(r => requestAnimationFrame(r));
 
