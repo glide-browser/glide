@@ -244,7 +244,7 @@ export function make_glide_api(
         return AppConstants.GLIDE_FIREFOX_VERSION;
       },
       get url() {
-        const url = (gBrowser?.selectedBrowser?.currentURI as nsIURI)?.spec;
+        const url = gBrowser.selectedBrowser?.currentURI?.spec;
         if (!url) {
           throw new Error("Could not resolve the current URL.");
         }

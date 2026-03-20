@@ -14,7 +14,7 @@ function uri(i: number) {
 }
 
 function current_url() {
-  return gBrowser.selectedBrowser?.currentURI.spec;
+  return gBrowser.selectedBrowser?.currentURI?.spec;
 }
 
 add_task(async function test_jumplist_basic_navigation() {

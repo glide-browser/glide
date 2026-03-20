@@ -53,7 +53,7 @@ add_task(async function test_tabs_active() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    is(gBrowser.selectedBrowser?.currentURI.spec, INPUT_TEST_URI);
+    is(gBrowser.selectedBrowser?.currentURI?.spec, INPUT_TEST_URI);
 
     await keys("<Space>n");
     await waiter(() => glide.g.test_checked).ok();

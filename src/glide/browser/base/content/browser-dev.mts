@@ -44,9 +44,7 @@ class GlideBrowserDevClass {
    * contribute to drive wear.
    */
   async #check_docs_change() {
-    const url = gBrowser?.selectedBrowser?.currentURI.spec as
-      | string
-      | undefined;
+    const url = gBrowser?.selectedBrowser?.currentURI?.spec;
     if (
       !url
       || !url.startsWith("file://")
@@ -94,9 +92,7 @@ class GlideBrowserDevClass {
   }
 
   async #check_tutor_change() {
-    const url = gBrowser?.selectedBrowser?.currentURI.spec as
-      | string
-      | undefined;
+    const url = gBrowser?.selectedBrowser?.currentURI?.spec;
 
     if (!url || !url.startsWith("resource://glide-tutor/")) {
       return;

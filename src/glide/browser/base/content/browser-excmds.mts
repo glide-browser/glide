@@ -634,7 +634,7 @@ class GlideExcmdsClass {
       }
 
       case "url_yank": {
-        const url = gBrowser.selectedBrowser?.currentURI.spec;
+        const url = gBrowser.selectedBrowser?.currentURI?.spec;
         if (!url) {
           throw new Error("Could not find a URL to copy");
         }
