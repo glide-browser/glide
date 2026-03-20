@@ -1913,8 +1913,10 @@ class GlideBrowserClass {
 
     let glide_commandline = document!.createXULElement("glide-commandline") as GlideCommandLine;
     const parent_node = browser.parentNode as HTMLElement | null;
-    parent_node?.insertAdjacentElement("afterend", glide_commandline);
-
+    if (!parent_node) {
+      throw new Error("Could not create commandline element");
+    }
+    parent_node.insertAdjacentElement("afterend", glide_commandline);
     await new Promise(r => requestAnimationFrame(r));
 
     if (window.closed || tab.closing) {

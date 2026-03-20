@@ -187,7 +187,7 @@ add_task(async function test_commandline_closes_on_blur() {
     is(input!.value, "test", "Input should contain 'test'");
 
     // Move focus to browser content
-    gBrowser.selectedBrowser?.focus();
+    gBrowser.selectedBrowser!.focus();
     await waiter(() => commandline.hidden).ok();
     await wait_for_mode("normal");
   });
