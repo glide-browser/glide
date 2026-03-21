@@ -190,7 +190,9 @@ class GlideHintsClass {
    * Remove all hints from the DOM tree and switch back to `normal` mode.
    */
   remove_hints() {
-    GlideBrowser._change_mode("normal");
+    if (GlideBrowser.state.mode === "hint") {
+      GlideBrowser._change_mode("normal");
+    }
     this.#clear_hints();
   }
 
