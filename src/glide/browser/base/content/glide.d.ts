@@ -140,6 +140,15 @@ declare global {
       ): void;
 
       /**
+       * Create an autocmd that will be invoked whenever the focused tab changes.
+       */
+      create<const Event extends "TabEnter">(
+        event: Event,
+        pattern: glide.AutocmdPatterns[Event],
+        callback: (args: glide.AutocmdArgs[Event]) => void,
+      ): void;
+
+      /**
        * Create an autocmd that will be invoked whenever the mode changes.
        *
        * The pattern is matched against `old_mode:new_mode`. You can also use `*` as a placeholder
@@ -2232,6 +2241,7 @@ declare global {
 
     type AutocmdEvent =
       | "UrlEnter"
+      | "TabEnter"
       | "ModeChanged"
       | "ConfigLoaded"
       | "WindowLoaded"
@@ -2240,6 +2250,7 @@ declare global {
       | "KeyStateChanged";
     type AutocmdPatterns = {
       UrlEnter: RegExp | { hostname?: string };
+      TabEnter: RegExp | { hostname?: string };
       ModeChanged: "*" | `${GlideMode | "*"}:${GlideMode | "*"}`;
       ConfigLoaded: null;
       WindowLoaded: null;
@@ -2249,6 +2260,7 @@ declare global {
     };
     type AutocmdArgs = {
       UrlEnter: { readonly url: string; readonly tab_id: number };
+      TabEnter: { readonly url: string; readonly tab_id: number };
       ModeChanged: {
         /**
          * This may be `null` when first loading Glide or when reloading the config.
