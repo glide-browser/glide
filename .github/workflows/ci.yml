@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ci/node-24
   pull_request:
 
 jobs:
