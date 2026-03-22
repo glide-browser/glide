@@ -105,6 +105,11 @@ declare global {
        * ```ts
        * const proc = await glide.process.spawn('kitty', ['nvim', 'glide.ts'], { cwd: '~/.dotfiles/glide' });
        * console.log('opened kitty with pid', proc.pid);
+       *
+       * // iterate through each output line as they come in
+       * for await (const line of proc.stdout.lines()) {
+       *   // ...
+       * }
        * ```
        *
        * **note**: on macOS, the `PATH` environment variable is likely not set to what you'd expect, as applications do not inherit your shell environment.
