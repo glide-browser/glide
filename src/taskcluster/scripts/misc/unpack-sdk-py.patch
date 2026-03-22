@@ -1,0 +1,40 @@
+diff --git a/taskcluster/scripts/misc/unpack-sdk.py b/taskcluster/scripts/misc/unpack-sdk.py
+index e17f98d6578efc85b1a474cd27b5b205ac6200aa..08008153f79aeed66af7214dcfbd84f8d5ef4bd4 100644
+--- a/taskcluster/scripts/misc/unpack-sdk.py
++++ b/taskcluster/scripts/misc/unpack-sdk.py
+@@ -8,6 +8,8 @@ import shutil
+ import stat
+ import sys
+ import tempfile
++import traceback
++import urllib.error
+ from io import BytesIO
+ from urllib.request import urlopen
+ 
+@@ -23,14 +25,18 @@ def unpack_sdk(url, sha512, extract_prefix, out_dir="."):
+             if attempt != 0:
+                 print(f"Failed to download from {url}. Retrying", file=sys.stderr)
+ 
+-            with urlopen(url) as fh:
+-                # Equivalent to shutil.copyfileobj, but computes sha512 at the same time.
+-                while True:
+-                    buf = fh.read(1024 * 1024)
+-                    if not buf:
+-                        break
+-                    hash.update(buf)
+-                    pkg.write(buf)
++            try:
++                with urlopen(url) as fh:
++                    # Equivalent to shutil.copyfileobj, but computes sha512 at the same time.
++                    while True:
++                        buf = fh.read(1024 * 1024)
++                        if not buf:
++                            break
++                        hash.update(buf)
++                        pkg.write(buf)
++            except urllib.error.HTTPError:
++                traceback.print_exc()
++
+             digest = hash.hexdigest()
+             if digest == sha512:
+                 break
