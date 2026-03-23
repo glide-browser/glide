@@ -62,8 +62,22 @@ export const autohide_tabstoolbar_v2 = css`
     }
   }
   @media not -moz-pref("sidebar.verticalTabs") {
+    :root:not([customizing], [chromehidden~="menubar"]) #navigator-toolbox::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 16px;
+      background: transparent;
+      pointer-events: auto;
+      z-index: 1;
+    }
+    #mainPopupSet:has(> #tabgroup-preview-panel[panelopen]) ~ #navigator-toolbox::before {
+      pointer-events: none;
+    }
     :root:not([customizing], [chromehidden~="menubar"])
-      #navigator-toolbox:has(> :is(#toolbar-menubar, #TabsToolbar):hover),
+      #navigator-toolbox:is(:hover, :has(> :is(#toolbar-menubar, #TabsToolbar):hover)),
     :root:not([customizing], [chromehidden~="menubar"]) #TabsToolbar {
       margin-bottom: calc(
         0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
@@ -96,12 +110,9 @@ export const autohide_tabstoolbar_v2 = css`
         margin-bottom var(--uc-tabs-hide-animation-duration) ease-out
           var(--uc-tabs-hide-animation-delay) !important;
     }
-    #mainPopupSet:has(
-        > #tab-group-editor > [panelopen],
-        > #tabgroup-preview-panel[panelopen]
-      )
+    #mainPopupSet:has(> #tab-group-editor > [panelopen])
       ~ #navigator-toolbox,
-    #navigator-toolbox:has(> :is(#toolbar-menubar, #TabsToolbar):hover),
+    #navigator-toolbox:is(:hover, :has(> :is(#toolbar-menubar, #TabsToolbar):hover)),
     #navigator-toolbox[movingtab] {
       transition-delay: 0s !important;
       margin-bottom: calc(
