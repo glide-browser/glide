@@ -1,8 +1,8 @@
 diff --git a/browser/components/customizableui/content/panelUI.inc.xhtml b/browser/components/customizableui/content/panelUI.inc.xhtml
-index 6cb22be6526b17d952a90fd414c49a31e9afde7a..33009fa314c4d7431dfdaa1c2521538037339d75 100644
+index 6cb22be6526b17d952a90fd414c49a31e9afde7a..3fe1985f109eb25579a958a8f12a336cc86ae922 100644
 --- a/browser/components/customizableui/content/panelUI.inc.xhtml
 +++ b/browser/components/customizableui/content/panelUI.inc.xhtml
-@@ -146,6 +146,22 @@
+@@ -146,6 +146,37 @@
           noautohide="true"
           nopreventnavboxhide="true"
           role="alert">
@@ -19,6 +19,21 @@ index 6cb22be6526b17d952a90fd414c49a31e9afde7a..33009fa314c4d7431dfdaa1c25215380
 +                     hidden="true">
 +      <popupnotificationcontent id="glide-smooth-scroll-default-notification-content" orient="vertical">
 +        <description id="glide-smooth-scroll-default-description" data-lazy-l10n-id="appmenu-glide-smooth-scroll-default-message"/>
++      </popupnotificationcontent>
++    </popupnotification>
++
++    <popupnotification id="appMenu-glide-visual-tabs-default-notification"
++                     popupid="glide-visual-tabs-default"
++                     data-lazy-l10n-id="appmenu-glide-visual-tabs-default"
++                     data-l10n-attrs="buttonlabel, buttonaccesskey, secondarybuttonlabel, secondarybuttonaccesskey"
++                     closebuttonhidden="true"
++                     dropmarkerhidden="true"
++                     checkboxhidden="true"
++                     buttonhighlight="true"
++                     hasicon="true"
++                     hidden="true">
++      <popupnotificationcontent id="glide-visual-tabs-default-notification-content" orient="vertical">
++        <description id="glide-visual-tabs-default-description" data-lazy-l10n-id="appmenu-glide-visual-tabs-default-message"/>
 +      </popupnotificationcontent>
 +    </popupnotification>
 +
