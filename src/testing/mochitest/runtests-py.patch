@@ -1,8 +1,8 @@
 diff --git a/testing/mochitest/runtests.py b/testing/mochitest/runtests.py
-index 0d19aa84ba415af20655924ef28db7d6db8174b4..8cda4e03f709f9af091ead852c8e3487a7ad8aa1 100644
+index 522906776da01f69bc2f873db0159e0b0dce81f9..9c566be262801943713d3cfa69d36950d5dd0848 100644
 --- a/testing/mochitest/runtests.py
 +++ b/testing/mochitest/runtests.py
-@@ -2332,6 +2332,15 @@ toolbar#nav-bar {
+@@ -2360,6 +2360,15 @@ toolbar#nav-bar {
              path = os.path.join(profile_data_dir, profile)
              self.profile.merge(path, interpolation=interpolation)
  
@@ -18,7 +18,7 @@ index 0d19aa84ba415af20655924ef28db7d6db8174b4..8cda4e03f709f9af091ead852c8e3487
      @property
      def conditioned_profile_copy(self):
          """Returns a copy of the original conditioned profile that was created."""
-@@ -2698,6 +2707,12 @@ toolbar#nav-bar {
+@@ -2724,6 +2733,12 @@ toolbar#nav-bar {
              attrs = ["pid", "ppid", "name", "cmdline", "username"]
              for proc in psutil.process_iter():
                  try:
@@ -29,5 +29,5 @@ index 0d19aa84ba415af20655924ef28db7d6db8174b4..8cda4e03f709f9af091ead852c8e3487
 +                        continue
 +
                      if "firefox" in proc.name():
-                         firefoxes = "%s%s\n" % (firefoxes, proc.as_dict(attrs=attrs))
+                         firefoxes = f"{firefoxes}{proc.as_dict(attrs=attrs)}\n"
                  except Exception:

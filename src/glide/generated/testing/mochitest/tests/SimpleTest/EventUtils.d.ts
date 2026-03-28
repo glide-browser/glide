@@ -8,6 +8,11 @@ function _EU_maybeUnwrap(o: any): any;
 function _EU_getPlatform(): "unknown" | "linux" | "android" | "windows" | "mac";
 function _EU_roundDevicePixels(aMaybeFractionalPixels: any): number;
 /**
+ * Return the additional version details of Windows, e.g., "7309" of build
+ * number "6100.7309".
+ */
+function _EU_getWindowsUBR(): any;
+/**
  * promiseElementReadyForUserInput() dispatches mousemove events to aElement
  * and waits one of them for a while.  Then, returns "resolved" state when it's
  * successfully received.  Otherwise, if it couldn't receive mousemove event on
@@ -1146,7 +1151,7 @@ namespace KEYBOARD_LAYOUT_ARABIC {
     let name: string;
     let Mac: number;
     let Win: number;
-    let hasAltGrOnWin: boolean;
+    const hasAltGrOnWin: boolean;
 }
 namespace KEYBOARD_LAYOUT_ARABIC_PC {
     let name_1: string;

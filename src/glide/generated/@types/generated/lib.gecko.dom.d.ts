@@ -1221,7 +1221,7 @@ interface GPUPipelineErrorInit {
 }
 
 interface GPUPipelineLayoutDescriptor extends GPUObjectDescriptorBase {
-    bindGroupLayouts: GPUBindGroupLayout[];
+    bindGroupLayouts: (GPUBindGroupLayout | null)[];
 }
 
 interface GPUPrimitiveState {
@@ -1510,6 +1510,15 @@ interface HeapSnapshotBoundaries {
     runtime?: boolean;
 }
 
+interface HighlightHitResult {
+    highlight?: Highlight;
+    ranges?: AbstractRange[];
+}
+
+interface HighlightsFromPointOptions {
+    shadowRoots?: ShadowRoot[];
+}
+
 interface IDBDatabaseInfo {
     name?: string;
     version?: number;
@@ -1753,6 +1762,10 @@ interface IntersectionObserverInit {
     threshold?: number | number[];
 }
 
+interface InvokeToolOptions {
+    signal?: AbortSignal;
+}
+
 interface KeySystemTrackConfiguration {
     encryptionScheme?: string | null;
     robustness?: string;
@@ -1816,8 +1829,10 @@ interface LibcConstants {
     FD_CLOEXEC?: number;
     F_SETFD?: number;
     F_SETFL?: number;
+    O_CLOEXEC?: number;
     O_CREAT?: number;
     O_NONBLOCK?: number;
+    O_PATH?: number;
     O_WRONLY?: number;
     POLLERR?: number;
     POLLHUP?: number;
@@ -2369,6 +2384,14 @@ interface MessageEventInit extends EventInit {
     source?: MessageEventSource | null;
 }
 
+interface ModelContextTool {
+    annotations?: ToolAnnotations;
+    description: string;
+    execute: ToolExecuteCallback;
+    inputSchema?: any;
+    name: string;
+}
+
 interface MouseEventInit extends EventModifierInit {
     button?: number;
     buttons?: number;
@@ -2617,8 +2640,10 @@ interface OscillatorOptions extends AudioNodeOptions {
 }
 
 interface PCErrorData {
+    errorDetail?: string;
     message: string;
     name: PCError;
+    sdpLineNumber?: number;
 }
 
 interface PageRevealEventInit extends EventInit {
@@ -3296,6 +3321,18 @@ interface RTCEncodedVideoFrameOptions {
     metadata?: RTCEncodedVideoFrameMetadata;
 }
 
+interface RTCErrorEventInit extends EventInit {
+    error: RTCError;
+}
+
+interface RTCErrorInit {
+    errorDetail: RTCErrorDetailType;
+    receivedAlert?: number;
+    sctpCauseCode?: number;
+    sdpLineNumber?: number;
+    sentAlert?: number;
+}
+
 interface RTCIceCandidateInit {
     candidate?: string;
     sdpMLineIndex?: number | null;
@@ -3463,6 +3500,14 @@ interface RTCOutboundRtpStreamStats extends RTCSentRtpStreamStats {
     rid?: string;
     totalEncodeTime?: number;
     totalEncodedBytesTarget?: number;
+}
+
+interface RTCPeerConnectionIceErrorEventInit extends EventInit {
+    address?: string | null;
+    errorCode: number;
+    errorText?: string;
+    port?: number | null;
+    url?: string;
 }
 
 interface RTCPeerConnectionIceEventInit extends EventInit {
@@ -3750,6 +3795,7 @@ interface ReportingObserverOptions {
 interface RequestInit {
     body?: BodyInit | null;
     cache?: RequestCache;
+    cookieJarSettings?: nsICookieJarSettings;
     credentials?: RequestCredentials;
     headers?: HeadersInit;
     integrity?: string;
@@ -4009,6 +4055,7 @@ interface SynthesizeEventData {
 
 interface SynthesizeEventOptions {
     isAsyncEnabled?: boolean;
+    isDOMEventSynthesized?: boolean;
     toWindow?: boolean;
 }
 
@@ -4023,7 +4070,6 @@ interface SynthesizeMouseEventData extends SynthesizeEventData {
 
 interface SynthesizeMouseEventOptions extends SynthesizeEventOptions {
     ignoreRootScrollFrame?: boolean;
-    isDOMEventSynthesized?: boolean;
     isWidgetEventSynthesized?: boolean;
 }
 
@@ -4130,6 +4176,10 @@ interface ToggleEventInit extends EventInit {
 
 interface TogglePopoverOptions extends ShowPopoverOptions {
     force?: boolean;
+}
+
+interface ToolAnnotations {
+    readOnlyHint?: boolean;
 }
 
 interface TouchEventInit extends EventModifierInit {
@@ -5853,8 +5903,31 @@ declare var CSSCustomPropertyRegisteredEvent: {
     isInstance: IsInstance<CSSCustomPropertyRegisteredEvent>;
 };
 
+interface CSSFontFaceDescriptors extends CSSStyleDeclaration {
+    ascentOverride: string;
+    descentOverride: string;
+    fontDisplay: string;
+    fontFamily: string;
+    fontFeatureSettings: string;
+    fontLanguageOverride: string;
+    fontStretch: string;
+    fontStyle: string;
+    fontVariationSettings: string;
+    fontWeight: string;
+    lineGapOverride: string;
+    sizeAdjust: string;
+    src: string;
+    unicodeRange: string;
+}
+
+declare var CSSFontFaceDescriptors: {
+    prototype: CSSFontFaceDescriptors;
+    new(): CSSFontFaceDescriptors;
+    isInstance: IsInstance<CSSFontFaceDescriptors>;
+};
+
 interface CSSFontFaceRule extends CSSRule {
-    readonly style: CSSStyleDeclaration;
+    readonly style: CSSFontFaceDescriptors;
 }
 
 declare var CSSFontFaceRule: {
@@ -6592,6 +6665,9 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     animationIterationCount: string;
     animationName: string;
     animationPlayState: string;
+    animationRange: string;
+    animationRangeEnd: string;
+    animationRangeStart: string;
     animationTimeline: string;
     animationTimingFunction: string;
     appearance: string;
@@ -7002,6 +7078,7 @@ interface CSSStyleProperties extends CSSStyleDeclaration {
     textWrap: string;
     textWrapMode: string;
     textWrapStyle: string;
+    timelineScope: string;
     top: string;
     touchAction: string;
     transform: string;
@@ -8596,12 +8673,6 @@ interface DeprecationReportBody extends ReportBody {
     toJSON(): any;
 }
 
-declare var DeprecationReportBody: {
-    prototype: DeprecationReportBody;
-    new(): DeprecationReportBody;
-    isInstance: IsInstance<DeprecationReportBody>;
-};
-
 interface DeviceAcceleration {
     readonly x: number | null;
     readonly y: number | null;
@@ -8788,6 +8859,7 @@ interface Document extends Node, ARIANotifyMixin, DocumentOrShadowRoot, FontFace
     blockUnblockOnload(block: boolean): void;
     captureEvents(): void;
     caretPositionFromPoint(x: number, y: number, options?: CaretPositionFromPointOptions): CaretPosition | null;
+    caretRangeFromPoint(x?: number, y?: number): Range | null;
     clear(): void;
     clearUserGestureActivation(): void;
     close(): void;
@@ -8870,6 +8942,8 @@ interface Document extends Node, ARIANotifyMixin, DocumentOrShadowRoot, FontFace
     createEvent(eventInterface: "PromiseRejectionEvent"): PromiseRejectionEvent;
     createEvent(eventInterface: "RTCDTMFToneChangeEvent"): RTCDTMFToneChangeEvent;
     createEvent(eventInterface: "RTCDataChannelEvent"): RTCDataChannelEvent;
+    createEvent(eventInterface: "RTCErrorEvent"): RTCErrorEvent;
+    createEvent(eventInterface: "RTCPeerConnectionIceErrorEvent"): RTCPeerConnectionIceErrorEvent;
     createEvent(eventInterface: "RTCPeerConnectionIceEvent"): RTCPeerConnectionIceEvent;
     createEvent(eventInterface: "RTCTrackEvent"): RTCTrackEvent;
     createEvent(eventInterface: "RedirectBlockedEvent"): RedirectBlockedEvent;
@@ -9002,6 +9076,7 @@ interface DocumentL10n extends DOMLocalization {
 interface DocumentOrShadowRoot {
     readonly activeElement: Element | null;
     adoptedStyleSheets: CSSStyleSheet[];
+    readonly customElementRegistry: CustomElementRegistry | null;
     readonly fullscreenElement: Element | null;
     readonly mozFullScreenElement: Element | null;
     readonly pointerLockElement: Element | null;
@@ -9205,6 +9280,7 @@ interface Element extends Node, ARIAMixin, ARIANotifyMixin, Animatable, ChildNod
     readonly clientWidth: number;
     readonly clientWidthDouble: number;
     readonly currentCSSZoom: number;
+    readonly customElementRegistry: CustomElementRegistry | null;
     readonly firstLineBoxBSize: number;
     readonly fontSizeInflation: number;
     readonly hasVisibleScrollbars: boolean;
@@ -13186,6 +13262,7 @@ declare var Highlight: {
 };
 
 interface HighlightRegistry {
+    highlightsFromPoint(x: number, y: number, options?: HighlightsFromPointOptions): HighlightHitResult[];
     forEach(callbackfn: (value: Highlight, key: string, parent: HighlightRegistry) => void, thisArg?: any): void;
 }
 
@@ -13743,6 +13820,7 @@ interface IntegrityViolationReportBody extends ReportBody {
     readonly blockedURL: string;
     readonly destination: string;
     readonly documentURL: string;
+    readonly reason: IntegrityViolationReason | null;
     readonly reportOnly: boolean;
     toJSON(): any;
 }
@@ -15509,6 +15587,31 @@ declare var MimeTypeArray: {
     isInstance: IsInstance<MimeTypeArray>;
 };
 
+/** Available only in secure contexts. */
+interface ModelContext {
+    getTools(): ModelContextTool[];
+    invokeTool(toolName: string, input?: any, options?: InvokeToolOptions): Promise<any>;
+    registerTool(tool: ModelContextTool): void;
+    unregisterTool(toolName: string): void;
+}
+
+declare var ModelContext: {
+    prototype: ModelContext;
+    new(): ModelContext;
+    isInstance: IsInstance<ModelContext>;
+};
+
+/** Available only in secure contexts. */
+interface ModelContextClient {
+    requestUserInteraction(callback: UserInteractionCallback): Promise<any>;
+}
+
+declare var ModelContextClient: {
+    prototype: ModelContextClient;
+    new(): ModelContextClient;
+    isInstance: IsInstance<ModelContextClient>;
+};
+
 interface MouseEvent extends UIEvent {
     readonly altKey: boolean;
     readonly button: number;
@@ -15965,6 +16068,7 @@ interface Navigator extends GlobalPrivacyControl, NavigatorAutomationInformation
     readonly mediaDevices: MediaDevices;
     readonly mediaSession: MediaSession;
     readonly mimeTypes: MimeTypeArray;
+    readonly modelContext: ModelContext;
     readonly mozAddonManager: AddonManager;
     readonly mozTCPSocket: LegacyMozTCPSocket;
     readonly oscpu: string;
@@ -16726,6 +16830,7 @@ interface PeerConnectionObserver {
     onCreateOfferError(error: PCErrorData): void;
     onCreateOfferSuccess(offer: string): void;
     onIceCandidate(level: number, mid: string, candidate: string, ufrag: string): void;
+    onIceCandidateError(address: string, port: number, url: string, errorCode: number, errorText: string): void;
     onPacket(level: number, type: mozPacketDumpType, sending: boolean, packet: ArrayBuffer): void;
     onSetDescriptionError(error: PCErrorData): void;
     onSetDescriptionSuccess(): void;
@@ -17699,6 +17804,30 @@ declare var RTCEncodedVideoFrame: {
     isInstance: IsInstance<RTCEncodedVideoFrame>;
 };
 
+interface RTCError extends DOMException {
+    readonly errorDetail: RTCErrorDetailType;
+    readonly receivedAlert: number | null;
+    readonly sctpCauseCode: number | null;
+    readonly sdpLineNumber: number | null;
+    readonly sentAlert: number | null;
+}
+
+declare var RTCError: {
+    prototype: RTCError;
+    new(init: RTCErrorInit, message?: string): RTCError;
+    isInstance: IsInstance<RTCError>;
+};
+
+interface RTCErrorEvent extends Event {
+    readonly error: RTCError;
+}
+
+declare var RTCErrorEvent: {
+    prototype: RTCErrorEvent;
+    new(type: string, eventInitDict: RTCErrorEventInit): RTCErrorEvent;
+    isInstance: IsInstance<RTCErrorEvent>;
+};
+
 interface RTCIceCandidate {
     readonly address: string | null;
     readonly candidate: string;
@@ -17732,6 +17861,7 @@ interface RTCIceTransport extends EventTarget {
     readonly gatheringState: RTCIceGathererState;
     ongatheringstatechange: ((this: RTCIceTransport, ev: Event) => any) | null;
     onstatechange: ((this: RTCIceTransport, ev: Event) => any) | null;
+    readonly role: RTCIceRole;
     readonly state: RTCIceTransportState;
     addEventListener<K extends keyof RTCIceTransportEventMap>(type: K, listener: (this: RTCIceTransport, ev: RTCIceTransportEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
@@ -17758,6 +17888,7 @@ interface RTCPeerConnectionEventMap {
     "connectionstatechange": Event;
     "datachannel": Event;
     "icecandidate": Event;
+    "icecandidateerror": Event;
     "iceconnectionstatechange": Event;
     "icegatheringstatechange": Event;
     "negotiationneeded": Event;
@@ -17780,6 +17911,7 @@ interface RTCPeerConnection extends EventTarget {
     onconnectionstatechange: ((this: RTCPeerConnection, ev: Event) => any) | null;
     ondatachannel: ((this: RTCPeerConnection, ev: Event) => any) | null;
     onicecandidate: ((this: RTCPeerConnection, ev: Event) => any) | null;
+    onicecandidateerror: ((this: RTCPeerConnection, ev: Event) => any) | null;
     oniceconnectionstatechange: ((this: RTCPeerConnection, ev: Event) => any) | null;
     onicegatheringstatechange: ((this: RTCPeerConnection, ev: Event) => any) | null;
     onnegotiationneeded: ((this: RTCPeerConnection, ev: Event) => any) | null;
@@ -17832,6 +17964,20 @@ declare var RTCPeerConnection: {
     new(configuration?: RTCConfiguration): RTCPeerConnection;
     isInstance: IsInstance<RTCPeerConnection>;
     generateCertificate(keygenAlgorithm: AlgorithmIdentifier): Promise<RTCCertificate>;
+};
+
+interface RTCPeerConnectionIceErrorEvent extends Event {
+    readonly address: string | null;
+    readonly errorCode: number;
+    readonly errorText: string;
+    readonly port: number | null;
+    readonly url: string;
+}
+
+declare var RTCPeerConnectionIceErrorEvent: {
+    prototype: RTCPeerConnectionIceErrorEvent;
+    new(type: string, eventInitDict: RTCPeerConnectionIceErrorEventInit): RTCPeerConnectionIceErrorEvent;
+    isInstance: IsInstance<RTCPeerConnectionIceErrorEvent>;
 };
 
 interface RTCPeerConnectionIceEvent extends Event {
@@ -18120,12 +18266,6 @@ interface Report {
     readonly url: string;
     toJSON(): any;
 }
-
-declare var Report: {
-    prototype: Report;
-    new(): Report;
-    isInstance: IsInstance<Report>;
-};
 
 interface ReportBody {
     toJSON(): any;
@@ -22628,6 +22768,7 @@ declare var ViewTransitionTypeSet: {
 interface VisualViewportEventMap {
     "resize": Event;
     "scroll": Event;
+    "scrollend": Event;
 }
 
 interface VisualViewport extends EventTarget {
@@ -22636,6 +22777,7 @@ interface VisualViewport extends EventTarget {
     readonly offsetTop: number;
     onresize: ((this: VisualViewport, ev: Event) => any) | null;
     onscroll: ((this: VisualViewport, ev: Event) => any) | null;
+    onscrollend: ((this: VisualViewport, ev: Event) => any) | null;
     readonly pageLeft: number;
     readonly pageTop: number;
     readonly scale: number;
@@ -25135,7 +25277,7 @@ interface Window extends EventTarget, AnimationFrameProvider, GlobalCrypto, Glob
     sizeToContent(constraints?: SizeToContentConstraints): void;
     stop(): void;
     synthesizeMouseEvent(type: string, offsetX: number, offsetY: number, mouseEventData?: SynthesizeMouseEventData, options?: SynthesizeMouseEventOptions, callback?: VoidFunction): boolean;
-    synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions): boolean;
+    synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions, callback?: VoidFunction): boolean;
     updateCommands(action: string): void;
     readonly STATE_MAXIMIZED: 1;
     readonly STATE_MINIMIZED: 2;
@@ -26219,6 +26361,7 @@ declare namespace ChromeUtils {
     function getAllDOMProcesses(): nsIDOMProcessParent[];
     function getAllPossibleUtilityActorNames(): string[];
     function getBaseDomainFromPartitionKey(partitionKey: string): string;
+    function getCachedJavaScriptSource(key: string, uri: string, hintCharset: string): any;
     function getCallerLocation(principal: Principal): any;
     function getClassName(obj: any, unwrap?: boolean): string;
     function getFormAutofillConfidences(elements: Element[]): FormAutofillConfidences[];
@@ -26348,6 +26491,7 @@ declare namespace InspectorUtils {
     function getCSSRegisteredProperties(document: Document): InspectorCSSPropertyDefinition[];
     function getCSSRegisteredProperty(document: Document, name: string): InspectorCSSPropertyDefinition | null;
     function getCSSValuesForProperty(property: string): string[];
+    function getCSSWideKeywords(): string[];
     function getChildrenForNode(node: Node, showingAnonymousContent: boolean, includeAssignedNodes: boolean): Node[];
     function getContentState(element: Element): number;
     function getGridContainerType(aElement: Element): number;
@@ -26477,6 +26621,7 @@ declare namespace UniFFIScaffolding {
     function callAsyncWrapper(id: UniFFIFunctionId, ...args: UniFFIScaffoldingValue[]): Promise<UniFFIScaffoldingCallResult>;
     function callSync(id: UniFFIFunctionId, ...args: UniFFIScaffoldingValue[]): UniFFIScaffoldingCallResult;
     function callbackHandleCreate(): number;
+    function callbackHandleFree(handle: number): void;
     function callbackHandleRelease(handle: number): number;
     function deregisterCallbackHandler(interfaceId: UniFFICallbackInterfaceId): void;
     function readPointer(id: UniFFIPointerId, buff: ArrayBuffer, position: number): UniFFIPointer;
@@ -26747,6 +26892,14 @@ interface SetDeleteObjectCallback {
 
 interface TestThrowingCallback {
     (): void;
+}
+
+interface ToolExecuteCallback {
+    (input: any, client: ModelContextClient): any;
+}
+
+interface UserInteractionCallback {
+    (): any;
 }
 
 interface ValidateAssertionCallback {
@@ -27117,7 +27270,7 @@ declare function shouldReportForServiceWorkerScope(aScope: string): boolean;
 declare function sizeToContent(constraints?: SizeToContentConstraints): void;
 declare function stop(): void;
 declare function synthesizeMouseEvent(type: string, offsetX: number, offsetY: number, mouseEventData?: SynthesizeMouseEventData, options?: SynthesizeMouseEventOptions, callback?: VoidFunction): boolean;
-declare function synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions): boolean;
+declare function synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions, callback?: VoidFunction): boolean;
 declare function updateCommands(action: string): void;
 declare function toString(): string;
 declare var ownerGlobal: WindowProxy | null;
@@ -27551,6 +27704,7 @@ type ImageOrientation = "flipY" | "from-image" | "none";
 type ImportESModuleTargetGlobal = "contextual" | "current" | "devtools" | "shared";
 type InspectorAnchorType = "explicit" | "popover" | "pseudo-element";
 type InspectorPropertyType = "color" | "gradient" | "timing-function";
+type IntegrityViolationReason = "invalid_manifest" | "invalid_transparency_proof" | "manifest_unavailable" | "missing_from_manifest" | "no_manifest_match" | "untrusted_transparency_proof";
 type IterationCompositeOperation = "accumulate" | "replace";
 type JSRFPTarget = "CSSPrefersColorScheme" | "HttpUserAgent" | "JSLocalePrompt" | "RoundWindowSize" | "SiteSpecificZoom";
 type L10nFileSourceHasFileStatus = "missing" | "present" | "unknown";
@@ -27599,7 +27753,7 @@ type PCObserverStateType = "ConnectionState" | "IceConnectionState" | "IceGather
 type PanningModelType = "HRTF" | "equalpower";
 type PaymentComplete = "fail" | "success" | "unknown";
 type PaymentShippingType = "delivery" | "pickup" | "shipping";
-type PermissionName = "camera" | "geolocation" | "microphone" | "midi" | "notifications" | "persistent-storage" | "push" | "screen-wake-lock" | "storage-access";
+type PermissionName = "camera" | "geolocation" | "local-network" | "loopback-network" | "microphone" | "midi" | "notifications" | "persistent-storage" | "push" | "screen-wake-lock" | "storage-access";
 type PermissionState = "denied" | "granted" | "prompt";
 type PermitUnloadAction = "dontUnload" | "prompt" | "unload";
 type PlacesEventType = "bookmark-added" | "bookmark-guid-changed" | "bookmark-keyword-changed" | "bookmark-moved" | "bookmark-removed" | "bookmark-tags-changed" | "bookmark-time-changed" | "bookmark-title-changed" | "bookmark-url-changed" | "favicon-changed" | "history-cleared" | "none" | "page-removed" | "page-title-changed" | "page-visited" | "pages-rank-changed" | "purge-caches";
@@ -27620,6 +27774,7 @@ type RTCDataChannelType = "arraybuffer" | "blob";
 type RTCDegradationPreference = "balanced" | "maintain-framerate" | "maintain-resolution";
 type RTCDtlsTransportState = "closed" | "connected" | "connecting" | "failed" | "new";
 type RTCEncodedVideoFrameType = "delta" | "empty" | "key";
+type RTCErrorDetailType = "data-channel-failure" | "dtls-failure" | "fingerprint-failure" | "hardware-encoder-error" | "hardware-encoder-not-available" | "sctp-failure" | "sdp-syntax-error";
 type RTCIceCandidateType = "host" | "prflx" | "relay" | "srflx";
 type RTCIceComponent = "rtcp" | "rtp";
 type RTCIceConnectionState = "checking" | "closed" | "completed" | "connected" | "disconnected" | "failed" | "new";
@@ -27627,6 +27782,7 @@ type RTCIceCredentialType = "password";
 type RTCIceGathererState = "complete" | "gathering" | "new";
 type RTCIceGatheringState = "complete" | "gathering" | "new";
 type RTCIceProtocol = "tcp" | "udp";
+type RTCIceRole = "controlled" | "controlling" | "unknown";
 type RTCIceTcpCandidateType = "active" | "passive" | "so";
 type RTCIceTransportPolicy = "all" | "relay";
 type RTCIceTransportState = "checking" | "closed" | "completed" | "connected" | "disconnected" | "failed" | "new";
@@ -28256,7 +28412,7 @@ interface WebGLRenderingContextBase {
 interface Window {
     postMessage(message: any, targetOrigin: string, transfer?: Iterable<any>): void;
     setScrollMarks(marks: Iterable<number>, onHorizontalScrollbar?: boolean): void;
-    synthesizeTouchEvent(type: string, touches: Iterable<SynthesizeTouchEventData>, modifiers?: number, options?: SynthesizeTouchEventOptions): boolean;
+    synthesizeTouchEvent(type: string, touches: Iterable<SynthesizeTouchEventData>, modifiers?: number, options?: SynthesizeTouchEventOptions, callback?: VoidFunction): boolean;
 }
 
 interface Worker {

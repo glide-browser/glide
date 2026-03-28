@@ -32,6 +32,7 @@ interface JSServices {
   locale: mozILocaleService;
   logins: nsILoginManager;
   mm: ChromeMessageBroadcaster;
+  modelContext: nsIModelContextService;
   obs: nsIObserverService;
   perms: nsIPermissionManager;
   policies: nsIEnterprisePolicies;

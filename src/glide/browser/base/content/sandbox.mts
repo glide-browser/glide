@@ -188,6 +188,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     // remove `Cu`, etc
     wantComponents: false,
     sandboxPrototype: proto,
+    freezeBuiltins: false,
   }) as any;
 }
 

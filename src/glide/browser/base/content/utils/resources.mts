@@ -20,7 +20,7 @@ export async function fetch_resource(
         return;
       }
       try {
-        const text = NetUtil.readInputStreamToString(inputStream, inputStream.available(), null);
+        const text = NetUtil.readInputStreamToString(inputStream, inputStream.available());
         resolve(text);
       } catch (e) {
         reject(e);

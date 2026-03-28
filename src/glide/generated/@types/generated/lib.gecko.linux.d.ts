@@ -63,7 +63,10 @@ interface nsIXPCComponents_Interfaces {
 }  // global
 
 // Typedefs from xpidl.
+type CSPDirective = nsIContentSecurityPolicy.CSPDirective;
 type PRTime = i64;
+type RequireTrustedTypesForDirectiveState = nsIContentSecurityPolicy.RequireTrustedTypesForDirectiveState;
+type nsContentPolicyType = nsIContentPolicy.nsContentPolicyType;
 type nsHandlerInfoAction = i32;
 type nsTaskbarProgressState = i32;
 

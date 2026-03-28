@@ -1,0 +1,13 @@
+diff --git a/netwerk/base/NetUtil.sys.mjs b/netwerk/base/NetUtil.sys.mjs
+index b767131ea23c06be1bbeefd8cec4f1e13bca5c26..09772d18837c1cc23e506c643adcc799030cc2e5 100644
+--- a/netwerk/base/NetUtil.sys.mjs
++++ b/netwerk/base/NetUtil.sys.mjs
+@@ -83,7 +83,7 @@ export var NetUtil = {
+    * is asynchronous, I/O may happen on the main thread.  When reading from
+    * a local file, prefer using IOUtils methods instead.
+    *
+-   * @param {nsIChannel|nsIInputStream} aSource
++   * @param {any} aSource
+    *        This argument can be one of the following:
+    *         - An options object that will be passed to NetUtil.newChannel.
+    *         - An existing nsIChannel.

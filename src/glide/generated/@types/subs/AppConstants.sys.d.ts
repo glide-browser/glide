@@ -106,8 +106,6 @@ export const AppConstants: Readonly<{
 
   MOZ_GECKOVIEW_HISTORY: boolean;
 
-  MOZ_GECKO_PROFILER: boolean;
-
   DLL_PREFIX: string;
   DLL_SUFFIX: ".dll" | ".so";
 

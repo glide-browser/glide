@@ -8,7 +8,6 @@ declare namespace BrowserCommands {
     function reloadOrDuplicate(aEvent: any): void;
     function reload(): void;
     function reloadSkipCache(): void;
-    function reloadWithFlags(reloadFlags: any): void;
     function stop(): void;
     function home(aEvent: any): void;
     function openTab({ event, url }?: {}): void;
