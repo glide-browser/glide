@@ -444,6 +444,7 @@ export const GLIDE_EXCOMMANDS = [
             "0",
             "^",
             "$",
+            "%",
             "{",
             "}",
             "s",

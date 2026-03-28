@@ -274,3 +274,89 @@ export function decode_utf8(bytes: Uint8Array) {
       ?? ((decoder = new (globalThis as any).TextDecoder()), (decode_utf8_ = decoder.decode.bind(decoder)))
   )(bytes);
 }
+
+const BRACKET_OPEN_TO_CLOSE: Record<string, string> = {
+  "(": ")",
+  "[": "]",
+  "{": "}",
+};
+const BRACKET_CLOSE_TO_OPEN: Record<string, string> = {
+  ")": "(",
+  "]": "[",
+  "}": "{",
+};
+
+export function is_bracket_char(c: string): boolean {
+  return c in BRACKET_OPEN_TO_CLOSE || c in BRACKET_CLOSE_TO_OPEN;
+}
+
+export function find_matching_bracket_index(text: string, start_idx: number): number | null {
+  const ch = text[start_idx]!;
+  const open = BRACKET_CLOSE_TO_OPEN[ch];
+  if (open !== undefined) {
+    const close = ch;
+    let depth = 0;
+    for (let i = start_idx; i >= 0; i--) {
+      const c = text[i]!;
+      if (c === close) {
+        depth++;
+      } else if (c === open) {
+        depth--;
+        if (depth === 0) {
+          return i;
+        }
+      }
+    }
+    return null;
+  }
+
+  const close = BRACKET_OPEN_TO_CLOSE[ch];
+  if (close !== undefined) {
+    const open = ch;
+    let depth = 0;
+    for (let i = start_idx; i < text.length; i++) {
+      const c = text[i]!;
+      if (c === open) {
+        depth++;
+      } else if (c === close) {
+        depth--;
+        if (depth === 0) {
+          return i;
+        }
+      }
+    }
+    return null;
+  }
+
+  return null;
+}
+
+export function jump_to_matching_bracket_offset(text: string, focus_offset: number): number | null {
+  const index_left_of_caret = focus_offset >= 1 ? focus_offset - 1 : -1;
+
+  const next_newline_index = text.indexOf("\n", Math.max(0, index_left_of_caret));
+  const line_end_exclusive = next_newline_index === -1 ? text.length : next_newline_index;
+
+  let bracket_index: number | null = null;
+  if (index_left_of_caret >= 0 && is_bracket_char(text[index_left_of_caret]!)) {
+    bracket_index = index_left_of_caret;
+  } else {
+    const scan_start = index_left_of_caret < 0 ? 0 : index_left_of_caret + 1;
+    for (let i = scan_start; i < line_end_exclusive; i++) {
+      if (is_bracket_char(text[i]!)) {
+        bracket_index = i;
+        break;
+      }
+    }
+  }
+
+  if (bracket_index === null) {
+    return null;
+  }
+
+  const matching_bracket_index = find_matching_bracket_index(text, bracket_index);
+  if (matching_bracket_index === null) {
+    return null;
+  }
+  return matching_bracket_index + 1;
+}
