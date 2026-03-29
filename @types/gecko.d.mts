@@ -325,8 +325,9 @@ declare namespace MockedExports {
       typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
     "resource://gre/modules/AppMenuNotifications.sys.mjs":
       typeof import("../engine/toolkit/modules/AppMenuNotifications.sys.mjs");
-    "resource://gre/modules/AppUpdater.sys.mjs": typeof import("../engine/toolkit/modules/AppUpdater.sys.mjs");
-    "resource://gre/modules/DownloadUtils.sys.mjs": typeof import("../engine/toolkit/mozapps/downloads/DownloadUtils.sys.mjs");
+    "resource://gre/modules/AppUpdater.sys.mjs": typeof import("../engine/toolkit/mozapps/update/AppUpdater.sys.mjs");
+    "resource://gre/modules/DownloadUtils.sys.mjs":
+      typeof import("../engine/toolkit/mozapps/downloads/DownloadUtils.sys.mjs");
 
     "resource://devtools/shared/loader/Loader.sys.mjs":
       typeof import("../engine/devtools/shared/loader/Loader.sys.mjs");
