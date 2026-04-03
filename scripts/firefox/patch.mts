@@ -199,7 +199,8 @@ export async function patch_mozconfig() {
       "\n",
       os_config,
       "\n",
-    ].join("\n"),
+      process.env["GLIDE_MOZCONFIG_CONTENT"],
+    ].filter(is_present).join("\n"),
   );
 
   const version = config.brands.glide.release.display_version;
