@@ -1,0 +1,17 @@
+name: "Setup Nix"
+description: "Setup Nix"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Install Nix
+      uses: samueldr/lix-gha-installer-action@7b7f14d320d6aacfb65bd1ef761566b3b69e474c
+
+    - name: Setup Nix cache
+      uses: DeterminateSystems/magic-nix-cache-action@cec65ff6f104850203b152861d3f9e5f1747885d
+      with:
+        use-flakehub: false
+        flakehub-api-server: ""
+        flakehub-cache-server: ""
+        diagnostic-endpoint: ""
