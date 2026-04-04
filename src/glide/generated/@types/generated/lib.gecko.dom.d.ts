@@ -4051,6 +4051,7 @@ interface SvcOutputMetadata {
 
 interface SynthesizeEventData {
     identifier?: number;
+    pressure?: number;
 }
 
 interface SynthesizeEventOptions {
@@ -4065,7 +4066,6 @@ interface SynthesizeMouseEventData extends SynthesizeEventData {
     clickCount?: number;
     inputSource?: number;
     modifiers?: number;
-    pressure?: number;
 }
 
 interface SynthesizeMouseEventOptions extends SynthesizeEventOptions {
@@ -4078,7 +4078,6 @@ interface SynthesizeTouchEventData extends SynthesizeEventData {
     azimuthAngle?: number;
     offsetX: number;
     offsetY: number;
-    pressure?: number;
     radiiX?: number;
     radiiY?: number;
     rotationAngle?: number;
@@ -5818,6 +5817,15 @@ declare var CSSAnimation: {
     isInstance: IsInstance<CSSAnimation>;
 };
 
+interface CSSAppearanceBaseRule extends CSSGroupingRule {
+}
+
+declare var CSSAppearanceBaseRule: {
+    prototype: CSSAppearanceBaseRule;
+    new(): CSSAppearanceBaseRule;
+    isInstance: IsInstance<CSSAppearanceBaseRule>;
+};
+
 interface CSSColor extends CSSColorValue {
     alpha: CSSNumberish;
     channels: CSSNumericValue[];
@@ -7392,6 +7400,7 @@ interface CanonicalBrowsingContext extends BrowsingContext {
     readonly isUnderHiddenEmbedderElement: boolean;
     readonly mediaController: MediaController | null;
     readonly mostRecentLoadingSessionHistoryEntry: nsISHEntry | null;
+    readonly scopedPrefs: nsIScopedPrefs | null;
     readonly secureBrowserUI: nsISecureBrowserUI | null;
     readonly sessionHistory: nsISHistory | null;
     targetTopLevelLinkClicksToBlank: boolean;
@@ -7771,7 +7780,6 @@ declare var ChildProcessMessageManager: {
 interface ChildSHistory {
     readonly count: number;
     readonly index: number;
-    readonly legacySHistory: nsISHistory;
     canGo(aOffset: number, aRequireUserInteraction?: boolean): boolean;
     go(aOffset: number, aRequireUserInteraction?: boolean, aUserActivation?: boolean): void;
     reload(aReloadFlags: number): void;
@@ -14122,7 +14130,6 @@ declare var KeyEvent: {
 };
 
 interface KeyEventMixin {
-    initKeyEvent(type: string, canBubble?: boolean, cancelable?: boolean, view?: Window | null, ctrlKey?: boolean, altKey?: boolean, shiftKey?: boolean, metaKey?: boolean, keyCode?: number, charCode?: number): void;
     readonly DOM_VK_CANCEL: 0x03;
     readonly DOM_VK_HELP: 0x06;
     readonly DOM_VK_BACK_SPACE: 0x08;
@@ -14568,7 +14575,6 @@ interface L10nRegistry {
     generateBundles(aLocales: string[], aResourceIds: L10nResourceId[]): FluentBundleAsyncIterator;
     generateBundlesSync(aLocales: string[], aResourceIds: L10nResourceId[]): FluentBundleIterator;
     getAvailableLocales(): string[];
-    getSource(aName: string): L10nFileSource | null;
     getSourceNames(): string[];
     hasSource(aName: string): boolean;
     registerSources(aSources: L10nFileSource[]): void;
@@ -14968,6 +14974,7 @@ interface MediaControllerEventMap {
 interface MediaController extends EventTarget {
     readonly id: number;
     readonly isActive: boolean;
+    readonly isAnyMediaBeingControlled: boolean;
     readonly isAudible: boolean;
     readonly isPlaying: boolean;
     onactivated: ((this: MediaController, ev: Event) => any) | null;
@@ -26484,6 +26491,7 @@ declare namespace InspectorUtils {
     function cssPropertySupportsType(property: string, type: InspectorPropertyType): boolean;
     function getAllStyleSheets(document: Document, documentOnly?: boolean): StyleSheet[];
     function getAnchorFor(element: Element, anchorName?: string | null): InspectorAnchorElement | null;
+    function getAnchorNamesFor(element: Element): string[];
     function getBlockLineCounts(element: Element): number[] | null;
     function getCSSPropertyNames(options?: PropertyNamesOptions): string[];
     function getCSSPropertyPrefs(): PropertyPref[];
@@ -27718,7 +27726,7 @@ type MIDIPortConnectionState = "closed" | "open" | "pending";
 type MIDIPortDeviceState = "connected" | "disconnected";
 type MIDIPortType = "input" | "output";
 type MLSObjectType = "application-message-ciphertext" | "application-message-plaintext" | "client-identifier" | "commit-output" | "commit-processed" | "credential-basic" | "exporter-context" | "exporter-label" | "exporter-output" | "group-epoch" | "group-identifier" | "group-info" | "key-package" | "proposal" | "welcome";
-type MediaControlKey = "focus" | "nexttrack" | "pause" | "play" | "playpause" | "previoustrack" | "seekbackward" | "seekforward" | "seekto" | "skipad" | "stop";
+type MediaControlKey = "focus" | "mute" | "nexttrack" | "pause" | "play" | "playpause" | "previoustrack" | "seekbackward" | "seekforward" | "seekto" | "setvolume" | "skipad" | "stop" | "unmute";
 type MediaDecodingType = "file" | "media-source";
 type MediaDeviceKind = "audioinput" | "audiooutput" | "videoinput";
 type MediaEncodingType = "record" | "transmission";
