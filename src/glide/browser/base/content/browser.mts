@@ -45,6 +45,7 @@ declare var document: Document & { documentElement: HTMLElement };
 export interface State {
   mode: GlideMode;
   operator: GlideOperator | null;
+  count: number;
 }
 export interface StateChangeMeta {
   /* By default, when exiting visual mode we collapse the selection but for certain cases, e.g.
@@ -55,7 +56,7 @@ type ResolvedAddonCache = {
   addons: Record<string, { id: string }>;
 };
 
-const _defaultState: State = { mode: "normal", operator: null };
+const _defaultState: State = { mode: "normal", operator: null, count: 1 };
 
 export type StateChangeListener = (
   new_state: State,
@@ -64,6 +65,7 @@ export type StateChangeListener = (
 ) => void;
 
 const DEBOUNCE_MODE_ANIMATION_FRAMES = 3;
+const MAX_VIM_COUNT = 999;
 
 class GlideBrowserClass {
   state_listeners = new Set<StateChangeListener>();
@@ -1413,6 +1415,11 @@ class GlideBrowserClass {
     this.state.mode = new_mode;
     this.state.operator = props?.operator ?? null;
 
+    // Reset count whenever we leave op-pending (i.e. a full command completed).
+    if (new_mode !== "op-pending") {
+      this.state.count = 1;
+    }
+
     Services.prefs.setIntPref("glide.caret.style", this.#mode_to_style_enum(new_mode));
 
     for (const listener of this.state_listeners) {
@@ -1628,6 +1635,20 @@ class GlideBrowserClass {
 
     const mode = this.state.mode;
     const has_partial = this.key_manager.has_partial_mapping;
+
+    // THE COUNT PREFIX intercept bare digit keys in normal/op-pending mode to
+    // accumulate... like (`3`, `3d`, `3dw`). 
+    const is_digit_prefix = !event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey
+      && ((event.key >= "1" && event.key <= "9")
+        || (event.key === "0" && this.state.count > 1));
+    if ((mode === "normal" || mode === "op-pending") && is_digit_prefix) {
+      this.state.count = Math.min(
+        this.state.count * 10 + parseInt(event.key, 10),
+        MAX_VIM_COUNT,
+      );
+      this.#prevent_keydown(keyn, event);
+      return;
+    }
     const current_sequence = this.key_manager.current_sequence;
     const mapping = this.key_manager.handle_key_event(event, mode);
     if (mapping?.has_children || mapping?.value?.retain_key_display) {
@@ -1727,6 +1748,12 @@ class GlideBrowserClass {
         mode,
       });
       await GlideExcmds.execute(mapping.value.command, { mapping });
+
+      // Reset count after any command that didn't enter op-pending.  When
+      // entering op-pending the count must survive.
+      if (this.state.mode !== "op-pending") {
+        this.state.count = 1;
+      }
     }
 
     return;
