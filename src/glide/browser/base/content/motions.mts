@@ -33,7 +33,31 @@ export interface Editor {
 /**
  * An exhaustive list of all currently supported motion operations.
  */
-export const MOTIONS = ["iw", "h", "j", "k", "l", "d"] as const;
+export const MOTIONS = [
+  // text objects
+  "iw", "aw",
+
+  // quote text objects
+  'i"', 'a"', "i'", "a'", "i`", "a`",
+
+  // bracket text objects
+  "i(", "a(", "ib", "ab",
+  "i[", "a[",
+  "i{", "a{", "iB", "aB",
+
+  // basic character motions
+  "h", "j", "k", "l",
+
+  // word motions
+  "w", "W", "b", "B", "e",
+
+  // line position motions
+  "0", "^", "$",
+
+  // line operation
+  "d",
+] as const;
+
 type GlideMotion = (typeof MOTIONS)[number];
 
 export function select_motion(
@@ -179,6 +203,137 @@ export function select_motion(
           }
         },
       };
+    }
+    case "aw": {
+      start_of_word(editor);
+      end_of_word(editor, { extend: true, inclusive: true });
+      // extend selection over any trailing whitespace (aw includes a separating space)
+      while (
+        text_obj.cls(next_char(editor)) === text_obj.CLS_WHITESPACE
+        && !is_eol(editor)
+        && !is_eof(editor)
+      ) {
+        forward_char(editor, true);
+      }
+      break;
+    }
+    case "w":
+    case "W": {
+      const before = editor.selection.focusOffset;
+      forward_word(editor, motion === "W", undefined);
+      const after = editor.selection.focusOffset;
+
+      if (after === before) return;
+
+      // exclusive forward
+      select_absolute_range(editor, before - 1, after - 1);
+      break;
+    }
+    case "b":
+    case "B": {
+      const before = editor.selection.focusOffset;
+      back_word(editor, motion === "B");
+      const after = editor.selection.focusOffset;
+
+      if (after === before) return;
+
+      // backward exclusive
+      select_absolute_range(editor, after - 1, before - 1);
+      break;
+    }
+    case "e": {
+      const before = editor.selection.focusOffset;
+      end_word(editor, undefined);
+      const after = editor.selection.focusOffset;
+
+      if (after === before) return;
+
+      // inclusive forward
+      select_absolute_range(editor, before - 1, after);
+      break;
+    }
+    case "0": {
+      const before = editor.selection.focusOffset;
+      beginning_of_line(editor, false);
+      const after = editor.selection.focusOffset;
+
+      if (after === before) return;
+
+      // backward exclusive
+      select_absolute_range(editor, after - 1, before - 1);
+      break;
+    }
+    case "^": {
+      const before = editor.selection.focusOffset;
+      first_non_whitespace(editor);
+      const after = editor.selection.focusOffset;
+
+      if (after === before) return;
+
+      if (after > before) {
+        // forward exclusive (cursor was on leading whitespace)
+        select_absolute_range(editor, before - 1, after - 1);
+      } else {
+        // backward exclusive
+        select_absolute_range(editor, after - 1, before - 1);
+      }
+      break;
+    }
+    case "$": {
+      const before = editor.selection.focusOffset;
+      end_of_line(editor, false);
+      const after = editor.selection.focusOffset;
+      if (after === before) return;
+      // inclusive forward: from before current char to after last char on line
+      select_absolute_range(editor, before - 1, after);
+      break;
+    }
+    // quote text objects
+    case 'i"':
+    case 'a"': {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_quote_range(text, editor.selection.focusOffset - 1, '"', motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "i'":
+    case "a'": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_quote_range(text, editor.selection.focusOffset - 1, "'", motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "i`":
+    case "a`": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_quote_range(text, editor.selection.focusOffset - 1, "`", motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "i(":
+    case "a(":
+    case "ib":
+    case "ab": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_bracket_range(text, editor.selection.focusOffset - 1, "(", ")", motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "i[":
+    case "a[": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_bracket_range(text, editor.selection.focusOffset - 1, "[", "]", motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "i{":
+    case "a{":
+    case "iB":
+    case "aB": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_bracket_range(text, editor.selection.focusOffset - 1, "{", "}", motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
     }
     default:
       throw assert_never(motion, `Unknown motion: ${motion}`);
@@ -622,4 +777,109 @@ export function is_eof(editor: Editor): boolean {
 
 export function is_eol(editor: Editor): boolean {
   return current_char(editor) === "\n";
+}
+
+// ── Text-object selection helpers ─────────────────────────────────────────────
+// These are intentionally unexported; they are implementation details of
+// select_motion and are not part of the public motions API.
+
+/**
+ * Move the caret to `start` (collapsing the selection), then extend it to
+ * `end`.  Both values are 0-based DOM cursor positions (i.e. the same index
+ * space as `focusOffset`).
+ */
+function select_absolute_range(editor: Editor, start: number, end: number): void {
+  const steps_to_start = editor.selection.focusOffset - start;
+  for (let i = 0; i < Math.abs(steps_to_start); i++) {
+    editor.selectionController.characterMove(steps_to_start > 0 ? false : true, false);
+  }
+  const steps_to_end = end - start;
+  for (let i = 0; i < steps_to_end; i++) {
+    editor.selectionController.characterMove(true, true);
+  }
+}
+
+/**
+ * Find the innermost pair of `quote` characters that encloses `offset` on the
+ * same line.  Returns DOM cursor positions (exclusive end) suitable for
+ * passing directly to `select_absolute_range`.
+ *
+ * `offset` is the 0-based vim cursor position (= `focusOffset - 1`).
+ */
+function find_quote_range(
+  text: string,
+  offset: number,
+  quote: string,
+  inner: boolean,
+): { start: number; end: number } | null {
+  const line_start = text.lastIndexOf("\n", offset - 1) + 1;
+  const line_end_idx = text.indexOf("\n", offset);
+  const line_end = line_end_idx === -1 ? text.length : line_end_idx;
+  const line = text.slice(line_start, line_end);
+  const pos_in_line = offset - line_start;
+
+  const positions: number[] = [];
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === quote) positions.push(i);
+  }
+
+  // Pair quotes in order: 0-1, 2-3, 4-5, …
+  for (let i = 0; i < positions.length - 1; i += 2) {
+    const qs = positions[i]!;
+    const qe = positions[i + 1]!;
+    if (qs <= pos_in_line && pos_in_line <= qe) {
+      return inner
+        ? { start: line_start + qs + 1, end: line_start + qe }
+        : { start: line_start + qs, end: line_start + qe + 1 };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Find the innermost matching bracket pair (`open`/`close`) that encloses
+ * `offset`.  Returns DOM cursor positions (exclusive end) suitable for passing
+ * directly to `select_absolute_range`.
+ *
+ * `offset` is the 0-based vim cursor position (= `focusOffset - 1`).
+ */
+function find_bracket_range(
+  text: string,
+  offset: number,
+  open: string,
+  close: string,
+  inner: boolean,
+): { start: number; end: number } | null {
+  // Search backward for the matching open bracket
+  let depth = 0;
+  let start = -1;
+  for (let i = offset; i >= 0; i--) {
+    if (text[i] === close && i !== offset) depth++;
+    else if (text[i] === open) {
+      if (depth === 0) {
+        start = i;
+        break;
+      }
+      depth--;
+    }
+  }
+  if (start === -1) return null;
+
+  // Search forward for the matching close bracket
+  depth = 0;
+  let end = -1;
+  for (let i = start + 1; i < text.length; i++) {
+    if (text[i] === open) depth++;
+    else if (text[i] === close) {
+      if (depth === 0) {
+        end = i;
+        break;
+      }
+      depth--;
+    }
+  }
+  if (end === -1) return null;
+
+  return inner ? { start: start + 1, end } : { start, end: end + 1 };
 }
