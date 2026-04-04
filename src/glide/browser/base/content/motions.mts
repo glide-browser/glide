@@ -45,6 +45,12 @@ export const MOTIONS = [
   "i[", "a[",
   "i{", "a{", "iB", "aB",
 
+  // angle bracket text objects
+  "i<", "a<",
+
+  // html tag text objects
+  "it", "at",
+
   // basic character motions
   "h", "j", "k", "l",
 
@@ -53,6 +59,9 @@ export const MOTIONS = [
 
   // line position motions
   "0", "^", "$",
+
+  // whole-buffer motions (for operators: dgg, dG, cgg, cG)
+  "gg", "G",
 
   // line operation
   "d",
@@ -333,6 +342,34 @@ export function select_motion(
       const text = editor.selection.focusNode?.textContent ?? "";
       const range = find_bracket_range(text, editor.selection.focusOffset - 1, "{", "}", motion[0] === "i");
       if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "i<":
+    case "a<": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_bracket_range(text, editor.selection.focusOffset - 1, "<", ">", motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "it":
+    case "at": {
+      const text = editor.selection.focusNode?.textContent ?? "";
+      const range = find_tag_range(text, editor.selection.focusOffset - 1, motion[0] === "i");
+      if (range) select_absolute_range(editor, range.start, range.end);
+      break;
+    }
+    case "gg": {
+      // Extend selection backward to beginning of buffer.
+      while (!is_bof(editor, "current")) {
+        editor.selectionController.characterMove(false, true);
+      }
+      break;
+    }
+    case "G": {
+      // Extend selection forward to end of buffer.
+      while (!is_eof(editor)) {
+        editor.selectionController.characterMove(true, true);
+      }
       break;
     }
     default:
@@ -882,4 +919,131 @@ function find_bracket_range(
   if (end === -1) return null;
 
   return inner ? { start: start + 1, end } : { start, end: end + 1 };
+}
+
+/**
+ * Find the innermost HTML tag pair that encloses `offset`.
+ *
+ * `offset` is the 0-based vim cursor position (`focusOffset - 1`).
+ *
+ * Returns DOM cursor positions (exclusive end) for use with
+ * `select_absolute_range`.  `inner` selects the content between the tags;
+ * `outer` (`!inner`) selects the entire `<tag>…</tag>` span.
+ */
+function find_tag_range(
+  text: string,
+  offset: number,
+  inner: boolean,
+): { start: number; end: number } | null {
+  // Search backward for an opening tag `<tagname` (not a closing tag `</`).
+  let open_start = -1;
+  for (let i = offset; i >= 0; i--) {
+    if (text[i] === "<" && text[i + 1] !== "/") {
+      open_start = i;
+      break;
+    }
+  }
+
+  if (open_start === -1) return null;
+
+  // Find the end of the opening tag (the `>`).
+  const open_end = text.indexOf(">", open_start);
+  if (open_end === -1) return null;
+
+  // Extract the tag name (ASCII alphanumeric / hyphen / underscore only).
+  let name_end = open_start + 1;
+  while (name_end < text.length && /[\w-]/.test(text[name_end]!)) name_end++;
+  const tag_name = text.slice(open_start + 1, name_end);
+
+  if (!tag_name) return null;
+
+  // Find the matching closing tag.
+  const close_tag = `</${tag_name}>`;
+  const close_start = text.indexOf(close_tag, open_end);
+
+  if (close_start === -1) return null;
+
+  // Make sure the cursor is actually inside this element.
+  if (offset < open_start || offset > close_start + close_tag.length - 1) return null;
+
+  return inner
+    ? { start: open_end + 1, end: close_start }
+    : { start: open_start, end: close_start + close_tag.length };
+}
+
+/**
+ * Select text between the current cursor position and the nth occurrence of
+ * `character` in the given direction, in preparation for a pending operator.
+ *
+ * - `f` — forward to char (inclusive)
+ * - `F` — backward to char (inclusive)
+ * - `t` — forward until char (exclusive)
+ * - `T` — backward until char (exclusive)
+ *
+ * The search is restricted to the current line (no newline crossing).
+ *
+ * Returns `true` when the character was found and a selection was made,
+ * `false` when the search failed (no change to the editor).
+ */
+export function select_find_char(
+  editor: Editor,
+  find_type: "f" | "F" | "t" | "T",
+  character: string,
+  count: number,
+): boolean {
+  const text = editor.selection.focusNode?.textContent ?? "";
+
+  // `focus` is the DOM offset (1-based).  The vim cursor is ON text[focus-1].
+  const focus = editor.selection.focusOffset;
+
+  const forward = find_type === "f" || find_type === "t";
+
+  // Restrict search to the current line.
+  const line_start = text.lastIndexOf("\n", focus - 2) + 1; // first char of line (0-based)
+  const line_end_raw = text.indexOf("\n", focus);
+  const line_end = line_end_raw === -1 ? text.length : line_end_raw;
+
+  let found_index = -1;
+  let occurrences = 0;
+
+  if (forward) {
+    // Start searching from the character *after* the vim cursor .
+    for (let i = focus; i < line_end; i++) {
+      if (text[i] === character) {
+        occurrences++;
+        if (occurrences === count) {
+          found_index = i;
+          break;
+        }
+      }
+    }
+  } else {
+    // Start searching from the character *before* the vim cursor .
+    for (let i = focus - 2; i >= line_start; i--) {
+      if (text[i] === character) {
+        occurrences++;
+        if (occurrences === count) {
+          found_index = i;
+          break;
+        }
+      }
+    }
+  }
+
+  if (found_index === -1) return false;
+
+  // Collapse selection to the vim cursor position (DOM offset: focus-1).
+  back_char(editor, false);
+
+  if (forward) {
+    const target_end = find_type === "f" ? found_index + 1 : found_index;
+    const steps = target_end - (focus - 1);
+    for (let i = 0; i < steps; i++) forward_char(editor, true);
+  } else {
+    const target_start = find_type === "F" ? found_index : found_index + 1;
+    const steps = (focus - 1) - target_start;
+    for (let i = 0; i < steps; i++) back_char(editor, true);
+  }
+
+  return true;
 }
