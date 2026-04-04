@@ -30,6 +30,13 @@ export interface ParentMessages {
     args: string;
     operator: GlideOperator | null;
     sequence: string[];
+    count: number;
+  };
+  "Glide::FindChar": {
+    find_type: "f" | "F" | "t" | "T";
+    character: string;
+    operator: GlideOperator;
+    count: number;
   };
   "Glide::KeyMappingExecution": {
     sequence: string[];

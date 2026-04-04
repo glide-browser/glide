@@ -599,27 +599,30 @@ class GlideExcmdsClass {
           args: { direction },
         } = this.#parse_command_args(command_meta, command);
 
+        const count = GlideBrowser.state.count;
+
         if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction });
+          GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction, count });
           return;
         }
 
         GlideBrowser.notify_scroll_breaking_change?.();
 
-        switch (direction) {
-          case "up":
-            return await GlideBrowser.api.keys.send("<up>", { skip_mappings: true });
-          case "left":
-            return await GlideBrowser.api.keys.send("<left>", { skip_mappings: true });
-          case "right":
-            return await GlideBrowser.api.keys.send("<right>", { skip_mappings: true });
-          case "down":
-            return await GlideBrowser.api.keys.send("<down>", { skip_mappings: true });
-          case "endline":
-            return GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction: "endline" });
-          default:
-            throw assert_never(direction);
+        const key_for_dir = direction === "up" ? "<up>"
+          : direction === "left" ? "<left>"
+          : direction === "right" ? "<right>"
+          : direction === "down" ? "<down>"
+          : null;
+
+        if (key_for_dir) {
+          for (let i = 0; i < count; i++) {
+            await GlideBrowser.api.keys.send(key_for_dir, { skip_mappings: true });
+          }
+          return;
         }
+
+        // endline has no count semantics
+        return GlideBrowser.get_focused_actor().send_async_message("Glide::Move", { direction: "endline", count: 1 });
       }
 
       case "echo": {
@@ -970,6 +973,35 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "execute_find": {
+        const {
+          args: { find_type },
+        } = this.#parse_command_args(command_meta, command);
+
+        const operator = GlideBrowser.state.operator;
+        if (!operator) {
+          throw new Error("execute_find requires a pending operator");
+        }
+
+        const event = await GlideBrowser.api.keys.next();
+        if (!Keys.is_printable(event.glide_key)) {
+          // cancelled (e.g. Escape) — reset count and bail
+          GlideBrowser.state.count = 1;
+          return;
+        }
+
+        const count = GlideBrowser.state.count;
+        GlideBrowser.state.count = 1;
+
+        GlideBrowser.get_focused_actor().send_async_message("Glide::FindChar", {
+          find_type: find_type as "f" | "F" | "t" | "T",
+          character: event.key,
+          operator,
+          count,
+        });
+        break;
+      }
+
       default:
         throw assert_never(command_meta, `Unhandled excmd: \`${(command_meta as any).name}\``);
     }
@@ -987,6 +1019,7 @@ class GlideExcmdsClass {
       args: props.args,
       operator: props.operator ?? GlideBrowser.state.operator,
       sequence: props.sequence,
+      count: GlideBrowser.state.count,
     };
     actor.send_async_message("Glide::ExecuteContentCommand", opts);
     console.log("sent execute command with", opts);
