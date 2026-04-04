@@ -325,6 +325,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
       case "Glide::Move": {
         const doc_shell = assert_present(this.docShell);
+        const count = message.data.count ?? 1;
 
         const editor = this.#get_editor(this.#get_active_element());
         if (editor) {
@@ -332,13 +333,17 @@ export class GlideHandlerChild extends JSWindowActorChild<
           // if we have an editor, sending the following commands should always work
           switch (message.data.direction) {
             case "left":
-              return doc_shell.doCommand("cmd_moveLeft");
+              for (let i = 0; i < count; i++) doc_shell.doCommand("cmd_moveLeft");
+              return;
             case "right":
-              return doc_shell.doCommand("cmd_moveRight");
+              for (let i = 0; i < count; i++) doc_shell.doCommand("cmd_moveRight");
+              return;
             case "up":
-              return doc_shell.doCommand("cmd_moveUp");
+              for (let i = 0; i < count; i++) doc_shell.doCommand("cmd_moveUp");
+              return;
             case "down":
-              return doc_shell.doCommand("cmd_moveDown");
+              for (let i = 0; i < count; i++) doc_shell.doCommand("cmd_moveDown");
+              return;
             case "endline":
               return doc_shell.doCommand("cmd_endLine");
             default:
@@ -355,18 +360,49 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         switch (message.data.direction) {
           case "left":
-            return DOM.scroll(window, { type: "pixel", x: -delta });
+            return DOM.scroll(window, { type: "pixel", x: -delta * count });
           case "right":
-            return DOM.scroll(window, { type: "pixel", x: delta });
+            return DOM.scroll(window, { type: "pixel", x: delta * count });
           case "up":
-            return DOM.scroll(window, { type: "pixel", y: -delta });
+            return DOM.scroll(window, { type: "pixel", y: -delta * count });
           case "down":
-            return DOM.scroll(window, { type: "pixel", y: delta });
+            return DOM.scroll(window, { type: "pixel", y: delta * count });
           case "endline":
             return doc_shell.doCommand("cmd_endLine");
           default:
             throw assert_never(message.data.direction);
         }
+      }
+
+      case "Glide::FindChar": {
+        const { find_type, character, operator, count } = message.data;
+        const editor = this.#expect_editor(`find-char:${find_type}${character}`);
+
+        const found = motions.select_find_char(editor, find_type, character, count ?? 1);
+        if (!found || editor.selection.isCollapsed) {
+          this.#change_mode("normal");
+          break;
+        }
+
+        switch (operator) {
+          case "d": {
+            motions.delete_selection(editor, true);
+            break;
+          }
+          case "c": {
+            motions.delete_selection(editor, false);
+            this.#change_mode("insert");
+            return;
+          }
+          case "r": {
+            throw new Error("The `r` operator cannot be executed with find-char");
+          }
+          default:
+            throw assert_never(operator);
+        }
+
+        this.#change_mode("normal");
+        break;
       }
 
       case "Glide::SelectionCollapse": {
@@ -469,19 +505,22 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         const sequence = props.sequence.join("");
         const editor = this.#expect_editor(`${operator}${sequence}`);
+        const count = props.count ?? 1;
 
         switch (operator) {
           case "d": {
-            const result = motions.select_motion(editor, sequence as any, this.state?.mode ?? "normal", operator);
+            for (let i = 0; i < count; i++) {
+              const result = motions.select_motion(editor, sequence as any, this.state?.mode ?? "normal", operator);
 
-            // if the motion didn't actually select anything, then there's
-            // nothing for us to delete
-            if (!editor.selection.isCollapsed) {
-              motions.delete_selection(editor, true);
-            }
+              // if the motion didn't actually select anything, then there's
+              // nothing for us to delete
+              if (!editor.selection.isCollapsed) {
+                motions.delete_selection(editor, true);
+              }
 
-            if (result?.fixup_deletion) {
-              result.fixup_deletion();
+              if (result?.fixup_deletion) {
+                result.fixup_deletion();
+              }
             }
 
             this.#record_repeatable_command({ ...props, operator });
@@ -489,8 +528,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
             break;
           }
           case "c": {
-            motions.select_motion(editor, sequence as any, this.state?.mode ?? "normal", operator);
-            motions.delete_selection(editor, false);
+            for (let i = 0; i < count; i++) {
+              motions.select_motion(editor, sequence as any, this.state?.mode ?? "normal", operator);
+              motions.delete_selection(editor, false);
+            }
 
             this.#record_repeatable_command({ ...props, operator });
             this.#change_mode("insert");
@@ -520,78 +561,23 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
 
         const editor = this.#expect_editor(keyseq);
+        const count = props.count ?? 1;
+
+        // Mode-changing and one-shot operations run once regardless of count.
         switch (keyseq) {
-          case "w": {
-            motions.forward_word(editor, /* bigword */ false, this.state?.mode);
-            break;
-          }
-          case "W": {
-            motions.forward_word(editor, /* bigword */ true, this.state?.mode);
-            break;
-          }
-          case "e": {
-            motions.end_word(editor, this.state?.mode);
-            break;
-          }
-          case "b": {
-            motions.back_word(editor, false);
-            break;
-          }
-          case "B": {
-            motions.back_word(editor, true);
-            break;
-          }
-          case "{": {
-            motions.back_para(editor);
-            break;
-          }
-          case "}": {
-            motions.next_para(editor);
-            break;
-          }
           case "I": {
             motions.first_non_whitespace(editor, false);
             motions.back_char(editor, false);
             this.#change_mode("insert");
             break;
           }
-          case "0": {
-            motions.beginning_of_line(editor, false);
-            break;
-          }
-          case "^": {
-            motions.first_non_whitespace(editor, false);
-            break;
-          }
-          case "$": {
-            motions.end_of_line(editor, false);
-            break;
-          }
           case "s": {
             // caret is on the first line and it's empty
-            if (motions.is_bof(editor) && motions.next_char(editor) === "\n") {
-              return;
-            }
+            if (motions.is_bof(editor) && motions.next_char(editor) === "\n") return;
 
             // `foo █ar baz` -> `foo█ar baz`
             editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
             this.#change_mode("insert");
-            break;
-          }
-          case "vh": {
-            if (editor.selection.isCollapsed) {
-              motions.back_char(editor, true);
-            }
-            motions.back_char(editor, true);
-            break;
-          }
-          case "vl": {
-            if (editor.selection.isCollapsed) {
-              editor.selectionController.characterMove(false, false);
-              editor.selectionController.characterMove(true, true);
-            }
-
-            motions.forward_char(editor, true);
             break;
           }
           case "vd": {
@@ -600,55 +586,111 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
             // `foo |r` -> `foo r|`
             motions.forward_char(editor, false);
-
             this.#change_mode("normal");
             break;
           }
           case "vc": {
             // `foo ██r` -> `foo |r`
             editor.deleteSelection(editor.ePrevious!, editor.eStrip!);
-
             this.#change_mode("insert");
-            break;
-          }
-          case "x": {
-            if (
-              // caret is on the first line and it's empty
-              (motions.is_bof(editor) && motions.next_char(editor) === "\n")
-              // we don't want to delete newlines
-              || motions.current_char(editor) === "\n"
-            ) {
-              return;
-            }
-
-            // `foo █ar baz` -> `foo█ar baz`
-            editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
-
-            if (motions.next_char(editor) !== "\n") {
-              // `foo█ar baz` -> `foo █r baz`
-              editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
-            }
-            break;
-          }
-          case "X": {
-            if (
-              // caret is on the first line and it's empty
-              (motions.is_bof(editor) && motions.next_char(editor) === "\n")
-              // we don't want to delete newlines
-              || motions.current_char(editor) === "\n"
-            ) {
-              return;
-            }
-
-            // `foo █ar baz` -> `foo█ar baz`
-            editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
             break;
           }
           case "o": {
             editor.selectionController.intraLineMove(/* forward */ true, /* extend */ false);
             editor.insertLineBreak();
-
             this.#change_mode("insert");
+            break;
+          }
+          // Position-only motions: repeat count times
+          case "w":
+          case "W":
+          case "e":
+          case "b":
+          case "B":
+          case "{":
+          case "}":
+          case "0":
+          case "^":
+          case "$":
+          case "vh":
+          case "vl":
+          case "x":
+          case "X": {
+            for (let i = 0; i < count; i++) {
+              switch (keyseq) {
+                case "w":
+                  motions.forward_word(editor, /* bigword */ false, this.state?.mode);
+                  break;
+                case "W":
+                  motions.forward_word(editor, /* bigword */ true, this.state?.mode);
+                  break;
+                case "e":
+                  motions.end_word(editor, this.state?.mode);
+                  break;
+                case "b":
+                  motions.back_word(editor, false);
+                  break;
+                case "B":
+                  motions.back_word(editor, true);
+                  break;
+                case "{":
+                  motions.back_para(editor);
+                  break;
+                case "}":
+                  motions.next_para(editor);
+                  break;
+                case "0":
+                  motions.beginning_of_line(editor, false);
+                  break;
+                case "^":
+                  motions.first_non_whitespace(editor, false);
+                  break;
+                case "$":
+                  motions.end_of_line(editor, false);
+                  break;
+                case "vh": {
+                  if (editor.selection.isCollapsed) motions.back_char(editor, true);
+                  motions.back_char(editor, true);
+                  break;
+                }
+                case "vl": {
+                  if (editor.selection.isCollapsed) {
+                    editor.selectionController.characterMove(false, false);
+                    editor.selectionController.characterMove(true, true);
+                  }
+                  motions.forward_char(editor, true);
+                  break;
+                }
+                case "x": {
+                  if (
+                    // caret is on the first line and it's empty
+                    (motions.is_bof(editor) && motions.next_char(editor) === "\n")
+                    // we don't want to delete newlines
+                    || motions.current_char(editor) === "\n"
+                  ) break;
+
+                  // `foo █ar baz` -> `foo█ar baz`
+                  editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
+                  if (motions.next_char(editor) !== "\n") {
+                    // `foo█ar baz` -> `foo █r baz`
+                    editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
+                  }
+                  break;
+                }
+                case "X": {
+                  if (
+                    // caret is on the first line and it's empty
+                    (motions.is_bof(editor) && motions.next_char(editor) === "\n")
+                    // we don't want to delete newlines
+                    || motions.current_char(editor) === "\n"
+                  ) break;
+
+                  // `foo █ar baz` -> `foo█ar baz`
+                  editor.deleteSelection(/* action */ editor.ePrevious!, /* stripWrappers */ editor.eStrip!);
+                  break;
+                }
+              }
+            }
             break;
           }
           default:
