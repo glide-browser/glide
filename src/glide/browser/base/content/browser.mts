@@ -257,7 +257,7 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await extension_startup;
-      await this.#state_change_autocmd(this.state, { mode: null, operator: null });
+      await this.#state_change_autocmd(this.state, { mode: null, operator: null, count: 0 }); // Set count to zero here, it shoudl just be ignored
     });
 
     this.on_startup(async () => {

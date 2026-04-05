@@ -871,12 +871,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
   ) => Promise<ChildQueries[QueryName]["result"]> = this.sendQuery;
 
   #change_mode(mode: GlideMode, force: boolean = true): void {
-    this.state ??= { mode, operator: null };
-    this.state.mode = mode;
-    this.state.operator = null;
+    this.state ??= { mode, operator: null, count: 0 };
+    this.state!.mode = mode;
+    this.state!.operator = null;
     this.send_async_message("Glide::ChangeMode", { mode, force });
     this._log.debug("new mode", this.state?.mode ?? "unset");
-  }
+}
 
   #record_repeatable_command(
     props: ChildMessages["Glide::RecordRepeatableCommand"],
