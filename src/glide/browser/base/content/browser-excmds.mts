@@ -608,10 +608,14 @@ class GlideExcmdsClass {
 
         GlideBrowser.notify_scroll_breaking_change?.();
 
-        const key_for_dir = direction === "up" ? "<up>"
-          : direction === "left" ? "<left>"
-          : direction === "right" ? "<right>"
-          : direction === "down" ? "<down>"
+        const key_for_dir = direction === "up"
+          ? "<up>"
+          : direction === "left"
+          ? "<left>"
+          : direction === "right"
+          ? "<right>"
+          : direction === "down"
+          ? "<down>"
           : null;
 
         if (key_for_dir) {

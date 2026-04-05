@@ -35,33 +35,58 @@ export interface Editor {
  */
 export const MOTIONS = [
   // text objects
-  "iw", "aw",
+  "iw",
+  "aw",
 
   // quote text objects
-  'i"', 'a"', "i'", "a'", "i`", "a`",
+  "i\"",
+  "a\"",
+  "i'",
+  "a'",
+  "i`",
+  "a`",
 
   // bracket text objects
-  "i(", "a(", "ib", "ab",
-  "i[", "a[",
-  "i{", "a{", "iB", "aB",
+  "i(",
+  "a(",
+  "ib",
+  "ab",
+  "i[",
+  "a[",
+  "i{",
+  "a{",
+  "iB",
+  "aB",
 
   // angle bracket text objects
-  "i<", "a<",
+  "i<",
+  "a<",
 
   // html tag text objects
-  "it", "at",
+  "it",
+  "at",
 
   // basic character motions
-  "h", "j", "k", "l",
+  "h",
+  "j",
+  "k",
+  "l",
 
   // word motions
-  "w", "W", "b", "B", "e",
+  "w",
+  "W",
+  "b",
+  "B",
+  "e",
 
   // line position motions
-  "0", "^", "$",
+  "0",
+  "^",
+  "$",
 
   // whole-buffer motions (for operators: dgg, dG, cgg, cG)
-  "gg", "G",
+  "gg",
+  "G",
 
   // line operation
   "d",
@@ -298,10 +323,10 @@ export function select_motion(
       break;
     }
     // quote text objects
-    case 'i"':
-    case 'a"': {
+    case "i\"":
+    case "a\"": {
       const text = editor.selection.focusNode?.textContent ?? "";
-      const range = find_quote_range(text, editor.selection.focusOffset - 1, '"', motion[0] === "i");
+      const range = find_quote_range(text, editor.selection.focusOffset - 1, "\"", motion[0] === "i");
       if (range) select_absolute_range(editor, range.start, range.end);
       break;
     }

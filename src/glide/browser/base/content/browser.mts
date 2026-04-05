@@ -1637,15 +1637,12 @@ class GlideBrowserClass {
     const has_partial = this.key_manager.has_partial_mapping;
 
     // THE COUNT PREFIX intercept bare digit keys in normal/op-pending mode to
-    // accumulate... like (`3`, `3d`, `3dw`). 
+    // accumulate... like (`3`, `3d`, `3dw`).
     const is_digit_prefix = !event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey
       && ((event.key >= "1" && event.key <= "9")
         || (event.key === "0" && this.state.count > 1));
     if ((mode === "normal" || mode === "op-pending") && is_digit_prefix) {
-      this.state.count = Math.min(
-        this.state.count * 10 + parseInt(event.key, 10),
-        MAX_VIM_COUNT,
-      );
+      this.state.count = Math.min(this.state.count * 10 + parseInt(event.key, 10), MAX_VIM_COUNT);
       this.#prevent_keydown(keyn, event);
       return;
     }

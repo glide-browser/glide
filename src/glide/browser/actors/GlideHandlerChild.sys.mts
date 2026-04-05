@@ -876,7 +876,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
     this.state!.operator = null;
     this.send_async_message("Glide::ChangeMode", { mode, force });
     this._log.debug("new mode", this.state?.mode ?? "unset");
-}
+  }
 
   #record_repeatable_command(
     props: ChildMessages["Glide::RecordRepeatableCommand"],
