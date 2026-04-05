@@ -79,6 +79,55 @@ declare namespace GlobalBrowser {
     trigger?: "menu_add" | "menu_open" | "alt_click" | null;
   }
 
+  interface AddTabOptions {
+    allowInheritPrincipal?: boolean;
+    allowThirdPartyFixup?: boolean;
+    bulkOrderedOpen?: boolean;
+    charset?: string;
+    createLazyBrowser?: boolean;
+    eventDetail?: object;
+    focusUrlBar?: boolean;
+    forceNotRemote?: boolean;
+    forceAllowDataURI?: boolean;
+    fromExternal?: boolean;
+    inBackground?: boolean;
+    isCaptivePortalTab?: boolean;
+    elementIndex?: number;
+    tabIndex?: number;
+    lazyTabTitle?: string;
+    name?: string;
+    noInitialLabel?: boolean;
+    openWindowInfo?: nsIOpenWindowInfo;
+    openerBrowser?: Browser;
+    originPrincipal?: nsIPrincipal;
+    originStoragePrincipal?: nsIPrincipal;
+    ownerTab?: MozTabbrowserTab | null;
+    pinned?: boolean;
+    postData?: nsIInputStream;
+    preferredRemoteType?: string;
+    referrerInfo?: nsIReferrerInfo;
+    relatedToCurrent?: boolean;
+    initialBrowsingContextGroupId?: number;
+    skipAnimation?: boolean;
+    skipBackgroundNotify?: boolean;
+    tabGroup?: MozTabbrowserTabGroup;
+    triggeringPrincipal?: nsIPrincipal;
+    userContextId?: number;
+    policyContainer?: unknown;
+    skipLoad?: boolean;
+    insertTab?: boolean;
+    globalHistoryOptions?: {
+      triggeringSponsoredURL?: string;
+      triggeringSponsoredURLVisitTimeMS?: number;
+      triggeringSource?: string;
+      triggeringSearchEngine?: string;
+    };
+    triggeringRemoteType?: string;
+    schemelessInput?: boolean;
+    hasValidUserGestureActivation?: boolean;
+    textDirectiveUserActivation?: boolean;
+  }
+
   interface GlobalBrowser {
     // tabs
     tabs: BrowserTab[];
@@ -95,15 +144,8 @@ declare namespace GlobalBrowser {
     ): void;
     getBrowserForTab(tab: BrowserTab): Browser;
     addProgressListener(listener: Partial<nsIWebProgressListener>): void;
-    // note: missing lots of opts
     // see `browser/components/tabbrowser/content/tabbrowser.js`
-    addTrustedTab(
-      uri: string,
-      opts: {
-        relatedToCurrent?: boolean;
-        inBackground?: boolean;
-      },
-    ): BrowserTab;
+    addTrustedTab(uri: string, opts: AddTabOptions): BrowserTab;
 
     currentURI: nsIURI;
 
