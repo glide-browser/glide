@@ -55,6 +55,32 @@ declare type TypedJSONFile<Data> =
  * This is a very small representation of the available APIs.
  */
 declare namespace GlobalBrowser {
+  interface MozTabSplitViewWrapper extends XULElement {
+    splitViewId: number;
+    tabs: BrowserTab[];
+    hasActiveTab: boolean;
+    visible: boolean;
+    pinned: false;
+    group: MozTabbrowserGroup | null;
+    shouldMoveAllTabsAtOnce: boolean;
+    state: { id: number; numberOfTabs: number };
+    addTabs(tabs: BrowserTab[], options?: { isSessionRestore?: boolean; indexOfReplacedTab?: number }): void;
+    unsplitTabs(trigger?: string): void;
+    replaceTab(tabToReplace: BrowserTab, newTab: BrowserTab): void;
+    reverseTabs(trigger?: string): void;
+    close(trigger?: string): void;
+    resetRightPanelWidth(): void;
+    panels: XULElement[];
+  }
+
+  type SplitViewTrigger = "menu_separate" | "icon_separate" | "icon_close" | "tab_close" | "footer_separate";
+
+  interface AddTabSplitViewOptions {
+    id?: number;
+    insertBefore?: MozTabbrowserTab;
+    trigger?: "menu_add" | "menu_open" | null;
+  }
+
   interface GlobalBrowser {
     // tabs
     tabs: BrowserTab[];
@@ -84,8 +110,8 @@ declare namespace GlobalBrowser {
     currentURI: nsIURI;
 
     // split views
-    unsplitTabs(splitview: any): void;
-    addTabSplitView(tabs: BrowserTab[], opts?: { id?: number }): { splitViewId: number; tabs: BrowserTab[] } | null;
+    unsplitTabs(splitview: MozTabSplitViewWrapper, trigger?: SplitViewTrigger | null): void;
+    addTabSplitView(tabs: BrowserTab[], opts?: AddTabSplitViewOptions): MozTabSplitViewWrapper | null;
 
     // notifications
     getNotificationBox(): NotificationBox;
