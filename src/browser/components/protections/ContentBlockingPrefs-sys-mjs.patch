@@ -1,0 +1,21 @@
+diff --git a/browser/components/protections/ContentBlockingPrefs.sys.mjs b/browser/components/protections/ContentBlockingPrefs.sys.mjs
+index 466372ffbf..a862ae4d69 100644
+--- a/browser/components/protections/ContentBlockingPrefs.sys.mjs
++++ b/browser/components/protections/ContentBlockingPrefs.sys.mjs
+@@ -424,10 +424,12 @@ export let ContentBlockingPrefs = {
+   },
+ 
+   updateCBCategory(preserveAllowListSettings = true) {
+-    if (
+-      this.switchingCategory ||
+-      !Services.prefs.prefHasUserValue(this.PREF_CB_CATEGORY)
+-    ) {
++    if (this.switchingCategory) {
++      return;
++    }
++
++    let prefType = Services.prefs.getPrefType(this.PREF_CB_CATEGORY);
++    if (prefType == Services.prefs.PREF_INVALID) {
+       return;
+     }
+     // Turn on switchingCategory flag, to ensure that when the individual prefs that change as a result
