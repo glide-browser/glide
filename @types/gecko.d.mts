@@ -111,7 +111,6 @@ declare namespace GlobalBrowser {
     skipAnimation?: boolean;
     skipBackgroundNotify?: boolean;
     tabGroup?: MozTabbrowserTabGroup;
-    triggeringPrincipal?: nsIPrincipal;
     userContextId?: number;
     policyContainer?: unknown;
     skipLoad?: boolean;
