@@ -73,12 +73,10 @@ declare namespace GlobalBrowser {
     panels: XULElement[];
   }
 
-  type SplitViewTrigger = "menu_separate" | "icon_separate" | "icon_close" | "tab_close" | "footer_separate";
-
   interface AddTabSplitViewOptions {
     id?: number;
     insertBefore?: MozTabbrowserTab;
-    trigger?: "menu_add" | "menu_open" | null;
+    trigger?: "menu_add" | "menu_open" | "alt_click" | null;
   }
 
   interface GlobalBrowser {
@@ -110,7 +108,10 @@ declare namespace GlobalBrowser {
     currentURI: nsIURI;
 
     // split views
-    unsplitTabs(splitview: MozTabSplitViewWrapper, trigger?: SplitViewTrigger | null): void;
+    unsplitTabs(
+      splitview: MozTabSplitViewWrapper,
+      trigger?: "menu_separate" | "icon_separate" | "icon_close" | "tab_close" | "footer_separate" | null,
+    ): void;
     addTabSplitView(tabs: BrowserTab[], opts?: AddTabSplitViewOptions): MozTabSplitViewWrapper | null;
 
     // notifications
