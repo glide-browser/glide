@@ -251,8 +251,149 @@ interface nsIWindowMediator {
 
 declare var MozElements: MozElements;
 
-// TODO(glide-types)
-declare type BrowserTab = any;
+interface BrowserTab extends MozTabbrowserTab {
+  _glide_commandline: GlideCommandLine | null;
+}
+// Source browser/components/tabbrowser/content/tab.js
+interface MozTabbrowserTab extends XULElement {
+  // Source toolkit/content/customElements.js
+  disabled: boolean;
+  tabIndex: number;
+  // Source toolkit/content/customElements.js
+  label: string;
+  image: string;
+  command: string;
+  accessKey: string;
+  // Source toolkit/content/widgets/tabbox.js
+  value: string;
+  container: MozTabbrowserTabs;
+  control: MozTabbrowserTabs;
+  selected: boolean;
+  visible: boolean;
+  linkedPanel: string;
+  // Source browser/components/tabbrowser/content/tab.js
+  closing: boolean;
+  pinned: boolean;
+  isOpen: boolean;
+  readonly hidden: boolean;
+  muted: boolean;
+  multiselected: boolean;
+  userContextId: number;
+  soundPlaying: boolean;
+  pictureinpicture: boolean;
+  activeMediaBlocked: boolean;
+  undiscardable: boolean;
+  animationsEnabled: boolean;
+  isEmpty: boolean;
+  lastAccessed: number;
+  lastSeenActive: number;
+  attention: boolean;
+  owner: MozTabbrowserTab | null;
+  elementIndex: number;
+  group: MozTabbrowserTabGroup | null;
+  splitview: GlobalBrowser.MozTabSplitViewWrapper | null;
+  hasTabNote: boolean;
+  muteReason: string | undefined | null;
+
+  readonly overlayIcon: Element | null;
+  readonly audioButton: Element | null;
+  readonly throbber: Element | null;
+  readonly iconImage: Element | null;
+  readonly sharingIcon: Element | null;
+  readonly textLabel: Element | null;
+  readonly closeButton: Element | null;
+  readonly noteIcon: Element | null;
+  readonly noteIconOverlay: Element | null;
+
+  initialize(): void;
+  updateLastAccessed(date?: number): void;
+  updateLastSeenActive(): void;
+  updateLastUnloadedByTabUnloader(): void;
+  recordTimeFromUnloadToReload(): void;
+  toggleMuteAudio(muteReason?: string | null): void;
+  resumeDelayedMedia(): void;
+  setUserContextId(userContextId: number): void;
+  updateA11yDescription(): void;
+  updateSplitViewAriaLabel(index: number): void;
+  // Dynamically set by tabbrowser.js
+  linkedBrowser: GlobalBrowser.GlobalBrowser | null;
+  permanentKey: object | undefined;
+  description: string | undefined;
+  successor: MozTabbrowserTab | null;
+  predecessors: Set<MozTabbrowserTab>;
+  initializingTab: boolean | undefined;
+  openerTab: MozTabbrowserTab | undefined;
+  addedByAdoption: boolean | undefined;
+  removedByAdoption: boolean | undefined;
+  collapsed: boolean;
+}
+
+// Source browser/components/tabbrowser/content/tabgroup.js
+interface MozTabbrowserTabGroup extends XULElement {
+  overflowContainer: XULElement;
+  saveOnWindowClose: boolean;
+
+  color: string;
+  defaultGroupName: string;
+  id: string;
+  hasActiveTab: boolean;
+  label: string;
+  name: string;
+  collapsed: boolean;
+  lastSeenActive: number;
+  tabs: MozTabbrowserTab[];
+  tabsAndSplitViews: (MozTabbrowserTab | GlobalBrowser.MozTabSplitViewWrapper)[];
+  labelElement: Element;
+  labelContainerElement: XULElement;
+  overflowCountLabel: Element;
+  wasCreatedByAdoption: boolean;
+  isBeingDragged: boolean;
+  hoverPreviewPanelActive: boolean;
+
+  addTabs(
+    tabsOrSplitViews: (MozTabbrowserTab | GlobalBrowser.MozTabSplitViewWrapper)[],
+    metricsContext?: object,
+  ): void;
+  ungroupTabs(metricsContext?: object): void;
+  save(options?: object): void;
+  saveAndClose(options?: object): void;
+  select(): void;
+  isTabVisibleInGroup(tab: MozTabbrowserTab): boolean;
+}
+
+// Source browser/components/tabbrowser/content/tabs.js
+interface MozTabbrowserTabs extends XULElement {
+  startupTime: number;
+  arrowScrollbox: Element;
+  pinnedTabsContainer: Element;
+  previewPanel: object | null;
+  tooltip: string;
+  tabDragAndDrop: object;
+  emptyTabTitle: string;
+  tabbox: XULElement;
+  newTabButton: Element;
+  verticalMode: boolean;
+  expandOnHover: boolean;
+  overflowing: boolean;
+  allTabs: MozTabbrowserTab[];
+  allGroups: MozTabbrowserTabGroup[];
+  allSplitViews: MozTabSplitViewWrapper[];
+  openTabs: MozTabbrowserTab[];
+  nonHiddenTabs: MozTabbrowserTab[];
+  visibleTabs: MozTabbrowserTab[];
+  tablistHasFocus: boolean;
+  ariaFocusableItems: Element[];
+  dragAndDropElements: Element[];
+  init(): void;
+  destroy(): void;
+  advanceSelectedItem(direction: number, wrap: boolean): void;
+  ensureTabPreviewPanelLoaded(): Promise<void>;
+  updateTabSoundLabel(tab: MozTabbrowserTab): void;
+  getRelatedElement(tab: MozTabbrowserTab): Element;
+  isContainerVerticalPinnedGrid(tab: MozTabbrowserTab): boolean;
+  cancelTabGroupPreview(): void;
+  showTabGroupPreview(group: MozTabbrowserTabGroup): void;
+}
 
 declare var GlideBrowser: typeof import("../src/glide/browser/base/content/browser.mts").GlideBrowser;
 
