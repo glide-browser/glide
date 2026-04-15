@@ -18,7 +18,10 @@ function current_url() {
 }
 
 add_task(async function test_jumplist_basic_navigation() {
-  const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
+  const browser = gBrowser.tabContainer.allTabs.at(0)?.linkedBrowser;
+  if (!browser) {
+    throw new Error("No browser found");
+  }
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
@@ -47,7 +50,10 @@ add_task(async function test_jumplist_basic_navigation() {
 });
 
 add_task(async function test_jumplist_prunes_forward_slice() {
-  const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
+  const browser = gBrowser.tabContainer.allTabs.at(0)?.linkedBrowser;
+  if (!browser) {
+    throw new Error("No browser found");
+  }
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
@@ -68,7 +74,10 @@ add_task(async function test_jumplist_prunes_forward_slice() {
 });
 
 add_task(async function test_jumplist_max_entries_trim() {
-  const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
+  const browser = gBrowser.tabContainer.allTabs.at(0)?.linkedBrowser;
+  if (!browser) {
+    throw new Error("No browser found");
+  }
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
@@ -102,7 +111,10 @@ add_task(async function test_jumplist_max_entries_trim() {
 });
 
 add_task(async function test_jumplist_deleted_intermediary_tab() {
-  const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
+  const browser = gBrowser.tabContainer.allTabs.at(0)?.linkedBrowser;
+  if (!browser) {
+    throw new Error("No browser found");
+  }
   BrowserTestUtils.startLoadingURIString(browser, uri(0));
   await BrowserTestUtils.browserLoaded(browser);
 
