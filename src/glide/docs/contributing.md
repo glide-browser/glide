@@ -164,7 +164,7 @@ pnpm mach test glide
 By default, tests run in a full browser window, however this means that you cannot do anything else while the tests are running. Instead, you can run tests in the background with:
 
 ```bash
-pnpm test --headless
+pnpm test glide --headless
 ```
 
 When adding a new test file, you must include it in the `path:browser.toml` file for that test directory, for example:
