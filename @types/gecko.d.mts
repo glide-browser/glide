@@ -728,6 +728,37 @@ declare var JSWindowActorParent: {
   isInstance: IsInstance<JSWindowActorParent>;
 };
 
+interface JSProcessActorChild<
+  Messages = Record<string, any>,
+  Queries = Record<string, GlideActorQuery>,
+> extends JSActor<Messages, Queries> {
+}
+
+declare var JSProcessActorChild: {
+  prototype: JSProcessActorChild;
+  new<
+    Messages = Record<string, any>,
+    Queries = Record<string, GlideActorQuery>,
+  >(): JSProcessActorChild<Messages, Queries>;
+  isInstance: IsInstance<JSProcessActorChild>;
+};
+
+interface JSProcessActorParent<
+  Messages = Record<string, any>,
+  Queries = Record<string, GlideActorQuery>,
+> extends JSActor<Messages, Queries> {
+  readonly manager: nsIDOMProcessParent;
+}
+
+declare var JSProcessActorParent: {
+  prototype: JSProcessActorParent;
+  new<
+    Messages = Record<string, any>,
+    Queries = Record<string, GlideActorQuery>,
+  >(): JSProcessActorParent<Messages, Queries>;
+  isInstance: IsInstance<JSProcessActorParent>;
+};
+
 //////////////////////////////////////////
 //////////////////////////////////////////
 
