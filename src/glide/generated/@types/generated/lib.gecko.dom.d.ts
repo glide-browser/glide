@@ -13880,8 +13880,6 @@ interface IntlUtils {
 
 interface JSActor {
     readonly name: string;
-    sendAsyncMessage(messageName: string, obj?: any, transferables?: any): void;
-    sendQuery(messageName: string, obj?: any): Promise<any>;
 }
 
 interface JSProcessActorChild extends JSActor {

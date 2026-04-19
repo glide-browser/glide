@@ -61,6 +61,17 @@ export async function generate_types() {
       );
     }
 
+    // Remove sendAsyncMessage and sendQuery from the non-generic JSActor interface
+    // as they conflict with the typed generic version in @types/gecko.d.mts
+    {
+      const dom_path = "src/glide/generated/@types/generated/lib.gecko.dom.d.ts";
+      const content = (await fs.readFile(dom_path, "utf-8")).replace(
+        /interface JSActor \{\n    readonly name: string;\n    sendAsyncMessage\(.*\): void;\n    sendQuery\(.*\): Promise<any>;\n\}/,
+        "interface JSActor {\n    readonly name: string;\n}",
+      );
+      await fs.writeFile(dom_path, content);
+    }
+
     await fs.copyFile(
       "engine/tools/@types/subs/AppConstants.sys.d.mts",
       "src/glide/generated/@types/subs/AppConstants.sys.d.ts",
