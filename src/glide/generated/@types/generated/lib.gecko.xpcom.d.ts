@@ -7286,7 +7286,7 @@ type nsISTSShutdownObserver = Callable<{
 }>
 
 interface nsISocketTransportService extends nsISupports {
-  createTransport(aSocketTypes: string[], aHost: string, aPort: i32, aProxyInfo: nsIProxyInfo, dnsRecord: nsIDNSRecord): nsISocketTransport;
+  createTransport(aSocketTypes: string[], aHost: string, aPort: i32, aProxyInfo: nsIProxyInfo | null, dnsRecord: nsIDNSRecord | null): nsISocketTransport;
   createUnixDomainTransport(aPath: nsIFile): nsISocketTransport;
   createUnixDomainAbstractAddressTransport(aName: string): nsISocketTransport;
 }
