@@ -292,7 +292,7 @@ Now, hints will only be cleared once activated or when `<Esc>` is pressed.
 
 In some cases Firefox will report error codes that are not easy to find; in that case the following snippet may be helpful, just replace `0x805a3ff2` with your error code.
 
-```typescript
+```typescript {% check="false" %}
 Cc["@mozilla.org/nss_errors_service;1"].getService(
   Ci.nsINSSErrorsService,
 ).getErrorMessage(0x805a3ff2);
