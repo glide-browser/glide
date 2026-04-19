@@ -19,6 +19,28 @@ export function reverse_indexof(
   return -1;
 }
 
+/**
+ * Split the string at the first occurrence of `separator`, and return a 2-tuple containing the part before the separator, and the part after the separator.
+ *
+ * If the separator is not found, return a 2-tuple containing the string itself, followed by an empty string.
+ *
+ * For example:
+ * ```typescript
+ * partition("foo\r\nbar", "\r\n") === ["foo", "bar"];
+ * partition("foo", "bar") === ["foo", ""];
+ * ```
+ */
+export function partition(str: string, separator: string): [left: string, right: string] {
+  const sep_index = str.indexOf(separator);
+  if (sep_index === -1) {
+    return [str, ""];
+  }
+
+  const left = str.slice(0, sep_index);
+  const right = str.slice(sep_index + separator.length);
+  return [left, right];
+}
+
 interface Candidate {
   code: string;
   branch: string; // the initial character that identifies the branch
