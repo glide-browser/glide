@@ -282,11 +282,21 @@ file:///path-to-glide-directory/src/glide/docs/dist/contributing.html
 >
 > You can also run _just_ the .md -> .html build step in watch mode with `pnpm dev:docs`.
 
-### Debugging Hints
+### Debugging hints
 
 When debugging hints, the hint popups will disappear when you try to inspect them with the [Browser Toolbox](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html). To prevent this, you can disable popup auto-hide in the Browser Toolbox, see the [Firefox docs](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html#debugging-popups) for how to do so.
 
 Now, hints will only be cleared once activated or when `<Esc>` is pressed.
+
+### Debugging errors
+
+In some cases Firefox will report error codes that are not easy to find; in that case the following snippet may be helpful, just replace `0x805a3ff2` with your error code.
+
+```typescript
+Cc["@mozilla.org/nss_errors_service;1"].getService(
+  Ci.nsINSSErrorsService,
+).getErrorMessage(0x805a3ff2);
+```
 
 ## Concepts
 
