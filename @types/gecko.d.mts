@@ -396,6 +396,8 @@ declare namespace MockedExports {
     "resource://devtools/client/framework/browser-toolbox/Launcher.sys.mjs":
       typeof import("../engine/devtools/client/framework/browser-toolbox/Launcher.sys.mjs");
 
+    "resource://gre/modules/XPCOMUtils.sys.mjs": typeof import("../engine/js/xpconnect/loader/XPCOMUtils.sys.mjs");
+
     "resource://gre/modules/Subprocess.sys.mjs":
       typeof import("../engine/toolkit/modules/subprocess/Subprocess.sys.mjs");
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
@@ -425,6 +427,7 @@ declare namespace MockedExports {
     defineModuleGetter: (target: any, variable: string, path: string) => void;
     defineESModuleGetters: (target: any, mappings: any) => void;
     generateQI(interfaces: any[]): MozQueryInterface;
+    domProcessChild: nsIDOMProcessChild | null;
   }
 }
 

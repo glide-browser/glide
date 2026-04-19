@@ -1,8 +1,22 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index d974112aa90bb5e5e72151de354a2e1ab382e32f..c52546d1a7a743db3def86608e18118758e467a3 100644
+index 059edd72c3b220ee3ec2fa4becf1fa1b67627834..1e3f7bfc1becef5a604a5133098ce00982b40aaa 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
-@@ -92,6 +92,53 @@ let JSWINDOWACTORS = {
+@@ -41,6 +41,13 @@ let JSPROCESSACTORS = {
+     includeParent: true,
+   },
+ 
++  GeminiProtocol: {
++    parent: {
++      esModuleURI: "resource:///actors/GeminiProtocolParent.sys.mjs",
++    },
++    includeParent: true,
++  },
++
+   RefreshBlockerObserver: {
+     child: {
+       esModuleURI: "resource:///actors/RefreshBlockerChild.sys.mjs",
+@@ -92,6 +99,53 @@ let JSWINDOWACTORS = {
      enablePreference: "browser.contextual-password-manager.enabled",
    },
  

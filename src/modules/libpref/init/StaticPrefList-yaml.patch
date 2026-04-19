@@ -1,8 +1,8 @@
 diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
-index a6c49438aaf3464e70bf9c75c2849a6062bd096a..c3876e665fdf048360b1c6ab45288ec61f850b59 100644
+index 224524c8ff2cf5a2c53dd7a894c596d75d13baac..b36aac44b1316cfee287f2e66ec5f14d96c9f907 100644
 --- a/modules/libpref/init/StaticPrefList.yaml
 +++ b/modules/libpref/init/StaticPrefList.yaml
-@@ -8086,6 +8086,35 @@
+@@ -8524,6 +8524,40 @@
    value: 0
    mirror: always
  
@@ -32,6 +32,11 @@ index a6c49438aaf3464e70bf9c75c2849a6062bd096a..c3876e665fdf048360b1c6ab45288ec6
 +- name: glide.firefox.taskbar.badge.enabled
 +  type: bool
 +  value: false
++  mirror: always
++
++- name: glide.gemini.enabled
++  type: bool
++  value: true
 +  mirror: always
 +
 +# glide-injection-end
