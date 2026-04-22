@@ -20,12 +20,6 @@ export const autohide_tabstoolbar_v2 = css`
     --uc-tabs-hide-animation-delay: 200ms;
     /* Modification keeping the default behavior and setting a custom collapse width */
     --uc-tab-collapsed-width: var(--tab-collapsed-width);
-    --uc-autohide-tabs-pull-collapsed: calc(
-      0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
-    );
-    --uc-autohide-tabs-pull-hover: calc(
-      0px - var(--tab-block-margin) - var(--tab-min-height)
-    );
   }
 
   @media -moz-pref("sidebar.verticalTabs") {
@@ -68,8 +62,12 @@ export const autohide_tabstoolbar_v2 = css`
     }
   }
   @media not -moz-pref("sidebar.verticalTabs") {
+    :root:not([customizing], [chromehidden~="menubar"])
+      #navigator-toolbox:has(> :is(#toolbar-menubar, #TabsToolbar):hover),
     :root:not([customizing], [chromehidden~="menubar"]) #TabsToolbar {
-      margin-bottom: var(--uc-autohide-tabs-pull-collapsed);
+      margin-bottom: calc(
+        0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
+      );
     }
     #toolbar-menubar:is([autohide=""], [autohide="true"])
       + #TabsToolbar:not(:hover) {
@@ -99,17 +97,16 @@ export const autohide_tabstoolbar_v2 = css`
           var(--uc-tabs-hide-animation-delay) !important;
     }
     #mainPopupSet:has(
-        > #tab-group-editor > [panelopen]
+        > #tab-group-editor > [panelopen],
+        > #tabgroup-preview-panel[panelopen]
       )
       ~ #navigator-toolbox,
-    #navigator-toolbox:is(
-      :hover,
-      :has(> :is(#toolbar-menubar, #TabsToolbar):hover),
-      :has(#alltabs-button[open="true"])
-    ),
+    #navigator-toolbox:has(> :is(#toolbar-menubar, #TabsToolbar):hover),
     #navigator-toolbox[movingtab] {
       transition-delay: 0s !important;
-      margin-bottom: var(--uc-autohide-tabs-pull-hover);
+      margin-bottom: calc(
+        0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
+      );
       > #TabsToolbar {
         visibility: visible;
         margin-bottom: 0px;
@@ -118,7 +115,9 @@ export const autohide_tabstoolbar_v2 = css`
     }
     @media -moz-pref("userchrome.autohidetabs.show-while-inactive.enabled") {
       #navigator-toolbox:-moz-window-inactive {
-        margin-bottom: var(--uc-autohide-tabs-pull-hover);
+        margin-bottom: calc(
+          0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
+        );
         > #TabsToolbar {
           visibility: visible;
           margin-bottom: 0px;
