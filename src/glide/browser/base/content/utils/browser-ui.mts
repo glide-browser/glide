@@ -113,6 +113,29 @@ export const autohide_tabstoolbar_v2 = css`
         transition-delay: 0ms, 0ms !important;
       }
     }
+    @media (-moz-platform: macos) {   
+      #navigator-toolbox:hover,
+      #navigator-toolbox:has(#alltabs-button[open]),
+      #navigator-toolbox:has(#alltabs-button[open="true"]) {
+        margin-bottom: 0px !important;
+        >#TabsToolbar {
+            visibility: visible !important;
+            margin-bottom: 0px !important;
+            transition-delay: 0ms, 0ms !important;
+        }
+      }
+      #mainPopupSet:has(
+        #tabContextMenu[open], 
+        #tabContextMenu[open="true"], 
+        #tabContextMenu[state="open"]
+      ) ~ #navigator-toolbox {
+        margin-bottom: 0px !important;
+        > #TabsToolbar {
+            visibility: visible !important;
+            margin-bottom: 0px !important;
+        }  
+      }
+    }
     @media -moz-pref("userchrome.autohidetabs.show-while-inactive.enabled") {
       #navigator-toolbox:-moz-window-inactive {
         margin-bottom: calc(
