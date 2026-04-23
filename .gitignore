@@ -7,3 +7,4 @@ dist/
 compile_commands.json
 .envrc.local
 /src/glide.ts
+.vscode/
