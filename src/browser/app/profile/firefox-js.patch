@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 04f3a34510a1e74bac6ebce5b981a1d404e2e178..0de0fd178de5983e99fe29c98756aa51cb8c52c9 100644
+index c15f009ffe137de1ab08cc2e292d0baaa00b3ae9..7e89ec5bac6cfb69543b4878612faae405f75c55 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3549,3 +3549,5 @@ pref("browser.settings-redesign.enabled", false);
- #if defined(MOZ_WIDGET_GTK)
- pref("widget.support-xdg-config", true, locked);
- #endif
+@@ -3596,3 +3596,5 @@ pref("browser.contentsharing.enabled", false);
+ 
+ // Controls whether the "New" badge is shown on the content sharing menu items
+ pref("browser.contentsharing.newBadge.enabled", true);
 +
 +#include glide.js

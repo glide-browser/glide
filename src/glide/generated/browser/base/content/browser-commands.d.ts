@@ -5,6 +5,7 @@ declare namespace BrowserCommands {
     function handleBackspace(): void;
     function handleShiftBackspace(): void;
     function gotoHistoryIndex(aEvent: any): boolean;
+    function duplicateTab(): void;
     function reloadOrDuplicate(aEvent: any): void;
     function reload(): void;
     function reloadSkipCache(): void;

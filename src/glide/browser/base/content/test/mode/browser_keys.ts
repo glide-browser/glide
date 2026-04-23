@@ -288,7 +288,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
 
   await BrowserTestUtils.withNewTab(FULLSCREEN_TEST_URI, async browser => {
     // basic
-    await DOMFullscreenTestUtils.changeFullscreen(browser, true);
+    await DOMFullscreenTestUtils.changeFullscreen(browser, true, {});
     is(window.fullScreen, true, "window should now be in full screen mode");
 
     await keys("<esc>");
@@ -303,7 +303,7 @@ add_task(async function test_Escape_to_exit_fullscreen() {
     //
     // in the future, this should likely be updated to check if the user is focused,
     // on an input element, as `<Esc>` *should* mean switch to normal mode in that case.
-    await DOMFullscreenTestUtils.changeFullscreen(browser, true);
+    await DOMFullscreenTestUtils.changeFullscreen(browser, true, {});
     is(window.fullScreen, true, "window should now be in full screen mode");
 
     await SpecialPowers.spawn(browser, [], async () => content.document.getElementById("input-1")!.focus());

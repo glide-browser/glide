@@ -1,17 +1,17 @@
 diff --git a/modules/libpref/init/all.js b/modules/libpref/init/all.js
-index d0c4fc9575e9a351c7463fd5c273efbcf58cd5d6..c4b2731566b3c44fc46dbd44f1aa5069463341ff 100644
+index e0b2092b7a9271cdf3ed863a0f5b991bb19cfe76..9eae60dfa7ad3f931d9e585a6c2067b586dabc1a 100644
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
-@@ -3486,7 +3486,7 @@ pref("browser.search.removeEngineInfobar.enabled", true);
+@@ -3484,7 +3484,7 @@ pref("browser.search.removeEngineInfobar.enabled", true);
  pref("media.gmp-manager.allowLocalSources", true);
  
  // Update service URL for GMP install/updates:
 -pref("media.gmp-manager.url", "https://aus5.mozilla.org/update/3/GMP/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
 +pref("media.gmp-manager.url", "https://aus5.mozilla.org/update/3/GMP/%PLATFORM_VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%FIREFOX_CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
  
- // The |media.gmp-manager.certs.| preference branch contains branches that are
- // sequentially numbered starting at 1 that contain attribute name / value
-@@ -4073,6 +4073,14 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
+ // Whether or not to perform reader mode article parsing on page load.
+ // If this pref is disabled, we will never show a reader mode icon in the toolbar.
+@@ -4050,6 +4050,14 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
  
  pref("extensions.formautofill.supportRTL", false);
  

@@ -1,8 +1,8 @@
-diff --git a/browser/base/content/browser-menubar.inc b/browser/base/content/browser-menubar.inc
-index ad17202ee481ef9d1962e5b46e5e360d3b695b07..6d644d9b68e2da97f434d369f77039909a1aa2e0 100644
---- a/browser/base/content/browser-menubar.inc
-+++ b/browser/base/content/browser-menubar.inc
-@@ -4,6 +4,7 @@
+diff --git a/browser/base/content/browser-menubar.inc.xhtml b/browser/base/content/browser-menubar.inc.xhtml
+index f35df861257d616a3705dffe84844837157c288a..ac0a36a5d8f00df3fd5297da8a2769d14ac7e7ab 100644
+--- a/browser/base/content/browser-menubar.inc.xhtml
++++ b/browser/base/content/browser-menubar.inc.xhtml
+@@ -3,6 +3,7 @@
  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
         <menubar id="main-menubar">
@@ -10,7 +10,7 @@ index ad17202ee481ef9d1962e5b46e5e360d3b695b07..6d644d9b68e2da97f434d369f7703990
            <script src="chrome://browser/content/browser-menubar.js" />
              <menu id="file-menu" data-l10n-id="menu-file">
                <menupopup id="menu_FilePopup">
-@@ -459,4 +460,7 @@
+@@ -487,4 +488,7 @@
                            hidden="true"/>
                </menupopup>
            </menu>
