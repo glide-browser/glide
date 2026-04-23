@@ -100,6 +100,8 @@ class GlideBrowserClass {
     document!.addEventListener("keydown", this.#on_keydown.bind(this), true);
     document!.addEventListener("keypress", this.#on_keypress.bind(this), true);
     document!.addEventListener("keyup", this.#on_keyup.bind(this), true);
+    document!.addEventListener("mousedown", this.#on_mousedown.bind(this), true);
+    document!.addEventListener("wheel", this.#on_wheel.bind(this), true);
     window.addEventListener("MozDOMFullscreen:Entered", this.#on_fullscreen_enter.bind(this), true);
     window.addEventListener("MozDOMFullscreen:Exited", this.#on_fullscreen_exit.bind(this), true);
 
@@ -1788,6 +1790,41 @@ class GlideBrowserClass {
       this._log.debug("fullscreen exit, switching to normal mode");
       this._change_mode("normal");
     }
+  }
+
+  async #on_mousedown(event: MouseEvent) {
+    if ((event.target as any).$glide_hack_click_from_hint) {
+      return;
+    }
+    const has_partial = this.key_manager.has_partial_mapping;
+    if (!has_partial) {
+      return;
+    }
+    const mode = this.state.mode;
+    this._log.debug("mousedown event", "resetting key sequence");
+    this.key_manager.reset_sequence();
+    this.#display_keyseq([]);
+    this.#invoke_keystatechanged_autocmd({
+      mode,
+      sequence: [],
+      partial: false,
+    });
+  }
+
+  async #on_wheel(_event: WheelEvent) {
+    const has_partial = this.key_manager.has_partial_mapping;
+    if (!has_partial) {
+      return;
+    }
+    const mode = this.state.mode;
+    this._log.debug("scroll event", "resetting key sequence");
+    this.key_manager.reset_sequence();
+    this.#display_keyseq([]);
+    this.#invoke_keystatechanged_autocmd({
+      mode,
+      sequence: [],
+      partial: false,
+    });
   }
 
   /**
