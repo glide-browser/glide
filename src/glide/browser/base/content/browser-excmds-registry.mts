@@ -426,6 +426,19 @@ export const GLIDE_EXCOMMANDS = [
     repeatable: false,
   },
   {
+    name: "execute_find",
+    description: "Await the next key press and execute a find-char motion (f/F/t/T) with the pending operator.",
+    content: false,
+    repeatable: false,
+    args_schema: {
+      find_type: {
+        type: { enum: ["f", "F", "t", "T"] },
+        required: true,
+        position: 0,
+      },
+    } as const satisfies ArgumentsSchema,
+  },
+  {
     name: "motion",
     description: "Execute a given motion (internal)",
     content: true,
