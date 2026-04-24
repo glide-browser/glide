@@ -293,7 +293,7 @@ class GlideExcmdsClass {
       }
 
       case "tab_next": {
-        const all_tabs = gBrowser.tabContainer.allTabs as unknown[];
+        const all_tabs = gBrowser.tabContainer.allTabs;
         let next_index = gBrowser.tabContainer.selectedIndex + 1;
         if (next_index >= all_tabs.length) {
           next_index = 0;
@@ -349,6 +349,9 @@ class GlideExcmdsClass {
 
       case "tab_pin_toggle": {
         const tab = gBrowser.selectedTab;
+        if (!tab) {
+          throw new Error("No tab to pin/unpin");
+        }
         if (tab.pinned) {
           gBrowser.unpinTab(tab);
         } else {
@@ -362,6 +365,9 @@ class GlideExcmdsClass {
       }
 
       case "tab_duplicate": {
+        if (!gBrowser.selectedTab) {
+          throw new Error("No tab to duplicate");
+        }
         gBrowser.duplicateTab(gBrowser.selectedTab, undefined, { inBackground: false });
         break;
       }
