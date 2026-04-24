@@ -1,0 +1,13 @@
+diff --git a/tools/@types/generated/lib.gecko.xpcom.d.ts b/tools/@types/generated/lib.gecko.xpcom.d.ts
+index 1b06688914abdb3a3cf827df0ff6d608e9589ef2..2cadf116bcba69114bfcdb31739846f216ac257f 100644
+--- a/tools/@types/generated/lib.gecko.xpcom.d.ts
++++ b/tools/@types/generated/lib.gecko.xpcom.d.ts
+@@ -7286,7 +7286,7 @@ type nsISTSShutdownObserver = Callable<{
+ }>
+ 
+ interface nsISocketTransportService extends nsISupports {
+-  createTransport(aSocketTypes: string[], aHost: string, aPort: i32, aProxyInfo: nsIProxyInfo, dnsRecord: nsIDNSRecord): nsISocketTransport;
++  createTransport(aSocketTypes: string[], aHost: string, aPort: i32, aProxyInfo: nsIProxyInfo | null, dnsRecord: nsIDNSRecord | null): nsISocketTransport;
+   createUnixDomainTransport(aPath: nsIFile): nsISocketTransport;
+   createUnixDomainAbstractAddressTransport(aName: string): nsISocketTransport;
+ }

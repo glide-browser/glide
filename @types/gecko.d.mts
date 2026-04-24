@@ -357,6 +357,7 @@ declare namespace MockedExports {
     "chrome://glide/content/bundled/ts-blank-space.mjs": {
       default: typeof import("ts-blank-space").default;
     };
+    "chrome://glide/content/bundled/dioscuri.mjs": { buffer: typeof import("dioscuri").buffer };
 
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
       typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
@@ -395,6 +396,8 @@ declare namespace MockedExports {
     "resource://devtools/client/framework/browser-toolbox/Launcher.sys.mjs":
       typeof import("../engine/devtools/client/framework/browser-toolbox/Launcher.sys.mjs");
 
+    "resource://gre/modules/XPCOMUtils.sys.mjs": typeof import("../engine/js/xpconnect/loader/XPCOMUtils.sys.mjs");
+
     "resource://gre/modules/Subprocess.sys.mjs":
       typeof import("../engine/toolkit/modules/subprocess/Subprocess.sys.mjs");
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
@@ -424,6 +427,7 @@ declare namespace MockedExports {
     defineModuleGetter: (target: any, variable: string, path: string) => void;
     defineESModuleGetters: (target: any, mappings: any) => void;
     generateQI(interfaces: any[]): MozQueryInterface;
+    domProcessChild: nsIDOMProcessChild | null;
   }
 }
 
