@@ -253,8 +253,6 @@ declare var MozElements: MozElements;
 
 interface BrowserTab extends MozTabbrowserTab {
   _glide_commandline: GlideCommandLine | null;
-  [Symbol.dispose](): void;
-  [Symbol.asyncDispose](): Promise<void>;
 }
 // Source browser/components/tabbrowser/content/tab.js
 interface MozTabbrowserTab extends XULElement {
