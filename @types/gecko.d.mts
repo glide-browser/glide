@@ -149,10 +149,6 @@ declare namespace GlobalBrowser {
     currentURI: nsIURI;
 
     // split views
-    unsplitTabs(
-      splitview: MozTabSplitViewWrapper,
-      trigger?: "menu_separate" | "icon_separate" | "icon_close" | "tab_close" | "footer_separate" | null,
-    ): void;
     addTabSplitView(tabs: BrowserTab[], opts?: AddTabSplitViewOptions): MozTabSplitViewWrapper | null;
 
     // notifications

@@ -1259,7 +1259,7 @@ export function make_glide_api(
             return ff_tab.splitview;
           })();
 
-          gBrowser.unsplitTabs(splitview);
+          splitview.unsplitTabs();
         },
 
         has_split_view(tab) {
