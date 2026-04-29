@@ -19,6 +19,45 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.61a
+
+## Experimental support for the gemini protocol {% id="0.1.61a-gemini-support" %}
+
+This release adds experimental support the `bash:gemini://` [protocol](https://geminiprotocol.net/). A lightweight, document oriented protocol.
+
+This is experimental as it has not been thoroughly tested, and the full gemini protocol has not been implemented yet.
+
+If you've just installed this version then you can try it out at any of the following sites:
+
+- [gemini://geminiprotocol.net](gemini://geminiprotocol.net)
+- [gemini://midnight.pub](gemini://midnight.pub)
+- [gemini://bbs.geminispace.org](gemini://bbs.geminispace.org)
+- [gemini://warmedal.se/~antenna/](gemini://warmedal.se/~antenna/)
+
+The default styling is intentionally minimal, you can custommise it however you'd like with [`glide.o.gemini_styles`](api.md#glide.o.gemini_styles):
+
+```typescript
+glide.o.gemini_styles = css`
+  html {
+    margin: 20px;
+  }
+  body {
+    max-width: 800px;
+    font-family: serif;
+    line-height: 1.6;
+  }
+  /* ... */
+`;
+```
+
+## Changes {% id="0.1.61a-changes" %}
+
+- Bumped Firefox from 149.0b8 to 151.0b3
+- Added support for [`glide.o.native_tabs = 'autohide'`](api.md#glide.o.native_tabs) on macOS
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Prevented enhanced tracking protection from resetting on restarts
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+
 # 0.1.60a
 
 ## Changes {% id="0.1.60a-changes" %}
