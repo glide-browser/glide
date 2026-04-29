@@ -26,7 +26,7 @@ jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
 
-    runs-on: depot-macos-15
+    runs-on: depot-macos-14
     env:
       CARGO_TERM_COLOR: always
       GLIDE_PLATFORM: macos
