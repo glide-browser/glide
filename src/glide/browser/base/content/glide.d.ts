@@ -63,7 +63,7 @@ declare global {
      *
      * This has the exact same API as {@link glide.o}.
      */
-    bo: Partial<glide.Options>;
+    bo: Partial<Omit<glide.Options, "gemini_styles">>;
 
     options: {
       /**
@@ -1407,6 +1407,33 @@ declare global {
      *       and `GlideKeyboardLayouts` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/glide.d.ts
      */
     keyboard_layouts: GlideKeyboardLayouts;
+
+    /**
+     * Override the CSS used for gemini pages.
+     *
+     * ```typescript
+     * glide.o.gemini_styles = css`
+     *   background {
+     *     color: grey;
+     *   }
+     * `;
+     * ```
+     *
+     * Or to extend the default styles instead of overriding:
+     *
+     * ```typescript
+     * glide.o.gemini_styles = glide.o.gemini_styles + css`
+     *   p {
+     *     color: red;
+     *   }
+     * `;
+     * ```
+     *
+     * **note**: Requires reloading the page to take effect.
+     *
+     * **note**: Buffer specific overrides via `glide.bo` are not supported yet.
+     */
+    gemini_styles: string;
   }
 
   /**

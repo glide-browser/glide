@@ -239,6 +239,54 @@ add_task(async function test_gemini_unknown_status_code() {
   );
 });
 
+add_task(async function test_gemini_styles() {
+  await setup();
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.gemini_styles = `
+      .gemini { background-color: rgb(1, 2, 3); }
+    `;
+  });
+
+  await spinup_gemini_server({
+    "gemini://127.0.0.1/": "20 text/gemini\r\n# Styled Page\r\nCustom styles applied.",
+  });
+
+  using tab = await GlideTestUtils.new_tab("gemini://127.0.0.1/");
+
+  await SpecialPowers.spawn(tab.linkedBrowser, [], async () => {
+    const style = content.document.querySelector("style");
+    ok(style);
+    Assert.stringContains(
+      style.textContent!,
+      "rgb(1, 2, 3)",
+      "Custom CSS from glide.o.gemini_styles is injected into the page",
+    );
+    ok(!style.textContent!.includes("max-width: 800px"), "Default styles are replaced");
+  });
+});
+
+add_task(async function test_gemini_styles_extends_default() {
+  await setup();
+  await GlideTestUtils.reload_config(function _() {
+    glide.o.gemini_styles = glide.o.gemini_styles + `
+      .gemini { outline: 99px solid rgb(4, 5, 6); }
+    `;
+  });
+
+  await spinup_gemini_server({
+    "gemini://127.0.0.1/": "20 text/gemini\r\n# Extended Page\r\nExtended styles.",
+  });
+
+  using tab = await GlideTestUtils.new_tab("gemini://127.0.0.1/");
+
+  await SpecialPowers.spawn(tab.linkedBrowser, [], async () => {
+    const style = content.document.querySelector("style");
+    ok(style);
+    Assert.stringContains(style.textContent!, "max-width: 800px", "Default styles are preserved");
+    Assert.stringContains(style.textContent!, "rgb(4, 5, 6)", "Additional custom CSS is appended");
+  });
+});
+
 add_task(async function test_gemini_can_be_disabled() {
   await setup();
   await spinup_gemini_server({

@@ -1,8 +1,8 @@
 diff --git a/modules/libpref/init/StaticPrefList.yaml b/modules/libpref/init/StaticPrefList.yaml
-index 224524c8ff2cf5a2c53dd7a894c596d75d13baac..b36aac44b1316cfee287f2e66ec5f14d96c9f907 100644
+index edca7d1f5852959d768703456c9bca5274c30775..22adf83569dad5f01770bf83dca0e62438359bcb 100644
 --- a/modules/libpref/init/StaticPrefList.yaml
 +++ b/modules/libpref/init/StaticPrefList.yaml
-@@ -8524,6 +8524,40 @@
+@@ -8531,6 +8531,45 @@
    value: 0
    mirror: always
  
@@ -38,6 +38,11 @@ index 224524c8ff2cf5a2c53dd7a894c596d75d13baac..b36aac44b1316cfee287f2e66ec5f14d
 +  type: bool
 +  value: true
 +  mirror: always
++
++- name: glide.gemini.css
++  type: String
++  value: ""
++  mirror: never
 +
 +# glide-injection-end
  #---------------------------------------------------------------------------

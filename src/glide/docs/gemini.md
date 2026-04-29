@@ -21,3 +21,26 @@ The temporary overrides are cleared when the browser restarts.
 We will improve this in the future.
 
 If these security tradeoffs are undesirable, you can disable support for `bash:gemini://` by setting the `bash:glide.gemini.enabled` pref to `false`.
+
+## Custom styles
+
+You can override the CSS used for rendering gemini pages by setting [`glide.o.gemini_styles`](api.md#glide.o.gemini_styles) in your config:
+
+```ts
+glide.o.gemini_styles = css`
+  html {
+    margin: 20px;
+  }
+  body {
+    max-width: 800px;
+    font-family: serif;
+    line-height: 1.6;
+  }
+  /* ... */
+`;
+```
+
+This option is global only, buffer-specific overrides via `glide.bo` are not supported yet.
+
+> [!NOTE]
+> The page must be reloaded for changes to take effect.

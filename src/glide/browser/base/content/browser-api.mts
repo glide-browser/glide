@@ -115,6 +115,28 @@ const options = {
 
     AboutNewTab.newTabURL = value;
   },
+
+  gemini_styles(value, buf) {
+    if (buf) {
+      // the way the page is rendered means the `bo` callbacks would be applied *after* we've already
+      // injected the styles, so it just takes extra effort to make this work.
+      throw new Error(`Setting glide.bo.gemini_styles is not supported yet`);
+    }
+
+    const pref = "glide.gemini.css";
+    const glide = GlideBrowser.api;
+    const previous = glide.prefs.get(pref);
+
+    Services.prefs.setStringPref(pref, value);
+
+    GlideBrowser.on_reload_config(() => {
+      if (typeof previous === "undefined") {
+        glide.prefs.clear(pref);
+      } else {
+        glide.prefs.set(pref, previous);
+      }
+    });
+  },
 } as const satisfies { [K in keyof typeof glide["o"]]?: (value: typeof glide["o"][K], buf: boolean) => void };
 
 type GlideO = (typeof glide)["o"];
@@ -188,6 +210,16 @@ class GlideOptions implements GlideO {
   keyboard_layouts: GlideKeyboardLayouts = Keyboard.get_layouts();
 
   keymaps_use_physical_layout: glide.Options["keymaps_use_physical_layout"] = "for_macos_option_modifier";
+
+  #gemini_styles: (typeof glide)["o"]["gemini_styles"] | null = null;
+  get gemini_styles() {
+    return this.#gemini_styles
+      ?? (ChromeUtils.importESModule("moz-src:///browser/components/gemini/dist/GeminiProtocolHandler.sys.mjs").STYLES);
+  }
+  set gemini_styles(value: (typeof glide)["o"]["gemini_styles"]) {
+    this.#gemini_styles = value;
+    options.gemini_styles(value, false);
+  }
 }
 
 // above properties that are defined with a `set $prop()` so that we can dynamically construct `glide.bo` and have
@@ -224,7 +256,7 @@ export function make_glide_api(
     bo: shared_api?.bo ?? make_buffer_options(),
     options: {
       get<Name extends keyof glide.Options>(name: Name): glide.Options[Name] {
-        const option = GlideBrowser.api.bo[name];
+        const option = (GlideBrowser.api.bo as Partial<glide.Options>)[name];
         if (is_present(option)) {
           return option!;
         }

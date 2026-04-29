@@ -187,7 +187,7 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
   #render_gemtext(gemtext: string): string {
     return `
       <head>
-        <style>${STYLES}</style>
+        <style>${this.#styles()}</style>
         <meta http-equiv="Content-Security-Policy" content="script-src 'none'">
       </head>
       <body class="gemini">
@@ -198,13 +198,20 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
   #render_error_page(title: string, body_html: string): string {
     return `
       <head>
-        <style>${STYLES}</style>
+        <style>${this.#styles()}</style>
       </head>
       <body class="gemini">
         <h1>${escape_html(title)}</h1>
         ${body_html}
       </body>
     `;
+  }
+
+  #styles() {
+    if (Services.prefs.prefHasUserValue("glide.gemini.css")) {
+      return Services.prefs.getStringPref("glide.gemini.css");
+    }
+    return STYLES;
   }
 
   QueryInterface = ChromeUtils.generateQI(["nsIProtocolHandler"]);
@@ -250,7 +257,7 @@ function escape_quoted_gemtext(gemtext: string): string {
     .join("");
 }
 
-const STYLES = `
+export const STYLES = `
   html {
     margin: 20px;
   }
