@@ -111,9 +111,22 @@ jobs:
         run: |
           pnpm bootstrap
 
+      - name: Bootstrap system
+        working-directory: engine
+        run: |
+          export PATH="$(python3 -m site --user-base)/bin":$PATH
+          ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes || true
+
+      # this is only needed temporarily while the SDK url in the current firefox tree reuslts in a 403
+      - name: Download macOS SDK
+        run: |
           cd engine
           export PATH="$(python3 -m site --user-base)/bin":$PATH
-          ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
+          PYTHONPATH=python/mozbuild python3 taskcluster/scripts/misc/unpack-sdk.py \
+            "https://swcdn.apple.com/content/downloads/60/13/122-35686-A_30JUXWIJFR/ck0gzuw5qccefzm3ptlwou3pu6a55d0o02/CLTools_macOSNMOS_SDK.pkg" \
+            "3e4e755526d97d4ccc8caa0d42c6ecb41cfd009a9e2848f86766f0eb30990f0f26709339caa926151becd4501df59cfeaa47a0caa7b8ad13c4211b607d1e63c8" \
+            "Library/Developer/CommandLineTools/SDKs/MacOSX26.4.sdk" \
+            "$HOME/.mozbuild/MacOSX26.0.sdk"
           cd ..
 
       - name: Build
