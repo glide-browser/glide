@@ -3,23 +3,19 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
-    rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils?ref=main";
   };
 
   outputs = {
     nixpkgs,
     flake-utils,
-    rust-overlay,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        overlays = [(import rust-overlay)];
         pkgs = import nixpkgs {
-          inherit system overlays;
+          inherit system;
         };
-        rustToolchain = pkgs.rust-bin.beta.latest.default;
       in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs;
@@ -28,7 +24,8 @@
               nodejs_24
               python314
               uv
-              rustToolchain
+              rustc
+              cargo
               watchman
               cairo
               gnutar
@@ -42,10 +39,23 @@
               lld
               gnumake
               curl
-              m4
+              m4 # gnum4
+
+              # from nixpkgs build-mozilla-mach nativeBuildInputs
+              autoconf
+              perl
+              unzip
+              which
+
+              # from nixpkgs build-mozilla-mach buildInputs
+              bzip2
+              file
+              zip
             ]
             ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
               apple-sdk_26
+              cups
+              rsync
             ])
             ++ pkgs.lib.optionals pkgs.stdenv.isLinux (with pkgs; [
               yasm
@@ -58,10 +68,41 @@
               gtk3
               libpulseaudio
               libX11
+              xorg.libXcursor
+              xorg.libXdamage
+              xorg.libXext
+              xorg.libXft
+              xorg.libXi
+              xorg.libXrender
+              xorg.libXtst
               libxcb
               libXt
               xvfb-run
               dos2unix
+
+              # from nixpkgs build-mozilla-mach buildInputs
+              fontconfig
+              freetype
+              glib
+              libevent
+              libffi
+              libjpeg
+              libpng
+              libvpx
+              libwebp
+              nspr
+              nss_latest
+              pango
+              pixman
+              xorgproto
+              zlib
+              libjack2
+              libxkbcommon
+              libGL
+              libGLU
+              libstartup_notification
+              jemalloc
+              libkrb5
             ]);
 
           env = {
@@ -74,9 +115,6 @@
             # correctly preprocesses .S files.
             # https://bugzilla.mozilla.org/show_bug.cgi?id=1497286
             unset AS
-
-            export RUSTC="${rustToolchain}/bin/rustc"
-            export CARGO="${rustToolchain}/bin/cargo"
           '';
         };
       }
