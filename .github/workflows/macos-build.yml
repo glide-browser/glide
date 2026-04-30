@@ -115,7 +115,7 @@ jobs:
         working-directory: engine
         run: |
           export PATH="$(python3 -m site --user-base)/bin":$PATH
-          ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes || true
+          ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes --exclude MacOSX26.4.sdk || true
 
       # this is only needed temporarily while the SDK url in the current firefox tree reuslts in a 403
       - name: Download macOS SDK
