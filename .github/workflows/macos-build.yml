@@ -97,6 +97,8 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.90
           source $HOME/.cargo/env
 
+          cargo install cbindgen
+
           if test "$GLIDE_COMPAT" = "aarch64"; then
             rustup target add aarch64-apple-darwin
           else
