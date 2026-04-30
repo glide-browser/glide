@@ -26,6 +26,7 @@
               uv
               rustc
               cargo
+              rustfmt
               watchman
               cairo
               gnutar
@@ -115,6 +116,37 @@
             # correctly preprocesses .S files.
             # https://bugzilla.mozilla.org/show_bug.cgi?id=1497286
             unset AS
+
+            # Set these in shellHook (after setup hooks) so nixpkgs setup hooks
+            # (e.g. llvmPackages.clang's) cannot override them back to bare "clang".
+            export CC="${pkgs.llvmPackages.clang}/bin/clang"
+            export CXX="${pkgs.llvmPackages.clang}/bin/clang++"
+            export HOST_CC="${pkgs.llvmPackages.clang}/bin/clang"
+            export HOST_CXX="${pkgs.llvmPackages.clang}/bin/clang++"
+
+            # Disable nix hardening flags injected by the cc-wrapper (e.g.
+            # -fzero-call-used-regs=used-gpr) which are unsupported on wasm targets
+            # and break mach configure's cross-compilation feature-detection tests.
+            # Firefox's own build system adds appropriate hardening for release builds.
+            unset NIX_HARDENING_ENABLE
+            export RUSTC="${pkgs.rustc}/bin/rustc"
+            export CARGO="${pkgs.cargo}/bin/cargo"
+            export CBINDGEN="${pkgs.rust-cbindgen}/bin/cbindgen"
+            export NODE="${pkgs.nodejs_24}/bin/node"
+            export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
+
+            GLIDE_MOZCONFIG_CONTENT="ac_add_options --with-libclang-path=${pkgs.llvmPackages.libclang.lib}/lib"
+            if [ -n "''${SDKROOT:-}" ]; then
+              GLIDE_MOZCONFIG_CONTENT="$GLIDE_MOZCONFIG_CONTENT
+ac_add_options --with-macos-sdk=$SDKROOT"
+            fi
+            # nix clang doesn't ship wasm32 compiler-rt builtins (libclang_rt.builtins.a
+            # for wasm32-unknown-wasi), so wasm-ld can't link wasm binaries. Disable the
+            # wasm sandboxing of system libraries for nix dev builds. This is the same
+            # workaround Mozilla uses for their code-coverage CI builds.
+            GLIDE_MOZCONFIG_CONTENT="$GLIDE_MOZCONFIG_CONTENT
+ac_add_options --without-wasm-sandboxed-libraries"
+            export GLIDE_MOZCONFIG_CONTENT
           '';
         };
       }
