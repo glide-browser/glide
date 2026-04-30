@@ -27,6 +27,11 @@
         rust = pkgs.rust-bin.stable.latest.default.override {
           targets = [ "aarch64-apple-darwin" "x86_64-apple-darwin" ];
         };
+        # Use LLVM 22 to match Rust 1.95's bundled LLVM (22.1.2). Cross-LTO
+        # (--enable-lto=cross,thin) requires that lld and rustc use the same
+        # LLVM major version; mixing LLVM 21 lld with LLVM 22 Rust bitcode
+        # produces "Unknown attribute kind" linker errors.
+        llvmPkgs = pkgs.llvmPackages_22;
       in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs;
@@ -43,12 +48,12 @@
               gnutar
               mercurial
               nasm
-              llvmPackages.clang
-              llvmPackages.libclang.lib
-              llvmPackages.libclang.dev  # clang/AST/*.h etc. for the Firefox clang plugin
-              llvm
-              llvmPackages.llvm.dev      # llvm/ADT/*.h etc. for the Firefox clang plugin
-              llvmPackages.bintools      # llvm-ar, llvm-nm, lld etc. needed for LTO
+              llvmPkgs.clang
+              llvmPkgs.libclang.lib
+              llvmPkgs.libclang.dev  # clang/AST/*.h etc. for the Firefox clang plugin
+              llvmPkgs.llvm
+              llvmPkgs.llvm.dev      # llvm/ADT/*.h etc. for the Firefox clang plugin
+              llvmPkgs.bintools      # llvm-ar, llvm-nm, lld etc. needed for LTO
               pkg-config
               gnumake
               curl
@@ -119,7 +124,7 @@
             ]);
 
           env = {
-            LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
+            LIBCLANG_PATH = "${llvmPkgs.libclang.lib}/lib";
           };
 
           shellHook = ''
@@ -131,10 +136,10 @@
 
             # Set these in shellHook (after setup hooks) so nixpkgs setup hooks
             # (e.g. llvmPackages.clang's) cannot override them back to bare "clang".
-            export CC="${pkgs.llvmPackages.clang}/bin/clang"
-            export CXX="${pkgs.llvmPackages.clang}/bin/clang++"
-            export HOST_CC="${pkgs.llvmPackages.clang}/bin/clang"
-            export HOST_CXX="${pkgs.llvmPackages.clang}/bin/clang++"
+            export CC="${llvmPkgs.clang}/bin/clang"
+            export CXX="${llvmPkgs.clang}/bin/clang++"
+            export HOST_CC="${llvmPkgs.clang}/bin/clang"
+            export HOST_CXX="${llvmPkgs.clang}/bin/clang++"
 
             # Disable nix hardening flags injected by the cc-wrapper (e.g.
             # -fzero-call-used-regs=used-gpr) which are unsupported on wasm targets
@@ -147,7 +152,20 @@
             export NODE="${pkgs.nodejs_24}/bin/node"
             export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
 
-            GLIDE_MOZCONFIG_CONTENT="ac_add_options --with-libclang-path=${pkgs.llvmPackages.libclang.lib}/lib"
+            # When cross-compiling x86_64 from an aarch64 runner, the nix
+            # cc-wrapper injects -target arm64-apple-darwin as an extraBefore
+            # flag. Firefox's build system overrides this for C/C++ files by
+            # passing -target x86_64-apple-darwin explicitly, but NSPR's
+            # Makefile-based assembly build (AS='$(CC) -x assembler-with-cpp')
+            # only appends $(ASFLAGS) — so without an explicit target in
+            # ASFLAGS, the arm64 default wins. os_Darwin.s then compiles empty
+            # (no __x86_64__ defined) and _PR_Darwin_x86_64_AtomicIncrement is
+            # never assembled, causing an undefined symbol at link time.
+            if [ "''${GLIDE_COMPAT:-}" = "x86_64" ]; then
+              export ASFLAGS="''${ASFLAGS:+$ASFLAGS }-target x86_64-apple-darwin"
+            fi
+
+            GLIDE_MOZCONFIG_CONTENT="ac_add_options --with-libclang-path=${llvmPkgs.libclang.lib}/lib"
             if [ -n "''${SDKROOT:-}" ]; then
               GLIDE_MOZCONFIG_CONTENT="$GLIDE_MOZCONFIG_CONTENT
 ac_add_options --with-macos-sdk=$SDKROOT"
