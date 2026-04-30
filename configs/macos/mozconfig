@@ -2,6 +2,7 @@
 
 unset MOZ_STDCXX_COMPAT
 
+ac_add_options --enable-bootstrap
 ac_add_options --disable-dmd
 ac_add_options --enable-eme=widevine
 
