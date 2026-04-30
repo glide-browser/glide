@@ -35,9 +35,11 @@
               rust-cbindgen
               llvmPackages.clang
               llvmPackages.libclang.lib
+              llvmPackages.libclang.dev  # clang/AST/*.h etc. for the Firefox clang plugin
               llvm
+              llvmPackages.llvm.dev      # llvm/ADT/*.h etc. for the Firefox clang plugin
+              llvmPackages.bintools      # llvm-ar, llvm-nm, lld etc. needed for LTO
               pkg-config
-              lld
               gnumake
               curl
               m4 # gnum4
