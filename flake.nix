@@ -4,17 +4,28 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils?ref=main";
+    # rust-overlay is needed for multi-target Rust: the CI cross-compiles x86_64
+    # from an aarch64 runner, which requires a rustc that has both stdlibs.
+    # Standard nixpkgs rustc only has the host platform target.
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs = {
     nixpkgs,
     flake-utils,
+    rust-overlay,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = import nixpkgs {
           inherit system;
+          overlays = [ rust-overlay.overlays.default ];
+        };
+        # Stable Rust with both macOS targets so cross-compilation works when
+        # building x86_64 from an aarch64 runner (and vice-versa).
+        rust = pkgs.rust-bin.stable.latest.default.override {
+          targets = [ "aarch64-apple-darwin" "x86_64-apple-darwin" ];
         };
       in {
         devShell = pkgs.mkShell {
@@ -24,15 +35,14 @@
               nodejs_24
               python314
               uv
-              rustc
-              cargo
+              rust
+              rust-cbindgen
               rustfmt
               watchman
               cairo
               gnutar
               mercurial
               nasm
-              rust-cbindgen
               llvmPackages.clang
               llvmPackages.libclang.lib
               llvmPackages.libclang.dev  # clang/AST/*.h etc. for the Firefox clang plugin
@@ -131,8 +141,8 @@
             # and break mach configure's cross-compilation feature-detection tests.
             # Firefox's own build system adds appropriate hardening for release builds.
             unset NIX_HARDENING_ENABLE
-            export RUSTC="${pkgs.rustc}/bin/rustc"
-            export CARGO="${pkgs.cargo}/bin/cargo"
+            export RUSTC="${rust}/bin/rustc"
+            export CARGO="${rust}/bin/cargo"
             export CBINDGEN="${pkgs.rust-cbindgen}/bin/cbindgen"
             export NODE="${pkgs.nodejs_24}/bin/node"
             export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
