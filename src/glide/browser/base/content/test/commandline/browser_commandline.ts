@@ -725,3 +725,25 @@ add_task(async function test_commandline_close() {
   is(result, true, "close() should return true when the commandline was open");
   await wait_for_mode("normal");
 });
+
+add_task(async function test_update_commandline() {
+  await reload_config(function _() {});
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    await GlideTestUtils.commandline.open();
+    await new Promise(r => requestAnimationFrame(r));
+
+    await keys("update");
+
+    is(
+      GlideTestUtils.commandline.current_source_header(),
+      "update",
+      "entering `update` should result in update completions",
+    );
+    let visible_rows = GlideTestUtils.commandline.visible_rows();
+    // Note: Updates are disabled in the test environment
+    // There will be 1 visible row stating that "Updates are disabled by policy"
+    await waiter(() => visible_rows.length).is(1, "there should only be 1 update option present");
+    await keys("<esc>");
+  });
+});

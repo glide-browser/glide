@@ -267,6 +267,8 @@ declare type _ExtensionCommon =
 declare type UserSearchEngine = import("../engine/toolkit/components/search/UserSearchEngine.sys.mjs").UserSearchEngine;
 
 declare type GlideHintIPC = import("../src/glide/browser/base/content/hinting.mts").GlideHintIPC;
+declare type AppUpdater = import("../engine/toolkit/mozapps/update/AppUpdater.sys.mjs").AppUpdater;
+declare type DownloadUtils = typeof import("../engine/toolkit/mozapps/downloads/DownloadUtils.sys.mjs").DownloadUtils;
 
 declare type GlideResolvedHint = GlideHintIPC & {
   label: string;
@@ -297,6 +299,8 @@ declare namespace MockedExports {
     "chrome://glide/content/utils/objects.mjs": typeof import("../src/glide/browser/base/content/utils/objects.mts");
     "chrome://glide/content/utils/strings.mjs": typeof import("../src/glide/browser/base/content/utils/strings.mts");
     "chrome://glide/content/utils/promises.mjs": typeof import("../src/glide/browser/base/content/utils/promises.mts");
+    "chrome://glide/content/utils/browser-update.mjs":
+      typeof import("../src/glide/browser/base/content/utils/browser-update.mts");
     "chrome://glide/content/utils/browser-ui.mjs":
       typeof import("../src/glide/browser/base/content/utils/browser-ui.mts");
     "chrome://glide/content/utils/resources.mjs":
@@ -386,6 +390,9 @@ declare namespace MockedExports {
       typeof import("../src/glide/generated/@types/subs/AppConstants.sys.d.ts");
     "resource://gre/modules/AppMenuNotifications.sys.mjs":
       typeof import("../engine/toolkit/modules/AppMenuNotifications.sys.mjs");
+    "resource://gre/modules/AppUpdater.sys.mjs": typeof import("../engine/toolkit/mozapps/update/AppUpdater.sys.mjs");
+    "resource://gre/modules/DownloadUtils.sys.mjs":
+      typeof import("../engine/toolkit/mozapps/downloads/DownloadUtils.sys.mjs");
 
     "resource://devtools/shared/loader/Loader.sys.mjs":
       typeof import("../engine/devtools/shared/loader/Loader.sys.mjs");
