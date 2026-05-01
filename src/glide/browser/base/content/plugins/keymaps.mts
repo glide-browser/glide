@@ -68,8 +68,8 @@ export function init(sandbox: Sandbox) {
 
   // tabs
   glide.keymaps.set("normal", "<leader>d", "tab_close");
-  glide.keymaps.set(["normal", "insert"], "<C-j>", "tab_next");
-  glide.keymaps.set(["normal", "insert"], "<C-k>", "tab_prev");
+  glide.keymaps.set(["normal", "insert"], "<C-j>", "tab_next_visual");
+  glide.keymaps.set(["normal", "insert"], "<C-k>", "tab_prev_visual");
   glide.keymaps.set("normal", "<A-p>", "tab_pin_toggle", { description: "Pin or unpin the current tab" });
   glide.keymaps.set("normal", "yt", "tab_duplicate");
 
