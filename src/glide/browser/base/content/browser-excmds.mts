@@ -786,7 +786,7 @@ class GlideExcmdsClass {
 
         const file = Cc["@mozilla.org/file/local;1"]!.createInstance(Ci.nsIFile);
         file.initWithPath(GlideBrowser.config_path);
-        file.launch();
+        launch_as_text(file);
         break;
       }
 
@@ -1042,3 +1042,14 @@ export function get_command_info(
 }
 
 export const GlideExcmds = new GlideExcmdsClass();
+
+function launch_as_text(file: nsIFile): void {
+  try {
+    const mime_service = Cc["@mozilla.org/mime;1"]!.getService(Ci.nsIMIMEService);
+    const mime_info = mime_service.getFromTypeAndExtension("text/plain", "");
+    mime_info.preferredAction = Ci.nsIHandlerInfo.useSystemDefault;
+    mime_info.launchWithFile(file);
+  } catch {
+    file.launch();
+  }
+}
