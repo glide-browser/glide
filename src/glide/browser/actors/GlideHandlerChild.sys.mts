@@ -567,6 +567,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
             motions.end_of_line(editor, false);
             break;
           }
+          case "%": {
+            motions.jump_to_matching_bracket(editor);
+            break;
+          }
           case "s": {
             // caret is on the first line and it's empty
             if (motions.is_bof(editor) && motions.next_char(editor) === "\n") {
@@ -701,6 +705,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "b":
       case "B":
       case "$":
+      case "%":
       case "{":
       case "}":
       case "s":
