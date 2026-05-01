@@ -210,7 +210,7 @@ export class TabsCompletionSource implements GlideCompletionSource<TabCompletion
                 tab.label,
               ],
             }),
-            DOM.create_element("td", { className: "url", children: tab.linkedBrowser.currentURI.spec }),
+            DOM.create_element("td", { className: "url", children: tab.linkedBrowser?.currentURI.spec }),
           ],
         }),
 
