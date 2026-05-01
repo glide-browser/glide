@@ -140,6 +140,13 @@
             export CXX="${llvmPkgs.clang}/bin/clang++"
             export HOST_CC="${llvmPkgs.clang}/bin/clang"
             export HOST_CXX="${llvmPkgs.clang}/bin/clang++"
+            # rust-cbindgen and rustfmt from nixpkgs have llvmPackages (LLVM 21)
+            # as a transitive propagated dep, adding LLVM 21 tools to PATH before
+            # LLVM 22. Pin AR/NM/RANLIB explicitly so cc-rs (used by Rust build
+            # scripts like swgl) doesn't pick up LLVM 21's ar.
+            export AR="${llvmPkgs.bintools}/bin/ar"
+            export NM="${llvmPkgs.bintools}/bin/nm"
+            export RANLIB="${llvmPkgs.bintools}/bin/ranlib"
 
             # Disable nix hardening flags injected by the cc-wrapper (e.g.
             # -fzero-call-used-regs=used-gpr) which are unsupported on wasm targets
