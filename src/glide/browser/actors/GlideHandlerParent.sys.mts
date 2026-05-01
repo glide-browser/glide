@@ -30,6 +30,13 @@ export interface ParentMessages {
     args: string;
     operator: GlideOperator | null;
     sequence: string[];
+    count: number;
+  };
+  "Glide::FindChar": {
+    find_type: "f" | "F" | "t" | "T";
+    character: string;
+    operator: GlideOperator;
+    count: number;
   };
   "Glide::KeyMappingExecution": {
     sequence: string[];
@@ -59,7 +66,7 @@ export interface ParentMessages {
       | GlideFunctionIPC<(target: HTMLElement) => Promise<void>>
       | null;
   };
-  "Glide::Move": { direction: "left" | "right" | "up" | "down" | "endline" };
+  "Glide::Move": { direction: "left" | "right" | "up" | "down" | "endline"; count?: number };
   "Glide::Scroll": { to: "half_page_up" | "half_page_down" | "page_up" | "page_down" | "top" | "bottom" };
   "Glide::Debug": null;
 }
