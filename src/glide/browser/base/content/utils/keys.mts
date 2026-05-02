@@ -20,6 +20,9 @@
  */
 
 import type { SetNonNullable } from "type-fest";
+import type { GlideExcmdName } from "../browser-excmds-registry.mjs";
+
+const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 
 const { lastx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
@@ -260,12 +263,13 @@ export class KeyManager {
     modes: GlideMode | GlideMode[],
     lhs: string,
     rhs: glide.ExcmdValue,
-    opts?: glide.KeymapOpts | undefined,
+    opts?: glide.KeymapOpts,
   ): void {
+    const keymap_description = opts?.description ?? get_description_from_registry(rhs);
     const mapping: KeyMapping = {
       sequence: split(lhs).map(normalize),
       command: rhs,
-      description: opts?.description,
+      description: keymap_description,
       retain_key_display: opts?.retain_key_display,
     };
 
@@ -845,4 +849,18 @@ export function is_printable(keyn: string): boolean {
     || keyn === "<End>"
     || keyn.startsWith("<F") // fn keys
   );
+}
+
+/**
+ * Returns the description of a key mapping from the excmd registry.
+ * @param excmd - The excmd value of the key mapping.
+ * @returns The description of the key mapping.
+ */
+function get_description_from_registry(excmd: glide.ExcmdValue): string {
+  if (typeof excmd !== "string") {
+    return "";
+  }
+
+  const command = GLIDE_EXCOMMANDS_MAP[excmd as GlideExcmdName];
+  return command?.description ?? "";
 }
