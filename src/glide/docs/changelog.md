@@ -52,7 +52,7 @@ glide.o.gemini_styles = css`
 
 ## Changes {% id="0.1.61a-changes" %}
 
-- Bumped Firefox from 149.0b8 to 151.0b3
+- Bumped Firefox from 149.0b8 to 151.0b4
 - Added support for [`glide.o.native_tabs = 'autohide'`](api.md#glide.o.native_tabs) on macOS
   - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 - Prevented enhanced tracking protection from resetting on restarts
