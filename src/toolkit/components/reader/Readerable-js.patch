@@ -1,0 +1,17 @@
+diff --git a/toolkit/components/reader/Readerable.js b/toolkit/components/reader/Readerable.js
+index 82a23a73b2ff6ebbca3dfe95f069820e32f5753f..32b2894a6c6dfbddb0c2a16d1af935d1f0dc42e5 100644
+--- a/toolkit/components/reader/Readerable.js
++++ b/toolkit/components/reader/Readerable.js
+@@ -58,7 +58,11 @@ var Readerable = {
+   ],
+ 
+   shouldCheckUri(uri, isBaseUri = false) {
+-    if (!["http", "https", "file", "moz-nullprincipal"].includes(uri.scheme)) {
++    if (
++      !["http", "https", "file", "moz-nullprincipal", "gemini"].includes(
++        uri.scheme
++      )
++    ) {
+       return false;
+     }
+ 
