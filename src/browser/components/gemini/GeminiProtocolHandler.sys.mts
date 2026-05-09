@@ -308,7 +308,7 @@ export const STYLES = `
     overflow-x: scroll;
   }
   
-  .gemini code {
+  .gemini :not(pre) > code {
     border: solid 1px;
     padding: 1px 2px;
     margin: 1px 2px;
