@@ -191,7 +191,7 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
         <meta http-equiv="Content-Security-Policy" content="script-src 'none'">
       </head>
       <body><article class="gemini">
-    ` + gemtext_to_html(escape_quoted_gemtext(gemtext))
+    ` + gemtext_to_html(gemtext)
       + `</article></body>`;
   }
 
@@ -225,36 +225,6 @@ function escape_html(s: unknown): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-}
-
-function escape_quoted_gemtext(gemtext: string): string {
-  let in_preformatted_block = false;
-
-  return gemtext
-    .split(/(\r\n|\r|\n)/)
-    .map((part, index) => {
-      if (index % 2 === 1) {
-        return part;
-      }
-
-      if (part.startsWith("```")) {
-        in_preformatted_block = !in_preformatted_block;
-        return part;
-      }
-
-      if (in_preformatted_block || !part.startsWith(">")) {
-        return part;
-      }
-
-      const match = /^(>[ \t]*)(.*)$/.exec(part);
-      if (!match) {
-        return part;
-      }
-
-      const [, prefix, text] = match;
-      return text ? prefix + escape_html(text) : part;
-    })
-    .join("");
 }
 
 export const STYLES = `
