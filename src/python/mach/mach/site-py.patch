@@ -1,0 +1,47 @@
+diff --git a/python/mach/mach/site.py b/python/mach/mach/site.py
+index 8c4c196a230b2d66e22bd61e0c8e37a495dc48af..b680ac4a667c543f057266fb90190af2fc4a8b59 100644
+--- a/python/mach/mach/site.py
++++ b/python/mach/mach/site.py
+@@ -386,7 +386,8 @@ class MachSiteManager:
+         if self._site_packages_source == SitePackagesSource.NONE:
+             return SiteUpToDateResult(True)
+         elif self._site_packages_source == SitePackagesSource.SYSTEM:
+-            _assert_pip_check(self._sys_path(), "mach", self._requirements)
++            _assert_pip_check(self._sys_path(), "mach", self._requirements,
++                              quiet=self._quiet)
+             return SiteUpToDateResult(True)
+         elif self._site_packages_source == SitePackagesSource.VENV:
+             environment = self._virtualenv()
+@@ -932,6 +933,7 @@ class CommandSiteManager:
+                 pthfile_lines,
+                 self._site_name,
+                 self._requirements if not self._populate_virtualenv else None,
++                quiet=self._quiet,
+             )
+ 
+         return _is_venv_up_to_date(
+@@ -1357,7 +1359,7 @@ def _ensure_python_exe(python_exe_root: Path):
+         )
+ 
+ 
+-def _assert_pip_check(pthfile_lines, virtualenv_name, requirements):
++def _assert_pip_check(pthfile_lines, virtualenv_name, requirements, quiet: bool = False):
+     """Check if the provided pthfile lines have a package incompatibility
+ 
+     If there's an incompatibility, raise an exception and allow it to bubble up since
+@@ -1372,10 +1374,11 @@ def _assert_pip_check(pthfile_lines, virtualenv_name, requirements):
+         # Don't re-assert compatibility against the system python within Mach subshells.
+         return
+ 
+-    print(
+-        'Running "pip check" to verify compatibility between the system Python and the '
+-        f'"{virtualenv_name}" site.'
+-    )
++    if not quiet:
++        print(
++            'Running "pip check" to verify compatibility between the system Python and the '
++            f'"{virtualenv_name}" site.'
++        )
+ 
+     with tempfile.TemporaryDirectory() as check_env_path:
+         # Pip detects packages on the "sys.path" that have a ".dist-info" or
