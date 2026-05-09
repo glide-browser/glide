@@ -190,9 +190,9 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
         <style>${this.#styles()}</style>
         <meta http-equiv="Content-Security-Policy" content="script-src 'none'">
       </head>
-      <body class="gemini">
+      <body><article class="gemini">
     ` + gemtext_to_html(escape_quoted_gemtext(gemtext))
-      + `</body>`;
+      + `</article></body>`;
   }
 
   #render_error_page(title: string, body_html: string): string {
