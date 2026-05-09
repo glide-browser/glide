@@ -1,0 +1,36 @@
+diff --git a/python/mach/mach/util.py b/python/mach/mach/util.py
+index f7f023567579c407497e484673e52728043c8bf4..211dade42ebf49d3821845348d0607d2a48b60e2 100644
+--- a/python/mach/mach/util.py
++++ b/python/mach/mach/util.py
+@@ -31,7 +31,8 @@ def setenv(key, value):
+ 
+ 
+ def get_state_dir(
+-    specific_to_topsrcdir=False, topsrcdir: Optional[Union[str, Path]] = None
++    specific_to_topsrcdir=False, topsrcdir: Optional[Union[str, Path]] = None,
++    quiet: bool = False,
+ ):
+     """Obtain path to a directory to hold state.
+ 
+@@ -67,7 +68,8 @@ def get_state_dir(
+     if not state_dir.is_dir():
+         # We create the srcdir here rather than 'mach_initialize.py' so direct
+         # consumers of this function don't create the directory inconsistently.
+-        print(f"Creating local state directory: {state_dir}")
++        if not quiet:
++            print(f"Creating local state directory: {state_dir}")
+         state_dir.mkdir(mode=0o770, parents=True)
+         # Save the topsrcdir that this state dir corresponds to so we can clean
+         # it up in the event its srcdir was deleted.
+@@ -77,9 +79,9 @@ def get_state_dir(
+     return str(state_dir)
+ 
+ 
+-def get_virtualenv_base_dir(topsrcdir):
++def get_virtualenv_base_dir(topsrcdir, quiet: bool = False):
+     return os.path.join(
+-        get_state_dir(specific_to_topsrcdir=True, topsrcdir=topsrcdir),
++        get_state_dir(specific_to_topsrcdir=True, topsrcdir=topsrcdir, quiet=quiet),
+         "_virtualenvs",
+     )
+ 

@@ -1,0 +1,51 @@
+diff --git a/build/mach_initialize.py b/build/mach_initialize.py
+index a968553ab29808aed7d4264be9612b6c64a9e986..93ddc0012eef75afa08d632debb5e2eaaa2d9e7c 100644
+--- a/build/mach_initialize.py
++++ b/build/mach_initialize.py
+@@ -146,10 +146,6 @@ def initialize(topsrcdir, args=()):
+ 
+     from mach.util import get_state_dir, get_virtualenv_base_dir, setenv
+ 
+-    state_dir = _create_state_dir()
+-
+-    check_for_spaces(topsrcdir)
+-
+     # See bug 1874208:
+     # Status messages from site.py break usages of `./mach environment`.
+     # We pass `quiet` only for it to work around this, so that all other
+@@ -159,6 +155,10 @@ def initialize(topsrcdir, args=()):
+     else:
+         quiet = False
+ 
++    state_dir = _create_state_dir(quiet=quiet)
++
++    check_for_spaces(topsrcdir)
++
+     # normpath state_dir to normalize msys-style slashes.
+     _activate_python_environment(
+         topsrcdir,
+@@ -570,7 +570,7 @@ def _finalize_telemetry_glean(
+     telemetry.submit(is_bootstrap)
+ 
+ 
+-def _create_state_dir():
++def _create_state_dir(quiet: bool = False):
+     # Global build system and mach state is stored in a central directory. By
+     # default, this is ~/.mozbuild. However, it can be defined via an
+     # environment variable. We detect first run (by lack of this directory
+@@ -580,13 +580,13 @@ def _create_state_dir():
+     # to react.
+     state_dir = os.environ.get("MOZBUILD_STATE_PATH")
+     if state_dir:
+-        if not os.path.exists(state_dir):
++        if not os.path.exists(state_dir) and not quiet:
+             print(
+                 f"Creating global state directory from environment variable: {state_dir}"
+             )
+     else:
+         state_dir = os.path.expanduser("~/.mozbuild")
+-        if not os.path.exists(state_dir):
++        if not os.path.exists(state_dir) and not quiet:
+             if not os.environ.get("MOZ_AUTOMATION"):
+                 print(STATE_DIR_FIRST_RUN.format(state_dir))
+ 
