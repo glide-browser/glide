@@ -90,10 +90,10 @@ jobs:
         run: |
           pnpm bootstrap
 
-      - name: Bootstrap system
-        working-directory: engine
-        run: |
-          ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes --exclude MacOSX26.4.sdk || true
+      # - name: Bootstrap system
+      #   working-directory: engine
+      #   run: |
+      #     ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes --exclude MacOSX26.4.sdk || true
 
       - name: Build
         run: |
