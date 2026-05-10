@@ -256,7 +256,11 @@
               LDFLAGS = "-Wl,-rpath,${placeholder "out"}/lib/glide";
             };
 
-          shellHook = shell;
+          shellHook =
+            lib.optionalString (!stdenv.hostPlatform.isDarwin) ''
+              export LD_LIBRARY_PATH="${pkgs.gcc.cc.lib}/lib:$LD_LIBRARY_PATH"
+            ''
+            + shell;
         };
       }
     );
