@@ -1,5 +1,5 @@
 diff --git a/build/mach_initialize.py b/build/mach_initialize.py
-index a968553ab29808aed7d4264be9612b6c64a9e986..93ddc0012eef75afa08d632debb5e2eaaa2d9e7c 100644
+index a968553ab29808aed7d4264be9612b6c64a9e986..ac57821b1740750b3bd30067a564839dcbf231e2 100644
 --- a/build/mach_initialize.py
 +++ b/build/mach_initialize.py
 @@ -146,10 +146,6 @@ def initialize(topsrcdir, args=()):
@@ -24,6 +24,15 @@ index a968553ab29808aed7d4264be9612b6c64a9e986..93ddc0012eef75afa08d632debb5e2ea
      # normpath state_dir to normalize msys-style slashes.
      _activate_python_environment(
          topsrcdir,
+@@ -443,7 +443,7 @@ def initialize(topsrcdir, args=()):
+             topsrcdir,
+             lambda: os.path.normpath(get_state_dir(True, topsrcdir=topsrcdir)),
+             site_name,
+-            get_virtualenv_base_dir(topsrcdir),
++            get_virtualenv_base_dir(topsrcdir, quiet=quiet),
+             quiet=quiet,
+         )
+ 
 @@ -570,7 +570,7 @@ def _finalize_telemetry_glean(
      telemetry.submit(is_bootstrap)
  
