@@ -317,26 +317,25 @@ add_task(async function test_tab_pin_toggle_excmd() {
   await reload_config(function _() {});
 
   using tab = await GlideTestUtils.new_tab(KEY_TEST_FILE + "?i=1");
+  const initial_tab_count = gBrowser.tabs.length;
   is(gBrowser.selectedTab, tab);
   is(gBrowser.selectedTab!.pinned, false, "Current tab should not be pinned initially");
 
   await keys(":tab_pin_toggle<CR>");
-  if (gBrowser.selectedTab !== tab) {
-    // idk man, Firefox seems to create an extra tab based off of the *other* tab that is active?
-    gBrowser.removeTab(gBrowser.selectedTab!);
-    gBrowser.removeTab(gBrowser.selectedTab!);
-  }
 
-  is(gBrowser.selectedTab!.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
+  is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
+  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
 
   await keys(":tab_pin_toggle<CR>");
-  is(gBrowser.selectedTab!.pinned, false, "Current tab should be unpinned after :tab_pin_toggle");
+  is(gBrowser.selectedTab.pinned, false, "Current tab should be unpinned after :tab_pin_toggle");
+  is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 });
 
 add_task(async function test_tab_pin_toggle_keymap() {
   await reload_config(function _() {});
 
   using tab = await GlideTestUtils.new_tab(KEY_TEST_FILE + "?i=1");
+  const initial_tab_count = gBrowser.tabs.length;
   is(gBrowser.selectedTab, tab);
   is(gBrowser.selectedTab!.pinned, false, "Current tab should not be pinned initially");
 
@@ -344,16 +343,13 @@ add_task(async function test_tab_pin_toggle_keymap() {
   await wait_for_mode("normal");
 
   await keys("<A-p>");
-  if (gBrowser.selectedTab !== tab) {
-    // idk man, Firefox seems to create an extra tab based off of the *other* tab that is active?
-    gBrowser.removeTab(gBrowser.selectedTab!);
-    gBrowser.removeTab(gBrowser.selectedTab!);
-  }
+  is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 
   await waiter(() => gBrowser.selectedTab!.pinned).is(true, "Tab should be pinned after <A-p>");
 
   await keys("<A-p>");
-  await waiter(() => gBrowser.selectedTab!.pinned).is(false, "Tab should be unpinned after <A-p>");
+  await waiter(() => gBrowser.selectedTab.pinned).is(false, "Tab should be unpinned after <A-p>");
+  is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 });
 
 add_task(async function test_tab_reopen() {

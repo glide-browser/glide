@@ -64,6 +64,7 @@ text-decoration: none;
 [`glide.o.keymaps_use_physical_layout`](#glide.o.keymaps_use_physical_layout)\
 [`glide.o.keyboard_layout`](#glide.o.keyboard_layout)\
 [`glide.o.keyboard_layouts`](#glide.o.keyboard_layouts)\
+[`glide.o.gemini_styles`](#glide.o.gemini_styles)\
 [`glide.bo`](#glide.bo)\
 [`glide.options`](#glide.options)\
 [`glide.options.get()`](#glide.options.get)\
@@ -467,7 +468,33 @@ note: please contribute your layout into Glide so that others can benefit from i
 you'll have to add it to `get_layouts()` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/browser-keyboard.mts
 and `GlideKeyboardLayouts` in https://github.com/glide-browser/glide/blob/main/src/glide/browser/base/content/glide.d.ts
 
-## • `glide.bo: Partial<glide.Options>` {% id="glide.bo" %}
+### `glide.o.gemini_styles: string` {% id="glide.o.gemini_styles" %}
+
+Override the CSS used for gemini pages.
+
+```typescript
+glide.o.gemini_styles = css`
+  background {
+    color: grey;
+  }
+`;
+```
+
+Or to extend the default styles instead of overriding:
+
+```typescript
+glide.o.gemini_styles = glide.o.gemini_styles + css`
+  p {
+    color: red;
+  }
+`;
+```
+
+**note**: Requires reloading the page to take effect.
+
+**note**: Buffer specific overrides via `glide.bo` are not supported yet.
+
+## • `glide.bo: Partial<Omit<glide.Options, "gemini_styles">>` {% id="glide.bo" %}
 
 Set buffer specific options.
 

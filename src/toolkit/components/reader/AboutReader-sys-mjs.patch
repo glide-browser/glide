@@ -1,0 +1,19 @@
+diff --git a/toolkit/components/reader/AboutReader.sys.mjs b/toolkit/components/reader/AboutReader.sys.mjs
+index c9067dd44eb74965b47888cbe8ffeb1aeddac6c0..76bddae50e24f1508fd407628843f8df59d208b1 100644
+--- a/toolkit/components/reader/AboutReader.sys.mjs
++++ b/toolkit/components/reader/AboutReader.sys.mjs
+@@ -89,11 +89,12 @@ export var AboutReader = function (
+     !(
+       url.startsWith("http://") ||
+       url.startsWith("https://") ||
+-      url.startsWith("file://")
++      url.startsWith("file://") ||
++      url.startsWith("gemini://")
+     )
+   ) {
+     let errorMsg =
+-      "Only http://, https:// and file:// URLs can be loaded in about:reader.";
++      "Only http://, https://, file://, and gemini:// URLs can be loaded in about:reader.";
+     if (Services.prefs.getBoolPref("reader.errors.includeURLs")) {
+       errorMsg += " Tried to load: " + url + ".";
+     }

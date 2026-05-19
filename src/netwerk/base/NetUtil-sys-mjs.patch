@@ -1,5 +1,5 @@
 diff --git a/netwerk/base/NetUtil.sys.mjs b/netwerk/base/NetUtil.sys.mjs
-index b767131ea23c06be1bbeefd8cec4f1e13bca5c26..09772d18837c1cc23e506c643adcc799030cc2e5 100644
+index b767131ea23c06be1bbeefd8cec4f1e13bca5c26..eb8c4ea0b4927ab2c8485931b50a1a6e6290f00a 100644
 --- a/netwerk/base/NetUtil.sys.mjs
 +++ b/netwerk/base/NetUtil.sys.mjs
 @@ -83,7 +83,7 @@ export var NetUtil = {
@@ -11,3 +11,12 @@ index b767131ea23c06be1bbeefd8cec4f1e13bca5c26..09772d18837c1cc23e506c643adcc799
     *        This argument can be one of the following:
     *         - An options object that will be passed to NetUtil.newChannel.
     *         - An existing nsIChannel.
+@@ -197,7 +197,7 @@ export var NetUtil = {
+    *        Note that this cannot be an nsIFile if you have to specify a
+    *        non-default charset or base URI.  Call NetUtil.newURI first if
+    *        you need to construct an URI using those options.
+-   * @param {Node} aWhatToLoad.loadingNode
++   * @param {Node} [aWhatToLoad.loadingNode]
+    * @param {nsIPrincipal} aWhatToLoad.loadingPrincipal
+    * @param {nsIPrincipal} aWhatToLoad.triggeringPrincipal
+    * @param {number} [aWhatToLoad.securityFlags]

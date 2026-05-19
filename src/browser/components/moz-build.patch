@@ -1,0 +1,12 @@
+diff --git a/browser/components/moz.build b/browser/components/moz.build
+index 63b59082d8c8be455530f81ed19d8fac49937200..848fb5fdb32704502e419a256c8dc233d401248e 100644
+--- a/browser/components/moz.build
++++ b/browser/components/moz.build
+@@ -42,6 +42,7 @@ DIRS += [
+     "enterprisepolicies",
+     "extensions",
+     "firefoxview",
++    "gemini",
+     "genai",
+     "ipprotection",
+     "messagepreview",

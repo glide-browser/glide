@@ -149,10 +149,6 @@ declare namespace GlobalBrowser {
     currentURI: nsIURI;
 
     // split views
-    unsplitTabs(
-      splitview: MozTabSplitViewWrapper,
-      trigger?: "menu_separate" | "icon_separate" | "icon_close" | "tab_close" | "footer_separate" | null,
-    ): void;
     addTabSplitView(tabs: BrowserTab[], opts?: AddTabSplitViewOptions): MozTabSplitViewWrapper | null;
 
     // notifications
@@ -498,6 +494,7 @@ declare namespace MockedExports {
     "chrome://glide/content/bundled/ts-blank-space.mjs": {
       default: typeof import("ts-blank-space").default;
     };
+    "chrome://glide/content/bundled/dioscuri.mjs": { buffer: typeof import("dioscuri").buffer };
 
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
       typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
@@ -536,6 +533,8 @@ declare namespace MockedExports {
     "resource://devtools/client/framework/browser-toolbox/Launcher.sys.mjs":
       typeof import("../engine/devtools/client/framework/browser-toolbox/Launcher.sys.mjs");
 
+    "resource://gre/modules/XPCOMUtils.sys.mjs": typeof import("../engine/js/xpconnect/loader/XPCOMUtils.sys.mjs");
+
     "resource://gre/modules/Subprocess.sys.mjs":
       typeof import("../engine/toolkit/modules/subprocess/Subprocess.sys.mjs");
     "resource://gre/modules/LayoutUtils.sys.mjs": typeof import("../engine/toolkit/modules/LayoutUtils.sys.mjs");
@@ -546,6 +545,8 @@ declare namespace MockedExports {
       typeof import("../engine/toolkit/components/search/SearchService.sys.mjs");
     "moz-src:///toolkit/components/search/SearchUtils.sys.mjs":
       typeof import("../engine/toolkit/components/search/SearchUtils.sys.mjs");
+    "moz-src:///browser/components/gemini/dist/GeminiProtocolHandler.sys.mjs":
+      typeof import("../src/browser/components/gemini/GeminiProtocolHandler.sys.mts");
   }
 
   interface ChromeUtils {
@@ -565,6 +566,7 @@ declare namespace MockedExports {
     defineModuleGetter: (target: any, variable: string, path: string) => void;
     defineESModuleGetters: (target: any, mappings: any) => void;
     generateQI(interfaces: any[]): MozQueryInterface;
+    domProcessChild: nsIDOMProcessChild | null;
   }
 }
 

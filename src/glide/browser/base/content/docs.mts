@@ -30,7 +30,16 @@ interface SidebarEntry {
   target?: string;
 }
 
-const IGNORE_CODE_LANGS = new Set(["glide", "about", "file", "stderr", "auto_activate", "action", "bootstrap"]);
+const IGNORE_CODE_LANGS = new Set([
+  "glide",
+  "about",
+  "file",
+  "stderr",
+  "auto_activate",
+  "action",
+  "bootstrap",
+  "gemini",
+]);
 
 // GitHub-style admonition types
 const ADMONITION_TYPES = new Set([
@@ -56,6 +65,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "FAQ", href: "faq.html" },
   { name: "Cookbook", href: "cookbook.html" },
   { name: "Security", href: "security.html" },
+  { name: "Gemini", href: "gemini.html" },
   { name: "Privacy", href: "privacy.html" },
   { name: "Changelog", href: "changelog.html" },
   { name: "Contributing", href: "contributing.html" },
@@ -768,7 +778,7 @@ class RenderState {
     const children = node.transformChildren(config);
 
     const is_external = href.startsWith("https://") || href.startsWith("http://") || href.startsWith("mailto:")
-      || href.startsWith("ircs://");
+      || href.startsWith("ircs://") || href.startsWith("gemini://");
     if (is_external) {
       return this.html({
         html: html`<a href="${href}" target="_blank" rel="noopener"

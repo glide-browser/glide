@@ -357,6 +357,7 @@ class GlideExcmdsClass {
         } else {
           gBrowser.pinTab(tab);
         }
+        break;
       }
 
       case "tab_reopen": {

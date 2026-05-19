@@ -1,5 +1,5 @@
 diff --git a/modules/libpref/init/all.js b/modules/libpref/init/all.js
-index e0b2092b7a9271cdf3ed863a0f5b991bb19cfe76..9eae60dfa7ad3f931d9e585a6c2067b586dabc1a 100644
+index e0b2092b7a9271cdf3ed863a0f5b991bb19cfe76..d2dc024b0faa4cb7654aab3ece514d030c47b150 100644
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
 @@ -3484,7 +3484,7 @@ pref("browser.search.removeEngineInfobar.enabled", true);
@@ -11,7 +11,7 @@ index e0b2092b7a9271cdf3ed863a0f5b991bb19cfe76..9eae60dfa7ad3f931d9e585a6c2067b5
  
  // Whether or not to perform reader mode article parsing on page load.
  // If this pref is disabled, we will never show a reader mode icon in the toolbar.
-@@ -4050,6 +4050,14 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
+@@ -4050,6 +4050,15 @@ pref("toolkit.osKeyStore.loglevel", "Warn");
  
  pref("extensions.formautofill.supportRTL", false);
  
@@ -20,6 +20,7 @@ index e0b2092b7a9271cdf3ed863a0f5b991bb19cfe76..9eae60dfa7ad3f931d9e585a6c2067b5
 +// Glide loggers
 +
 +pref("glide.logging.loglevel", "Error");
++pref("glide.gemini.loglevel", "Error");
 +
 +// ----- glide-injection-end -----
 +

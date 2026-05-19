@@ -10,23 +10,27 @@ export async function bundle() {
   await $.no_stdout(async () => {
     await fs.mkdir("src/glide/bundled", { recursive: true });
 
-    const build = async (mod: string, filename: string) => {
-      console.log("+ bundling", mod);
+    const build = async (
+      filename: string,
+      { mod, path }: { mod: string; path?: undefined } | { path: string; mod?: undefined },
+    ) => {
+      console.log("+ bundling", mod ?? path);
       await esbuild.build({
         format: "esm",
         minify: true,
         bundle: true,
-        entryPoints: [fileURLToPath(import.meta.resolve(mod))],
+        entryPoints: mod ? [fileURLToPath(import.meta.resolve(mod))] : [path!],
         outfile: `src/glide/bundled/${filename}`,
       });
     };
 
-    await build("ts-blank-space", "ts-blank-space.mjs");
-    await build("@markdoc/markdoc", "markdoc.mjs");
-    await build("fast-check", "fast-check.mjs");
+    await build("ts-blank-space.mjs", { mod: "ts-blank-space" });
+    await build("markdoc.mjs", { mod: "@markdoc/markdoc" });
+    await build("fast-check.mjs", { mod: "fast-check" });
+    await build("dioscuri.mjs", { path: "scripts/shims/dioscuri.mjs" });
 
     // TODO(glide): only bundle the themes + languages we need
-    await build("shiki", "shiki.mjs");
+    await build("shiki.mjs", { mod: "shiki" });
   });
 
   await bundle_types();

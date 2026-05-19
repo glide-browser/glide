@@ -26,6 +26,7 @@
 - Web extensions [API](https://glide-browser.app/extensions) support
 - Fuzzy tab manager (try it with `<space><space>`)
 - Site specific [settings](https://glide-browser.app/cookbook#set-a-pref-for-a-specific-website) / [keymaps](https://glide-browser.app/cookbook#override-a-keymap-for-a-specific-website)
+- Support for the [Gemini](https://glide-browser.app/gemini) protocol
 - ... and more
 
 https://github.com/user-attachments/assets/610e8121-8e25-484b-bf1c-8f9f3efd8605

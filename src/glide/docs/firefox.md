@@ -10,6 +10,7 @@ Glide extends and heavily builds on top of Firefox but for the most part Glide i
 6. Updates are not automatically installed, when new versions are available - you will be _prompted_ to install them
 7. Taskbar [badges](https://connect.mozilla.org/t5/ideas/disable-profile-badge/idc-p/101744) are disabled by default, you can re-enable them with the `path:glide.firefox.taskbar.badge.enabled` pref.
 8. On Linux, the auto updater is disabled.
+9. Support for the `gemini://` [protocol](gemini.md) is included out of the box
 
 Additionally, the extension native messaging runtime paths are different:
 

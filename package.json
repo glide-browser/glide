@@ -54,6 +54,7 @@
   "license": "MPL-2.0",
   "dependencies": {
     "@markdoc/markdoc": "^0.5.4",
+    "dioscuri": "github:glide-browser/dioscuri",
     "shiki": "^3.19.0",
     "ts-blank-space": "^0.6.2",
     "typescript": "^5.9.2"

@@ -11,6 +11,9 @@ importers:
       '@markdoc/markdoc':
         specifier: ^0.5.4
         version: 0.5.4
+      dioscuri:
+        specifier: github:glide-browser/dioscuri
+        version: https://codeload.github.com/glide-browser/dioscuri/tar.gz/9b9ffb606e7bf8839c86120ff9e1e49c482cd707
       shiki:
         specifier: ^3.19.0
         version: 3.19.0
@@ -390,12 +393,16 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@humanfs/core@0.19.1':
-    resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
+  '@humanfs/core@0.19.2':
+    resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
     engines: {node: '>=18.18.0'}
 
-  '@humanfs/node@0.16.7':
-    resolution: {integrity: sha512-/zUx+yOsIrG4Y43Eh2peDeKCxlRt/gET6aHfaKpuq267qXdYDFViVHfMaLyygZOnl0kGWxFIgsBy8QFuTLUXEQ==}
+  '@humanfs/node@0.16.8':
+    resolution: {integrity: sha512-gE1eQNZ3R++kTzFUpdGlpmy8kDZD/MLyHqDwqjkVQI0JMdI1D51sy1H958PNXYkM2rAac7e5/CnIKZrHtPh3BQ==}
+    engines: {node: '>=18.18.0'}
+
+  '@humanfs/types@0.15.0':
+    resolution: {integrity: sha512-ZZ1w0aoQkwuUuC7Yf+7sdeaNfqQiiLcSRbfI08oAxqLtpXQr9AIVX7Ay7HLDuiLYAaFPu8oBYNq/QIi9URHJ3Q==}
     engines: {node: '>=18.18.0'}
 
   '@humanwhocodes/module-importer@1.0.1':
@@ -682,6 +689,9 @@ packages:
   '@types/markdown-it@12.2.3':
     resolution: {integrity: sha512-GKMHFfv3458yYy+v/N8gjufHO6MSZKCOXpZc5GXIWWy8uldwfmPn98vp81gZ5f9SVw8YYBctgfJ22a2d7AOMeQ==}
 
+  '@types/mdast@3.0.15':
+    resolution: {integrity: sha512-LnwD+mUEfxWMa1QpDraczIn6k0Ee3SMicuYSSzS6ZYl2gKS09EClnJYGd8Du6rfc5r/GZEk5o1mRb8TaTj03sQ==}
+
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
 
@@ -691,14 +701,17 @@ packages:
   '@types/node@24.3.0':
     resolution: {integrity: sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==}
 
+  '@types/unist@2.0.11':
+    resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==}
+
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
   '@types/webidl2@24.4.3':
     resolution: {integrity: sha512-Rn7VaRM3TmzA3nPgwSOqC8MGzzY2W8J7f0IPEf2g5Ga0e6jCsuLRHF+O0gywp3gh37IE/quCWCbNDTwAdKeFKw==}
 
-  '@typescript-eslint/types@8.57.1':
-    resolution: {integrity: sha512-S29BOBPJSFUiblEl6RzPPjJt6w25A6XsBqRVDt53tA/tlL8q7ceQNZHTjPeONt/3S7KRI4quk+yP9jK2WjBiPQ==}
+  '@typescript-eslint/types@8.59.2':
+    resolution: {integrity: sha512-e82GVOE8Ps3E++Egvb6Y3Dw0S10u8NkQ9KXmtRhCWJJ8kDhOJTvtMAWnFL16kB1583goCWXsr0NieKCZMs2/0Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@ungap/structured-clone@1.3.0':
@@ -714,8 +727,8 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ajv@6.14.0:
-    resolution: {integrity: sha512-IWrosm/yrn43eiKqkfkHis7QioDleaXQHdDVPKg0FSwwd/DuvyX79TZnFOnYpB7dcsFAMmtFztZuXPDvSePkFw==}
+  ajv@6.15.0:
+    resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -780,6 +793,10 @@ packages:
 
   brace-expansion@5.0.3:
     resolution: {integrity: sha512-fy6KJm2RawA5RcHkLa1z/ScpBeA762UF9KmZQxwIbDtRJrgLzM10depAiEQ+CXYcoiqW1/m96OAAoke2nE9EeA==}
+    engines: {node: 18 || 20 || >=22}
+
+  brace-expansion@5.0.5:
+    resolution: {integrity: sha512-VZznLgtwhn+Mact9tfiwx64fA9erHH/MCXEUfB/0bX/6Fz6ny5EGTXYltMocqg4xFAQZtnO3DHWWXi8RiuN7cQ==}
     engines: {node: 18 || 20 || >=22}
 
   call-bind-apply-helpers@1.0.2:
@@ -885,6 +902,10 @@ packages:
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
+
+  dioscuri@https://codeload.github.com/glide-browser/dioscuri/tar.gz/9b9ffb606e7bf8839c86120ff9e1e49c482cd707:
+    resolution: {tarball: https://codeload.github.com/glide-browser/dioscuri/tar.gz/9b9ffb606e7bf8839c86120ff9e1e49c482cd707}
+    version: 1.3.0
 
   doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
@@ -1443,23 +1464,38 @@ packages:
     resolution: {integrity: sha512-JhC3R1f6dbspVtmF3vKjAWz1EVIvwFrGGPLSdU6rK79xBwHWTuHoLnRX/t1/zHS1Ch1Y2UtIrih7DAHuH9JFJA==}
     engines: {node: '>=20'}
 
+  micromark-util-character@1.2.0:
+    resolution: {integrity: sha512-lXraTwcX3yH/vMDaFWCQJP1uIszLVebzUa3ZHdrgxr7KEU/9mL4mVgCpGbyhvNLNlauROiNUq7WN5u7ndbY6xg==}
+
   micromark-util-character@2.1.1:
     resolution: {integrity: sha512-wv8tdUTJ3thSFFFJKtpYKOYiGP2+v96Hvk4Tu8KpCAsTMs6yi+nVmGh1syvSCsaxz45J6Jbw+9DD6g97+NV67Q==}
+
+  micromark-util-encode@1.1.0:
+    resolution: {integrity: sha512-EuEzTWSTAj9PA5GOAs992GzNh2dGQO52UvAbtSOMvXTxv3Criqb6IOzJUBCmEqrrXSblJIJBbFFv6zPxpreiJw==}
 
   micromark-util-encode@2.0.1:
     resolution: {integrity: sha512-c3cVx2y4KqUnwopcO9b/SCdo2O67LwJJ/UyqGfbigahfegL9myoEFoDYZgkT7f36T0bLrM9hZTAaAyH+PCAXjw==}
 
+  micromark-util-sanitize-uri@1.2.0:
+    resolution: {integrity: sha512-QO4GXv0XZfWey4pYFndLUKEAktKkG5kZTdUNaTAkzbuJxn2tNBOr+QtxR2XpWaMhbImT2dPzyLrPXLlPhph34A==}
+
   micromark-util-sanitize-uri@2.0.1:
     resolution: {integrity: sha512-9N9IomZ/YuGGZZmQec1MbgxtlgougxTodVwDzzEouPKo3qFWvymFHWcnDi2vzV1ff6kas9ucW+o3yzJK9YB1AQ==}
+
+  micromark-util-symbol@1.1.0:
+    resolution: {integrity: sha512-uEjpEYY6KMs1g7QfJ2eX1SQEV+ZT4rUD3UcF6l57acZvLNK7PBZL+ty82Z1qhK1/yXIY4bdx04FKMgR0g4IAag==}
 
   micromark-util-symbol@2.0.1:
     resolution: {integrity: sha512-vs5t8Apaud9N28kgCrRUdEed4UJ+wWNvicHLPxCa9ENlYuAY31M0ETy5y1vA33YoNPDFTghEbnh6efaE8h4x0Q==}
 
+  micromark-util-types@1.1.0:
+    resolution: {integrity: sha512-ukRBgie8TIAcacscVHSiddHjO4k/q3pnedmzMQ4iwDcK0FtFCohKOlFbaOL/mPgfnPsL3C1ZyxJa4sbWrBl3jg==}
+
   micromark-util-types@2.0.2:
     resolution: {integrity: sha512-Yw0ECSpJoViF1qTU4DC6NwtC4aWGt1EkzaQB8KPPyCRR8z9TWeV0HbEFGTO+ZY1wB22zmxnJqhPyTpOVCpeHTA==}
 
-  minimatch@10.2.4:
-    resolution: {integrity: sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==}
+  minimatch@10.2.5:
+    resolution: {integrity: sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==}
     engines: {node: 18 || 20 || >=22}
 
   minimatch@3.1.5:
@@ -1590,8 +1626,8 @@ packages:
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
-  picomatch@4.0.3:
-    resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
+  picomatch@4.0.4:
+    resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
 
   possible-typed-array-names@1.1.0:
@@ -1808,8 +1844,8 @@ packages:
     resolution: {integrity: sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==}
     engines: {node: '>=6'}
 
-  tinyglobby@0.2.15:
-    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
+  tinyglobby@0.2.16:
+    resolution: {integrity: sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==}
     engines: {node: '>=12.0.0'}
 
   to-valid-identifier@1.0.0:
@@ -1870,6 +1906,9 @@ packages:
     resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
     engines: {node: '>=18'}
 
+  unist-util-is@5.2.1:
+    resolution: {integrity: sha512-u9njyyfEh43npf1M+yGKDGVPbY/JWEemg5nH05ncKPfi+kBbKBJoTdsogMu33uhytuLlv9y0O7GH7fEdwLdLQw==}
+
   unist-util-is@6.0.1:
     resolution: {integrity: sha512-LsiILbtBETkDz8I9p1dQ0uyRUWuaQzd/cuEeS1hoRSyW5E5XGmTzlwY1OrNzzakGowI9Dr/I8HVaw4hTtnxy8g==}
 
@@ -1879,8 +1918,14 @@ packages:
   unist-util-stringify-position@4.0.0:
     resolution: {integrity: sha512-0ASV06AAoKCDkS2+xw5RXJywruurpbC4JZSm7nr7MOt1ojAzvyyaO+UxZf18j8FCF6kmzCZKcAgN/yu2gm2XgQ==}
 
+  unist-util-visit-parents@5.1.3:
+    resolution: {integrity: sha512-x6+y8g7wWMyQhL1iZfhIPhDAs7Xwbn9nRosDXl7qoPTSCy0yNxnKc+hWokFifWQIDGi154rdUqKvbCa4+1kLhg==}
+
   unist-util-visit-parents@6.0.2:
     resolution: {integrity: sha512-goh1s1TBrqSqukSc8wrjwWhL0hiJxgA8m4kFxGlQ+8FYQ3C/m11FcTs4YYem7V664AhHVvgoQLk890Ssdsr2IQ==}
+
+  unist-util-visit@4.1.2:
+    resolution: {integrity: sha512-MSd8OUGISqHdVvfY9TPhyK2VdUrPgxkUtWSuMHF6XAAFuL4LokseigBnZtPnJMu+FbynTkFNnFlyjxpVKujMRg==}
 
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
@@ -2001,7 +2046,7 @@ snapshots:
   '@es-joy/jsdoccomment@0.76.0':
     dependencies:
       '@types/estree': 1.0.8
-      '@typescript-eslint/types': 8.57.1
+      '@typescript-eslint/types': 8.59.2
       comment-parser: 1.4.1
       esquery: 1.7.0
       jsdoc-type-pratt-parser: 6.10.0
@@ -2120,7 +2165,7 @@ snapshots:
 
   '@eslint/eslintrc@3.3.5':
     dependencies:
-      ajv: 6.14.0
+      ajv: 6.15.0
       debug: 4.4.3
       espree: 10.4.0
       globals: 14.0.0
@@ -2141,12 +2186,17 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@humanfs/core@0.19.1': {}
-
-  '@humanfs/node@0.16.7':
+  '@humanfs/core@0.19.2':
     dependencies:
-      '@humanfs/core': 0.19.1
+      '@humanfs/types': 0.15.0
+
+  '@humanfs/node@0.16.8':
+    dependencies:
+      '@humanfs/core': 0.19.2
+      '@humanfs/types': 0.15.0
       '@humanwhocodes/retry': 0.4.3
+
+  '@humanfs/types@0.15.0': {}
 
   '@humanwhocodes/module-importer@1.0.1': {}
 
@@ -2319,9 +2369,9 @@ snapshots:
 
   '@ts-morph/common@0.29.0':
     dependencies:
-      minimatch: 10.2.4
+      minimatch: 10.2.5
       path-browserify: 1.0.1
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
 
   '@types/estree@1.0.8': {}
 
@@ -2342,6 +2392,10 @@ snapshots:
       '@types/mdurl': 2.0.0
     optional: true
 
+  '@types/mdast@3.0.15':
+    dependencies:
+      '@types/unist': 2.0.11
+
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
@@ -2353,11 +2407,13 @@ snapshots:
     dependencies:
       undici-types: 7.10.0
 
+  '@types/unist@2.0.11': {}
+
   '@types/unist@3.0.3': {}
 
   '@types/webidl2@24.4.3': {}
 
-  '@typescript-eslint/types@8.57.1': {}
+  '@typescript-eslint/types@8.59.2': {}
 
   '@ungap/structured-clone@1.3.0': {}
 
@@ -2367,7 +2423,7 @@ snapshots:
 
   acorn@8.16.0: {}
 
-  ajv@6.14.0:
+  ajv@6.15.0:
     dependencies:
       fast-deep-equal: 3.1.3
       fast-json-stable-stringify: 2.1.0
@@ -2457,6 +2513,10 @@ snapshots:
       concat-map: 0.0.1
 
   brace-expansion@5.0.3:
+    dependencies:
+      balanced-match: 4.0.4
+
+  brace-expansion@5.0.5:
     dependencies:
       balanced-match: 4.0.4
 
@@ -2563,6 +2623,15 @@ snapshots:
   devlop@1.1.0:
     dependencies:
       dequal: 2.0.3
+
+  dioscuri@https://codeload.github.com/glide-browser/dioscuri/tar.gz/9b9ffb606e7bf8839c86120ff9e1e49c482cd707:
+    dependencies:
+      '@types/mdast': 3.0.15
+      '@types/unist': 2.0.11
+      micromark-util-encode: 1.1.0
+      micromark-util-sanitize-uri: 1.2.0
+      unist-util-visit: 4.1.2
+      zwitch: 2.0.4
 
   doctrine@2.1.0:
     dependencies:
@@ -2871,11 +2940,11 @@ snapshots:
       '@eslint/eslintrc': 3.3.5
       '@eslint/js': 9.38.0
       '@eslint/plugin-kit': 0.4.1
-      '@humanfs/node': 0.16.7
+      '@humanfs/node': 0.16.8
       '@humanwhocodes/module-importer': 1.0.1
       '@humanwhocodes/retry': 0.4.3
       '@types/estree': 1.0.8
-      ajv: 6.14.0
+      ajv: 6.15.0
       chalk: 4.1.2
       cross-spawn: 7.0.6
       debug: 4.4.3
@@ -2945,9 +3014,9 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fdir@6.5.0(picomatch@4.0.3):
+  fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
-      picomatch: 4.0.3
+      picomatch: 4.0.4
 
   figures@6.1.0:
     dependencies:
@@ -3297,12 +3366,25 @@ snapshots:
 
   meow@14.0.0: {}
 
+  micromark-util-character@1.2.0:
+    dependencies:
+      micromark-util-symbol: 1.1.0
+      micromark-util-types: 1.1.0
+
   micromark-util-character@2.1.1:
     dependencies:
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.2
 
+  micromark-util-encode@1.1.0: {}
+
   micromark-util-encode@2.0.1: {}
+
+  micromark-util-sanitize-uri@1.2.0:
+    dependencies:
+      micromark-util-character: 1.2.0
+      micromark-util-encode: 1.1.0
+      micromark-util-symbol: 1.1.0
 
   micromark-util-sanitize-uri@2.0.1:
     dependencies:
@@ -3310,13 +3392,17 @@ snapshots:
       micromark-util-encode: 2.0.1
       micromark-util-symbol: 2.0.1
 
+  micromark-util-symbol@1.1.0: {}
+
   micromark-util-symbol@2.0.1: {}
+
+  micromark-util-types@1.1.0: {}
 
   micromark-util-types@2.0.2: {}
 
-  minimatch@10.2.4:
+  minimatch@10.2.5:
     dependencies:
-      brace-expansion: 5.0.3
+      brace-expansion: 5.0.5
 
   minimatch@3.1.5:
     dependencies:
@@ -3474,7 +3560,7 @@ snapshots:
 
   path-parse@1.0.7: {}
 
-  picomatch@4.0.3: {}
+  picomatch@4.0.4: {}
 
   possible-typed-array-names@1.1.0: {}
 
@@ -3733,10 +3819,10 @@ snapshots:
 
   tapable@2.3.0: {}
 
-  tinyglobby@0.2.15:
+  tinyglobby@0.2.16:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.3)
-      picomatch: 4.0.3
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
 
   to-valid-identifier@1.0.0:
     dependencies:
@@ -3812,6 +3898,10 @@ snapshots:
 
   unicorn-magic@0.3.0: {}
 
+  unist-util-is@5.2.1:
+    dependencies:
+      '@types/unist': 2.0.11
+
   unist-util-is@6.0.1:
     dependencies:
       '@types/unist': 3.0.3
@@ -3824,10 +3914,21 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
+  unist-util-visit-parents@5.1.3:
+    dependencies:
+      '@types/unist': 2.0.11
+      unist-util-is: 5.2.1
+
   unist-util-visit-parents@6.0.2:
     dependencies:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.1
+
+  unist-util-visit@4.1.2:
+    dependencies:
+      '@types/unist': 2.0.11
+      unist-util-is: 5.2.1
+      unist-util-visit-parents: 5.1.3
 
   unist-util-visit@5.0.0:
     dependencies:
