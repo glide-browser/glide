@@ -324,10 +324,10 @@ add_task(async function test_tab_pin_toggle_excmd() {
   await keys(":tab_pin_toggle<CR>");
 
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
-  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
+  is(gBrowser.selectedTab!.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
 
   await keys(":tab_pin_toggle<CR>");
-  is(gBrowser.selectedTab.pinned, false, "Current tab should be unpinned after :tab_pin_toggle");
+  is(gBrowser.selectedTab!.pinned, false, "Current tab should be unpinned after :tab_pin_toggle");
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 });
 
@@ -348,7 +348,7 @@ add_task(async function test_tab_pin_toggle_keymap() {
   await waiter(() => gBrowser.selectedTab!.pinned).is(true, "Tab should be pinned after <A-p>");
 
   await keys("<A-p>");
-  await waiter(() => gBrowser.selectedTab.pinned).is(false, "Tab should be unpinned after <A-p>");
+  await waiter(() => gBrowser.selectedTab!.pinned).is(false, "Tab should be unpinned after <A-p>");
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 });
 
