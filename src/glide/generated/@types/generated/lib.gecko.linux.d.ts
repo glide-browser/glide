@@ -6,7 +6,7 @@
 
 declare global {
 
-// https://searchfox.org/mozilla-central/source/browser/components/shell/nsIGNOMEShellService.idl
+// https://searchfox.org/firefox-main/source/browser/components/shell/nsIGNOMEShellService.idl
 
 interface nsIGNOMEShellService extends nsIShellService {
   readonly canSetDesktopBackground: boolean;
@@ -15,14 +15,14 @@ interface nsIGNOMEShellService extends nsIShellService {
   setGSettingsString(aScheme: string, aKey: string, aValue: string): void;
 }
 
-// https://searchfox.org/mozilla-central/source/browser/components/shell/nsIOpenTabsProvider.idl
+// https://searchfox.org/firefox-main/source/browser/components/shell/nsIOpenTabsProvider.idl
 
 interface nsIOpenTabsProvider extends nsISupports {
   getOpenTabs(): string[];
   switchToOpenTab(url: string): void;
 }
 
-// https://searchfox.org/mozilla-central/source/widget/nsIApplicationChooser.idl
+// https://searchfox.org/firefox-main/source/widget/nsIApplicationChooser.idl
 
 type nsIApplicationChooserFinishedCallback = Callable<{
   done(handlerApp: nsIHandlerApp): void;
@@ -33,13 +33,13 @@ interface nsIApplicationChooser extends nsISupports {
   open(contentType: string, applicationChooserFinishedCallback: nsIApplicationChooserFinishedCallback): void;
 }
 
-// https://searchfox.org/mozilla-central/source/widget/nsIGtkTaskbarProgress.idl
+// https://searchfox.org/firefox-main/source/widget/nsIGtkTaskbarProgress.idl
 
 interface nsIGtkTaskbarProgress extends nsITaskbarProgress {
   setPrimaryWindow(aWindow: mozIDOMWindowProxy): void;
 }
 
-// https://searchfox.org/mozilla-central/source/widget/nsITaskbarProgress.idl
+// https://searchfox.org/firefox-main/source/widget/nsITaskbarProgress.idl
 
 interface nsITaskbarProgress extends nsISupports {
   readonly STATE_NO_PROGRESS?: 0;

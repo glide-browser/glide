@@ -1,8 +1,8 @@
 diff --git a/tools/@types/generated/lib.gecko.dom.d.ts b/tools/@types/generated/lib.gecko.dom.d.ts
-index 25c8eae71f27251969e87ccfea14dfcc06ff73fb..9098023d1dd2834ca3fb3b8fd293239633250953 100644
+index bc1e95a67bbdbdc23f87bbd4e63b76d707ecef4d..a4651d9a77917b9d6e8341ddc274023228c6bdae 100644
 --- a/tools/@types/generated/lib.gecko.dom.d.ts
 +++ b/tools/@types/generated/lib.gecko.dom.d.ts
-@@ -17757,22 +17757,6 @@ declare var ReadableByteStreamController: {
+@@ -18202,22 +18202,6 @@ declare var ReadableByteStreamController: {
      isInstance: IsInstance<ReadableByteStreamController>;
  };
  
@@ -25,15 +25,15 @@ index 25c8eae71f27251969e87ccfea14dfcc06ff73fb..9098023d1dd2834ca3fb3b8fd2932396
  interface ReadableStreamBYOBReader extends ReadableStreamGenericReader {
      read(view: ArrayBufferView, options?: ReadableStreamBYOBReaderReadOptions): Promise<ReadableStreamReadResult>;
      releaseLock(): void;
-@@ -25634,6 +25618,7 @@ declare var XULCommandEvent: {
+@@ -26099,6 +26083,7 @@ declare var XULCommandEvent: {
  };
  
  interface XULElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
 +    keypress: KeyboardEvent
  }
  
- interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
-@@ -27955,11 +27940,6 @@ interface FileSystemDirectoryHandle {
+ interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrSVGOrMathMLElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+@@ -28462,11 +28447,6 @@ interface FileSystemDirectoryHandle {
      values(): AsyncIterableIterator<FileSystemHandle>;
  }
  

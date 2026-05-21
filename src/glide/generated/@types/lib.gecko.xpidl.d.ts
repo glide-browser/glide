@@ -4,7 +4,7 @@
 
 /**
  * Generic IDs are created by most code which passes a nsID to js.
- * https://searchfox.org/mozilla-central/source/js/xpconnect/src/XPCJSID.cpp#24
+ * https://searchfox.org/firefox-main/source/js/xpconnect/src/XPCJSID.cpp#24
  */
 interface nsID<uuid = string> {
   readonly number: uuid;
@@ -13,7 +13,7 @@ interface nsID<uuid = string> {
 /**
  * In addition to nsID, interface IIDs support instanceof type guards,
  * and expose constants defined on the class, including variants from enums.
- * https://searchfox.org/mozilla-central/source/js/xpconnect/src/XPCJSID.cpp#45
+ * https://searchfox.org/firefox-main/source/js/xpconnect/src/XPCJSID.cpp#45
  */
 type nsJSIID<iface, enums = {}> = nsID &
   Constants<iface> &
@@ -28,7 +28,7 @@ type nsIID = nsIXPCComponents_Interfaces[keyof nsIXPCComponents_Interfaces];
 /** A generic to resolve QueryInterface return type from a nsIID. */
 type nsQIResult<iid> = iid extends { prototype: infer U } ? U : never;
 
-/** Picks only const number properties from T. */
+/** Picks only const number properties from T and marks them as required. */
 type Constants<T> = {
   [K in keyof T as IfConst<K, T[K]>]-?: Exclude<T[K], undefined>;
 };

@@ -1,8 +1,8 @@
 diff --git a/toolkit/moz.configure b/toolkit/moz.configure
-index 52bca068f90cd8e214900e8f3159e1f7e37fb3e8..776522e50f32d9fe805b8a2009f522129ee5b132 100644
+index 75e99bbd2490b9014be6f4e956546d4507e751df..2df16bfa4cdb7c61c4604a4ea502a767ce59c93e 100644
 --- a/toolkit/moz.configure
 +++ b/toolkit/moz.configure
-@@ -86,6 +86,9 @@ option(
+@@ -84,6 +84,9 @@ option(
  )
  set_config("MOZ_INCLUDE_SOURCE_INFO", True, when="MOZ_INCLUDE_SOURCE_INFO")
  
@@ -12,16 +12,3 @@ index 52bca068f90cd8e214900e8f3159e1f7e37fb3e8..776522e50f32d9fe805b8a2009f52212
  option(
      "--with-distribution-id",
      nargs=1,
-@@ -931,9 +934,9 @@ set_config("MOZ_SYSTEM_AV1", True, when="--with-system-av1")
- option("--disable-jxl", help="Disable jxl image support")
- 
- 
--@depends("--disable-jxl", milestone.is_nightly)
--def jxl(value, is_nightly):
--    if is_nightly and value:
-+@depends("--disable-jxl")
-+def jxl(value):
-+    if value:
-         return True
- 
- 
