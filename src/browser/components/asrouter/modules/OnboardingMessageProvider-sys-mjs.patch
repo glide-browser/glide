@@ -1,5 +1,5 @@
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index 43f898cbaedfbbf087c50a19b91119c2e3abd341..c0f46e4cb19c1ca995d464774e8acb26e4af75aa 100644
+index eeb0b54fc40f680fe32b865b479af0c2f76b01ae..90b166ce601d52b1f43f8d90db34cdc45782f978 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 @@ -60,6 +60,7 @@ const isMSIX =
@@ -10,9 +10,9 @@ index 43f898cbaedfbbf087c50a19b91119c2e3abd341..c0f46e4cb19c1ca995d464774e8acb26
  const BASE_MESSAGES = () => [
    {
      id: "MENU_MESSAGE_DEFAULT_CTA_ILLUSTRATION_LAYOUT",
-@@ -3156,7 +3157,7 @@ const BASE_MESSAGES = () => [
-       ],
+@@ -3210,7 +3211,7 @@ const BASE_MESSAGES = () => [
      },
+     groups: [],
    },
 -];
 +].filter((msg) => !msg.id.toLowerCase().includes('promo'));

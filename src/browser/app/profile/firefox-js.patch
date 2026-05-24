@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index c15f009ffe137de1ab08cc2e292d0baaa00b3ae9..7e89ec5bac6cfb69543b4878612faae405f75c55 100644
+index d7ab4882738751359d119b787ec9b83624bc94bc..188ba9accdc0eb23d3c98e91067621419133b153 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3596,3 +3596,5 @@ pref("browser.contentsharing.enabled", false);
+@@ -3625,3 +3625,5 @@ pref("browser.contentsharing.newBadge.enabled", true);
  
- // Controls whether the "New" badge is shown on the content sharing menu items
- pref("browser.contentsharing.newBadge.enabled", true);
+ // When enabled, Firefox ignores the distribution.ini file if global.id is MozillaOnline.
+ pref("distribution.mozillaonline.ignore", false);
 +
 +#include glide.js

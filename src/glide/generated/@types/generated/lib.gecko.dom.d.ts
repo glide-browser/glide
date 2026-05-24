@@ -4,8 +4,6 @@
  * If you're updating some of the sources, see README for instructions.
  */
 
-/// <reference no-default-lib="true" />
-
 type HTMLCollectionOf<T> = any;
 type IsInstance<T> = (obj: any) => obj is T;
 type NodeListOf<T> = any;
@@ -9586,7 +9584,7 @@ declare var EventSource: {
 };
 
 interface EventTarget {
-    readonly ownerGlobal: WindowProxy | null;
+    readonly documentGlobal: WindowProxy | null;
     addEventListener(type: string, listener: EventListener | null, options?: AddEventListenerOptions | boolean, wantsUntrusted?: boolean | null): void;
     dispatchEvent(event: Event): boolean;
     getEventHandler(type: string): EventHandler;
@@ -11779,7 +11777,7 @@ declare var HTMLDocument: {
 interface HTMLElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
 }
 
-interface HTMLElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+interface HTMLElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrSVGOrMathMLElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
     accessKey: string;
     readonly accessKeyLabel: string;
     autocapitalize: string;
@@ -12625,7 +12623,7 @@ declare var HTMLOptionsCollection: {
     isInstance: IsInstance<HTMLOptionsCollection>;
 };
 
-interface HTMLOrForeignElement {
+interface HTMLOrSVGOrMathMLElement {
     autofocus: boolean;
     readonly dataset: DOMStringMap;
     tabIndex: number;
@@ -14936,7 +14934,7 @@ declare var MatchPatternSet: {
 interface MathMLElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
 }
 
-interface MathMLElement extends Element, ElementCSSInlineStyle, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+interface MathMLElement extends Element, ElementCSSInlineStyle, GlobalEventHandlers, HTMLOrSVGOrMathMLElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
     addEventListener<K extends keyof MathMLElementEventMap>(type: K, listener: (this: MathMLElement, ev: MathMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
     removeEventListener<K extends keyof MathMLElementEventMap>(type: K, listener: (this: MathMLElement, ev: MathMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
@@ -18725,7 +18723,7 @@ interface SVGElementEventMap extends ElementEventMap, GlobalEventHandlersEventMa
 }
 
 // @ts-ignore
-interface SVGElement extends Element, ElementCSSInlineStyle, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+interface SVGElement extends Element, ElementCSSInlineStyle, GlobalEventHandlers, HTMLOrSVGOrMathMLElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
     readonly className: SVGAnimatedString;
     id: string;
     nonce: string;
@@ -26086,7 +26084,7 @@ interface XULElementEventMap extends ElementEventMap, GlobalEventHandlersEventMa
     keypress: KeyboardEvent
 }
 
-interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrForeignElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
+interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrSVGOrMathMLElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
     collapsed: boolean;
     contextMenu: string;
     readonly controllers: XULControllers;
@@ -27279,7 +27277,7 @@ declare function synthesizeMouseEvent(type: string, offsetX: number, offsetY: nu
 declare function synthesizeTouchEvent(type: string, touches: SynthesizeTouchEventData[], modifiers?: number, options?: SynthesizeTouchEventOptions, callback?: VoidFunction): boolean;
 declare function updateCommands(action: string): void;
 declare function toString(): string;
-declare var ownerGlobal: WindowProxy | null;
+declare var documentGlobal: WindowProxy | null;
 declare function dispatchEvent(event: Event): boolean;
 declare function getEventHandler(type: string): EventHandler;
 declare function setEventHandler(type: string, handler: EventHandler): void;
@@ -27807,7 +27805,7 @@ type ReferrerPolicy = "" | "no-referrer" | "no-referrer-when-downgrade" | "origi
 type RenderBlockingStatusType = "blocking" | "non-blocking";
 type RequestCache = "default" | "force-cache" | "no-cache" | "no-store" | "only-if-cached" | "reload";
 type RequestCredentials = "include" | "omit" | "same-origin";
-type RequestDestination = "" | "audio" | "audioworklet" | "document" | "embed" | "font" | "frame" | "iframe" | "image" | "json" | "manifest" | "object" | "paintworklet" | "report" | "script" | "sharedworker" | "style" | "track" | "video" | "worker" | "xslt";
+type RequestDestination = "" | "audio" | "audioworklet" | "document" | "embed" | "font" | "frame" | "iframe" | "image" | "json" | "manifest" | "object" | "paintworklet" | "report" | "script" | "sharedworker" | "style" | "text" | "track" | "video" | "worker" | "xslt";
 type RequestMode = "cors" | "navigate" | "no-cors" | "same-origin";
 type RequestPriority = "auto" | "high" | "low";
 type RequestRedirect = "error" | "follow" | "manual";
