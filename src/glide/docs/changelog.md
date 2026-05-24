@@ -19,6 +19,16 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.62a
+
+## Changes {% id="0.1.62a-changes" %}
+
+- Bumped Firefox from 151.0b4 to 152.0b2
+- Added support for toggling reader mode on `gemini://` pages
+- Fixed styling for code blocks on `gemini://` pages
+- Fixed broken behaviour in `:tab_pin_toggle` excmd
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution and [@Kazimazi](https://github.com/Kazimazi) for reporting!
+
 # 0.1.61a
 
 ## Experimental support for the gemini protocol {% id="0.1.61a-gemini-support" %}
