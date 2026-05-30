@@ -90,6 +90,10 @@
             "--with-onnx-runtime=${lib.getLib pkgs.onnxruntime}/lib"
           ];
 
+        # note: unlike the nixpkgs build, we don't tell mach to use our python version as
+        #       the firefox build system is not really set up for that, and I ran into a bunch
+        #       of annoying bugs because of `MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system`.
+
         shell =
           ''
             # Set predictable directories for build and state
@@ -102,9 +106,6 @@
             # AS=as in the environment causes build failure
             # https://bugzilla.mozilla.org/show_bug.cgi?id=1497286
             unset AS
-
-            # Use our own python
-            export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
 
             # RBox WASM Sandboxing
             export WASM_CC=${pkgsCross.wasi32.stdenv.cc}/bin/${pkgsCross.wasi32.stdenv.cc.targetPrefix}cc
