@@ -307,6 +307,33 @@ class GlideExcmdsClass {
         gBrowser.selectedTab = gBrowser.tabContainer.allTabs.at(gBrowser.tabContainer.selectedIndex - 1);
         break;
       }
+
+      case "tab_next_visual": {
+        GlideBrowser.notify_tabs_breaking_change?.();
+
+        const glide = GlideBrowser.api;
+        if (glide.prefs.get("sidebar.verticalTabs")) {
+          await glide.excmds.execute("tab_next");
+          return;
+        }
+
+        await glide.excmds.execute("tab_prev");
+        break;
+      }
+
+      case "tab_prev_visual": {
+        GlideBrowser.notify_tabs_breaking_change?.();
+
+        const glide = GlideBrowser.api;
+        if (glide.prefs.get("sidebar.verticalTabs")) {
+          await glide.excmds.execute("tab_prev");
+          return;
+        }
+
+        await glide.excmds.execute("tab_next");
+        break;
+      }
+
       case "tab_pin": {
         const {
           args: { tab_id },
