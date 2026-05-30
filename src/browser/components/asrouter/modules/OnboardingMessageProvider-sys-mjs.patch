@@ -1,18 +1,10 @@
 diff --git a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-index eeb0b54fc40f680fe32b865b479af0c2f76b01ae..90b166ce601d52b1f43f8d90db34cdc45782f978 100644
+index 638d356fc26eb0e810fdafa28c1a097d3d8aee35..8b5446f597611ea40f7e0655ebe65820a4bf3633 100644
 --- a/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
 +++ b/browser/components/asrouter/modules/OnboardingMessageProvider.sys.mjs
-@@ -60,6 +60,7 @@ const isMSIX =
-   AppConstants.platform === "win" &&
-   Services.sysinfo.getProperty("hasWinPackageId", false);
- 
-+// prettier-ignore
- const BASE_MESSAGES = () => [
-   {
-     id: "MENU_MESSAGE_DEFAULT_CTA_ILLUSTRATION_LAYOUT",
-@@ -3210,7 +3211,7 @@ const BASE_MESSAGES = () => [
+@@ -3404,7 +3404,7 @@ const BASE_MESSAGES = () => [
+       ],
      },
-     groups: [],
    },
 -];
 +].filter((msg) => !msg.id.toLowerCase().includes('promo'));
