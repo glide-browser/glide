@@ -41,6 +41,25 @@
           }
         );
 
+        searchfox-cli = pkgs.rustPlatform.buildRustPackage rec {
+          pname = "searchfox-cli";
+          version = "0.15.0";
+
+          src = pkgs.fetchFromGitHub {
+            owner = "padenot";
+            repo = "searchfox-cli";
+            tag = "v${version}";
+            hash = "sha256-5D28uoHJcuiaC/NbLEViJ6Z9waWmBDj3o4NRLXVAxuE=";
+          };
+
+          cargoHash = "sha256-/LYstGJV3YWq3qjHn8QbiELKv4kaT4FRADGzA0u944E=";
+
+          # The workspace also contains a pyo3-based crate that we don't need.
+          buildAndTestSubdir = "searchfox-cli";
+
+          doCheck = false;
+        };
+
         # Compile the wasm32 sysroot to build the RLBox Sandbox
         # https://hacks.mozilla.org/2021/12/webassembly-and-back-again-fine-grained-sandboxing-in-firefox-95/
         # We only link c++ libs here, our compiler wrapper can find wasi libc and crt itself.
@@ -141,6 +160,8 @@
               # crash reporter
               dump_syms
               patchelf
+
+              searchfox-cli
             ]
             ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [
               pkg-config
