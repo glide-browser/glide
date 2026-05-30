@@ -338,6 +338,7 @@ class GlideBrowserClass {
   #sandbox: Sandbox | null = null;
   get config_sandbox() {
     this.#sandbox ??= create_sandbox({
+      name: 'Glide Config',
       window: this.sandbox_window,
       original_window: window,
       document: this._mirrored_document,
@@ -538,9 +539,17 @@ class GlideBrowserClass {
     this._log.info(`Executing config file at \`${config_path}\``);
     const config_str = await IOUtils.readUTF8(config_path);
 
+    // Create an extra "trampoline" so we can load the user config as a module;
+    // evalInSandbox loads in script mode by default but still allows us to import()
+    // modules, which in turn *will* be evaluated in module mode.
+
+    const config_js_path = CONFIG_URI.replace(/([.]m?)ts$/, '$1js');
+    const trampoline_js = `
+      import(${JSON.stringify(config_js_path)})
+    `;
+
     try {
-      const config_js = TSBlank.default(config_str);
-      Cu.evalInSandbox(config_js, sandbox, null, CONFIG_URI, 1, false);
+      Cu.evalInSandbox(trampoline_js, sandbox, null, CONFIG_URI, 1, false);
     } catch (err) {
       this._log.error(err);
 

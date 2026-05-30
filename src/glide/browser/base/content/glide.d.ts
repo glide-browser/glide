@@ -966,6 +966,13 @@ declare global {
        */
       /// @docs-skip
       include(path: string): Promise<void>;
+
+      /**
+       * Returns an import URI for the given filepath.
+       *
+       * @example await import(await glide.module('./test.ts'))
+       */
+      module<T extends string>(path: T): Promise<T>;
     };
 
     path: {
@@ -980,6 +987,11 @@ declare global {
        * Throws an error on non-relative paths.
        */
       join(...parts: string[]): string;
+
+      /**
+       * Resolves the given path relative to the file it's called from.
+       */
+      resolve(path: string): string;
     };
 
     fs: {
