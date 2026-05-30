@@ -47,7 +47,7 @@
     "tsc:scripts": "tsc -p scripts/tsconfig.json",
     "tsc:config": "tsc -p src/glide/browser/base/content/test/config/types/tsconfig.json",
     "tsc:docs": "tsn scripts/check-docs-types.mts",
-    "test": "mach test glide"
+    "test": "tsn scripts/test.mts"
   },
   "keywords": [],
   "author": "",
