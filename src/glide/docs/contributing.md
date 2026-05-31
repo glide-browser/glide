@@ -224,16 +224,18 @@ add_task(...).only();
 
 <!-- TODO: mention docs type checking -->
 
-You can also filter tests by directory:
+You can also filter tests by
+
+- Directory:
 
 ```bash
-pnpm mach test glide/browser/base/content/test/config/
+pnpm test glide/browser/base/content/test/config/
 ```
 
-Or individual file:
+- Individual file:
 
 ```bash
-pnpm mach test glide/browser/base/content/test/config/dist/browser_include.js
+pnpm test glide/browser/base/content/test/config/dist/browser_include.js
 ```
 
 > [!NOTE]
