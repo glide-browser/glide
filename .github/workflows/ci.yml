@@ -24,3 +24,37 @@ jobs:
         uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
         with:
           advanced-security: true
+
+  # thin shim around the Depot CI workflow in .depot/workflows/ci.yml so that logs are publicly viewable.
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: depot/setup-action@15c09a5f77a0840ad4bce955686522a257853461 # v1.7.1
+        with:
+          version: "2.101.63"
+
+      - name: Run lint
+        env:
+          DEPOT_TOKEN: ${{ secrets.DEPOT_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          run_output=$(depot ci run --workflow .depot/workflows/ci.yml)
+          printf '%s\n' "$run_output"
+          run_id=$(printf '%s\n' "$run_output" | awk '/^Run: /{print $2; exit}')
+          if [ -z "$run_id" ]; then
+            echo "::error::Could not parse Depot run id"
+            exit 1
+          fi
+
+          depot ci logs "$run_id" --follow
+
+          # "finished" is the only success status; anything else fails the job.
+          status=$(depot ci status "$run_id" --output json | jq -r '.status')
+          echo "Depot run status: $status"
+          [ "$status" = "finished" ]
