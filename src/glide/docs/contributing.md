@@ -151,7 +151,7 @@ The config file in `src/glide.ts` will take precedence over the user-wide config
 
 ### Tests
 
-Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html) and located in [`path:src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
+Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/testing/browser-chrome/index.html) and located in [`path:src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
 
 You can run all Glide's tests with:
 
