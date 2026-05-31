@@ -20,6 +20,9 @@
  */
 
 import type { SetNonNullable } from "type-fest";
+import type { GlideExcmdName } from "../browser-excmds-registry.mjs";
+
+const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
 
 const { lastx } = ChromeUtils.importESModule("chrome://glide/content/utils/arrays.mjs");
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
@@ -265,7 +268,7 @@ export class KeyManager {
     const mapping: KeyMapping = {
       sequence: split(lhs).map(normalize),
       command: rhs,
-      description: opts?.description,
+      description: opts?.description ?? get_excmd_description(rhs),
       retain_key_display: opts?.retain_key_display,
     };
 
@@ -845,4 +848,15 @@ export function is_printable(keyn: string): boolean {
     || keyn === "<End>"
     || keyn.startsWith("<F") // fn keys
   );
+}
+
+function get_excmd_description(excmd: glide.ExcmdValue): string {
+  if (typeof excmd !== "string") {
+    return "";
+  }
+
+  // `excmd` may carry args (e.g. `"tab_switch 3"`)
+  const space = excmd.indexOf(" ");
+  const name = (space === -1 ? excmd : excmd.slice(0, space)) as GlideExcmdName;
+  return GLIDE_EXCOMMANDS_MAP[name]?.description ?? "";
 }
