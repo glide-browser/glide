@@ -4,19 +4,59 @@ on:
   workflow_dispatch:
 
 jobs:
+  prepare:
+    name: prepare image
+    runs-on:
+      size: 2x8
+      image: 9c42191sh0.registry.depot.dev/glide-ci:latest
+    outputs:
+      image-tag: ${{ steps.check.outputs.image-tag }}
+    steps:
+      - name: Read baked firefox version
+        id: baked
+        run: |
+          if [ -f firefox.json ]; then
+            echo "version=$(jq -r .version.version firefox.json)" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          clean: false
+
+      - name: Check firefox version against baked image
+        id: check
+        run: |
+          expected=$(jq -r .version.version firefox.json)
+          actual="${{ steps.baked.outputs.version }}"
+          echo "image-tag=$expected" >> "$GITHUB_OUTPUT"
+          if [ "$expected" = "$actual" ]; then
+            echo "rebuild=false" >> "$GITHUB_OUTPUT"
+            echo "image is up-to-date for firefox $expected"
+          else
+            echo "rebuild=true" >> "$GITHUB_OUTPUT"
+            echo "image firefox version '$actual' does not match firefox.json '$expected', rebuilding"
+          fi
+
+      - name: Build & push CI image
+        if: steps.check.outputs.rebuild == 'true'
+        uses: ./.github/actions/build-ci-image
+        with:
+          image-tag: ${{ steps.check.outputs.image-tag }}
+
   lint:
     name: lint
-    runs-on: depot-ubuntu-latest # was: ubuntu-latest. Mapped standard GitHub runner to Depot equivalent.
+    needs: prepare
+    runs-on:
+      size: 2x8
+      image: 9c42191sh0.registry.depot.dev/glide-ci:${{ needs.prepare.outputs.image-tag }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-
-      - name: Configure git
-        run: |
-          git config --global \
-            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
-            "git@github.com:mozilla-firefox/firefox.git"
+          clean: false
 
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
 
@@ -29,14 +69,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Download Firefox source
-        run: |
-          pnpm firefox:download
-
-      - name: Bootstrap repo
-        run: |
-          pnpm bootstrap
+      - name: Bootstrap
+        run: pnpm bootstrap --offline
 
       - name: Run lint
-        run: |
-          pnpm lint
+        run: pnpm lint
