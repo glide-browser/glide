@@ -263,13 +263,12 @@ export class KeyManager {
     modes: GlideMode | GlideMode[],
     lhs: string,
     rhs: glide.ExcmdValue,
-    opts?: glide.KeymapOpts,
+    opts?: glide.KeymapOpts | undefined,
   ): void {
-    const keymap_description = opts?.description ?? get_description_from_registry(rhs);
     const mapping: KeyMapping = {
       sequence: split(lhs).map(normalize),
       command: rhs,
-      description: keymap_description,
+      description: opts?.description ?? get_excmd_description(rhs),
       retain_key_display: opts?.retain_key_display,
     };
 
@@ -851,16 +850,13 @@ export function is_printable(keyn: string): boolean {
   );
 }
 
-/**
- * Returns the description of a key mapping from the excmd registry.
- * @param excmd - The excmd value of the key mapping.
- * @returns The description of the key mapping.
- */
-function get_description_from_registry(excmd: glide.ExcmdValue): string {
+function get_excmd_description(excmd: glide.ExcmdValue): string {
   if (typeof excmd !== "string") {
     return "";
   }
 
-  const command = GLIDE_EXCOMMANDS_MAP[excmd as GlideExcmdName];
-  return command?.description ?? "";
+  // `excmd` may carry args (e.g. `"tab_switch 3"`)
+  const space = excmd.indexOf(" ");
+  const name = (space === -1 ? excmd : excmd.slice(0, space)) as GlideExcmdName;
+  return GLIDE_EXCOMMANDS_MAP[name]?.description ?? "";
 }
