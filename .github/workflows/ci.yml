@@ -52,7 +52,8 @@ jobs:
             exit 1
           fi
 
-          depot ci logs "$run_id" --follow
+          depot ci logs "$run_id" --job prepare --follow || true
+          depot ci logs "$run_id" --job lint --follow || true
 
           # "finished" is the only success status; anything else fails the job.
           status=$(depot ci status "$run_id" --output json | jq -r '.status')

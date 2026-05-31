@@ -1,0 +1,49 @@
+name: Build CI image
+description: >-
+  Build the ci snapshot image with the firefox source code included.
+  Assumes the repository is already checked out.
+
+inputs:
+  image-tag:
+    description: the firefox version to push
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Configure git
+      shell: bash
+      run: |
+        git config --global \
+          url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+          "git@github.com:mozilla-firefox/firefox.git"
+
+    - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: "24"
+        cache: "pnpm"
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Download Firefox source
+      shell: bash
+      run: pnpm firefox:download
+
+    - name: Bootstrap repo
+      shell: bash
+      run: pnpm bootstrap
+
+    - name: Push snapshot (versioned)
+      uses: depot/snapshot-action@6af2bc7128223169fb12a5e1521c9576d5b7a8bf # v1.1.2
+      with:
+        image: 9c42191sh0.registry.depot.dev/glide-ci:${{ inputs.image-tag }}
+
+    - name: Push snapshot (latest)
+      uses: depot/snapshot-action@6af2bc7128223169fb12a5e1521c9576d5b7a8bf # v1.1.2
+      with:
+        image: 9c42191sh0.registry.depot.dev/glide-ci:latest
