@@ -7,6 +7,44 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Configure git
+        run: |
+          git config --global \
+            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+            "git@github.com:mozilla-firefox/firefox.git"
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download Firefox source
+        run: |
+          pnpm firefox:download
+
+      - name: Bootstrap repo
+        run: |
+          pnpm bootstrap
+
+      - name: Run lint
+        run: |
+          pnpm lint
+
   zizmor:
     name: zizmor
     runs-on: ubuntu-latest
@@ -24,48 +62,3 @@ jobs:
         uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
         with:
           advanced-security: true
-
-  # thin shim around the Depot CI workflow in .depot/workflows/ci.yml so that logs are publicly viewable.
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - uses: depot/setup-action@15c09a5f77a0840ad4bce955686522a257853461 # v1.7.1
-        with:
-          version: "2.101.63"
-
-      - name: Run lint
-        env:
-          DEPOT_TOKEN: ${{ secrets.DEPOT_TOKEN }}
-        run: |
-          set -euo pipefail
-
-          run_output=$(depot ci run --workflow .depot/workflows/ci.yml)
-          printf '%s\n' "$run_output"
-          run_id=$(printf '%s\n' "$run_output" | awk '/^Run: /{print $2; exit}')
-          if [ -z "$run_id" ]; then
-            echo "::error::Could not parse Depot run id"
-            exit 1
-          fi
-
-          depot ci logs "$run_id" --job prepare --follow || true
-          depot ci logs "$run_id" --job lint --follow || true
-
-          # the log-follows above can return while the run is still "running", so we
-          # need to work around that by polling until a terminal state is hit.
-          status=""
-          for _ in $(seq 1 360); do # ~30 min @ 5s, very overkill
-            status=$(depot ci status "$run_id" --output json | jq -r '.status')
-            case "$status" in
-              queued | running | pending | starting | creating) sleep 5 ;;
-              *) break ;;
-            esac
-          done
-
-          # "finished" is the only success status; anything else fails the job.
-          echo "Depot run status: $status"
-          [ "$status" = "finished" ]
