@@ -55,7 +55,17 @@ jobs:
           depot ci logs "$run_id" --job prepare --follow || true
           depot ci logs "$run_id" --job lint --follow || true
 
+          # the log-follows above can return while the run is still "running", so we
+          # need to work around that by polling until a terminal state is hit.
+          status=""
+          for _ in $(seq 1 360); do # ~30 min @ 5s, very overkill
+            status=$(depot ci status "$run_id" --output json | jq -r '.status')
+            case "$status" in
+              queued | running | pending | starting | creating) sleep 5 ;;
+              *) break ;;
+            esac
+          done
+
           # "finished" is the only success status; anything else fails the job.
-          status=$(depot ci status "$run_id" --output json | jq -r '.status')
           echo "Depot run status: $status"
           [ "$status" = "finished" ]
