@@ -27,8 +27,8 @@ To open the `about:memory` page, type `about:memory` in the address bar and pres
 
 On the `about:memory` page. Click `Load…` and pick a saved report file (`.json.gz` suffix). The report opens on the page so you can review it.
 
->[!NOTE]
-It's useful to compare before and after memory usage. To do this, you can use the `Load and diff…` button to load two different memory reports and compare the differences.
+> [!NOTE]
+> It's useful to compare before and after memory usage. To do this, you can use the `Load and diff…` button to load two different memory reports and compare the differences.
 
 ### Interpreting memory usage
 
@@ -74,7 +74,7 @@ Each process has two main parts:
 
 You don’t need to understand every line. Focus on unusually large entries and compare reports with Load and diff… to see what changed.
 
->[!TIP]
-Hover over any button or measurement in about:memory for a short explanation of what it means.
+> [!TIP]
+> Hover over any button or measurement in `about:memory` for a short explanation of what it means.
 
 For detailed information, read the [`about:memory` Firefox docs](https://firefox-source-docs.mozilla.org/performance/memory/about_colon_memory.html).
