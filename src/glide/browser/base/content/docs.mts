@@ -69,6 +69,7 @@ const SIDEBAR: SidebarEntry[] = [
   { name: "Privacy", href: "privacy.html" },
   { name: "Changelog", href: "changelog.html" },
   { name: "Contributing", href: "contributing.html" },
+  { name: "Memory Usage", href: "memory-usage.html" },
   { name: "Chat", href: "chat.html" },
 ];
 
