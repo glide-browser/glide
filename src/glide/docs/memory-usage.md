@@ -9,6 +9,7 @@ Glide is generally expected to have slightly higher memory usage than Firefox. T
 Since Glide is a fork of Firefox, we can use the same tools to measure memory usage. Some of the tooling rely on Firefox's memory reporting system, which is not available to Glide.
 
 1. [`about:memory`](#about:memory)
+2. [AWSY](#awsy)
 
 ## about:memory
 
@@ -78,3 +79,87 @@ You don’t need to understand every line. Focus on unusually large entries and 
 > Hover over any button or measurement in `about:memory` for a short explanation of what it means.
 
 For detailed information, read the [`about:memory` Firefox docs](https://firefox-source-docs.mozilla.org/performance/memory/about_colon_memory.html).
+
+## AWSY
+
+AWSY (Are We Slim Yet) is Firefox’s automated memory testing suite. It loads a set of web pages and tracks memory usage.
+
+To run AWSY:
+
+```bash
+pnpm mach awsy-test
+```
+
+> [!NOTE]
+> A Glide build is required before running AWSY tests.
+
+The first AWSY run also downloads the test pages, so allow extra time and make sure you have network access. To verify everything works, start with `pnpm mach awsy-test --quick` before running a full test.
+
+### Useful flags
+
+| Flag         | What it does                                                         |
+| ------------ | -------------------------------------------------------------------- |
+| `-h`         | Show all options and AWSY-specific flags                             |
+| `--quick`    | Shorter run — opens 3 pages once, with minimal waiting between steps |
+| `--base`     | Run base memory usage tests                                          |
+| `--headless` | Run tests in headless mode                                           |
+
+When the run finishes, results are saved under `engine/obj-*/_tests/awsy/results/`. The log prints the exact path:
+
+```bash
+0:42.79 INFO Perfherder data written to engine/.../perfherder-data.json
+```
+
+> [!NOTE]
+> Glide is based on Firefox and uses the same AWSY tests. Mozilla tracks those results on Perfherder, but Glide can't use Perfherder. For now, we rely on the memory usage data from `perfherder-data.json` to analyze memory usage.
+
+### Interpreting results
+
+The result is a JSON file that contains the memory usage data for the run. You can open it in a text editor to view the data.
+
+Structure of the result file:
+
+```txt
+{
+  "framework": { "name": "awsy" },
+  "suites": [
+    {
+      "name": "Explicit Memory",
+      "value": 490176268,
+      "unit": "bytes",
+      "lowerIsBetter": true,
+      "extraOptions": ["tp6", "fission"],
+      "subtests": [
+        { "name": "Fresh start", "value": 488051251, "unit": "bytes" },
+        { "name": "After tabs open", "value": 756072339, "unit": "bytes" },
+        { "name": "Tabs closed [+30s, forced GC]", "value": 339143635, "unit": "bytes" }
+      ]
+    }
+  ]
+}
+```
+
+| Field           | Description                                                                 |
+| --------------- | --------------------------------------------------------------------------- |
+| `suites`        | The metrics AWSY tracks (Explicit, Resident, JS, Images, Heap Unclassified) |
+| `subtests`      | Memory at each stage of the test                                            |
+| `value`         | Summary score across all checkpoints for the suite                          |
+| `unit`          | Unit of the value field e.g. `bytes`                                        |
+| `lowerIsBetter` | `true` if lower values are better, `false` if higher values are better      |
+| `extraOptions`  | Additional options that were used to run the test                           |
+
+#### Checkpoints
+
+Each suite includes the same stages as the test runs:
+
+| Checkpoint                    | What it means                            |
+| ----------------------------- | ---------------------------------------- |
+| Fresh start                   | Memory right after launch                |
+| After tabs open               | After opening the test pages             |
+| Tabs closed [+30s, forced GC] | After closing tabs and reclaiming memory |
+
+The file includes more checkpoints (e.g. Fresh start [+30s], After tabs open [+30s, forced GC]). The table above covers the main ones.
+
+Memory should increase when tabs open and decrease after they close. If it stays high at **Tabs closed**, that may indicate a leak.
+
+For detailed information, read the [AWSY docs](https://firefox-source-docs.mozilla.org/testing/perfdocs/awsy.html).
