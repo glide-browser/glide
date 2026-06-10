@@ -2,18 +2,18 @@
 
 ## Introduction
 
-Glide is generally expected to have slightly higher memory usage than Firefox. This is due to the additional functionality and customisation that Glide provides. This section discuss various ways to measure memory usage, how to interpret the results, and making sure Glide memory usage is within acceptable limits.
+Glide is generally expected to have slightly higher memory usage than Firefox. This is due to the additional functionality and customisation that Glide provides. This section discusses various ways to measure memory usage and how to interpret the results.
 
 ## Tools for Measuring Memory Usage
 
-Since Glide is a fork of Firefox, we can use the same tools to measure memory usage. Some of the tooling rely on Firefox's memory reporting system, which is not available to Glide.
+Since Glide is a fork of Firefox, we can use the same tools to measure memory usage. Some of the tooling relies on Firefox's memory reporting system, which is not available to Glide.
 
 1. [`about:memory`](#about:memory)
 2. [AWSY](#awsy)
 
 ## about:memory
 
-`about:memory` page is a powerful, built-in diagnostic tool that provides detailed measurements of Firefox’s memory usage. It allows you to view, save, load, and diff detailed measurements of Firefox’s memory usage. It provides detailed breakdowns of exactly which tabs, extensions or background processes are consuming memory and allows you to force memory garbage collection.
+The `about:memory` page is a powerful, built-in diagnostic tool that provides detailed measurements of Firefox’s memory usage. It allows you to view, save, load, and diff detailed measurements of Firefox’s memory usage. It provides detailed breakdowns of exactly which tabs, extensions, or background processes are consuming memory and allows you to force memory garbage collection.
 
 To open the `about:memory` page, type `about:memory` in the address bar and press Enter.
 
@@ -21,12 +21,12 @@ To open the `about:memory` page, type `about:memory` in the address bar and pres
 
 1. Use Glide the way you normally would.
 2. When you're ready to capture memory usage, open the `about:memory` page.
-3. Click on `Measure and save` button to generate a memory report.
-4. This will open a file dialog that allows you to save the file(`.json.gz` suffix) at your desired location.
+3. Click the `Measure and save` button to generate a memory report.
+4. This will open a file dialog that allows you to save the file (`.json.gz` suffix) at your desired location.
 
 ### Loading a memory report
 
-On the `about:memory` page. Click `Load…` and pick a saved report file (`.json.gz` suffix). The report opens on the page so you can review it.
+On the `about:memory` page, click `Load…` and pick a saved report file (`.json.gz` suffix).
 
 > [!NOTE]
 > It's useful to compare before and after memory usage. To do this, you can use the `Load and diff…` button to load two different memory reports and compare the differences.
@@ -63,7 +63,7 @@ The basics
 
 ### How to read a tree
 
-- Bottom rows(Leaf nodes) are the actual measurements.
+- Bottom rows (leaf nodes) are the actual measurements.
 - Parent rows are the sum of everything below them.
 
 ### What to look for
@@ -71,7 +71,7 @@ The basics
 Each process has two main parts:
 
 1. Explicit allocations — memory broken down by tabs, extensions, JavaScript, images, and other subsystems. Look for top(https://…) rows to see which tabs use the most memory.
-2. Other measurements — totals across the whole browser. resident is the best single number for overall RAM usage.
+2. Other measurements — totals across the whole browser. `resident` is the best single number for overall RAM usage.
 
 You don’t need to understand every line. Focus on unusually large entries and compare reports with Load and diff… to see what changed.
 
@@ -111,7 +111,7 @@ When the run finishes, results are saved under `engine/obj-*/_tests/awsy/results
 ```
 
 > [!NOTE]
-> Glide is based on Firefox and uses the same AWSY tests. Mozilla tracks those results on Perfherder, but Glide can't use Perfherder. For now, we rely on the memory usage data from `perfherder-data.json` to analyze memory usage.
+> Perfherder is a dashboard intended to allow monitoring and analysis of automated performance tests run against Mozilla products (currently Firefox and Firefox for Android). Glide is not supported on Perfherder, so we rely on the memory usage data from `perfherder-data.json` to analyse memory usage.
 
 ### Interpreting results
 
@@ -144,7 +144,7 @@ Structure of the result file:
 | `suites`        | The metrics AWSY tracks (Explicit, Resident, JS, Images, Heap Unclassified) |
 | `subtests`      | Memory at each stage of the test                                            |
 | `value`         | Summary score across all checkpoints for the suite                          |
-| `unit`          | Unit of the value field e.g. `bytes`                                        |
+| `unit`          | Unit of the value field, e.g. `bytes`                                       |
 | `lowerIsBetter` | `true` if lower values are better, `false` if higher values are better      |
 | `extraOptions`  | Additional options that were used to run the test                           |
 
