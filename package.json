@@ -55,7 +55,7 @@
   "dependencies": {
     "@markdoc/markdoc": "^0.5.4",
     "dioscuri": "github:glide-browser/dioscuri",
-    "shiki": "^3.19.0",
+    "shiki": "^4.2.0",
     "ts-blank-space": "^0.6.2",
     "typescript": "^5.9.2"
   },
@@ -70,9 +70,9 @@
     "bin": "workspace:",
     "chalk": "^5.6.0",
     "chokidar": "^5.0.0",
-    "dprint": "^0.51.1",
+    "dprint": "^0.54.0",
     "dts-bundle-generator": "^9.5.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.28.0",
     "eslint-plugin-mozilla": "^4.4.0",
     "execa": "^9.6.0",
     "fast-check": "^4.3.0",

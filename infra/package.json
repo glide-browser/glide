@@ -9,7 +9,7 @@
   "packageManager": "pnpm@10.17.0",
   "private": true,
   "dependencies": {
-    "wrangler": "^4.72.0"
+    "wrangler": "^4.100.0"
   },
   "pnpm": {
     "overrides": {
