@@ -1294,7 +1294,7 @@ add_task(async function test_fs_stat() {
     const result = await until(() => glide.g.value as glide.FileInfo | undefined);
     is(result.type, "file");
     is(typeof result.size, "number");
-    is(typeof result.creation_time, "number");
+    is(typeof result.creation_time, AppConstants.platform === "linux" ? "undefined" : "number");
     is(typeof result.last_accessed, "number");
     is(typeof result.last_modified, "number");
     is(typeof result.path, "string");
@@ -1319,7 +1319,7 @@ add_task(async function test_fs_stat_directory() {
     const result = await until(() => glide.g.value as glide.FileInfo | undefined);
     is(result.type, "directory");
     is(typeof result.size, "number");
-    is(typeof result.creation_time, "number");
+    is(typeof result.creation_time, AppConstants.platform === "linux" ? "undefined" : "number");
     is(typeof result.last_accessed, "number");
     is(typeof result.last_modified, "number");
     is(typeof result.path, "string");
