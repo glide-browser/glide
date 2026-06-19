@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
-const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
 export type GlideHintIPC = Omit<glide.ContentHint, "element" | "label"> & {
   /**
@@ -61,7 +60,7 @@ export const content = {
         continue;
       }
 
-      const rect = LayoutUtils.getElementBoundingScreenRect(target);
+      const rect = target.documentGlobal!.windowUtils.getElementBoundingScreenRect(target);
 
       // check if the element would be outside the current browser window
       const y = rect.y - opts.browser_ui_rect.y;

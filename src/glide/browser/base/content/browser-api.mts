@@ -23,7 +23,6 @@ const { object_assign } = ChromeUtils.importESModule("chrome://glide/content/uti
 const { create_sandbox, FileNotFoundError, FileModificationNotAllowedError, GlideProcessError } = ChromeUtils
   .importESModule("chrome://glide/content/sandbox.mjs");
 const { MODE_SCHEMA_TYPE } = ChromeUtils.importESModule("chrome://glide/content/browser-excmds-registry.mjs");
-const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -598,6 +597,7 @@ export function make_glide_api(
         gBrowser.$hints_action = opts?.action;
         gBrowser.$hints_label_generator = opts?.label_generator;
 
+        const body = document!.body!;
         actor.send_async_message("Glide::Hint", {
           action: typeof opts?.action !== "function" ? opts?.action : undefined,
           selector: opts?.selector,
@@ -606,7 +606,7 @@ export function make_glide_api(
           editable_only: opts?.editable ?? undefined,
           include_click_listeners: opts?.include_click_listeners,
           auto_activate: opts?.auto_activate ?? false,
-          browser_ui_rect: LayoutUtils.getElementBoundingScreenRect(document!.body),
+          browser_ui_rect: body.documentGlobal!.windowUtils.getElementBoundingScreenRect(body),
           debug: Services.prefs.getBoolPref("devtools.testing", false),
         });
       },

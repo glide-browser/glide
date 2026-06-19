@@ -5,7 +5,6 @@
 
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
-const { LayoutUtils } = ChromeUtils.importESModule("resource://gre/modules/LayoutUtils.sys.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { DataCloneError } = ChromeUtils.importESModule("chrome://glide/content/sandbox.mjs");
 
@@ -46,7 +45,8 @@ class GlideHintsClass {
     // the hints return an x/y of the screen rect, so to position it correctly inside the browser UI
     // we need to figure out what the screen rect is for the browser itself and then subtract that
     // from the hint x/y
-    const chrome_ui_box = LayoutUtils.getElementBoundingScreenRect(document!.body);
+    const body = document!.body!;
+    const chrome_ui_box = body.documentGlobal!.windowUtils.getElementBoundingScreenRect(body);
     const base_hints = ipc_hints.map((hint): glide.Hint => ({
       ...hint,
       x: hint.x - chrome_ui_box.x,

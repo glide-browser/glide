@@ -350,7 +350,9 @@ export function make_listener_change_observer(): nsIListenerChangeListener {
     listenersChanged(changes) {
       const seen = new Set<EventTarget>();
       for (let i = 0; i < changes.length; i++) {
-        const mirror_target = changes.queryElementAt(i, Ci.nsIEventListenerChange).target;
+        // `target` is typed as `EventTarget`, but the listener targets we mirror are always DOM
+        // nodes and we rely on `Node.documentGlobal`to find the owning window.
+        const mirror_target = changes.queryElementAt(i, Ci.nsIEventListenerChange).target as Node;
         const target_window = mirror_target.documentGlobal;
         if (!target_window || !target_window.document || !REGISTRY.has(target_window.document)) {
           // a listener is being added to somewhere other than a document mirror
