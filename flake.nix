@@ -60,6 +60,34 @@
           doCheck = false;
         };
 
+        # Firefox requires cbindgen >= 0.29.4, but nixpkgs only has 0.29.2 at the time of writing.
+        rust-cbindgen = pkgs.rustPlatform.buildRustPackage (finalAttrs: {
+          pname = "rust-cbindgen";
+          version = "0.29.4";
+
+          src = pkgs.fetchFromGitHub {
+            owner = "mozilla";
+            repo = "cbindgen";
+            rev = "v${finalAttrs.version}";
+            hash = "sha256-leeHOwpzXuzg2cTjXehBnCsS+dvU4eIIFtWKeCee20U=";
+          };
+
+          cargoHash = "sha256-f6YoDoiVoh0BVPYHFO1FsdI4OCsF+LY72QaD57StdIQ=";
+
+          doCheck = false;
+        });
+
+        # Firefox requires NSS >= 3.125, but nixpkgs only has 3.124 at the time of writing.
+        nss_latest = pkgs.nss_latest.overrideAttrs (old: rec {
+          version = "3.125";
+          src = pkgs.fetchFromGitHub {
+            owner = "nss-dev";
+            repo = "nss";
+            rev = "NSS_${lib.replaceStrings ["."] ["_"] version}_RTM";
+            hash = "sha256-pIRoFJYsQZzI+hJcNzTX+WT91tfXDygWE0RrirfyBPc=";
+          };
+        });
+
         # Compile the wasm32 sysroot to build the RLBox Sandbox
         # https://hacks.mozilla.org/2021/12/webassembly-and-back-again-fine-grained-sandboxing-in-firefox-95/
         # We only link c++ libs here, our compiler wrapper can find wasi libc and crt itself.
