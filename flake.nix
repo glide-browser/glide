@@ -154,6 +154,7 @@
               rust-cbindgen
               rustPlatform.bindgenHook
               rustc
+              sccache
               unzip
               which
 
