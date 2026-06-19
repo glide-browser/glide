@@ -5,6 +5,8 @@ declare namespace BrowserCommands {
     function handleBackspace(): void;
     function handleShiftBackspace(): void;
     function gotoHistoryIndex(aEvent: any): boolean;
+    function addTabSplitView(): void;
+    function separateTabSplitView(): void;
     function duplicateTab(): void;
     function reloadOrDuplicate(aEvent: any): void;
     function reload(): void;

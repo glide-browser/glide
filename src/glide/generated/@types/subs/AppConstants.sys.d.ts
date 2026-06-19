@@ -177,9 +177,6 @@ export const AppConstants: Readonly<{
 
   // #ifdef MOZ_WIDGET_ANDROID
   MOZ_ANDROID_CONTENT_SERVICE_ISOLATED_PROCESS: boolean;
-
-  // Returns true for CN region build when distibution id set as 'MozillaOnline'
-  isChinaRepack(): boolean;
 }>;
 
 type Platform = "linux" | "win" | "macosx" | "ios" | "android" | "other";
