@@ -233,6 +233,9 @@ interface GleanImpl {
   smartWindow: {
     addTabsClick: GleanEventWithExtras<{ chat_id?: string, location?: string, message_seq?: string, tabs_available?: string, tabs_preselected?: string }>;
     addTabsSelection: GleanEventWithExtras<{ chat_id?: string, location?: string, message_seq?: string, tabs_available?: string, tabs_preselected?: string, tabs_selected?: string }>;
+    browserActionPrompt: GleanEventWithExtras<{ action_type?: string, candidates?: string, chat_id?: string, location?: string, message_seq?: string, preselected?: string, prompt_type?: string, reason?: string }>;
+    browserActionPromptResponse: GleanEventWithExtras<{ action_type?: string, chat_id?: string, location?: string, message_seq?: string, prompt_type?: string, reason?: string, response?: string, selected?: string }>;
+    browserActionUndo: GleanEventWithExtras<{ action_type?: string, chat_id?: string, error?: string, location?: string, message_seq?: string, result?: string, tabs_restored?: string, time_delta?: string }>;
     chatPreviousSession: GleanEventWithExtras<{ tabs?: string }>;
     chatRetrieved: GleanEventWithExtras<{ chat_id?: string, location?: string, message_seq?: string, time_delta?: string }>;
     chatStorage: GleanQuantity;
@@ -5360,7 +5363,8 @@ interface GleanImpl {
     happyEyeballsConnectionAttemptCount: GleanCustomDistribution;
     happyEyeballsConnectionEstablishmentTime: GleanCustomDistribution;
     happyEyeballsDnsResolutionTime: Record<"a"|"aaaa"|"https", GleanCustomDistribution>;
-    happyEyeballsHttpsRecordAvailable: Record<"available"|"unavailable", GleanCounter>;
+    happyEyeballsH3Discovery: Record<"altsvc_only"|"both"|"https_rr_only"|"none", GleanCounter>;
+    happyEyeballsHttpsRrFeatures: Record<"ech"|"h3_alpn"|"ipv4hint"|"ipv6hint"|"total", GleanCounter>;
     happyEyeballsTimeToFirstAttempt: GleanCustomDistribution;
     happyEyeballsWinningAttemptIndex: GleanCustomDistribution;
     http30rttState: Record<"conn_closed_by_necko"|"conn_error"|"not_used"|"rejected"|"succeeded", GleanCounter>;
@@ -7089,6 +7093,11 @@ interface GleanImpl {
     insecureOpensearchUpdateCount: GleanQuantity;
     secureOpensearchEngineCount: GleanQuantity;
     secureOpensearchUpdateCount: GleanQuantity;
+  }
+
+  searchCounts: {
+    hiddenEngines: Record<"disabled"|"oneOff", GleanQuantity>;
+    totals: Record<"addon"|"appProvidedConfig"|"openSearch"|"policy"|"user"|"userInstalledConfig", GleanQuantity>;
   }
 
   searchEngineDefault: {
