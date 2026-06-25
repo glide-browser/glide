@@ -1,5 +1,5 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index b7301d663a96532582651ac1c34f07a8953576ad..1925034f3d93542b8a51c4435e0ebc4f6a2d3d3c 100644
+index 126bc5c13ac71282675e02792e9b3b14ff1a00e5..2078a652138878e644017846dcbe75202ce23931 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
 @@ -42,6 +42,13 @@ let JSPROCESSACTORS = {
@@ -16,8 +16,8 @@ index b7301d663a96532582651ac1c34f07a8953576ad..1925034f3d93542b8a51c4435e0ebc4f
    RefreshBlockerObserver: {
      child: {
        esModuleURI: "resource:///actors/RefreshBlockerChild.sys.mjs",
-@@ -93,6 +100,53 @@ let JSWINDOWACTORS = {
-     enablePreference: "browser.contextual-password-manager.enabled",
+@@ -94,6 +101,53 @@ let JSWINDOWACTORS = {
+     remoteTypes: ["parent"],
    },
  
 +  GlideDocs: {

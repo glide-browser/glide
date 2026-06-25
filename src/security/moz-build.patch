@@ -1,0 +1,15 @@
+diff --git a/security/moz.build b/security/moz.build
+index 5f3bce2b37b059acd0a8a0a5e0775d27d20d0afb..7699a81c7947217ac7efde17be28b574d0075328 100644
+--- a/security/moz.build
++++ b/security/moz.build
+@@ -22,6 +22,10 @@ with Files("nss.symbols"):
+ if CONFIG["MOZ_SYSTEM_NSS"]:
+     Library("nss")
+     OS_LIBS += CONFIG["NSS_LIBS"]
++    # nss-rs's freebl bindings call FREEBL_GetVector directly, but the system
++    # NSS link line only exposes the public libs (nss3/ssl3/smime3/nssutil3).
++    # FREEBL_GetVector lives in freebl's loadable module, so link it explicitly.
++    OS_LIBS += ["freeblpriv3"]
+ 
+ include("/build/gyp_base.mozbuild")
+ if CONFIG["MOZ_FOLD_LIBS"]:
