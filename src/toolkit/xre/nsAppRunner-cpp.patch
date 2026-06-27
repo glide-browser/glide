@@ -1,8 +1,8 @@
 diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
-index 442fe6ee029fee3be487ab829f24fc94342b4519..086ab4381e19ed5bad625a000f4b75a20e786ecd 100644
+index 0b0e8a138e4507bba6aac18d8b355a6dc0a8838d..856adb948f56f95a2aafd1fb419933f9ad540095 100644
 --- a/toolkit/xre/nsAppRunner.cpp
 +++ b/toolkit/xre/nsAppRunner.cpp
-@@ -274,6 +274,8 @@
+@@ -271,6 +271,8 @@
  extern void InstallSignalHandlers(const char* ProgramName);
  
  #define FILE_COMPATIBILITY_INFO "compatibility.ini"_ns
@@ -11,7 +11,7 @@ index 442fe6ee029fee3be487ab829f24fc94342b4519..086ab4381e19ed5bad625a000f4b75a2
  #define FILE_INVALIDATE_CACHES ".purgecaches"_ns
  #define FILE_STARTUP_INCOMPLETE u".startup-incomplete"_ns
  
-@@ -3671,6 +3673,42 @@ static void WriteVersion(nsIFile* aProfileDir, const nsCString& aVersion,
+@@ -3857,6 +3859,42 @@ static void WriteVersion(nsIFile* aProfileDir, const nsCString& aVersion,
    PR_Close(fd);
  }
  
@@ -51,10 +51,10 @@ index 442fe6ee029fee3be487ab829f24fc94342b4519..086ab4381e19ed5bad625a000f4b75a2
 +  PR_Close(fd);
 +}
 +
- /**
-  * Returns true if the startup cache file was successfully removed.
-  * Returns false if file->Clone fails at any point (OOM) or if unable
-@@ -5313,6 +5351,10 @@ int XREMain::XRE_mainStartup(bool* aExitFlag) {
+ // Read the first 24 bytes of the first existing canonical app DB and
+ // classify its encryption state by header inspection. No SQLite, no
+ // mozStorage -- a pure file read. Returns NoDBs if none of the canonical
+@@ -5623,6 +5661,10 @@ int XREMain::XRE_mainStartup(bool* aExitFlag,
        mProfD, version, osABI, mDirProvider.GetGREDir(), mAppData->directory,
        flagFile, &cachesOK, &isDowngrade, lastVersion);
  
