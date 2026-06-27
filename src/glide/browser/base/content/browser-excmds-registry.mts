@@ -389,6 +389,14 @@ export const GLIDE_EXCOMMANDS = [
   },
 
   {
+    name: "mode_reset",
+    description:
+      "Reset the mode to whatever the currently focused element implies. Note this always applies, even from `ignore` mode",
+    content: true,
+    repeatable: false,
+  },
+
+  {
     name: "hint",
     description: "Show hint labels for jumping to clickable elements",
     content: false,

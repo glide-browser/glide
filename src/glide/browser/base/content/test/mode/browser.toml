@@ -32,3 +32,6 @@ https_first_disabled = true
 
 ["dist/browser_mode_switching.js"]
 https_first_disabled = true
+
+["dist/browser_mode_reset.js"]
+https_first_disabled = true

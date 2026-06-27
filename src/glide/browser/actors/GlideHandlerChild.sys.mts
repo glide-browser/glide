@@ -461,6 +461,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
         break;
       }
+      case "mode_reset": {
+        this.#reset_mode();
+        break;
+      }
       case "execute_motion": {
         const operator = props.operator ?? this.state?.operator;
         if (!operator) {
@@ -786,6 +790,50 @@ export class GlideHandlerChild extends JSWindowActorChild<
       : null;
   }
 
+  /**
+   * Determine which mode should be active given the currently focused element,
+   * mirroring the logic that runs automatically on `focusin` events.
+   */
+  #compute_focus_mode(
+    target: HTMLElement | null,
+    current_mode: GlideMode | undefined,
+  ): GlideMode {
+    if (target?.getAttribute("anonid") === GLIDE_COMMANDLINE_INPUT_ANONID) {
+      return "command";
+    }
+
+    if (target && DOM.is_text_editable(target)) {
+      return "insert";
+    }
+
+    if (target && DOM.is_video_element(target)) {
+      return "insert";
+    }
+
+    if (current_mode === "visual") {
+      return "visual";
+    }
+
+    return "normal";
+  }
+
+  /**
+   * Re-derive the mode from the currently focused element and switch to it if
+   * it differs from the current one.
+   *
+   * Unlike the automatic `focusin` detection, this is an explicit user action
+   * so the mode change is forced and applies unconditionally, even when
+   * `glide.o.switch_mode_on_focus` is `false` or we're in `ignore` mode.
+   */
+  #reset_mode(): void {
+    const current_mode = this.state?.mode;
+    const target = this.#get_active_element();
+    const new_mode = this.#compute_focus_mode(target, current_mode);
+    if (new_mode !== current_mode) {
+      this.#change_mode(new_mode, /* force */ true);
+    }
+  }
+
   #expect_editor(seq: string): nsIEditor {
     const editor = this.#get_editor(this.#get_active_element());
     if (!editor) {
@@ -903,29 +951,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         this._log.debug("current mode", current_mode ?? "unset");
 
-        function get_new_mode(): GlideMode {
-          if (
-            target.getAttribute("anonid") === GLIDE_COMMANDLINE_INPUT_ANONID
-          ) {
-            return "command";
-          }
-
-          if (DOM.is_text_editable(target)) {
-            return "insert";
-          }
-
-          if (DOM.is_video_element(target)) {
-            return "insert";
-          }
-
-          if (current_mode === "visual") {
-            return "visual";
-          }
-
-          return "normal";
-        }
-
-        const new_mode = get_new_mode();
+        const new_mode = this.#compute_focus_mode(target, current_mode);
         if (new_mode !== this.state?.mode) {
           this.#change_mode(new_mode, false);
         }
