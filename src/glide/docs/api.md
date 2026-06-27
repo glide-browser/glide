@@ -161,6 +161,7 @@ text-decoration: none;
 [`glide.modes`](#glide.modes)\
 [`glide.modes.register()`](#glide.modes.register)\
 [`glide.modes.list()`](#glide.modes.list)\
+[`glide.modes.get()`](#glide.modes.get)\
 [`glide.SpawnOptions`](#glide.SpawnOptions)\
 [`glide.Process`](#glide.Process)\
 [`glide.ProcessReadStream`](#glide.ProcessReadStream)\
@@ -1344,6 +1345,12 @@ glide.modes.list(): GlideMode[]
 {% /api-heading %}
 
 List all registered modes.
+
+{% api-heading id="glide.modes.get" %}
+glide.modes.get(mode): glide.ModeConfig | undefined
+{% /api-heading %}
+
+Returns the registered config for the given `mode`, or `undefined` if the mode has not been registered.
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 

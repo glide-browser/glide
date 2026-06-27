@@ -927,6 +927,9 @@ export function make_glide_api(
       list() {
         return Object.keys(GlideBrowser._modes) as GlideMode[];
       },
+      get(mode) {
+        return GlideBrowser._modes[mode];
+      },
     },
     styles: ((): typeof glide["styles"] => {
       const elements = new Map<string, HTMLStyleElement>();

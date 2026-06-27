@@ -1123,6 +1123,11 @@ declare global {
        * List all registered modes.
        */
       list(): GlideMode[];
+
+      /**
+       * Returns the registered config for the given `mode`, or `undefined` if the mode has not been registered.
+       */
+      get(mode: GlideMode): glide.ModeConfig | undefined;
     };
   };
 
@@ -1994,6 +1999,14 @@ declare global {
     export type ContentHint = glide.Hint & { element: HTMLElement };
     /// @docs-skip
     export type ResolvedHint = glide.Hint & { label: string };
+
+    /**
+     * The config a mode was registered with, see {@link glide.modes.register}.
+     */
+    export interface ModeConfig {
+      caret: "block" | "line" | "underline";
+      switch_mode_on_focus?: boolean;
+    }
 
     export type HintLabelGenerator = (ctx: HintLabelGeneratorProps) => string[] | Promise<string[]>;
 
