@@ -404,8 +404,8 @@ add_task(async function test_minimal_env() {
 add_task(async function test_execute() {
   await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
-      const proc = await glide.process.execute("printenv");
-      glide.g.value = proc.exit_code;
+      const proc = await glide.process.execute("echo", ["hello from execute"]);
+      glide.g.value = { exit_code: proc.exit_code, stdout: await proc.stdout.text() };
     });
   });
 
