@@ -111,7 +111,7 @@ add_task(async function test_non_zero_exit_code_success_codes_disables() {
 });
 
 add_task(async function test_stdin() {
-  const proc = await glide.process.spawn("/bin/cat");
+  const proc = await glide.process.spawn("cat");
 
   // Write
   await proc.stdin.write("Hello from stdin!\n");
@@ -130,7 +130,7 @@ add_task(async function test_stdin() {
 });
 
 add_task(async function test_stdin_arraybuffer() {
-  const proc = await glide.process.spawn("/bin/cat");
+  const proc = await glide.process.spawn("cat");
 
   // Write binary data
   const data = new TextEncoder().encode("Binary data test\n");
