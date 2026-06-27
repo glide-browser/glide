@@ -1092,8 +1092,25 @@ export function make_glide_api(
 
         const workdir = opts?.cwd ? expand_tilde(opts.cwd) : undefined;
 
+        // `Subprocess.pathSearch` does not work for relative PATH entries, so we need to expand them here..
+        const search_env = Subprocess.getEnvironment() as Record<string, string | undefined>;
+        if (typeof search_env["PATH"] === "string") {
+          const search_base = workdir ?? Services.dirsvc.get("CurWorkD", Ci.nsIFile).path;
+          search_env["PATH"] = search_env["PATH"]
+            .split(":")
+            .flatMap(dir => {
+              if (PathUtils.isAbsolute(dir)) return [dir];
+              try {
+                return [PathUtils.joinRelative(search_base, dir || ".")];
+              } catch {
+                return [];
+              }
+            })
+            .join(":");
+        }
+
         const subprocess = await Subprocess.call({
-          command: await Subprocess.pathSearch(command),
+          command: await Subprocess.pathSearch(command, search_env),
           arguments: args ?? [],
           stderr,
           workdir,

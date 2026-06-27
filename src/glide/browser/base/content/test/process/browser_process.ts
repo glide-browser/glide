@@ -306,6 +306,38 @@ add_task(async function test_cwd_no_tilde_expansion() {
   is(glide.g.value, path, "paths with ~ in the middle should not be expanded");
 });
 
+add_task(async function test_relative_path_entry_resolution() {
+  await reload_config(function() {});
+
+  const base = GlideTestUtils.make_temp_directory("glide", "test-relative-path-" + Date.now());
+  const bindir = base.clone();
+  bindir.append("relbin");
+  bindir.create(Ci.nsIFile.DIRECTORY_TYPE, 0o755);
+
+  const script = bindir.clone();
+  script.append("glide_rel_cmd");
+  await IOUtils.writeUTF8(script.path, "#!/bin/sh\necho resolved-from-relative-path\n");
+  await IOUtils.setPermissions(script.path, 0o755);
+
+  const original_path = Services.env.get("PATH");
+  Services.env.set("PATH", "./relbin:" + original_path);
+
+  try {
+    glide.keymaps.set("normal", "~", async () => {
+      const proc = await glide.process.spawn("glide_rel_cmd", [], { cwd: base.path });
+      glide.g.value = await proc.stdout.text();
+    });
+
+    await glide.keys.send("~");
+    await waiter(() => glide.g.value).is(
+      "resolved-from-relative-path\n",
+      "a command in a relative `$PATH` entry should resolve against the cwd",
+    );
+  } finally {
+    Services.env.set("PATH", original_path);
+  }
+});
+
 add_task(async function test_env() {
   await reload_config(function() {
     glide.keymaps.set("normal", "~", async () => {
