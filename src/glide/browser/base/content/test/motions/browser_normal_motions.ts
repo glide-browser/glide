@@ -501,3 +501,52 @@ add_task(async function test_normal_caret() {
     await test_motion("^", 2, "h");
   });
 });
+
+add_task(async function test_normal_percent() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
+
+    await set_text("a(b)c", "open paren to close");
+    await set_selection(1, "(");
+    await test_motion("%", 3, ")");
+
+    await set_text("a(b)c", "close paren to open");
+    await set_selection(3, ")");
+    await test_motion("%", 1, "(");
+
+    await set_text("((x))", "nested parens from outer open");
+    await set_selection(0, "(");
+    await test_motion("%", 4, ")");
+
+    await set_text("((x))", "nested parens from inner open");
+    await set_selection(1, "(");
+    await test_motion("%", 3, ")");
+
+    await set_text("((x))", "nested parens from final close");
+    await set_selection(4, ")");
+    await test_motion("%", 0, "(");
+
+    await set_text("[a]", "square brackets");
+    await set_selection(0, "[");
+    await test_motion("%", 2, "]");
+
+    await set_text("{a}", "curly brackets");
+    await set_selection(0, "{");
+    await test_motion("%", 2, "}");
+
+    await set_text("(\n)", "multiline pair");
+    await set_selection(0, "(");
+    await test_motion("%", 2, ")");
+
+    await set_text("a (b)", "text before open paren, jump to close");
+    await set_selection(0, "a");
+    await test_motion("%", 4, ")");
+
+    await set_text("abc", "no bracket on rest of line");
+    await test_motion("%", 0, "a");
+
+    await set_text("abc(de", "unbalanced bracket on line");
+    await set_selection(3, "(");
+    await test_motion("%", 3, "(");
+  });
+});
