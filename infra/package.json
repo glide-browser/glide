@@ -13,7 +13,7 @@
   },
   "pnpm": {
     "overrides": {
-      "undici": ">=7.24.0"
+      "undici": ">=7.28.0 <8"
     }
   }
 }
