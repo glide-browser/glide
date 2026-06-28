@@ -889,6 +889,8 @@ export function make_glide_api(
       join(...parts) {
         return PathUtils.join(...parts);
       },
+
+      resolve: resolve_path,
     },
     fs: {
       async read(path, encoding): Promise<string> {
@@ -1348,6 +1350,10 @@ export function make_glide_api(
       async include(path) {
         await load_config_at_path({ absolute: resolve_path(path), relative: path });
       },
+
+      async module<T extends string>(path: T) {
+        return ('glide://config/' + path) as T // ?
+      }
     },
   };
 
@@ -1372,7 +1378,7 @@ export function make_glide_api(
       throw new Error("Non absolute paths can only be used when there is a config file defined.");
     }
 
-    return PathUtils.joinRelative(PathUtils.parent(config_path) ?? "/", path);
+    return PathUtils.normalize(PathUtils.joinRelative(PathUtils.parent(config_path) ?? "/", path));
   }
 
   function handle_ioutils_error(err: unknown, absolute: string): never {
@@ -1396,6 +1402,7 @@ async function load_config_at_path({ absolute, relative }: { absolute: string; r
   const config_str = await IOUtils.readUTF8(absolute);
 
   const sandbox = create_sandbox({
+    name: 'Glide Config',
     document: GlideBrowser._mirrored_document,
     window: GlideBrowser.sandbox_window,
     original_window: window,
@@ -1422,9 +1429,17 @@ async function load_config_at_path({ absolute, relative }: { absolute: string; r
     },
   });
 
+  // Create an extra "trampoline" so we can load the user config as a module;
+  // evalInSandbox loads in script mode by default but still allows us to import()
+  // modules, which in turn *will* be evaluated in module mode.
+
+  const config_path = 'glide://config/' + relative.replace(/([.]m?)ts$/, '$1js');
+  const trampoline_js = `
+    import(${JSON.stringify(config_path)})
+  `;
+
   try {
-    const config_js = TSBlank.default(config_str);
-    Cu.evalInSandbox(config_js, sandbox, null, `chrome://glide/config/${relative}`, 1, false);
+    Cu.evalInSandbox(trampoline_js, sandbox, null, `glide://config/${relative}`, 1, false);
   } catch (err) {
     GlideBrowser._log.error(err);
 
