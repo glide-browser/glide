@@ -39,7 +39,33 @@ export function init(sandbox: Sandbox) {
 
   // hint mode
   glide.keymaps.set("normal", "f", "hint");
-  glide.keymaps.set("normal", "F", "hint --action=newtab-click");
+  glide.keymaps.set("normal", "F", () =>
+    glide.hints.show({
+      async action({ content }) {
+        const result = await content.execute((target) => {
+          const tagName = target.tagName.toLowerCase();
+          const hasHref = tagName === "a" && (target as HTMLAnchorElement).href !== "";
+
+          if (hasHref) {
+            return { hasHref: true, href: (target as HTMLAnchorElement).href };
+          } else {
+            target.focus();
+            target.$glide_hack_click_from_hint = true;
+            target.click();
+            setTimeout(() => {
+              target.$glide_hack_click_from_hint = false;
+            }, 10);
+
+            return { hasHref: false };
+          }
+        });
+
+        if (result.hasHref && result.href) {
+          await gBrowser.addTrustedTab(result.href, { inBackground: true });
+        }
+      },
+    }));
+
   glide.keymaps.set("normal", "<leader>f", "hint --location=browser-ui");
   glide.keymaps.set(
     "normal",
