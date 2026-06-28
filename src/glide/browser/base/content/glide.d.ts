@@ -1113,10 +1113,31 @@ declare global {
        * }
        * glide.modes.register('leap', { caret: 'block' })
        * ```
+       *
+       * To define a mode that behaves like the builtin `ignore` mode, i.e.
+       * one where Glide does not automatically switch modes, set
+       * `switch_mode_on_focus` to `false`:
+       *
+       * ```typescript
+       * glide.modes.register('leap', { caret: 'line', switch_mode_on_focus: false })
+       * ```
        */
       register<Mode extends keyof GlideModes>(
         mode: Mode,
-        opts: { caret: "block" | "line" | "underline" },
+        opts: {
+          caret: "block" | "line" | "underline";
+
+          /**
+           * Override the global {@link glide.o.switch_mode_on_focus} option
+           * for this mode.
+           *
+           * When `false`, Glide will not automatically switch modes while in this
+           * mode (on focus, blur, etc), exactly like the builtin `ignore` mode.
+           *
+           * When not set, the global `switch_mode_on_focus` option is used.
+           */
+          switch_mode_on_focus?: boolean;
+        },
       ): void;
 
       /**

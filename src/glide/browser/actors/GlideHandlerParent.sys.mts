@@ -11,7 +11,15 @@ import type { ChildMessages, ChildQueries } from "./GlideHandlerChild.sys.mjs";
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 
 export interface ParentMessages {
-  "Glide::StateUpdate": { state: State; meta?: StateChangeMeta };
+  "Glide::StateUpdate": {
+    state: State;
+    meta?: StateChangeMeta;
+
+    /**
+     * Whether automatic mode switching is disabled for `state.mode`.
+     */
+    switch_mode_disabled: boolean;
+  };
 
   /**
    * Trigger manual registration of user gesture activation.
@@ -149,7 +157,11 @@ export class GlideHandlerParent extends JSWindowActorParent<
     // note that this *should* never happen, as we remove our callback
     // in the `didDestroy()` method above.
     if (!this.has_been_destroyed()) {
-      this.send_async_message("Glide::StateUpdate", { state, meta });
+      this.send_async_message("Glide::StateUpdate", {
+        state,
+        meta,
+        switch_mode_disabled: this.glide_browser?.is_mode_switching_disabled() ?? false,
+      });
     }
   }
 
@@ -179,7 +191,10 @@ export class GlideHandlerParent extends JSWindowActorParent<
           // shouldn't actually be changed.
           //
           // we also send a state update message back to the content process to make sure its state is up to date.
-          this.send_async_message("Glide::StateUpdate", { state: this.glide_browser.state });
+          this.send_async_message("Glide::StateUpdate", {
+            state: this.glide_browser.state,
+            switch_mode_disabled: this.glide_browser.is_mode_switching_disabled(),
+          });
           return;
         }
 

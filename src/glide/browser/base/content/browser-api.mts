@@ -60,6 +60,13 @@ const options = {
     GlideBrowser.set_css_property("--glide-hint-font-size", value, buf);
   },
 
+  switch_mode_on_focus(_value, _buf) {
+    // re-broadcast the current state so each content process recomputes whether
+    // automatic mode switching is disabled for the current mode, otherwise the
+    // cached value goes stale until the next mode change
+    GlideBrowser.resync_state();
+  },
+
   native_tabs(value, buf) {
     const id = "$glide.o.native_tabs";
     const glide = GlideBrowser.api;
@@ -142,7 +149,14 @@ type GlideO = (typeof glide)["o"];
 class GlideOptions implements GlideO {
   mapping_timeout = 200;
 
-  switch_mode_on_focus = true as const;
+  #switch_mode_on_focus = true;
+  get switch_mode_on_focus() {
+    return this.#switch_mode_on_focus;
+  }
+  set switch_mode_on_focus(value: boolean) {
+    this.#switch_mode_on_focus = value;
+    options.switch_mode_on_focus(value, false);
+  }
 
   scroll_implementation = "keys" as const;
 
@@ -920,7 +934,7 @@ export function make_glide_api(
           throw new Error(`The \`${mode}\` mode has already been registered. Modes can only be registered once`);
         }
 
-        GlideBrowser._modes[mode] = { caret: opts.caret };
+        GlideBrowser._modes[mode] = { caret: opts.caret, switch_mode_on_focus: opts.switch_mode_on_focus };
         MODE_SCHEMA_TYPE.enum.push(mode);
         GlideBrowser.key_manager.register_mode(mode);
       },

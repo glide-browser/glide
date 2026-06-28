@@ -67,6 +67,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
   #last_focused_input_element: HTMLElement | null = null;
 
+  /**
+   * Whether automatic mode switching is disabled for the current mode.
+   * (i.e. `ignore` mode).
+   */
+  #switch_mode_disabled: boolean = false;
+
   #active_hints: glide.ContentHint[] = [];
   #hint_action: HintAction | null = null;
   #is_scrolling: boolean = false;
@@ -90,6 +96,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
       case "Glide::StateUpdate": {
         const previous_mode = this.state?.mode;
         this.state = message.data.state;
+        this.#switch_mode_disabled = message.data.switch_mode_disabled;
 
         // if we're leaving `hint` mode, we don't need to listen to the
         // scroll events anymore
@@ -944,8 +951,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
 
         const current_mode = this.state?.mode;
-        if (current_mode === "ignore") {
-          // automatic mode switching is disabled in `ignore` mode
+        if (this.#switch_mode_disabled) {
+          // automatic mode switching is disabled in the current mode (e.g. `ignore`)
           return;
         }
 
@@ -959,7 +966,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "blur": {
-        if (this.state?.mode !== "normal" && this.state?.mode !== "ignore") {
+        if (this.state?.mode !== "normal" && !this.#switch_mode_disabled) {
           this.#change_mode("normal", false);
         }
         break;

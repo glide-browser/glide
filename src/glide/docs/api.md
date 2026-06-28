@@ -1340,6 +1340,17 @@ declare global {
 glide.modes.register("leap", { caret: "block" });
 ```
 
+To define a mode that behaves like the builtin `ignore` mode, i.e.
+one where Glide does not automatically switch modes, set
+`switch_mode_on_focus` to `false`:
+
+```typescript
+glide.modes.register("leap", {
+  caret: "line",
+  switch_mode_on_focus: false,
+});
+```
+
 {% api-heading id="glide.modes.list" %}
 glide.modes.list(): GlideMode[]
 {% /api-heading %}

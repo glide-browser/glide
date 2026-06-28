@@ -498,7 +498,7 @@ class GlideBrowserClass {
     // builtin modes
     this.api.modes.register("normal", { caret: "block" });
     this.api.modes.register("visual", { caret: "block" });
-    this.api.modes.register("ignore", { caret: "line" });
+    this.api.modes.register("ignore", { caret: "line", switch_mode_on_focus: false });
     this.api.modes.register("insert", { caret: "line" });
     this.api.modes.register("command", { caret: "line" });
     this.api.modes.register("op-pending", { caret: "underline" });
@@ -1380,7 +1380,9 @@ class GlideBrowserClass {
     return this.state_listeners.delete(cb);
   }
 
-  _modes: { [k in GlideMode]: { caret: "block" | "line" | "underline" } } = {} as any;
+  _modes: {
+    [k in GlideMode]: { caret: "block" | "line" | "underline"; switch_mode_on_focus?: boolean };
+  } = {} as any;
 
   get mode_names(): GlideMode[] {
     return Object.keys(this._modes) as GlideMode[];
@@ -1443,6 +1445,25 @@ class GlideBrowserClass {
     }
 
     requestAnimationFrame(animate);
+  }
+
+  /**
+   * Re-broadcasts the current {@link State} to all content processes.
+   *
+   * Some values derived from the state are cached in each content process, e.g.
+   * whether automatic mode switching is disabled (see {@link is_mode_switching_disabled}),
+   * which depends on the `switch_mode_on_focus` option in addition to the current mode.
+   * When such an option changes *without* a mode change, we need to re-broadcast the
+   * state so those caches don't go stale.
+   */
+  resync_state(): void {
+    for (const listener of this.state_listeners) {
+      if (listener === this.#state_change_autocmd) {
+        // the mode hasn't changed, so don't fire mode-change autocmds
+        continue;
+      }
+      listener(this.state, this.state, undefined);
+    }
   }
 
   #update_mode_ui() {
@@ -1773,7 +1794,8 @@ class GlideBrowserClass {
   testing: { override_os?: typeof glide["ctx"]["os"] } = {};
 
   is_mode_switching_disabled(): boolean {
-    return this.state.mode === "ignore" || !this.api.options.get("switch_mode_on_focus");
+    const enabled = this._modes[this.state.mode]?.switch_mode_on_focus ?? this.api.options.get("switch_mode_on_focus");
+    return !enabled;
   }
 
   async #on_fullscreen_enter() {
