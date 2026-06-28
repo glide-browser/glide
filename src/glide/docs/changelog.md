@@ -19,6 +19,18 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.63a
+
+## Changes {% id="0.1.63a-changes" %}
+
+- Bumped Firefox from 152.0b2 to 153.0b5
+- Added `:mode_reset` excmd for recalculating the current mode
+- Added [`glide.modes.get()`](api.md#glide.modes.get)
+- Added support for registering custom ignore modes, [`glide.modes.register('...', { switch_mode_on_focus: false })`](api.md#glide.modes.register)
+- Added support for populating keymap descriptions from the excmd they're mapped to
+  - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
+- Fixed `glide.process` handling of relative `PATH` entries
+
 # 0.1.62a
 
 ## Changes {% id="0.1.62a-changes" %}
