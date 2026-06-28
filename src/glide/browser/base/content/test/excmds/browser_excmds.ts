@@ -21,7 +21,10 @@ function current_url() {
 }
 
 add_task(async function test_tab_switching() {
-  const browser = gBrowser.tabContainer.allTabs.at(0).linkedBrowser;
+  const browser = gBrowser.tabContainer.allTabs.at(0)?.linkedBrowser;
+  if (!browser) {
+    throw new Error("No browser found");
+  }
   BrowserTestUtils.startLoadingURIString(browser, INPUT_TEST_FILE + "?i=0");
   await BrowserTestUtils.browserLoaded(browser);
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
@@ -274,9 +277,9 @@ add_task(async function test_tab_pin() {
   using tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
 
-  is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
+  is(gBrowser.selectedTab!.pinned, false, "Current tab should not be pinned initially");
   await keys(":tab_pin<CR>");
-  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin");
+  is(gBrowser.selectedTab!.pinned, true, "Current tab should be pinned after :tab_pin");
 
   const tab1_id = GlideBrowser.extension?.tabManager?.getWrapper?.(tab1)?.id;
   isnot(tab1_id, undefined, "Tab ID should be available");
@@ -294,11 +297,11 @@ add_task(async function test_tab_unpin() {
   using tab1 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=1");
   using _tab2 = await GlideTestUtils.new_tab(INPUT_TEST_FILE + "?i=2");
 
-  gBrowser.pinTab(gBrowser.selectedTab);
+  gBrowser.pinTab(gBrowser.selectedTab!);
 
-  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned initially");
+  is(gBrowser.selectedTab!.pinned, true, "Current tab should be pinned initially");
   await keys(":tab_unpin<CR>");
-  is(gBrowser.selectedTab.pinned, false, "Current tab should be unpinned after :tab_unpin");
+  is(gBrowser.selectedTab!.pinned, false, "Current tab should be unpinned after :tab_unpin");
 
   gBrowser.pinTab(tab1);
   const tab1_id = GlideBrowser.extension?.tabManager?.getWrapper?.(tab1)?.id;
@@ -316,15 +319,15 @@ add_task(async function test_tab_pin_toggle_excmd() {
   using tab = await GlideTestUtils.new_tab(KEY_TEST_FILE + "?i=1");
   const initial_tab_count = gBrowser.tabs.length;
   is(gBrowser.selectedTab, tab);
-  is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
+  is(gBrowser.selectedTab!.pinned, false, "Current tab should not be pinned initially");
 
   await keys(":tab_pin_toggle<CR>");
 
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
-  is(gBrowser.selectedTab.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
+  is(gBrowser.selectedTab!.pinned, true, "Current tab should be pinned after :tab_pin_toggle");
 
   await keys(":tab_pin_toggle<CR>");
-  is(gBrowser.selectedTab.pinned, false, "Current tab should be unpinned after :tab_pin_toggle");
+  is(gBrowser.selectedTab!.pinned, false, "Current tab should be unpinned after :tab_pin_toggle");
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 });
 
@@ -334,7 +337,7 @@ add_task(async function test_tab_pin_toggle_keymap() {
   using tab = await GlideTestUtils.new_tab(KEY_TEST_FILE + "?i=1");
   const initial_tab_count = gBrowser.tabs.length;
   is(gBrowser.selectedTab, tab);
-  is(gBrowser.selectedTab.pinned, false, "Current tab should not be pinned initially");
+  is(gBrowser.selectedTab!.pinned, false, "Current tab should not be pinned initially");
 
   await keys("<esc>");
   await wait_for_mode("normal");
@@ -342,10 +345,10 @@ add_task(async function test_tab_pin_toggle_keymap() {
   await keys("<A-p>");
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 
-  await waiter(() => gBrowser.selectedTab.pinned).is(true, "Tab should be pinned after <A-p>");
+  await waiter(() => gBrowser.selectedTab!.pinned).is(true, "Tab should be pinned after <A-p>");
 
   await keys("<A-p>");
-  await waiter(() => gBrowser.selectedTab.pinned).is(false, "Tab should be unpinned after <A-p>");
+  await waiter(() => gBrowser.selectedTab!.pinned).is(false, "Tab should be unpinned after <A-p>");
   is(gBrowser.tabs.length, initial_tab_count, "Tab count should remain the same");
 });
 
@@ -355,7 +358,7 @@ add_task(async function test_tab_reopen() {
   const initial_tab_count = gBrowser.tabs.length;
   const test_url = INPUT_TEST_FILE + "?reopen_test";
 
-  const tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, test_url);
+  using tab = await BrowserTestUtils.openNewForegroundTab(gBrowser, test_url);
   is(gBrowser.tabs.length, initial_tab_count + 1, "New tab should be created");
   is(current_url(), test_url, "New tab should have the test URL");
 

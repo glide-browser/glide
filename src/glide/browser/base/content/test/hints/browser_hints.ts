@@ -94,7 +94,7 @@ add_task(async function test_F_opens_new_tab() {
     is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
 
     if (final_tab_count > initial_tab_count) {
-      gBrowser.removeTab(gBrowser.selectedTab);
+      gBrowser.removeTab(gBrowser.selectedTab!);
     }
   });
 });
@@ -438,7 +438,7 @@ add_task(async function test_numeric_hint_generator() {
     is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
 
     if (final_tab_count > initial_tab_count) {
-      gBrowser.removeTab(gBrowser.selectedTab);
+      gBrowser.removeTab(gBrowser.selectedTab!);
     }
   });
 });
