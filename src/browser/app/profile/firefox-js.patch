@@ -1,10 +1,10 @@
 diff --git a/browser/app/profile/firefox.js b/browser/app/profile/firefox.js
-index 9de6eb4b0326bc46db5959bbe2380473e80cab87..ff8dc9b3e0a7b64fdf3ade68fe5fa4ce8d903854 100644
+index 91d9c0d57f142492c591fb2cd8792bd969c54c0b..1d089a33c7ce6ea817b6ff326576b0d8df7022ec 100644
 --- a/browser/app/profile/firefox.js
 +++ b/browser/app/profile/firefox.js
-@@ -3625,3 +3625,5 @@ pref("browser.contentsharing.enabled", false);
- 
- // When enabled, Firefox ignores the distribution.ini file if global.id is MozillaOnline.
- pref("distribution.mozillaonline.ignore", true);
+@@ -3624,3 +3624,5 @@ pref("distribution.mozillaonline.ignore", true);
+ #ifdef XP_MACOSX
+   pref("browser.macAppMenu.setAsDefaultShown", false);
+ #endif
 +
 +#include glide.js
