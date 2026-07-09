@@ -410,7 +410,10 @@ add_task(async function test_execute() {
   });
 
   await glide.keys.send("~");
-  await waiter(() => glide.g.value).is(0, "execute() should wait for the process to exit before returning");
+  await waiter(() => glide.g.value).isjson(
+    { exit_code: 0, stdout: "hello from execute\n" },
+    "execute() should wait for the process to exit before returning",
+  );
 });
 
 add_task(async function test_stdout_text() {
