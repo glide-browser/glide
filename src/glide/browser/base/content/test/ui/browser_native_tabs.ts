@@ -9,23 +9,46 @@
 
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
+/**
+ * `native_tabs` toggles the tab strip via an async stylesheet, so the toolbox only reflows a frame
+ * or two after `reload_config` resolves. read the height once it has settled, otherwise we capture a
+ * transient value mid-reflow and the height comparisons flake.
+ */
+async function settled_toolbox_height(toolbox: Element): Promise<number> {
+  let last = -1;
+  let stable = 0;
+  for (let i = 0; i < 120; i++) {
+    await sleep_frames(1);
+    const height = toolbox.clientHeight;
+    if (height === last) {
+      if (++stable >= 5) {
+        return height;
+      }
+    } else {
+      stable = 0;
+      last = height;
+    }
+  }
+  return last;
+}
+
 add_task(async function test_native_tabs() {
   const navigator_toolbox = document!.getElementById("navigator-toolbox");
   ok(navigator_toolbox, "Element 'navigator-toolbox' should exist.");
 
   await reload_config(() => {});
-  const height_default = navigator_toolbox!.clientHeight;
+  const height_default = await settled_toolbox_height(navigator_toolbox!);
 
   await reload_config(function _() {
     glide.o.native_tabs = "show";
   });
-  const height_show = navigator_toolbox!.clientHeight;
+  const height_show = await settled_toolbox_height(navigator_toolbox!);
   is(height_default, height_show, "glide.o.native_tabs 'show' option should keep initial toolbox dimensions.");
 
   await reload_config(function _() {
     glide.o.native_tabs = "hide";
   });
-  const height_hide = navigator_toolbox!.clientHeight;
+  const height_hide = await settled_toolbox_height(navigator_toolbox!);
   Assert.greater(height_default, height_hide, "glide.o.native_tabs 'hide' option should shrink the toolbox height.");
 
   await reload_config(function _() {
@@ -37,7 +60,7 @@ add_task(async function test_native_tabs() {
   }).ok("glide.o.native_tabs 'autohide' toolbox height should be in range 'show' - 'hide'.");
 
   await reload_config(() => {});
-  const height_reset_default = navigator_toolbox!.clientHeight;
+  const height_reset_default = await settled_toolbox_height(navigator_toolbox!);
   is(height_default, height_reset_default, "Resetting the config should yield the default window height");
 });
 
