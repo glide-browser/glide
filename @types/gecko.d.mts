@@ -576,7 +576,7 @@ interface MozFindbar extends MozXULElement, MozFindbarConstants {
    */
   _setDiacriticMatching(diacriticMatching): void;
 
-  _find(): void;
+  _find(value?: string): void;
 }
 
 /** may be `undefined` if the findbar has never been opened */

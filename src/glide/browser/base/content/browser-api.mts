@@ -398,10 +398,16 @@ export function make_glide_api(
         if (typeof opts?.query !== "undefined") {
           await findbar.startFind(mode, /* userWantsPrefill */ false, opts.query);
 
+          // `startFind` populates the input and runs the find via `onCurrentSelection`, which can
+          // race with an internal `_find()` that clears `_startFindDeferred` first, causing
+          // `onCurrentSelection` to bail out early and leave the field empty / the find running with
+          // an empty string. set the value and run the find explicitly so the query is always applied.
+          findbar._findField.value = opts.query;
+
           // this *actually* starts the finder and shows results, we only do this for the
           // explicit `query` case because its more likely that the user explicitly wants
           // to see results immediately.
-          findbar._find();
+          findbar._find(opts.query);
         } else {
           await findbar.startFind(mode);
         }
