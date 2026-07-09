@@ -469,6 +469,50 @@ add_task(async function test_insert_before_siblings() {
   is(updatedChildren[0]?.id, "zeroth");
 });
 
+add_task(async function test_insert_before_reference_reparented_by_import() {
+  // Regression test: in a single mutation batch, a newly-added node (`wrapper`) contains an
+  // already-mirrored descendant (`ref`), and `ref` is also the `nextSibling` reference for
+  // inserting `wrapper`. While importing `wrapper`, `import_node` re-parents the mirror of `ref`
+  // into the new clone via `appendChild`, so the mirror of `ref` is no longer a child of the
+  // target parent by the time we `insertBefore(wrapper_clone, ref_clone)`.
+  const source = create_test_doc(`
+    <body>
+      <div id="parent">
+        <div id="ref">ref</div>
+      </div>
+    </body>
+  `);
+  const mirror = Mirror.mirror_into_document(source, document.implementation.createHTMLDocument());
+
+  is(mirror.getElementById("ref")!.parentElement!.id, "parent", "sanity: ref starts under parent");
+
+  const parent = source.getElementById("parent")!;
+  const ref = source.getElementById("ref")!;
+
+  // one synchronous batch, so both mutations are delivered to the observer together:
+  //   1. insert `wrapper` before `ref`  -> the added-node record's nextSibling is `ref`
+  //   2. move `ref` inside `wrapper`    -> importing `wrapper` re-parents ref's mirror
+  const wrapper = source.createElement("div");
+  wrapper.id = "wrapper";
+  parent.insertBefore(wrapper, ref);
+  wrapper.appendChild(ref);
+
+  await sleep_frames(20);
+
+  const mirror_parent = mirror.getElementById("parent")!;
+  const mirror_wrapper = mirror.getElementById("wrapper");
+  const mirror_ref = mirror.getElementById("ref");
+
+  ok(mirror_wrapper, "wrapper should be mirrored");
+  ok(mirror_ref, "ref should still be mirrored");
+  is(mirror_wrapper!.parentElement!.id, "parent", "wrapper should be a child of parent");
+  is(mirror_ref!.parentElement!.id, "wrapper", "ref should be moved inside wrapper");
+  is(mirror_parent.children.length, 1, "parent should only contain wrapper");
+  is(mirror_parent.children[0]!.id, "wrapper", "parent's only child should be wrapper");
+
+  Mirror.stop_mirroring(mirror);
+});
+
 add_task(async function test_whitespace_handling() {
   const source = create_test_doc(`<body>
     <div id="test">

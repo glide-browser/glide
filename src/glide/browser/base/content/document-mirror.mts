@@ -142,64 +142,78 @@ function apply_mutations(
       continue;
     }
 
-    switch (mutation.type) {
-      case "childList": {
-        const to_parent = from_to_map.get(mutation.target);
-        if (!to_parent) break;
+    // the mirror is best-effort and reacts to arbitrary chrome DOM mutations, so a single
+    // unexpected mutation must not throw out of the observer callback. doing so both fails the
+    // current operation and, because the remaining mutations in this batch are dropped, leaves the
+    // mirror permanently out of sync.
+    try {
+      switch (mutation.type) {
+        case "childList": {
+          const to_parent = from_to_map.get(mutation.target);
+          if (!to_parent) break;
 
-        mutation.removedNodes.forEach((from_node) => {
-          const node = ensure(from_node);
-          const mapped = from_to_map.get(node);
-          if (mapped && mapped.parentNode) {
-            mapped.parentNode.removeChild(mapped);
-          }
-        });
-
-        const before_node = mutation.nextSibling ? from_to_map.get(mutation.nextSibling) ?? null : null;
-        mutation.addedNodes.forEach((from_node) => {
-          const node = ensure(from_node);
-          const existing = from_to_map.get(node);
-          if (existing) {
-            // node was moved
-            if (existing.parentNode !== to_parent || existing.nextSibling !== before_node) {
-              to_parent.insertBefore(existing, before_node);
+          mutation.removedNodes.forEach((from_node) => {
+            const node = ensure(from_node);
+            const mapped = from_to_map.get(node);
+            if (mapped && mapped.parentNode) {
+              mapped.parentNode.removeChild(mapped);
             }
-          } else {
-            // new node
-            const clone = import_node(to_document, node, from_to_map);
-            to_parent.insertBefore(clone, before_node);
-            store_node_mappings(node, clone, from_to_map, to_from_map);
+          });
+
+          const mapped_sibling = mutation.nextSibling ? from_to_map.get(mutation.nextSibling) ?? null : null;
+
+          // `insertBefore` throws `NotFoundError` if the reference node is not currently a child of
+          // `to_parent`. the mapped sibling can drift out of `to_parent` across mutations, or even
+          // mid-loop as `import_node` re-parents already-imported descendants, so re-resolve it right
+          // before each insert and fall back to appending when it is no longer a valid child.
+          const ref_child = () => mapped_sibling && mapped_sibling.parentNode === to_parent ? mapped_sibling : null;
+          mutation.addedNodes.forEach((from_node) => {
+            const node = ensure(from_node);
+            const existing = from_to_map.get(node);
+            if (existing) {
+              // node was moved
+              if (existing.parentNode !== to_parent || existing.nextSibling !== ref_child()) {
+                to_parent.insertBefore(existing, ref_child());
+              }
+            } else {
+              // new node
+              const clone = import_node(to_document, node, from_to_map);
+              to_parent.insertBefore(clone, ref_child());
+              store_node_mappings(node, clone, from_to_map, to_from_map);
+            }
+          });
+          break;
+        }
+
+        case "attributes": {
+          const from_element = mutation.target as Element;
+          const to_element = from_to_map.get(mutation.target) as Element | null;
+          if (!to_element) {
+            break;
           }
-        });
-        break;
-      }
 
-      case "attributes": {
-        const from_element = mutation.target as Element;
-        const to_element = from_to_map.get(mutation.target) as Element | null;
-        if (!to_element) {
+          const name = mutation.attributeName!;
+          const value = from_element.getAttribute(name);
+          if (value === null) {
+            to_element.removeAttribute(name);
+          } else {
+            to_element.setAttribute(name, value);
+          }
           break;
         }
 
-        const name = mutation.attributeName!;
-        const value = from_element.getAttribute(name);
-        if (value === null) {
-          to_element.removeAttribute(name);
-        } else {
-          to_element.setAttribute(name, value);
-        }
-        break;
-      }
+        case "characterData": {
+          const to_node = from_to_map.get(mutation.target);
+          if (!to_node) {
+            break;
+          }
 
-      case "characterData": {
-        const to_node = from_to_map.get(mutation.target);
-        if (!to_node) {
+          to_node.nodeValue = mutation.target.nodeValue;
           break;
         }
-
-        to_node.nodeValue = mutation.target.nodeValue;
-        break;
       }
+    } catch (err) {
+      GlideBrowser._log.warn(`[document-mirror]: failed to apply ${mutation.type} mutation`, err);
     }
   }
 }
