@@ -735,6 +735,9 @@ h3.code-heading {
   margin-bottom: 0.25em;
   display: flex;
   align-items: center;
+  position: relative;
+  /* line the wordmark up with the tree entry labels below (1.5ch margin + 1.5ch padding) */
+  padding-left: 3ch;
 }
 
 .glide-sidenav-heading-link {
@@ -744,11 +747,14 @@ h3.code-heading {
   flex-grow: 1;
 }
 
+/* the glider sits in the tree gutter, as the root of the tree */
 .glide-sidenav-heading-img {
-  width: 0.95em;
-  height: 0.95em;
-  margin-bottom: -0.08em;
-  margin-right: 0.5ch;
+  position: absolute;
+  left: 0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .glide-sidenav-heading-link:hover {
