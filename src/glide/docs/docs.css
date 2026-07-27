@@ -747,15 +747,64 @@ h3.code-heading {
   flex-grow: 1;
 }
 
-/* the glider sits in the tree gutter, as the root of the tree */
+/* the glider sits in the tree gutter, as the root of the tree.
+ *
+ * the svg is a 4x4 grid (the union of the glider's four generations, for the
+ * hover animation below) but at rest only the top-left 3x3 is visible, so it
+ * is scaled by 4/3 and nudged to keep the resting glider optically centered.
+ */
 .glide-sidenav-heading-img {
   position: absolute;
   left: 0.3rem;
   top: 50%;
-  transform: translateY(-50%);
-  width: 1.15rem;
-  height: 1.15rem;
+  transform: translateY(calc(-50% + 0.21rem));
+  width: 1.57rem;
+  height: 1.57rem;
 }
+
+/* on hover, play Game of Life: each cell's keyframes encode which of the four
+ * generations it is alive in (gc-<G0><G1><G2><G3>), stepping discretely */
+@media (prefers-reduced-motion: no-preference) {
+  .glide-sidenav-heading-link:hover [class^="gc-"] {
+    animation: 720ms step-end infinite;
+  }
+
+  .glide-sidenav-heading-link:hover .gc-1000 {
+    animation-name: glider-1000;
+  }
+  .glide-sidenav-heading-link:hover .gc-1110 {
+    animation-name: glider-1110;
+  }
+  .glide-sidenav-heading-link:hover .gc-1010 {
+    animation-name: glider-1010;
+  }
+  .glide-sidenav-heading-link:hover .gc-1100 {
+    animation-name: glider-1100;
+  }
+  .glide-sidenav-heading-link:hover .gc-0100 {
+    animation-name: glider-0100;
+  }
+  .glide-sidenav-heading-link:hover .gc-0111 {
+    animation-name: glider-0111;
+  }
+  .glide-sidenav-heading-link:hover .gc-0011 {
+    animation-name: glider-0011;
+  }
+  .glide-sidenav-heading-link:hover .gc-0001 {
+    animation-name: glider-0001;
+  }
+}
+
+/* dprint-ignore-start */
+@keyframes glider-1000 { 0% { opacity: 1; } 25% { opacity: 0; } 50% { opacity: 0; } 75% { opacity: 0; } }
+@keyframes glider-1110 { 0% { opacity: 1; } 25% { opacity: 1; } 50% { opacity: 1; } 75% { opacity: 0; } }
+@keyframes glider-1010 { 0% { opacity: 1; } 25% { opacity: 0; } 50% { opacity: 1; } 75% { opacity: 0; } }
+@keyframes glider-1100 { 0% { opacity: 1; } 25% { opacity: 1; } 50% { opacity: 0; } 75% { opacity: 0; } }
+@keyframes glider-0100 { 0% { opacity: 0; } 25% { opacity: 1; } 50% { opacity: 0; } 75% { opacity: 0; } }
+@keyframes glider-0111 { 0% { opacity: 0; } 25% { opacity: 1; } 50% { opacity: 1; } 75% { opacity: 1; } }
+@keyframes glider-0011 { 0% { opacity: 0; } 25% { opacity: 0; } 50% { opacity: 1; } 75% { opacity: 1; } }
+@keyframes glider-0001 { 0% { opacity: 0; } 25% { opacity: 0; } 50% { opacity: 0; } 75% { opacity: 1; } }
+/* dprint-ignore-end */
 
 .glide-sidenav-heading-link:hover {
   background: linear-gradient(
