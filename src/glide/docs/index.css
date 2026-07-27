@@ -61,6 +61,9 @@
 .platform-switch-label {
   cursor: pointer;
   display: block;
+  /* the global `label` styles round the width down to a whole ch,
+   * leaving a gap between the selection bar and the frame border */
+  width: 100%;
   padding: 0 1ch;
   white-space: pre;
 }
