@@ -721,6 +721,10 @@ h3.code-heading {
   position: sticky;
   top: 0px;
   height: 100vh;
+  /* cancel the body's top padding: with it, the sidebar starts one line down
+   * and its 100vh overflows the viewport bottom until scrolled past it */
+  margin-top: calc(-1 * var(--line-height));
+  align-self: flex-start;
   min-width: 25ch;
   width: 20ch;
   padding: calc(var(--line-height)) 2ch;
@@ -1407,6 +1411,7 @@ table th, table td {
     max-width: 300px;
     height: 100vh;
     z-index: 200;
+    margin-top: 0;
     transition: left 0.3s ease;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
