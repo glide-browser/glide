@@ -515,7 +515,40 @@ declare var document: Document;
     document.addEventListener("touchstart", on_click);
 
     init_toc();
+    init_api_reference();
   });
+
+  /**
+   * On the API reference page, tag each entry's body elements with their
+   * heading depth so they can be indented along with their heading.
+   *
+   * This can't be done in CSS alone as the rendered markdown is a flat list
+   * of siblings; there is no "everything until the next heading" selector.
+   */
+  function init_api_reference() {
+    if (!/\/api(\.html)?$/.test(location.pathname)) {
+      return;
+    }
+
+    const article = query_selector("article article") ?? query_selector("article");
+    if (!article) {
+      return;
+    }
+
+    article.classList.add("api-reference");
+
+    let level = 0;
+    for (const child of Array.from(article.children)) {
+      const heading = child.tagName.match(/^H([1-6])$/);
+      if (heading) {
+        level = child.classList.contains("code-heading") ? parseInt(heading[1]!, 10) : 0;
+        continue;
+      }
+      if (level >= 3) {
+        child.classList.add(`api-body-${level}`);
+      }
+    }
+  }
 
   function query_selector<E extends HTMLElement = HTMLElement>(selectors: string): E | null {
     return document.querySelector<E>(selectors) as any;

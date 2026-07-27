@@ -651,15 +651,36 @@ h2.code-heading {
 h3.code-heading {
   margin-top: 2em !important;
 }
-/* nest the API reference by heading depth */
-h3.code-heading {
+/* nest the API reference by heading depth: entries are bulleted and their
+ * body content is indented along with them.
+ *
+ * the `.api-reference` and `.api-body-*` classes are added at runtime, see
+ * `init_api_reference()` in docs.ts
+ */
+.api-reference h3.code-heading {
   margin-left: 2ch;
 }
-h4.code-heading {
+.api-reference h4.code-heading {
   margin-left: 4ch;
 }
-h5.code-heading {
+.api-reference h5.code-heading {
   margin-left: 6ch;
+}
+
+.api-reference :where(h3, h4, h5).code-heading::before {
+  content: "▪ ";
+  color: var(--text-color-alt);
+}
+
+/* !important as e.g. `figure` sets `margin: 0 !important` */
+.api-reference .api-body-3 {
+  margin-left: 4ch !important;
+}
+.api-reference .api-body-4 {
+  margin-left: 6ch !important;
+}
+.api-reference .api-body-5 {
+  margin-left: 8ch !important;
 }
 
 /* method signatures render as "invisible" headers wrapping a <pre>;
@@ -667,13 +688,13 @@ h5.code-heading {
 :where(h2, h3, h4, h5).code-heading.invisible-header {
   margin: 2em 0 var(--line-height) !important;
 }
-h3.code-heading.invisible-header {
+.api-reference h3.code-heading.invisible-header {
   margin-left: 2ch !important;
 }
-h4.code-heading.invisible-header {
+.api-reference h4.code-heading.invisible-header {
   margin-left: 4ch !important;
 }
-h5.code-heading.invisible-header {
+.api-reference h5.code-heading.invisible-header {
   margin-left: 6ch !important;
 }
 .code-heading.invisible-header pre {
