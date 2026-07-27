@@ -1,0 +1,9 @@
+<!-- Tile-less variant of the Glide glider for inline use (e.g. the sidebar);
+     cells use currentColor so it adapts to the surrounding theme. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 66">
+  <rect x="24" y="0" width="18" height="18" rx="2" fill="currentColor"/>
+  <rect x="48" y="24" width="18" height="18" rx="2" fill="currentColor"/>
+  <rect x="0" y="48" width="18" height="18" rx="2" fill="currentColor"/>
+  <rect x="24" y="48" width="18" height="18" rx="2" fill="currentColor"/>
+  <rect x="48" y="48" width="18" height="18" rx="2" fill="#f59e0b"/>
+</svg>
