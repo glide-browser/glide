@@ -651,6 +651,35 @@ h2.code-heading {
 h3.code-heading {
   margin-top: 2em !important;
 }
+/* nest the API reference by heading depth */
+h3.code-heading {
+  margin-left: 2ch;
+}
+h4.code-heading {
+  margin-left: 4ch;
+}
+h5.code-heading {
+  margin-left: 6ch;
+}
+
+/* method signatures render as "invisible" headers wrapping a <pre>;
+ * make them look like the other reference entry lines */
+:where(h2, h3, h4, h5).code-heading.invisible-header {
+  margin: 2em 0 var(--line-height) !important;
+}
+h3.code-heading.invisible-header {
+  margin-left: 2ch !important;
+}
+h4.code-heading.invisible-header {
+  margin-left: 4ch !important;
+}
+h5.code-heading.invisible-header {
+  margin-left: 6ch !important;
+}
+.code-heading.invisible-header pre {
+  display: inline;
+  margin: 0;
+}
 .code-heading::after {
   display: none !important;
 }
@@ -813,20 +842,27 @@ h3.code-heading {
 
 /* page-find styling */
 
-.search-button {
+/* the `Search (/)` sidebar entry, styled like the other nav links */
+.sidenav-search-button {
+  display: block;
+  width: 100%;
+  height: auto;
   margin: 0;
-  margin-left: auto;
-  padding: calc(var(--line-height) * 0.25) 1ch;
-  background: var(--background-color-alt);
-  border: 1px solid var(--text-color-alt);
-  height: unset;
-  line-height: 1;
-  font-size: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  font: inherit;
+  line-height: var(--line-height);
+  cursor: pointer;
 }
 
-.search-button:hover {
-  background: var(--text-color);
-  color: var(--background-color);
+.sidenav-search-button:hover {
+  background: var(--background-color-alt);
+}
+
+.sidenav-search-button:active {
+  transform: none;
 }
 
 /* Pagefind UI customization.
@@ -919,16 +955,24 @@ h3.code-heading {
   color: var(--text-color);
 }
 
+/* pagefind's default drawer flexbox adds a huge gap between the input and results */
+#search .pagefind-ui__drawer {
+  display: block;
+  gap: 0;
+}
+
 #search .pagefind-ui__results-area {
   margin: 0;
-  padding: calc(var(--line-height) / 2) 0;
+  padding: calc(var(--line-height) / 4) 0 calc(var(--line-height) / 2);
   max-height: min(60vh, calc(100vh - 12rem));
   overflow-y: auto;
 }
 
 /* the `13 results for tab` counter line, fzf-style below the prompt */
 #search .pagefind-ui__message {
-  padding: 0 2ch calc(var(--line-height) / 2) 3ch;
+  box-sizing: border-box;
+  height: auto;
+  padding: 0 2ch calc(var(--line-height) / 4) 3ch;
   color: var(--text-color-alt);
   font-size: 0.85rem;
   font-weight: var(--font-weight-normal);

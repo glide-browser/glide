@@ -243,17 +243,16 @@ export async function markdown_to_html(
                     <img src="${rel_to_dist}/logo.webp" class="glide-sidenav-heading-img" width="48" height="48" alt="Glide logo" />
                     Glide
                   </a>
-                  <button
-                    type="button"
-                    class="search-button"
-                    aria-label="Search"
-                    id="search-button"
-                  >
-                    /
-                  </button>
                 </li>
                 <li>
                   <ul class="sidenav">
+                    <li>
+                      <button
+                        type="button"
+                        class="sidenav-search-button"
+                        id="search-button"
+                      >Search (/)</button>
+                    </li>
                     ${
     SIDEBAR.map(({ title, entries }) =>
       Html.li({ class: "sidenav-group" }, [

@@ -301,11 +301,9 @@ function* Header(
     yield { type: "index", kind, id };
   }
 
-  const Bullet = parents.length === 1 ? "• " : "";
-
   const HeaderHash = Array(parents.length + 2).join("#");
 
-  yield `\n${HeaderHash} ${Bullet}\`${Code}\` {% ${Words([`id="${id}"`, attrs])} %}\n`;
+  yield `\n${HeaderHash} \`${Code}\` {% ${Words([`id="${id}"`, attrs])} %}\n`;
 }
 
 interface DocsDirectives {
