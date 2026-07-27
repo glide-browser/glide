@@ -717,13 +717,16 @@ h3.code-heading {
   flex: 1;
 }
 
+/* the sidebar is a TUI pane: a framed box inset from the viewport edge */
 .sidebar {
   position: sticky;
-  top: 0px;
-  height: 100vh;
+  top: calc(var(--line-height) / 2);
+  height: calc(100vh - var(--line-height));
   min-width: 25ch;
   width: 20ch;
+  margin: calc(var(--line-height) / 2) 0 calc(var(--line-height) / 2) 1ch;
   padding: calc(var(--line-height)) 2ch;
+  border: var(--border-thickness) solid var(--text-color);
   --border-thickness: 2px;
   --line-height: 1.2rem;
   background: var(--background-color);
@@ -1254,18 +1257,18 @@ table th, table td {
   line-height: 1.2;
 }
 
-/* Table of Contents sidebar (right side) */
+/* Table of Contents sidebar (right side), a TUI pane like the sidebar */
 .toc-sidebar {
   position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
+  top: calc(var(--line-height) / 2);
+  right: 1ch;
+  height: calc(100vh - var(--line-height));
   width: 30ch;
-  padding: calc(var(--line-height) * 2) 1ch calc(var(--line-height)) 1ch;
+  padding: calc(var(--line-height)) 1ch;
   background: var(--background-color);
   font-family: var(--font-family);
   overflow-y: auto;
-  border-left: 1px solid var(--background-color-alt);
+  border: var(--border-thickness) solid var(--text-color);
 }
 
 .toc-sidebar-title {
@@ -1407,6 +1410,9 @@ table th, table td {
     max-width: 300px;
     height: 100vh;
     z-index: 200;
+    margin: 0;
+    border: none;
+    border-right: var(--border-thickness) solid var(--text-color);
     transition: left 0.3s ease;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
