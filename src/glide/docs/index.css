@@ -4,40 +4,47 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+/* blinking terminal cursor after the page title */
+#glide::before {
+  content: "> ";
+  color: var(--text-color-alt);
+}
+
+#glide::after {
+  content: "▉";
+  margin-left: 0.5ch;
+  animation: cursor-blink 1.2s step-end infinite;
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+@keyframes cursor-blink {
+  50% {
+    color: transparent;
+  }
+}
+
 .download-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1ch;
 }
 
 .download-link {
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  padding: calc(var(--line-height) / 4) 1ch;
   font-size: 0.9rem;
   text-decoration: none;
   text-align: center;
-  color: #343b58;
-  background-color: #f7fafc;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-  --shiki-dark: #c0caf5;
+  color: var(--text-color);
+  background: var(--background-color);
+  border: var(--border-thickness) solid var(--text-color);
 }
 
 .download-link:hover {
-  background-color: #f0f0f0;
-  border-color: #d0d0d0;
+  background: var(--background-color-alt);
 }
 
-@media (prefers-color-scheme: dark) {
-  .download-link {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-    border-color: #4a5568;
-  }
-
-  .download-link:hover {
-    background-color: #404040 !important;
-    border-color: #606060;
-  }
+.download-link:active {
+  transform: translate(2px, 2px);
 }
 
 .platform-switch-input {
@@ -47,17 +54,36 @@
   height: 0;
 }
 
+.platform-switch {
+  border: var(--border-thickness) solid var(--text-color);
+}
+
 .platform-switch-label {
   cursor: pointer;
-  padding-left: 0.25em;
+  display: block;
+  padding: 0 1ch;
+  white-space: pre;
+}
+
+.platform-switch-label::before {
+  content: "  ";
+}
+
+.platform-switch-label:hover {
+  background: var(--background-color-alt);
 }
 
 #platform-macos:checked ~ .platform-switch label[for="platform-macos"],
 #platform-linux:checked ~ .platform-switch label[for="platform-linux"],
 #platform-windows:checked ~ .platform-switch label[for="platform-windows"] {
-  background-color: #fff;
-  color: #111827;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.15);
+  background: var(--text-color);
+  color: var(--background-color);
+}
+
+#platform-macos:checked ~ .platform-switch label[for="platform-macos"]::before,
+#platform-linux:checked ~ .platform-switch label[for="platform-linux"]::before,
+#platform-windows:checked ~ .platform-switch label[for="platform-windows"]::before {
+  content: "> ";
 }
 
 download-details {
@@ -75,11 +101,11 @@ download-details {
 #download-box {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 2ch;
 }
 
 #download-box .platform-switch {
-  flex: 0 0 120px;
+  flex: 0 0 14ch;
 }
 
 download-details pre {
@@ -87,14 +113,13 @@ download-details pre {
 }
 
 .package-name {
-  font-weight: 500;
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--line-height);
+  margin-bottom: calc(var(--line-height) / 4);
 }
 
 #demo-video {
-  border: 2px solid #7f7474;
-  border-radius: 8px;
+  border: var(--border-thickness) solid var(--text-color);
 }
 @media screen and (max-width: 768px) {
   #demo-video {
@@ -103,21 +128,15 @@ download-details pre {
   }
 }
 
-#download, #glide {
-  text-align: center;
-}
-
 #default-keymappings {
-  text-align: center;
   margin-top: 3rem;
   margin-bottom: 0.5rem;
 }
 
 #default-keymappings-note {
-  text-align: center;
-  color: grey;
+  color: var(--text-color-alt);
   line-height: 0.4rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--line-height);
 }
 
 @media (max-width: 768px) {
@@ -129,36 +148,55 @@ download-details pre {
 .keymaps-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin: 1rem 0;
+  gap: calc(var(--line-height) * 1.5) 2ch;
+  margin: var(--line-height) 0;
 }
 
 .keymap-section {
-  border-radius: 8px;
+  border: var(--border-thickness) solid var(--text-color);
+  padding: var(--line-height) 2ch;
 }
 
-.keymap-section h3 {
-  margin: 0 0 1rem 0;
+/* the first heading sits on top of the frame border, TUI-dialog style */
+.keymap-section > a:first-child {
+  display: block;
+  margin-top: calc(-1.5 * var(--line-height) - var(--border-thickness));
 }
 
-.keymap-section h3:not(:first-of-type) {
-  margin: 2rem 0 1rem 0;
+.keymap-section > a:first-child h3 {
+  display: inline-block;
+  margin: 0 0 calc(var(--line-height) / 2) 0;
+  padding: calc(var(--line-height) / 3) 1ch;
+  background: var(--background-color);
+}
+
+/* subsequent headings within a frame */
+.keymap-section > h3 {
+  margin: var(--line-height) 0;
+  padding: 0;
+}
+
+.keymap-section > h3::before {
+  content: "── ";
+  font-weight: var(--font-weight-normal);
+  color: var(--text-color-alt);
 }
 
 .keymap-grid {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.5rem 1rem;
+  gap: 0.5rem 2ch;
   align-items: center;
 }
 
 .keymap-key {
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  justify-self: start;
+  padding: 0 1ch;
   font-size: 0.9rem;
   white-space: nowrap;
-  color: #343b58;
-  --shiki-dark: #c0caf5;
+  color: var(--text-color);
+  background: var(--background-color-alt);
+  border: 1px solid var(--text-color-alt);
 }
 
 .keymap-desc {
@@ -166,19 +204,8 @@ download-details pre {
 }
 
 .mode-note {
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 3px solid white;
+  padding: calc(var(--line-height) / 2) 2ch;
+  border-left: var(--border-thickness) solid var(--text-color);
   font-style: italic;
-  color: #a0aec0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .keymap-key {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-    font-weight: var(--shiki-dark-font-weight) !important;
-    text-decoration: var(--shiki-dark-text-decoration) !important;
-  }
+  color: var(--text-color-alt);
 }

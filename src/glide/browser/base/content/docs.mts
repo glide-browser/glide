@@ -50,26 +50,46 @@ const ADMONITION_TYPES = new Set([
   "CAUTION",
 ]);
 
-const SIDEBAR: SidebarEntry[] = [
-  { name: "Tutorial", href: "tutorial.html" },
-  { name: "Config", href: "config.html" },
-  { name: "Keys", href: "keys.html" },
-  { name: "API", href: "api.html" },
-  { name: "Autocmds", href: "autocmds.html" },
-  { name: "Excmds", href: "excmds.html" },
-  { name: "Hints", href: "hints.html" },
-  { name: "Extensions", href: "extensions.html" },
-  { name: "Firefox", href: "firefox.html" },
-  { name: "CommandLine", href: "commandline.html" },
-  { name: "Editor", href: "editor.html" },
-  { name: "FAQ", href: "faq.html" },
-  { name: "Cookbook", href: "cookbook.html" },
-  { name: "Security", href: "security.html" },
-  { name: "Gemini", href: "gemini.html" },
-  { name: "Privacy", href: "privacy.html" },
-  { name: "Changelog", href: "changelog.html" },
-  { name: "Contributing", href: "contributing.html" },
-  { name: "Chat", href: "chat.html" },
+interface SidebarGroup {
+  title: string;
+  entries: SidebarEntry[];
+}
+
+const SIDEBAR: SidebarGroup[] = [
+  {
+    title: "Docs",
+    entries: [
+      { name: "Tutorial", href: "tutorial.html" },
+      { name: "Config", href: "config.html" },
+      { name: "Keys", href: "keys.html" },
+      { name: "Hints", href: "hints.html" },
+      { name: "CommandLine", href: "commandline.html" },
+      { name: "Editor", href: "editor.html" },
+      { name: "Extensions", href: "extensions.html" },
+      { name: "Cookbook", href: "cookbook.html" },
+    ],
+  },
+  {
+    title: "Reference",
+    entries: [
+      { name: "API", href: "api.html" },
+      { name: "Excmds", href: "excmds.html" },
+      { name: "Autocmds", href: "autocmds.html" },
+      { name: "Firefox", href: "firefox.html" },
+    ],
+  },
+  {
+    title: "Misc",
+    entries: [
+      { name: "FAQ", href: "faq.html" },
+      { name: "Security", href: "security.html" },
+      { name: "Gemini", href: "gemini.html" },
+      { name: "Privacy", href: "privacy.html" },
+      { name: "Changelog", href: "changelog.html" },
+      { name: "Contributing", href: "contributing.html" },
+      { name: "Chat", href: "chat.html" },
+    ],
+  },
 ];
 
 // overrides for certain cases where we render type declarations differently
@@ -235,15 +255,24 @@ export async function markdown_to_html(
                 <li>
                   <ul class="sidenav">
                     ${
-    SIDEBAR.map(({ name, href, class: class_, target }) => {
-      const abs = rel_to_dist + "/" + href;
-      return Html.li({
-        class: [
-          abs === current_href ? "is-active" : null,
-          class_,
-        ],
-      }, [Html.a({ href, target }, [name])]);
-    }).join("")
+    SIDEBAR.map(({ title, entries }) =>
+      Html.li({ class: "sidenav-group" }, [
+        Html.element("span", { class: "sidenav-group-title" }, [title]),
+        Html.element(
+          "ul",
+          {},
+          entries.map(({ name, href, class: class_, target }) => {
+            const abs = rel_to_dist + "/" + href;
+            return Html.li({
+              class: [
+                abs === current_href ? "is-active" : null,
+                class_,
+              ],
+            }, [Html.a({ href, target }, [name])]);
+          }),
+        ),
+      ])
+    ).join("")
   }
                     <li>
                       <a
