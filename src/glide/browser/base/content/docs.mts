@@ -167,10 +167,10 @@ export async function markdown_to_html(
         <meta name="twitter:description" content="${description}" />
         <meta name="twitter:image" content="https://glide-browser.app/logo1024.png" />
 
-        <link rel="icon" href="${rel_to_dist}/logo.png" />
+        <link rel="icon" href="${rel_to_dist}/logo.svg" type="image/svg+xml" />
+        <link rel="icon" href="${rel_to_dist}/logo.png" type="image/png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-        <link rel="preload" as="image" href="${rel_to_dist}/logo.webp" />
         <link
           rel="preload"
           href="${rel_to_dist}/BerkeleyMono-Regular.woff2"
@@ -240,7 +240,8 @@ export async function markdown_to_html(
                     href="${rel_to_dist}/index.html"
                     class="glide-sidenav-heading-link"
                   >
-                    <img src="${rel_to_dist}/logo.webp" class="glide-sidenav-heading-img" width="48" height="48" alt="Glide logo" />
+                    <!-- inlined copy of logo-inline.svg so the cells follow the theme via currentColor -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 66" class="glide-sidenav-heading-img" role="img" aria-label="Glide logo"><rect x="24" y="0" width="18" height="18" rx="2" fill="currentColor"/><rect x="48" y="24" width="18" height="18" rx="2" fill="currentColor"/><rect x="0" y="48" width="18" height="18" rx="2" fill="currentColor"/><rect x="24" y="48" width="18" height="18" rx="2" fill="currentColor"/><rect x="48" y="48" width="18" height="18" rx="2" fill="#f59e0b"/></svg>
                     Glide
                   </a>
                 </li>

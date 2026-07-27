@@ -745,10 +745,10 @@ h3.code-heading {
 }
 
 .glide-sidenav-heading-img {
-  width: 1.25em;
-  height: 1.25em;
-  margin-bottom: -0.25em;
-  margin-right: -0.25em;
+  width: 0.95em;
+  height: 0.95em;
+  margin-bottom: -0.08em;
+  margin-right: 0.5ch;
 }
 
 .glide-sidenav-heading-link:hover {

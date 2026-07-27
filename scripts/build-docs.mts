@@ -36,6 +36,8 @@ const SYMLINKS = [
   "logo.webp",
   "logo@2x.webp",
   "logo.png",
+  "logo.svg",
+  "logo-inline.svg",
   "logo1024.png",
   "BerkeleyMono-Regular.woff2",
   "_headers",
