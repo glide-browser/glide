@@ -33,8 +33,6 @@ const SYMLINKS = [
   "docs.css",
   "reset.css",
   "index.css",
-  "logo.webp",
-  "logo@2x.webp",
   "logo.png",
   "logo.svg",
   "logo-inline.svg",
