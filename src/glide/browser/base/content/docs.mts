@@ -240,25 +240,8 @@ export async function markdown_to_html(
                     href="${rel_to_dist}/index.html"
                     class="glide-sidenav-heading-link"
                   >
-                    <!--
-                      the glider from logo-inline.svg, cells in currentColor so they follow the theme.
-
-                      on hover it plays Game of Life: the grid is the union of the glider's four
-                      generations, each cell classed with its alive-mask (gc-<G0><G1><G2><G3>) which
-                      docs.css animates. the amber cell is alive in every generation.
-                    -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" class="glide-sidenav-heading-img" role="img" aria-label="Glide logo">
-                      <rect class="gc-1000" opacity="1" x="24" y="0" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-0100" opacity="0" x="0" y="24" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-0001" opacity="0" x="24" y="24" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-1110" opacity="1" x="48" y="24" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-1010" opacity="1" x="0" y="48" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-1100" opacity="1" x="24" y="48" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect opacity="1" x="48" y="48" width="18" height="18" rx="2" fill="#f59e0b"/>
-                      <rect class="gc-0001" opacity="0" x="72" y="48" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-0111" opacity="0" x="24" y="72" width="18" height="18" rx="2" fill="currentColor"/>
-                      <rect class="gc-0011" opacity="0" x="48" y="72" width="18" height="18" rx="2" fill="currentColor"/>
-                    </svg>
+                    <!-- inlined copy of logo-inline.svg so the wing follows the theme via currentColor -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" class="glide-sidenav-heading-img" role="img" aria-label="Glide logo"><polygon points="90,6 6,50 40,52" fill="currentColor"/><polygon points="90,6 40,52 52,90" fill="#f59e0b"/></svg>
                     Glide
                   </a>
                 </li>
