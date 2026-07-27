@@ -1,9 +1,10 @@
-<!-- The Glide logo: a paper dart mid-glide.
-     The amber keel is the same accent used across the docs. -->
+<!-- The Glide logo: the vim command line - a `:` prompt and a block cursor.
+     The amber cursor is the same accent used across the docs. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
   <rect width="96" height="96" rx="20" fill="#1a1b25"/>
-  <g transform="translate(14 14) scale(0.72)">
-    <polygon points="90,6 6,50 40,52" fill="#f5f5f5"/>
-    <polygon points="90,6 40,52 52,90" fill="#f59e0b"/>
+  <g transform="translate(9.6 9.6) scale(0.8)">
+    <rect x="12" y="20" width="19" height="19" rx="2" fill="#f5f5f5"/>
+    <rect x="12" y="58" width="19" height="19" rx="2" fill="#f5f5f5"/>
+    <rect x="45" y="17" width="40" height="62" rx="3" fill="#f59e0b"/>
   </g>
 </svg>

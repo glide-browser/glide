@@ -751,7 +751,7 @@ h3.code-heading {
   flex-grow: 1;
 }
 
-/* the dart sits in the tree gutter, at the root of the tree */
+/* the logo sits in the tree gutter, at the root of the tree */
 .glide-sidenav-heading-img {
   position: absolute;
   left: 0.28rem;
@@ -761,14 +761,16 @@ h3.code-heading {
   height: 1.25rem;
 }
 
-/* on hover, the dart glides */
+/* on hover, the cursor blinks */
 @media (prefers-reduced-motion: no-preference) {
-  .glide-sidenav-heading-img {
-    transition: transform 200ms ease-out;
+  .glide-sidenav-heading-link:hover .logo-cursor {
+    animation: logo-cursor-blink 1.2s step-end infinite;
   }
+}
 
-  .glide-sidenav-heading-link:hover .glide-sidenav-heading-img {
-    transform: translateY(-50%) translate(2px, -2px);
+@keyframes logo-cursor-blink {
+  50% {
+    opacity: 0;
   }
 }
 

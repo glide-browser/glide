@@ -240,8 +240,8 @@ export async function markdown_to_html(
                     href="${rel_to_dist}/index.html"
                     class="glide-sidenav-heading-link"
                   >
-                    <!-- inlined copy of logo-inline.svg so the wing follows the theme via currentColor -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" class="glide-sidenav-heading-img" role="img" aria-label="Glide logo"><polygon points="90,6 6,50 40,52" fill="currentColor"/><polygon points="90,6 40,52 52,90" fill="#f59e0b"/></svg>
+                    <!-- inlined copy of logo-inline.svg so the colon follows the theme via currentColor -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" class="glide-sidenav-heading-img" role="img" aria-label="Glide logo"><rect x="12" y="20" width="19" height="19" rx="2" fill="currentColor"/><rect x="12" y="58" width="19" height="19" rx="2" fill="currentColor"/><rect class="logo-cursor" x="45" y="17" width="40" height="62" rx="3" fill="#f59e0b"/></svg>
                     Glide
                   </a>
                 </li>
