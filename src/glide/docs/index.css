@@ -4,23 +4,28 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-/* blinking terminal cursor after the page title */
-#glide::before {
-  content: "> ";
-  color: var(--text-color-alt);
+/* the big GLIDE banner, matching the tutor's ascii art.
+ * centered as a block; per-line text-align would misalign the art */
+.glide-banner {
+  white-space: pre;
+  overflow-x: auto;
+  text-align: left;
+  width: fit-content;
+  max-width: 100%;
+  font-size: 1.5em !important;
+  line-height: 1.2 !important;
+  font-weight: var(--font-weight-normal) !important;
+  margin: var(--line-height) auto calc(var(--line-height) * 2) !important;
+  padding: 0 !important;
 }
 
-#glide::after {
-  content: "▉";
-  margin-left: 0.5ch;
-  animation: cursor-blink 1.2s step-end infinite;
-  opacity: 1 !important;
-  transition: none !important;
+.glide-banner::after {
+  display: none !important;
 }
 
-@keyframes cursor-blink {
-  50% {
-    color: transparent;
+@media screen and (max-width: 768px) {
+  .glide-banner {
+    font-size: 1em !important;
   }
 }
 
