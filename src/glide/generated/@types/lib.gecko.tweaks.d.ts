@@ -69,6 +69,25 @@ interface MessageListenerManagerMixin {
   );
 }
 
+// @typescript/dom-lib-generator drops `matches` unless it's Element-shaped.
+interface MatchPattern {
+  matches(uri: URI, explicit?: boolean): boolean;
+  matches(url: string, explicit?: boolean): boolean;
+}
+
+interface MatchPatternSet {
+  matches(uri: URI, explicit?: boolean): boolean;
+  matches(url: string, explicit?: boolean): boolean;
+}
+
+interface ChannelWrapper {
+  matches(
+    filter?: MozRequestFilter,
+    extension?: WebExtensionPolicy | null,
+    options?: MozRequestMatchOptions
+  ): boolean;
+}
+
 interface MozQueryInterface {
   <T>(iid: T): nsQIResult<T>;
 }

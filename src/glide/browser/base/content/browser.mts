@@ -1843,7 +1843,7 @@ class GlideBrowserClass {
   get_content_actor(): GlideHandlerParent {
     const tab_browser = assert_present(gBrowser.selectedBrowser);
     let content_wgp = assert_present(
-      tab_browser.browsingContext
+      assert_present(tab_browser.browsingContext)
         .currentWindowGlobal as typeof windowGlobalChild,
     );
 
@@ -1856,7 +1856,7 @@ class GlideBrowserClass {
   get_docs_actor(): GlideDocsParent {
     const tab_browser = assert_present(gBrowser.selectedBrowser);
     let content_wgp = assert_present(
-      tab_browser.browsingContext
+      assert_present(tab_browser.browsingContext)
         .currentWindowGlobal as typeof windowGlobalChild,
     );
     return content_wgp.getActor("GlideDocs") as any as GlideDocsParent;

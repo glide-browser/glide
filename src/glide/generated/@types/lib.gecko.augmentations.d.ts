@@ -6,8 +6,7 @@
 export {};
 
 interface MozElementBase {
-  new (...any): any;
-  implementCustomInterface(MozBrowser, interfaces: nsIID[]);
+  new (): Element;
 }
 
 declare global {
@@ -15,8 +14,12 @@ declare global {
     MozElementMixin<T extends MozElementBase>(base: T): T;
   }>;
 
-  interface MozXULElement extends MozElementBase, XULElement {}
-  interface MozHTMLElement extends MozElementBase, HTMLElement {}
+  class MozXULElement extends XULElement implements MozElementBase {
+    static implementCustomInterface(cls: MozElementBase, ifaces: nsIID[]): void;
+  }
+  class MozHTMLElement extends HTMLElement implements MozElementBase {
+    static implementCustomInterface(cls: MozElementBase, ifaces: nsIID[]): void;
+  }
 
   type MozBrowser =
     import("../../toolkit/content/widgets/browser-custom-element.mjs").MozBrowser;

@@ -631,6 +631,9 @@ interface nsIXPCComponents_Results {
 
   // Codes defined in WebIDL https://heycam.github.io/webidl/#idl-DOMException-error-names
 
+  /** A network error occurred. */
+  NS_ERROR_DOM_NETWORK_ERR: 0x80530013;
+
   /** The object can not be found here. */
   NS_ERROR_DOM_NOT_FOUND_ERR: 0x80530008;
 
