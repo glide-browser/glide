@@ -74,7 +74,6 @@ export interface Modules {
   "chrome://global/content/ml/StopWords.sys.mjs": typeof import("chrome://global/content/ml/StopWords.sys.mjs"),
   "chrome://global/content/ml/Utils.sys.mjs": typeof import("chrome://global/content/ml/Utils.sys.mjs"),
   "chrome://global/content/ml/backends/LlamaCppPipeline.mjs": typeof import("chrome://global/content/ml/backends/LlamaCppPipeline.mjs"),
-  "chrome://global/content/ml/backends/LlamaPipeline.mjs": typeof import("chrome://global/content/ml/backends/LlamaPipeline.mjs"),
   "chrome://global/content/ml/backends/ONNXPipeline.mjs": typeof import("chrome://global/content/ml/backends/ONNXPipeline.mjs"),
   "chrome://global/content/ml/backends/OpenAIPipeline.mjs": typeof import("chrome://global/content/ml/backends/OpenAIPipeline.mjs"),
   "chrome://global/content/ml/backends/Pipeline.mjs": typeof import("chrome://global/content/ml/backends/Pipeline.mjs"),
