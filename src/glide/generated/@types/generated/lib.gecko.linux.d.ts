@@ -8,51 +8,101 @@ declare global {
 
 // https://searchfox.org/firefox-main/source/browser/components/shell/nsIGNOMEShellService.idl
 
-interface nsIGNOMEShellService extends nsIShellService {
+}  // global
+
+/** <!-- binding_to(idl, class, XPIDL_nsIGNOMEShellService_DesktopEntryStatus) --> */
+declare enum nsIGNOMEShellService_DesktopEntryStatus {
+  /** <!-- binding_to(idl, const, XPIDL_nsIGNOMEShellService_DesktopEntryStatus_DESKTOP_ENTRY_ABSENT) --> */
+  DESKTOP_ENTRY_ABSENT = 0,
+  /** <!-- binding_to(idl, const, XPIDL_nsIGNOMEShellService_DesktopEntryStatus_DESKTOP_ENTRY_INVISIBLE) --> */
+  DESKTOP_ENTRY_INVISIBLE = 1,
+  /** <!-- binding_to(idl, const, XPIDL_nsIGNOMEShellService_DesktopEntryStatus_DESKTOP_ENTRY_VISIBLE) --> */
+  DESKTOP_ENTRY_VISIBLE = 2,
+}
+
+declare global {
+
+namespace nsIGNOMEShellService {
+  type DesktopEntryStatus = nsIGNOMEShellService_DesktopEntryStatus;
+}
+
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIGNOMEShellService) --> */
+interface nsIGNOMEShellService extends nsIShellService, Enums<typeof nsIGNOMEShellService_DesktopEntryStatus> {
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIGNOMEShellService_canSetDesktopBackground) --> */
   readonly canSetDesktopBackground: boolean;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_isDefaultForScheme) --> */
   isDefaultForScheme(aScheme: string): boolean;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_getGSettingsString) --> */
   getGSettingsString(aScheme: string, aKey: string): string;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_setGSettingsString) --> */
   setGSettingsString(aScheme: string, aKey: string, aValue: string): void;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_getArgv0) --> */
+  getArgv0(): string;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_getGlibPrgname) --> */
+  getGlibPrgname(): string;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_getDesktopEntryStatus) --> */
+  getDesktopEntryStatus(aEntryId: string): nsIGNOMEShellService.DesktopEntryStatus;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_requestInstallDynamicLauncher) --> */
+  requestInstallDynamicLauncher(aEntryId: string, aDesktopEntry: nsIINIParserWriter, aWindow: mozIDOMWindowProxy): Promise<any>;
+  /** <!-- binding_to(idl, method, XPIDL_nsIGNOMEShellService_requestUninstallDynamicLauncher) --> */
+  requestUninstallDynamicLauncher(aEntryId: string): Promise<any>;
 }
 
 // https://searchfox.org/firefox-main/source/browser/components/shell/nsIOpenTabsProvider.idl
 
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIOpenTabsProvider) --> */
 interface nsIOpenTabsProvider extends nsISupports {
+  /** <!-- binding_to(idl, method, XPIDL_nsIOpenTabsProvider_getOpenTabs) --> */
   getOpenTabs(): string[];
+  /** <!-- binding_to(idl, method, XPIDL_nsIOpenTabsProvider_switchToOpenTab) --> */
   switchToOpenTab(url: string): void;
 }
 
 // https://searchfox.org/firefox-main/source/widget/nsIApplicationChooser.idl
 
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIApplicationChooserFinishedCallback) --> */
 type nsIApplicationChooserFinishedCallback = Callable<{
+  /** <!-- binding_to(idl, method, XPIDL_nsIApplicationChooserFinishedCallback_done) --> */
   done(handlerApp: nsIHandlerApp): void;
 }>
 
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIApplicationChooser) --> */
 interface nsIApplicationChooser extends nsISupports {
+  /** <!-- binding_to(idl, method, XPIDL_nsIApplicationChooser_init) --> */
   init(parent: mozIDOMWindowProxy, title: string): void;
+  /** <!-- binding_to(idl, method, XPIDL_nsIApplicationChooser_open) --> */
   open(contentType: string, applicationChooserFinishedCallback: nsIApplicationChooserFinishedCallback): void;
 }
 
 // https://searchfox.org/firefox-main/source/widget/nsIGtkTaskbarProgress.idl
 
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIGtkTaskbarProgress) --> */
 interface nsIGtkTaskbarProgress extends nsITaskbarProgress {
+  /** <!-- binding_to(idl, method, XPIDL_nsIGtkTaskbarProgress_setPrimaryWindow) --> */
   setPrimaryWindow(aWindow: mozIDOMWindowProxy): void;
 }
 
 // https://searchfox.org/firefox-main/source/widget/nsITaskbarProgress.idl
 
+/** <!-- binding_to(idl, interface_name, XPIDL_nsITaskbarProgress) --> */
 interface nsITaskbarProgress extends nsISupports {
+  /** <!-- binding_to(idl, const, XPIDL_nsITaskbarProgress_STATE_NO_PROGRESS) --> */
   readonly STATE_NO_PROGRESS?: 0;
+  /** <!-- binding_to(idl, const, XPIDL_nsITaskbarProgress_STATE_INDETERMINATE) --> */
   readonly STATE_INDETERMINATE?: 1;
+  /** <!-- binding_to(idl, const, XPIDL_nsITaskbarProgress_STATE_NORMAL) --> */
   readonly STATE_NORMAL?: 2;
+  /** <!-- binding_to(idl, const, XPIDL_nsITaskbarProgress_STATE_ERROR) --> */
   readonly STATE_ERROR?: 3;
+  /** <!-- binding_to(idl, const, XPIDL_nsITaskbarProgress_STATE_PAUSED) --> */
   readonly STATE_PAUSED?: 4;
 
+  /** <!-- binding_to(idl, method, XPIDL_nsITaskbarProgress_setProgressState) --> */
   setProgressState(state: nsTaskbarProgressState, currentValue?: u64, maxValue?: u64): void;
 }
 
 interface nsIXPCComponents_Interfaces {
-  nsIGNOMEShellService: nsJSIID<nsIGNOMEShellService>;
+  nsIGNOMEShellService: nsJSIID<nsIGNOMEShellService, typeof nsIGNOMEShellService_DesktopEntryStatus>;
   nsIOpenTabsProvider: nsJSIID<nsIOpenTabsProvider>;
   nsIApplicationChooserFinishedCallback: nsJSIID<nsIApplicationChooserFinishedCallback>;
   nsIApplicationChooser: nsJSIID<nsIApplicationChooser>;

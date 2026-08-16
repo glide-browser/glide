@@ -1,8 +1,8 @@
 diff --git a/testing/mochitest/browser-test.js b/testing/mochitest/browser-test.js
-index 82702aa28a04b87153efaab43a5510da88141bd5..edb5ceabda8c579b179698c6e8c3fbccbccb5f94 100644
+index cda6079744b27e0f747b5e5a23b7a0c044752a47..1e2d97de656e8b748ec383a6b7b2748a136ed60f 100644
 --- a/testing/mochitest/browser-test.js
 +++ b/testing/mochitest/browser-test.js
-@@ -247,6 +247,18 @@ function Tester(aTests, structuredLogger, aCallback) {
+@@ -352,6 +352,18 @@ function Tester(aTests, structuredLogger, aCallback) {
    this.PerTestCoverageUtils = ChromeUtils.importESModule(
      "resource://testing-common/PerTestCoverageUtils.sys.mjs"
    ).PerTestCoverageUtils;
@@ -21,7 +21,7 @@ index 82702aa28a04b87153efaab43a5510da88141bd5..edb5ceabda8c579b179698c6e8c3fbcc
    this.PromiseTestUtils.init();
  
    this.SimpleTestOriginal = {};
-@@ -1435,6 +1447,31 @@ Tester.prototype = {
+@@ -1539,6 +1551,40 @@ Tester.prototype = {
      scope.BrowserTestUtils = this.BrowserTestUtils;
      scope.TestUtils = this.TestUtils;
      scope.ExtensionTestUtils = this.ExtensionTestUtils;
@@ -53,7 +53,7 @@ index 82702aa28a04b87153efaab43a5510da88141bd5..edb5ceabda8c579b179698c6e8c3fbcc
      // Pass a custom report function for mochitest style reporting.
      scope.Assert = new this.Assert(function (err, message, stack) {
        currentTest.addResult(
-@@ -1804,6 +1841,16 @@ function testScope(aTester, aTest, expected) {
+@@ -1917,6 +1963,16 @@ function testScope(aTester, aTest, expected) {
        self.record(condition, name);
      }
    };
@@ -70,7 +70,7 @@ index 82702aa28a04b87153efaab43a5510da88141bd5..edb5ceabda8c579b179698c6e8c3fbcc
    this.record = function test_record(condition, name, ex, stack, expected) {
      if (expected == "fail") {
        aTest.addResult(
-@@ -1837,6 +1884,18 @@ function testScope(aTester, aTest, expected) {
+@@ -1950,6 +2006,18 @@ function testScope(aTester, aTest, expected) {
        Components.stack.caller
      );
    };
@@ -89,7 +89,7 @@ index 82702aa28a04b87153efaab43a5510da88141bd5..edb5ceabda8c579b179698c6e8c3fbcc
    this.isfuzzy = function test_isfuzzy(a, b, epsilon, name) {
      self.record(
        a >= b - epsilon && a <= b + epsilon,
-@@ -2018,6 +2077,17 @@ function testScope(aTester, aTest, expected) {
+@@ -2131,6 +2199,17 @@ function testScope(aTester, aTest, expected) {
      }
    };
  
@@ -107,7 +107,7 @@ index 82702aa28a04b87153efaab43a5510da88141bd5..edb5ceabda8c579b179698c6e8c3fbcc
    this.requestCompleteLog = function test_requestCompleteLog() {
      self.__tester.structuredLogger.deactivateBuffering();
      self.registerCleanupFunction(function () {
-@@ -2060,6 +2130,10 @@ testScope.prototype = {
+@@ -2173,6 +2252,10 @@ testScope.prototype = {
    TestUtils: null,
    ExtensionTestUtils: null,
    Assert: null,

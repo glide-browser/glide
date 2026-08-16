@@ -1,8 +1,8 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index 126bc5c13ac71282675e02792e9b3b14ff1a00e5..2078a652138878e644017846dcbe75202ce23931 100644
+index e284ae540b6222946e00173df57dfb30fba527c8..e794b450cdaee2dc6d060e524da55e8dc89d4493 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
-@@ -42,6 +42,13 @@ let JSPROCESSACTORS = {
+@@ -43,6 +43,13 @@ let JSPROCESSACTORS = {
      remoteTypes: ["parent", "privilegedabout"],
    },
  
@@ -16,7 +16,7 @@ index 126bc5c13ac71282675e02792e9b3b14ff1a00e5..2078a652138878e644017846dcbe7520
    RefreshBlockerObserver: {
      child: {
        esModuleURI: "resource:///actors/RefreshBlockerChild.sys.mjs",
-@@ -94,6 +101,53 @@ let JSWINDOWACTORS = {
+@@ -96,6 +103,54 @@ let JSWINDOWACTORS = {
      remoteTypes: ["parent"],
    },
  
@@ -65,6 +65,7 @@ index 126bc5c13ac71282675e02792e9b3b14ff1a00e5..2078a652138878e644017846dcbe7520
 +    },
 +    allFrames: true,
 +    includeChrome: true,
++    safeForUntrustedWebProcess: true,
 +  },
 +
    AboutLogins: {

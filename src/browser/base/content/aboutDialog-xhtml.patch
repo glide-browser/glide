@@ -1,5 +1,5 @@
 diff --git a/browser/base/content/aboutDialog.xhtml b/browser/base/content/aboutDialog.xhtml
-index c64980810570fcea84e33fdc2d66ac42a79f4e46..552efb12b1960d53a0d560d3d697d495a317e4d3 100644
+index 067eaf8d4e23f76a2423d01a1d9fa71d9ef3c65f..47cfc735ccc06fc93d2ae83e8718131d2db98623 100644
 --- a/browser/base/content/aboutDialog.xhtml
 +++ b/browser/base/content/aboutDialog.xhtml
 @@ -129,8 +129,8 @@
@@ -11,5 +11,5 @@ index c64980810570fcea84e33fdc2d66ac42a79f4e46..552efb12b1960d53a0d560d3d697d495
 +            <label is="text-link" href="https://github.com/sponsors/glide-browser" data-l10n-name="helpus-donateLink"/>
 +            <label is="text-link" href="https:/github.com/glide-browser/glide" data-l10n-name="helpus-getInvolvedLink"/>
            </description>
-         </vbox>
-       </vbox>
+           <description class="text-blurb" id="contributeDescReferrals" data-l10n-id="helpus-referrals" hidden="true">
+             <label is="text-link" href="https://foundation.mozilla.org/?form=firefox-about" data-l10n-name="helpus-donateLink"/>

@@ -1,10 +1,10 @@
 diff --git a/browser/base/content/navigator-toolbox.inc.xhtml b/browser/base/content/navigator-toolbox.inc.xhtml
-index 754181405c8f44c672a8c78eda341e422be5e62b..5e4528fa551ab4da00fe300b80356ae656c287d5 100644
+index 60a9e7524120d91952f9726844069abc62cde203..49f0163bb645a504686f8193cdc2598bc3be1f55 100644
 --- a/browser/base/content/navigator-toolbox.inc.xhtml
 +++ b/browser/base/content/navigator-toolbox.inc.xhtml
-@@ -155,6 +155,18 @@
-           </box>
-         </toolbarbutton>
+@@ -148,6 +148,18 @@
+                        command="Browser:Stop"
+                        tooltip="dynamic-shortcut-tooltip"/>
        </toolbaritem>
 +
 +      <toolbarbutton id="glide-toolbar-mode-button" class="toolbarbutton-1 chromeclass-toolbar-additional glide-mode-button"
@@ -17,11 +17,11 @@ index 754181405c8f44c672a8c78eda341e422be5e62b..5e4528fa551ab4da00fe300b80356ae6
 +                     removable="true">
 +        normal
 +      </toolbarbutton>
-+      
++
        <toolbarspring cui-areatype="toolbar" class="chromeclass-toolbar-additional"/>
        <toolbarspring cui-areatype="toolbar"
                     class="chromeclass-toolbar-additional titlebar-spacer"
-@@ -450,6 +462,15 @@
+@@ -453,6 +465,15 @@
          </box>
        </toolbarbutton>
  

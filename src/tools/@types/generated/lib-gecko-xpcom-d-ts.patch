@@ -1,21 +1,21 @@
 diff --git a/tools/@types/generated/lib.gecko.xpcom.d.ts b/tools/@types/generated/lib.gecko.xpcom.d.ts
-index dfade9b260bdb4f5f7ac2c05cafa4714e580d865..8701df4221ac71baaca1203d6cae37120a3dc0e7 100644
+index a783ef95fc219734642ffe0331c4de714faa7675..dceccc7ccad16ec652e63a02ab5d1a172e5a847c 100644
 --- a/tools/@types/generated/lib.gecko.xpcom.d.ts
 +++ b/tools/@types/generated/lib.gecko.xpcom.d.ts
-@@ -2626,6 +2626,7 @@ interface nsIDOMWindowUtils extends nsISupports, Enums<typeof nsIDOMWindowUtils_
-   getScrollXYFloat(aFlushLayout: boolean, aScrollX: OutParam<float>, aScrollY: OutParam<float>): void;
+@@ -4624,6 +4624,7 @@ interface nsIDOMWindowUtils extends nsISupports, Enums<typeof nsIDOMWindowUtils_
    getScrollbarSize(aFlushLayout: boolean, aWidth: OutParam<i32>, aHeight: OutParam<i32>): void;
+   /** <!-- binding_to(idl, method, XPIDL_nsIDOMWindowUtils_getBoundsWithoutFlushing) --> */
    getBoundsWithoutFlushing(aElement: Element): DOMRect;
 +  getElementBoundingScreenRect(aElement: Element): DOMRect;
+   /** <!-- binding_to(idl, method, XPIDL_nsIDOMWindowUtils_getWidgetOpaqueRegion) --> */
    getWidgetOpaqueRegion(): DOMRect[];
-   scrollToVisual(aOffsetX: float, aOffsetY: float, aUpdateType: i32, aScrollMode: i32): void;
-   getVisualViewportOffsetRelativeToLayoutViewport(aOffsetX: OutParam<float>, aOffsetY: OutParam<float>): void;
-@@ -7415,7 +7416,7 @@ type nsISTSShutdownObserver = Callable<{
- }>
- 
+   /** <!-- binding_to(idl, method, XPIDL_nsIDOMWindowUtils_scrollToVisual) --> */
+@@ -12741,7 +12742,7 @@ type nsISTSShutdownObserver = Callable<{
+ /** <!-- binding_to(idl, interface_name, XPIDL_nsISocketTransportService) --> */
  interface nsISocketTransportService extends nsISupports {
+   /** <!-- binding_to(idl, method, XPIDL_nsISocketTransportService_createTransport) --> */
 -  createTransport(aSocketTypes: string[], aHost: string, aPort: i32, aProxyInfo: nsIProxyInfo, dnsRecord: nsIDNSRecord): nsISocketTransport;
 +  createTransport(aSocketTypes: string[], aHost: string, aPort: i32, aProxyInfo: nsIProxyInfo | null, dnsRecord: nsIDNSRecord | null): nsISocketTransport;
+   /** <!-- binding_to(idl, method, XPIDL_nsISocketTransportService_createUnixDomainTransport) --> */
    createUnixDomainTransport(aPath: nsIFile): nsISocketTransport;
-   createUnixDomainAbstractAddressTransport(aName: string): nsISocketTransport;
- }
+   /** <!-- binding_to(idl, method, XPIDL_nsISocketTransportService_createUnixDomainAbstractAddressTransport) --> */

@@ -599,6 +599,11 @@ add_task(async function test_suggested_command_is_default() {
 add_task(async function test_multiple_commands_suggested() {
   await reload_config(function _() {});
 
+  // a stale notification from an earlier test (e.g. a pending config reload) would
+  // pollute the suggestion ordering asserted below
+  gNotificationBox.removeAllNotifications(true);
+  await until(() => gNotificationBox.allNotifications.length === 0);
+
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     // Suggest a :copy command.
     await keys(":profile_dir<CR>");

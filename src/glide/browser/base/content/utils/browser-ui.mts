@@ -66,7 +66,7 @@ export const autohide_tabstoolbar_v2 = css`
       #navigator-toolbox:has(> :is(#toolbar-menubar, #TabsToolbar):hover),
     :root:not([customizing], [chromehidden~="menubar"]) #TabsToolbar {
       margin-bottom: calc(
-        0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
+        0px - 2 * var(--tab-margin-block) - var(--tab-min-height)
       );
     }
     #toolbar-menubar:is([autohide=""], [autohide="true"])
@@ -105,7 +105,7 @@ export const autohide_tabstoolbar_v2 = css`
     #navigator-toolbox[movingtab] {
       transition-delay: 0s !important;
       margin-bottom: calc(
-        0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
+        0px - 2 * var(--tab-margin-block) - var(--tab-min-height)
       );
       > #TabsToolbar {
         visibility: visible;
@@ -139,7 +139,7 @@ export const autohide_tabstoolbar_v2 = css`
     @media -moz-pref("userchrome.autohidetabs.show-while-inactive.enabled") {
       #navigator-toolbox:-moz-window-inactive {
         margin-bottom: calc(
-          0px - 2 * var(--tab-block-margin) - var(--tab-min-height)
+          0px - 2 * var(--tab-margin-block) - var(--tab-min-height)
         );
         > #TabsToolbar {
           visibility: visible;

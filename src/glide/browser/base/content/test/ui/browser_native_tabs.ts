@@ -10,6 +10,17 @@
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
 /**
+ * Firefox 154 moved the tab notification deck into a `#notifications-toolbar` inside
+ * `#navigator-toolbox`, so transient infobars (e.g. at startup) change the toolbox height.
+ * `native_tabs` only manipulates the tab strip, so exclude the notifications toolbar from
+ * all height measurements.
+ */
+function toolbox_height(toolbox: Element): number {
+  const notifications = document!.getElementById("notifications-toolbar");
+  return toolbox.clientHeight - (notifications?.clientHeight ?? 0);
+}
+
+/**
  * `native_tabs` toggles the tab strip via an async stylesheet, so the toolbox only reflows a frame
  * or two after `reload_config` resolves. read the height once it has settled, otherwise we capture a
  * transient value mid-reflow and the height comparisons flake.
@@ -19,7 +30,7 @@ async function settled_toolbox_height(toolbox: Element): Promise<number> {
   let stable = 0;
   for (let i = 0; i < 120; i++) {
     await sleep_frames(1);
-    const height = toolbox.clientHeight;
+    const height = toolbox_height(toolbox);
     if (height === last) {
       if (++stable >= 5) {
         return height;
@@ -55,7 +66,7 @@ add_task(async function test_native_tabs() {
     glide.o.native_tabs = "autohide";
   });
   await waiter(() => {
-    const height_autohide = navigator_toolbox!.clientHeight;
+    const height_autohide = toolbox_height(navigator_toolbox!);
     return height_default > height_autohide && height_autohide > height_hide;
   }).ok("glide.o.native_tabs 'autohide' toolbox height should be in range 'show' - 'hide'.");
 
@@ -69,12 +80,12 @@ add_task(async function test_buf_native_tabs() {
   ok(navigator_toolbox, "Element 'navigator-toolbox' should exist.");
 
   await reload_config(() => {});
-  const height_default = navigator_toolbox!.clientHeight;
+  const height_default = toolbox_height(navigator_toolbox!);
 
   await reload_config(function _() {
     glide.bo.native_tabs = "hide";
   });
-  const height_hide = navigator_toolbox!.clientHeight;
+  const height_hide = toolbox_height(navigator_toolbox!);
   Assert.greater(height_default, height_hide, "glide.bo.native_tabs 'hide' option should shrink the toolbox height.");
 
   await reload_config(function _() {
@@ -82,12 +93,12 @@ add_task(async function test_buf_native_tabs() {
       glide.bo.native_tabs = "hide";
     });
   });
-  is(navigator_toolbox!.clientHeight, height_default);
+  is(toolbox_height(navigator_toolbox!), height_default);
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async () => {
     is(glide.bo.native_tabs, "hide");
-    is(navigator_toolbox!.clientHeight, height_hide, "Loading the input_test buffer should hide the native tabs");
+    is(toolbox_height(navigator_toolbox!), height_hide, "Loading the input_test buffer should hide the native tabs");
   });
 
-  is(navigator_toolbox!.clientHeight, height_default, "Leaving the input_test buffer should show the native tabs");
+  is(toolbox_height(navigator_toolbox!), height_default, "Leaving the input_test buffer should show the native tabs");
 });
