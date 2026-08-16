@@ -211,6 +211,7 @@ declare namespace GlobalBrowser {
       dismissable?: boolean,
     ): Promise<Notification>;
     removeNotification(notification: Notification): void;
+    removeAllNotifications(aImmediate?: boolean): void;
 
     getNotificationWithValue(value: string): Notification | null;
   }

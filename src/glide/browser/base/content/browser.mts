@@ -1844,7 +1844,7 @@ class GlideBrowserClass {
     const tab_browser = assert_present(gBrowser.selectedBrowser);
     let content_wgp = assert_present(
       tab_browser.browsingContext
-        .currentWindowGlobal as typeof windowGlobalChild,
+        ?.currentWindowGlobal as typeof windowGlobalChild,
     );
 
     // we can't use `.getExistingActor()` as the actor may not have been loaded
@@ -1857,7 +1857,7 @@ class GlideBrowserClass {
     const tab_browser = assert_present(gBrowser.selectedBrowser);
     let content_wgp = assert_present(
       tab_browser.browsingContext
-        .currentWindowGlobal as typeof windowGlobalChild,
+        ?.currentWindowGlobal as typeof windowGlobalChild,
     );
     return content_wgp.getActor("GlideDocs") as any as GlideDocsParent;
   }
