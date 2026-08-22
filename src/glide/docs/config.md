@@ -27,7 +27,9 @@ Glide will resolve the config file by searching for a `path:glide.ts` file in th
 
 1. The current working directory
 2. The profile directory
-3. `path:$XDG_CONFIG_HOME/glide/` or `path:~/.config/glide/` if `$XDG_CONFIG_HOME` is not set.
+3. `path:$GLIDE_CONFIG_HOME/glide/`
+4. `path:$XDG_CONFIG_HOME/glide/`
+5. `path:~/.config/glide/`
 
 Glide will only consider the _first_ config file that matches and will not load any further.
 

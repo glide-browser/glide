@@ -1884,12 +1884,19 @@ class GlideBrowserClass {
   }
 
   get home_config_dir(): string {
-    const xdg_dir = Services.env.get("XDG_CONFIG_HOME");
-    if (xdg_dir) {
-      return PathUtils.join(xdg_dir, "glide");
-    }
+    const config_home = function() {
+      if (Services.env.exists("GLIDE_CONFIG_HOME")) {
+        return Services.env.get("GLIDE_CONFIG_HOME");
+      }
 
-    return PathUtils.join(Services.dirsvc.get("Home", Ci.nsIFile).path, ".config", "glide");
+      if (Services.env.exists("XDG_CONFIG_HOME")) {
+        return Services.env.get("XDG_CONFIG_HOME");
+      }
+
+      return PathUtils.join(Services.dirsvc.get("Home", Ci.nsIFile).path, ".config");
+    }();
+
+    return PathUtils.join(config_home, "glide");
   }
 
   get profile_config_dir(): string {
