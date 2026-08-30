@@ -3,7 +3,16 @@
 <link rel="stylesheet" href="./index.css?v=" />
 {% /head %}
 
-# Glide
+{% meta title="Glide" %}{% /meta %}
+
+{% html %}
+
+<h1 id="glide" class="glide-banner" aria-label="Glide">   ____  _     ___ ____  _____ 
+  / ___|| |   |_ _|  _ \| ____|
+ | |  _ | |    | || | | |  _|  
+ | |_| || |___ | || |_| | |___ 
+  \____||_____|___|____/|_____|</h1>
+{% /html %}
 
 An [extensible](config.md) and [keyboard-focused](hints.md) web browser.
 

@@ -4,7 +4,8 @@ padding-top: unset !important;
 margin-top: unset !important;
 margin-bottom: unset !important;
 }
-article h1 {
+article h1,
+article h2 {
 font-size: revert !important;
 padding-top: revert !important;
 margin-top: 30px !important;
@@ -15,13 +16,13 @@ padding: 0.3em;
 }
 {% /styles %}
 
-{% toc selector="h1[id]" /%}
+{% toc selector="h2[id]" /%}
 
 # Changelog
 
-# 0.1.63a
+## 0.1.63a
 
-## Changes {% id="0.1.63a-changes" %}
+### Changes {% id="0.1.63a-changes" %}
 
 - Bumped Firefox from 152.0b2 to 153.0b5
 - Added `:mode_reset` excmd for recalculating the current mode
@@ -31,9 +32,9 @@ padding: 0.3em;
   - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 - Fixed `glide.process` handling of relative `PATH` entries
 
-# 0.1.62a
+## 0.1.62a
 
-## Changes {% id="0.1.62a-changes" %}
+### Changes {% id="0.1.62a-changes" %}
 
 - Bumped Firefox from 151.0b4 to 152.0b2
 - Added support for toggling reader mode on `gemini://` pages
@@ -41,9 +42,9 @@ padding: 0.3em;
 - Fixed broken behaviour in `:tab_pin_toggle` excmd
   - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution and [@Kazimazi](https://github.com/Kazimazi) for reporting!
 
-# 0.1.61a
+## 0.1.61a
 
-## Experimental support for the gemini protocol {% id="0.1.61a-gemini-support" %}
+### Experimental support for the gemini protocol {% id="0.1.61a-gemini-support" %}
 
 This release adds experimental support the `bash:gemini://` [protocol](https://geminiprotocol.net/). A lightweight, document oriented protocol.
 
@@ -72,7 +73,7 @@ glide.o.gemini_styles = css`
 `;
 ```
 
-## Changes {% id="0.1.61a-changes" %}
+### Changes {% id="0.1.61a-changes" %}
 
 - Bumped Firefox from 149.0b8 to 151.0b4
 - Added support for [`glide.o.native_tabs = 'autohide'`](api.md#glide.o.native_tabs) on macOS
@@ -80,9 +81,9 @@ glide.o.gemini_styles = css`
 - Prevented enhanced tracking protection from resetting on restarts
   - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 
-# 0.1.60a
+## 0.1.60a
 
-## Changes {% id="0.1.60a-changes" %}
+### Changes {% id="0.1.60a-changes" %}
 
 - Bumped Firefox from 148.0b15 to 149.0b8
 - Added [`AddonInstalled`](autocmds.md#addoninstalled) autocmd
@@ -98,9 +99,9 @@ glide.o.gemini_styles = css`
 - Breaking change: the [`ts:glide.unstable.split_views`](api.md#glide.unstable.split_views) API now requires numeric IDs
   - This was an upstream Firefox change.
 
-# 0.1.59a
+## 0.1.59a
 
-## Breaking change: diacritic keymaps on macOS {% id="0.1.59a-diacritics" %}
+### Breaking change: diacritic keymaps on macOS {% id="0.1.59a-diacritics" %}
 
 Previously on macOS if you wanted to define a keymap with the Option key, then you would have to use the diacritic version of the key as macOS uses Option to enable [diacritics](https://support.apple.com/guide/mac-help/mh27474/mac#:~:text=Use%20key%20combinations).
 
@@ -116,7 +117,7 @@ glide.keymaps.set("normal", "<A-p>", "tab_pin");
 
 For more information see the [Key codes](keys.md#key-codes) docs.
 
-## Findbar API {% id="0.1.59a-findbar" %}
+### Findbar API {% id="0.1.59a-findbar" %}
 
 This release includes support for programmatically operating the Firefox findbar. You can now open / close the findbar, and traverse through findbar matches directly from the config.
 
@@ -144,7 +145,7 @@ The full API includes:
 - [`ts:glide.findbar.is_open()`](api.md#glide.findbar.is_open)
 - [`ts:glide.findbar.is_focused()`](api.md#glide.findbar.is_focused)
 
-## Previous / next link following {% id="0.1.59a-previous-next-links" %}
+### Previous / next link following {% id="0.1.59a-previous-next-links" %}
 
 This release adds the `[[` and `]]` default keymappings in `normal` mode that will automatically follow "previous" and "next" links respectively.
 
@@ -155,7 +156,7 @@ This works by searching for link elements (e.g. `html:<a>`, `html:<div role="lin
 You can customise the text strings to search for with [`ts:glide.o.go_next_patterns`](api.md#glide.o.go_next_patterns) and [`ts:glide.o.go_previous_patterns`](api.md#glide.o.go_previous_patterns).
 Or use different keymappings by mapping `:go_next` and `:go_previous`.
 
-## Customisable keyboard layouts {% id="0.1.59a-keyboard-layouts" %}
+### Customisable keyboard layouts {% id="0.1.59a-keyboard-layouts" %}
 
 Added support for resolving keymaps from the _physical_ key pressed instead of whatever key string your software layout resolved it to.
 
@@ -186,11 +187,11 @@ glide.keymaps.set("normal", "<C-t>", "tab_prev");
 >
 > The default keyboard layout is US qwerty. If you use a different layout, see the [`ts:glide.o.keyboard_layouts`](api.md#glide.o.keyboard_layouts) option.
 
-## Half page scrolling {% id="0.1.59a-half-page-scrolling" %}
+### Half page scrolling {% id="0.1.59a-half-page-scrolling" %}
 
 The `<C-d>` and `<C-u>` keymaps now scroll _half_ pages instead of full pages like they did before. This was changed to match Vim behaviour more closely.
 
-## Changes {% id="0.1.59a-changes" %}
+### Changes {% id="0.1.59a-changes" %}
 
 - Bumped Firefox from 148.0b4 to 148.0b15
 - Blocked AI link previews by default
@@ -208,9 +209,9 @@ The `<C-d>` and `<C-u>` keymaps now scroll _half_ pages instead of full pages li
   - Thanks to [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 - Fixed (partially) an issue where [`ts:glide.keys.next()`](api.md#glide.keys.next) promises could hang around after config reloads
 
-# 0.1.58a
+## 0.1.58a
 
-## Experimental windows support {% id="0.1.58a-experimental-windows-support" %}
+### Experimental windows support {% id="0.1.58a-experimental-windows-support" %}
 
 This release adds support for Windows!
 
@@ -221,7 +222,7 @@ If you run into any issues please [report](https://github.com/glide-browser/glid
 > The Windows binaries are not signed _yet_. This means that Windows will warn you that you're installing an
 > app from an "unknown publisher"; you'll have to click through these warnings if you want to try out Glide on Windows right now.
 
-## Changes {% id="0.1.58a-changes" %}
+### Changes {% id="0.1.58a-changes" %}
 
 - Bumped Firefox from 147.0b8 to 148.0b4
 - Added process output helpers, `ts:await process.stdout.text()`, `ts:await process.stdout.lines()`
@@ -250,9 +251,9 @@ If you run into any issues please [report](https://github.com/glide-browser/glid
   - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 - docs: fixed clashing `/tutorial` pages
 
-# 0.1.57a
+## 0.1.57a
 
-## Search engine configuration {% id="0.1.57a-search-engine-configuration" %}
+### Search engine configuration {% id="0.1.57a-search-engine-configuration" %}
 
 You can now configure new search engines directly in the Glide config, for example:
 
@@ -273,7 +274,7 @@ With this example you could search using Discogs by focusing the address bar and
 
 The [`glide.search_engines.add()`](api.md#glide.search_engines.add) function takes the same arguments as the `chrome_settings_overrides.search_provider` web extension manifest v2 [object](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#browser_compatibility).
 
-## Changes {% id="0.1.57a-changes" %}
+### Changes {% id="0.1.57a-changes" %}
 
 - Bumped Firefox from 147.0b3 to 147.0b8
 - [Improved](https://github.com/glide-browser/glide/pull/193) type inference for [`ts:glide.content.execute()`](api.md#glide.content.execute) params
@@ -302,9 +303,9 @@ The [`glide.search_engines.add()`](api.md#glide.search_engines.add) function tak
   - [Reduced](https://github.com/glide-browser/glide/pull/157) the number of redundant DOM mutations inside the commandline
     - Thanks [@suveshmoza](https://github.com/suveshmoza) for the contribution!
 
-# 0.1.56a
+## 0.1.56a
 
-## Breaking changes {% id="0.1.56a-breaking-changes" %}
+### Breaking changes {% id="0.1.56a-breaking-changes" %}
 
 ### Hint callback execution {% id="0.1.56a-hint-callback-execution" %}
 
@@ -387,7 +388,7 @@ glide.fs.read("data.json");
 
 0.1.56a will now read `path:<config>/foo/bar/data.json`
 
-## Custom hint label generators {% id="0.1.56a-custom-hint-label-generators" %}
+### Custom hint label generators {% id="0.1.56a-custom-hint-label-generators" %}
 
 You can now override label generation for hints to use whatever strategy you'd like.
 
@@ -406,7 +407,7 @@ glide.hints.show({
 
 Thanks to [@peff](https://github.com/peff) for the contribution!
 
-## Changes {% id="0.1.56a-changes" %}
+### Changes {% id="0.1.56a-changes" %}
 
 - Bumped Firefox from 146.0b9 to 147.0b3
 - Added support for nested [`glide.unstable.include()`](api.md#glide.unstable.include) calls
@@ -427,7 +428,7 @@ Thanks to [@peff](https://github.com/peff) for the contribution!
 - Fixed [`glide.hints.show()`](api.md#glide.hints.show) with `auto_activate: true` not respecting `action: () => ...`
 - Fixed elements returned by commandline options `render()` functions from being needlessly duplicated, and breaking references
 
-# 0.1.55a
+## 0.1.55a
 
 ### Picker API {% id="0.1.55a-picker-api" %}
 
@@ -547,7 +548,7 @@ glide.keymaps.set(
 - Fixed [`glide.keys.send()`](./api.md#glide.keys.send) potentially resulting in out-of-order key events
 - Fixed the [`glide.o.yank_highlight`](./api.md#glide.o.yank_highlight) type to allow `rgb(255, 255, 255)` strings
 
-# 0.1.54a
+## 0.1.54a
 
 Page navigation keys (`h`, `j`, `k`, `l`, `<C-u>`, `<C-d>`, `gg`, and `G`) are now translated into equivalent standard keys:
 
@@ -615,7 +616,7 @@ Note that this also changes the scroll behaviour when using arrow keys directly.
 - Disabled more AI prefs
 - We now store the previous Glide versions you've used in the profile directory
 
-# 0.1.53a
+## 0.1.53a
 
 ### Addons API {% id="0.1.53a-addons-api" %}
 
@@ -679,7 +680,7 @@ glide.autocmds.create("WindowLoaded", () => {
 - Fixed `glide.ctx.url` so that it is constructed in the correct JS realm
 - [Fixed](https://github.com/glide-browser/glide/issues/8) the commandline stealing focus even after it was closed
 
-# 0.1.52a
+## 0.1.52a
 
 - Bumped Firefox from 144.0b8 to 144.0b9.
 - Fixed synthesizing special keys, e.g. `glide.keys.send("<down>")`.
@@ -699,7 +700,7 @@ glide.autocmds.create("WindowLoaded", () => {
   - Thank you to [@jacobzim-stl](https://github.com/jacobzim-stl) for the contribution!
 - Disabled the AI chat button in the context menu.
 
-# 0.1.51a
+## 0.1.51a
 
 ### Breaking changes {% id="0.1.51a-breaking-changes" %}
 
@@ -714,7 +715,7 @@ This change was made to prevent a conflict with the default `<C-l>` keymap in Fi
 - Fixed bad handling of invalid `focusin` events.
 - Added `<C-[>` in `insert`, `visual`, and `op-pending` mode to switch back to `normal` mode.
 
-# 0.1.50a
+## 0.1.50a
 
 - Added `glide.fs.stat()`.
 - Added `glide.env.get()`, `glide.env.set()`, and `glide.env.delete()`. This is particularly useful for configuring your `PATH` on macOS.
@@ -730,13 +731,13 @@ This change was made to prevent a conflict with the default `<C-l>` keymap in Fi
   This was the only place it was accessible and allowing access to the `browser` API from the content frame has security implications
   that need to be investigated further.
 
-# 0.1.49a
+## 0.1.49a
 
 - Fixed a case where dev tools autocomplete could stop working
 - Changed `glide.ctx.url` from a `string` to a `URL`
 - Bumped Firefox from 144.0b3 to 144.0b5
 
-# 0.1.48a
+## 0.1.48a
 
 - Updated the recommended tsconfig to more accurately reflect reality
 - Added support for setting attributes using `DOM.create_element()`
@@ -747,7 +748,7 @@ This change was made to prevent a conflict with the default `<C-l>` keymap in Fi
   - Fixed race conditions when mutating the `document`
   - Added many missing elements
 
-# 0.1.47a
+## 0.1.47a
 
 - Fixed a case where the browser toolbox devtools could crash
 - Fixed issues with certain functions not being callable in the config, e.g. `ts:setTimeout()`
@@ -756,17 +757,17 @@ This change was made to prevent a conflict with the default `<C-l>` keymap in Fi
 - Added `ts:glide.fs.exists(path)`
 - Upated Firefox from `path:144.0b1` to `path:144.0b3`
 
-# 0.1.46a
+## 0.1.46a
 
 - Added `ts:glide.fs.read(path, encoding)`
 - Added `ts:glide.process.spawn(command, args, opts)`
 - Added `ts:glide.process.execute(command, args, opts)`
 
-# 0.1.45a
+## 0.1.45a
 
 This release fixes a regression with the document mirror causing a crash when multiple windows are opened.
 
-# 0.1.44a
+## 0.1.44a
 
 This release restructures how the config sandbox is evaluated. Previously, it was possible to access the internal `Document` and `ChromeWindow` that Firefox uses to render the browser UI itself.
 This is useful for accessing DOM APIs, e.g. `URL`, and allowing you to modify the UI in any way you want, however it introduces security concerns as _all_ of the Glide and Firefox internals can be accessed directly, effectively nullifying the sandbox.
@@ -775,10 +776,10 @@ Now, we create a hidden `Window` and a `Document` that is a bi-directional mirro
 
 Firefox has been bumped from `path:143.0b9` to `path:144.0b1`, the Firefox release notes can be found [here](https://www.firefox.com/en-US/firefox/143.0/releasenotes/).
 
-# 0.1.43a
+## 0.1.43a
 
 This release is mostly minor docs changes and an internal rehaul of the build system.
 
-# 0.1.42a
+## 0.1.42a
 
 Initial public release!

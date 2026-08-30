@@ -50,26 +50,46 @@ const ADMONITION_TYPES = new Set([
   "CAUTION",
 ]);
 
-const SIDEBAR: SidebarEntry[] = [
-  { name: "Tutorial", href: "tutorial.html" },
-  { name: "Config", href: "config.html" },
-  { name: "Keys", href: "keys.html" },
-  { name: "API", href: "api.html" },
-  { name: "Autocmds", href: "autocmds.html" },
-  { name: "Excmds", href: "excmds.html" },
-  { name: "Hints", href: "hints.html" },
-  { name: "Extensions", href: "extensions.html" },
-  { name: "Firefox", href: "firefox.html" },
-  { name: "CommandLine", href: "commandline.html" },
-  { name: "Editor", href: "editor.html" },
-  { name: "FAQ", href: "faq.html" },
-  { name: "Cookbook", href: "cookbook.html" },
-  { name: "Security", href: "security.html" },
-  { name: "Gemini", href: "gemini.html" },
-  { name: "Privacy", href: "privacy.html" },
-  { name: "Changelog", href: "changelog.html" },
-  { name: "Contributing", href: "contributing.html" },
-  { name: "Chat", href: "chat.html" },
+interface SidebarGroup {
+  title: string;
+  entries: SidebarEntry[];
+}
+
+const SIDEBAR: SidebarGroup[] = [
+  {
+    title: "Docs",
+    entries: [
+      { name: "Tutorial", href: "tutorial.html" },
+      { name: "Config", href: "config.html" },
+      { name: "Keys", href: "keys.html" },
+      { name: "Hints", href: "hints.html" },
+      { name: "CommandLine", href: "commandline.html" },
+      { name: "Editor", href: "editor.html" },
+      { name: "Extensions", href: "extensions.html" },
+      { name: "Cookbook", href: "cookbook.html" },
+    ],
+  },
+  {
+    title: "Reference",
+    entries: [
+      { name: "API", href: "api.html" },
+      { name: "Excmds", href: "excmds.html" },
+      { name: "Autocmds", href: "autocmds.html" },
+      { name: "Firefox", href: "firefox.html" },
+    ],
+  },
+  {
+    title: "Misc",
+    entries: [
+      { name: "FAQ", href: "faq.html" },
+      { name: "Security", href: "security.html" },
+      { name: "Gemini", href: "gemini.html" },
+      { name: "Privacy", href: "privacy.html" },
+      { name: "Changelog", href: "changelog.html" },
+      { name: "Contributing", href: "contributing.html" },
+      { name: "Chat", href: "chat.html" },
+    ],
+  },
 ];
 
 // overrides for certain cases where we render type declarations differently
@@ -147,10 +167,10 @@ export async function markdown_to_html(
         <meta name="twitter:description" content="${description}" />
         <meta name="twitter:image" content="https://glide-browser.app/logo1024.png" />
 
-        <link rel="icon" href="${rel_to_dist}/logo.png" />
+        <link rel="icon" href="${rel_to_dist}/logo.svg" type="image/svg+xml" />
+        <link rel="icon" href="${rel_to_dist}/logo.png" type="image/png" />
         <link rel="stylesheet" href="${rel_to_dist}/reset.css?v=" />
         <link rel="stylesheet" href="${rel_to_dist}/docs.css?v=" />
-        <link rel="preload" as="image" href="${rel_to_dist}/logo.webp" />
         <link
           rel="preload"
           href="${rel_to_dist}/BerkeleyMono-Regular.woff2"
@@ -220,30 +240,39 @@ export async function markdown_to_html(
                     href="${rel_to_dist}/index.html"
                     class="glide-sidenav-heading-link"
                   >
-                    <img src="${rel_to_dist}/logo.webp" class="glide-sidenav-heading-img" width="48" height="48" alt="Glide logo" />
+                    <!-- inlined copy of logo-inline.svg so the colon follows the theme via currentColor -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" class="glide-sidenav-heading-img" role="img" aria-label="Glide logo"><rect x="12" y="20" width="19" height="19" rx="2" fill="currentColor"/><rect x="12" y="58" width="19" height="19" rx="2" fill="currentColor"/><rect class="logo-cursor" x="45" y="17" width="40" height="62" rx="3" fill="#f59e0b"/></svg>
                     Glide
                   </a>
-                  <button
-                    type="button"
-                    class="search-button"
-                    aria-label="Search"
-                    id="search-button"
-                  >
-                    /
-                  </button>
                 </li>
                 <li>
                   <ul class="sidenav">
+                    <li>
+                      <button
+                        type="button"
+                        class="sidenav-search-button"
+                        id="search-button"
+                      >Search (/)</button>
+                    </li>
                     ${
-    SIDEBAR.map(({ name, href, class: class_, target }) => {
-      const abs = rel_to_dist + "/" + href;
-      return Html.li({
-        class: [
-          abs === current_href ? "is-active" : null,
-          class_,
-        ],
-      }, [Html.a({ href, target }, [name])]);
-    }).join("")
+    SIDEBAR.map(({ title, entries }) =>
+      Html.li({ class: "sidenav-group" }, [
+        Html.element("span", { class: "sidenav-group-title" }, [title]),
+        Html.element(
+          "ul",
+          {},
+          entries.map(({ name, href, class: class_, target }) => {
+            const abs = rel_to_dist + "/" + href;
+            return Html.li({
+              class: [
+                abs === current_href ? "is-active" : null,
+                class_,
+              ],
+            }, [Html.a({ href, target }, [name])]);
+          }),
+        ),
+      ])
+    ).join("")
   }
                     <li>
                       <a

@@ -138,7 +138,54 @@ declare var document: Document;
       throw new Error("The pagefind script has not loaded yet");
     }
 
-    docs.pagefind_ui = new PagefindUI({ element: "#search", showSubResults: true, resetStyles: false });
+    docs.pagefind_ui = new PagefindUI({
+      element: "#search",
+      showSubResults: true,
+      resetStyles: false,
+      pageSize: 25,
+      // rewrite sub-result titles to the full header path, e.g. `API > glide.tabs > glide.tabs.active`
+      processResult: (result: any) => {
+        // indexed heading text can include the `#` anchor suffix and list bullets
+        const clean = (text: string): string => text.trim().replace(/\s*#$/, "").replace(/^•\s*/, "");
+        const page: string | undefined = result?.meta?.title ? clean(result.meta.title) : undefined;
+        const headings: Array<{ element: string; id: string; text: string; location: number }> =
+          (result?.anchors ?? [])
+            .filter((anchor: any) => /^h[1-6]$/.test(anchor.element) && anchor.text)
+            .sort((a: any, b: any) => a.location - b.location);
+
+        for (const sub of result?.sub_results ?? []) {
+          const parts: string[] = page ? [page] : [];
+
+          if (sub.anchor && /^h[1-6]$/.test(sub.anchor.element)) {
+            // walk backwards from the sub-result's heading, collecting each enclosing
+            // heading (skipping h1s as they duplicate the page title)
+            const chain: string[] = [];
+            let level = Number(sub.anchor.element[1]);
+            for (let i = headings.findIndex(h => h.id === sub.anchor.id) - 1; i >= 0 && level > 2; i--) {
+              const heading = headings[i]!;
+              const heading_level = Number(heading.element[1]);
+              if (heading_level < level) {
+                if (heading_level >= 2) {
+                  chain.unshift(clean(heading.text));
+                }
+                level = heading_level;
+              }
+            }
+            parts.push(...chain);
+
+            if (sub.title) {
+              parts.push(clean(sub.title));
+            }
+          } else if (sub.title && sub.title !== page) {
+            parts.push(clean(sub.title));
+          }
+
+          sub.title = parts.join(" > ");
+        }
+
+        return result;
+      },
+    });
     return docs.pagefind_ui!;
   };
 
@@ -166,6 +213,12 @@ declare var document: Document;
     let current_group: HTMLElement | null = null;
     const groups = new Map<string, HTMLElement>();
 
+    // group by the shallowest selected heading level, so pages that only
+    // select h2s (e.g. the changelog versions) still get groups
+    const group_level = Math.min(
+      ...Array.from(headings, heading => parseInt(heading.tagName.charAt(1))),
+    );
+
     headings.forEach((heading) => {
       const level = parseInt(heading.tagName.charAt(1));
 
@@ -180,8 +233,8 @@ declare var document: Document;
       const link = create_element("a", { href: `#${heading.id}`, textContent: text, title: text });
       link.dataset["level"] = level.toString();
 
-      // If it's a top-level heading (h1), create a new group
-      if (level === 1) {
+      // If it's a top-level heading, create a new group
+      if (level === group_level) {
         const group_header = create_element("div", {
           className: "toc-group-header",
           children: [
@@ -462,7 +515,40 @@ declare var document: Document;
     document.addEventListener("touchstart", on_click);
 
     init_toc();
+    init_api_reference();
   });
+
+  /**
+   * On the API reference page, tag each entry's body elements with their
+   * heading depth so they can be indented along with their heading.
+   *
+   * This can't be done in CSS alone as the rendered markdown is a flat list
+   * of siblings; there is no "everything until the next heading" selector.
+   */
+  function init_api_reference() {
+    if (!/\/api(\.html)?$/.test(location.pathname)) {
+      return;
+    }
+
+    const article = query_selector("article article") ?? query_selector("article");
+    if (!article) {
+      return;
+    }
+
+    article.classList.add("api-reference");
+
+    let level = 0;
+    for (const child of Array.from(article.children)) {
+      const heading = child.tagName.match(/^H([1-6])$/);
+      if (heading) {
+        level = child.classList.contains("code-heading") ? parseInt(heading[1]!, 10) : 0;
+        continue;
+      }
+      if (level >= 3) {
+        child.classList.add(`api-body-${level}`);
+      }
+    }
+  }
 
   function query_selector<E extends HTMLElement = HTMLElement>(selectors: string): E | null {
     return document.querySelector<E>(selectors) as any;

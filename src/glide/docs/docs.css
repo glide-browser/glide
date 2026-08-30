@@ -502,9 +502,7 @@ label input {
 
 .shiki {
   padding: 1em;
-  border: 1px solid #666;
-  border-width: 1px;
-  border-radius: 5px;
+  border: var(--border-thickness) solid var(--text-color-alt);
   position: relative;
 }
 
@@ -602,9 +600,16 @@ figcaption {
 
 /* Only apply background color to standalone <code> elements */
 code:not(pre code) {
-  background-color: #313131;
+  background-color: var(--background-color-alt);
   font-weight: 400;
-  color: #e6e6e6;
+  color: var(--text-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  code:not(pre code) {
+    background-color: #313131;
+    color: #e6e6e6;
+  }
 }
 
 sup {
@@ -646,6 +651,56 @@ h2.code-heading {
 h3.code-heading {
   margin-top: 2em !important;
 }
+/* nest the API reference by heading depth: entries are bulleted and their
+ * body content is indented along with them.
+ *
+ * the `.api-reference` and `.api-body-*` classes are added at runtime, see
+ * `init_api_reference()` in docs.ts
+ */
+.api-reference h3.code-heading {
+  margin-left: 2ch;
+}
+.api-reference h4.code-heading {
+  margin-left: 4ch;
+}
+.api-reference h5.code-heading {
+  margin-left: 6ch;
+}
+
+.api-reference :where(h3, h4, h5).code-heading::before {
+  content: "▪ ";
+  color: var(--text-color-alt);
+}
+
+/* !important as e.g. `figure` sets `margin: 0 !important` */
+.api-reference .api-body-3 {
+  margin-left: 4ch !important;
+}
+.api-reference .api-body-4 {
+  margin-left: 6ch !important;
+}
+.api-reference .api-body-5 {
+  margin-left: 8ch !important;
+}
+
+/* method signatures render as "invisible" headers wrapping a <pre>;
+ * make them look like the other reference entry lines */
+:where(h2, h3, h4, h5).code-heading.invisible-header {
+  margin: 2em 0 var(--line-height) !important;
+}
+.api-reference h3.code-heading.invisible-header {
+  margin-left: 2ch !important;
+}
+.api-reference h4.code-heading.invisible-header {
+  margin-left: 4ch !important;
+}
+.api-reference h5.code-heading.invisible-header {
+  margin-left: 6ch !important;
+}
+.code-heading.invisible-header pre {
+  display: inline;
+  margin: 0;
+}
 .code-heading::after {
   display: none !important;
 }
@@ -666,6 +721,10 @@ h3.code-heading {
   position: sticky;
   top: 0px;
   height: 100vh;
+  /* cancel the body's top padding: with it, the sidebar starts one line down
+   * and its 100vh overflows the viewport bottom until scrolled past it */
+  margin-top: calc(-1 * var(--line-height));
+  align-self: flex-start;
   min-width: 25ch;
   width: 20ch;
   padding: calc(var(--line-height)) 2ch;
@@ -680,6 +739,9 @@ h3.code-heading {
   margin-bottom: 0.25em;
   display: flex;
   align-items: center;
+  position: relative;
+  /* line the wordmark up with the tree entry labels below (1.5ch margin + 1.5ch padding) */
+  padding-left: 3ch;
 }
 
 .glide-sidenav-heading-link {
@@ -689,11 +751,27 @@ h3.code-heading {
   flex-grow: 1;
 }
 
+/* the logo sits in the tree gutter, at the root of the tree */
 .glide-sidenav-heading-img {
-  width: 1.25em;
-  height: 1.25em;
-  margin-bottom: -0.25em;
-  margin-right: -0.25em;
+  position: absolute;
+  left: 0.28rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* on hover, the cursor blinks */
+@media (prefers-reduced-motion: no-preference) {
+  .glide-sidenav-heading-link:hover .logo-cursor {
+    animation: logo-cursor-blink 1.2s step-end infinite;
+  }
+}
+
+@keyframes logo-cursor-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .glide-sidenav-heading-link:hover {
@@ -702,6 +780,12 @@ h3.code-heading {
     var(--background-color-alt) 80%,
     transparent 100%
   );
+}
+
+.sidenav-group-title {
+  display: block;
+  color: var(--text-color-alt);
+  font-weight: var(--font-weight-medium);
 }
 
 .sidenav a {
@@ -738,8 +822,7 @@ h3.code-heading {
   left: 1rem;
   z-index: 201;
   background: var(--background-color-alt);
-  border: 1px solid var(--text-color);
-  border-radius: 4px;
+  border: var(--border-thickness) solid var(--text-color);
   padding: 0.5rem;
   cursor: pointer;
   width: 2.5rem;
@@ -787,8 +870,6 @@ h3.code-heading {
 
 .copy-button:hover {
   background: var(--background-color-alt) !important;
-  transition: opacity 0.2s ease;
-  border-radius: 4px;
 }
 
 .copy-button .check-icon {
@@ -805,24 +886,37 @@ h3.code-heading {
 
 /* page-find styling */
 
-.search-button {
+/* the `Search (/)` sidebar entry, styled like the other nav links */
+.sidenav-search-button {
+  display: block;
+  width: 100%;
+  height: auto;
   margin: 0;
-  margin-left: auto;
-  padding: calc(var(--line-height) * 0.25) 1ch;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  font: inherit;
+  line-height: var(--line-height);
+  cursor: pointer;
+}
+
+.sidenav-search-button:hover {
   background: var(--background-color-alt);
-  border: 1px solid hsla(0, 0%, 100%, 0.1);
-  border-radius: 6px;
-  height: unset;
-  line-height: 1;
-  font-size: 1rem;
 }
 
-.search-button:hover {
-  background: var(--background-color);
-  border-color: hsla(0, 0%, 100%, 0.2);
+.sidenav-search-button:active {
+  transform: none;
 }
 
-/* Pagefind UI customization */
+/* Pagefind UI customization.
+ *
+ * Styled as a terminal command palette: a wide framed box, `>` prompt,
+ * and one result per line (title column + truncated excerpt).
+ *
+ * Rules are scoped under `#search` as pagefind's own stylesheet is
+ * injected after ours.
+ */
 #search {
   display: none;
   position: fixed;
@@ -832,129 +926,257 @@ h3.code-heading {
   padding: 1rem;
 }
 
-.pagefind-ui {
-  max-width: 640px;
-  margin: 4rem auto 0;
+#search .pagefind-ui {
+  --pagefind-ui-font: var(--font-family);
+  --pagefind-ui-border-radius: 0;
+  --pagefind-ui-border-width: var(--border-thickness);
+  --pagefind-ui-border: var(--text-color-alt);
+  --pagefind-ui-text: var(--text-color);
+  --pagefind-ui-background: var(--background-color);
+  --pagefind-ui-primary: var(--text-color);
+  max-width: min(100ch, calc(100vw - 4rem));
+  margin: 8vh auto 0;
   background: var(--background-color);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 32px hsla(0, 0%, 0%, 0.4);
-  border: 1px solid hsla(0, 0%, 100%, 0.1);
+  box-shadow: 6px 6px 0 hsla(0, 0%, 0%, 0.4);
+  border: var(--border-thickness) solid var(--text-color);
 }
 
-.pagefind-ui__search-input {
+/* `> query` prompt */
+#search .pagefind-ui__form {
+  position: relative;
+}
+
+#search .pagefind-ui__form::before {
+  content: ">";
+  position: absolute;
+  left: 2ch;
+  top: calc(var(--line-height) / 2);
+  width: auto;
+  height: auto;
+  background: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+  color: var(--text-color-alt);
+  pointer-events: none;
+}
+
+#search .pagefind-ui__search-input {
   width: 100%;
-  padding: 0.75rem 1rem;
+  height: auto;
+  padding: calc(var(--line-height) / 2) 2ch calc(var(--line-height) / 2) 4ch;
   font-size: 1rem;
-  background: var(--background-color);
-  border: 1px solid hsla(0, 0%, 100%, 0.2);
+  font-weight: var(--font-weight-normal);
+  background: transparent;
+  border: none;
+  border-bottom: var(--border-thickness) solid var(--text-color-alt);
   color: var(--text-color);
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  transition: all 0.2s ease;
+  margin: 0;
 }
 
-.pagefind-ui__search-input:focus {
+#search .pagefind-ui__search-input:focus {
   outline: none;
-  border-color: hsla(0, 0%, 0%, 0.4);
-  background: var(--background-color-alt);
+  border-bottom-color: var(--text-color);
 }
 
-/* Style the search input placeholder */
-.pagefind-ui__search-input::placeholder {
+#search .pagefind-ui__search-input::placeholder {
   color: var(--text-color-alt);
   opacity: 0.7;
 }
 
-/* Style the clear button (x) in the search input */
-.pagefind-ui__search-clear {
+/* the clear button (x) in the search input */
+#search .pagefind-ui__search-clear {
+  position: absolute;
+  right: 1ch;
+  height: auto;
+  padding: calc(var(--line-height) / 2) 1ch;
+  background: none;
+  border: none;
+  color: var(--text-color-alt);
+  font-weight: var(--font-weight-normal);
+}
+
+#search .pagefind-ui__search-clear:hover {
   color: var(--text-color);
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
 }
 
-.pagefind-ui__search-clear:hover {
-  opacity: 1;
+/* pagefind's default drawer flexbox adds a huge gap between the input and results */
+#search .pagefind-ui__drawer {
+  display: block;
+  gap: 0;
 }
 
-.pagefind-ui__results-area {
-  margin-top: 1rem;
-  max-height: calc(100vh - 12rem);
+#search .pagefind-ui__results-area {
+  margin: 0;
+  padding: calc(var(--line-height) / 4) 0 calc(var(--line-height) / 2);
+  max-height: min(60vh, calc(100vh - 12rem));
   overflow-y: auto;
 }
 
-.pagefind-ui__result {
-  padding: 1rem;
-  border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+/* the `13 results for tab` counter line, fzf-style below the prompt */
+#search .pagefind-ui__message {
+  box-sizing: border-box;
+  height: auto;
+  padding: 0 2ch calc(var(--line-height) / 4) 3ch;
+  color: var(--text-color-alt);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-normal);
+}
+
+/* results: a flat fzf-style list of lines */
+#search .pagefind-ui__results {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  border-radius: 0;
 }
 
-.pagefind-ui__result:last-child {
-  border-bottom: none;
+#search .pagefind-ui__result {
+  display: block;
+  margin: 0;
+  /* the global `ol li` numbering/padding must not apply here */
+  padding: 0 !important;
+  border: none;
 }
 
-.pagefind-ui__result:hover {
+#search .pagefind-ui__result::before {
+  content: none !important;
+}
+
+#search .pagefind-ui__result-thumb, #search .pagefind-ui__result-image {
+  display: none;
+}
+
+/* line layout: `  Page > Heading   excerpt…` */
+#search .pagefind-ui__result-inner, #search .pagefind-ui__result-nested {
+  display: flex;
+  align-items: baseline;
+  gap: 2ch;
+  margin: 0;
+}
+
+#search .pagefind-ui__result-inner {
+  position: relative;
+  z-index: 0;
+}
+
+/* sub-result lines carry the full header path, so the page-title line is redundant */
+#search .pagefind-ui__result-inner:has(.pagefind-ui__result-nested) {
+  display: block;
+}
+
+#search .pagefind-ui__result-inner:has(.pagefind-ui__result-nested) > .pagefind-ui__result-title,
+#search .pagefind-ui__result-inner:has(.pagefind-ui__result-nested) > .pagefind-ui__result-excerpt {
+  display: none;
+}
+
+#search .pagefind-ui__result-nested {
+  position: relative;
+}
+
+#search .pagefind-ui__result-title {
+  flex: 0 1 auto;
+  max-width: 65%;
+  margin: 0;
+  padding-left: 3ch;
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* make the entire row clickable by stretching the link over it */
+#search .pagefind-ui__result-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+#search .pagefind-ui__result-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+#search .pagefind-ui__result-excerpt {
+  flex: 1 1 0;
+  margin: 0;
+  padding-right: 2ch;
+  color: var(--text-color-alt);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* fzf-style `>` pointer + selection bar on the hovered line */
+#search .pagefind-ui__result-nested:hover {
   background: var(--background-color-alt);
 }
 
-.pagefind-ui__result-title {
+#search .pagefind-ui__result-nested:hover::before {
+  content: ">";
+  position: absolute;
+  left: 1ch;
+  color: #f59e0b;
   font-weight: var(--font-weight-bold);
-  color: var(--text-color);
-  text-decoration: none;
-  font-size: 1.1rem;
 }
 
-.pagefind-ui__result-excerpt {
-  margin-top: 0.5rem;
-  color: var(--text-color);
-  font-size: 0.9rem;
+/* the top-level line needs an overlay bar as its cells have no shared row container */
+#search .pagefind-ui__result-inner:hover:not(:has(.pagefind-ui__result-nested:hover))::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1lh;
+  background: var(--background-color-alt);
+  z-index: -1;
 }
 
-.pagefind-ui__message {
-  color: var(--text-color);
-  text-align: center;
-  padding: 1rem;
+#search .pagefind-ui__result-inner:hover:not(:has(.pagefind-ui__result-nested:hover))::after {
+  content: ">";
+  position: absolute;
+  top: 0;
+  left: 1ch;
+  color: #f59e0b;
+  font-weight: var(--font-weight-bold);
 }
 
-/* Style for highlighted text in results */
-.pagefind-ui__result-excerpt mark, .pagefind-ui__result-title mark {
-  background: #404040;
-  color: #ffffff;
-  padding: 0.1rem 0.2rem;
-  border-radius: 2px;
+/* highlighted matches, terminal-selection yellow */
+#search .pagefind-ui__result mark {
+  background: #f59e0b;
+  color: #111;
+  padding: 0 0.2ch;
   font-weight: bold;
 }
 
-/* Add subtle animation for the highlights */
-.pagefind-ui__result-excerpt mark, .pagefind-ui__result-title mark {
-  animation: highlight-fade-in 0.15s ease-in;
+/* "Load more results", as a quiet `…` line */
+#search .pagefind-ui__button {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0 2ch 0 3ch;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  background: none;
+  border: none;
+  color: var(--text-color-alt);
+  cursor: pointer;
 }
 
-@keyframes highlight-fade-in {
-  from {
-    background: transparent;
-    color: inherit;
-  }
-
-  to {
-    background: #404040;
-    color: #ffffff;
-  }
+#search .pagefind-ui__button::before {
+  content: "… ";
 }
 
-/* Add a subtle transition when hovering over results */
-.pagefind-ui__result {
-  transition: background-color 0.15s ease;
+#search .pagefind-ui__button:hover {
+  background: var(--background-color-alt);
+  color: var(--text-color);
 }
 
-/* Make the title highlights stand out a bit more */
-.pagefind-ui__result-title mark {
-  background: #505050;
-}
-
-/* Add close button */
-.pagefind-ui__close-button {
+/* close button */
+#search .pagefind-ui__close-button {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -966,7 +1188,7 @@ h3.code-heading {
   padding: 0.5rem;
 }
 
-.pagefind-ui__close-button:hover {
+#search .pagefind-ui__close-button:hover {
   opacity: 0.8;
 }
 
@@ -978,9 +1200,8 @@ h3.code-heading {
 /* GitHub-style admonitions */
 .admonition {
   margin: 1rem 0;
-  padding: 1rem;
-  border: 1px solid #999;
-  border-radius: 5px;
+  padding: calc(var(--line-height) / 2) 2ch;
+  border: var(--border-thickness) solid var(--text-color-alt);
   background-color: rgba(255, 255, 255, 0.02);
 }
 
@@ -1033,8 +1254,7 @@ table th, table td {
   padding: 0.5rem 0.75rem;
   margin-bottom: 1.25rem;
   background-color: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  border-radius: 0.25rem;
+  border: var(--border-thickness) solid rgba(245, 158, 11, 0.5);
   color: #92400e;
   font-size: 0.8125rem;
   line-height: 1.2;
@@ -1193,6 +1413,7 @@ table th, table td {
     max-width: 300px;
     height: 100vh;
     z-index: 200;
+    margin-top: 0;
     transition: left 0.3s ease;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
     overflow-y: auto;
@@ -1227,9 +1448,19 @@ table th, table td {
     white-space: nowrap;
   }
 
-  .pagefind-ui {
-    margin: 1rem;
-    padding: 1rem;
+  #search .pagefind-ui {
+    margin: 1rem auto 0;
+    max-width: 100%;
+  }
+
+  /* stack title and excerpt on small screens */
+  #search .pagefind-ui__result-inner, #search .pagefind-ui__result-nested {
+    flex-wrap: wrap;
+    gap: 0 2ch;
+  }
+
+  #search .pagefind-ui__result-title {
+    max-width: 100%;
   }
 
   .copy-button {
