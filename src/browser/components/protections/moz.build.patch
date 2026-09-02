@@ -1,0 +1,13 @@
+diff --git a/browser/components/protections/moz.build b/browser/components/protections/moz.build
+index 0989e17e3e..04747747ab 100644
+--- a/browser/components/protections/moz.build
++++ b/browser/components/protections/moz.build
+@@ -2,6 +2,8 @@
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
++MARIONETTE_MANIFESTS += ["test/marionette/manifest.toml"]
++
+ BROWSER_CHROME_MANIFESTS += ["test/browser/browser.toml"]
+ 
+ XPCSHELL_TESTS_MANIFESTS += ["test/xpcshell/xpcshell.toml"]
