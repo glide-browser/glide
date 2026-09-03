@@ -893,7 +893,9 @@ class GlideBrowserClass {
         url: location.spec,
         get tab_id() {
           return assert_present(
-            GlideBrowser.extension.tabManager.getWrapper(gBrowser.selectedTab),
+            GlideBrowser.extension.tabManager.getWrapper(
+              assert_present(gBrowser.selectedTab, "could not resolve selected tab"),
+            ),
             "could not resolve tab wrapper",
           ).id;
         },
@@ -1921,6 +1923,9 @@ class GlideBrowserClass {
    */
   async upsert_commandline(opts: GlideCommandLineShowOptions = {}) {
     const tab = gBrowser.selectedTab;
+    if (!tab) {
+      return null;
+    }
     const cached = this.#get_cached_commandline(tab);
     if (cached) {
       cached.show(opts);
@@ -1953,6 +1958,9 @@ class GlideBrowserClass {
   }
 
   async toggle_commandline() {
+    if (!gBrowser.selectedTab) {
+      return;
+    }
     const commandline = this.#get_cached_commandline(gBrowser.selectedTab);
     if (!commandline) {
       await this.upsert_commandline();
@@ -1972,6 +1980,9 @@ class GlideBrowserClass {
    * This only returns anything **if** the commandline is open **and** it is focused.
    */
   #get_active_commandline(): GlideCommandLine | null {
+    if (!gBrowser.selectedTab) {
+      return null;
+    }
     const commandline = this.#get_cached_commandline(gBrowser.selectedTab);
     if (!commandline) {
       return null;
@@ -1993,6 +2004,9 @@ class GlideBrowserClass {
   }
 
   get_commandline(): GlideCommandLine | null {
+    if (!gBrowser.selectedTab) {
+      return null;
+    }
     return this.#get_cached_commandline(gBrowser.selectedTab);
   }
 
@@ -2004,7 +2018,7 @@ class GlideBrowserClass {
     return tab._glide_commandline;
   }
 
-  #cache_commandline(tab: BrowserTab, excmdbar: Element): void {
+  #cache_commandline(tab: BrowserTab, excmdbar: GlideCommandLine): void {
     tab._glide_commandline = excmdbar;
   }
 }
