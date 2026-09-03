@@ -97,7 +97,7 @@ pnpm fmt
 Glide inherits a lot of concepts from Firefox, for a quick primer:
 
 1. The main way to interact with the Firefox build system is through the [`mach`](https://firefox-source-docs.mozilla.org/mach/usage.html) CLI, accessible through `pnpm mach`.
-2. Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/testing/browser-chrome/index.html) and can be invoked with `pnpm mach test glide`. More details [here](#tests).
+2. Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/testing/browser-chrome/index.html) and can be invoked with `pnpm test` (or `pnpm mach test glide`). More details [here](#tests).
 3. Files are included in the Firefox build through [JAR Manifests](https://firefox-source-docs.mozilla.org/build/buildsystem/jar-manifests.html).
 4. All interaction with web content is centralised to a single [JS Actor](#js-actors) that we define, [`GlideHandlerChild`](/src/glide/browser/actors/GlideHandlerChild.sys.mts).
 5. JS imports must use Firefox's [`ChromeUtils.importESModule()`](https://firefox-source-docs.mozilla.org/jsloader/system-modules.html), types can be imported with `import type { .. } from '...'`.
@@ -151,7 +151,7 @@ The config file in `src/glide.ts` will take precedence over the user-wide config
 
 ### Tests
 
-Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/dom/ipc/jsactors.html) and located in [`path:src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
+Tests are written using [mochitest](https://firefox-source-docs.mozilla.org/testing/browser-chrome/index.html) and located in [`path:src/glide/browser/base/content/test/`](/src/glide/browser/base/content/test/).
 
 You can run all Glide's tests with:
 
@@ -164,7 +164,7 @@ pnpm mach test glide
 By default, tests run in a full browser window, however this means that you cannot do anything else while the tests are running. Instead, you can run tests in the background with:
 
 ```bash
-pnpm test glide --headless
+pnpm test --headless
 ```
 
 When adding a new test file, you must include it in the `path:browser.toml` file for that test directory, for example:
@@ -224,16 +224,32 @@ add_task(...).only();
 
 <!-- TODO: mention docs type checking -->
 
-You can also filter tests by directory:
+You can also filter tests by
+
+- Directory:
 
 ```bash
+pnpm test glide/browser/base/content/test/config/
+# or
 pnpm mach test glide/browser/base/content/test/config/
 ```
 
-Or individual file:
+- Individual file:
 
 ```bash
+pnpm test glide/browser/base/content/test/config/dist/browser_include.js
+# or
 pnpm mach test glide/browser/base/content/test/config/dist/browser_include.js
+# or use dist/$file.js shorthand
+pnpm test dist/browser_include.js
+```
+
+- Test label:
+
+```bash
+pnpm test browser_include
+# or
+pnpm mach test browser_include
 ```
 
 > [!NOTE]
