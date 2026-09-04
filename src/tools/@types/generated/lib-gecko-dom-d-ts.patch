@@ -1,39 +1,48 @@
 diff --git a/tools/@types/generated/lib.gecko.dom.d.ts b/tools/@types/generated/lib.gecko.dom.d.ts
-index bc1e95a67bbdbdc23f87bbd4e63b76d707ecef4d..a4651d9a77917b9d6e8341ddc274023228c6bdae 100644
+index 025d03e5a4942efd603cb4e5fd93a722db57900c..4be6b92d68c2294c82e6574a72fe8d3887cefeec 100644
 --- a/tools/@types/generated/lib.gecko.dom.d.ts
 +++ b/tools/@types/generated/lib.gecko.dom.d.ts
-@@ -18202,22 +18202,6 @@ declare var ReadableByteStreamController: {
+@@ -29065,31 +29065,6 @@ declare var ReadableByteStreamController: {
      isInstance: IsInstance<ReadableByteStreamController>;
  };
  
+-/** <!-- binding_to(idl, class, WEBIDL_ReadableStream) --> */
 -interface ReadableStream {
+-    /** <!-- binding_to(idl, attribute, WEBIDL_ReadableStream_locked) --> */
 -    readonly locked: boolean;
+-    /** <!-- binding_to(idl, method, WEBIDL_ReadableStream_cancel) --> */
 -    cancel(reason?: any): Promise<void>;
+-    /** <!-- binding_to(idl, method, WEBIDL_ReadableStream_getReader) --> */
 -    getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader;
+-    /** <!-- binding_to(idl, method, WEBIDL_ReadableStream_pipeThrough) --> */
 -    pipeThrough(transform: ReadableWritablePair, options?: StreamPipeOptions): ReadableStream;
+-    /** <!-- binding_to(idl, method, WEBIDL_ReadableStream_pipeTo) --> */
 -    pipeTo(destination: WritableStream, options?: StreamPipeOptions): Promise<void>;
+-    /** <!-- binding_to(idl, method, WEBIDL_ReadableStream_tee) --> */
 -    tee(): ReadableStream[];
 -}
 -
 -declare var ReadableStream: {
 -    prototype: ReadableStream;
 -    new(underlyingSource?: any, strategy?: QueuingStrategy): ReadableStream;
+-    /** <!-- binding_to(idl, attribute, WEBIDL_ReadableStream_isInstance) --> */
 -    isInstance: IsInstance<ReadableStream>;
+-    /** <!-- binding_to(idl, method, WEBIDL_ReadableStream_from) --> */
 -    from(asyncIterable: any): ReadableStream;
 -};
 -
+ /** <!-- binding_to(idl, class, WEBIDL_ReadableStreamBYOBReader) --> */
  interface ReadableStreamBYOBReader extends ReadableStreamGenericReader {
-     read(view: ArrayBufferView, options?: ReadableStreamBYOBReaderReadOptions): Promise<ReadableStreamReadResult>;
-     releaseLock(): void;
-@@ -26099,6 +26083,7 @@ declare var XULCommandEvent: {
+     /** <!-- binding_to(idl, method, WEBIDL_ReadableStreamBYOBReader_read) --> */
+@@ -41940,6 +41915,7 @@ declare var XULCommandEvent: {
  };
  
  interface XULElementEventMap extends ElementEventMap, GlobalEventHandlersEventMap, OnErrorEventHandlerForNodesEventMap, TouchEventHandlersEventMap {
 +    keypress: KeyboardEvent
  }
  
- interface XULElement extends Element, ElementCSSInlineStyle, ElementOffsetAttributes, GlobalEventHandlers, HTMLOrSVGOrMathMLElement, OnErrorEventHandlerForNodes, TouchEventHandlers {
-@@ -28462,11 +28447,6 @@ interface FileSystemDirectoryHandle {
+ /** <!-- binding_to(idl, class, WEBIDL_XULElement) --> */
+@@ -45421,11 +45397,6 @@ interface FileSystemDirectoryHandle {
      values(): AsyncIterableIterator<FileSystemHandle>;
  }
  

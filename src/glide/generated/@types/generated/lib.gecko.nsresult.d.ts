@@ -228,6 +228,9 @@ interface nsIXPCComponents_Results {
   /** Factory already exists */
   NS_ERROR_FACTORY_EXISTS: 0xc1f30100;
 
+  /** Invalid signature */
+  NS_ERROR_INVALID_SIGNATURE: 0x804b003a;
+
   // added from nsError.h on Feb 28 2001...
 
   /** Stream closed */

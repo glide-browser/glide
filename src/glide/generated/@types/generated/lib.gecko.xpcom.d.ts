@@ -2571,12 +2571,80 @@ interface nsIContentClassifierRemoteSettingsClient extends nsISupports {
 
 // https://searchfox.org/firefox-main/source/toolkit/components/content-classifier/nsIContentClassifierService.idl
 
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIContentClassifierProbeRequest) --> */
+interface nsIContentClassifierProbeRequest extends nsISupports {
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_url) --> */
+  readonly url: string;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_sourceUrl) --> */
+  readonly sourceUrl: string;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_topWindowUrl) --> */
+  readonly topWindowUrl: string;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_requestType) --> */
+  readonly requestType: string;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_privateBrowsing) --> */
+  readonly privateBrowsing: boolean;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_forceThirdPartyToTop) --> */
+  readonly forceThirdPartyToTop: boolean;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeRequest_isNonRecommendedAddon) --> */
+  readonly isNonRecommendedAddon: boolean;
+}
+
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIContentClassifierProbeResult) --> */
+interface nsIContentClassifierProbeResult extends nsISupports {
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeResult_featureName) --> */
+  readonly featureName: string;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeResult_matched) --> */
+  readonly matched: boolean;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeResult_exception) --> */
+  readonly exception: boolean;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeResult_important) --> */
+  readonly important: boolean;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeResult_engineResult) --> */
+  readonly engineResult: nsresult;
+}
+
+}  // global
+
+/** <!-- binding_to(idl, class, XPIDL_nsIContentClassifierService_ProbeStatus) --> */
+declare enum nsIContentClassifierService_ProbeStatus {
+  /** <!-- binding_to(idl, const, XPIDL_nsIContentClassifierService_ProbeStatus_Miss) --> */
+  Miss = 0,
+  /** <!-- binding_to(idl, const, XPIDL_nsIContentClassifierService_ProbeStatus_Hit) --> */
+  Hit = 1,
+  /** <!-- binding_to(idl, const, XPIDL_nsIContentClassifierService_ProbeStatus_Exception) --> */
+  Exception = 2,
+  /** <!-- binding_to(idl, const, XPIDL_nsIContentClassifierService_ProbeStatus_ImportantHit) --> */
+  ImportantHit = 3,
+  /** <!-- binding_to(idl, const, XPIDL_nsIContentClassifierService_ProbeStatus_ImportantException) --> */
+  ImportantException = 4,
+}
+
+declare global {
+
+namespace nsIContentClassifierService {
+  type ProbeStatus = nsIContentClassifierService_ProbeStatus;
+}
+
 /** <!-- binding_to(idl, interface_name, XPIDL_nsIContentClassifierService) --> */
-interface nsIContentClassifierService extends nsISupports {
+interface nsIContentClassifierService extends nsISupports, Enums<typeof nsIContentClassifierService_ProbeStatus> {
   /** <!-- binding_to(idl, method, XPIDL_nsIContentClassifierService_onListsChanged) --> */
   onListsChanged(aUpdated: string[], aRemoved: string[]): void;
   /** <!-- binding_to(idl, method, XPIDL_nsIContentClassifierService_getFeatureNames) --> */
   getFeatureNames(): string[];
+  /** <!-- binding_to(idl, method, XPIDL_nsIContentClassifierService_probeBlocking) --> */
+  probeBlocking(aRequest: nsIContentClassifierProbeRequest): Promise<any>;
+  /** <!-- binding_to(idl, method, XPIDL_nsIContentClassifierService_probeAnnotate) --> */
+  probeAnnotate(aRequest: nsIContentClassifierProbeRequest): Promise<any>;
+  /** <!-- binding_to(idl, method, XPIDL_nsIContentClassifierService_probeFeature) --> */
+  probeFeature(aFeatureName: string, aRequest: nsIContentClassifierProbeRequest): Promise<any>;
+}
+
+/** <!-- binding_to(idl, interface_name, XPIDL_nsIContentClassifierProbeReport) --> */
+interface nsIContentClassifierProbeReport extends nsISupports {
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeReport_status) --> */
+  readonly status: nsIContentClassifierService.ProbeStatus;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsIContentClassifierProbeReport_results) --> */
+  readonly results: nsIContentClassifierProbeResult[];
 }
 
 // https://searchfox.org/firefox-main/source/dom/events/nsIEventListenerService.idl
@@ -5100,8 +5168,6 @@ interface nsIRemoteTab extends nsISupports, Enums<typeof nsIRemoteTab_Navigation
   readonly browsingContext: BrowsingContext;
   /** <!-- binding_to(idl, attribute, XPIDL_nsIRemoteTab_hasPresented) --> */
   readonly hasPresented: boolean;
-  /** <!-- binding_to(idl, method, XPIDL_nsIRemoteTab_transmitPermissionsForPrincipal) --> */
-  transmitPermissionsForPrincipal(aPrincipal: nsIPrincipal): void;
   /** <!-- binding_to(idl, method, XPIDL_nsIRemoteTab_createAboutBlankDocumentViewer) --> */
   createAboutBlankDocumentViewer(aPrincipal: nsIPrincipal, aPartitionedPrincipal: nsIPrincipal): void;
   /** <!-- binding_to(idl, method, XPIDL_nsIRemoteTab_maybeCancelContentJSExecution) --> */
@@ -26543,7 +26609,10 @@ interface nsIXPCComponents_Interfaces {
   nsICommandLineValidator: nsJSIID<nsICommandLineValidator>;
   nsIEditingSession: nsJSIID<nsIEditingSession>;
   nsIContentClassifierRemoteSettingsClient: nsJSIID<nsIContentClassifierRemoteSettingsClient>;
-  nsIContentClassifierService: nsJSIID<nsIContentClassifierService>;
+  nsIContentClassifierProbeRequest: nsJSIID<nsIContentClassifierProbeRequest>;
+  nsIContentClassifierProbeResult: nsJSIID<nsIContentClassifierProbeResult>;
+  nsIContentClassifierService: nsJSIID<nsIContentClassifierService, typeof nsIContentClassifierService_ProbeStatus>;
+  nsIContentClassifierProbeReport: nsJSIID<nsIContentClassifierProbeReport>;
   nsIEventListenerChange: nsJSIID<nsIEventListenerChange>;
   nsIListenerChangeListener: nsJSIID<nsIListenerChangeListener>;
   nsIEventListenerInfo: nsJSIID<nsIEventListenerInfo>;

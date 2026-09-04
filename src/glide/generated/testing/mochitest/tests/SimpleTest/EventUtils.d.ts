@@ -188,77 +188,85 @@ function synthesizeMouseAtPoint(aLeft: number, aTop: number, aEvent: MouseEventD
 function synthesizeMouseAtCenter(aTarget: Element, aEvent: MouseEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
 /**
  * @typedef {object} TouchEventData
- * @property {boolean} [asyncEnabled] - If `true`, the event is
- * dispatched to the parent process through APZ, without being injected
- * into the OS event queue.
+ *
  * @property {string} [type] - The touch event type. If undefined,
- * "touchstart" and "touchend" will be synthesized at same point.
- * @property {number | number[]} [id] - The touch id. If you don't specify this,
- * default touch id will be used for first touch and further touch ids
- * are the values incremented from the first id.
- * @property {number | number[]} [rx] - The X radius in CSS pixels of the touch
- * @property {number | number[]} [ry] - The Y radius in CSS pixels of the touch
- * @property {number | number[]} [angle] - The angle in degrees
- * @property {number | number[]} [force] - The force of the touch
- * @property {number | number[]} [tiltX] - The X tilt of the touch
- * @property {number | number[]} [tiltY] - The Y tilt of the touch
- * @property {number | number[]} [twist] - The twist of the touch
- * @property {number | number[]} [altitudeAngle] - The altitude angle of the touch
- * @property {number | number[]} [azimuthAngle] - The azimuth angle of the touch
+ *     "touchstart" and "touchend" will be synthesized at same point.
+ * @property {number | Array<number>} [id] - The touch id. If you don't specify this,
+ *     default touch id will be used for first touch and further touch ids
+ *     are the values incremented from the first id.
+ * @property {boolean} [asyncEnabled] - If `true`, the event is
+ *     dispatched to the parent process through APZ, without being injected
+ *     into the OS event queue.
+ * @property {number | Array<number>} [rx] - The X radius in CSS pixels of the touch
+ * @property {number | Array<number>} [ry] - The Y radius in CSS pixels of the touch
+ * @property {number | Array<number>} [angle] - The angle in degrees
+ * @property {number | Array<number>} [force] - The force of the touch
+ * @property {number | Array<number>} [tiltX] - The X tilt of the touch
+ * @property {number | Array<number>} [tiltY] - The Y tilt of the touch
+ * @property {number | Array<number>} [twist] - The twist of the touch
+ * @property {number | Array<number>} [altitudeAngle] - The altitude angle of the touch
+ * @property {number | Array<number>} [azimuthAngle] - The azimuth angle of the touch
  */
 /**
- * Synthesize one or more touches on aTarget. aTarget can be either Element
- * or Array of Elements.  aOffsetX, aOffsetY, aEvent.id, aEvent.rx, aEvent.ry,
- * aEvent.angle, aEvent.force, aEvent.tiltX, aEvent.tiltY and aEvent.twist can
- * be either number or array of numbers (can be mixed).  If you specify array
- * to synthesize a multi-touch, you need to specify same length arrays.  If
- * you don't specify array to them, same values (or computed default values for
- * aEvent.id) are used for all touches.
+ * Synthesize one or more touches on aTarget.
  *
- * @param {Element | Element[]} aTarget - The target element which you specify
- * relative offset from its top-left.
- * @param {number | number[]} aOffsetX - The relative offset from left of aTarget.
- * @param {number | number[]} aOffsetY - The relative offset from top of aTarget.
- * @param {TouchEventData} aEvent - Details of the touch event to dispatch
- * @param {DOMWindow} [aWindow] - DOM window used to dispatch the event.
- * @param {Function} [aCallback] - A callback function that is invoked when the
- *                                 touch event is dispatched.
+ * Parameters except `aWindow`, `aCallback`, `aEvent.type` and
+ * `aEvent.asyncEnabled` can be either number or an array of
+ * numbers (can be mixed). If you specify an array to synthesize
+ * a multi-touch, all arrays need the same length. If you don't
+ * specify array to them, same values are used for all touches.
  *
- * @returns true if and only if aEvent.type is specified and default of the
- * event is prevented.
- */
-function synthesizeTouch(aTarget: Element | Element[], aOffsetX: number | number[], aOffsetY: number | number[], aEvent?: TouchEventData, aWindow?: DOMWindow, aCallback?: Function): any;
-/**
- * Synthesize one or more touches at the points. aLeft, aTop, aEvent.id,
- * aEvent.rx, aEvent.ry, aEvent.angle, aEvent.force, aEvent.tiltX, aEvent.tiltY
- * and aEvent.twist can be either number or array of numbers (can be mixed).
- * If you specify array to synthesize a multi-touch, you need to specify same
- * length arrays.  If you don't specify array to them, same values are used for
- * all touches.
- *
- * @param {number | number[]} aLeft - The relative offset from left of aTarget.
- * @param {number | number[]} aTop - The relative offset from top of aTarget.
+ * @param {Element | Array<Element>} aTarget - DOM element(s) to dispatch the event on.
+ * @param {number | Array<number>} aOffsetX - The relative offset from left of `aTarget`.
+ * @param {number | Array<number>} aOffsetY - The relative offset from top of `aTarget`.
  * @param {TouchEventData} aEvent - Details of the touch event to dispatch
  * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
  * @param {Function} [aCallback] - A callback function that is invoked when the
  *                                 touch event is dispatched.
  *
- * @returns true if and only if aEvent.type is specified and default of the
- * event is prevented.
+ * @returns true if and only if aEvent.type is specified
+ *          and default of the event is prevented.
  */
-function synthesizeTouchAtPoint(aLeft: number | number[], aTop: number | number[], aEvent?: TouchEventData, aWindow?: DOMWindow, aCallback?: Function): any;
+function synthesizeTouch(aTarget: Element | Array<Element>, aOffsetX: number | Array<number>, aOffsetY: number | Array<number>, aEvent?: TouchEventData, aWindow?: DOMWindow, aCallback?: Function): any;
 /**
- * Synthesize one or more touches at the center of your target
+ * Synthesize a touch event at the center of `aTarget`.
  *
- * @param {Element | Element[]} aTarget - The target element
- * @param {TouchEventData} aEvent - Details of the touch event to dispatch
+ * Parameters except `aTarget`, `aWindow`, `aCallback`, `aEvent.type`
+ * and `aEvent.asyncEnabled` can be either number or an array of
+ * numbers (can be mixed). If you specify an array to synthesize
+ * a multi-touch, all arrays need the same length. If you don't
+ * specify array to them, same values are used for all touches.
+ *
+ * @param {Element} aTarget - DOM element to dispatch the event on.
+ * @param {TouchEventData} aEvent - Details of the touch event to dispatch.
+ * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
+ * @param {Function} [aCallback] - A callback function that is invoked when the
+ *     touch event is dispatched.
+ *
+ * @returns true if and only if aEvent.type is specified
+ *          and default of the event is prevented.
+ */
+function synthesizeTouchAtCenter(aTarget: Element, aEvent: TouchEventData, aWindow?: DOMWindow, aCallback?: Function): any;
+/**
+ * Synthesize one or more touches at the points.
+ *
+ * Parameters except `aWindow`, `aCallback`, `aEvent.type` and
+ * `aEvent.asyncEnabled` can be either number or an array of
+ * numbers (can be mixed). If you specify an array to synthesize
+ * a multi-touch, all arrays need the same length. If you don't
+ * specify array to them, same values are used for all touches.
+ *
+ * @param {number | Array<number>} aLeft - Floating-point value for the X offset in CSS pixels.
+ * @param {number | Array<number>} aTop - Floating-point value for the Y offset in CSS pixels.
+ * @param {TouchEventData} aEvent - Details of the touch event to dispatch.
  * @param {DOMWindow} [aWindow=window] - DOM window used to dispatch the event.
  * @param {Function} [aCallback] - A callback function that is invoked when the
  *                                 touch event is dispatched.
  *
- * @returns {boolean} Whether the event had preventDefault() called on it.
+ * @returns true if and only if aEvent.type is specified
+ *          and default of the event is prevented.
  */
-function synthesizeTouchAtCenter(aTarget: Element | Element[], aEvent: TouchEventData, aWindow?: DOMWindow, aCallback?: Function): boolean;
+function synthesizeTouchAtPoint(aLeft: number | Array<number>, aTop: number | Array<number>, aEvent?: TouchEventData, aWindow?: DOMWindow, aCallback?: Function): any;
 /**
  * @typedef {object} WheelEventData
  * @property {string} [accessKey] - The character or key associated with
@@ -1350,8 +1358,6 @@ const QUERY_CONTENT_FLAG_SELECTION_FIND: 128;
 const QUERY_CONTENT_FLAG_SELECTION_URLSECONDARY: 256;
 const QUERY_CONTENT_FLAG_SELECTION_URLSTRIKEOUT: 512;
 const QUERY_CONTENT_FLAG_OFFSET_RELATIVE_TO_INSERTION_POINT: 1024;
-const SELECTION_SET_FLAG_USE_NATIVE_LINE_BREAK: 0;
-const SELECTION_SET_FLAG_USE_XP_LINE_BREAK: 1;
 const SELECTION_SET_FLAG_REVERSE: 2;
 class EventCounter {
     constructor(aTarget: any, aType: any, aOptions?: {});
@@ -1439,12 +1445,6 @@ type MouseEventData = {
 };
 type TouchEventData = {
     /**
-     * - If `true`, the event is
-     * dispatched to the parent process through APZ, without being injected
-     * into the OS event queue.
-     */
-    asyncEnabled?: boolean;
-    /**
      * - The touch event type. If undefined,
      * "touchstart" and "touchend" will be synthesized at same point.
      */
@@ -1454,43 +1454,49 @@ type TouchEventData = {
      * default touch id will be used for first touch and further touch ids
      * are the values incremented from the first id.
      */
-    id?: number | number[];
+    id?: number | Array<number>;
+    /**
+     * - If `true`, the event is
+     * dispatched to the parent process through APZ, without being injected
+     * into the OS event queue.
+     */
+    asyncEnabled?: boolean;
     /**
      * - The X radius in CSS pixels of the touch
      */
-    rx?: number | number[];
+    rx?: number | Array<number>;
     /**
      * - The Y radius in CSS pixels of the touch
      */
-    ry?: number | number[];
+    ry?: number | Array<number>;
     /**
      * - The angle in degrees
      */
-    angle?: number | number[];
+    angle?: number | Array<number>;
     /**
      * - The force of the touch
      */
-    force?: number | number[];
+    force?: number | Array<number>;
     /**
      * - The X tilt of the touch
      */
-    tiltX?: number | number[];
+    tiltX?: number | Array<number>;
     /**
      * - The Y tilt of the touch
      */
-    tiltY?: number | number[];
+    tiltY?: number | Array<number>;
     /**
      * - The twist of the touch
      */
-    twist?: number | number[];
+    twist?: number | Array<number>;
     /**
      * - The altitude angle of the touch
      */
-    altitudeAngle?: number | number[];
+    altitudeAngle?: number | Array<number>;
     /**
      * - The azimuth angle of the touch
      */
-    azimuthAngle?: number | number[];
+    azimuthAngle?: number | Array<number>;
 };
 type WheelEventData = {
     /**

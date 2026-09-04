@@ -11,8 +11,6 @@ export const AppConstants: Readonly<{
   // defines: https://wiki.mozilla.org/Platform/Channel-specific_build_defines
   NIGHTLY_BUILD: boolean;
 
-  ENABLE_EXPLICIT_RESOURCE_MANAGEMENT: boolean;
-
   RELEASE_OR_BETA: boolean;
 
   EARLY_BETA_OR_EARLIER: boolean;
