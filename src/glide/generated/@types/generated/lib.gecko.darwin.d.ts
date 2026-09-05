@@ -40,6 +40,9 @@ interface nsIMacShellService extends nsIShellService {
   showDesktopPreferences(): void;
   showSecurityPreferences(aPaneID: string): void;
   getAvailableApplicationsForProtocol(protocol: string): string[][];
+  enableLaunchOnLogin(): boolean;
+  disableLaunchOnLogin(): boolean;
+  getLaunchOnLoginEnabled(): boolean;
 }
 
 // https://searchfox.org/firefox-main/source/widget/nsIMacDockSupport.idl

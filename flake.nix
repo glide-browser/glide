@@ -77,14 +77,14 @@
           doCheck = false;
         });
 
-        # Firefox requires NSS >= 3.127, but nixpkgs only has 3.124 at the time of writing.
+        # Firefox requires NSS >= 3.128, but nixpkgs only has 3.124 at the time of writing.
         nss_latest = pkgs.nss_latest.overrideAttrs (old: rec {
-          version = "3.127";
+          version = "3.128";
           src = pkgs.fetchFromGitHub {
             owner = "nss-dev";
             repo = "nss";
             rev = "NSS_${lib.replaceStrings ["."] ["_"] version}_RTM";
-            hash = "sha256-SiaKDkDTHqhTCs/pcwOAk0lgIayeMKOwGLAZr9WKS4Q=";
+            hash = "sha256-C9SGEyoxR16F6j7zOUsudS0aH/qIHc7DgV5FbBbz90Q=";
           };
         });
 

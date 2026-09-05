@@ -1,5 +1,5 @@
 diff --git a/python/mach/mach/util.py b/python/mach/mach/util.py
-index f7f023567579c407497e484673e52728043c8bf4..211dade42ebf49d3821845348d0607d2a48b60e2 100644
+index b225876a3be3f921c8501209288343c61c2959c8..4a9a74304c4d15fcfec5ecf1572cde32987281ff 100644
 --- a/python/mach/mach/util.py
 +++ b/python/mach/mach/util.py
 @@ -31,7 +31,8 @@ def setenv(key, value):
@@ -22,8 +22,8 @@ index f7f023567579c407497e484673e52728043c8bf4..211dade42ebf49d3821845348d0607d2
          state_dir.mkdir(mode=0o770, parents=True)
          # Save the topsrcdir that this state dir corresponds to so we can clean
          # it up in the event its srcdir was deleted.
-@@ -77,9 +79,9 @@ def get_state_dir(
-     return str(state_dir)
+@@ -101,9 +103,9 @@ def get_global_machrc_path():
+     return Path(get_state_dir()) / "machrc"
  
  
 -def get_virtualenv_base_dir(topsrcdir):

@@ -14,7 +14,6 @@ interface JSServices {
   clearData: nsIClearDataService;
   clipboard: nsIClipboard;
   console: nsIConsoleService;
-  cookieBanners: nsICookieBannerService;
   cookies: nsICookieManager & nsICookieService;
   cpmm: ContentProcessMessageManager;
   dirsvc: nsIDirectoryService & nsIProperties;

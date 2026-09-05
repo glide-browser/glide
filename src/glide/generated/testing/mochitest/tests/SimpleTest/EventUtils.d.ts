@@ -780,9 +780,10 @@ function synthesizeQueryCaretRect(aOffset: any, aWindow: any): any;
  * @param aReverse If true, the selection is from |aOffset + aLength| to
  *                 |aOffset|.  Otherwise, from |aOffset| to |aOffset + aLength|.
  * @param aWindow  Optional (If null, current |window| will be used)
+ * @param aFlags   Additional eSetSelection event flags.
  * @return         True, if succeeded.  Otherwise false.
  */
-function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: any, aWindow?: Window & typeof globalThis): Promise<any>;
+function synthesizeSelectionSet(aOffset: any, aLength: any, aReverse: any, aWindow?: Window & typeof globalThis, aFlags?: number): Promise<any>;
 /**
  * Synthesize a query text rect event.
  *

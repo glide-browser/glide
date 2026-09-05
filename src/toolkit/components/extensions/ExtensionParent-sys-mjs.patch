@@ -1,8 +1,8 @@
 diff --git a/toolkit/components/extensions/ExtensionParent.sys.mjs b/toolkit/components/extensions/ExtensionParent.sys.mjs
-index 962e2c779aaa74f96f0d1a2c5ac7fb97ca1b87ec..c11c549beef7e13f10473d5eb9f860f2824b3157 100644
+index ddc2bc53b4b2144e245910e42bb6c2240495979b..1b873b12d919c92bbfba9c954be8d399515fb87c 100644
 --- a/toolkit/components/extensions/ExtensionParent.sys.mjs
 +++ b/toolkit/components/extensions/ExtensionParent.sys.mjs
-@@ -749,7 +749,12 @@ class ContentScriptContextParent extends ProxyContextParent {}
+@@ -809,7 +809,12 @@ class ContentScriptContextParent extends ProxyContextParent {}
   * background script, a tab page, or a popup, running in
   * ExtensionChild.sys.mjs.
   */
@@ -13,12 +13,12 @@ index 962e2c779aaa74f96f0d1a2c5ac7fb97ca1b87ec..c11c549beef7e13f10473d5eb9f860f2
 +  // glide-original
 +  // class ExtensionPageContextParent extends ProxyContextParent {
 +  // glide-override-end
-   constructor(envType, extension, params, browsingContext) {
-     super(envType, extension, params, browsingContext, extension.principal);
+   constructor(envType, extension, params, actor) {
+     super(envType, extension, params, actor, extension.principal);
  
-@@ -1185,6 +1190,16 @@ ParentAPIManager = {
- 
-     verifyActorForContext(actor, context);
+@@ -1257,6 +1262,16 @@ ParentAPIManager = {
+     let context = this.getContext(data.childId, actor);
+     let target = actor.browsingContext?.top.embedderElement;
  
 +    // -------------------- glide message overrides --------------------
 +    if (data.path === 'glide.sendMessage') {

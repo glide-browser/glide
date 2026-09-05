@@ -586,6 +586,7 @@ export const WINDOW_PROPERTIES = new Set([
   "PaymentRequestUpdateEvent",
   "PaymentResponse",
   "Performance",
+  "PerformanceContainerTiming",
   "PerformanceEntry",
   "PerformanceEventTiming",
   "PerformanceMark",

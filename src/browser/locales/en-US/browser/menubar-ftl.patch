@@ -1,11 +1,11 @@
 diff --git a/browser/locales/en-US/browser/menubar.ftl b/browser/locales/en-US/browser/menubar.ftl
-index c66c0c5dff38e910837510952e9ef4b6426b709b..a2cec9dc6e496232d4bfae8e6cadab8e16fa063a 100644
+index d29e2b1fbc59a2fda7f982a09600c260d148c248..d5188d73cbb39e4295d196ce91dda58e8b0dd5e4 100644
 --- a/browser/locales/en-US/browser/menubar.ftl
 +++ b/browser/locales/en-US/browser/menubar.ftl
 @@ -378,3 +378,7 @@ menu-report-broken-site =
  # use the browser. "Share" here means recommending or referring the browser
- menu-referrals =
-     .label = Share { -brand-shorter-name }
+ menu-referrals2 =
+     .label = Share { -brand-product-name }
 +
 +# Glide
 +menu-glide-mode =
