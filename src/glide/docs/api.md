@@ -207,7 +207,7 @@ text-decoration: none;
 
 # `glide` {% id="glide" %}
 
-## • `glide.ctx` {% id="glide.ctx" %}
+## `glide.ctx` {% id="glide.ctx" %}
 
 ### `glide.ctx.mode: GlideMode` {% id="glide.ctx.mode" %}
 
@@ -241,7 +241,7 @@ Whether or not the currently focused element is editable.
 
 This includes but is not limited to `html:<textarea>`, `html:<input>`, `contenteditable=true`.
 
-## • `glide.o: GlideOptions` {% id="glide.o" %}
+## `glide.o: GlideOptions` {% id="glide.o" %}
 
 Set browser-wide options.
 
@@ -495,13 +495,13 @@ glide.o.gemini_styles = glide.o.gemini_styles + css`
 
 **note**: Buffer specific overrides via `glide.bo` are not supported yet.
 
-## • `glide.bo: Partial<Omit<glide.Options, "gemini_styles">>` {% id="glide.bo" %}
+## `glide.bo: Partial<Omit<glide.Options, "gemini_styles">>` {% id="glide.bo" %}
 
 Set buffer specific options.
 
 This has the exact same API as {% link href="#glide.o" class="go-to-def" %} `ts:glide.o`{% /link %}.
 
-## • `glide.options` {% id="glide.options" %}
+## `glide.options` {% id="glide.options" %}
 
 {% api-heading id="glide.options.get" %}
 glide.options.get(name): glide.Options[Name]
@@ -509,7 +509,7 @@ glide.options.get(name): glide.Options[Name]
 
 Returns either a buffer-specific option, or the global version. In that order
 
-## • `glide.env` {% id="glide.env" %}
+## `glide.env` {% id="glide.env" %}
 
 {% api-heading id="glide.env.get" %}
 glide.env.get(name): string | null
@@ -535,7 +535,7 @@ Does _not_ error if the environment variable did not already exist.
 
 Returns the value of the deleted environment variable, if it did not exist `null` is returned.
 
-## • `glide.process` {% id="glide.process" %}
+## `glide.process` {% id="glide.process" %}
 
 {% api-heading id="glide.process.spawn" %}
 glide.process.spawn(command, args?, opts?): Promise<glide.Process>
@@ -570,7 +570,7 @@ Spawn a new process and wait for it to exit.
 
 See {% link href="#glide.process.spawn" class="go-to-def" %} `ts:glide.process.spawn`{% /link %} for more information.
 
-## • `glide.autocmds` {% id="glide.autocmds" %}
+## `glide.autocmds` {% id="glide.autocmds" %}
 
 {% api-heading id="glide.autocmds.remove" %}
 glide.autocmds.remove(event, callback): boolean
@@ -593,7 +593,7 @@ glide.autocmds.create(
 
 If the given event/callback does not correspond to any previously created autocmds, then `false` is returned.
 
-## • `glide.styles` {% id="glide.styles" %}
+## `glide.styles` {% id="glide.styles" %}
 
 {% api-heading id="glide.styles.add" %}
 glide.styles.add(styles, opts?): void
@@ -645,7 +645,7 @@ glide.styles.get(id): string | undefined
 
 Returns the CSS string for the given `id`, or `undefined` if no styles have been registered with that ID.
 
-## • `glide.prefs` {% id="glide.prefs" %}
+## `glide.prefs` {% id="glide.prefs" %}
 
 {% api-heading id="glide.prefs.set" %}
 glide.prefs.set(name, value): void
@@ -693,7 +693,7 @@ _temporary_ is determined by the lifetime of the return value, e.g.
 // ... now outside the block, `foo` is set to its previous value
 ```
 
-## • `glide.g: GlideGlobals` {% id="glide.g" %}
+## `glide.g: GlideGlobals` {% id="glide.g" %}
 
 Equivalent to `vim.g`.
 
@@ -716,7 +716,7 @@ For example, a mapping defined with `<leader>r` would be matched when Space + r 
 
 `ts:@default "<Space>"`
 
-## • `glide.tabs` {% id="glide.tabs" %}
+## `glide.tabs` {% id="glide.tabs" %}
 
 {% api-heading id="glide.tabs.active" %}
 glide.tabs.active(): Promise<glide.TabWithID>
@@ -762,7 +762,7 @@ Note that you _cannot_ unload the currently active tab, if you try to do so, an 
 
 [0]: https://support.mozilla.org/kb/unload-tabs-reduce-memory-usage-firefox
 
-## • `glide.commandline` {% id="glide.commandline" %}
+## `glide.commandline` {% id="glide.commandline" %}
 
 {% api-heading id="glide.commandline.show" %}
 glide.commandline.show(opts?): Promise<void>
@@ -800,7 +800,7 @@ glide.commandline.is_active(): boolean
 
 If the commandline is open and focused.
 
-## • `glide.excmds` {% id="glide.excmds" %}
+## `glide.excmds` {% id="glide.excmds" %}
 
 {% api-heading id="glide.excmds.execute" %}
 glide.excmds.execute(cmd): Promise<void>
@@ -830,7 +830,7 @@ declare global {
 }
 ```
 
-## • `glide.content` {% id="glide.content" %}
+## `glide.content` {% id="glide.content" %}
 
 {% api-heading id="glide.content.fn" %}
 glide.content.fn(wrapped): glide.ContentFunction<F>
@@ -880,7 +880,7 @@ await glide.content.execute(set_body_border_style, {
 
 Note: all `args` must be JSON serialisable.
 
-## • `glide.keymaps` {% id="glide.keymaps" %}
+## `glide.keymaps` {% id="glide.keymaps" %}
 
 {% api-heading id="glide.keymaps.set" %}
 glide.keymaps.set(modes, lhs, rhs, opts?): void
@@ -903,7 +903,7 @@ List all global key mappings.
 If a key mapping is defined for multiple modes, multiple entries
 will be returned for each mode.
 
-## • `glide.hints` {% id="glide.hints" %}
+## `glide.hints` {% id="glide.hints" %}
 
 {% api-heading id="glide.hints.show" %}
 glide.hints.show(opts?): void
@@ -928,7 +928,7 @@ Use with {% link href="#glide.o.hint_label_generator" class="go-to-def" %} `ts:g
 sequential numeric labels, starting at `1` and counting up.
 Ignores {% link href="#glide.o.hint_chars" class="go-to-def" %} `ts:glide.o.hint_chars`{% /link %}.
 
-## • `glide.findbar` {% id="glide.findbar" %}
+## `glide.findbar` {% id="glide.findbar" %}
 
 APIs for interacting with the native [findbar](https://support.mozilla.org/kb/search-contents-current-page-text-or-links).
 
@@ -974,7 +974,7 @@ glide.findbar.is_focused(): boolean
 
 If the findbar UI is currently visible _and_ focused.
 
-## • `glide.buf` {% id="glide.buf" %}
+## `glide.buf` {% id="glide.buf" %}
 
 ### `glide.buf.prefs` {% id="glide.buf.prefs" %}
 
@@ -1001,7 +1001,7 @@ Remove the mapping of {lhs} for the {modes} where the map command applies.
 
 The mapping may remain defined for other modes where it applies.
 
-## • `glide.addons` {% id="glide.addons" %}
+## `glide.addons` {% id="glide.addons" %}
 
 {% api-heading id="glide.addons.install" %}
 glide.addons.install(xpi_url, opts?): Promise<glide.AddonInstall>
@@ -1026,7 +1026,7 @@ The returned addons can be filtered by type, for example to only return extensio
 await glide.addons.list("extension");
 ```
 
-## • `glide.search_engines` {% id="glide.search_engines" %}
+## `glide.search_engines` {% id="glide.search_engines" %}
 
 {% api-heading id="glide.search_engines.add" %}
 glide.search_engines.add(props): Promise<void>
@@ -1056,7 +1056,7 @@ supported by Firefox, e.g. `instant_url`, and `image_url`.
 
 [0]: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_settings_overrides#search_provider
 
-## • `glide.keys` {% id="glide.keys" %}
+## `glide.keys` {% id="glide.keys" %}
 
 {% api-heading id="glide.keys.send" %}
 glide.keys.send(keyseq, opts?): Promise<void>
@@ -1156,7 +1156,7 @@ was just another Glide config file.
 
 `ts:@example glide.include("shared.glide.ts")`
 
-## • `glide.unstable` {% id="glide.unstable" %}
+## `glide.unstable` {% id="glide.unstable" %}
 
 ### `glide.unstable.split_views` {% id="glide.unstable.split_views" %}
 
@@ -1194,7 +1194,7 @@ glide.unstable.split_views.has_split_view(tab): boolean
 
 Whether or not the given tab is in a split view.
 
-## • `glide.path` {% id="glide.path" %}
+## `glide.path` {% id="glide.path" %}
 
 ### `glide.path.cwd` {% id="glide.path.cwd" %}
 
@@ -1212,7 +1212,7 @@ Join all arguments together and normalize the resulting path.
 
 Throws an error on non-relative paths.
 
-## • `glide.fs` {% id="glide.fs" %}
+## `glide.fs` {% id="glide.fs" %}
 
 {% api-heading id="glide.fs.read" %}
 glide.fs.read(path, encoding): Promise<string>
@@ -1280,7 +1280,7 @@ Parent directories are created by default, if desired you can turn this off with
 By default this will _not_ error if the `path` already exists, if you would like it
 to do so, pass `ts:glide.fs.mkdir('...', { exists_ok: false })`
 
-## • `glide.messengers` {% id="glide.messengers" %}
+## `glide.messengers` {% id="glide.messengers" %}
 
 {% api-heading id="glide.messengers.create" %}
 glide.messengers.create(receiver): glide.ParentMessenger<Messages>
@@ -1321,7 +1321,7 @@ glide.keymaps.set("normal", "gt", ({ tab_id }) => {
 });
 ```
 
-## • `glide.modes` {% id="glide.modes" %}
+## `glide.modes` {% id="glide.modes" %}
 
 {% api-heading id="glide.modes.register" %}
 glide.modes.register(mode, opts): void
@@ -1365,7 +1365,7 @@ Returns the registered config for the given `mode`, or `undefined` if the mode h
 
 # `Types` {% id="types" style="margin-top: 3em !important" %}
 
-## • `glide.SpawnOptions` {% id="glide.SpawnOptions" %}
+## `glide.SpawnOptions` {% id="glide.SpawnOptions" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 cwd?: string;
@@ -1389,7 +1389,7 @@ check_exit_code?: boolean;
 stderr?: "pipe" | "stdout";
 ```
 
-## • `glide.Process` {% id="glide.Process" %}
+## `glide.Process` {% id="glide.Process" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 pid: number;
@@ -1431,7 +1431,7 @@ wait(): Promise<glide.CompletedProcess>;
 kill(timeout?: number): Promise<glide.CompletedProcess>;
 ```
 
-## • `glide.ProcessReadStream` {% id="glide.ProcessReadStream" %}
+## `glide.ProcessReadStream` {% id="glide.ProcessReadStream" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 ReadableStream<string> & {
@@ -1454,7 +1454,7 @@ ReadableStream<string> & {
 }
 ```
 
-## • `glide.CompletedProcess` {% id="glide.CompletedProcess" %}
+## `glide.CompletedProcess` {% id="glide.CompletedProcess" %}
 
 Represents a process that has exited.
 
@@ -1464,7 +1464,7 @@ glide.Process & {
 }
 ```
 
-## • `glide.ProcessStdinPipe` {% id="glide.ProcessStdinPipe" %}
+## `glide.ProcessStdinPipe` {% id="glide.ProcessStdinPipe" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1488,9 +1488,9 @@ close(opts?: {
 }): Promise<void>;
 ```
 
-## • `glide.RGBString: '#${string}` | `rgb(${string})'` {% id="glide.RGBString" %}
+## `glide.RGBString: '#${string}` | `rgb(${string})'` {% id="glide.RGBString" %}
 
-## • `glide.TabWithID` {% id="glide.TabWithID" %}
+## `glide.TabWithID` {% id="glide.TabWithID" %}
 
 A web extension tab that is guaranteed to have the `ts:id` property present.
 
@@ -1500,7 +1500,7 @@ Omit<Browser.Tabs.Tab, "id"> & {
 }
 ```
 
-## • `glide.ScopedPrefs` {% id="glide.ScopedPrefs" %}
+## `glide.ScopedPrefs` {% id="glide.ScopedPrefs" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 Omit<(typeof glide.prefs), "scoped"> & {
@@ -1508,7 +1508,7 @@ Omit<(typeof glide.prefs), "scoped"> & {
 };
 ```
 
-## • `glide.AddonInstallOptions` {% id="glide.AddonInstallOptions" %}
+## `glide.AddonInstallOptions` {% id="glide.AddonInstallOptions" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1525,7 +1525,7 @@ force?: boolean;
 private_browsing_allowed?: boolean;
 ```
 
-## • `glide.Addon` {% id="glide.Addon" %}
+## `glide.Addon` {% id="glide.Addon" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 readonly id: string;
@@ -1545,7 +1545,7 @@ uninstall(): Promise<void>;
 reload(): Promise<void>;
 ```
 
-## • `glide.AddonInstall` {% id="glide.AddonInstall" %}
+## `glide.AddonInstall` {% id="glide.AddonInstall" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 glide.Addon & {
@@ -1553,14 +1553,14 @@ glide.Addon & {
 }
 ```
 
-## • `glide.AddonType` {% id="glide.AddonType" %}
+## `glide.AddonType` {% id="glide.AddonType" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 "extension" | "theme" | "locale" | "dictionary"
   | "sitepermission";
 ```
 
-## • `glide.KeyEvent` {% id="glide.KeyEvent" %}
+## `glide.KeyEvent` {% id="glide.KeyEvent" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 KeyboardEvent & {
@@ -1573,7 +1573,7 @@ KeyboardEvent & {
 }
 ```
 
-## • `glide.KeySendOptions` {% id="glide.KeySendOptions" %}
+## `glide.KeySendOptions` {% id="glide.KeySendOptions" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1583,19 +1583,19 @@ KeyboardEvent & {
 skip_mappings?: boolean;
 ```
 
-## • `glide.KeymapCallback` {% id="glide.KeymapCallback" %}
+## `glide.KeymapCallback` {% id="glide.KeymapCallback" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 (props: glide.KeymapCallbackProps) => void
 ```
 
-## • `glide.KeymapContentCallback` {% id="glide.KeymapContentCallback" %}
+## `glide.KeymapContentCallback` {% id="glide.KeymapContentCallback" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 glide.ContentFunction<() => void>;
 ```
 
-## • `glide.KeymapCallbackProps` {% id="glide.KeymapCallbackProps" %}
+## `glide.KeymapCallbackProps` {% id="glide.KeymapCallbackProps" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1604,13 +1604,13 @@ glide.ContentFunction<() => void>;
 tab_id: number;
 ```
 
-## • `glide.HintLabelGenerator` {% id="glide.HintLabelGenerator" %}
+## `glide.HintLabelGenerator` {% id="glide.HintLabelGenerator" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 (ctx: HintLabelGeneratorProps) => string[] | Promise<string[]>
 ```
 
-## • `glide.HintLabelGeneratorProps` {% id="glide.HintLabelGeneratorProps" %}
+## `glide.HintLabelGeneratorProps` {% id="glide.HintLabelGeneratorProps" %}
 
 ````typescript {% highlight_prefix="type x = {" %}
 hints: glide.Hint[];
@@ -1628,13 +1628,13 @@ content: {
 };
 ````
 
-## • `glide.HintPicker` {% id="glide.HintPicker" %}
+## `glide.HintPicker` {% id="glide.HintPicker" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 (props: glide.HintPickerProps) => glide.Hint[] | Promise<glide.Hint[]>
 ```
 
-## • `glide.HintPickerProps` {% id="glide.HintPickerProps" %}
+## `glide.HintPickerProps` {% id="glide.HintPickerProps" %}
 
 ````typescript {% highlight_prefix="type x = {" %}
 hints: glide.Hint[];
@@ -1652,11 +1652,11 @@ content: {
 };
 ````
 
-## • `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
+## `glide.HintLocation: "content" | "browser-ui"` {% id="glide.HintLocation" %}
 
-## • `glide.HintAction: "click" | "newtab-click" | ((props: glide.HintActionProps) => Promise<void> | void)` {% id="glide.HintAction" %}
+## `glide.HintAction: "click" | "newtab-click" | ((props: glide.HintActionProps) => Promise<void> | void)` {% id="glide.HintAction" %}
 
-## • `glide.HintActionProps` {% id="glide.HintActionProps" %}
+## `glide.HintActionProps` {% id="glide.HintActionProps" %}
 
 ````typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1677,7 +1677,7 @@ content: {
 };
 ````
 
-## • `glide.FindbarOpenOpts` {% id="glide.FindbarOpenOpts" %}
+## `glide.FindbarOpenOpts` {% id="glide.FindbarOpenOpts" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1733,20 +1733,20 @@ match_diacritics?: boolean | undefined;
 whole_words?: boolean | undefined;
 ```
 
-## • `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
+## `glide.SplitViewCreateOpts` {% id="glide.SplitViewCreateOpts" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 id?: number;
 ```
 
-## • `glide.SplitView` {% id="glide.SplitView" %}
+## `glide.SplitView` {% id="glide.SplitView" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 id: number;
 tabs: Browser.Tabs.Tab[];
 ```
 
-## • `glide.KeyNotation` {% id="glide.KeyNotation" %}
+## `glide.KeyNotation` {% id="glide.KeyNotation" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1766,7 +1766,7 @@ meta: boolean;
 shift: boolean;
 ```
 
-## • `glide.Keymap` {% id="glide.Keymap" %}
+## `glide.Keymap` {% id="glide.Keymap" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 sequence: string[];
@@ -1776,7 +1776,7 @@ description: string | undefined;
 mode: GlideMode;
 ```
 
-## • `glide.KeymapOpts` {% id="glide.KeymapOpts" %}
+## `glide.KeymapOpts` {% id="glide.KeymapOpts" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 description?: string | undefined;
@@ -1796,13 +1796,13 @@ buffer?: boolean;
 retain_key_display?: boolean;
 ```
 
-## • `glide.KeymapDeleteOpts` {% id="glide.KeymapDeleteOpts" %}
+## `glide.KeymapDeleteOpts` {% id="glide.KeymapDeleteOpts" %}
 
 ```typescript {% highlight_prefix="type x = " %}
 Pick<glide.KeymapOpts, "buffer">;
 ```
 
-## • `glide.CommandLineShowOpts` {% id="glide.CommandLineShowOpts" %}
+## `glide.CommandLineShowOpts` {% id="glide.CommandLineShowOpts" %}
 
 ````typescript {% highlight_prefix="type x = {" %}
 /**
@@ -1834,7 +1834,7 @@ title?: string;
 options?: glide.CommandLineCustomOption[];
 ````
 
-## • `glide.CommandLineCustomOption` {% id="glide.CommandLineCustomOption" %}
+## `glide.CommandLineCustomOption` {% id="glide.CommandLineCustomOption" %}
 
 ````typescript {% highlight_prefix="type x = {" %}
 /** Primary text shown for this option. */
@@ -1884,7 +1884,7 @@ execute(props: {
 }): void;
 ````
 
-## • `glide.FileInfo` {% id="glide.FileInfo" %}
+## `glide.FileInfo` {% id="glide.FileInfo" %}
 
 ```typescript {% highlight_prefix="type x = {" %}
 type: "file" | "directory" | null;
@@ -1932,7 +1932,7 @@ DOM.create_element("div", {
 });
 ```
 
-## • `DOM.listeners` {% id="DOM.listeners" %}
+## `DOM.listeners` {% id="DOM.listeners" %}
 
 {% api-heading id="DOM.listeners.has" %}
 DOM.listeners.has(target, type): boolean
