@@ -100,6 +100,46 @@ add_task(async function test_normal_diw() {
   });
 });
 
+add_task(async function test_normal_dw() {
+  await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
+    const { set_text, test_edit, set_selection } = GlideTestUtils.make_input_test_helpers(browser, {
+      text_start: 1,
+    });
+
+    await set_text("hello world", "dw at start of word deletes word + following space");
+    await set_selection(0, "h");
+    await test_edit("dw", "world", 0, "w");
+
+    await set_text("hello world", "dw from inside a word deletes to next word boundary (keeps preceding chars)");
+    await set_selection(2, "l");
+    await test_edit("dw", "heworld", 2, "w");
+
+    await set_text("hello   world", "dw at start deletes word + all following spaces");
+    await set_selection(0, "h");
+    await test_edit("dw", "world", 0, "w");
+
+    await set_text("hello, world", "dw stops at punctuation (keeps punctuation and following space)");
+    await set_selection(0, "h");
+    await test_edit("dw", ", world", 0, ",");
+
+    await set_text("hello\nworld", "dw treats newline as whitespace and deletes it with the word");
+    await set_selection(0, "h");
+    await test_edit("dw", "\nworld", -1, "");
+
+    await set_text("hello?.world", "dw on punctuation run deletes punctuation up to next word");
+    await set_selection(5, "?");
+    await test_edit("dw", "helloworld", 5, "w");
+
+    await set_text("h j k", "dw deletes a single-letter word + following space");
+    await set_selection(2, "j");
+    await test_edit("dw", "h k", 2, "k");
+
+    await set_text("\nworld", "dw at start deletes leading newline (treats newline as whitespace)");
+    await set_selection(0, "\n");
+    await test_edit("dw", "world", 0, "w");
+  });
+});
+
 add_task(async function test_normal_w() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async browser => {
     const { set_text, test_motion, set_selection } = GlideTestUtils.make_input_test_helpers(browser, { text_start: 1 });
