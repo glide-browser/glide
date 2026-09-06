@@ -23,11 +23,6 @@ padding: 0.3em;
 
 ## Changes {% id="0.1.64a-changes" %}
 
-67cbf8c6 commandline: fix mode switching race condition
-04e61079 findbar: apply `open({ query })` deterministically
-73487f76 fix(document-mirror): don't corrupt the mirror on a stale insertBefore reference
-5e8bd974 feat(firefox): bump to 153.0b9
-
 - Bumped Firefox from 153.0b5 to 156.0b3
 - Fixed a mode switching race condition in the commandline
 - Fixed `document` mirror corruption on stale references
