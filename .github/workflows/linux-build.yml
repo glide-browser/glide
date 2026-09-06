@@ -98,8 +98,10 @@ jobs:
 
       - name: Fix Rust version
         run: |
-          # Install a rust version compatible with LLVM 18
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.90
+          # Match the rust version Firefox builds with (taskcluster/kinds/toolchain/rust.yml).
+          # With cross-language LTO, rustc must be able to read bitcode produced by the
+          # bootstrapped clang, so this must be bumped alongside Firefox toolchain bumps.
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.95
           source $HOME/.cargo/env
 
           if test "$GLIDE_COMPAT" = "aarch64"; then
