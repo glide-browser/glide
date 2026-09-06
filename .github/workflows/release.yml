@@ -198,8 +198,10 @@ jobs:
     steps:
       - name: Check release is not published
         run: |
-          if gh release view $VERSION --json isDraft --jq '.isDraft' | grep -q 'false'; then
-            echo -e "Error: Release $VERSION is already published. Refusing to continue."
+          # this runs before checkout so `gh` can't infer the repo from git
+          is_draft=$(gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft')
+          if [[ "$is_draft" != "true" ]]; then
+            echo -e "Error: Release $VERSION is already published (isDraft=$is_draft). Refusing to continue."
             exit 1
           fi
         env:
