@@ -87,6 +87,13 @@ const KEYS = make_keys({
   "F10": { code: "F10" },
   "F11": { code: "F11" },
   "F12": { code: "F12" },
+  "BrowserBack": { code: "BrowserBack" },
+  "BrowserFavorites": { code: "BrowserFavorites" },
+  "BrowserForward": { code: "BrowserForward" },
+  "BrowserHome": { code: "BrowserHome" },
+  "BrowserRefresh": { code: "BrowserRefresh" },
+  "BrowserSearch": { code: "BrowserSearch" },
+  "BrowserStop": { code: "BrowserStop" },
 
   // standard
   "a": { code: "KeyA" },
@@ -277,6 +284,13 @@ add_task(async function test_event_to_ident() {
   is(to_key_notation(KEYS["Delete"]), "<Del>");
   is(to_key_notation(KEYS["F1"]), "<F1>");
   is(to_key_notation(KEYS["F12"]), "<F12>");
+  is(to_key_notation(KEYS["BrowserBack"]), "<BrowserBack>");
+  is(to_key_notation(KEYS["BrowserFavorites"]), "<BrowserFavorites>");
+  is(to_key_notation(KEYS["BrowserForward"]), "<BrowserForward>");
+  is(to_key_notation(KEYS["BrowserHome"]), "<BrowserHome>");
+  is(to_key_notation(KEYS["BrowserRefresh"]), "<BrowserRefresh>");
+  is(to_key_notation(KEYS["BrowserSearch"]), "<BrowserSearch>");
+  is(to_key_notation(KEYS["BrowserStop"]), "<BrowserStop>");
   is(to_key_notation({ ...KEYS["F2"], ctrlKey: true, shiftKey: true }), "<C-S-F2>");
 
   // Special downcast keys
