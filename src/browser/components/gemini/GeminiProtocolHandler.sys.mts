@@ -5,13 +5,12 @@
 import type { GeminiProtocolChild } from "../../../glide/browser/actors/GeminiProtocolParent.sys.mjs";
 
 const Strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
-const { buffer: gemtext_to_html } = ChromeUtils.importESModule("chrome://glide/content/bundled/dioscuri.mjs");
 
 export class GeminiProtocolHandler implements nsIProtocolHandler {
   /**
    * The protocol scheme handled by this handler.
    */
-  scheme = "gemini";
+  scheme = "glide";
 
   #log: ConsoleInstance = console.createInstance
     ? console.createInstance({ prefix: "GeminiProtocol", maxLogLevelPref: "glide.gemini.loglevel" })
@@ -26,8 +25,8 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
 
     // https://geminiprotocol.net/docs/protocol-specification.gmi#requests
     // "If a client is making a request with an empty path, the client SHOULD add a trailing '/' to the request"
-    if (!uri.filePath) {
-      uri = uri.mutate().setFilePath("/").finalize();
+    if (uri.host !== 'config') {
+      // throw
       this.#log.debug("adding a trailing slash:", uri.spec);
     }
 
@@ -36,7 +35,7 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
 
     stream_channel.setURI(uri);
     inner_channel.loadInfo = load_info;
-    inner_channel.contentType = "text/html";
+    inner_channel.contentType = "text/javascript"; // TODO
     inner_channel.contentCharset = "UTF-8";
     inner_channel.originalURI = uri;
 
@@ -46,82 +45,20 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
     //
     // The parent channel's data is just discarded so to avoid making two separate network requests
     // we just provide empty content in the parent process.
-    if (Services.appinfo.processType === Services.appinfo.PROCESS_TYPE_DEFAULT) {
-      this.#log.debug("skipping fetch in parent process");
-      this.#write_to_channel("", stream => {
-        stream_channel.contentStream = stream;
-      });
-      return inner_channel;
-    }
+    // if (Services.appinfo.processType === Services.appinfo.PROCESS_TYPE_DEFAULT) {
+    //   this.#log.debug("skipping fetch in parent process");
+    //   this.#write_to_channel("", stream => {
+    //     stream_channel.contentStream = stream;
+    //   });
+    //   return inner_channel;
+    // }
 
     const suspended_channel = Services.io.newSuspendableChannelWrapper(inner_channel);
     suspended_channel.suspend();
 
     Promise.resolve()
       .then(() => this.#connect_and_read_stream(uri))
-      .then(({ header, data }) => {
-        const [status, meta] = Strings.partition(header, " ");
-
-        const content = ((): string => {
-          switch (status[0]) {
-            case "1": {
-              return this.#render_error_page(
-                "Input required",
-                `<p>This Gemini page requires user input, which is not supported yet.</p>`,
-              );
-            }
-            case "2": {
-              if (meta.startsWith("text/gemini")) {
-                return this.#render_gemtext(data);
-              }
-              return this.#render_error_page(
-                "Unknown mime type",
-                `<p>This page uses the MIME type <code>${escape_html(meta)}</code>, which is not supported yet.</p>`,
-              );
-            }
-            case "3": {
-              const link = escape_html(meta);
-              const rendered_link = meta.startsWith("gemini://") || meta.startsWith("https://")
-                ? `<a href="${link}">${link}</a>`
-                : `<code>${link}</code>`;
-              return this.#render_error_page(
-                "Redirect",
-                `<p>This page redirects to ${rendered_link}. Automatic redirects are not supported yet.</p>`,
-              );
-            }
-            case "4": {
-              return this.#render_error_page(
-                "Temporary failure",
-                `<p>The server encountered a temporary issue and could not fulfill the request.${
-                  meta ? ` Server message: ${escape_html(meta)}` : ""
-                }</p>`,
-              );
-            }
-            case "5": {
-              return this.#render_error_page(
-                "Permanent failure",
-                `<p>The server could not fulfill the request.${
-                  meta ? ` Server message: ${escape_html(meta)}` : ""
-                } </p>`,
-              );
-            }
-            case "6": {
-              return this.#render_error_page(
-                "Client authentication required",
-                `<p>This page requires authentication, which is not supported yet.${
-                  meta ? ` Server message: ${escape_html(meta)}` : ""
-                }</p>`,
-              );
-            }
-            default: {
-              return this.#render_error_page(
-                "Unknown response",
-                `<p>The server returned an unrecognized status code: <code>${escape_html(status)}</code></p>`,
-              );
-            }
-          }
-        })();
-
+      .then(({ content }) => {
         this.#write_to_channel(content, stream => {
           stream_channel.contentStream = stream;
           suspended_channel.resume();
@@ -129,13 +66,7 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
       })
       .catch(error => {
         this.#log.error(error);
-
-        const content = this.#render_error_page(
-          "Connection Failed",
-          `<p>Could not connect to the Gemini server at <code>${escape_html(uri.host)}</code>. ${
-            escape_html(Error.isError(error) ? error.message : String(error))
-          }</p>`,
-        );
+        const content = '// Error: ' + (Error.isError(error) ? error.message : String(error));
 
         this.#write_to_channel(content, stream => {
           stream_channel.contentStream = stream;
@@ -151,10 +82,10 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
    */
   allowPort(port: number, _scheme: string) {
     // see `src/glide/browser/actors/GeminiProtocolParent.sys.mts:#connect_to_uri` for details on connection handling.
-    return port === 1965;
+    return false;  // port === 1965;
   }
 
-  async #connect_and_read_stream(uri: nsIURI): Promise<{ header: string; data: string }> {
+  async #connect_and_read_stream(uri: nsIURI): Promise<{ content: string }> {
     const actor = this.#get_actor();
     if (!actor) {
       throw new Error("The GeminiProtocol process actor is unavailable.");
@@ -165,9 +96,7 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
       throw new Error(result.error || "Could not connect or read the server response");
     }
 
-    const [header, data] = Strings.partition(result.content, "\r\n");
-    this.#log.debug(`${uri.spec} response`, { header, data });
-    return { header, data };
+    return { content: result.content };
   }
 
   #get_actor(): GeminiProtocolChild | null {
@@ -184,35 +113,35 @@ export class GeminiProtocolHandler implements nsIProtocolHandler {
     callback(sis);
   }
 
-  #render_gemtext(gemtext: string): string {
-    return `
-      <head>
-        <style>${this.#styles()}</style>
-        <meta http-equiv="Content-Security-Policy" content="script-src 'none'">
-      </head>
-      <body><article class="gemini">
-    ` + gemtext_to_html(gemtext)
-      + `</article></body>`;
-  }
+  // #render_gemtext(gemtext: string): string {
+  //   return `
+  //     <head>
+  //       <style>${this.#styles()}</style>
+  //       <meta http-equiv="Content-Security-Policy" content="script-src 'none'">
+  //     </head>
+  //     <body><article class="gemini">
+  //   ` + gemtext_to_html(gemtext)
+  //     + `</article></body>`;
+  // }
 
-  #render_error_page(title: string, body_html: string): string {
-    return `
-      <head>
-        <style>${this.#styles()}</style>
-      </head>
-      <body class="gemini">
-        <h1>${escape_html(title)}</h1>
-        ${body_html}
-      </body>
-    `;
-  }
+  // #render_error_page(title: string, body_html: string): string {
+  //   return `
+  //     <head>
+  //       <style>${this.#styles()}</style>
+  //     </head>
+  //     <body class="gemini">
+  //       <h1>${escape_html(title)}</h1>
+  //       ${body_html}
+  //     </body>
+  //   `;
+  // }
 
-  #styles() {
-    if (Services.prefs.prefHasUserValue("glide.gemini.css")) {
-      return Services.prefs.getStringPref("glide.gemini.css");
-    }
-    return STYLES;
-  }
+  // #styles() {
+  //   if (Services.prefs.prefHasUserValue("glide.gemini.css")) {
+  //     return Services.prefs.getStringPref("glide.gemini.css");
+  //   }
+  //   return STYLES;
+  // }
 
   QueryInterface = ChromeUtils.generateQI(["nsIProtocolHandler"]);
 }

@@ -1,0 +1,19 @@
+diff --git a/dom/security/nsContentSecurityUtils.cpp b/dom/security/nsContentSecurityUtils.cpp
+index 186c777f23504380f48c1fe2eff8e9393a668968..dafab5e30de34175edbb0678647b69faaadf5968 100644
+--- a/dom/security/nsContentSecurityUtils.cpp
++++ b/dom/security/nsContentSecurityUtils.cpp
+@@ -2097,10 +2097,14 @@ bool nsContentSecurityUtils::ValidateScriptFilename(JSContext* cx,
+   }
+   if (StringBeginsWith(filename, "file://"_ns)) {
+     // We will temporarily allow all file:// URIs through for now
+     return true;
+   }
++  if (StringBeginsWith(filename, "glide://"_ns)) {
++    // We will temporarily allow all glide:// URIs through for now
++    return true;
++  }
+   if (StringBeginsWith(filename, "jar:file://"_ns)) {
+     // We will temporarily allow all jar URIs through for now
+     return true;
+   }
+   if (filename.Equals("about:sync-log"_ns)) {
