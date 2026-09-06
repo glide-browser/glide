@@ -500,7 +500,9 @@ class GlideBrowserClass {
     this.api.modes.register("visual", { caret: "block" });
     this.api.modes.register("ignore", { caret: "line", switch_mode_on_focus: false });
     this.api.modes.register("insert", { caret: "line" });
-    this.api.modes.register("command", { caret: "line" });
+    // auto mode switching here has a race condition with the manual mode switching that the `close()` handler
+    // does in the command line implementation.
+    this.api.modes.register("command", { caret: "line", switch_mode_on_focus: false });
     this.api.modes.register("op-pending", { caret: "underline" });
 
     const sandbox = this.config_sandbox;
