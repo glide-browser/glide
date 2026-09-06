@@ -94,7 +94,7 @@ jobs:
 
           brew install watchman
 
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.90
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.95
           source $HOME/.cargo/env
 
           cargo install cbindgen
