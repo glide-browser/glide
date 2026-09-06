@@ -384,7 +384,12 @@ add_task(async function test_downloads_api() {
 
       assert(downloads.length > 0, "Could not find the download");
 
-      await browser.downloads.cancel(download_id);
+      // sometimes the download can complete before we get here, so ignore the error if that happens
+      try {
+        await browser.downloads.cancel(download_id);
+      } catch (err) {
+        assert(String(err).includes("already complete"), `Unexpected cancel() error: ${err}`);
+      }
       await browser.downloads.erase({ id: download_id });
 
       const after_erase = await browser.downloads.search({ id: download_id });
