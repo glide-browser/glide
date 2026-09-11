@@ -1356,6 +1356,7 @@ class GlideBrowserClass {
 
   get commandline_sources(): GlideCompletionSource[] {
     return redefine_getter(this, "commandline_sources", [
+      new CommandLine.UpdateCompletionSource(),
       new CommandLine.TabsCompletionSource(),
       new CommandLine.ExcmdsCompletionSource(),
     ]);

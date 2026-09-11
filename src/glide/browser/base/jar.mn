@@ -45,7 +45,8 @@ glide.jar:
   content/utils/strings.mjs                    (content/utils/dist/strings.mjs)
   content/utils/promises.mjs                   (content/utils/dist/promises.mjs)
   content/utils/resources.mjs                  (content/utils/dist/resources.mjs)
-  content/utils/browser-ui.mjs                  (content/utils/dist/browser-ui.mjs)
+  content/utils/browser-ui.mjs                 (content/utils/dist/browser-ui.mjs)
+  content/utils/browser-update.mjs             (content/utils/dist/browser-update.mjs)
 
 # default plugins
   content/plugins/shims.mjs                    (content/plugins/dist/shims.mjs)
