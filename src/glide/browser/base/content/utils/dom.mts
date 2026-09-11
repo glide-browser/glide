@@ -334,3 +334,22 @@ export function in_frames(window: Window, n: number, func: () => void): void {
 
   window.requestAnimationFrame(wait);
 }
+
+export function is_text_field(el: Element): el is HTMLTextAreaElement | HTMLInputElement {
+  if (el instanceof HTMLTextAreaElement) {
+    return true;
+  }
+  if (el instanceof HTMLInputElement) {
+    const t = el.type;
+    return (
+      t === "text"
+      || t === "search"
+      || t === "url"
+      || t === "tel"
+      || t === "password"
+      || t === "email"
+      || t === ""
+    );
+  }
+  return false;
+}
