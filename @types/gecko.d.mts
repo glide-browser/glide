@@ -7,6 +7,7 @@
 
 declare var gBrowser: GlobalBrowser.GlobalBrowser;
 declare var gNotificationBox: GlobalBrowser.NotificationBox;
+declare var gURLBar: { searchMode: { engineName?: string } | null };
 
 declare var FileUtils: MockedExports.KnownModules["resource://gre/modules/FileUtils.sys.mjs"]["FileUtils"];
 declare var AppMenuNotifications:

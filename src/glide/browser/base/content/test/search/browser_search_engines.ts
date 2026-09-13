@@ -28,6 +28,9 @@ async function focus_address_bar() {
   } else {
     await keys("<C-l>");
   }
+
+  // wait for us to actually enter insert mode so typing goes into the urlbar input
+  await wait_for_mode("insert", "focusing the urlbar should switch to insert mode");
 }
 
 add_task(async function test_add_search_engine() {
@@ -57,7 +60,9 @@ add_task(async function test_add_search_engine() {
   Assert.stringContains(submission.uri.spec, "suggest", "Suggest URL is correct");
 
   await focus_address_bar();
-  await keys("@test<space>wow");
+  await keys("@test<space>");
+  await until(() => gURLBar.searchMode?.engineName === ENGINE_NAME, "urlbar should enter search mode for `@test`");
+  await keys("wow");
   await sleep_frames(10);
   await keys("<CR>");
 
@@ -92,7 +97,12 @@ add_task(async function test_add_search_engine_with_multiple_keywords() {
     using __ = await GlideTestUtils.new_tab();
 
     await focus_address_bar();
-    await keys(`@${alias}<CR>${alias}`);
+    await keys(`@${alias}<CR>`);
+    await until(
+      () => gURLBar.searchMode?.engineName === ENGINE_NAME,
+      `urlbar should enter search mode for \`@${alias}\``,
+    );
+    await keys(alias);
     await sleep_frames(10);
     await keys("<CR>");
     await waiter(() => glide.ctx.url.toString()).is(
