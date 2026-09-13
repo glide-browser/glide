@@ -7,9 +7,8 @@
 
 "use strict";
 
-const { AddonTestUtils } = ChromeUtils.importESModule("resource://testing-common/AddonTestUtils.sys.mjs", {
-  global: "current",
-});
+// note: this must NOT be imported with `{ global: "current" }`, doing so hangs shutdown until the watchdog crashes the browser.
+const { AddonTestUtils } = ChromeUtils.importESModule("resource://testing-common/AddonTestUtils.sys.mjs");
 declare global {
   interface GlideGlobals {
     exit_code?: number;
