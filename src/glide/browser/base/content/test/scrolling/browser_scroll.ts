@@ -156,11 +156,13 @@ add_task(async function test_scrolling() {
       });
     }
 
-    const max_y = await SpecialPowers.spawn(browser, [], async () => {
-      return content.window.scrollMaxY;
-    });
+    async function get_max_y(): Promise<number> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return content.window.scrollMaxY;
+      });
+    }
 
-    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll, get_viewport_height });
+    await vertical_scroll_tests({ min_y: 0, get_max_y, get_scroll, get_viewport_height });
   });
 
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
@@ -184,11 +186,13 @@ add_task(async function test_scrolling_legacy() {
       });
     }
 
-    const max_y = await SpecialPowers.spawn(browser, [], async () => {
-      return content.window.scrollMaxY;
-    });
+    async function get_max_y(): Promise<number> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        return content.window.scrollMaxY;
+      });
+    }
 
-    await vertical_scroll_tests({ min_y: 0, max_y, get_scroll, get_viewport_height });
+    await vertical_scroll_tests({ min_y: 0, get_max_y, get_scroll, get_viewport_height });
   });
 
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
@@ -212,14 +216,21 @@ add_task(async function test_scrolling_pdf() {
         });
       }
 
-      const { max_y, min_y } = await SpecialPowers.spawn(browser, [], async () => {
+      async function get_max_y(): Promise<number> {
+        return await SpecialPowers.spawn(browser, [], async () => {
+          const container = content.document.getElementById("viewerContainer")!;
+          return container.scrollTopMax;
+        });
+      }
+
+      const min_y = await SpecialPowers.spawn(browser, [], async () => {
         const container = content.document.getElementById("viewerContainer")!;
-        return { max_y: container.scrollTopMax, min_y: container.scrollTop };
+        return container.scrollTop;
       });
 
       await vertical_scroll_tests({
         min_y,
-        max_y,
+        get_max_y,
         get_scroll,
         get_viewport_height,
         // for some reason, G goes *almost* to the actual bottom of the PDF
@@ -231,9 +242,9 @@ add_task(async function test_scrolling_pdf() {
 }).skip(); // the PDF tests are very flaky
 
 async function vertical_scroll_tests(
-  { min_y, max_y, get_scroll, get_viewport_height, G_wip }: {
+  { min_y, get_max_y, get_scroll, get_viewport_height, G_wip }: {
     min_y: number;
-    max_y: number;
+    get_max_y: () => Promise<number>;
     get_scroll(): Promise<[number, number]>;
     get_viewport_height: () => Promise<number>;
     G_wip?: boolean;
@@ -333,6 +344,7 @@ async function vertical_scroll_tests(
   await wait_for_scroll_stop();
   var [x, y] = await get_scroll();
   is(x, curr_x, `G should retain the x position`);
+  const max_y = await get_max_y();
   if (G_wip) {
     todo_is(y, max_y, `G should go to the max y`);
   } else {
