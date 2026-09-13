@@ -484,7 +484,7 @@ class GlideExcmdsClass {
         if (GlideBrowser.api.ctx.os === "macosx") {
           await GlideBrowser.api.keys.send("<D-Up>", { skip_mappings: true });
         } else {
-          await GlideBrowser.api.keys.send("<C-Home>", { skip_mappings: true });
+          await GlideBrowser.api.keys.send("<Home>", { skip_mappings: true });
         }
         break;
       }
@@ -506,7 +506,7 @@ class GlideExcmdsClass {
         if (GlideBrowser.api.ctx.os === "macosx") {
           await GlideBrowser.api.keys.send("<D-Down>", { skip_mappings: true });
         } else {
-          await GlideBrowser.api.keys.send("<C-End>", { skip_mappings: true });
+          await GlideBrowser.api.keys.send("<End>", { skip_mappings: true });
         }
         break;
       }
