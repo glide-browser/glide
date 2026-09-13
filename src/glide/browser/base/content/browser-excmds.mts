@@ -562,8 +562,11 @@ class GlideExcmdsClass {
           // `effectiveScrollPortSize.height * 0.5` instead of something close to just the height.
           //
           // see `ScrollContainerFrame::GetPageScrollAmount()` in `layout/generic/ScrollContainerFrame.cpp`
+          //
+          // note: `maxOverlapLines` is multiplied by the line height in app units (60 per CSS pixel) using
+          //       32-bit integer arithmetic, so it must be kept small enough to not overflow.
           using prefs = glide.prefs.scoped();
-          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapLines", 99999999);
+          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapLines", 10000);
           prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
           await glide.keys.send("<pageup>", { skip_mappings: true });
         }
@@ -587,8 +590,11 @@ class GlideExcmdsClass {
           // `effectiveScrollPortSize.height * 0.5` instead of something close to just the height.
           //
           // see `ScrollContainerFrame::GetPageScrollAmount()` in `layout/generic/ScrollContainerFrame.cpp`
+          //
+          // note: `maxOverlapLines` is multiplied by the line height in app units (60 per CSS pixel) using
+          //       32-bit integer arithmetic, so it must be kept small enough to not overflow.
           using prefs = glide.prefs.scoped();
-          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapLines", 99999999);
+          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapLines", 10000);
           prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
           await glide.keys.send("<pagedown>", { skip_mappings: true });
         }
