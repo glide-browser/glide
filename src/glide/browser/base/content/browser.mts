@@ -30,6 +30,7 @@ const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-c
 const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const Promises = ChromeUtils.importESModule("chrome://glide/content/utils/promises.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
+const { GLIDE_COMMANDLINE_INPUT_ANONID } = ChromeUtils.importESModule("chrome://glide/content/browser-constants.mjs");
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
 const { assert_never, assert_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
@@ -97,6 +98,7 @@ class GlideBrowserClass {
 
   init() {
     document!.addEventListener("blur", this.#on_blur.bind(this), true);
+    document!.addEventListener("focusin", this.#on_focusin.bind(this), true);
     document!.addEventListener("keydown", this.#on_keydown.bind(this), true);
     document!.addEventListener("keypress", this.#on_keypress.bind(this), true);
     document!.addEventListener("keyup", this.#on_keyup.bind(this), true);
@@ -1492,6 +1494,63 @@ class GlideBrowserClass {
     if (this.state.mode !== "normal" && !this.is_mode_switching_disabled()) {
       this._change_mode("normal");
     }
+  }
+
+  /**
+   * Switch modes based on the element that just received focus in the chrome document,
+   * mirroring the `focusin` logic in `GlideHandlerChild`.
+   *
+   * The chrome actor also observes these events but its mode change requests go through an
+   * async round-trip, which is both redundant (this handler runs first, synchronously) and
+   * racy (a late request can undo a more recent mode change), so the parent ignores them
+   * (see `GlideHandlerParent`). Handling it here means that e.g. typing immediately after
+   * `<C-l>` is handled in insert mode instead of being interpreted as normal mode mappings.
+   */
+  #on_focusin(event: FocusEvent) {
+    if (this.is_mode_switching_disabled()) {
+      return;
+    }
+
+    const target = this.#resolve_focused_element(event.target as Element | null);
+    if (!target) {
+      return;
+    }
+
+    if (target.getAttribute("anonid") === GLIDE_COMMANDLINE_INPUT_ANONID) {
+      // the commandline widget switches to command mode itself
+      return;
+    }
+
+    const new_mode: GlideMode = DOM.is_text_editable(target) || DOM.is_video_element(target as HTMLElement)
+      ? "insert"
+      : this.state.mode === "visual"
+      ? "visual"
+      : "normal";
+
+    if (new_mode !== this.state.mode) {
+      this._change_mode(new_mode);
+    }
+  }
+
+  /**
+   * Whether an editable element in the chrome document (e.g. the urlbar) currently has focus.
+   *
+   * Content is *not* considered, i.e. this returns `false` if the focus is inside a `<browser>`.
+   */
+  is_chrome_editable_focused(): boolean {
+    const target = this.#resolve_focused_element(document?.activeElement ?? null);
+    return target != null && DOM.is_text_editable(target);
+  }
+
+  /**
+   * Resolves the given element to the actually focused element if it's a shadow host,
+   * i.e. `element.shadowRoot.activeElement` (recursively).
+   */
+  #resolve_focused_element(element: Element | null): Element | null {
+    while (element?.shadowRoot?.activeElement) {
+      element = element.shadowRoot.activeElement;
+    }
+    return element;
   }
 
   // TODO(glide): is this an exhaustive list?
