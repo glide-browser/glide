@@ -14,7 +14,21 @@ type JumplistEntry = {
 export class Jumplist {
   #entries: Array<JumplistEntry> = [];
   #index: number = -1;
-  #is_jumping: boolean = false;
+
+  /**
+   * Tab IDs we've asked to activate as part of a jump but haven't seen the
+   * corresponding `onActivated` event for yet.
+   *
+   * This is a set instead of a boolean as multiple jumps can be in flight at
+   * the same time (e.g. `<C-o><C-o>` pressed quickly) and the activation events
+   * are delivered asynchronously.
+   */
+  #pending_jumps: Set<number> = new Set();
+
+  /**
+   * We run jumps in serial so that the index isn't mutated concurrently.
+   */
+  #queue: Promise<void> = Promise.resolve();
   #sandbox: Sandbox;
 
   constructor(sandbox: Sandbox) {
@@ -30,8 +44,8 @@ export class Jumplist {
 
     glide.autocmds.create("ConfigLoaded", () => {
       browser.tabs.onActivated.addListener(change_info => {
-        if (this.#is_jumping) {
-          this.#is_jumping = false;
+        if (this.#pending_jumps.delete(change_info.tabId)) {
+          // this activation was caused by us
           return;
         }
 
@@ -59,12 +73,31 @@ export class Jumplist {
     return this.#sandbox.browser.tabs.get(id).catch(() => null);
   }
 
-  async #switch_tab(entry: JumplistEntry) {
-    this.#is_jumping = true;
-    await this.#sandbox.browser.tabs.update(entry.tab_id, { active: true });
+  async #switch_tab(tab: Browser.Tabs.Tab) {
+    if (tab.active) {
+      // nothing to do
+      return;
+    }
+
+    this.#pending_jumps.add(tab.id!);
+    await this.#sandbox.browser.tabs.update(tab.id!, { active: true });
   }
 
-  async jump_backwards() {
+  #enqueue(jump: () => Promise<void>): Promise<void> {
+    const next = this.#queue.then(jump, jump);
+    this.#queue = next.catch(() => {});
+    return next;
+  }
+
+  jump_backwards(): Promise<void> {
+    return this.#enqueue(() => this.#jump_backwards());
+  }
+
+  jump_forwards(): Promise<void> {
+    return this.#enqueue(() => this.#jump_forwards());
+  }
+
+  async #jump_backwards() {
     while (true) {
       if (this.#index <= 0) {
         return;
@@ -79,12 +112,12 @@ export class Jumplist {
         continue;
       }
 
-      await this.#switch_tab(entry);
+      await this.#switch_tab(tab);
       return;
     }
   }
 
-  async jump_forwards() {
+  async #jump_forwards() {
     while (true) {
       if (this.#index >= this.#entries.length - 1) {
         return;
@@ -99,7 +132,7 @@ export class Jumplist {
         continue;
       }
 
-      await this.#switch_tab(entry);
+      await this.#switch_tab(tab);
       return;
     }
   }
