@@ -95,10 +95,13 @@ add_task(async function test_tabs_functions() {
 
 add_task(async function test_dns() {
   await reload_config(function _() {
-    void browser.dns.resolve("example.com").then(r => {
-      assert(r.addresses.length, "no DNS addresses resolved");
+    browser.dns.resolve("example.com").then(r => {
+      glide.g.value = r.addresses;
     });
   });
+
+  await waiter(() => glide.g.value).ok("DNS resolution should complete");
+  Assert.greater((glide.g.value as string[]).length, 0, "DNS addresses should be resolved");
 });
 
 add_task(async function test_css_injection() {
