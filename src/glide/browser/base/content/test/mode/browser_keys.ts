@@ -338,11 +338,11 @@ add_task(async function test_mapping_user_gesture_activation() {
     });
 
     await keys("yc");
-    await sleep_frames(10);
+    await waiter(() => glide.g.test_checked).ok("the mapping should be invoked");
 
     // clicking the button should attempt to copy the contents of a `<textarea>` to
     // the clipboard which will only work if user gestures were recently registered.
-    is(await navigator.clipboard.readText(), "This is the test content to copy");
+    await waiter(() => navigator.clipboard.readText()).is("This is the test content to copy");
   });
 });
 
