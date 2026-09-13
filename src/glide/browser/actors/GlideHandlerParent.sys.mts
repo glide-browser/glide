@@ -198,6 +198,18 @@ export class GlideHandlerParent extends JSWindowActorParent<
           return;
         }
 
+        if (message.data.mode === "command" && !message.data.force) {
+          // `command` mode is owned by the commandline widget, which switches to it itself when
+          // it is shown (and it closes itself on `focusout`, so its input can only ever gain focus
+          // through `show()`). a non-forced request to enter it can therefore only come from the
+          // chrome actor observing that `focusin`, which is redundant at best and harmful when the
+          // message is delivered late: after `close()` reset the mode to `normal` (leaving us stuck in
+          // `command` mode with no commandline) or after a `mode_change normal` mapping was executed
+          // while the commandline was still open (undoing the user's explicit mode change).
+          this.#log.debug("ignoring redundant request to enter command mode", message.data);
+          return;
+        }
+
         this.#log.debug("changing mode", message.data);
         this.glide_browser?._change_mode(message.data.mode);
         break;
