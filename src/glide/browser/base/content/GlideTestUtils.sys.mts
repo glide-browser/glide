@@ -105,10 +105,14 @@ class GlideTestUtilsClass {
   }
 
   async wait_for_mode(mode: GlideMode, name?: string) {
-    await g.TestUtils.waitForCondition(
-      () => GlideBrowser.state.mode === mode,
-      name ?? `Waiting for mode to be "${mode}" mode`,
-    );
+    try {
+      await g.TestUtils.waitForCondition(
+        () => GlideBrowser.state.mode === mode,
+        name ?? `Waiting for mode to be "${mode}" mode`,
+      );
+    } catch (err) {
+      throw new Error(`${err} (current mode: "${GlideBrowser.state.mode}")`, { cause: err });
+    }
   }
 
   async until<R>(cb: () => R | undefined | null, name?: string): Promise<R> {
