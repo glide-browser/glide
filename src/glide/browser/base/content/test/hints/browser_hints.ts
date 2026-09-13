@@ -77,6 +77,7 @@ add_task(async function test_hints_follow_link() {
 add_task(async function test_F_opens_new_tab() {
   await BrowserTestUtils.withNewTab(FILE, async _ => {
     const initial_tab_count = gBrowser.tabs.length;
+    const initial_tabs = new Set(gBrowser.tabs);
 
     await keys("F");
     await wait_for_hints();
@@ -86,15 +87,16 @@ add_task(async function test_F_opens_new_tab() {
     ok(first_hint.textContent);
 
     await keys(first_hint.textContent);
-    await sleep_frames(3);
 
-    const final_tab_count = gBrowser.tabs.length;
-    is(final_tab_count, initial_tab_count + 1, "F key should open a new tab when following hint");
+    await waiter(() => gBrowser.tabs.length).is(
+      initial_tab_count + 1,
+      "F key should open a new tab when following hint",
+    );
+    await wait_for_mode("normal", "Mode should return to 'normal' after following hint");
 
-    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
-
-    if (final_tab_count > initial_tab_count) {
-      gBrowser.removeTab(gBrowser.selectedTab);
+    const new_tab = gBrowser.tabs.find(tab => !initial_tabs.has(tab));
+    if (new_tab) {
+      gBrowser.removeTab(new_tab);
     }
   });
 });
@@ -422,6 +424,7 @@ add_task(async function test_numeric_hint_generator() {
 
   await BrowserTestUtils.withNewTab(FILE, async _browser => {
     const initial_tab_count = gBrowser.tabs.length;
+    const initial_tabs = new Set(gBrowser.tabs);
     await keys("F");
     await wait_for_hints();
 
@@ -431,14 +434,13 @@ add_task(async function test_numeric_hint_generator() {
     is(hints[9]?.label, "10");
 
     await keys("1<CR>");
-    await sleep_frames(3);
 
-    const final_tab_count = gBrowser.tabs.length;
-    is(final_tab_count, initial_tab_count + 1, "<CR> should select first hint");
-    is(GlideBrowser.state.mode, "normal", "Mode should return to 'normal' after following hint");
+    await waiter(() => gBrowser.tabs.length).is(initial_tab_count + 1, "<CR> should select first hint");
+    await wait_for_mode("normal", "Mode should return to 'normal' after following hint");
 
-    if (final_tab_count > initial_tab_count) {
-      gBrowser.removeTab(gBrowser.selectedTab);
+    const new_tab = gBrowser.tabs.find(tab => !initial_tabs.has(tab));
+    if (new_tab) {
+      gBrowser.removeTab(new_tab);
     }
   });
 });
