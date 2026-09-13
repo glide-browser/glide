@@ -7,6 +7,8 @@
 
 "use strict";
 
+requestLongerTimeout(2);
+
 declare var content: TestContent;
 
 declare global {

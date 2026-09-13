@@ -71,6 +71,7 @@ declare global {
   function add_task(fn: (() => void) | (() => Promise<void>)): BoundTestTask;
   function add_setup(fn: (() => void) | (() => Promise<void>)): void;
   function registerCleanupFunction(fn: () => void): void;
+  function requestLongerTimeout(factor: number): void;
 
   function sleep_frames(count: number): Promise<void>;
   function sleep_forever(): Promise<void>;

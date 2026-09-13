@@ -7,6 +7,8 @@
 
 "use strict";
 
+requestLongerTimeout(2);
+
 const { AppConstants } = ChromeUtils.importESModule("resource://gre/modules/AppConstants.sys.mjs");
 
 declare var content: TestContent;
