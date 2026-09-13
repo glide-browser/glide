@@ -211,26 +211,31 @@ class GlideTestUtilsClass {
     const [x, y] = await get_scroll();
     const state = { x, y };
 
+    // how many consecutive samples (each `SAMPLE_FRAMES` apart) the scroll position
+    // must be unchanged for before we consider scrolling to have stopped.
+    const STABLE_SAMPLES = 3;
+    const SAMPLE_FRAMES = 5;
+
     async function wait_for_scroll_stop() {
-      await g.sleep_frames(5); // ensure scrolling starts
+      await g.sleep_frames(SAMPLE_FRAMES); // ensure scrolling starts
 
       await GlideTestUtils.until(async () => {
-        const [new_x, new_y] = await get_scroll!();
-        if (new_x === state.x && new_y === state.y) {
-          return true;
+        let [x, y] = await get_scroll!();
+
+        for (let i = 0; i < STABLE_SAMPLES; i++) {
+          await g.sleep_frames(SAMPLE_FRAMES);
+
+          const [new_x, new_y] = await get_scroll!();
+          if (new_x !== x || new_y !== y) {
+            // we're still scrolling
+            state.x = new_x;
+            state.y = new_y;
+            return false;
+          }
         }
 
-        await g.sleep_frames(5);
-
-        var [x, y] = await get_scroll!();
         state.x = x;
         state.y = y;
-
-        if (x !== new_x || y !== new_y) {
-          // we're still scrolling
-          return false;
-        }
-
         return true;
       });
     }
