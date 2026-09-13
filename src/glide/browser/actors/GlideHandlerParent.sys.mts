@@ -190,6 +190,26 @@ export class GlideHandlerParent extends JSWindowActorParent<
 
     switch (message.name) {
       case "Glide::ChangeMode": {
+        if (!message.data.force && !this.browsingContext?.isContent) {
+          // focus/blur driven mode switches for the chrome document are handled synchronously in
+          // `GlideBrowser` (`#on_focusin` / `#on_blur`), so requests from the chrome actor are
+          // redundant at best and, when delivered late, undo a more recent mode change.
+          this.#log.debug("ignoring mode change request from the chrome actor", message.data);
+          return;
+        }
+
+        if (
+          !message.data.force
+          && message.data.mode === "normal"
+          && this.glide_browser?.is_chrome_editable_focused()
+        ) {
+          // a content `blur` requests normal mode, but if the focus already moved to an editable
+          // chrome element (e.g. `<C-l>` while a content input was focused) then `#on_focusin` has
+          // already switched to insert mode and applying this (late) request would undo that.
+          this.#log.debug("ignoring normal mode request, an editable chrome element is focused", message.data);
+          return;
+        }
+
         if (this.glide_browser?.is_mode_switching_disabled() && !message.data.force) {
           // the content process can request to switch modes on focus/blur events, which we do not want
           // to *actually* apply if `glide.o.switch_mode_on_focus === false`, so to prevent having to make
