@@ -425,11 +425,28 @@ export function make_listener_change_observer(): nsIListenerChangeListener {
 
           // we need to cleanup all the source and mirror listeners when the config is reloaded
           // to avoid sending duplicate events
+          const type = info.type;
           GlideBrowser.on_reload_config(() => {
             GlideBrowser._log.debug(`[document-mirror/listener]: clearing state`);
             all_state = new WeakMap();
-            mirror_target.removeEventListener(info.type, info.listenerObject);
-            source_target.removeEventListener(info.type, listener);
+
+            // note: `type_state.mirror_listeners` is the live map, so this covers every mirror listener
+            //       for this type that was added after the source listener was registered too.
+            for (const mirror_listener of type_state.mirror_listeners.keys()) {
+              mirror_target.removeEventListener(type, mirror_listener as EventListener);
+            }
+            type_state.mirror_listeners.clear();
+
+            // event handler attributes, e.g. `element.onclick = () => {}`, are reported by
+            // `getListenerInfoFor()` but can't be removed with `removeEventListener()`, they
+            // have to be explicitly cleared otherwise they'd survive across config reloads
+            // and fire alongside the listeners registered by the new config.
+            const handler_prop = `on${type}`;
+            if (handler_prop in mirror_target && typeof (mirror_target as any)[handler_prop] === "function") {
+              (mirror_target as any)[handler_prop] = null;
+            }
+
+            source_target.removeEventListener(type, listener);
           });
         }
 

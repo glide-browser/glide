@@ -608,6 +608,40 @@ add_task(async function test_addEventListener__element() {
   is((GlideBrowser.sandbox_window as any).$glide_counter, 1, "listener should not be invoked after config reload");
 });
 
+add_task(async function test_onclick_property__cleared_on_reload() {
+  // regression test: an `onclick` handler can't be removed with `removeEventListener()`, so it used
+  // to survive config reloads and fire alongside the listeners registered by the *next* config.
+  await GlideTestUtils.reload_config(() => {
+    const store = window as any as { $glide_counter: number };
+    store.$glide_counter = 0;
+
+    (document.getElementById("glide-toolbar-mode-button")! as HTMLElement).onclick = () => {
+      store.$glide_counter++;
+    };
+  });
+
+  await GlideTestUtils.reload_config(() => {
+    const store = window as any as { $glide_counter: number };
+    store.$glide_counter = 0;
+
+    glide.g.value = 0;
+    document.getElementById("glide-toolbar-mode-button")!.addEventListener("click", () => {
+      glide.g.value++;
+      store.$glide_counter++;
+    });
+  });
+
+  await sleep_frames(10); // TODO: sad
+  (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
+
+  await waiter(() => glide.g.value).is(1, "click listener from the new config should be invoked");
+  is(
+    (GlideBrowser.sandbox_window as any).$glide_counter,
+    1,
+    "the onclick handler from the previous config should not be invoked",
+  );
+});
+
 add_task(async function test_addEventListener__element__keydown() {
   await GlideTestUtils.reload_config(() => {
     glide.g.events = [];

@@ -25,6 +25,7 @@ padding: 0.3em;
 
 - Bumped Firefox from 159.0b4 to 159.0b5
 - Scrolling with `<C-d>`, `<C-u>`, `<C-f>`, `<C-b>`, `gg` and `G` no longer synthesizes key events (or temporarily changes page scroll prefs for half pages): it now scrolls what the keyboard would scroll through a small Firefox patch (`nsIDOMWindowUtils.scrollKeyboardTarget`), which also fixes half page scrolls occasionally scrolling a full page
+- Fixed event handler properties (e.g. `element.onclick = ...`) set on the `document` mirror by a previous config still firing after a config reload
 
 # 0.1.65a
 
