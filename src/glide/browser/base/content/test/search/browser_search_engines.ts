@@ -30,7 +30,16 @@ async function focus_address_bar() {
   }
 
   // wait for us to actually enter insert mode so typing goes into the urlbar input
-  await wait_for_mode("insert", "focusing the urlbar should switch to insert mode");
+  try {
+    await wait_for_mode("insert", "focusing the urlbar should switch to insert mode");
+  } catch (err) {
+    throw new Error(
+      `${err} (urlbar focused: ${gURLBar.focused}, active element: ${
+        document!.activeElement?.id || document!.activeElement?.tagName
+      })`,
+      { cause: err },
+    );
+  }
 }
 
 add_task(async function test_add_search_engine() {
@@ -63,7 +72,7 @@ add_task(async function test_add_search_engine() {
   await keys("@test<space>");
   await until(() => gURLBar.searchMode?.engineName === ENGINE_NAME, "urlbar should enter search mode for `@test`");
   await keys("wow");
-  await sleep_frames(10);
+  await until(() => gURLBar.value === "wow", "urlbar should contain the typed query");
   await keys("<CR>");
 
   await waiter(() => glide.ctx.url.toString()).is("https://example.com/search?q=wow");
@@ -103,7 +112,7 @@ add_task(async function test_add_search_engine_with_multiple_keywords() {
       `urlbar should enter search mode for \`@${alias}\``,
     );
     await keys(alias);
-    await sleep_frames(10);
+    await until(() => gURLBar.value === alias, "urlbar should contain the typed query");
     await keys("<CR>");
     await waiter(() => glide.ctx.url.toString()).is(
       `https://example.com/search?q=${alias}`,

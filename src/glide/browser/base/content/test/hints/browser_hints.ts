@@ -191,7 +191,7 @@ add_task(async function test_include_selector() {
     const standard_count = standard_hints.length;
 
     await keys("<Esc>");
-    await sleep_frames(3);
+    await wait_for_mode("normal");
 
     // Now test with --include
     await keys("F");
@@ -255,11 +255,10 @@ add_task(async function test_pick_basic() {
 
 add_task(async function test_gI() {
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async browser => {
-    await keys("gI");
-    await sleep_frames(5);
+    const get_focused_id = () => SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
 
-    var focument_element = await SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
-    is(focument_element, "vim-test-area", "should focus the largest editable element");
+    await keys("gI");
+    await waiter(get_focused_id).is("vim-test-area", "should focus the largest editable element");
 
     // make ^ smaller
     await SpecialPowers.spawn(browser, [], () => {
@@ -269,10 +268,10 @@ add_task(async function test_gI() {
     });
 
     await keys("<Escape>gI");
-    await sleep_frames(5);
-
-    var focument_element = await SpecialPowers.spawn(browser, [], () => content.document.activeElement?.id);
-    is(focument_element, "contenteditable-div-with-role-textbox", "should focus the largest editable element");
+    await waiter(get_focused_id).is(
+      "contenteditable-div-with-role-textbox",
+      "should focus the largest editable element",
+    );
   });
 });
 
@@ -285,7 +284,6 @@ add_task(async function test_expandable_content_can_be_hinted() {
       summary.scrollIntoView();
       return (summary as any).parentElement!.open;
     });
-    await sleep_frames(10);
     is(is_open, false, "<details> content should be hidden by default");
 
     await keys("f");

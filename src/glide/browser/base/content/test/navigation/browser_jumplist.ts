@@ -117,8 +117,7 @@ add_task(async function test_jumplist_deleted_intermediary_tab() {
   await waiter(current_url).is(uri(2), "Jumped back to tab2");
 
   // delete tab3 while we're *not* on it
-  BrowserTestUtils.removeTab(tab3);
-  await sleep_frames(30);
+  await BrowserTestUtils.removeTab(tab3);
 
   await keys("<C-i>");
   await waiter(current_url).is(uri(4), "Skipped deleted tab3 and jumped to tab4");

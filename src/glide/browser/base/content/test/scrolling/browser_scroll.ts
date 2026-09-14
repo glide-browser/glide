@@ -371,12 +371,12 @@ async function horizontal_scroll_tests(url: string) {
     var x = await get_x();
     is(x, min_x);
 
+    const wait_for_scroll_stop = await GlideTestUtils.scroll_waiter(async () => [await get_x(), 0]);
+
     for (let i = 0; i < 10; i++) {
       await keys("l");
     }
-    // ensure we give enough frame time to complete the horizontal scroll
-    // TODO(glide): better solution for this
-    await sleep_frames(100);
+    await wait_for_scroll_stop();
 
     var curr_x = await get_x();
     isnot(curr_x, 0, `repeated \`l\` should move the scroll x position`);
@@ -385,8 +385,6 @@ async function horizontal_scroll_tests(url: string) {
     for (let i = 0; i < 10; i++) {
       await keys("h");
     }
-    await sleep_frames(100);
-    var new_x = await get_x();
-    is(new_x, min_x, `h should scroll to the left edge`);
+    await waiter(get_x).is(min_x, `h should scroll to the left edge`);
   });
 }

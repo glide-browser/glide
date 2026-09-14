@@ -23,9 +23,7 @@ add_task(async function test_include_basic_functionality() {
     glide.include("included.ts");
   });
 
-  await sleep_frames(10);
-
-  ok(glide.g.include_called, "the included.ts file was executed");
+  await waiter(() => glide.g.include_called).ok("the included.ts file was executed");
 });
 
 add_task(async function test_unstable_include_still_works() {
@@ -37,9 +35,7 @@ add_task(async function test_unstable_include_still_works() {
     glide.unstable.include("included.ts");
   });
 
-  await sleep_frames(10);
-
-  ok(glide.g.include_called, "the included.ts file was executed");
+  await waiter(() => glide.g.include_called).ok("the included.ts file was executed");
 });
 
 add_task(async function test_include_absolute_path() {
@@ -51,9 +47,7 @@ add_task(async function test_include_absolute_path() {
     glide.include(glide.path.join(glide.path.profile_dir, "glide", "included.ts"));
   });
 
-  await sleep_frames(10);
-
-  ok(glide.g.include_called, "the included.ts file was executed");
+  await waiter(() => glide.g.include_called).ok("the included.ts file was executed");
 });
 
 add_task(async function test_include_nested_absolute() {

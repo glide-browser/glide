@@ -218,11 +218,10 @@ add_task(async function test_page_visibility_signal_exists() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(1);
 
   // note: we may want to force this to be `visible` in the future, this test is just
   //       to verify when that changes.
-  is(glide.g.value, "hidden");
+  await waiter(() => glide.g.value).is("hidden");
 });
 
 add_task(async function test_setTimeout() {
@@ -235,9 +234,8 @@ add_task(async function test_setTimeout() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(10);
 
-  is(glide.g.value, "from setTimeout");
+  await waiter(() => glide.g.value).is("from setTimeout");
 });
 
 add_task(async function test_requestAnimationFrame() {
@@ -250,9 +248,8 @@ add_task(async function test_requestAnimationFrame() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(10);
 
-  is(glide.g.value, "from requestAnimationFrame");
+  await waiter(() => glide.g.value).is("from requestAnimationFrame");
 });
 
 add_task(async function test_setInterval() {
@@ -266,9 +263,8 @@ add_task(async function test_setInterval() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(10);
 
-  is(glide.g.value, 1, "setInterval ticked at least once and then cleared");
+  await waiter(() => glide.g.value).is(1, "setInterval ticked at least once and then cleared");
 });
 
 add_task(async function test_queueMicrotask() {
@@ -281,9 +277,8 @@ add_task(async function test_queueMicrotask() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(1);
 
-  is(glide.g.value, "from queueMicrotask");
+  await waiter(() => glide.g.value).is("from queueMicrotask");
 });
 
 add_task(async function test_requestIdleCallback_with_timeout() {
@@ -296,9 +291,8 @@ add_task(async function test_requestIdleCallback_with_timeout() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(20);
 
-  is(glide.g.value, "from requestIdleCallback");
+  await waiter(() => glide.g.value).is("from requestIdleCallback");
 });
 
 add_task(async function test_performance_now_monotonicity() {
@@ -316,9 +310,8 @@ add_task(async function test_performance_now_monotonicity() {
   });
 
   await glide.keys.send("~");
-  await sleep_frames(2);
 
-  const { t0, t1, inc } = glide.g.value;
+  const { t0, t1, inc } = await until(() => glide.g.value);
   Assert.greaterOrEqual(t1, t0, "monotonic, non-decreasing");
   Assert.greaterOrEqual(inc, 0, "non-negative delta");
 });

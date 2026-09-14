@@ -34,9 +34,7 @@ add_task(async function test_ignore_mode_new_tab_stays_in_ignore_mode() {
     await BrowserTestUtils.withNewTab(FILE, async browser => {
       await focus_input(browser);
 
-      await sleep_frames(10);
-      is(
-        glide.ctx.mode,
+      await wait_for_mode(
         "ignore",
         "we should still be in ignore mode after opening a new tab and focusing an input element",
       );
@@ -57,9 +55,7 @@ add_task(async function test_custom_ignore_mode_stays_on_focus() {
     await BrowserTestUtils.withNewTab(FILE, async browser => {
       await focus_input(browser);
 
-      await sleep_frames(10);
-      is(
-        glide.ctx.mode,
+      await wait_for_mode(
         "leap",
         "a custom mode registered with `switch_mode_on_focus: false` should not auto-switch to insert on focus",
       );
@@ -104,9 +100,7 @@ add_task(async function test_custom_mode_without_flag_switches_on_focus() {
     await BrowserTestUtils.withNewTab(FILE, async browser => {
       await focus_input(browser);
 
-      await sleep_frames(10);
-      is(
-        glide.ctx.mode,
+      await wait_for_mode(
         "insert",
         "a custom mode without `switch_mode_on_focus: false` should still auto-switch to insert on focus",
       );

@@ -283,7 +283,7 @@ add_task(async function test_commandline_exit_autocmd() {
     });
 
     await keys(":foo");
-    await sleep_frames(5);
+    await until(() => GlideTestUtils.commandline.get_input_content() === "foo");
     await keys("<esc>");
 
     await waiter(() => glide.g.test_checked).ok("CommandLineExit autocmd should be triggered");
@@ -579,10 +579,11 @@ add_task(async function test_suggested_command_is_default() {
     is(GlideTestUtils.commandline.visible_rows().length, GlideBrowser.commandline_excmds.length);
 
     await keys("<CR>");
-    await sleep_frames(10);
 
-    const clipboard_text = await navigator.clipboard.readText();
-    is(clipboard_text, profile_dir, "Clipboard should contain the profile directory path");
+    await waiter(() => navigator.clipboard.readText()).is(
+      profile_dir,
+      "Clipboard should contain the profile directory path",
+    );
 
     await TestUtils.waitForCondition(
       () => gNotificationBox.getNotificationWithValue("glide-profile-dir") === null,

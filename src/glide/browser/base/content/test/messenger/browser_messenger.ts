@@ -34,8 +34,7 @@ add_task(async function test_basic_message_usage() {
     });
 
     await keys("gt");
-    await sleep_frames(10);
-    is(glide.g.value, "my_message", "the message should be sent through to the parent config");
+    await waiter(() => glide.g.value).is("my_message", "the message should be sent through to the parent config");
   });
 });
 
@@ -54,11 +53,11 @@ add_task(async function test_recv_error_handling() {
     });
 
     await keys("gt");
-    await sleep_frames(50);
 
-    let notification = gNotificationBox.getNotificationWithValue("glide-messenger-error");
-
-    ok(notification, "Error notification should be shown");
+    let notification = await until(
+      () => gNotificationBox.getNotificationWithValue("glide-messenger-error"),
+      "Error notification should be shown",
+    );
     is(
       // @ts-ignore
       notification.shadowRoot

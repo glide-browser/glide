@@ -547,14 +547,12 @@ add_task(async function test_webext_storage_api_listener_error() {
   });
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
-    await sleep_frames(5);
     await keys("<Space>q");
-    await sleep_frames(50);
-    GlideBrowser.flush_pending_error_notifications();
 
-    const notification = gNotificationBox.getNotificationWithValue("glide-config-error");
-
-    ok(notification, "Error notification should be shown");
+    const notification = await until(() => {
+      GlideBrowser.flush_pending_error_notifications();
+      return gNotificationBox.getNotificationWithValue("glide-config-error");
+    }, "Error notification should be shown");
     is(
       notification.shadowRoot.querySelector(".message")?.textContent?.trim(),
       "An error occurred inside a Web Extension listener at @glide.ts:2:9 - Error: an error in the storage listener",

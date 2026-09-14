@@ -65,8 +65,6 @@ add_task(async function test_gi_focuses_last_used_input() {
     await SpecialPowers.spawn(browser, [], async () => {
       content.document.getElementById("input-1")!.focus();
     });
-    await sleep_frames(100);
-
     await wait_for_mode("insert");
 
     await keys("hello");
@@ -125,10 +123,12 @@ add_task(async function test_excmd_callback_receives_tab_id() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     await keys(":test_command<CR>");
-    await sleep_frames(10);
 
     const active_tab = await glide.tabs.active();
-    is(glide.g.value, active_tab.id, "Excmd callback should receive tab_id that matches the active tab ID");
+    await waiter(() => glide.g.value).is(
+      active_tab.id,
+      "Excmd callback should receive tab_id that matches the active tab ID",
+    );
   });
 });
 
@@ -141,20 +141,16 @@ add_task(async function test_excmd_callback_receives_unparsed_args() {
 
   await BrowserTestUtils.withNewTab(INPUT_TEST_FILE, async _ => {
     await glide.excmds.execute("test_command");
-    await sleep_frames(10);
-    isjson(glide.g.value, [], "Excmd callback should receive empty args as none were passed");
+    await waiter(() => glide.g.value).isjson([], "Excmd callback should receive empty args as none were passed");
 
     await glide.excmds.execute("test_command Hello");
-    await sleep_frames(10);
-    isjson(glide.g.value, ["Hello"], "Excmd callback should receive 1 arg");
+    await waiter(() => glide.g.value).isjson(["Hello"], "Excmd callback should receive 1 arg");
 
     await glide.excmds.execute("test_command Hello world");
-    await sleep_frames(10);
-    isjson(glide.g.value, ["Hello", "world"], "Excmd callback should receive 2 args");
+    await waiter(() => glide.g.value).isjson(["Hello", "world"], "Excmd callback should receive 2 args");
 
     await glide.excmds.execute("test_command \"Hello world\"");
-    await sleep_frames(10);
-    isjson(glide.g.value, ["Hello world"], "Excmd callback should get quoted args");
+    await waiter(() => glide.g.value).isjson(["Hello world"], "Excmd callback should get quoted args");
   });
 });
 
@@ -252,10 +248,11 @@ add_task(async function test_copy_excmd_single_notification() {
     const profile_dir = PathUtils.profileDir;
 
     await keys(":copy<CR>");
-    await sleep_frames(10);
 
-    const clipboard_text = await navigator.clipboard.readText();
-    is(clipboard_text, profile_dir, "Clipboard should contain the profile directory path");
+    await waiter(() => navigator.clipboard.readText()).is(
+      profile_dir,
+      "Clipboard should contain the profile directory path",
+    );
 
     await TestUtils.waitForCondition(
       () => gNotificationBox.getNotificationWithValue("glide-profile-dir") === null,

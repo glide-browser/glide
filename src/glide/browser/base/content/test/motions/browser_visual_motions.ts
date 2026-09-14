@@ -164,11 +164,9 @@ add_task(async function test_visual_yank_editable_to_clipboard() {
     await sleep_frames(3);
 
     await keys("y");
-    await sleep_frames(10);
 
-    const clipboardText = await navigator.clipboard.readText();
-    is(clipboardText, "ello", "Selected text should be copied to clipboard");
-    is(GlideBrowser.state.mode, "normal", "Should return to normal mode after yank");
+    await waiter(() => navigator.clipboard.readText()).is("ello", "Selected text should be copied to clipboard");
+    await wait_for_mode("normal", "Should return to normal mode after yank");
   });
 });
 
@@ -202,9 +200,11 @@ add_task(async function test_visual_yank_non_editable_to_clipboard() {
 
     await sleep_frames(3);
     await keys("vy");
-    await sleep_frames(3);
 
-    is(await navigator.clipboard.readText(), "Enter your text:", "Label text should be copied to clipboard");
-    is(GlideBrowser.state.mode, "normal", "Should return to normal mode after yank");
+    await waiter(() => navigator.clipboard.readText()).is(
+      "Enter your text:",
+      "Label text should be copied to clipboard",
+    );
+    await wait_for_mode("normal", "Should return to normal mode after yank");
   });
 });
