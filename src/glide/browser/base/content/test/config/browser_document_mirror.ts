@@ -24,6 +24,67 @@ function create_test_doc(html: string): Document {
   const parser = new DOMParser();
   return parser.parseFromString(html, "text/html");
 }
+/**
+ * Wait until the mirror document is fully in sync with the source document.
+ *
+ * Mutations are applied to the mirror asynchronously (`MutationObserver` batches), so
+ * asserting on the mirror right after mutating the source is racy.
+ */
+async function wait_for_mirror_sync(source: Document, mirror: Document): Promise<void> {
+  try {
+    await until(
+      () => mirror.documentElement!.outerHTML === source.documentElement!.outerHTML,
+      "waiting for the mirror document to be in sync with the source document",
+    );
+  } catch (err) {
+    throw new Error(
+      `${err}\n--- source ---\n${source.documentElement!.outerHTML}\n--- mirror ---\n${
+        mirror.documentElement!.outerHTML
+      }`,
+      { cause: err },
+    );
+  }
+}
+
+/**
+ * Wait until the document mirror has registered its forwarding listener for `type` on the given
+ * *source* element, i.e. until `addEventListener()` / `on<type>` assignments made on the mirrored
+ * element inside the config have been picked up (listener change notifications are async).
+ */
+async function wait_for_mirror_listener(element: Element, type: string): Promise<void> {
+  await until(
+    () =>
+      Services.els.getListenerInfoFor(element).some(info =>
+        info.type === type && (info.listenerObject as any)?.name === "glide_mirror_listener"
+      ),
+    `waiting for the mirror to register a "${type}" listener on ${element.id || element.tagName}`,
+  );
+}
+
+/**
+ * Focus the urlbar input and wait until we're in insert mode.
+ *
+ * Includes diagnostics in the timeout error as focusing an already-focused element does not fire
+ * any focus events, so if we somehow ended up in normal mode with the urlbar focused this would
+ * otherwise be very hard to debug.
+ */
+async function focus_urlbar(): Promise<void> {
+  const input = document.getElementById("urlbar-input") as HTMLInputElement;
+  const was_focused = document.activeElement === input;
+  const mode_before = GlideBrowser.state.mode;
+  input.focus();
+  try {
+    await wait_for_mode("insert");
+  } catch (err) {
+    throw new Error(
+      `${err} (urlbar already focused: ${was_focused}, mode before focus: ${mode_before}, active element now: ${
+        document.activeElement?.id || document.activeElement?.tagName
+      })`,
+      { cause: err },
+    );
+  }
+}
+
 add_task(async function test_initial_dom_structure_mirroring() {
   const source = create_test_doc(`
     <!DOCTYPE html>
@@ -61,7 +122,7 @@ add_task(async function test_adding_elements() {
   const new_div = DOM.create_element("div", { id: "new-div", textContent: "New content" }, undefined, source);
   source.getElementById("root")?.appendChild(new_div);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const mirrored_div = mirror.getElementById("new-div");
   ok(mirrored_div, "New div should be mirrored");
@@ -70,7 +131,7 @@ add_task(async function test_adding_elements() {
   const nested = DOM.create_element("span", { className: "nested", textContent: "Nested" }, undefined, source);
   new_div.appendChild(nested);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const mirrored_nested = mirror.querySelector("#new-div .nested");
   ok(mirrored_nested, "Nested element should be mirrored");
@@ -93,21 +154,21 @@ add_task(async function test_removing_elements() {
 
   const child2 = source.getElementById("child2")!;
   child2.remove();
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   ok(mirror.getElementById("child1"), "Child 1 should still exist");
   ok(!mirror.getElementById("child2"), "Child 2 should be removed from mirror");
   ok(mirror.getElementById("child3"), "Child 3 should still exist");
 
   const child3 = source.getElementById("child3")!;
   child3.remove();
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   ok(mirror.getElementById("child1"), "Child 1 should still exist");
   ok(!mirror.getElementById("child2"), "Child 2 should still not exist");
   ok(!mirror.getElementById("child3"), "Child 3 should be removed");
 
   source.getElementById("parent")?.remove();
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   ok(!mirror.getElementById("parent"), "Parent should be removed");
   ok(!mirror.getElementById("child1"), "Child 1 should be removed");
@@ -129,13 +190,13 @@ add_task(async function test_text_content_changes() {
   const para = source.getElementById("para")!;
   para.textContent = "Changed text";
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(mirror.getElementById("para")!.textContent, "Changed text", "Text should be updated");
 
   source.getElementById("div")!.firstChild!.nodeValue = "Modified ";
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(mirror.getElementById("div")?.textContent, "Modified span text", "Text node should be updated");
 
@@ -155,20 +216,20 @@ add_task(async function test_attribute_mutations() {
   const input = source.getElementById("input") as HTMLInputElement;
 
   div.setAttribute("data-new", "value");
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   is(mirror.getElementById("test")?.getAttribute("data-new"), "value");
 
   div.setAttribute("class", "modified");
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   is(mirror.getElementById("test")?.className, "modified");
 
   div.removeAttribute("data-value");
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   ok(!mirror.getElementById("test")?.hasAttribute("data-value"));
 
   ok((mirror.getElementById("input") as HTMLInputElement)!.disabled);
   input.removeAttribute("disabled");
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   ok(!(mirror.getElementById("input") as HTMLInputElement)!.disabled);
 
   Mirror.stop_mirroring(mirror);
@@ -189,7 +250,7 @@ add_task(async function test_moving_elements() {
   const container2 = source.getElementById("container2")!;
   container2.appendChild(moveable!);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const mirrored_moveable = mirror.getElementById("moveable");
   is(mirrored_moveable!.parentElement!.id, "container2", "Element should be moved to container2");
@@ -216,7 +277,7 @@ add_task(async function test_reordering_elements() {
 
   list.insertBefore(item1, item3.nextSibling);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const mirror_list = mirror.getElementById("list");
   const children = Array.from(mirror_list!.children);
@@ -253,7 +314,7 @@ add_task(async function test_complex_nested_mutations() {
   `;
   source.getElementById("root")!.appendChild(new_element);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   ok(mirror.querySelector("article"));
   is(mirror.querySelectorAll("article p").length, 2);
@@ -277,7 +338,7 @@ add_task(async function test_rapid_mutations() {
     container.appendChild(DOM.create_element("div", { id: `div${i}`, textContent: `Content ${i}` }, undefined, source));
   }
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   for (let i = 0; i < 10; i++) {
     const mirrored_div = mirror.getElementById(`div${i}`);
@@ -289,7 +350,7 @@ add_task(async function test_rapid_mutations() {
     source.getElementById(`div${i}`)!.setAttribute("data-index", String(i * 2));
   }
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   for (let i = 0; i < 10; i++) {
     is(
@@ -323,7 +384,7 @@ add_task(async function test_re_mirroring() {
 
   let mirror = Mirror.mirror_into_document(source, target);
   source.getElementById("test")!.textContent = "First mirror";
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
   is(mirror.getElementById("test")?.textContent, "First mirror", "First mirror should work");
 
   is(
@@ -340,12 +401,12 @@ add_task(async function test_empty_text_nodes() {
 
   const div = source.getElementById("test")!;
   div.appendChild(source.createTextNode(""));
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(mirror.getElementById("test")!.childNodes.length, 1, "Should have empty text node");
 
   div.firstChild!.nodeValue = "Now has text";
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(mirror.getElementById("test")!.textContent, "Now has text", "Text should be updated");
 
@@ -361,7 +422,7 @@ add_task(async function test_comment_node_types() {
   is(mirror.getElementById("test")!.firstChild!.nodeValue, "comment");
 
   source.getElementById("test")!.firstChild!.nodeValue = "modified comment";
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(mirror.getElementById("test")?.firstChild?.nodeValue, "modified comment", "Comment should be updated");
 
@@ -381,7 +442,7 @@ add_task(async function test_document_fragments() {
 
   source.getElementById("container")!.appendChild(fragment);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   for (let i = 0; i < 5; i++) {
     const mirrored_div = mirror.getElementById(`frag-${i}`);
@@ -398,7 +459,7 @@ add_task(async function test_replace_document_element() {
   new_body.innerHTML = "<div id='new'>New content</div>";
   source.documentElement!.replaceChild(new_body, source.body!);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   ok(!mirror.getElementById("original"), "Original should be gone");
   ok(mirror.getElementById("new"), "New content should exist");
@@ -420,7 +481,7 @@ add_task(async function test_simultaneous_mutation_types() {
   source.body!.appendChild(DOM.create_element("div", { id: "div4", textContent: "Content 4" }, undefined, source));
   source.getElementById("div3")!.textContent = "Modified 3";
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(mirror.getElementById("div1")?.className, "modified", "div1 class should be modified");
   ok(!mirror.getElementById("div2"), "div2 should be removed");
@@ -448,7 +509,7 @@ add_task(async function test_insert_before_siblings() {
     source.getElementById("third"),
   );
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const mirror_container = mirror.getElementById("container");
   const children = Array.from(mirror_container!.children);
@@ -463,7 +524,7 @@ add_task(async function test_insert_before_siblings() {
     container!.firstChild,
   );
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const updatedChildren = Array.from(mirror_container!.children);
   is(updatedChildren[0]?.id, "zeroth");
@@ -497,7 +558,7 @@ add_task(async function test_insert_before_reference_reparented_by_import() {
   parent.insertBefore(wrapper, ref);
   wrapper.appendChild(ref);
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   const mirror_parent = mirror.getElementById("parent")!;
   const mirror_wrapper = mirror.getElementById("wrapper");
@@ -532,7 +593,7 @@ add_task(async function test_whitespace_handling() {
   const div = source.getElementById("test");
   div!.firstChild!.nodeValue = "\n\t\tTabbed content\n";
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   is(
     mirror.getElementById("test")?.firstChild?.nodeValue,
@@ -565,7 +626,7 @@ add_task(async function test_replace_node_type() {
     source.getElementById("replaceme")!,
   );
 
-  await sleep_frames(20);
+  await wait_for_mirror_sync(source, mirror);
 
   ok(!mirror.getElementById("replaceme"), "Old span should be gone");
   const replaced = mirror.getElementById("replaced");
@@ -592,7 +653,7 @@ add_task(async function test_addEventListener__element() {
     });
   });
 
-  await sleep_frames(10); // TODO: sad
+  await wait_for_mirror_listener(document.getElementById("glide-toolbar-mode-button")!, "click");
   (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
 
   const frame_time = await waiter(() => glide.g.value).is(1, "click listener should be invoked");
@@ -631,7 +692,7 @@ add_task(async function test_onclick_property__cleared_on_reload() {
     });
   });
 
-  await sleep_frames(10); // TODO: sad
+  await wait_for_mirror_listener(document.getElementById("glide-toolbar-mode-button")!, "click");
   (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
 
   await waiter(() => glide.g.value).is(1, "click listener from the new config should be invoked");
@@ -667,8 +728,8 @@ add_task(async function test_addEventListener__element__keydown() {
     });
   });
 
-  await sleep_frames(10);
-  (document.getElementById("urlbar-input") as HTMLElement).focus();
+  await wait_for_mirror_listener(document.getElementById("urlbar-input")!, "keydown");
+  await focus_urlbar();
 
   await keys("foo");
 
@@ -727,7 +788,7 @@ add_task(async function test_addEventListener__element__click() {
     });
   });
 
-  await sleep_frames(10);
+  await wait_for_mirror_listener(document.getElementById("glide-toolbar-mode-button")!, "click");
   (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
 
   await waiter(() => glide.g.events?.length).is(1, "click listener should be invoked");
@@ -768,8 +829,8 @@ add_task(async function test_addEventListener__element__input() {
     });
   });
 
-  await sleep_frames(10);
-  (document.getElementById("urlbar-input") as HTMLElement).focus();
+  await wait_for_mirror_listener(document.getElementById("urlbar-input")!, "input");
+  await focus_urlbar();
 
   await keys("ab");
 
@@ -814,7 +875,7 @@ add_task(async function test_addEventListener__element__wheel() {
     });
   });
 
-  await sleep_frames(10);
+  await wait_for_mirror_listener(document.documentElement, "wheel");
 
   document.documentElement.dispatchEvent(
     new WheelEvent("wheel", {
@@ -859,8 +920,8 @@ add_task(async function test_addEventListener__element__keydown_with_modifiers()
     });
   });
 
-  await sleep_frames(10);
-  (document.getElementById("urlbar-input") as HTMLElement).focus();
+  await wait_for_mirror_listener(document.getElementById("urlbar-input")!, "keydown");
+  await focus_urlbar();
 
   await keys("<C-a>");
   await waiter(() => glide.g.events?.length).is(1, "keydown listener should be invoked");
@@ -902,7 +963,7 @@ add_task(async function test_addEventListener__multiple_listeners_same_element__
   });
 
   await waiter(() => glide.g.ready).ok();
-  await sleep_frames(10);
+  await wait_for_mirror_listener(document.getElementById("glide-toolbar-mode-button")!, "click");
 
   const element = document.getElementById("glide-toolbar-mode-button") as HTMLElement;
   element.click();
@@ -939,10 +1000,10 @@ add_task(async function test_addEventListener__preventDefault() {
     });
   });
 
-  await sleep_frames(10);
+  await wait_for_mirror_listener(document.getElementById("urlbar-input")!, "keydown");
 
+  await focus_urlbar();
   const input = document.getElementById("urlbar-input") as HTMLInputElement;
-  input.focus();
   await wait_for_mode("insert");
 
   await keys("ab");
@@ -970,7 +1031,7 @@ add_task(async function test_onclick_property() {
     };
   });
 
-  await sleep_frames(10);
+  await wait_for_mirror_listener(document.getElementById("glide-toolbar-mode-button")!, "click");
   (document.getElementById("glide-toolbar-mode-button") as HTMLElement).click();
 
   const frame_time = await waiter(() => glide.g.value).is(1, "onclick listener should be invoked");
