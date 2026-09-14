@@ -23,20 +23,16 @@ add_task(async function test_keys_send_backspace() {
       input.focus();
       input.value = "hello";
     });
-    await sleep_frames(3);
-    is(GlideBrowser.state.mode, "insert", "Should be in insert mode when input is focused");
+    await wait_for_mode("insert", "Should be in insert mode when input is focused");
 
     await keys("~");
-    await sleep_frames(5);
 
-    is(
-      await SpecialPowers.spawn(browser, [], async () => {
+    await waiter(() =>
+      SpecialPowers.spawn(browser, [], async () => {
         const input = content.document.getElementById<HTMLInputElement>("input-1")!;
         return input.value;
-      }),
-      "hell",
-      "glide.keys.send('<BS>') should delete the text",
-    );
+      })
+    ).is("hell", "glide.keys.send('<BS>') should delete the text");
   });
 });
 
@@ -48,20 +44,16 @@ add_task(async function test_keys_send_space() {
         input.focus();
         input.value = "hello";
       });
-      await sleep_frames(3);
-      is(GlideBrowser.state.mode, "insert", "Should be in insert mode when input is focused");
+      await wait_for_mode("insert", "Should be in insert mode when input is focused");
 
       await glide.keys.send(`${space}world`);
-      await sleep_frames(10);
 
-      is(
-        await SpecialPowers.spawn(browser, [], async () => {
+      await waiter(() =>
+        SpecialPowers.spawn(browser, [], async () => {
           const input = content.document.getElementById<HTMLInputElement>("input-1")!;
           return input.value;
-        }),
-        "hello world",
-        `glide.keys.send('${space}') should send a space`,
-      );
+        })
+      ).is("hello world", `glide.keys.send('${space}') should send a space`);
     }
   });
 });
@@ -74,8 +66,7 @@ add_task(async function test_keys_send_arrow_keys() {
       input.value = "hello";
       input.setSelectionRange(5, 5);
     });
-    await sleep_frames(3);
-    is(GlideBrowser.state.mode, "insert", "Should be in insert mode when input is focused");
+    await wait_for_mode("insert", "Should be in insert mode when input is focused");
     is(
       await SpecialPowers.spawn(browser, [], async () => {
         const input = content.document.getElementById<HTMLInputElement>("input-1")!;
@@ -86,16 +77,13 @@ add_task(async function test_keys_send_arrow_keys() {
     );
 
     await glide.keys.send("<left>");
-    await sleep_frames(5);
 
-    is(
-      await SpecialPowers.spawn(browser, [], async () => {
+    await waiter(() =>
+      SpecialPowers.spawn(browser, [], async () => {
         const input = content.document.getElementById<HTMLInputElement>("input-1")!;
         return input.selectionStart;
-      }),
-      4,
-      "glide.keys.send('<left>') should move cursor left",
-    );
+      })
+    ).is(4, "glide.keys.send('<left>') should move cursor left");
 
     await SpecialPowers.spawn(browser, [], async () => {
       const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
@@ -112,13 +100,12 @@ add_task(async function test_keys_send_arrow_keys() {
     is(cursor_pos, 11);
 
     await glide.keys.send("<up>");
-    await sleep_frames(5);
 
-    cursor_pos = await SpecialPowers.spawn(browser, [], async () => {
-      const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
-      return textarea.selectionStart;
-    });
-    Assert.less(cursor_pos!, 11, `glide.keys.send('<up>') should move cursor up (expected < 11, got ${cursor_pos})`);
+    await until(async () =>
+      (await SpecialPowers.spawn(browser, [], async () => {
+        const textarea = content.document.getElementById<HTMLTextAreaElement>("textarea-1")!;
+        return textarea.selectionStart;
+      }))! < 11, "glide.keys.send('<up>') should move cursor up (expected < 11)");
   });
 });
 

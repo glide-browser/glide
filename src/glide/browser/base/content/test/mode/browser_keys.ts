@@ -45,28 +45,19 @@ add_task(async function test_jj_insert_middle() {
       input.setSelectionRange(40, 40);
     });
 
+    const get_value = () =>
+      SpecialPowers.spawn(browser, [], async () => content.document.getElementById<HTMLInputElement>("input-2")!.value);
+
     await keys("j");
-    await sleep_frames(5);
-    let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById<HTMLInputElement>("input-2")!
-        .value;
-    });
-    is(
-      value,
+    await waiter(get_value).is(
       "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html",
       "Partial insert mapping matches should insert the key",
     );
 
     await keys("j");
-    await sleep_frames(4);
-
-    value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById<HTMLInputElement>("input-2")!
-        .value;
-    });
 
     // content should not have `jj` now
-    is(value, INPUT_TEST_URI);
+    await waiter(get_value).is(INPUT_TEST_URI);
 
     const [selection_start, selection_end] = await SpecialPowers.spawn(browser, [], async () => {
       const input = content.document.getElementById<HTMLInputElement>("input-2")!;
@@ -88,24 +79,16 @@ add_task(async function test_jj_insert_end() {
     });
 
     await sleep_frames(1);
-    await keys("j");
-    await sleep_frames(4);
-
-    let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById<HTMLInputElement>("input-2")!
-        .value;
-    });
-    is(value, INPUT_TEST_URI + "j");
+    const get_value = () =>
+      SpecialPowers.spawn(browser, [], async () => content.document.getElementById<HTMLInputElement>("input-2")!.value);
 
     await keys("j");
-    await sleep_frames(3);
+    await waiter(get_value).is(INPUT_TEST_URI + "j");
+
+    await keys("j");
 
     // content should be the exact same
-    is(
-      await SpecialPowers.spawn(browser, [], async () =>
-        content.document.getElementById<HTMLInputElement>("input-2")!.value),
-      INPUT_TEST_URI,
-    );
+    await waiter(get_value).is(INPUT_TEST_URI);
     is(
       await SpecialPowers.spawn(browser, [], async () => content.document.getElementById("input-2")!.matches(":focus")),
       true,
@@ -123,26 +106,16 @@ add_task(async function test_jj_partial_cancel_by_other_keypress() {
       input.setSelectionRange(40, 40);
     });
 
+    const get_value = () =>
+      SpecialPowers.spawn(browser, [], async () => content.document.getElementById<HTMLInputElement>("input-2")!.value);
+
     await keys("j");
-    await sleep_frames(1);
-    let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById<HTMLInputElement>("input-2")!
-        .value;
-    });
-    await sleep_frames(2);
-    is(value, "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html");
+    await waiter(get_value).is("http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html");
 
     await keys("e");
-    await sleep_frames(4);
 
     // content should now have `je`
-    is(
-      await SpecialPowers.spawn(browser, [], async () => {
-        return content.document.getElementById<HTMLInputElement>("input-2")!
-          .value;
-      }),
-      "http://mochi.test:8888/browser/glide/brojewser/base/content/test/mode/input_test.html",
-    );
+    await waiter(get_value).is("http://mochi.test:8888/browser/glide/brojewser/base/content/test/mode/input_test.html");
 
     const [selection_start, selection_end] = await SpecialPowers.spawn(browser, [], async () => {
       const input = content.document.getElementById<HTMLInputElement>("input-2")!;
@@ -163,20 +136,15 @@ add_task(async function test_j_cancel_by_escape() {
     });
 
     await keys("j");
-    await sleep_frames(2);
-    let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById<HTMLInputElement>("input-2")!
-        .value;
-    });
-    is(
-      value,
+    await waiter(() =>
+      SpecialPowers.spawn(browser, [], async () => content.document.getElementById<HTMLInputElement>("input-2")!.value)
+    ).is(
       "http://mochi.test:8888/browser/glide/brojwser/base/content/test/mode/input_test.html",
       "Partial insert mapping matches should insert the key",
     );
 
     await keys("<esc>");
-    await sleep_frames(3);
-    is(GlideBrowser.state.mode, "normal", "Esc after a single j should go to normal mode");
+    await wait_for_mode("normal", "Esc after a single j should go to normal mode");
 
     // content should be back to original
     is(
@@ -204,16 +172,13 @@ add_task(async function test_jj_switching_elements() {
     });
 
     await keys("fj");
-    await sleep_frames(5);
-    let value = await SpecialPowers.spawn(browser, [], async () => {
-      return content.document.getElementById<HTMLInputElement>("input-1")!
-        .value;
-    });
-    is(value, "foofj", "Partial insert mapping matches should insert the key");
+    await waiter(() =>
+      SpecialPowers.spawn(browser, [], async () => content.document.getElementById<HTMLInputElement>("input-1")!.value)
+    ).is("foofj", "Partial insert mapping matches should insert the key");
 
     // start a new context
     await keys("<esc>");
-    await sleep_frames(3);
+    await wait_for_mode("normal");
 
     await SpecialPowers.spawn(browser, [], async () => {
       const input = content.document.getElementById<HTMLInputElement>("input-2")!;
@@ -221,19 +186,15 @@ add_task(async function test_jj_switching_elements() {
       input.focus();
     });
 
-    await sleep_frames(3);
+    await wait_for_mode("insert");
     await keys("j");
-    await sleep_frames(4);
 
-    const [first_value, second_value] = await SpecialPowers.spawn(browser, [], async () => {
-      return [
+    await waiter(() =>
+      SpecialPowers.spawn(browser, [], async () => [
         content.document.getElementById<HTMLInputElement>("input-1")!.value,
         content.document.getElementById<HTMLInputElement>("input-2")!.value,
-      ];
-    });
-
-    is(first_value, "foofj", "first content should be the same as before");
-    is(second_value, "otherj", "second content should have j inserted");
+      ])
+    ).isjson(["foofj", "otherj"], "first content should be the same as before, second content should have j inserted");
   });
 });
 
@@ -246,18 +207,19 @@ add_task(async function test_mapped_keys_no_events() {
     });
 
     // verify the event listeners are working by sending an unmapped key
-    await keys("m");
-    await sleep_frames(2);
-    let captured_events = await SpecialPowers.spawn(browser, [], async () => {
-      return {
+    const get_captured_events = () =>
+      SpecialPowers.spawn(browser, [], async () => ({
         keydown: content.document.getElementById("keydown-events")!.children.length,
         keypress: content.document.getElementById("keypress-events")!.children.length,
         keyup: content.document.getElementById("keyup-events")!.children.length,
-      };
-    });
-    is(captured_events.keydown, 1, "Unmapped key should trigger keydown");
-    is(captured_events.keypress, 1, "Unmapped key should trigger keypress");
-    is(captured_events.keyup, 1, "Unmapped key should trigger keyup");
+      }));
+
+    await keys("m");
+    await waiter(get_captured_events).isjson(
+      { keydown: 1, keypress: 1, keyup: 1 },
+      "Unmapped key should trigger keydown, keypress and keyup",
+    );
+    let captured_events: Awaited<ReturnType<typeof get_captured_events>>;
 
     // mapped key sequence
     await keys("..");
@@ -308,8 +270,11 @@ add_task(async function test_Escape_to_exit_fullscreen() {
 
     await SpecialPowers.spawn(browser, [], async () => content.document.getElementById("input-1")!.focus());
     await sleep_frames(1);
+    // wait for the exit transition to fully complete (including painting), otherwise
+    // the window can still be settling when the next test starts sending keys
+    const exited_fullscreen = DOMFullscreenTestUtils.waitForFullScreenState(browser, false);
     await keys("ab<esc>");
-    await sleep_frames(1);
+    await exited_fullscreen;
     is(window.fullScreen, false, "window not be in full screen mode");
   });
 });
@@ -317,11 +282,9 @@ add_task(async function test_Escape_to_exit_fullscreen() {
 add_task(async function test_d_op_pending_q_normal() {
   // Test that pressing "d" enters op-pending mode and then pressing "q" goes back to normal mode because q is not mapped
   await keys("d");
-  await sleep_frames(4);
-  is(GlideBrowser.state.mode, "op-pending", "Pressing 'd' enters op-pending mode");
+  await wait_for_mode("op-pending", "Pressing 'd' enters op-pending mode");
   await keys("q");
-  await sleep_frames(4);
-  is(GlideBrowser.state.mode, "normal", "Pressing 'q' in op-pending mode returns to normal mode");
+  await wait_for_mode("normal", "Pressing 'q' in op-pending mode returns to normal mode");
 });
 
 add_task(async function test_mapping_user_gesture_activation() {
@@ -362,17 +325,21 @@ add_task(async function test_buf_local_keymaps_override_global() {
     });
 
     await keys("q");
-    await sleep_frames(3);
-    is(glide.g.invoked_buffer, 1, "Buffer-local mapping should be executed in the originating buffer");
+    await waiter(() => glide.g.invoked_buffer).is(
+      1,
+      "Buffer-local mapping should be executed in the originating buffer",
+    );
     is(glide.g.invoked_global, 0, "Global mapping should be shadowed by the buffer-local mapping");
 
     // Open a new tab to clear buffer-local mappings.
     using _tab = await GlideTestUtils.new_tab(KEYS_TEST_URI);
 
     await keys("q");
-    await sleep_frames(3);
+    await waiter(() => glide.g.invoked_global).is(
+      1,
+      "Global mapping should be executed in buffers without a buffer-local override",
+    );
     is(glide.g.invoked_buffer, 1, "Buffer-local mapping should not fire in a different buffer");
-    is(glide.g.invoked_global, 1, "Global mapping should be executed in buffers without a buffer-local override");
   });
 });
 
