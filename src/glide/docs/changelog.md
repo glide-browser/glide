@@ -27,6 +27,7 @@ padding: 0.3em;
 - Scrolling with `<C-d>`, `<C-u>`, `<C-f>`, `<C-b>`, `gg` and `G` no longer synthesizes key events (or temporarily changes page scroll prefs for half pages): it now scrolls what the keyboard would scroll through a small Firefox patch (`nsIDOMWindowUtils.scrollKeyboardTarget`), which also fixes half page scrolls occasionally scrolling a full page
 - Fixed event handler properties (e.g. `element.onclick = ...`) set on the `document` mirror by a previous config still firing after a config reload
 - Fixed keys typed immediately after focusing the address bar (e.g. right after `<C-l>`) sometimes being handled as normal mode mappings instead of text
+- Fixed the `document` mirror inserting elements in the wrong order when their reference sibling was moved inside them in the same mutation batch
 
 # 0.1.65a
 

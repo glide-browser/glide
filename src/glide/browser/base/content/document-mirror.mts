@@ -167,18 +167,38 @@ function apply_mutations(
           // mid-loop as `import_node` re-parents already-imported descendants, so re-resolve it right
           // before each insert and fall back to appending when it is no longer a valid child.
           const ref_child = () => mapped_sibling && mapped_sibling.parentNode === to_parent ? mapped_sibling : null;
+
+          // when the mapped sibling has drifted, appending would put the node in the wrong place
+          // relative to its siblings (e.g. after a trailing text node, or after later elements).
+          // the source document is already in its final state for this batch, so the node's
+          // *current* next sibling that is mirrored under `to_parent` is the correct reference.
+          const insertion_ref = (node: Node): Node | null => {
+            const mapped = ref_child();
+            if (mapped) {
+              return mapped;
+            }
+            for (let sibling = node.nextSibling; sibling; sibling = sibling.nextSibling) {
+              const candidate = from_to_map.get(sibling);
+              if (candidate && candidate.parentNode === to_parent) {
+                return candidate;
+              }
+            }
+            return null;
+          };
+
           mutation.addedNodes.forEach((from_node) => {
             const node = ensure(from_node);
             const existing = from_to_map.get(node);
             if (existing) {
               // node was moved
-              if (existing.parentNode !== to_parent || existing.nextSibling !== ref_child()) {
-                to_parent.insertBefore(existing, ref_child());
+              const ref = insertion_ref(node);
+              if (existing.parentNode !== to_parent || existing.nextSibling !== ref) {
+                to_parent.insertBefore(existing, ref);
               }
             } else {
               // new node
               const clone = import_node(to_document, node, from_to_map);
-              to_parent.insertBefore(clone, ref_child());
+              to_parent.insertBefore(clone, insertion_ref(node));
               store_node_mappings(node, clone, from_to_map, to_from_map);
             }
           });
