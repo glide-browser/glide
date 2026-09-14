@@ -73,6 +73,26 @@ export class GlideHandlerChild extends JSWindowActorChild<
    */
   #switch_mode_disabled: boolean = false;
 
+  /**
+   * Whether a partial insert-mode key mapping (e.g. the first `j` of `jj`) has been
+   * inserted into the active editor with the caret left *before* it (see
+   * `Glide::KeyMappingPartial`), and hasn't been resolved yet.
+   *
+   * While this is set, any (non-modifier) key event that reaches this process must be
+   * one that cancelled the mapping: continuation keys are consumed by the parent process and
+   * never forwarded to content. We use that to move the caret past the pending text in our own
+   * `keydown` handler, *before* the key's default action inserts text, instead of relying on
+   * the `Glide::KeyMappingCancel` message which travels on a separate IPC channel and can be
+   * delivered after the key event (observed under CPU load: `foo|j` + `e` -> `fooej|`).
+   */
+  #partial_insert_pending: boolean = false;
+
+  /**
+   * Keys that never resolve a partial mapping by themselves, kept in sync with
+   * `#modifier_keys` in `browser.mts`.
+   */
+  #modifier_keys = new Set<string>(["Meta", "Shift", "Alt", "Control", "AltGraph"]);
+
   #active_hints: glide.ContentHint[] = [];
   #hint_action: HintAction | null = null;
   #is_scrolling: boolean = false;
@@ -179,22 +199,17 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
           editor.insertText(message.data.key);
           editor.selectionController.characterMove(/* forward */ false, /* extend */ false);
+          this.#partial_insert_pending = true;
         }
         break;
       }
       case "Glide::KeyMappingCancel": {
-        const target = this.#get_key_event_target();
-        const editor = this.#get_editor(target);
-
         // note: keep in sync with other conditions in `Glide::KeyMapping*`
-        if (message.data.mode === "insert" && editor) {
-          // move cursor forward as any partial key presses that were previously
-          // inserted are now "permanent" entries to the element, e.g. `j` -> `e`
-          //
-          // `foo|j` + `e` -> `fooje|`
-          //
-          // without this block, we'd get `foo|j` + `e` -> `fooe|j`
-          editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
+        if (message.data.mode === "insert") {
+          // this is a no-op if the cancelling key already reached us and was handled in
+          // `keydown`, it matters for cancels that don't come with a key event, i.e. the
+          // `mapping_timeout` expiring or the cancelling key itself being mapped (`<Esc>`).
+          this.#commit_partial_insert(this.#get_editor(this.#get_key_event_target()));
         }
         break;
       }
@@ -216,6 +231,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
             editor.deleteSelection(/* action */ editor.eNext!, /* stripWrappers */ editor.eStrip!);
           }
         }
+        this.#partial_insert_pending = false;
 
         break;
       }
@@ -848,6 +864,22 @@ export class GlideHandlerChild extends JSWindowActorChild<
     }
   }
 
+  /**
+   * Make any partially inserted mapping keys "permanent" by moving the caret past them.
+   *
+   * Idempotent, see `#partial_insert_pending`.
+   */
+  #commit_partial_insert(editor: nsIEditor | null): void {
+    if (!this.#partial_insert_pending) {
+      return;
+    }
+    this.#partial_insert_pending = false;
+
+    if (editor) {
+      editor.selectionController.characterMove(/* forward */ true, /* extend */ false);
+    }
+  }
+
   #expect_editor(seq: string): nsIEditor {
     const editor = this.#get_editor(this.#get_active_element());
     if (!editor) {
@@ -944,6 +976,12 @@ export class GlideHandlerChild extends JSWindowActorChild<
         this.#last_key_event_element = this.document?.activeElement
           ? this.#get_active_nested_shadow_root_elem(this.document?.activeElement as HTMLElement)
           : null;
+
+        if (this.#partial_insert_pending && !this.#modifier_keys.has((event as KeyboardEvent).key)) {
+          // see `#partial_insert_pending`: this key cancelled the partial mapping, so make the
+          // pending text permanent before the key's own text is inserted, e.g. `foo|j` + `e` -> `fooje|`
+          this.#commit_partial_insert(this.#get_editor(this.#last_key_event_element));
+        }
         break;
       }
       case "focusin": {
