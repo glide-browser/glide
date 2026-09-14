@@ -437,6 +437,8 @@ export function make_listener_change_observer(): nsIListenerChangeListener {
           );
 
           const listener = make_listener_callback(mirror_target);
+          // named so that tests can identify these listeners via `Services.els.getListenerInfoFor()`
+          Object.defineProperty(listener, "name", { value: "glide_mirror_listener" });
           source_target.addEventListener(info.type, listener, {
             capture: info.capturing,
             mozSystemGroup: info.inSystemEventGroup,
