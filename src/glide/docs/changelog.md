@@ -28,6 +28,7 @@ padding: 0.3em;
 - Fixed event handler properties (e.g. `element.onclick = ...`) set on the `document` mirror by a previous config still firing after a config reload
 - Fixed keys typed immediately after focusing the address bar (e.g. right after `<C-l>`) sometimes being handled as normal mode mappings instead of text
 - Fixed the `document` mirror inserting elements in the wrong order when their reference sibling was moved inside them in the same mutation batch
+- Fixed text occasionally being inserted in the wrong order when cancelling a partial insert mode mapping (e.g. typing `je` with a `jj` mapping)
 
 # 0.1.65a
 
