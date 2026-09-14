@@ -139,23 +139,50 @@ class GlideTestUtilsClass {
     };
     frame_counter.start();
 
+    // like `TestUtils.waitForCondition()` but includes the last value returned by the getter
+    // in the timeout error, so that failures are actually debuggable from the logs.
+    async function wait_for(condition: () => Promise<boolean>, name: string, expected: () => string) {
+      try {
+        await g.TestUtils.waitForCondition(condition, name, interval, tries);
+      } catch (err) {
+        let actual: string;
+        try {
+          actual = safe_stringify(await getter());
+        } catch (_) {
+          actual = "<threw>";
+        }
+        throw new Error(`${err} (got ${actual}, expected ${expected()})`, { cause: err });
+      }
+    }
+
+    // values can be XPCOM objects (getters that throw) or cyclic, neither of which `JSON.stringify` likes
+    function safe_stringify(value: unknown): string {
+      try {
+        return JSON.stringify(value) ?? String(value);
+      } catch (_) {
+        try {
+          return String(value);
+        } catch (_) {
+          return "<unserialisable>";
+        }
+      }
+    }
+
     return {
       async is(value: unknown, name?: string) {
-        await g.TestUtils.waitForCondition(
+        await wait_for(
           async () => (await getter()) === value,
           name ?? (String(getter) + ` === ${value}`),
-          interval,
-          tries,
+          () => safe_stringify(value),
         );
         g.is(await getter(), value, name);
         return frame_counter.stop();
       },
       async isnot(value, name) {
-        await g.TestUtils.waitForCondition(
+        await wait_for(
           async () => (await getter()) !== value,
           name ?? (String(getter) + ` !== ${value}`),
-          interval,
-          tries,
+          () => `anything but ${safe_stringify(value)}`,
         );
         g.isnot(await getter(), value, name);
         return frame_counter.stop();
@@ -164,7 +191,7 @@ class GlideTestUtilsClass {
       async isjson(value, name) {
         const serialised = JSON.stringify(value, typeof value === "object" && value ? Object.keys(value).sort() : null);
 
-        await g.TestUtils.waitForCondition(
+        await wait_for(
           async () => {
             const resolved = await getter();
             return JSON.stringify(
@@ -173,24 +200,26 @@ class GlideTestUtilsClass {
             ) === serialised;
           },
           name ?? (String(getter) + ` === ${value}`),
-          interval,
-          tries,
+          () => serialised,
         );
         g.isjson(await getter(), value, name);
         return frame_counter.stop();
       },
 
       async ok(message?: string) {
-        await g.TestUtils.waitForCondition(getter, message ?? (String(getter) + ` === <truthy>`), interval, tries);
+        await wait_for(
+          async () => Boolean(await getter()),
+          message ?? (String(getter) + ` === <truthy>`),
+          () => "<truthy>",
+        );
         g.ok(await getter(), message);
         return frame_counter.stop();
       },
       async notok(message?: string) {
-        await g.TestUtils.waitForCondition(
+        await wait_for(
           async () => !(await getter()),
           message ?? (String(getter) + ` === <not truthy>`),
-          interval,
-          tries,
+          () => "<not truthy>",
         );
         g.notok(await getter(), message);
         return frame_counter.stop();

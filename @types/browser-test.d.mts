@@ -29,7 +29,7 @@ declare global {
    * store how long it took to happen originally, and then wait for that number of frames in the
    * negative case.
    */
-  function waiter<V>(getter: () => V): GlideTestWaiter<V extends Promise<infer U> ? U : V>;
+  function waiter<V>(getter: () => V): GlideTestWaiter<Awaited<V>>;
 
   /**
    * Returns a promise that will resolve when the given function returns a truthy value.
