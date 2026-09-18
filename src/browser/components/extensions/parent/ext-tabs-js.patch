@@ -1,8 +1,8 @@
 diff --git a/browser/components/extensions/parent/ext-tabs.js b/browser/components/extensions/parent/ext-tabs.js
-index bff93996b42aa1f88f1bfcbd813c3af4a5806f13..2b85cee3a98f2d57c495c981739b0d814c304bc5 100644
+index 0a9b522374bd78dd4038b24e211fa90dd0621b39..2d30eea73ab00f6cb2d6dd88d0558fc869959fe6 100644
 --- a/browser/components/extensions/parent/ext-tabs.js
 +++ b/browser/components/extensions/parent/ext-tabs.js
-@@ -766,7 +766,10 @@ this.tabs = class extends ExtensionAPIPersistent {
+@@ -719,7 +719,10 @@ this.tabs = class extends ExtensionAPIPersistent {
            }).then(window => {
              let url;
  
@@ -14,7 +14,7 @@ index bff93996b42aa1f88f1bfcbd813c3af4a5806f13..2b85cee3a98f2d57c495c981739b0d81
              if (createProperties.cookieStoreId) {
                // May throw if validation fails.
                options.userContextId = getUserContextIdForCookieStoreId(
-@@ -938,7 +941,8 @@ this.tabs = class extends ExtensionAPIPersistent {
+@@ -880,7 +883,8 @@ this.tabs = class extends ExtensionAPIPersistent {
                flags: updateProperties.loadReplace
                  ? Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY
                  : Ci.nsIWebNavigation.LOAD_FLAGS_NONE,
@@ -24,3 +24,18 @@ index bff93996b42aa1f88f1bfcbd813c3af4a5806f13..2b85cee3a98f2d57c495c981739b0d81
              };
  
              if (!context.checkLoadURL(url, { dontReportErrors: true })) {
+@@ -1661,7 +1665,13 @@ this.tabs = class extends ExtensionAPIPersistent {
+               }
+             }
+           }
+-          if (hidden.length) {
++          // Glide's internal extension is the browser itself running the
++          // user's config, so warning that "an extension is hiding tabs"
++          // (and moving the alltabs button around) makes no sense for it.
++          if (
++            hidden.length &&
++            extension.id !== "glide-internal@mozilla.org"
++          ) {
+             let win = Services.wm.getMostRecentWindow("navigator:browser");
+ 
+             // Before showing the hidden tabs warning,

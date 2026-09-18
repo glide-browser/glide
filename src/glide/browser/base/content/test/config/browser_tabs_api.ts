@@ -6,6 +6,12 @@
 
 const INPUT_TEST_URI = "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/input_test.html";
 
+declare global {
+  interface GlideGlobals {
+    test_done?: boolean;
+  }
+}
+
 add_setup(async function setup() {
   await reload_config(function _() {
     // empty placeholder config file
@@ -142,5 +148,50 @@ add_task(async function test_tabs_unload__current_tab() {
     await waiter(() => glide.g.test_checked).ok();
 
     Assert.stringContains(glide.g.value, "active tabs cannot be unloaded");
+  });
+});
+
+add_task(async function test_tabs_hide__no_doorhanger() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      const tab = await browser.tabs.create({ active: false });
+      try {
+        await browser.tabs.hide(tab.id!);
+        assert((await browser.tabs.get(tab.id!)).hidden, "tab should be hidden");
+        glide.g.test_checked = true;
+
+        // keep the tab hidden until the test has verified that no
+        // "extension is hiding tabs" doorhanger was shown for it
+        await new Promise<void>(resolve => {
+          const interval = setInterval(() => {
+            if (glide.g.test_done) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, 20);
+        });
+      } finally {
+        await browser.tabs.remove(tab.id!);
+      }
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(INPUT_TEST_URI, async _ => {
+    const tab_count = gBrowser.tabs.length;
+
+    await keys("~");
+    await waiter(() => glide.g.test_checked).ok();
+
+    await Assert.rejects(
+      until(() => {
+        const panel = document!.getElementById("extension-notification-panel") as XULPopupElement | null;
+        return panel?.state === "open" || undefined;
+      }, "waiting for the tab hide doorhanger to be shown"),
+      /timed out/,
+      "the extension controlled tab hide doorhanger should not be shown",
+    );
+
+    glide.g.test_done = true;
+    await waiter(() => gBrowser.tabs.length).is(tab_count);
   });
 });
