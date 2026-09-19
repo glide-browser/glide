@@ -30,6 +30,7 @@ padding: 0.3em;
 - Fixed the `document` mirror inserting elements in the wrong order when their reference sibling was moved inside them in the same mutation batch
 - Fixed text occasionally being inserted in the wrong order when cancelling a partial insert mode mapping (e.g. typing `je` with a `jj` mapping)
 - Fixed keys typed quickly after `v`, `I`, `s`, `o` or `c` sometimes being handled in the previous mode (e.g. `Ifoo` running motions instead of inserting text)
+- Fixed spurious "Tried to access `browser` too early in startup" errors: `browser` calls and event listeners registered at startup now wait for the extension to be ready
 
 # 0.1.65a
 
