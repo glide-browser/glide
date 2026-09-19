@@ -361,6 +361,11 @@ add_task(async function test_tab_reopen() {
   BrowserTestUtils.removeTab(tab);
   is(gBrowser.tabs.length, initial_tab_count, "Tab should be closed");
 
+  await until(
+    () => SessionStore.getClosedTabDataForWindow(window)[0]?.state?.entries?.at(-1)?.url === test_url,
+    "waiting for the closed tab to be recorded by the session store",
+  );
+
   await keys(":tab_reopen<CR>");
   await waiter(() => gBrowser.tabs.length).is(initial_tab_count + 1, "Waiting for tab to be reopened");
   await BrowserTestUtils.browserLoaded(gBrowser.selectedBrowser);

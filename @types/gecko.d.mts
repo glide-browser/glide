@@ -261,6 +261,7 @@ declare var Services: JSServices;
 declare var PlacesUtils: typeof import("../engine/toolkit/components/places/PlacesUtils.sys.mjs").PlacesUtils;
 declare var SessionWindowUI:
   typeof import("../engine/browser/components/sessionstore/SessionWindowUI.sys.mjs").SessionWindowUI;
+declare var SessionStore: typeof import("../engine/browser/components/sessionstore/SessionStore.sys.mjs").SessionStore;
 
 declare type _BroadcastConduit =
   import("../engine/toolkit/components/extensions/ConduitsParent.sys.mjs").BroadcastConduit;
