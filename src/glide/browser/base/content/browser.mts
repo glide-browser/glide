@@ -1301,11 +1301,12 @@ class GlideBrowserClass {
    * See `glide_content_functions` in `engine/toolkit/components/extensions/ExtensionChild.sys.mjs`.
    */
   #clear_extension_content_function(props: { id: number }) {
-    const child_id = GlideBrowser.extension.backgroundContext?.childId;
+    const child_id = GlideBrowser.extension?.backgroundContext?.childId;
     if (!child_id) {
-      throw new Error(
-        "Tried to access `browser` too early in startup. You should wrap this call in a resource://glide-docs/autocmds.html#configloaded autocmd",
-      );
+      // this could happen if the builtin addon's background context is already being torn down / restarted,
+      // in which case there is nothing to clean up.
+      GlideBrowser._log.debug(`Not clearing extension content function \`${props.id}\`, no background context`);
+      return;
     }
 
     // This hits `toolkit/components/extensions/ExtensionChild.sys.mjs::ChildAPIManager::recvRunListener`
