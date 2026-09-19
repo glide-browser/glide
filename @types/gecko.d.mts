@@ -484,16 +484,22 @@ interface WebExtension {
     };
   // taken from toolkit/components/extensions/parent/ext-backgroundPage.js::BACKGROUND_STATE
   backgroundState: "starting" | "running" | "suspending" | "stopped";
+  hasShutdown: boolean;
 
   on(
     event: "extension-proxy-context-load",
     callback: (event: unknown, context: WebExtensionBackgroundContext) => void,
   ): void;
+  on(event: WebExtensionLifecycleEvent, callback: () => void): void;
   off(
     event: "extension-proxy-context-load",
     callback: (event: unknown, context: WebExtensionBackgroundContext) => void,
   ): void;
+  off(event: WebExtensionLifecycleEvent, callback: () => void): void;
 }
+
+/** see `toolkit/components/extensions/parent/ext-backgroundPage.js` */
+type WebExtensionLifecycleEvent = "background-script-started" | "background-script-aborted" | "shutdown";
 
 interface WebExtensionPolicy {
   extension: WebExtension;
@@ -518,6 +524,8 @@ declare var ChromeUtils: MockedExports.ChromeUtils;
 interface Addon {
   sourceURI: nsIURI | null;
   reload(): Promise<void>;
+  disable(): Promise<void>;
+  enable(): Promise<void>;
 }
 declare var AddonManager: AddonManager;
 

@@ -243,25 +243,20 @@ class GlideBrowserClass {
   }
 
   async reload_config(all_windows = true) {
-    // note: we have to initialise this promise as early as possible so that we don't
-    //       register the listener *after* the extension has started up, therefore
-    //       resulting in the listener never firing.
-    const extension_startup = this._extension_startup_promise;
-
     await this.#reload_config(all_windows);
 
     this.on_startup(async () => {
-      await extension_startup;
+      await this.wait_for_extension_ready();
       await this.#invoke_urlenter_autocmd(gBrowser.currentURI);
     });
 
     this.on_startup(async () => {
-      await extension_startup;
+      await this.wait_for_extension_ready();
       await this.#state_change_autocmd(this.state, { mode: null, operator: null });
     });
 
     this.on_startup(async () => {
-      await extension_startup;
+      await this.wait_for_extension_ready();
       await Autocmds.invoke("ConfigLoaded", { register_cleanup: null, args: {} });
     });
 
@@ -526,8 +521,10 @@ class GlideBrowserClass {
         await addon.reload();
       }
 
-      // TODO(glide): only do this if we need to
-      redefine_getter(this, "browser_parent_api", this.#create_browser_parent_api());
+      // drop the cached APIs so that they are re-created lazily on next access, the parent API
+      // in particular must not be created eagerly here as the reloaded addon's background may
+      // still be starting (see `wait_for_extension_ready()`)
+      delete (this as { browser_parent_api?: unknown }).browser_parent_api;
       redefine_getter(this, "browser_proxy_api", this.#create_browser_proxy_api());
     }
 
@@ -564,31 +561,69 @@ class GlideBrowserClass {
     }
   }
 
-  get _extension_startup_promise(): Promise<void> {
-    return redefine_getter(
-      this,
-      "_extension_startup_promise",
-      new Promise<void>((resolve) => {
-        const extension = this.extension;
+  /**
+   * Resolves once the builtin extension's background page is running, i.e. its scripts have
+   * executed and `extension.backgroundContext` can be used.
+   *
+   * This is evaluated against the *current* state every time, so it also does the right thing
+   * after the addon was reloaded / restarted (a cached promise would be stale and resolve
+   * immediately while the new background is still starting up, which is exactly the window in
+   * which "Tried to access `browser` too early in startup" used to be thrown, e.g. by
+   * `browser.<ns>.on*.addListener()` calls registered at startup).
+   */
+  async wait_for_extension_ready(): Promise<void> {
+    while (!Services.startup.shuttingDown) {
+      let extension: WebExtension | null = null;
+      try {
+        extension = this.extension;
+      } catch (_) {
+        // no policy registered, e.g. in the middle of an addon reload
+      }
 
-        // If the extension background context is available then the extension is already ready,
-        // so resolve immediately as our listener below would never be called.
-        if (extension.backgroundContext) {
-          resolve();
-          return;
-        }
+      if (
+        extension && !extension.hasShutdown && extension.backgroundState === "running" && extension.backgroundContext
+      ) {
+        return;
+      }
 
-        const listener = (_: unknown, context: WebExtensionBackgroundContext) => {
-          this._log.debug(`extension-proxy-context-load called with viewType = ${context.viewType}`);
-          if (context.viewType === "background") {
-            resolve();
-            extension.off("extension-proxy-context-load", listener);
-          }
+      // wait for the background to start (or for this extension instance to go away, in which
+      // case we loop and pick up its replacement). the timeout is a fallback for transitions
+      // that don't produce an event on *this* instance, e.g. a new extension instance being
+      // registered after the old one shut down.
+      await new Promise<void>((resolve) => {
+        const events: WebExtensionLifecycleEvent[] = [
+          "background-script-started",
+          "background-script-aborted",
+          "shutdown",
+        ];
+        // the extension manager tells us about *new* extension instances (e.g. after an addon
+        // reload), which the old instance can't
+        const management_events = ["startup", "ready"] as const;
+        const Management = ExtensionParent.apiManager as unknown as {
+          on(event: string, listener: () => void): void;
+          off(event: string, listener: () => void): void;
         };
-
-        extension.on("extension-proxy-context-load", listener);
-      }),
-    );
+        const timer = setTimeout(done, 100);
+        function done() {
+          clearTimeout(timer);
+          for (const event of events) {
+            extension?.off(event, done);
+          }
+          for (const event of management_events) {
+            Management.off(event, done);
+          }
+          resolve();
+        }
+        if (extension && !extension.hasShutdown) {
+          for (const event of events) {
+            extension.on(event, done);
+          }
+        }
+        for (const event of management_events) {
+          Management.on(event, done);
+        }
+      });
+    }
   }
 
   /**
@@ -1144,8 +1179,12 @@ class GlideBrowserClass {
 
             // we can't necessarily access the necessary extension context depending on how
             // early on in startup we are, so register a startup listener instead if we haven't
-            // finished startup yet.
-            GlideBrowser.on_startup(() => {
+            // finished startup yet, and wait for the extension background to be running (window
+            // startup finishing does not imply that, and registering listeners at the top level
+            // of a config is a supported pattern).
+            GlideBrowser.on_startup(async () => {
+              await GlideBrowser.wait_for_extension_ready();
+
               let method = GlideBrowser.browser_parent_api;
               for (const prop of previous_chain) {
                 method = method[prop];
@@ -1186,6 +1225,8 @@ class GlideBrowserClass {
   }
 
   async send_extension_query(props: { method_path: string; args: any[] }) {
+    await this.wait_for_extension_ready();
+
     const child_id = GlideBrowser.extension.backgroundContext?.childId;
     if (!child_id) {
       // TODO(glide): define an easy way to register a listener for when
