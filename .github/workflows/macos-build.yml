@@ -48,9 +48,9 @@ jobs:
     defaults:
       run:
         # Every step runs inside the pinned nix environment defined by
-        # `devShells.ci` in flake.nix (host tooling only; the compiler, macOS SDK
-        # and the rest of the target toolchain come from `mach bootstrap` / Xcode).
-        # Steps that run before nix is installed override this with `shell: bash`.
+        # `devShells.ci` in flake.nix, which provides the complete toolchain
+        # (no `mach bootstrap`; only the macOS SDK comes from Xcode). Steps that
+        # run before nix is installed override this with `shell: bash`.
         shell: nix develop .#ci --profile /tmp/nix-ci-profile --command bash -euo pipefail {0}
 
     steps:
@@ -80,17 +80,7 @@ jobs:
           primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.nix', 'flake.lock') }}
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
           # only collect garbage before saving if the store grew past this
-          gc-max-store-size-macos: 6G
-
-      - name: Restore Mozilla toolchains
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          # everything `mach bootstrap` installs (clang, sysroots, cbindgen, ...),
-          # pinned by the Firefox revision; the downloaded archives are excluded
-          path: |
-            ~/.mozbuild
-            !~/.mozbuild/toolchains
-          key: mozbuild-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('firefox.json') }}
+          gc-max-store-size-macos: 10G
 
       - name: Restore pnpm store
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -115,6 +105,7 @@ jobs:
       - name: Nix environment
         run: |
           nix --version
+          clang --version
           rustc --version
           cargo --version
           node --version
@@ -129,12 +120,6 @@ jobs:
       - name: Bootstrap repo
         run: |
           pnpm bootstrap
-
-      - name: Bootstrap system
-        # note: no `working-directory: engine`, the nix shell has to be resolved from the repo root
-        run: |
-          cd engine
-          ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes --exclude MacOSX26.4.sdk || true
 
       - name: Build
         run: |

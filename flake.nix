@@ -181,27 +181,32 @@
         # ---------------------------------------------------------------------
         # CI / release build environment (`nix develop .#ci`)
         #
-        # This shell intentionally provides *only* the host tooling that the
-        # release builds need (node/pnpm for our scripts, python for mach, rust,
-        # packaging utilities). Everything that ends up influencing the produced
-        # binaries - clang/lld, the Linux target sysroot (Debian, glibc 2.17),
-        # the wasi sysroot, cbindgen, nasm (linux), node (for the build itself),
-        # pkg-config and sccache - is installed into ~/.mozbuild by
-        # `mach bootstrap` from Mozilla's toolchain artifacts, which are pinned
-        # by the Firefox revision in firefox.json. That is exactly what the
-        # previous apt/brew based CI did, so the artifacts have the same
-        # provenance and runtime requirements as before; using nixpkgs' clang
-        # would instead link the binaries against nixpkgs' glibc/ld.so and
-        # break them for users.
+        # Linux: the whole toolchain comes from nixpkgs (clang/lld/llvm tools,
+        # rust, cbindgen, nasm, node, sccache, wasi sysroot), like the Firefox
+        # package in nixpkgs. The only non-nix pieces are two Mozilla toolchain
+        # artifacts fetched as fixed-output derivations: the Debian sysroot the
+        # binaries are compiled and linked against (this is what keeps the
+        # glibc 2.17 floor of the release builds - using nixpkgs' glibc would
+        # produce binaries that only run on NixOS) and the prebuilt onnxruntime
+        # that gets bundled. Nothing is downloaded by `mach bootstrap`.
         #
-        # There is deliberately no C compiler in this shell (mkShellNoCC): a
-        # `CC`/`CXX` exported by a nix stdenv would take precedence over the
-        # bootstrapped clang in mach's configure.
+        # macOS still uses `mach bootstrap` for clang + the Xcode SDK; nix only
+        # provides the host tooling there.
+        #
+        # There is deliberately no nix cc-wrapper in this shell (mkShellNoCC):
+        # the wrapper would inject nixpkgs' glibc and dynamic linker into every
+        # link, so the unwrapped clang is used with the sysroot instead.
         # ---------------------------------------------------------------------
 
         # Must match the rust version pinned by Firefox in
         # engine/taskcluster/kinds/toolchain/rust.yml (`linux64-rust-1.xx`).
         firefoxRustVersion = "1.95.0";
+
+        # The clang major Firefox builds with (`linux64-clang` alias in
+        # engine/taskcluster/kinds/toolchain/clang.yml). It has to match the
+        # libclang taken from Mozilla's clang artifact below, since bindgen
+        # parses headers with that libclang but this clang's builtin headers.
+        ciLlvm = pkgs.llvmPackages_22;
 
         ciRustToolchainWithCC = pkgs.rust-bin.stable.${firefoxRustVersion}.minimal.override {
           # macOS release builds run on aarch64 runners and cross-compile the
@@ -214,9 +219,9 @@
 
         # rust-overlay propagates nixpkgs' C compiler (rustc's default linker)
         # into any shell that includes the toolchain, which would export
-        # `CC=gcc` and put a nix `cc` on PATH ahead of the bootstrapped clang.
-        # Firefox's build system always passes its own linker to cargo, so drop
-        # the propagation by re-exporting the toolchain without `nix-support`.
+        # `CC=gcc` and put a nix `cc` on PATH ahead of ours. Firefox's build
+        # system always passes its own linker to cargo, so drop the propagation
+        # by re-exporting the toolchain without `nix-support`.
         ciRustToolchain = pkgs.runCommand "rust-minimal-${firefoxRustVersion}-no-cc" {} ''
           mkdir -p $out
           for entry in ${ciRustToolchainWithCC}/*; do
@@ -249,6 +254,187 @@
           mkdir -p $out
           tar -xzf $src -C $out --strip-components=1 wasi-sdk-24.0-arm64-macos/share/wasi-sysroot
         '';
+
+        # Mozilla toolchain artifacts, pinned by their taskcluster index hash.
+        # `task` is the toolchain task the artifact comes from and `index` the
+        # hash `mach bootstrap` records in `~/.mozbuild/indices/<artifact>` for
+        # the pinned Firefox revision (`./mach artifact toolchain --from-build
+        # <task> --no-unpack` in engine/ also prints it); they need updating when
+        # firefox.json is bumped. `hash` is the tarball's (`nix-prefetch-url <url>`).
+        mozillaToolchainArtifacts = {
+          "x86_64-linux" = {
+            sysroot = {
+              task = "sysroot-x86_64-linux-gnu";
+              index = "f18eb4f18093faedb235bfa14d052234cb65568766407d95867142131994042a";
+              hash = "sha256-CJ9n3YXZp91wa5vjB81KEp3SoR2fP4+kDTlKBsyJuvc=";
+            };
+            onnxruntime = {
+              task = "onnxruntime-x86_64-linux-gnu";
+              index = "de1e12235ad720fbaa369e9d8af6b3a0a6cb3288ce2b69dede3d59d203237682";
+              hash = "sha256-HXoYcBr2f9uUQLrz/LA/aJ4HATC7pv13PcV/QnXv9eE=";
+            };
+            clang = {
+              task = "linux64-clang-22";
+              artifact = "clang";
+              index = "a7c8168e11ab12621fb8d9f8bbfdaf3751c1322a24a80eb7862a0b1698de2b69";
+              hash = "sha256-TJU7S/21W/oHwEhITaA+k+59BKxPRav7+SgzWIPOqVA=";
+            };
+          };
+          # note: Firefox has no onnxruntime artifact for linux aarch64
+          "aarch64-linux" = {
+            sysroot = {
+              task = "sysroot-aarch64-linux-gnu";
+              index = "a563d78df955f76f46b88fc05654d24be610b7a424f881d8991c4cd30582c7d9";
+              hash = "sha256-yDT7P5rRYA5id5KkVLqLjMVqf2EWovp43zoXDASiwgs=";
+            };
+            clang = {
+              task = "linux64-aarch64-clang-22";
+              artifact = "clang";
+              index = "6a6430dab5a5242bf2cc45748ca7cf708f6c454f9bd66f42d13e3db5b589877c";
+              hash = "sha256-HGCbE7KMJBpRoDGyBPAm/aCtpkQTy9a/ewHcYNVuQvg=";
+            };
+          };
+          # the macOS builds (both arches) run on aarch64 runners
+          "aarch64-darwin" = {
+            clang = {
+              task = "macosx64-aarch64-clang-22";
+              artifact = "clang";
+              index = "075e292765d67831f6ed157873accca894b891f974d7b9cd44fc8a3708d26101";
+              hash = "sha256-FgVvIwpO8gHiLrROKOLPHS/b8kcFC/Qg26A+Cfmjqlg=";
+            };
+            onnxruntime = {
+              task = "onnxruntime-aarch64-apple-darwin";
+              index = "b1ed476d5bb19da02cd1b677f2f813d25c7533139248b0c13404029209874f79";
+              hash = "sha256-y/+BDngKwK65XfAoim3BK0ShO1M9t555TtECxCrkulw=";
+            };
+          };
+        };
+
+        hasMozillaToolchain = key:
+          (mozillaToolchainArtifacts.${stdenv.hostPlatform.system} or {}) ? ${key};
+
+        mozillaToolchain = key: {extract ? []}: let
+          platform = stdenv.hostPlatform.system;
+          artifacts =
+            mozillaToolchainArtifacts.${platform}
+            or (throw "flake.nix: no Mozilla toolchain artifact hashes for ${platform} yet");
+          spec = artifacts.${key};
+          artifact = spec.artifact or spec.task;
+        in
+          pkgs.stdenvNoCC.mkDerivation {
+            name = artifact;
+            src = pkgs.fetchurl {
+              url = "https://firefox-ci-tc.services.mozilla.com/api/index/v1/task/gecko.cache.level-3.toolchains.v3.${spec.task}.hash.${spec.index}/artifacts/public/build/${artifact}.tar.zst";
+              inherit (spec) hash;
+            };
+            nativeBuildInputs = [pkgs.zstd];
+            dontUnpack = true;
+            dontConfigure = true;
+            dontBuild = true;
+            # keep the artifact byte-for-byte as Mozilla ships it (no patchelf/strip)
+            dontFixup = true;
+            installPhase = ''
+              mkdir -p $out
+              # note: not every artifact named .tar.zst is actually zstd compressed
+              # (onnxruntime-aarch64-apple-darwin is a plain tar), so let tar detect it
+              tar -xf $src -C $out --strip-components=1 --wildcards ${lib.escapeShellArgs extract}
+            '';
+          };
+
+        linuxSysroot = mozillaToolchain "sysroot" {};
+        linuxOnnxRuntime = mozillaToolchain "onnxruntime" {};
+
+        # bindgen dlopen()s libclang from cargo build scripts. Those are host
+        # programs, but without a cross-compile cargo links them with the
+        # *target* linker (see the comment in config/makefiles/rust.mk), i.e.
+        # against the Debian sysroot, and they run on the CI runner's system
+        # glibc - which nixpkgs' libclang (built against nixpkgs' newer glibc)
+        # cannot be loaded into. So take just libclang from Mozilla's clang
+        # artifact (the same library today's builds use); nothing else of that
+        # toolchain is used.
+        mozillaLibclang = mozillaToolchain "clang" {
+          # libclang is linked against the toolchain's own libLLVM
+          extract = ["clang/lib/libclang.so*" "clang/lib/libLLVM.so*"];
+        };
+
+        # nixpkgs' clang has its default `-dynamic-linker` removed (purity.patch)
+        # on the assumption that the cc-wrapper adds nixpkgs' one back. We want
+        # the standard one, so a thin wrapper re-adds it when linking. Nothing
+        # else is injected: the sysroot comes from --with-sysroot in the
+        # mozconfig, exactly like Mozilla's own clang is driven.
+        ciClang = let
+          clang = ciLlvm.clang-unwrapped;
+          fhsDynamicLinker =
+            {
+              x86_64 = "/lib64/ld-linux-x86-64.so.2";
+              aarch64 = "/lib/ld-linux-aarch64.so.1";
+            }
+            .${stdenv.hostPlatform.parsed.cpu.name};
+        in
+          pkgs.runCommand "clang-${clang.version}-glide-ci" {} (
+            ''
+              mkdir -p $out/bin
+            ''
+            + lib.concatMapStrings (tool: ''
+              cat > $out/bin/${tool} <<'EOF'
+              #!${pkgs.runtimeShell}
+              linking=1
+              for arg in "$@"; do
+                case "$arg" in
+                  -c | -S | -E | -M | -MM | -r | -fsyntax-only | -### | --version | -dumpmachine | -dumpversion | -print-* | --print-* | --target=wasm*) linking=0 ;;
+                esac
+              done
+              if [ "$linking" = 1 ]; then
+                set -- "$@" -Wl,-dynamic-linker,${fhsDynamicLinker}
+              fi
+              exec ${clang}/bin/${tool} "$@"
+              EOF
+              chmod +x $out/bin/${tool}
+            '') ["clang" "clang++"]
+          );
+
+        # Firefox's configure only looks for a `pkg-config` binary. Use pkgconf
+        # (what Mozilla's own toolchain ships): unlike freedesktop pkg-config
+        # 0.29 it keeps the transitive `Requires.private` cflags of the sysroot's
+        # .pc files, which e.g. gtk+-3.0 needs to find freetype2.
+        ciPkgConfig = pkgs.runCommand "pkgconf-${pkgs.pkgconf-unwrapped.version}-as-pkg-config" {} ''
+          mkdir -p $out/bin
+          ln -s ${pkgs.pkgconf-unwrapped}/bin/pkgconf $out/bin/pkg-config
+        '';
+
+        # Compiler for *host* tools that only run during the build (nsinstall,
+        # cargo build scripts, proc macros, the elfhack linker wrapper, ...):
+        # nixpkgs' regular wrapped clang, so they link against nixpkgs' glibc
+        # and get RUNPATHs into the nix store. Firefox links host tools with
+        # `-fuse-ld=lld`, so the wrapper needs a bintools that provides a
+        # wrapped `ld.lld` (the default binutils one doesn't, and clang would
+        # silently pick the unwrapped lld from PATH, losing the RUNPATH logic).
+        # None of these tools end up in the package.
+        ciHostClang = ciLlvm.clang.override {
+          bintools = ciLlvm.bintools;
+        };
+
+        # macOS: the compiler toolchain is Mozilla's own clang artifact (what
+        # `mach bootstrap` installed before; it's self-contained and includes
+        # compiler-rt, libclang and the llvm tools), the SDK stays the Xcode one
+        # configure finds via xcrun, and the rest of the host tooling is nix.
+        mozillaClang = mozillaToolchain "clang" {};
+        darwinOnnxRuntime = mozillaToolchain "onnxruntime" {};
+
+        ciMozconfig =
+          lib.optionalString stdenv.hostPlatform.isLinux (
+            ''
+              ac_add_options --with-sysroot=${linuxSysroot}
+              ac_add_options --with-libclang-path=${mozillaLibclang}/lib
+              ac_add_options --with-wasi-sysroot=${wasiSysRoot}
+            ''
+            + lib.optionalString (hasMozillaToolchain "onnxruntime") ''
+              ac_add_options --with-onnx-runtime=${linuxOnnxRuntime}
+            ''
+          )
+          + lib.optionalString stdenv.hostPlatform.isDarwin ''
+            ac_add_options --with-libclang-path=${mozillaClang}/lib
+          '';
 
         # mach runs under nix's python, whose dynamic loader only searches the
         # nix store. The bindgen configure check dlopen()s Mozilla's prebuilt
@@ -325,9 +511,22 @@
               which
               cacert
             ]
-            ++ lib.optionals stdenv.hostPlatform.isDarwin [
-              # mach bootstrap doesn't install nasm on macOS (needed for the x86_64 build)
+            ++ lib.optionals stdenv.hostPlatform.isLinux [
+              ciClang
+              ciLlvm.lld
+              ciLlvm.llvm # llvm-ar, llvm-nm, llvm-objcopy, llvm-strip, ...
+              rust-cbindgen
               nasm
+              ciPkgConfig
+              # note: no sccache here on purpose. nixpkgs' 0.15 silently falls
+              # back to a local (ephemeral) cache with the GitHub Actions cache
+              # backend on the CI runners, so warm builds were as slow as cold
+              # ones; CI puts the sccache-action's binary on PATH instead.
+            ]
+            ++ lib.optionals stdenv.hostPlatform.isDarwin [
+              mozillaClang # clang, ld64.lld, llvm-ar/strip/otool/dsymutil, ...
+              rust-cbindgen
+              nasm # needed for the x86_64 build
             ];
 
           env =
@@ -338,7 +537,23 @@
               RUSTC = "${ciRustToolchain}/bin/rustc";
               CARGO = "${ciRustToolchain}/bin/cargo";
             }
+            // lib.optionalAttrs stdenv.hostPlatform.isLinux {
+              # target: unwrapped clang + the Debian sysroot (see --with-sysroot)
+              CC = "${ciClang}/bin/clang";
+              CXX = "${ciClang}/bin/clang++";
+              # host: see ciHostClang. Also lets bindgen's build script dlopen()
+              # nixpkgs' libclang, which needs a newer glibc than the runner's.
+              HOST_CC = "${ciHostClang}/bin/clang";
+              HOST_CXX = "${ciHostClang}/bin/clang++";
+              # RLBox wasm sandboxing (same setup as the default dev shell)
+              WASM_CC = "${pkgsCross.wasi32.stdenv.cc}/bin/${pkgsCross.wasi32.stdenv.cc.targetPrefix}cc";
+              WASM_CXX = "${pkgsCross.wasi32.stdenv.cc}/bin/${pkgsCross.wasi32.stdenv.cc.targetPrefix}c++";
+            }
             // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
+              CC = "${mozillaClang}/bin/clang";
+              CXX = "${mozillaClang}/bin/clang++";
+              HOST_CC = "${mozillaClang}/bin/clang";
+              HOST_CXX = "${mozillaClang}/bin/clang++";
               WASI_SYSROOT = "${wasiSdkSysroot}/share/wasi-sysroot";
             };
 
@@ -355,8 +570,20 @@
             # configure reads some of these and the nix stdenv setup sets them.
             # (mach also warns about PYTHONPATH, which nix's python hook sets.)
             unset MACOSX_DEPLOYMENT_TARGET SOURCE_DATE_EPOCH NIX_CFLAGS_COMPILE NIX_LDFLAGS PYTHONPATH
+
+            export GLIDE_MOZCONFIG_CONTENT="${ciMozconfig}"
+          ''
+          + lib.optionalString stdenv.hostPlatform.isDarwin ''
+            # onnxruntime only for the native aarch64 build: that is what the
+            # previous `mach bootstrap` based builds ended up with (it only
+            # installed the host-arch artifact, so the x86_64 build had none).
+            if [ "''${GLIDE_COMPAT:-aarch64}" != x86_64 ]; then
+              export GLIDE_MOZCONFIG_CONTENT="$GLIDE_MOZCONFIG_CONTENT
+            ac_add_options --with-onnx-runtime=${darwinOnnxRuntime}"
+            fi
           '';
         };
+
       in {
         devShells.default = pkgs.mkShell.override {stdenv = buildStdenv;} {
           nativeBuildInputs = with pkgs;
