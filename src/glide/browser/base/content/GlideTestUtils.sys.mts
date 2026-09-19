@@ -148,7 +148,7 @@ class GlideTestUtilsClass {
         let actual: string;
         try {
           actual = safe_stringify(await getter());
-        } catch (_) {
+        } catch {
           actual = "<threw>";
         }
         throw new Error(`${err} (got ${actual}, expected ${expected()})`, { cause: err });
@@ -159,10 +159,10 @@ class GlideTestUtilsClass {
     function safe_stringify(value: unknown): string {
       try {
         return JSON.stringify(value) ?? String(value);
-      } catch (_) {
+      } catch {
         try {
           return String(value);
-        } catch (_) {
+        } catch {
           return "<unserialisable>";
         }
       }
@@ -292,7 +292,7 @@ class GlideTestUtilsClass {
           /* interval */ 10,
           /* max tries */ 500,
         );
-      } catch (_) {
+      } catch {
         // let the caller assert on the final state
       }
       return value;
