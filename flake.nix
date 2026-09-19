@@ -77,15 +77,18 @@
           doCheck = false;
         });
 
-        # Firefox requires NSS >= 3.128, but nixpkgs only has 3.124 at the time of writing.
+        # Firefox requires NSS >= 3.129, but nixpkgs only has 3.124 at the time of writing.
         nss_latest = pkgs.nss_latest.overrideAttrs (old: rec {
-          version = "3.128";
+          version = "3.129";
           src = pkgs.fetchFromGitHub {
             owner = "nss-dev";
             repo = "nss";
             rev = "NSS_${lib.replaceStrings ["."] ["_"] version}_RTM";
-            hash = "sha256-C9SGEyoxR16F6j7zOUsudS0aH/qIHc7DgV5FbBbz90Q=";
+            hash = "sha256-cy7+nCVtogr1onk8/8OQcQZUm2AH2azNsUmVFg4ym7k=";
           };
+          postPatch = (old.postPatch or "") + ''
+            sed -i '/^generate_pkg_config$/d' build.sh
+          '';
         });
 
         # Compile the wasm32 sysroot to build the RLBox Sandbox

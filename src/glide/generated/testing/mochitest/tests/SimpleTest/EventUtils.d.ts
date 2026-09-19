@@ -471,7 +471,7 @@ function synthesizeAndWaitNativeMouseMove(aTarget: any, aOffsetX: any, aOffsetY:
  *        Customise the `ctrlKey` modifier.
  * @param {boolean} [aEvent.shiftKey]
  *        Customise the `shiftKey` modifier.
- * @param {*} [aEvent.location]
+ * @param {any} [aEvent.location]
  *        If you want to specify this, you can specify this explicitly.
  *        However, if you don't specify this value, it will be computed
  *        from code value.
@@ -881,7 +881,7 @@ function synthesizeDragOver(aSrcElement: Element, aDestElement: Element, aDragDa
  * Emulate the drop event and mouseup event.
  * This should be called after synthesizeDragOver.
  *
- * @param {*} aResult
+ * @param {any} aResult
  *        The first element of the array returned from ``synthesizeDragOver``.
  * @param {DataTransfer} aDataTransfer
  *        The second element of the array returned from ``synthesizeDragOver``.

@@ -1,20 +1,22 @@
 diff --git a/browser/base/content/browser-menubar.inc.xhtml b/browser/base/content/browser-menubar.inc.xhtml
-index f35df861257d616a3705dffe84844837157c288a..ac0a36a5d8f00df3fd5297da8a2769d14ac7e7ab 100644
+index aff758c4fe983ca4b9a2b9afe566d4397e8c408a..2b2801a06f0d87f8b64f0e7b3e1b35d1024ceb7d 100644
 --- a/browser/base/content/browser-menubar.inc.xhtml
 +++ b/browser/base/content/browser-menubar.inc.xhtml
 @@ -3,6 +3,7 @@
  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
-        <menubar id="main-menubar">
-+          <script src="chrome://glide/content/glide-menubar.js" />
-           <script src="chrome://browser/content/browser-menubar.js" />
-             <menu id="file-menu" data-l10n-id="menu-file">
-               <menupopup id="menu_FilePopup">
-@@ -487,4 +488,7 @@
-                           hidden="true"/>
-               </menupopup>
-           </menu>
+ <menubar id="main-menubar">
++  <script src="chrome://glide/content/glide-menubar.js" />
+   <script src="chrome://browser/content/browser-menubar.js" />
+   <menu id="file-menu" data-l10n-id="menu-file">
+     <menupopup id="menu_FilePopup">
+@@ -472,6 +473,9 @@
+       <menuitem id="helpPolicySupport" hidden="true"/>
+     </menupopup>
+   </menu>
 +
-+          <menu id="menu_glideMode" data-l10n-id="menu-glide-mode">
-+          </menu>
-         </menubar>
++  <menu id="menu_glideMode" data-l10n-id="menu-glide-mode">
++  </menu>
+ #ifdef XP_MACOSX
+ <!-- nsMenuBarX hides these and uses them to build the Application menu. -->
+ <!-- macOS 13 changed "Preferences" to "Settings" so one of these gets picked. -->

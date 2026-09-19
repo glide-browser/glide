@@ -1,17 +1,17 @@
 diff --git a/testing/mochitest/tests/SimpleTest/EventUtils.js b/testing/mochitest/tests/SimpleTest/EventUtils.js
-index f5cdcc756f74ebed56f108f24961d0401ef3ba50..4c87efa57aa4d23a1ab6cf7cc94de851fcafb8a1 100644
+index 5bc437f999ab308c7cafa447c11c21f313b30f63..c7e4ad82d05cb8aa2326d2d1653804e5a0b564f0 100644
 --- a/testing/mochitest/tests/SimpleTest/EventUtils.js
 +++ b/testing/mochitest/tests/SimpleTest/EventUtils.js
-@@ -1734,22 +1734,26 @@ function synthesizeAndWaitNativeMouseMove(
+@@ -1810,22 +1810,26 @@ function synthesizeAndWaitNativeMouseMove(
   * @param {number} [aEvent.repeat]
   *        If you emulate auto-repeat, you should set the count of repeat.
   *        This method will automatically synthesize keydown (and keypress).
-- * @param {*} aEvent.location
+- * @param {any} aEvent.location
 + * @param {boolean} [aEvent.ctrlKey]
 + *        Customise the `ctrlKey` modifier.
 + * @param {boolean} [aEvent.shiftKey]
 + *        Customise the `shiftKey` modifier.
-+ * @param {*} [aEvent.location]
++ * @param {any} [aEvent.location]
   *        If you want to specify this, you can specify this explicitly.
   *        However, if you don't specify this value, it will be computed
   *        from code value.
@@ -33,7 +33,7 @@ index f5cdcc756f74ebed56f108f24961d0401ef3ba50..4c87efa57aa4d23a1ab6cf7cc94de851
   *        Is optional and can be used to receive notifications from TIP.
   *
   * @description
-@@ -3637,7 +3641,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
+@@ -3710,7 +3714,7 @@ function _computeSrcElementFromSrcSelection(aSrcSelection) {
   *                The final x coordinate inside srcElement
   * @param {number} aParams.finalY
   *                The final x coordinate inside srcElement

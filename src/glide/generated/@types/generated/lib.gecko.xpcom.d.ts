@@ -3312,6 +3312,8 @@ interface nsIURIFixup extends nsISupports {
   readonly FIXUP_FLAG_PRIVATE_CONTEXT?: 4;
   /** <!-- binding_to(idl, const, XPIDL_nsIURIFixup_FIXUP_FLAG_FIX_SCHEME_TYPOS) --> */
   readonly FIXUP_FLAG_FIX_SCHEME_TYPOS?: 8;
+  /** <!-- binding_to(idl, const, XPIDL_nsIURIFixup_FIXUP_FLAG_FORCE_KEYWORD_LOOKUP) --> */
+  readonly FIXUP_FLAG_FORCE_KEYWORD_LOOKUP?: 16;
 
   /** <!-- binding_to(idl, method, XPIDL_nsIURIFixup_getFixupURIInfo) --> */
   getFixupURIInfo(aURIText: string, aFixupFlags?: u32): nsIURIFixupInfo;
@@ -22115,6 +22117,22 @@ interface nsINativeMessagingPortal extends nsISupports {
   start(aHandle: string, aName: string, aExtension: string): Promise<any>;
 }
 
+// https://searchfox.org/firefox-main/source/toolkit/components/extensions/nsINativeMessagingProxy.idl
+
+/** <!-- binding_to(idl, interface_name, XPIDL_nsINativeMessagingProxy) --> */
+interface nsINativeMessagingProxy extends nsISupports {
+  /** <!-- binding_to(idl, method, XPIDL_nsINativeMessagingProxy_shouldUse) --> */
+  shouldUse(): boolean;
+  /** <!-- binding_to(idl, attribute, XPIDL_nsINativeMessagingProxy_available) --> */
+  readonly available: Promise<any>;
+  /** <!-- binding_to(idl, method, XPIDL_nsINativeMessagingProxy_closeSession) --> */
+  closeSession(aHandle: string): Promise<any>;
+  /** <!-- binding_to(idl, method, XPIDL_nsINativeMessagingProxy_getManifest) --> */
+  getManifest(aName: string, aExtension: string): Promise<any>;
+  /** <!-- binding_to(idl, method, XPIDL_nsINativeMessagingProxy_start) --> */
+  start(aName: string, aExtension: string): Promise<any>;
+}
+
 // https://searchfox.org/firefox-main/source/dom/media/webvtt/nsIWebVTTListener.idl
 
 /** <!-- binding_to(idl, interface_name, XPIDL_nsIWebVTTListener) --> */
@@ -27413,6 +27431,7 @@ interface nsIXPCComponents_Interfaces {
   mozIExtensionAPIRequestHandler: nsJSIID<mozIExtensionAPIRequestHandler>;
   mozIExtensionProcessScript: nsJSIID<mozIExtensionProcessScript>;
   nsINativeMessagingPortal: nsJSIID<nsINativeMessagingPortal>;
+  nsINativeMessagingProxy: nsJSIID<nsINativeMessagingProxy>;
   nsIWebVTTListener: nsJSIID<nsIWebVTTListener>;
   nsIWebVTTParserWrapper: nsJSIID<nsIWebVTTParserWrapper>;
   nsIBaseWindow: nsJSIID<nsIBaseWindow>;
