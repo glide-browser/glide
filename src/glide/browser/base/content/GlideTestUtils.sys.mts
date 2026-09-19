@@ -147,6 +147,9 @@ class GlideTestUtilsClass {
       try {
         await g.TestUtils.waitForCondition(condition, name, interval, tries);
       } catch (err) {
+        // stop counting frames, otherwise the `requestAnimationFrame` loop runs forever and the
+        // harness additionally fails the file with "vsync remained enabled at the end of the test"
+        frame_counter.stop();
         let actual: string;
         try {
           actual = safe_stringify(await getter());
