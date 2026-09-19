@@ -91,6 +91,11 @@ export interface ParentQueries {
     props: { x: number; y: number; unit: "lines" | "pages" | "whole" };
     result: boolean;
   };
+  /** How many (trusted) `keydown` events the document has received, see `GlideBrowser.wait_for_keys_processed()`. */
+  "Glide::Query::KeydownCount": {
+    props: {};
+    result: number;
+  };
   "Glide::Query::ExecuteHintAction": {
     props: {
       id: number;
