@@ -113,6 +113,17 @@ export class GlideHandlerParent extends JSWindowActorParent<
   #log: ConsoleInstance = null as any;
   #state_change_listener: StateChangeListener = null as any;
 
+  /**
+   * Whether a text editable element is currently focused in this actor's document.
+   *
+   * Kept up to date by the child on every `focusin` / `blur`, so that the parent process can
+   * make synchronous decisions that depend on it. Notably, content commands that enter insert
+   * mode (e.g. the `I` motion) only do so when an editor is focused, and the mode switch they
+   * request arrives as an async message; keys typed before it lands would otherwise be handled
+   * in normal mode (see `#execute_content_command` in `browser-excmds.mts`).
+   */
+  editable_focused: boolean = false;
+
   actorCreated() {
     this.#log = console.createInstance({ prefix: "Glide[Parent]", maxLogLevelPref: "glide.logging.loglevel" });
     this.#state_change_listener = this.on_state_change.bind(this);
@@ -189,7 +200,23 @@ export class GlideHandlerParent extends JSWindowActorParent<
     this.#log.debug("receiveMessage", message.name);
 
     switch (message.name) {
+      case "Glide::EditableFocusChanged": {
+        this.editable_focused = message.data.editable;
+        break;
+      }
+
       case "Glide::ChangeMode": {
+        if (
+          this.glide_browser
+          && message.data.mode === this.glide_browser.state.mode
+          && this.glide_browser.state.operator === null
+        ) {
+          // already in the requested mode, e.g. the parent switched to insert mode synchronously
+          // before dispatching a content command and the child is now confirming it. applying it
+          // again would fire a redundant `ModeChanged` autocmd.
+          break;
+        }
+
         if (!message.data.force && !this.browsingContext?.isContent) {
           // focus/blur driven mode switches for the chrome document are handled synchronously in
           // `GlideBrowser` (`#on_focusin` / `#on_blur`), so requests from the chrome actor are

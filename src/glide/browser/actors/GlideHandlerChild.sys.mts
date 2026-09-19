@@ -28,6 +28,11 @@ export interface ChildMessages {
   };
   "Glide::HideHints": {};
   "Glide::ChangeMode": { mode: GlideMode; force?: boolean };
+  /**
+   * Sent whenever focus moves, so that the parent process knows synchronously whether an
+   * editable element is focused (see `GlideHandlerParent.editable_focused`).
+   */
+  "Glide::EditableFocusChanged": { editable: boolean };
   "Glide::RecordRepeatableCommand": ParentMessages["Glide::ExecuteContentCommand"];
 }
 
@@ -991,9 +996,11 @@ export class GlideHandlerChild extends JSWindowActorChild<
         }
 
         const target = this.#get_active_nested_shadow_root_elem(event.target as HTMLElement);
-        if (DOM.is_text_editable(target)) {
+        const is_editable = DOM.is_text_editable(target);
+        if (is_editable) {
           this.#last_focused_input_element = target;
         }
+        this.send_async_message("Glide::EditableFocusChanged", { editable: is_editable });
 
         const current_mode = this.state?.mode;
         if (this.#switch_mode_disabled) {
@@ -1011,6 +1018,8 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "blur": {
+        this.send_async_message("Glide::EditableFocusChanged", { editable: false });
+
         if (this.state?.mode !== "normal" && !this.#switch_mode_disabled) {
           this.#change_mode("normal", false);
         }

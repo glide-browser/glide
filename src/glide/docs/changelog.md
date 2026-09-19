@@ -29,6 +29,7 @@ padding: 0.3em;
 - Fixed keys typed immediately after focusing the address bar (e.g. right after `<C-l>`) sometimes being handled as normal mode mappings instead of text
 - Fixed the `document` mirror inserting elements in the wrong order when their reference sibling was moved inside them in the same mutation batch
 - Fixed text occasionally being inserted in the wrong order when cancelling a partial insert mode mapping (e.g. typing `je` with a `jj` mapping)
+- Fixed keys typed quickly after `v`, `I`, `s`, `o` or `c` sometimes being handled in the previous mode (e.g. `Ifoo` running motions instead of inserting text)
 
 # 0.1.65a
 
