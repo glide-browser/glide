@@ -3,6 +3,10 @@ name: macOS Build
 on:
   workflow_dispatch:
     inputs:
+      arch:
+        description: "Only build this architecture (aarch64 or x86_64); empty builds both"
+        type: string
+        default: ""
       artifacts:
         description: "Upload built artifacts"
         type: boolean
@@ -39,10 +43,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, x86_64]
+        arch: ${{ fromJSON(inputs.arch && format('["{0}"]', inputs.arch) || '["aarch64", "x86_64"]') }}
+
+    defaults:
+      run:
+        # Every step runs inside the pinned nix environment defined by
+        # `devShells.ci` in flake.nix (host tooling only; the compiler, macOS SDK
+        # and the rest of the target toolchain come from `mach bootstrap` / Xcode).
+        # Steps that run before nix is installed override this with `shell: bash`.
+        shell: nix develop .#ci --profile /tmp/nix-ci-profile --command bash -euo pipefail {0}
 
     steps:
       - name: Debug
+        shell: bash
         run: |
           xcrun --show-sdk-version
 
@@ -52,18 +65,40 @@ jobs:
           persist-credentials: false
 
       - name: Configure git
+        shell: bash
         run: |
           git config --global \
             url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
             "git@github.com:mozilla-firefox/firefox.git"
 
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      - name: Restore nix store
+        uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7
         with:
-          node-version: "24"
-          cache: "pnpm"
+          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.nix', 'flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
+          # only collect garbage before saving if the store grew past this
+          gc-max-store-size-macos: 6G
+
+      - name: Restore Mozilla toolchains
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          # everything `mach bootstrap` installs (clang, sysroots, cbindgen, ...),
+          # pinned by the Firefox revision; the downloaded archives are excluded
+          path: |
+            ~/.mozbuild
+            !~/.mozbuild/toolchains
+          key: mozbuild-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('firefox.json') }}
+
+      - name: Restore pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
@@ -77,34 +112,16 @@ jobs:
             core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
 
-      - name: Install system dependencies
+      - name: Nix environment
         run: |
-          brew update
-          brew install cairo gnu-tar mercurial
-
-          brew uninstall --ignore-dependencies python3.12 -f
-
-          export PATH="$(python3 -m site --user-base)/bin":$PATH
-
-          rm '/usr/local/bin/2to3-3.11' '/usr/local/bin/2to3-3.12' '/usr/local/bin/2to3' || true
-          rm '/usr/local/bin/idle3.11' '/usr/local/bin/idle3.12' '/usr/local/bin/idle3' || true
-          rm '/usr/local/bin/pydoc3.11' '/usr/local/bin/pydoc3.12' '/usr/local/bin/pydoc3' || true
-          rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3' || true
-          rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config' || true
-
-          brew install watchman
-
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.95
-          source $HOME/.cargo/env
-
-          cargo install cbindgen
-
-          if test "$GLIDE_COMPAT" = "aarch64"; then
-            rustup target add aarch64-apple-darwin
-          else
-            rustup target add x86_64-apple-darwin
-            brew install nasm
-          fi
+          nix --version
+          rustc --version
+          cargo --version
+          node --version
+          pnpm --version
+          python3 --version
+          nasm --version
+          echo "WASI_SYSROOT=$WASI_SYSROOT"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -114,17 +131,10 @@ jobs:
           pnpm bootstrap
 
       - name: Bootstrap system
-        working-directory: engine
+        # note: no `working-directory: engine`, the nix shell has to be resolved from the repo root
         run: |
-          export PATH="$(python3 -m site --user-base)/bin":$PATH
+          cd engine
           ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes --exclude MacOSX26.4.sdk || true
-
-      - name: Download WASI SDK
-        run: |
-          mkdir -p "$HOME/.mozbuild/wasi-sdk"
-          curl -L "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-24/wasi-sdk-24.0-arm64-macos.tar.gz" \
-            | tar -xz -C "$HOME/.mozbuild/wasi-sdk" --strip-components=1
-          echo "WASI_SYSROOT=$HOME/.mozbuild/wasi-sdk/share/wasi-sysroot" >> $GITHUB_ENV
 
       - name: Build
         run: |
