@@ -304,6 +304,9 @@ class GlideTestUtilsClass {
         assertion_index = 0;
         await SpecialPowers.spawn(browser, [text, opts.text_start], async (text, text_start) => {
           const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
+          // blur first so that `focus()` always fires a `focusin`, even if the textarea was
+          // already focused, which makes the mode switch below deterministic
+          textarea.blur();
           textarea.focus();
           textarea.value = text;
 
@@ -311,12 +314,9 @@ class GlideTestUtilsClass {
           textarea.setSelectionRange(pos, pos);
         });
 
-        await g.sleep_frames(3);
-
-        if (GlideBrowser.state.mode !== "normal") {
-          g.EventUtils.synthesizeKey("KEY_Escape");
-          await g.TestUtils.waitForCondition(() => GlideBrowser.state.mode === "normal", "Waiting for `normal` mode");
-        }
+        await GlideTestUtils.wait_for_mode("insert", "Waiting for `insert` mode after focusing the textarea");
+        g.EventUtils.synthesizeKey("KEY_Escape");
+        await GlideTestUtils.wait_for_mode("normal", "Waiting for `normal` mode");
       },
 
       async is_text(expected_text: string) {
