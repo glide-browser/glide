@@ -209,12 +209,15 @@ add_task(async function test_stderr_as_stdout() {
         "-c",
         "echo \"An error\" >&2; echo \"foo\"; sleep 0.1; echo \"Another error\" >&2;",
       ], { stderr: "stdout" });
-      glide.g.value = await Array.fromAsync(proc.stdout.values());
+      glide.g.value = (await Array.fromAsync(proc.stdout.values())).join("");
     });
   });
 
   await glide.keys.send("~");
-  await waiter(() => glide.g.value).isjson(["An error\nfoo\n", "Another error\n"]);
+  await waiter(() => glide.g.value).is(
+    "An error\nfoo\nAnother error\n",
+    "stderr should be interleaved into stdout in order",
+  );
 });
 
 add_task(async function test_cwd_option() {
