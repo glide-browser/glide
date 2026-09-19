@@ -1710,8 +1710,26 @@ class GlideBrowserClass {
    * destroyed in the meantime) we give up after a few seconds instead of hanging.
    */
   async wait_for_keys_processed(): Promise<void> {
+    const deadline = Date.now() + 5000;
     while (this.#pending_key_handlers.size) {
-      await Promise.allSettled([...this.#pending_key_handlers]);
+      if (this.next_key_waiter !== null || this.next_key_passthrough_waiters.length) {
+        // a mapping is blocked on `glide.keys.next()` / `next_passthrough()`, i.e. it is waiting
+        // for the *next* key, which the caller is presumably about to send. that handler is as
+        // processed as it can get right now, waiting for it would deadlock.
+        break;
+      }
+      if (Date.now() > deadline) {
+        // a mapping callback that takes this long is not something a test should be waiting on
+        // synchronously, but don't hang forever, make it visible instead.
+        console.error(
+          `wait_for_keys_processed(): giving up on ${this.#pending_key_handlers.size} key handler(s) still pending after 5s`,
+        );
+        break;
+      }
+      await Promise.race([
+        Promise.allSettled([...this.#pending_key_handlers]),
+        new Promise(r => setTimeout(r, 50)),
+      ]);
     }
 
     for (const [actor, expected] of this.#forwarded_keydowns) {

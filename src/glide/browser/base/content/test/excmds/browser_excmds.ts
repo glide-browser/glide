@@ -191,7 +191,11 @@ add_task(async function test_keys() {
 
   ok(GlideTestUtils.commandline.get_element()?.hidden, "commandline should be hidden at the start");
   await keys(";");
-  ok(GlideTestUtils.commandline.get_element()!.hidden, "commandline should be shown after pressing ;");
+  // the mapped `keys :` opens the commandline asynchronously
+  await waiter(() => GlideTestUtils.commandline.get_element()?.hidden).is(
+    false,
+    "commandline should be shown after pressing ;",
+  );
 
   GlideTestUtils.commandline.get_element()!.close();
 });
@@ -388,7 +392,8 @@ add_task(async function test_tab_duplicate() {
 
   await keys(":tab_duplicate<CR>");
   await waiter(() => gBrowser.tabs.length).is(initial_tab_count + 2, "Waiting for tab to be duplicated");
-  is(current_url(), test_url, "Duplicated tab should have the original URL");
+  // the duplicated tab is selected immediately but its URL is restored asynchronously
+  await waiter(current_url).is(test_url, "Duplicated tab should have the original URL");
 
   await sleep_frames(10);
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
