@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import type { SetOptional } from "type-fest";
-import type { ParentMessages } from "../../actors/GlideHandlerParent.sys.mjs";
+import type { GlideHandlerParent, ParentMessages } from "../../actors/GlideHandlerParent.sys.mjs";
 import type {
   ArgumentSchema,
   ContentExcmd,
@@ -879,6 +879,12 @@ class GlideExcmdsClass {
   }
 
   /**
+   * `motion` keyseqs that always switch to insert mode in the content process when an editor
+   * is focused (see `#handle_excmd` in `GlideHandlerChild.sys.mts`), keep in sync.
+   */
+  static #INSERT_MOTIONS = new Set(["I", "s", "vc", "o"]);
+
+  /**
    * Scroll the scroll container that keyboard scrolling would target from the focused element,
    * the same way (target selection, page / line sizes, smooth scrolling, scroll snapping) a
    * PageDown / Home / arrow key would, but without synthesizing key events and with support for
@@ -931,8 +937,47 @@ class GlideExcmdsClass {
       operator: props.operator ?? GlideBrowser.state.operator,
       sequence: props.sequence,
     };
+
+    // some content commands switch modes, which the child reports back with an async
+    // `Glide::ChangeMode` message. keys are routed by the parent based on the *current* mode, so
+    // anything typed before that message lands (e.g. `Ifoo` or `vlll` typed quickly) would be
+    // interpreted as mappings for the old mode. when we can tell that the child *will* switch,
+    // switch here first.
+    const resulting_mode = this.#resulting_mode(actor, opts);
+    if (resulting_mode && GlideBrowser.state.mode !== resulting_mode) {
+      GlideBrowser._change_mode(resulting_mode);
+    }
+
     actor.send_async_message("Glide::ExecuteContentCommand", opts);
     console.log("sent execute command with", opts);
+  }
+
+  /**
+   * The mode the content process will switch to as a result of executing the given command,
+   * if we can determine it ahead of time. Keep in sync with `#handle_excmd` in
+   * `GlideHandlerChild.sys.mts`.
+   */
+  #resulting_mode(
+    actor: GlideHandlerParent,
+    opts: ParentMessages["Glide::ExecuteContentCommand"],
+  ): GlideMode | null {
+    switch (opts.command.name) {
+      case "motion": {
+        const keyseq = opts.args.trim().split(/\s+/)[1];
+        if (keyseq === "v") {
+          // entering visual mode does not require an editor
+          return "visual";
+        }
+        if (keyseq != null && actor.editable_focused && GlideExcmdsClass.#INSERT_MOTIONS.has(keyseq)) {
+          return "insert";
+        }
+        return null;
+      }
+      case "execute_motion":
+        return actor.editable_focused && opts.operator === "c" ? "insert" : null;
+      default:
+        return null;
+    }
   }
 }
 
