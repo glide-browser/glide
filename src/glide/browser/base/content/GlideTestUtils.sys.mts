@@ -109,6 +109,8 @@ class GlideTestUtilsClass {
       await g.TestUtils.waitForCondition(
         () => GlideBrowser.state.mode === mode,
         name ?? `Waiting for mode to be "${mode}" mode`,
+        /* interval */ 10,
+        /* max tries */ 500,
       );
     } catch (err) {
       throw new Error(`${err} (current mode: "${GlideBrowser.state.mode}")`, { cause: err });
