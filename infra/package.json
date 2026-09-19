@@ -9,11 +9,11 @@
   "packageManager": "pnpm@10.17.0",
   "private": true,
   "dependencies": {
-    "wrangler": "^4.100.0"
+    "wrangler": "^4.135.0"
   },
   "pnpm": {
     "overrides": {
-      "undici": ">=7.28.0 <8"
+      "undici": ">=7.29.0 <8"
     }
   }
 }
