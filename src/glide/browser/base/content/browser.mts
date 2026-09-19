@@ -99,7 +99,7 @@ class GlideBrowserClass {
   init() {
     document!.addEventListener("blur", this.#on_blur.bind(this), true);
     document!.addEventListener("focusin", this.#on_focusin.bind(this), true);
-    document!.addEventListener("keydown", this.#on_keydown.bind(this), true);
+    document!.addEventListener("keydown", this.#on_keydown_listener.bind(this), true);
     document!.addEventListener("keypress", this.#on_keypress.bind(this), true);
     document!.addEventListener("keyup", this.#on_keyup.bind(this), true);
     window.addEventListener("MozDOMFullscreen:Entered", this.#on_fullscreen_enter.bind(this), true);
@@ -1638,6 +1638,56 @@ class GlideBrowserClass {
         sequence: props.sequence.map(element => element === GlideBrowser.api.g.mapleader ? "<leader>" : element),
       },
     });
+  }
+
+  /**
+   * In-flight `#on_keydown` handlers and, per actor, how many keydown events we've let through
+   * to it (i.e. did not `preventDefault()`), used by {@link wait_for_keys_processed}.
+   */
+  #pending_key_handlers: Set<Promise<void>> = new Set();
+  #forwarded_keydowns: Map<GlideHandlerParent, number> = new Map();
+
+  #on_keydown_listener(event: KeyboardEvent): void {
+    // resolve the target actor *now*: handling the key may move focus
+    const actor = this.get_focused_actor();
+    const handler = this.#on_keydown(event).then(() => {
+      if (!event.defaultPrevented) {
+        this.#forwarded_keydowns.set(actor, (this.#forwarded_keydowns.get(actor) ?? 0) + 1);
+      }
+    });
+    this.#pending_key_handlers.add(handler);
+    handler.finally(() => this.#pending_key_handlers.delete(handler)).catch(() => {});
+  }
+
+  /**
+   * Resolves once every key event dispatched so far has been fully processed, i.e. our own
+   * handlers have finished (including any content commands they sent, which are delivered in
+   * order before the query below) and every keydown we let through has been received by the
+   * content process (the key's default action, e.g. inserting text, runs synchronously with it).
+   *
+   * Testing only. Best effort: if an actor never reports the expected count (e.g. it was
+   * destroyed in the meantime) we give up after a few seconds instead of hanging.
+   */
+  async wait_for_keys_processed(): Promise<void> {
+    while (this.#pending_key_handlers.size) {
+      await Promise.allSettled([...this.#pending_key_handlers]);
+    }
+
+    for (const [actor, expected] of this.#forwarded_keydowns) {
+      const deadline = Date.now() + 5000;
+      while (Date.now() < deadline) {
+        let count: number;
+        try {
+          count = await actor.send_query("Glide::Query::KeydownCount");
+        } catch (_) {
+          break; // actor gone
+        }
+        if (count >= expected) {
+          break;
+        }
+        await new Promise(r => setTimeout(r, 5));
+      }
+    }
   }
 
   async #on_keydown(event: KeyboardEvent) {

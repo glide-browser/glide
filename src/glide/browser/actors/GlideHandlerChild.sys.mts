@@ -92,6 +92,9 @@ export class GlideHandlerChild extends JSWindowActorChild<
    */
   #partial_insert_pending: boolean = false;
 
+  /** Number of (trusted) `keydown` events this document has received, see `Glide::Query::KeydownCount`. */
+  #keydown_count: number = 0;
+
   /**
    * Keys that never resolve a partial mapping by themselves, kept in sync with
    * `#modifier_keys` in `browser.mts`.
@@ -421,6 +424,10 @@ export class GlideHandlerChild extends JSWindowActorChild<
 
         MozUtils.copy_to_clipboard(this.contentWindow!, selection);
         break;
+      }
+
+      case "Glide::Query::KeydownCount": {
+        return this.#keydown_count;
       }
 
       case "Glide::Query::ScrollKeyboardTarget": {
@@ -978,6 +985,7 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
       case "keydown": {
+        this.#keydown_count++;
         this.#last_key_event_element = this.document?.activeElement
           ? this.#get_active_nested_shadow_root_elem(this.document?.activeElement as HTMLElement)
           : null;
