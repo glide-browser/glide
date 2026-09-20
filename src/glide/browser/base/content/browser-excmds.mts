@@ -468,136 +468,32 @@ class GlideExcmdsClass {
       }
 
       case "scroll_top": {
-        if (
-          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
-          // if an input element is focused, <D-Up> would move the caret to the *start* of the input,
-          // instead of going to the top of the page, so we have to use our own API for scrolling to
-          // actually get to the top of the page.
-          || await GlideBrowser.api.ctx.is_editing()
-        ) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "top" });
-          return;
-        }
-
-        GlideBrowser.notify_scroll_breaking_change?.();
-
-        if (GlideBrowser.api.ctx.os === "macosx") {
-          await GlideBrowser.api.keys.send("<D-Up>", { skip_mappings: true });
-        } else {
-          await GlideBrowser.api.keys.send("<Home>", { skip_mappings: true });
-        }
+        await this.#scroll_keyboard_target({ to: "top" }, 0, -1, "whole");
         break;
       }
 
       case "scroll_bottom": {
-        if (
-          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
-          // if an input element is focused, <D-Down> would move the caret to the *end* of the input,
-          // instead of going to the bottom of the page, so we have to use our own API for scrolling to
-          // actually get to the bottom of the page.
-          || await GlideBrowser.api.ctx.is_editing()
-        ) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "bottom" });
-          return;
-        }
-
-        GlideBrowser.notify_scroll_breaking_change?.();
-
-        if (GlideBrowser.api.ctx.os === "macosx") {
-          await GlideBrowser.api.keys.send("<D-Down>", { skip_mappings: true });
-        } else {
-          await GlideBrowser.api.keys.send("<End>", { skip_mappings: true });
-        }
+        await this.#scroll_keyboard_target({ to: "bottom" }, 0, 1, "whole");
         break;
       }
 
       case "scroll_page_up": {
-        if (
-          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
-          // if an input element is focused, <pageup> would scroll the element instead of actually scrolling
-          // the page up so we have to use our own API for scrolling to actually go up the page.
-          || await GlideBrowser.api.ctx.is_editing()
-        ) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_up" });
-          return;
-        }
-
-        GlideBrowser.notify_scroll_breaking_change?.();
-
-        await GlideBrowser.api.keys.send("<pageup>", { skip_mappings: true });
+        await this.#scroll_keyboard_target({ to: "page_up" }, 0, -1, "pages");
         break;
       }
 
       case "scroll_page_down": {
-        if (
-          GlideBrowser.api.options.get("scroll_implementation") === "legacy"
-          // if an input element is focused, <pagedown> would scroll the element instead of actually scrolling
-          // the page down so we have to use our own API for scrolling to actually go down the page.
-          || await GlideBrowser.api.ctx.is_editing()
-        ) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "page_down" });
-          return;
-        }
-
-        GlideBrowser.notify_scroll_breaking_change?.();
-
-        await GlideBrowser.api.keys.send("<pagedown>", { skip_mappings: true });
+        await this.#scroll_keyboard_target({ to: "page_down" }, 0, 1, "pages");
         break;
       }
 
       case "scroll_half_page_up": {
-        const glide = GlideBrowser.api;
-        if (
-          glide.options.get("scroll_implementation") === "legacy"
-          // if an input element is focused, <pageup> would scroll the element instead of actually scrolling
-          // the page up so we have to use our own API for scrolling to actually go up the page.
-          || await glide.ctx.is_editing()
-        ) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "half_page_up" });
-          return;
-        }
-
-        {
-          // this works by forcing Firefox's scroll calculation logic to collapse down to
-          // `effectiveScrollPortSize.height * 0.5` instead of something close to just the height.
-          //
-          // see `ScrollContainerFrame::GetPageScrollAmount()` in `layout/generic/ScrollContainerFrame.cpp`
-          //
-          // note: `maxOverlapLines` is multiplied by the line height in app units (60 per CSS pixel) using
-          //       32-bit integer arithmetic, so it must be kept small enough to not overflow.
-          using prefs = glide.prefs.scoped();
-          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapLines", 10000);
-          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
-          await glide.keys.send("<pageup>", { skip_mappings: true });
-        }
+        await this.#scroll_keyboard_target({ to: "half_page_up" }, 0, -0.5, "pages");
         break;
       }
 
       case "scroll_half_page_down": {
-        const glide = GlideBrowser.api;
-        if (
-          glide.options.get("scroll_implementation") === "legacy"
-          // if an input element is focused, <pagedown> would scroll the element instead of actually scrolling
-          // the page down so we have to use our own API for scrolling to actually go down the page.
-          || await glide.ctx.is_editing()
-        ) {
-          GlideBrowser.get_focused_actor().send_async_message("Glide::Scroll", { to: "half_page_down" });
-          return;
-        }
-
-        {
-          // this works by forcing Firefox's scroll calculation logic to collapse down to
-          // `effectiveScrollPortSize.height * 0.5` instead of something close to just the height.
-          //
-          // see `ScrollContainerFrame::GetPageScrollAmount()` in `layout/generic/ScrollContainerFrame.cpp`
-          //
-          // note: `maxOverlapLines` is multiplied by the line height in app units (60 per CSS pixel) using
-          //       32-bit integer arithmetic, so it must be kept small enough to not overflow.
-          using prefs = glide.prefs.scoped();
-          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapLines", 10000);
-          prefs.set("toolkit.scrollbox.pagescroll.maxOverlapPercent", 50);
-          await glide.keys.send("<pagedown>", { skip_mappings: true });
-        }
+        await this.#scroll_keyboard_target({ to: "half_page_down" }, 0, 0.5, "pages");
         break;
       }
 
@@ -979,6 +875,46 @@ class GlideExcmdsClass {
 
       default:
         throw assert_never(command_meta, `Unhandled excmd: \`${(command_meta as any).name}\``);
+    }
+  }
+
+  /**
+   * Scroll the scroll container that keyboard scrolling would target from the focused element,
+   * the same way (target selection, page / line sizes, smooth scrolling, scroll snapping) a
+   * PageDown / Home / arrow key would, but without synthesizing key events and with support for
+   * fractional amounts (e.g. half a page).
+   *
+   * See `nsIDOMWindowUtils.scrollKeyboardTarget` (a Glide patch) and
+   * `Glide::Query::ScrollKeyboardTarget`.
+   *
+   * With `glide.o.scroll_implementation = "legacy"` the old `Glide::Scroll` message is sent
+   * instead, which scrolls the window itself.
+   */
+  async #scroll_keyboard_target(
+    legacy: ParentMessages["Glide::Scroll"],
+    x: number,
+    y: number,
+    unit: "lines" | "pages" | "whole",
+  ): Promise<void> {
+    const actor = GlideBrowser.get_focused_actor();
+
+    if (GlideBrowser.api.options.get("scroll_implementation") === "legacy") {
+      actor.send_async_message("Glide::Scroll", legacy);
+      return;
+    }
+
+    GlideBrowser.notify_scroll_breaking_change?.();
+
+    if (await actor.send_query("Glide::Query::ScrollKeyboardTarget", { x, y, unit })) {
+      return;
+    }
+
+    // nothing scrollable in the focused document, e.g. the focus is in an out-of-process iframe
+    // that can't scroll (any further); keyboard scrolling hands off to the top-level document
+    // in that case, so do the same.
+    const top = GlideBrowser.get_content_actor();
+    if (top !== actor) {
+      await top.send_query("Glide::Query::ScrollKeyboardTarget", { x, y, unit });
     }
   }
 

@@ -773,3 +773,10 @@ type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
   [Key in keyof BaseType]: Key extends Keys ? NonNullable<BaseType[Key]>
     : BaseType[Key];
 };
+
+// Glide additions to Firefox interfaces: the generated `lib.gecko.xpcom.d.ts` is Firefox's
+// checked-in copy and does not know about our patches.
+interface nsIDOMWindowUtils {
+  /** See `src/dom/interfaces/base/nsIDOMWindowUtils-idl.patch`. */
+  scrollKeyboardTarget(aDeltaX: number, aDeltaY: number, aUnit: number): boolean;
+}

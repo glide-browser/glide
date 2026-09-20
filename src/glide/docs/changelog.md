@@ -27,6 +27,7 @@ padding: 0.3em;
 - Fixed a mode switching race condition in the commandline
 - Fixed `document` mirror corruption on stale references
 - Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config
+- Scrolling with `<C-d>`, `<C-u>`, `<C-f>`, `<C-b>`, `gg` and `G` no longer synthesizes key events (or temporarily changes page scroll prefs for half pages): it now scrolls what the keyboard would scroll through a small Firefox patch (`nsIDOMWindowUtils.scrollKeyboardTarget`), which also fixes half page scrolls occasionally scrolling a full page
 
 # 0.1.63a
 
