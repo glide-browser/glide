@@ -1,0 +1,35 @@
+diff --git a/dom/interfaces/base/nsIDOMWindowUtils.idl b/dom/interfaces/base/nsIDOMWindowUtils.idl
+index 83313786eba285ecd6895869f9991c722c99f799..dd6def55e6f42c20528758c37b3e956fe2811ba0 100644
+--- a/dom/interfaces/base/nsIDOMWindowUtils.idl
++++ b/dom/interfaces/base/nsIDOMWindowUtils.idl
+@@ -2183,6 +2183,30 @@ interface nsIDOMWindowUtils : nsISupports {
+   // Returns an element currently scrolling by wheel.
+   Element getWheelScrollTarget();
+ 
++  // Units for scrollKeyboardTarget().
++  const unsigned long SCROLL_UNIT_LINES = 0;
++  const unsigned long SCROLL_UNIT_PAGES = 1;
++  const unsigned long SCROLL_UNIT_WHOLE = 2;
++
++  /**
++   * Scrolls the scroll container that keyboard scrolling (arrow keys, PageUp /
++   * PageDown, Home / End) would scroll from the currently focused element, by
++   * the given amounts, using the same line and page sizes, scroll modes (smooth
++   * scrolling) and scroll snapping as keyboard scrolling does.
++   *
++   * The deltas are multiples of the unit and may be fractional, e.g.
++   * (0, 0.5, SCROLL_UNIT_PAGES) scrolls down by half a page. For
++   * SCROLL_UNIT_WHOLE only the sign of the deltas matters.
++   *
++   * Returns false if there is nothing to scroll in this document, in which
++   * case the caller may want to try the parent document (this is what
++   * keyboard scrolling does for out-of-process iframes).
++   *
++   * This is a Glide addition.
++   */
++  boolean scrollKeyboardTarget(in double aDeltaX, in double aDeltaY,
++                               in unsigned long aUnit);
++
+   // The current drag session on this widget of this window (if any).
+   readonly attribute nsIDragSession dragSession;
+ 
