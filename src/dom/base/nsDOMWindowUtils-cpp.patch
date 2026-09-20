@@ -1,0 +1,97 @@
+diff --git a/dom/base/nsDOMWindowUtils.cpp b/dom/base/nsDOMWindowUtils.cpp
+index 5d3805f04534a82ba8b68eb26ffdceb68f8832bc..3f1655b82efb64ade5744a1150fec407717bc5eb 100644
+--- a/dom/base/nsDOMWindowUtils.cpp
++++ b/dom/base/nsDOMWindowUtils.cpp
+@@ -46,6 +46,8 @@
+ #include "mozilla/dom/Touch.h"
+ #include "mozilla/dom/UserActivation.h"
+ #include "mozilla/layers/APZCCallbackHelper.h"
++#include "mozilla/layers/APZPublicUtils.h"
++#include "mozilla/ScrollOrigin.h"
+ #include "mozilla/layers/CompositorBridgeChild.h"
+ #include "mozilla/layers/PCompositorBridgeTypes.h"
+ #include "mozilla/layers/TouchActionHelper.h"
+@@ -4715,6 +4717,83 @@ nsDOMWindowUtils::GetWheelScrollTarget(Element** aResult) {
+   return NS_OK;
+ }
+ 
++NS_IMETHODIMP
++nsDOMWindowUtils::ScrollKeyboardTarget(double aDeltaX, double aDeltaY,
++                                       uint32_t aUnit, bool* aResult) {
++  *aResult = false;
++
++  nsCOMPtr<Document> doc = GetDocument();
++  NS_ENSURE_STATE(doc);
++  // make sure the frame tree and scroll ranges are up to date before picking
++  // a target, like a real key event would see them.
++  doc->FlushPendingNotifications(FlushType::Layout);
++
++  PresShell* presShell = GetPresShell();
++  NS_ENSURE_TRUE(presShell, NS_ERROR_NOT_AVAILABLE);
++  nsPresContext* presContext = presShell->GetPresContext();
++  NS_ENSURE_TRUE(presContext, NS_ERROR_NOT_AVAILABLE);
++
++  ScrollDirections directions;
++  if (aDeltaX != 0) {
++    directions += ScrollDirection::eHorizontal;
++  }
++  if (aDeltaY != 0) {
++    directions += ScrollDirection::eVertical;
++  }
++  if (directions.isEmpty()) {
++    return NS_OK;
++  }
++
++  // The same target selection as PresShell::ScrollByKeyboard uses for the
++  // focused content, minus the cross-process handoff (see the IDL comment).
++  ScrollContainerFrame* scrollContainerFrame =
++      presShell->GetScrollContainerFrameToScroll(directions);
++  if (!scrollContainerFrame) {
++    return NS_OK;
++  }
++
++  auto sign = [](double aValue) -> int32_t {
++    return aValue > 0 ? 1 : (aValue < 0 ? -1 : 0);
++  };
++
++  switch (aUnit) {
++    case nsIDOMWindowUtils::SCROLL_UNIT_LINES:
++    case nsIDOMWindowUtils::SCROLL_UNIT_PAGES: {
++      const bool pages = aUnit == nsIDOMWindowUtils::SCROLL_UNIT_PAGES;
++      const nsSize amount = pages ? scrollContainerFrame->GetPageScrollAmount()
++                                  : scrollContainerFrame->GetLineScrollAmount();
++      // ScrollBy() with DEVICE_PIXELS takes integer device pixels.
++      const nsIntPoint delta(
++          NSToIntRound(presContext->AppUnitsToFloatDevPixels(
++              float(amount.width * aDeltaX))),
++          NSToIntRound(presContext->AppUnitsToFloatDevPixels(
++              float(amount.height * aDeltaY))));
++      const ScrollOrigin origin =
++          pages ? ScrollOrigin::Pages : ScrollOrigin::Lines;
++      scrollContainerFrame->ScrollBy(
++          delta, ScrollUnit::DEVICE_PIXELS,
++          apz::GetScrollModeForOrigin(origin), nullptr,
++          ScrollOrigin::NotSpecified, ScrollContainerFrame::NOT_MOMENTUM,
++          pages ? (ScrollSnapFlags::IntendedDirection |
++                   ScrollSnapFlags::IntendedEndPosition)
++                : ScrollSnapFlags::IntendedDirection);
++      break;
++    }
++    case nsIDOMWindowUtils::SCROLL_UNIT_WHOLE:
++      scrollContainerFrame->ScrollBy(
++          nsIntPoint(sign(aDeltaX), sign(aDeltaY)), ScrollUnit::WHOLE,
++          apz::GetScrollModeForOrigin(ScrollOrigin::Other), nullptr,
++          ScrollOrigin::NotSpecified, ScrollContainerFrame::NOT_MOMENTUM,
++          ScrollSnapFlags::IntendedEndPosition);
++      break;
++    default:
++      return NS_ERROR_INVALID_ARG;
++  }
++
++  *aResult = true;
++  return NS_OK;
++}
++
+ NS_IMETHODIMP
+ nsDOMWindowUtils::SetHiDPIMode(bool aHiDPI) {
+ #ifdef DEBUG
