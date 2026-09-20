@@ -35,10 +35,11 @@ jobs:
       CARGO_TERM_COLOR: always
       GLIDE_PLATFORM: macos
       GLIDE_RELEASE: true
+      # keep the objdir out of engine/ so the Firefox checkout can be cached
+      MOZ_OBJDIR: ${{ github.workspace }}/objdir
       GLIDE_LTO: 1
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
-      MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
 
     strategy:
       fail-fast: false
@@ -71,16 +72,26 @@ jobs:
             url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
             "git@github.com:mozilla-firefox/firefox.git"
 
+      - name: Build id
+        shell: bash
+        # Without a fixed build id every `mach build` invocation gets a new one,
+        # which makes `mach package` relink libxul (a full cross-LTO link on
+        # macOS). Release runs pass one in; generate one here otherwise.
+        env:
+          INPUT_MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
+        run: |
+          echo "MOZ_BUILD_DATE=${INPUT_MOZ_BUILD_DATE:-$(date +%Y%m%d%H%M%S)}" >> "$GITHUB_ENV"
+
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@8d87e8d5e5b8a8309d4281094560f127d9a265f1 # v3.22.5
 
       - name: Restore nix store
         uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7
         with:
-          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.nix', 'flake.lock') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
+          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('flake.nix', 'flake.lock') }}
+          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
           # only collect garbage before saving if the store grew past this
-          gc-max-store-size-macos: 10G
+          gc-max-store-size-macos: 5G
 
       - name: Restore pnpm store
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -89,6 +100,10 @@ jobs:
           key: pnpm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             pnpm-${{ runner.os }}-${{ runner.arch }}-
+
+      # note: unlike linux, the Firefox checkout is not cached here: restoring
+      # it took ~100 s and git then spent ~6 min re-hashing the 480k restored
+      # files during `pnpm bootstrap`, more than the ~3.5 min clone.
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
@@ -111,6 +126,7 @@ jobs:
           node --version
           pnpm --version
           python3 --version
+          df -h .
           nasm --version
           echo "WASI_SYSROOT=$WASI_SYSROOT"
 
@@ -124,6 +140,10 @@ jobs:
       - name: Build
         run: |
           pnpm build
+
+      - name: sccache stats
+        shell: bash
+        run: sccache --show-stats || true
 
       - name: Package
         run: |
