@@ -81,6 +81,16 @@ export interface ParentQueries {
     props: {};
     result: boolean;
   };
+  /**
+   * Scroll the scroll container that keyboard scrolling would target from the focused element
+   * (see `nsIDOMWindowUtils.scrollKeyboardTarget`). Resolves to `false` if there was nothing to
+   * scroll in this document, in which case the caller should try the top-level document, which
+   * is what keyboard scrolling does for out-of-process iframes.
+   */
+  "Glide::Query::ScrollKeyboardTarget": {
+    props: { x: number; y: number; unit: "lines" | "pages" | "whole" };
+    result: boolean;
+  };
   "Glide::Query::ExecuteHintAction": {
     props: {
       id: number;

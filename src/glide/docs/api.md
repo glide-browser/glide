@@ -357,9 +357,13 @@ This can be useful for staying in the same mode while switching tabs.
 ### `glide.o.scroll_implementation` {% id="glide.o.scroll_implementation" %}
 
 Configure the strategy for implementing scrolling, this affects the
-`h`, `j`, `k`, `l`,`<C-u>`, `<C-d>`, `G`, and `gg` mappings.
+`h`, `j`, `k`, `l`,`<C-u>`, `<C-d>`, `<C-f>`, `<C-b>`, `G`, and `gg` mappings.
 
-This is exposed as the current `keys` implementation can result in non-ideal behaviour if a website overrides arrow key events.
+- `keys`: scroll exactly what a key press (`PageDown`, `Home`, ...) would scroll, with the
+  same page / line sizes, smooth scrolling and scroll snapping, but without synthesizing
+  key events, so websites can't intercept it and it works while an input is focused.
+  `h`, `j`, `k` and `l` still send arrow key events as they also move the caret in inputs.
+- `legacy`: scroll the window directly with fixed amounts.
 
 This will be removed in the future when the kinks with the `keys` implementation are ironed out.
 

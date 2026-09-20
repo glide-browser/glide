@@ -402,6 +402,13 @@ export class GlideHandlerChild extends JSWindowActorChild<
         break;
       }
 
+      case "Glide::Query::ScrollKeyboardTarget": {
+        const window = assert_present(this.contentWindow, "no content window");
+        // `nsIDOMWindowUtils.SCROLL_UNIT_*`, see `src/dom/interfaces/base/nsIDOMWindowUtils-idl.patch`
+        const units = { lines: 0, pages: 1, whole: 2 } as const;
+        return window.windowUtils.scrollKeyboardTarget(message.data.x, message.data.y, units[message.data.unit]);
+      }
+
       case "Glide::Query::IsEditing": {
         const element = this.#get_active_element();
         if (!element) {
