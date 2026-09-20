@@ -168,6 +168,90 @@ add_task(async function test_scrolling() {
   await horizontal_scroll_tests(SCROLL_TEST_FILE);
 });
 
+add_task(async function test_scrolling_nested_scroller() {
+  // Scrolling must target what keyboard scrolling would: the nearest scroll
+  // container (from the focused element) that can still scroll *in that direction*,
+  // so a nested scroller at its bottom hands `<C-d>` to the outer document, but
+  // still gets `<C-u>`.
+  await BrowserTestUtils.withNewTab(SCROLL_TEST_FILE, async browser => {
+    async function get_scroll(): Promise<[number, number]> {
+      return await SpecialPowers.spawn(browser, [], async () => {
+        const inner = content.document.getElementById("inner-scroller")!;
+        return [content.window.scrollY, inner.scrollTop];
+      });
+    }
+    const inner_max = await SpecialPowers.spawn(browser, [], async () => {
+      const inner = content.document.createElement("div");
+      inner.id = "inner-scroller";
+      inner.tabIndex = 0;
+      inner.style.cssText = "position: absolute; top: 0; left: 0; width: 300px; height: 150px; overflow: auto;";
+      const filler = content.document.createElement("div");
+      filler.style.height = "1000px";
+      inner.append(filler);
+      content.document.getElementById("container")!.prepend(inner);
+      inner.focus();
+      return inner.scrollTopMax;
+    });
+    Assert.greater(inner_max, 0, "the nested scroller should be scrollable");
+
+    const wait_for_scroll_stop = await GlideTestUtils.scroll_waiter(get_scroll);
+
+    await keys("<C-d>");
+    await wait_for_scroll_stop();
+    var [window_y, inner_y] = await get_scroll();
+    Assert.greater(inner_y, 0, `<C-d> should scroll the focused nested scroller (inner=${inner_y})`);
+    is(window_y, 0, "<C-d> should not scroll the document while the nested scroller can still scroll down");
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      const inner = content.document.getElementById("inner-scroller")!;
+      inner.scrollTop = inner.scrollTopMax;
+    });
+    await wait_for_scroll_stop();
+
+    await keys("<C-d>");
+    await wait_for_scroll_stop();
+    var [window_y, inner_y] = await get_scroll();
+    Assert.greater(
+      window_y,
+      0,
+      `<C-d> should scroll the document once the nested scroller is at its bottom (window=${window_y})`,
+    );
+    is(inner_y, inner_max, "the nested scroller should stay at its bottom");
+
+    const window_y_before_ctrl_u = window_y;
+
+    await keys("<C-u>");
+    await wait_for_scroll_stop();
+    var [window_y, inner_y] = await get_scroll();
+    Assert.less(
+      inner_y,
+      inner_max,
+      `<C-u> should scroll the nested scroller, which can still scroll up (inner=${inner_y})`,
+    );
+    is(
+      window_y,
+      window_y_before_ctrl_u,
+      "<C-u> should not scroll the document while the nested scroller can scroll up",
+    );
+
+    await SpecialPowers.spawn(browser, [], async () => {
+      const inner = content.document.getElementById("inner-scroller")!;
+      inner.scrollTop = inner.scrollTopMax;
+    });
+    await wait_for_scroll_stop();
+
+    await keys("G");
+    await wait_for_scroll_stop();
+    var [window_y, inner_y] = await get_scroll();
+    is(
+      window_y,
+      await SpecialPowers.spawn(browser, [], async () => content.window.scrollMaxY),
+      "G should scroll the document to the bottom once the nested scroller is at its bottom",
+    );
+    is(inner_y, inner_max, "the nested scroller should stay at its bottom");
+  });
+});
+
 add_task(async function test_scrolling_legacy() {
   await reload_config(function _() {
     glide.o.scroll_implementation = "legacy";
