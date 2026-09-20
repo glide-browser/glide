@@ -86,6 +86,10 @@ async function setupGitRepo(tag: string) {
   log.info(`Configuring repo`);
   await engine_run("git", ["config", "commit.gpgsign", "false"]);
   await engine_run("git", ["config", "core.safecrlf", "false"]);
+  // Only compare mtime + size against the index. CI restores the checkout
+  // from a cache, which changes inodes/ctimes, and with the default settings
+  // git then re-hashes all ~480k files on the next command (minutes on macOS).
+  await engine_run("git", ["config", "core.checkStat", "minimal"]);
 
   // cleanup any existing code (probably overkill)
   log.info(`Cleaning up repo`);

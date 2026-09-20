@@ -101,9 +101,13 @@ jobs:
           restore-keys: |
             pnpm-${{ runner.os }}-${{ runner.arch }}-
 
-      # note: unlike linux, the Firefox checkout is not cached here: restoring
-      # it took ~100 s and git then spent ~6 min re-hashing the 480k restored
-      # files during `pnpm bootstrap`, more than the ~3.5 min clone.
+      - name: Restore Firefox checkout
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          # the shallow clone of the pinned Firefox revision (cloning takes
+          # ~3.5 minutes here); `pnpm bootstrap` resets and re-patches it anyway
+          path: engine
+          key: engine-v3-${{ runner.os }}-${{ hashFiles('firefox.json') }}
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
