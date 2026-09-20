@@ -11,6 +11,22 @@ on:
         type: string
         default: ""
         description: "Set the build id"
+      arch:
+        description: "Only build this architecture (aarch64 or x86_64); empty builds both"
+        type: string
+        default: ""
+      run_tests:
+        description: "Build with tests enabled (non-release) and run the mochitest sweep instead of packaging"
+        type: boolean
+        default: false
+      test_passes:
+        description: "Sweep passes (comma separated): idle, chaos, load"
+        type: string
+        default: "idle,chaos,load,idle"
+      test_dirs:
+        description: "Sweep test dirs (space separated, empty = all)"
+        type: string
+        default: ""
   workflow_call:
     inputs:
       upload:
@@ -30,7 +46,9 @@ jobs:
     env:
       CARGO_TERM_COLOR: always
       GLIDE_PLATFORM: linux
-      GLIDE_RELEASE: true
+      # a test build is a non-release build (release builds `--disable-tests`). note the inverted
+      # ternary: `x && '' || 'true'` always yields 'true' because '' is falsy
+      GLIDE_RELEASE: ${{ !inputs.run_tests && 'true' || '' }}
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
       MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
@@ -38,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, x86_64]
+        arch: ${{ fromJSON(inputs.arch && format('["{0}"]', inputs.arch) || '["aarch64", "x86_64"]') }}
 
     steps:
       - name: Free Disk Space
@@ -111,16 +129,34 @@ jobs:
         run: |
           pnpm build
 
+      - name: Run test sweep
+        if: inputs.run_tests
+        env:
+          PASSES: ${{ inputs.test_passes }}
+          DIRS: ${{ inputs.test_dirs }}
+        run: |
+          .github/scripts/test-sweep.sh
+
+      - name: Upload test logs
+        if: always() && inputs.run_tests
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 14
+          name: test-logs-${{ matrix.arch }}
+          path: test-logs/
+
       - name: Package
+        if: ${{ !inputs.run_tests }}
         run: |
           pnpm package
 
       - name: Rename artifacts
+        if: ${{ !inputs.run_tests }}
         run: |
           mv dist/glide-*.tar.xz "dist/glide.linux-$GLIDE_COMPAT.tar.xz"
 
       - name: Upload tar
-        if: inputs.upload
+        if: inputs.upload && !inputs.run_tests
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           retention-days: 10
