@@ -1,90 +1,176 @@
 diff --git a/dom/base/nsDOMWindowUtils.cpp b/dom/base/nsDOMWindowUtils.cpp
-index 5d3805f04534a82ba8b68eb26ffdceb68f8832bc..3f1655b82efb64ade5744a1150fec407717bc5eb 100644
+index 5d3805f04534a82ba8b68eb26ffdceb68f8832bc..c9aec8fad4dcfff9f04b98f59299863dc2690323 100644
 --- a/dom/base/nsDOMWindowUtils.cpp
 +++ b/dom/base/nsDOMWindowUtils.cpp
-@@ -46,6 +46,8 @@
+@@ -5,6 +5,7 @@
+ #include "nsDOMWindowUtils.h"
+ 
+ #include <algorithm>
++#include <cmath>
+ 
+ #include "CubebDeviceEnumerator.h"
+ #include "LayoutConstants.h"
+@@ -21,6 +22,7 @@
+ #include "mozilla/PresShell.h"
+ #include "mozilla/PresShellInlines.h"
+ #include "mozilla/ScrollContainerFrame.h"
++#include "mozilla/ScrollOrigin.h"
+ #include "mozilla/ServoStyleSet.h"
+ #include "mozilla/StaticPrefs_layout.h"
+ #include "mozilla/StaticPrefs_test.h"
+@@ -46,6 +48,7 @@
  #include "mozilla/dom/Touch.h"
  #include "mozilla/dom/UserActivation.h"
  #include "mozilla/layers/APZCCallbackHelper.h"
 +#include "mozilla/layers/APZPublicUtils.h"
-+#include "mozilla/ScrollOrigin.h"
  #include "mozilla/layers/CompositorBridgeChild.h"
  #include "mozilla/layers/PCompositorBridgeTypes.h"
  #include "mozilla/layers/TouchActionHelper.h"
-@@ -4715,6 +4717,83 @@ nsDOMWindowUtils::GetWheelScrollTarget(Element** aResult) {
+@@ -4715,6 +4718,154 @@ nsDOMWindowUtils::GetWheelScrollTarget(Element** aResult) {
    return NS_OK;
  }
  
++// Largest delta scrollKeyboardTarget() scrolls by, in scroll units or device
++// pixels. Big enough to reach the end of any scroll range, small enough to
++// convert to int32 (and be multiplied by a line / page size, saturating)
++// safely.
++static constexpr double kMaxKeyboardScrollDelta = double(1 << 30);
++
++static bool IsWholeKeyboardScrollDelta(double aDelta) {
++  return std::trunc(aDelta) == aDelta &&
++         std::abs(aDelta) <= kMaxKeyboardScrollDelta;
++}
++
 +NS_IMETHODIMP
 +nsDOMWindowUtils::ScrollKeyboardTarget(double aDeltaX, double aDeltaY,
 +                                       uint32_t aUnit, bool* aResult) {
 +  *aResult = false;
 +
-+  nsCOMPtr<Document> doc = GetDocument();
-+  NS_ENSURE_STATE(doc);
-+  // make sure the frame tree and scroll ranges are up to date before picking
-+  // a target, like a real key event would see them.
-+  doc->FlushPendingNotifications(FlushType::Layout);
-+
-+  PresShell* presShell = GetPresShell();
-+  NS_ENSURE_TRUE(presShell, NS_ERROR_NOT_AVAILABLE);
-+  nsPresContext* presContext = presShell->GetPresContext();
-+  NS_ENSURE_TRUE(presContext, NS_ERROR_NOT_AVAILABLE);
-+
-+  ScrollDirections directions;
-+  if (aDeltaX != 0) {
-+    directions += ScrollDirection::eHorizontal;
++  if (!std::isfinite(aDeltaX) || !std::isfinite(aDeltaY)) {
++    return NS_ERROR_INVALID_ARG;
 +  }
-+  if (aDeltaY != 0) {
-+    directions += ScrollDirection::eVertical;
++  if (aUnit != nsIDOMWindowUtils::SCROLL_UNIT_LINES &&
++      aUnit != nsIDOMWindowUtils::SCROLL_UNIT_PAGES &&
++      aUnit != nsIDOMWindowUtils::SCROLL_UNIT_WHOLE) {
++    return NS_ERROR_INVALID_ARG;
 +  }
-+  if (directions.isEmpty()) {
++
++  // The edges to scroll towards; positive deltas scroll down / right, like a
++  // "forward" keyboard scroll action.
++  SideBits sides = SideBits::eNone;
++  if (aDeltaX > 0) {
++    sides |= SideBits::eRight;
++  } else if (aDeltaX < 0) {
++    sides |= SideBits::eLeft;
++  }
++  if (aDeltaY > 0) {
++    sides |= SideBits::eBottom;
++  } else if (aDeltaY < 0) {
++    sides |= SideBits::eTop;
++  }
++  if (sides == SideBits::eNone) {
 +    return NS_OK;
 +  }
 +
-+  // The same target selection as PresShell::ScrollByKeyboard uses for the
-+  // focused content, minus the cross-process handoff (see the IDL comment).
++  nsCOMPtr<Document> doc = GetDocument();
++  NS_ENSURE_STATE(doc);
++  // Make sure the frame tree and scroll ranges are up to date before picking
++  // a target, like a real key event would see them.
++  doc->FlushPendingNotifications(FlushType::Layout);
++
++  // The flush may have torn the presentation down, so only look it up now
++  // (through the document we flushed), and keep it alive across the scroll.
++  RefPtr<PresShell> presShell = doc->GetPresShell();
++  if (!presShell || presShell->IsDestroying()) {
++    return NS_OK;
++  }
++  nsPresContext* presContext = presShell->GetPresContext();
++  if (!presContext) {
++    return NS_OK;
++  }
++
++  // Pick the target the way PresShell::ScrollByKeyboard does: seed the search
++  // from the focused / selected content (or the viewport) and walk up to the
++  // nearest scroll container that can still move towards the requested edges.
++  // Unlike ScrollByKeyboard this never hands off to the embedder process when
++  // nothing in this process can scroll (keyboard scroll actions can't express
++  // fractional amounts), the caller does that based on the false result.
++  nsCOMPtr<nsIContent> content = presShell->GetContentForScrolling();
++  nsIFrame* startFrame = content ? content->GetPrimaryFrame() : nullptr;
++  if (startFrame) {
++    if (ScrollContainerFrame* target = startFrame->GetScrollTargetFrame()) {
++      startFrame = target->GetScrolledFrame();
++    }
++  } else if (ScrollContainerFrame* rootScrollContainerFrame =
++                 presShell->GetRootScrollContainerFrame()) {
++    startFrame = rootScrollContainerFrame->GetScrolledFrame();
++  }
++  if (!startFrame) {
++    return NS_OK;
++  }
 +  ScrollContainerFrame* scrollContainerFrame =
-+      presShell->GetScrollContainerFrameToScroll(directions);
++      nsLayoutUtils::GetNearestScrollContainerFrameToScrollTowards(startFrame,
++                                                                   sides);
 +  if (!scrollContainerFrame) {
 +    return NS_OK;
 +  }
 +
-+  auto sign = [](double aValue) -> int32_t {
-+    return aValue > 0 ? 1 : (aValue < 0 ? -1 : 0);
-+  };
-+
 +  switch (aUnit) {
-+    case nsIDOMWindowUtils::SCROLL_UNIT_LINES:
-+    case nsIDOMWindowUtils::SCROLL_UNIT_PAGES: {
-+      const bool pages = aUnit == nsIDOMWindowUtils::SCROLL_UNIT_PAGES;
-+      const nsSize amount = pages ? scrollContainerFrame->GetPageScrollAmount()
-+                                  : scrollContainerFrame->GetLineScrollAmount();
-+      // ScrollBy() with DEVICE_PIXELS takes integer device pixels.
-+      const nsIntPoint delta(
-+          NSToIntRound(presContext->AppUnitsToFloatDevPixels(
-+              float(amount.width * aDeltaX))),
-+          NSToIntRound(presContext->AppUnitsToFloatDevPixels(
-+              float(amount.height * aDeltaY))));
-+      const ScrollOrigin origin =
-+          pages ? ScrollOrigin::Pages : ScrollOrigin::Lines;
-+      scrollContainerFrame->ScrollBy(
-+          delta, ScrollUnit::DEVICE_PIXELS,
-+          apz::GetScrollModeForOrigin(origin), nullptr,
-+          ScrollOrigin::NotSpecified, ScrollContainerFrame::NOT_MOMENTUM,
-+          pages ? (ScrollSnapFlags::IntendedDirection |
-+                   ScrollSnapFlags::IntendedEndPosition)
-+                : ScrollSnapFlags::IntendedDirection);
-+      break;
-+    }
-+    case nsIDOMWindowUtils::SCROLL_UNIT_WHOLE:
++    case nsIDOMWindowUtils::SCROLL_UNIT_WHOLE: {
++      auto sign = [](double aValue) -> int32_t {
++        return aValue > 0 ? 1 : (aValue < 0 ? -1 : 0);
++      };
 +      scrollContainerFrame->ScrollBy(
 +          nsIntPoint(sign(aDeltaX), sign(aDeltaY)), ScrollUnit::WHOLE,
 +          apz::GetScrollModeForOrigin(ScrollOrigin::Other), nullptr,
 +          ScrollOrigin::NotSpecified, ScrollContainerFrame::NOT_MOMENTUM,
 +          ScrollSnapFlags::IntendedEndPosition);
 +      break;
++    }
++    case nsIDOMWindowUtils::SCROLL_UNIT_LINES:
++    case nsIDOMWindowUtils::SCROLL_UNIT_PAGES: {
++      const bool pages = aUnit == nsIDOMWindowUtils::SCROLL_UNIT_PAGES;
++      const ScrollOrigin origin =
++          pages ? ScrollOrigin::Pages : ScrollOrigin::Lines;
++      const ScrollSnapFlags snapFlags =
++          pages ? (ScrollSnapFlags::IntendedDirection |
++                   ScrollSnapFlags::IntendedEndPosition)
++                : ScrollSnapFlags::IntendedDirection;
++
++      if (IsWholeKeyboardScrollDelta(aDeltaX) &&
++          IsWholeKeyboardScrollDelta(aDeltaY)) {
++        // Whole lines / pages: exactly the ScrollBy() call keyboard scrolling
++        // makes (including its snap point selection for pages).
++        scrollContainerFrame->ScrollBy(
++            nsIntPoint(int32_t(aDeltaX), int32_t(aDeltaY)),
++            pages ? ScrollUnit::PAGES : ScrollUnit::LINES,
++            apz::GetScrollModeForOrigin(origin), nullptr,
++            ScrollOrigin::NotSpecified, ScrollContainerFrame::NOT_MOMENTUM,
++            snapFlags);
++        break;
++      }
++
++      // Fractional amounts: convert to device pixels using the same line /
++      // page sizes ScrollBy() would multiply by, and pass the keyboard scroll
++      // origin explicitly so smooth scrolling animates like a key press
++      // (with DEVICE_PIXELS an unspecified origin would become "pixels").
++      const nsSize amount = pages ? scrollContainerFrame->GetPageScrollAmount()
++                                  : scrollContainerFrame->GetLineScrollAmount();
++      const double appUnitsPerDevPixel = presContext->AppUnitsPerDevPixel();
++      auto toDevPixels = [&](nscoord aAmount, double aDelta) -> int32_t {
++        const double devPixels = double(aAmount) * aDelta / appUnitsPerDevPixel;
++        return NSToIntRound(std::clamp(devPixels, -kMaxKeyboardScrollDelta,
++                                       kMaxKeyboardScrollDelta));
++      };
++      scrollContainerFrame->ScrollBy(
++          nsIntPoint(toDevPixels(amount.width, aDeltaX),
++                     toDevPixels(amount.height, aDeltaY)),
++          ScrollUnit::DEVICE_PIXELS, apz::GetScrollModeForOrigin(origin),
++          nullptr, origin, ScrollContainerFrame::NOT_MOMENTUM, snapFlags);
++      break;
++    }
 +    default:
++      MOZ_ASSERT_UNREACHABLE("unit was validated above");
 +      return NS_ERROR_INVALID_ARG;
 +  }
 +

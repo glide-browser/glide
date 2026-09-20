@@ -1,8 +1,8 @@
 diff --git a/dom/interfaces/base/nsIDOMWindowUtils.idl b/dom/interfaces/base/nsIDOMWindowUtils.idl
-index 83313786eba285ecd6895869f9991c722c99f799..dd6def55e6f42c20528758c37b3e956fe2811ba0 100644
+index 83313786eba285ecd6895869f9991c722c99f799..060109459ec2f475ef74a7fa2fe92ec50695910b 100644
 --- a/dom/interfaces/base/nsIDOMWindowUtils.idl
 +++ b/dom/interfaces/base/nsIDOMWindowUtils.idl
-@@ -2183,6 +2183,30 @@ interface nsIDOMWindowUtils : nsISupports {
+@@ -2183,6 +2183,37 @@ interface nsIDOMWindowUtils : nsISupports {
    // Returns an element currently scrolling by wheel.
    Element getWheelScrollTarget();
  
@@ -12,18 +12,25 @@ index 83313786eba285ecd6895869f9991c722c99f799..dd6def55e6f42c20528758c37b3e956f
 +  const unsigned long SCROLL_UNIT_WHOLE = 2;
 +
 +  /**
-+   * Scrolls the scroll container that keyboard scrolling (arrow keys, PageUp /
-+   * PageDown, Home / End) would scroll from the currently focused element, by
-+   * the given amounts, using the same line and page sizes, scroll modes (smooth
-+   * scrolling) and scroll snapping as keyboard scrolling does.
++   * Scrolls what keyboard scrolling (arrow keys, PageUp / PageDown, Home /
++   * End) would scroll: starting from the focused element (or the selection,
++   * or the viewport), the nearest scroll container that can still scroll
++   * towards the requested edge, using the same line and page sizes, scroll
++   * modes (smooth scrolling) and scroll snapping as keyboard scrolling does.
 +   *
-+   * The deltas are multiples of the unit and may be fractional, e.g.
-+   * (0, 0.5, SCROLL_UNIT_PAGES) scrolls down by half a page. For
-+   * SCROLL_UNIT_WHOLE only the sign of the deltas matters.
++   * The deltas are multiples of the unit; positive values scroll down / right.
++   * Whole numbers scroll exactly like the corresponding key presses (one
++   * SCROLL_UNIT_LINES line is a single line though, arrow keys scroll
++   * `toolkit.scrollbox.verticalScrollDistance` lines); fractional amounts are
++   * supported, e.g. (0, 0.5, SCROLL_UNIT_PAGES) scrolls down by half a page.
++   * For SCROLL_UNIT_WHOLE only the sign of the deltas matters. Non-finite
++   * deltas and unknown units throw NS_ERROR_INVALID_ARG.
 +   *
-+   * Returns false if there is nothing to scroll in this document, in which
-+   * case the caller may want to try the parent document (this is what
-+   * keyboard scrolling does for out-of-process iframes).
++   * Returns false if nothing in this process can scroll towards the requested
++   * edge (also when there is no presentation), which is when keyboard
++   * scrolling hands off to the embedder document of an out-of-process iframe;
++   * callers that want that behaviour should then retry from the top-level
++   * document.
 +   *
 +   * This is a Glide addition.
 +   */
