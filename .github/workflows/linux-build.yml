@@ -37,6 +37,8 @@ jobs:
       GLIDE_RELEASE: true
       # keep the objdir out of engine/ so the Firefox checkout can be cached
       MOZ_OBJDIR: ${{ github.workspace }}/objdir
+      # let mach clobber the restored objdir itself when Firefox requires it
+      AUTOCLOBBER: 1
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
 
@@ -102,6 +104,17 @@ jobs:
           # 2-3 minutes); `pnpm bootstrap` resets and re-patches it anyway
           path: engine
           key: engine-v3-${{ runner.os }}-${{ hashFiles('firefox.json') }}
+
+      - name: Restore objdir
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          # incremental builds: restore the most recent objdir built for this
+          # Firefox revision and always save this job's one (unique key).
+          # (not done on macOS: saving a cache there runs at ~6 MB/s)
+          path: objdir
+          key: objdir-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('firefox.json') }}-${{ github.run_id }}
+          restore-keys: |
+            objdir-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('firefox.json') }}-
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@7d986dd989559c6ecdb630a3fd2557667be217ad # v0.0.9
