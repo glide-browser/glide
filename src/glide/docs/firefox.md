@@ -11,6 +11,7 @@ Glide extends and heavily builds on top of Firefox but for the most part Glide i
 7. Taskbar [badges](https://connect.mozilla.org/t5/ideas/disable-profile-badge/idc-p/101744) are disabled by default, you can re-enable them with the `path:glide.firefox.taskbar.badge.enabled` pref.
 8. On Linux, the auto updater is disabled.
 9. Support for the `gemini://` [protocol](gemini.md) is included out of the box
+10. The Firefox 157+ "Nova" UI redesign is disabled by default (`path:browser.nova.enabled`), keeping the previous tab and toolbar styling
 
 Additionally, the extension native messaging runtime paths are different:
 

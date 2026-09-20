@@ -23,10 +23,11 @@ padding: 0.3em;
 
 ## Changes {% id="0.1.64a-changes" %}
 
-- Bumped Firefox from 153.0b5 to 156.0b3
+- Bumped Firefox from 153.0b5 to 157.0b2
 - Fixed a mode switching race condition in the commandline
 - Fixed `document` mirror corruption on stale references
 - Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config
+- Disabled the new Firefox "Nova" UI redesign by default (`path:browser.nova.enabled`), keeping the pre-157 tab and toolbar styling
 
 # 0.1.63a
 

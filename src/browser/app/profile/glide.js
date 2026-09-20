@@ -10,6 +10,9 @@ pref("browser.newtabpage.activity-stream.feeds.topsites", false);
 // (e.g. firefox browser dom updates)
 pref("app.update.auto", false);
 
+// Firefox 157 turned on the "Nova" UI redesign by default, which is super ugly.
+pref("browser.nova.enabled", false);
+
 // disable AI by default
 pref("browser.ml.enable", false);
 pref("browser.ml.chat.menu", false);
