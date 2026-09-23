@@ -92,12 +92,5 @@
     "zx": "^8.8.5"
   },
   "packageManager": "pnpm@10.17.0",
-  "private": true,
-  "pnpm": {
-    "overrides": {
-      "js-yaml": ">=4.3.2 <5",
-      "brace-expansion@1": ">=1.1.16 <2",
-      "brace-expansion@5": ">=5.0.7 <6"
-    }
-  }
+  "private": true
 }
