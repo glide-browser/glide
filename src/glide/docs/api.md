@@ -741,7 +741,7 @@ glide.tabs.get_first(query): Promise<Browser.Tabs.Tab | undefined>
 
 Find the first tab matching the given query filter.
 
-This is the same API as [browser.tabs.get](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/get),
+This is the same API as [browser.tabs.query](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query),
 but returns the first tab instead of an Array.
 
 {% api-heading id="glide.tabs.query" %}

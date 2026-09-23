@@ -106,7 +106,7 @@ glide.keymaps.set("normal", "<leader>ts", async () => {
 ```typescript
 glide.keymaps.set("normal", "gt", async () => {
   const tab = await glide.tabs.get_first({
-    url: "example.com",
+    url: "*://example.com/*",
   });
   assert(tab && tab.id);
   await browser.tabs.update(tab.id, { active: true });

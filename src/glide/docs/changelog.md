@@ -28,6 +28,7 @@ padding: 0.3em;
 - Fixed `document` mirror corruption on stale references
 - Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config
 - Disabled the new Firefox "Nova" UI redesign by default (`path:browser.nova.enabled`), keeping the pre-157 tab and toolbar styling
+- Fixed the `glide.tabs.get_first()` example in the cookbook and config docs, which used an invalid URL match pattern
 
 # 0.1.63a
 

@@ -14,7 +14,7 @@ Here's a short snippet that adds a `gt` keymapping to switch to a tab with `path
 // ~/.config/glide/glide.ts
 glide.keymaps.set("normal", "gt", async () => {
   const tab = await glide.tabs.get_first({
-    url: "example.com",
+    url: "*://example.com/*",
   });
   assert(tab && tab.id);
   await browser.tabs.update(tab.id, { active: true });
