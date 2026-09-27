@@ -1,8 +1,8 @@
 diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
-index 0b0e8a138e4507bba6aac18d8b355a6dc0a8838d..856adb948f56f95a2aafd1fb419933f9ad540095 100644
+index 2512c029ec8a21e6a5c58b86efa079619e157b6d..d69e07e2e70782f1059e6f056fca3cf356edab57 100644
 --- a/toolkit/xre/nsAppRunner.cpp
 +++ b/toolkit/xre/nsAppRunner.cpp
-@@ -271,6 +271,8 @@
+@@ -276,6 +276,8 @@
  extern void InstallSignalHandlers(const char* ProgramName);
  
  #define FILE_COMPATIBILITY_INFO "compatibility.ini"_ns
@@ -11,7 +11,7 @@ index 0b0e8a138e4507bba6aac18d8b355a6dc0a8838d..856adb948f56f95a2aafd1fb419933f9
  #define FILE_INVALIDATE_CACHES ".purgecaches"_ns
  #define FILE_STARTUP_INCOMPLETE u".startup-incomplete"_ns
  
-@@ -3857,6 +3859,42 @@ static void WriteVersion(nsIFile* aProfileDir, const nsCString& aVersion,
+@@ -4028,6 +4030,42 @@ static void WriteVersion(nsIFile* aProfileDir, const nsCString& aVersion,
    PR_Close(fd);
  }
  
@@ -54,14 +54,14 @@ index 0b0e8a138e4507bba6aac18d8b355a6dc0a8838d..856adb948f56f95a2aafd1fb419933f9
  // Read the first 24 bytes of the first existing canonical app DB and
  // classify its encryption state by header inspection. No SQLite, no
  // mozStorage -- a pure file read. Returns NoDBs if none of the canonical
-@@ -5623,6 +5661,10 @@ int XREMain::XRE_mainStartup(bool* aExitFlag,
-       mProfD, version, osABI, mDirProvider.GetGREDir(), mAppData->directory,
-       flagFile, &cachesOK, &isDowngrade, lastVersion);
+@@ -5807,6 +5845,10 @@ int XREMain::XRE_mainStartup(bool* aExitFlag) {
+   gLastAppBuildID = compatResult.lastAppBuildID;
+   gProfileEncryptedDatabases = compatResult.hasEncryptedDatabases;
  
-+  if (!lastVersion.IsEmpty()) {
-+    WriteCompatibilityOldestVersion(mProfD, lastVersion);
++  if (!compatResult.lastVersion.IsEmpty()) {
++    WriteCompatibilityOldestVersion(mProfD, compatResult.lastVersion);
 +  }
 +
-   MOZ_RELEASE_ASSERT(!cachesOK || lastVersion.Equals(version),
+   MOZ_RELEASE_ASSERT(!cachesOK || compatResult.lastVersion.Equals(version),
                       "Caches cannot be good if the version has changed.");
  
