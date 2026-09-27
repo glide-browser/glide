@@ -288,7 +288,17 @@ class GlideTestUtilsClass {
     let name: string;
     let assertion_index: number;
 
-    async function settle<T>(read: () => T, matches: (value: Awaited<T>) => boolean): Promise<Awaited<T>> {
+    async function settle<T>(
+      read: () => T,
+      matches: (value: Awaited<T>) => boolean,
+      state?: "todo",
+    ): Promise<Awaited<T>> {
+      // `todo` cases are expected to never match, so polling would always burn the full
+      // timeout; give the motion a few frames to apply and read once instead
+      if (state === "todo") {
+        await g.sleep_frames(3);
+        return await read();
+      }
       let value = await read();
       try {
         await g.TestUtils.waitForCondition(
@@ -358,7 +368,7 @@ class GlideTestUtilsClass {
             const pos = textarea.selectionStart! - 1;
             return [pos, textarea.value.charAt(pos)] as [number, string];
           });
-        const [position, char] = await settle(read, ([pos, ch]) => pos === expected_pos && ch === expected_char);
+        const [position, char] = await settle(read, ([pos, ch]) => pos === expected_pos && ch === expected_char, state);
 
         (state === "todo" ? g.todo_is : g.is)(position, expected_pos, `${name}/${assertion_index}`);
         (state === "todo" ? g.todo_is : g.is)(char, expected_char, `${name}/${assertion_index}`);
@@ -410,7 +420,7 @@ class GlideTestUtilsClass {
             const textarea = content.document.getElementById("textarea-1")! as HTMLTextAreaElement;
             return textarea.value.slice(textarea.selectionStart!, textarea.selectionEnd!);
           });
-        const selected_text = await settle(read, selected => selected === expected_selection);
+        const selected_text = await settle(read, selected => selected === expected_selection, state);
         (state === "todo" ? g.todo_is : g.is)(selected_text, expected_selection, `${name}/${assertion_index}`);
         assertion_index++;
       },
