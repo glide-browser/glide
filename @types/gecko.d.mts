@@ -143,6 +143,7 @@ declare namespace GlobalBrowser {
       aOptions?: { inBackground?: boolean; tabIndex?: number },
     ): void;
     getBrowserForTab(tab: BrowserTab): Browser;
+    getTabForBrowser(browser: Element): BrowserTab | null;
     addProgressListener(listener: Partial<nsIWebProgressListener>): void;
     // see `browser/components/tabbrowser/content/tabbrowser.js`
     addTrustedTab(uri: string, opts: AddTabOptions): BrowserTab;

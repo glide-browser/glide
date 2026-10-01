@@ -113,3 +113,33 @@ add_task(async function test_page_auto_focusing_elements() {
     );
   });
 });
+
+add_task(async function test_background_tab_cannot_change_mode() {
+  await reload_config(function _() {});
+
+  using background = await GlideTestUtils.new_tab(FILE);
+  using foreground = await GlideTestUtils.new_tab(FILE);
+
+  await SpecialPowers.spawn(foreground.linkedBrowser, [], async () => {
+    (content.document.getElementById("input-1") as HTMLInputElement).focus();
+  });
+  await wait_for_mode("insert");
+
+  // simulate a late `blur` from a tab that isn't selected anymore, e.g. one that was just closed
+  await SpecialPowers.spawn(background.linkedBrowser, [], async () => {
+    content.window.windowGlobalChild!.getActor("GlideHandler").sendAsyncMessage("Glide::ChangeMode", {
+      mode: "normal",
+      force: false,
+    });
+  });
+  await sleep_frames(10);
+  is(glide.ctx.mode, "insert", "a mode change request from a background tab should be ignored");
+
+  await SpecialPowers.spawn(foreground.linkedBrowser, [], async () => {
+    content.window.windowGlobalChild!.getActor("GlideHandler").sendAsyncMessage("Glide::ChangeMode", {
+      mode: "normal",
+      force: false,
+    });
+  });
+  await wait_for_mode("normal", "a mode change request from the selected tab should still be applied");
+});

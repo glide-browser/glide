@@ -167,6 +167,34 @@ export class GlideHandlerParent extends JSWindowActorParent<
     return this.browsingContext?.topChromeWindow?.GlideBrowser;
   }
 
+  /**
+   * Whether this actor belongs to web content in a tab that is not visible, i.e. a background
+   * tab or a tab that has already been closed.
+   *
+   * Content that isn't in a tab at all, e.g. extension popups, is never considered background.
+   */
+  #is_background_content(): boolean {
+    const browsing_context = this.browsingContext;
+    const gBrowser = this.gBrowser;
+    if (!browsing_context?.isContent || !gBrowser) {
+      return false;
+    }
+
+    const browser = browsing_context.top.embedderElement;
+    if (!browser || !browser.isConnected) {
+      // the tab has been closed
+      return true;
+    }
+
+    const tab = gBrowser.getTabForBrowser(browser);
+    if (!tab || tab.selected) {
+      return false;
+    }
+
+    // both tabs in the active split view are visible
+    return !tab.splitview || tab.splitview !== gBrowser.selectedTab?.splitview;
+  }
+
   get glide_hints() {
     return this.browsingContext?.topChromeWindow?.GlideHints;
   }
@@ -256,6 +284,19 @@ export class GlideHandlerParent extends JSWindowActorParent<
           this.send_async_message("Glide::StateUpdate", {
             state: this.glide_browser.state,
             switch_mode_disabled: this.glide_browser.is_mode_switching_disabled(),
+          });
+          return;
+        }
+
+        if (!message.data.force && this.#is_background_content()) {
+          // focus/blur events from a tab that isn't selected must not change the mode, as the mode
+          // reflects whatever *is* focused. the main case is a tab that was just closed or switched
+          // away from: its `blur` can be delivered after focus has already moved on, e.g. to the urlbar
+          // of a new tab, which would switch to `normal` mode while you're typing in it.
+          this.#log.debug("ignoring mode change request from a background tab", message.data);
+          this.send_async_message("Glide::StateUpdate", {
+            state: this.glide_browser!.state,
+            switch_mode_disabled: this.glide_browser!.is_mode_switching_disabled(),
           });
           return;
         }
