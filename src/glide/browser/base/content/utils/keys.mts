@@ -442,6 +442,13 @@ const SPECIAL_KEY_MAP = new Map(Object.entries({
   F10: "F10",
   F11: "F11",
   F12: "F12",
+  BrowserBack: "BrowserBack",
+  BrowserFavorites: "BrowserFavorites",
+  BrowserForward: "BrowserForward",
+  BrowserHome: "BrowserHome",
+  BrowserRefresh: "BrowserRefresh",
+  BrowserSearch: "BrowserSearch",
+  BrowserStop: "BrowserStop",
 
   // Note: see below `DOWNCAST_SPECIAL_KEY_MAP`, these characters are treated differently
   // from the rest of the ones defined above.
