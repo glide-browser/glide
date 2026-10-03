@@ -13,19 +13,20 @@ const cert_overrides = Cc["@mozilla.org/security/certoverride;1"]!.getService(Ci
 let servers: nsITLSServerSocket[] = [];
 
 async function spinup_gemini_server(responses: Record<string, string>) {
-  const cert = get_test_server_certificate();
+  const cert = await get_test_server_certificate();
   const server = start_gemini_server(cert, responses);
   store_cert_override(server.port, cert);
   Services.prefs.setIntPref("glide.gemini.test.port", server.port);
   servers.push(server);
 }
 
-function get_test_server_certificate(): nsIX509Cert {
+async function get_test_server_certificate(): Promise<nsIX509Cert> {
   const cert_db = Cc["@mozilla.org/security/x509certdb;1"]!.getService(Ci.nsIX509CertDB);
   const cert_file = Cc["@mozilla.org/file/local;1"]!.createInstance(Ci.nsIFile);
   cert_file.initWithPath(getTestFilePath("../client-cert.p12"));
   cert_db.importPKCS12File(cert_file, "password");
-  for (const cert of cert_db.getCerts()) {
+  const certs: nsIX509Cert[] = await cert_db.getCerts();
+  for (const cert of certs) {
     if (cert.commonName == "Test End-entity") {
       return cert;
     }

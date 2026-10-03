@@ -86,6 +86,7 @@ interface GleanImpl {
     cookieCountUnpartitioned: GleanCustomDistribution;
     cookieCreationFixupDiff: GleanCustomDistribution;
     cookieDbValidation: Record<"eOK"|"eRejectedAttributeDomainOversize"|"eRejectedAttributeExpiryOversize"|"eRejectedAttributePathOversize"|"eRejectedEmptyNameAndValue"|"eRejectedForNonSameSiteness"|"eRejectedHttpOnlyButFromScript"|"eRejectedInvalidCharName"|"eRejectedInvalidCharValue"|"eRejectedInvalidDomain"|"eRejectedInvalidPath"|"eRejectedInvalidPrefix"|"eRejectedNameValueOversize"|"eRejectedNoneRequiresSecure"|"eRejectedPartitionedRequiresSecure"|"eRejectedSecureButNonHttps", GleanCounter>;
+    cookieFilePresent: GleanBoolean;
     cookiePurgeEntryMax: GleanCustomDistribution;
     cookiePurgeMax: GleanCustomDistribution;
     cookieTimestampFixedCount: Record<"creationTime"|"lastAccessed", GleanCounter>;
@@ -266,11 +267,11 @@ interface GleanImpl {
     autoTabUngroupCompleted: GleanEventWithExtras<{ error_type?: string, grouped_id?: string|number, grouped_tabs?: string|number, source?: string, success?: string|boolean }>;
     autoTabUngroupRequested: GleanEventWithExtras<{ grouped_id?: string|number, grouped_tabs?: string|number, source?: string }>;
     bookmarkbar: Record<"opened", GleanCounter>;
-    browserActionComplete: GleanEventWithExtras<{ action_type?: string, chat_id?: string, error?: string, location?: string, message_seq?: string|number, model?: string, prompt_version?: string, result?: string, tabs_affected?: string|number, undo_available?: string|boolean }>;
-    browserActionPrompt: GleanEventWithExtras<{ action_type?: string, candidates?: string|number, chat_id?: string, location?: string, message_seq?: string|number, preselected?: string|number, prompt_type?: string, reason?: string }>;
-    browserActionPromptResponse: GleanEventWithExtras<{ action_type?: string, chat_id?: string, location?: string, message_seq?: string|number, prompt_type?: string, reason?: string, response?: string, selected?: string|number }>;
-    browserActionSubmit: GleanEventWithExtras<{ action_type?: string, chat_id?: string, location?: string, mentions?: string|number, message_seq?: string|number, model?: string, prompt_version?: string, submit_type?: string, tabs_open?: string|number }>;
-    browserActionUndo: GleanEventWithExtras<{ action_type?: string, chat_id?: string, error?: string, location?: string, message_seq?: string|number, result?: string, tabs_restored?: string|number, time_delta?: string|number }>;
+    browserActionComplete: GleanEventWithExtras<{ action?: string, chat_id?: string, error?: string, location?: string, message_seq?: string|number, model?: string, prompt_version?: string, result?: string, tabs_affected?: string|number, trigger?: string, undo_available?: string|boolean }>;
+    browserActionPrompt: GleanEventWithExtras<{ action?: string, candidates?: string|number, chat_id?: string, location?: string, message_seq?: string|number, preselected?: string|number, prompt_type?: string, reason?: string }>;
+    browserActionPromptResponse: GleanEventWithExtras<{ action?: string, chat_id?: string, location?: string, message_seq?: string|number, prompt_type?: string, reason?: string, response?: string, selected?: string|number }>;
+    browserActionSubmit: GleanEventWithExtras<{ action?: string, chat_id?: string, location?: string, mentions?: string|number, message_seq?: string|number, model?: string, prompt_version?: string, submit_type?: string, tabs_open?: string|number, trigger?: string }>;
+    browserActionUndo: GleanEventWithExtras<{ action?: string, chat_id?: string, error?: string, location?: string, message_seq?: string|number, result?: string, tabs_restored?: string|number, time_delta?: string|number }>;
     chatPreviousSession: GleanEventWithExtras<{ tabs?: string|number }>;
     chatRetrieved: GleanEventWithExtras<{ chat_id?: string, location?: string, message_seq?: string|number, time_delta?: string|number }>;
     chatStorage: GleanQuantity;
@@ -754,7 +755,6 @@ interface GleanImpl {
     httpsOnlyModeEnabled: GleanQuantity;
     httpsOnlyModeEnabledPbm: GleanQuantity;
     fissionPrincipals: GleanEventWithExtras<{ principalType?: string, scheme?: string, value?: string }>;
-    shadowedHtmlDocumentPropertyAccess: GleanEventWithExtras<{ name?: string }>;
     cspViolationInternalPage: GleanEventWithExtras<{ baseline?: string|boolean, blockeduridetails?: string, blockeduritype?: string, columnnumber?: string|number, directive?: string, linenumber?: string|number, sample?: string, selfdetails?: string, selftype?: string, sourcedetails?: string, sourcetype?: string }>;
     evalUsageParentProcess: GleanEventWithExtras<{ fileinfo?: string, value?: string }>;
     evalUsageSystemContext: GleanEventWithExtras<{ fileinfo?: string, value?: string }>;
@@ -894,6 +894,9 @@ interface GleanImpl {
     wallpaperClick: GleanEventWithExtras<{ had_previous_wallpaper?: string|boolean, had_uploaded_previously?: string|boolean, newtab_visit_id?: string, selected_wallpaper?: string }>;
     wallpaperHighlightCtaClick: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     wallpaperHighlightDismissed: GleanEventWithExtras<{ newtab_visit_id?: string }>;
+    wallpaperSavedAdd: GleanEventWithExtras<{ newtab_visit_id?: string, saved_wallpaper_count?: string|number, wallpaper_source?: string }>;
+    wallpaperSavedClick: GleanEventWithExtras<{ newtab_visit_id?: string, saved_wallpaper_count?: string|number, wallpaper_source?: string }>;
+    wallpaperSavedRemove: GleanEventWithExtras<{ newtab_visit_id?: string, saved_wallpaper_count?: string|number, wallpaper_source?: string, was_applied?: string|boolean }>;
     weatherChangeDisplay: GleanEventWithExtras<{ newtab_visit_id?: string, weather_display_mode?: string }>;
     weatherDetectLocation: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     weatherEnabled: GleanBoolean;
@@ -923,14 +926,14 @@ interface GleanImpl {
   }
 
   newtabContent: {
-    click: GleanEventWithExtras<{ corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, matches_selected_topic?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section?: string, selected_topics?: string, tile_id?: string|number, topic?: string }>;
+    click: GleanEventWithExtras<{ corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, matches_selected_topic?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section?: string, selected_topics?: string, source_section_id?: string, tile_id?: string|number, topic?: string, variant_id?: string|number }>;
     coarseOs: GleanString;
     country: GleanString;
     dismiss: GleanEventWithExtras<{ corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section?: string, section_position?: string, tile_id?: string|number }>;
     experimentBranch: GleanString;
     experimentName: GleanString;
     followedSections: GleanStringList;
-    impression: GleanEventWithExtras<{ corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section?: string, selected_topics?: string, tile_id?: string|number, topic?: string }>;
+    impression: GleanEventWithExtras<{ corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section?: string, selected_topics?: string, source_section_id?: string, tile_id?: string|number, topic?: string, variant_id?: string|number }>;
     inferredInterests: GleanObject;
     pingVersion: GleanQuantity;
     reportContentOpen: GleanEventWithExtras<{ corpus_item_id?: string, scheduled_corpus_item_id?: string }>;
@@ -949,10 +952,10 @@ interface GleanImpl {
   }
 
   pocket: {
-    click: GleanEventWithExtras<{ content_redacted?: string|boolean, corpus_item_id?: string, event_source?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, matches_selected_topic?: string, newtab_visit_id?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section_position?: string, tile_id?: string|number }>;
+    click: GleanEventWithExtras<{ card_column?: string|number, content_redacted?: string|boolean, corpus_item_id?: string, event_source?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, matches_selected_topic?: string, newtab_visit_id?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section_position?: string, tile_id?: string|number }>;
     dismiss: GleanEventWithExtras<{ content_redacted?: string|boolean, corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, newtab_visit_id?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section_position?: string, tile_id?: string|number }>;
     enabled: GleanBoolean;
-    impression: GleanEventWithExtras<{ content_redacted?: string|boolean, corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, newtab_visit_id?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section_position?: string, tile_id?: string|number }>;
+    impression: GleanEventWithExtras<{ card_column?: string|number, content_redacted?: string|boolean, corpus_item_id?: string, format?: string, is_ad_eligible_position?: string|boolean, is_section_followed?: string|boolean, is_sponsored?: string|boolean, layout_name?: string, newtab_visit_id?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section_position?: string, tile_id?: string|number }>;
     isSignedIn: GleanBoolean;
     save: GleanEventWithExtras<{ corpus_item_id?: string, format?: string, is_section_followed?: string|boolean, is_sponsored?: string|boolean, matches_selected_topic?: string, newtab_visit_id?: string, position?: string|number, received_rank?: string|number, recommended_at?: string|number, scheduled_corpus_item_id?: string, section?: string, section_position?: string, selected_topics?: string, tile_id?: string|number, topic?: string }>;
     spocPlaceholderDuration: GleanTimingDistribution;
@@ -967,7 +970,7 @@ interface GleanImpl {
     dismiss: GleanEventWithExtras<{ advertiser_name?: string, content_redacted?: string|boolean, is_sponsored?: string|boolean, newtab_visit_id?: string, position?: string|number, tile_id?: string|number }>;
     edit: GleanEventWithExtras<{ has_title_changed?: string|boolean, has_url_changed?: string|boolean, newtab_visit_id?: string, position?: string|number }>;
     enabled: GleanBoolean;
-    impression: GleanEventWithExtras<{ advertiser_name?: string, is_pinned?: string|boolean, is_sponsored?: string|boolean, newtab_visit_id?: string, position?: string|number, smart_scores?: string, smart_weights?: string, tile_id?: string|number, visible_topsites?: string|number }>;
+    impression: GleanEventWithExtras<{ advertiser_name?: string, is_ad_eligible_position?: string|boolean, is_pinned?: string|boolean, is_sponsored?: string|boolean, newtab_visit_id?: string, position?: string|number, smart_scores?: string, smart_weights?: string, tile_id?: string|number, visible_topsites?: string|number }>;
     pin: GleanEventWithExtras<{ newtab_visit_id?: string, position?: string|number }>;
     pinnedCount: GleanQuantity;
     prefChanged: GleanEventWithExtras<{ new_value?: string|boolean, pref_name?: string }>;
@@ -1058,6 +1061,22 @@ interface GleanImpl {
 
   profileLock: {
     failedLockCount: GleanQuantity;
+  }
+
+  profiles: {
+    active: GleanBoolean;
+    currentMissing: GleanEventWithExtras<{ profile_count?: string|number }>;
+    profileCount: GleanQuantity;
+    creationDate: GleanQuantity;
+    creationPlace: Record<"legacy_existing"|"legacy_forced"|"xdg_config"|"xdg_default", GleanCounter>;
+    firstUseDate: GleanQuantity;
+    otherProfiles: GleanObject;
+    pathInProfilesIni: GleanBoolean;
+    recoveredFromBackup: GleanQuantity;
+    resetDate: GleanQuantity;
+    source: GleanString;
+    storeIdInProfilesIni: GleanBoolean;
+    storeIdMismatch: GleanBoolean;
   }
 
   profilesDefault: {
@@ -1168,6 +1187,7 @@ interface GleanImpl {
     contextmenu: Record<string, GleanCounter>;
     contextmenuVisual: Record<string, GleanCounter>;
     errorpage: Record<string, GleanCounter>;
+    newtabSearchWidget: Record<string, GleanCounter>;
     newtabSearchbar: Record<string, GleanCounter>;
     searchbar: Record<string, GleanCounter>;
     smartbar: Record<string, GleanCounter>;
@@ -1696,6 +1716,11 @@ interface GleanImpl {
     bannerShown: GleanCounter;
     disableClicked: GleanCounter;
     reloadClicked: GleanCounter;
+  }
+
+  themePicker: {
+    change: GleanEventWithExtras<{ appearance?: string, layout?: string, native_theme?: string|boolean, property?: string, session?: string, source?: string, theme_id?: string }>;
+    shown: GleanEventWithExtras<{ layout?: string, session?: string, source?: string }>;
   }
 
   timestamps: {
@@ -4974,7 +4999,6 @@ interface GleanImpl {
     declarativeMutable: GleanCounter;
     detectedDuplicatedMessageIds: GleanCounter;
     errorCode: Record<"decryption_error"|"internal_error"|"not_delivered"|"uncaught_exception"|"unhandled_rejection", GleanCounter>;
-    unsubscribedByClearingData: GleanCounter;
   }
 
   domQuota: {
@@ -5423,6 +5447,7 @@ interface GleanImpl {
     sslTokenCacheHits: Record<"hit"|"miss", GleanCounter>;
     sslTokenCacheLoadTime: GleanTimingDistribution;
     sslTokenCachePersistenceRecordsLoaded: GleanCounter;
+    sslTokenResumptionOutcome: Record<"not_resumed"|"rejected"|"resumed", GleanCounter>;
     urlclassifierHarmfulAddonBlock: GleanEventWithExtras<{ addon_id?: string, addon_version?: string, etld?: string, table?: string }>;
     alpnMismatchCount: Record<string, GleanCounter>;
     backPressureSuspensionCpType: GleanCustomDistribution;
@@ -5543,6 +5568,7 @@ interface GleanImpl {
   }
 
   http: {
+    altsvcH3ExpiredStaleness: GleanTimingDistribution;
     altsvcMappingChangedTarget: Record<"false"|"true", GleanCounter>;
     cacheDisposition: GleanDualLabeledCounter;
     cacheLmInconsistent: Record<"false"|"true", GleanCounter>;
@@ -5848,9 +5874,23 @@ interface GleanImpl {
     clickToolbarIcon: GleanEventWithExtras<{ action?: string, device_count?: string, fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
     clickUnverSyncSettings: GleanEventWithExtras<{ action?: string, device_count?: string, fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
     clickVpnCta: GleanEventWithExtras<{ action?: string, device_count?: string, fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    copyPrimaryProfile: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    createNewProfileCtaButton: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    createNewProfileCtaLabel: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    createNewProfileSubmenu: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    editPrimaryProfile: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    getFirefoxForMobileCta: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    launchSecondaryProfile: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    launchSecondaryProfileAllProfiles: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    manageAllProfiles: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    managePrimaryProfile: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    manageProfiles: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
     sendTabExposed: GleanEventWithExtras<{ device_count?: string, fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
     sendTabOpened: GleanEventWithExtras<{ device_count?: string, fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    syncYourDataCta: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
     syncedDeviceSubmenu: GleanEventWithExtras<{ device_count?: string, device_type?: string, fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string }>;
+    viewAllProfiles: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
+    whatAreProfiles: GleanEventWithExtras<{ fxa_avatar?: string, fxa_status?: string, fxa_sync_on?: string, profile_count?: string|number }>;
   }
 
   pageContextMenu: {
@@ -6599,6 +6639,7 @@ interface GleanImpl {
     openSiteExistingLogin: GleanEventWithExtras<{ breached?: string|boolean, vulnerable?: string|boolean }>;
     osAuthEnabled: GleanBoolean;
     potentiallyBreachedPasswords: GleanQuantity;
+    primaryPasswordPrompt: GleanEventWithExtras<{ result?: string, source?: string, trigger?: string }>;
     promptRememberAction: GleanCustomDistribution;
     promptShownOsReauth: GleanEventWithExtras<{ result?: string, trigger?: string }>;
     promptUpdateAction: GleanCustomDistribution;
@@ -6608,7 +6649,7 @@ interface GleanImpl {
     rustMigrationLoginError: GleanEventWithExtras<{ error_message?: string, metric_version?: string, run_id?: string }>;
     rustMigrationStatus: GleanEventWithExtras<{ attempt?: string|number, duration_ms?: string|number, end_state?: string, error_message?: string, metric_version?: string, number_of_logins_migrated?: string|number, number_of_logins_quarantined?: string|number, number_of_logins_to_migrate?: string|number, number_of_vulnerable_passwords?: string|number, primary_password_set?: string|boolean, run_id?: string }>;
     rustRestoreLoginError: GleanEventWithExtras<{ error_message?: string, metric_version?: string, run_id?: string }>;
-    rustRestoreStatus: GleanEventWithExtras<{ attempt?: string|number, duration_ms?: string|number, end_state?: string, error_message?: string, metric_version?: string, number_of_logins_added?: string|number, number_of_logins_failed?: string|number, number_of_logins_skipped?: string|number, number_of_logins_to_restore?: string|number, number_of_logins_updated?: string|number, primary_password_set?: string|boolean, run_id?: string, state?: string }>;
+    rustRestoreStatus: GleanEventWithExtras<{ attempt?: string|number, duration_ms?: string|number, end_state?: string, error_message?: string, metric_version?: string, number_of_logins_added?: string|number, number_of_logins_failed?: string|number, number_of_logins_skipped?: string|number, number_of_logins_to_restore?: string|number, number_of_logins_updated?: string|number, primary_password_set?: string|boolean, restore_version?: string|number, run_id?: string, state?: string }>;
     saveExistingLogin: GleanEventWithExtras<{ breached?: string|boolean, vulnerable?: string|boolean }>;
     saveNewLogin: GleanEventWithExtras<{ breached?: string|boolean, vulnerable?: string|boolean }>;
     savedLoginUsedAuthLogin: GleanEventWithExtras<{ filled?: string|boolean }>;
@@ -7656,7 +7697,7 @@ interface GleanImpl {
     searchCtaClickAborted: Record<"connectivity_lost", GleanCounter>;
     searchCtaClicked: GleanCounter;
     searchCtaExit: GleanEventWithExtras<{ cta_shown?: string|boolean, reason?: string, suggestion_shown?: string|boolean }>;
-    searchCtaReason: Record<"connectivity_unconfirmed"|"engine_not_general"|"host_unusable"|"keywords_found"|"no_meaningful_keywords"|"no_path"|"not_top_level"|"search_unavailable", GleanCounter>;
+    searchCtaReason: Record<"connectivity_unconfirmed"|"decision_timed_out"|"engine_not_general"|"host_unusable"|"keywords_found"|"no_meaningful_keywords"|"no_path"|"not_top_level"|"search_unavailable", GleanCounter>;
     searchCtaShown: GleanCounter;
   }
 
@@ -7873,7 +7914,7 @@ interface GleanImpl {
     unableToApplyNotify: GleanCounter;
     unableToApplySubsequent: GleanCounter;
     updateOutcome: GleanEventWithExtras<{ can_stage?: string|boolean, is_background?: string|boolean, is_patch?: string|boolean, is_success?: string|boolean, previous_version?: string, target_version?: string, total_retries?: string|number }>;
-    bitshresult: Record<string, GleanCounter>;
+    bitsError: GleanEventWithExtras<{ code?: string, code_type?: string, error_action?: string|number, error_stage?: string|number, error_type?: string|number, patch_type?: string }>;
     moveResult: Record<string, GleanCounter>;
     noWindowAutoRestarts: GleanCounter;
     suppressPrompts: GleanBoolean;
@@ -7889,15 +7930,6 @@ interface GleanImpl {
 
   updater: {
     available: GleanBoolean;
-  }
-
-  profiles: {
-    creationDate: GleanQuantity;
-    creationPlace: Record<"legacy_existing"|"legacy_forced"|"xdg_config"|"xdg_default", GleanCounter>;
-    firstUseDate: GleanQuantity;
-    recoveredFromBackup: GleanQuantity;
-    resetDate: GleanQuantity;
-    source: GleanString;
   }
 
   e10s: {

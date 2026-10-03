@@ -121,13 +121,17 @@ function _maybeSynthesizeDragOver(left: any, top: any, aEvent: any, aWindow: any
  * @property {boolean} [isWidgetEventSynthesized] - Controls WidgetMouseEvent.mReason value.
  * @property {boolean} [metaKey] - If set to `true`, the Meta key will
  *     be considered pressed.
+ * @property {number} [movementX] - Raw movement delta, standing in for the delta a
+ *     platform widget reports while the native pointer is locked. Must be specified
+ *     together with `movementY`.
+ * @property {number} [movementY] - See `movementX`.
  * @property {number} [pressure=0] - Touch input pressure (0.0 -> 1.0).
  * @property {boolean} [shiftKey] - If set to `true`, the Shift key will
  *     be considered pressed.
  * @property {string} [type] - Event type to synthesize. If not specified
  *     a `mousedown` followed by a `mouseup` are performed.
  *
- * @see nsIDOMWindowUtils.sendMouseEvent
+ * @see SynthesizeMouseEventData defined in Window.webidl
  */
 /**
  * Synthesize a mouse event on a target.
@@ -1429,6 +1433,16 @@ type MouseEventData = {
      * be considered pressed.
      */
     metaKey?: boolean;
+    /**
+     * - Raw movement delta, standing in for the delta a
+     * platform widget reports while the native pointer is locked. Must be specified
+     * together with `movementY`.
+     */
+    movementX?: number;
+    /**
+     * - See `movementX`.
+     */
+    movementY?: number;
     /**
      * - Touch input pressure (0.0 -> 1.0).
      */

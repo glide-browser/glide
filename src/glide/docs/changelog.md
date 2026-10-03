@@ -23,7 +23,7 @@ padding: 0.3em;
 
 ## Changes {% id="0.1.64a-changes" %}
 
-- Bumped Firefox from 153.0b5 to 157.0b5
+- Bumped Firefox from 153.0b5 to 158.0b2
 - Fixed a mode switching race condition in the commandline
 - Fixed `document` mirror corruption on stale references
 - Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config

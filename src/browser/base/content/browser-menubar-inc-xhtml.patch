@@ -1,5 +1,5 @@
 diff --git a/browser/base/content/browser-menubar.inc.xhtml b/browser/base/content/browser-menubar.inc.xhtml
-index aff758c4fe983ca4b9a2b9afe566d4397e8c408a..2b2801a06f0d87f8b64f0e7b3e1b35d1024ceb7d 100644
+index ea461ff47202e536021909a6ba5f6374617556c5..0d6fc2844ea3b68c24d1ea1413da56cae4261ba9 100644
 --- a/browser/base/content/browser-menubar.inc.xhtml
 +++ b/browser/base/content/browser-menubar.inc.xhtml
 @@ -3,6 +3,7 @@
@@ -9,7 +9,7 @@ index aff758c4fe983ca4b9a2b9afe566d4397e8c408a..2b2801a06f0d87f8b64f0e7b3e1b35d1
 +  <script src="chrome://glide/content/glide-menubar.js" />
    <script src="chrome://browser/content/browser-menubar.js" />
    <menu id="file-menu" data-l10n-id="menu-file">
-     <menupopup id="menu_FilePopup">
+     <menupopup id="menu_FilePopup" accesskey-conflicts-bug="2073895">
 @@ -472,6 +473,9 @@
        <menuitem id="helpPolicySupport" hidden="true"/>
      </menupopup>
