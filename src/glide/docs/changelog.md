@@ -26,6 +26,8 @@ padding: 0.3em;
 - Bumped Firefox from 153.0b5 to 158.0b2
 - Fixed a mode switching race condition in the commandline
 - Fixed `gemini://` pages failing to load with "Connection Failed"
+- Fixed `:map` opening an empty mappings page
+- Fixed the tutor not showing your config file path or detecting your config file
 - Fixed `document` mirror corruption on stale references
 - Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config
 - Disabled the new Firefox "Nova" UI redesign by default (`path:browser.nova.enabled`), keeping the pre-157 tab and toolbar styling

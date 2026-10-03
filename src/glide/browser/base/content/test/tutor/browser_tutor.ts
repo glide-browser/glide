@@ -37,3 +37,16 @@ add_task(async function test_ctrl_comma_blurs_input() {
     await wait_for_mode("normal");
   });
 });
+
+add_task(async function test_config_path_is_shown() {
+  await BrowserTestUtils.withNewTab(TUTOR_URL, async browser => {
+    const config_path = await SpecialPowers.spawn(browser, [], async () => {
+      await ContentTaskUtils.waitForCondition(
+        () => !!content.document.querySelector("config-path")!.textContent!.trim(),
+        "the config path should be filled in by the GlideTutor actor",
+      );
+      return content.document.querySelector("config-path")!.textContent!.trim();
+    });
+    ok(config_path.endsWith("glide.ts"), `the tutor should show the config path (got ${config_path})`);
+  });
+});

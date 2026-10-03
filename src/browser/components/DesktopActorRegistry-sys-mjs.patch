@@ -1,5 +1,5 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index 4ceb32d5517d39074842e78c4f48b06c48e0881d..0665219ab80a42ea8211d15c0d3484dc43619c75 100644
+index 4ceb32d5517d39074842e78c4f48b06c48e0881d..82d57da6a62f9b53e3b2274d191c3414b979f045 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
 @@ -43,6 +43,15 @@ let JSPROCESSACTORS = {
@@ -18,7 +18,7 @@ index 4ceb32d5517d39074842e78c4f48b06c48e0881d..0665219ab80a42ea8211d15c0d3484dc
    RefreshBlockerObserver: {
      child: {
        esModuleURI: "resource:///actors/RefreshBlockerChild.sys.mjs",
-@@ -96,6 +105,54 @@ let JSWINDOWACTORS = {
+@@ -96,6 +105,58 @@ let JSWINDOWACTORS = {
      remoteTypes: ["parent"],
    },
  
@@ -35,6 +35,8 @@ index 4ceb32d5517d39074842e78c4f48b06c48e0881d..0665219ab80a42ea8211d15c0d3484dc
 +    matches: ["resource://glide-docs/dynamic/mappings.html"],
 +    allFrames: false,
 +    includeChrome: false,
++    // resource:// pages are loaded in web content processes
++    safeForUntrustedWebProcess: true,
 +  },
 +  GlideTutor: {
 +    parent: {
@@ -50,6 +52,8 @@ index 4ceb32d5517d39074842e78c4f48b06c48e0881d..0665219ab80a42ea8211d15c0d3484dc
 +    matches: ["resource://glide-tutor/*"],
 +    allFrames: false,
 +    includeChrome: false,
++    // resource:// pages are loaded in web content processes
++    safeForUntrustedWebProcess: true,
 +  },
 +
 +  GlideHandler: {

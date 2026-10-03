@@ -393,3 +393,20 @@ add_task(async function test_tab_duplicate() {
   await sleep_frames(10);
   BrowserTestUtils.removeTab(gBrowser.selectedTab);
 });
+
+add_task(async function test_map_lists_mappings() {
+  const tab_opened = BrowserTestUtils.waitForNewTab(gBrowser, "resource://glide-docs/dynamic/mappings.html", true);
+  await keys(":map<CR>");
+  const tab = await tab_opened;
+
+  const count = await SpecialPowers.spawn(tab.linkedBrowser, [], async () => {
+    await ContentTaskUtils.waitForCondition(
+      () => content.document.querySelectorAll(".mapping-item").length > 0,
+      "the mappings page should list the mappings",
+    );
+    return content.document.querySelectorAll(".mapping-item").length;
+  });
+  Assert.greater(count, 0, ":map should open a page listing the mappings");
+
+  BrowserTestUtils.removeTab(tab);
+});
