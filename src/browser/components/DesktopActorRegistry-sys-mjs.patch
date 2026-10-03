@@ -1,8 +1,8 @@
 diff --git a/browser/components/DesktopActorRegistry.sys.mjs b/browser/components/DesktopActorRegistry.sys.mjs
-index 7b1f65b44f06f2b0e86217b6f8c9efe2db8969b0..9b7219826dc6b61ff5ce0e60df4f4c1736c415b9 100644
+index 4ceb32d5517d39074842e78c4f48b06c48e0881d..0665219ab80a42ea8211d15c0d3484dc43619c75 100644
 --- a/browser/components/DesktopActorRegistry.sys.mjs
 +++ b/browser/components/DesktopActorRegistry.sys.mjs
-@@ -43,6 +43,13 @@ let JSPROCESSACTORS = {
+@@ -43,6 +43,15 @@ let JSPROCESSACTORS = {
      remoteTypes: ["parent", "privilegedabout"],
    },
  
@@ -11,12 +11,14 @@ index 7b1f65b44f06f2b0e86217b6f8c9efe2db8969b0..9b7219826dc6b61ff5ce0e60df4f4c17
 +      esModuleURI: "resource:///actors/GeminiProtocolParent.sys.mjs",
 +    },
 +    includeParent: true,
++    // gemini pages are loaded in regular web content processes
++    safeForUntrustedWebProcess: true,
 +  },
 +
    RefreshBlockerObserver: {
      child: {
        esModuleURI: "resource:///actors/RefreshBlockerChild.sys.mjs",
-@@ -96,6 +103,54 @@ let JSWINDOWACTORS = {
+@@ -96,6 +105,54 @@ let JSWINDOWACTORS = {
      remoteTypes: ["parent"],
    },
  
