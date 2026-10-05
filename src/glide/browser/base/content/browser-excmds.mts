@@ -241,6 +241,11 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "update": {
+        await GlideBrowser.upsert_commandline({ prefill: "update" });
+        break;
+      }
+
       case "repl": {
         const { require } = ChromeUtils.importESModule("resource://devtools/shared/loader/Loader.sys.mjs");
         const { BrowserConsoleManager } = require("devtools/client/webconsole/browser-console-manager");
