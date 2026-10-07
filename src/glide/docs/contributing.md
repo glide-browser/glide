@@ -159,7 +159,7 @@ You can run all Glide's tests with:
 pnpm test
 ```
 
-Note that `pnpm mach test glide` only runs the tests under `path:src/glide/`. If you add tests anywhere else, add their directory to the `test` script in `path:package.json` too, otherwise they won't be run.
+Note that `pnpm mach test glide` only runs the tests under `path:src/glide/`. If you add tests anywhere else, add their directory to `DEFAULT_PATHS` in `path:scripts/test.mts` too, otherwise they won't be run.
 
 By default, tests run in a full browser window, however this means that you cannot do anything else while the tests are running. Instead, you can run tests in the background with:
 
