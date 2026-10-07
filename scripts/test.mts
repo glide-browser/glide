@@ -1,6 +1,6 @@
 import { execa } from "execa";
 
-const DEFAULT_TEST = ["glide","browser/components/test"];
+const DEFAULT_TEST = ["glide", "browser/components/test"];
 
 function split_test_args(args: string[]) {
   const test_args: string[] = [];
