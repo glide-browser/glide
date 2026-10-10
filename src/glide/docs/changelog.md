@@ -23,7 +23,7 @@ padding: 0.3em;
 
 ## Changes {% id="0.1.64a-changes" %}
 
-- Bumped Firefox from 153.0b5 to 158.0b3
+- Bumped Firefox from 153.0b5 to 158.0b5
 - Fixed a mode switching race condition in the commandline
 - Fixed `gemini://` pages failing to load with "Connection Failed"
 - Fixed `:map` opening an empty mappings page
