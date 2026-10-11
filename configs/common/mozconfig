@@ -55,7 +55,7 @@ if test "$GLIDE_RELEASE"; then
   ac_add_options --disable-tests
   ac_add_options --disable-rust-tests
   ac_add_options --enable-rust-simd
-  ac_add_options --enable-wasm-simd
+  ac_add_options --enable-jit-simd
 fi
 
 # release hardening
