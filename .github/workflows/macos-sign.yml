@@ -35,6 +35,13 @@ on:
 
 permissions: {}
 
+# when called from release.yml `github.workflow` is "Release", the suffix keeps
+# this group distinct from release.yml's own, sharing one would deadlock the
+# release run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-macos-sign
+  cancel-in-progress: false
+
 jobs:
   macos-sign:
     name: Sign

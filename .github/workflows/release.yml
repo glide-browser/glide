@@ -34,6 +34,11 @@ on:
 
 permissions: {}
 
+# never cancel a release that's in progress, a second run on the same ref waits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   metadata:
     name: metadata

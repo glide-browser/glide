@@ -13,6 +13,12 @@ on:
 
 permissions: {}
 
+# don't interrupt a deploy that's already uploading, newer queued ones replace
+# older queued ones
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.branch || 'main' }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: deploy

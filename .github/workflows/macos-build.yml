@@ -24,6 +24,13 @@ on:
 
 permissions: {}
 
+# a newer manual build of the same branch replaces an older one. when called
+# from release.yml `github.workflow` is "Release", the suffix keeps this group
+# distinct from release.yml's own, sharing one would deadlock the release run
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-macos-build
+  cancel-in-progress: true
+
 jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}

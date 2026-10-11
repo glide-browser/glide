@@ -9,6 +9,10 @@ on:
 # deploy, the GITHUB_TOKEN isn't used
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   docs:
     name: Update docs
