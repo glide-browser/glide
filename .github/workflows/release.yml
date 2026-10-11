@@ -101,7 +101,7 @@ jobs:
     if: ${{ inputs.linux }}
 
     name: Linux build
-    uses: ./.github/workflows/linux-build.yml
+    uses: $/.github/workflows/linux-build.yml
     needs: [metadata]
     # called workflows can only narrow the caller's permissions, so this has to
     # grant everything their jobs ask for or the whole run fails to start
@@ -115,7 +115,7 @@ jobs:
     if: ${{ inputs.macos }}
 
     name: macOS build
-    uses: ./.github/workflows/macos-build.yml
+    uses: $/.github/workflows/macos-build.yml
     needs: [metadata]
     permissions:
       contents: read
@@ -128,7 +128,7 @@ jobs:
 
     name: macOS sign
     needs: [macos]
-    uses: ./.github/workflows/macos-sign.yml
+    uses: $/.github/workflows/macos-sign.yml
     permissions:
       contents: read
 
@@ -148,7 +148,7 @@ jobs:
     if: ${{ inputs.windows }}
 
     name: Windows build
-    uses: ./.github/workflows/windows-build.yml
+    uses: $/.github/workflows/windows-build.yml
     needs: [metadata]
     permissions:
       contents: read
