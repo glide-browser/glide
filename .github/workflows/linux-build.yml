@@ -22,6 +22,8 @@ on:
         default: ""
         description: "Set the build id"
 
+permissions: {}
+
 jobs:
   linux-build:
     name: Build - ${{ matrix.arch }}
@@ -34,6 +36,9 @@ jobs:
       GLIDE_DISABLE_PGO: 1
       GLIDE_COMPAT: ${{ matrix.arch }}
       MOZ_BUILD_DATE: ${{ inputs.MOZ_BUILD_DATE }}
+
+    permissions:
+      contents: read
 
     strategy:
       fail-fast: false

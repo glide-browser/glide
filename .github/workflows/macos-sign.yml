@@ -33,6 +33,8 @@ on:
       PROVISIONING_PROFILE_BASE64:
         required: true
 
+permissions: {}
+
 jobs:
   macos-sign:
     name: Sign
@@ -42,6 +44,9 @@ jobs:
 
     timeout-minutes: 40
     environment: release
+
+    permissions:
+      contents: read
 
     strategy:
       fail-fast: false

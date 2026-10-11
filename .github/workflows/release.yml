@@ -32,10 +32,15 @@ on:
         type: boolean
         default: true
 
+permissions: {}
+
 jobs:
   metadata:
     name: metadata
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
 
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -98,6 +103,10 @@ jobs:
     name: Linux build
     uses: ./.github/workflows/linux-build.yml
     needs: [metadata]
+    # called workflows can only narrow the caller's permissions, so this has to
+    # grant everything their jobs ask for or the whole run fails to start
+    permissions:
+      contents: read
     with:
       upload: true
       MOZ_BUILD_DATE: ${{ needs.metadata.outputs.build_id }}
@@ -108,6 +117,8 @@ jobs:
     name: macOS build
     uses: ./.github/workflows/macos-build.yml
     needs: [metadata]
+    permissions:
+      contents: read
     with:
       artifacts: true
       MOZ_BUILD_DATE: ${{ needs.metadata.outputs.build_id }}
@@ -118,6 +129,8 @@ jobs:
     name: macOS sign
     needs: [macos]
     uses: ./.github/workflows/macos-sign.yml
+    permissions:
+      contents: read
 
     secrets:
       MACOS_P12_BASE64: ${{ secrets.MACOS_P12_BASE64 }}
@@ -137,6 +150,8 @@ jobs:
     name: Windows build
     uses: ./.github/workflows/windows-build.yml
     needs: [metadata]
+    permissions:
+      contents: read
     with:
       MOZ_BUILD_DATE: ${{ needs.metadata.outputs.build_id }}
 
@@ -144,6 +159,9 @@ jobs:
     name: source
     runs-on: ubuntu-latest
     needs: [metadata]
+
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
@@ -194,6 +212,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [metadata, linux, macos, macos-sign, windows, source]
     environment: release
+
+    permissions:
+      contents: read
 
     steps:
       - name: Check release is not published
@@ -315,6 +336,9 @@ jobs:
     name: Push update manifests
     runs-on: ubuntu-latest
     needs: [release, metadata]
+
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

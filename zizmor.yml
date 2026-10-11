@@ -1,4 +1,0 @@
-rules:
-  # this is too much work to enable at the moment
-  excessive-permissions:
-    disable: true

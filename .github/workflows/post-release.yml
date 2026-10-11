@@ -5,8 +5,9 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: write # we're pushing a branch
+# docs-production is pushed with REPO_ACCESS_TOKEN so that the push triggers a
+# deploy, the GITHUB_TOKEN isn't used
+permissions: {}
 
 jobs:
   docs:
