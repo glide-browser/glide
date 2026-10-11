@@ -5,8 +5,6 @@ on:
   release:
     types: [published]
 
-# docs-production is pushed with REPO_ACCESS_TOKEN so that the push triggers a
-# deploy, the GITHUB_TOKEN isn't used
 permissions: {}
 
 concurrency:
@@ -14,15 +12,39 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  docs:
-    name: Update docs
+  # release events run on the release's tag, which the release environment's
+  # main-only branch policy rejects, so hand over to a run on main instead
+  redispatch:
+    if: ${{ github.event_name == 'release' }}
+
+    name: Re-run on main
     runs-on: ubuntu-latest
 
+    permissions:
+      actions: write # to dispatch this workflow
+
     steps:
+      - name: Dispatch on main
+        run: |
+          gh workflow run post-release.yml --repo "$GITHUB_REPOSITORY" --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  docs:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+
+    name: Update docs
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      # this has to push with REPO_ACCESS_TOKEN, not the GITHUB_TOKEN: pushes made
+      # with the GITHUB_TOKEN don't trigger the docs deploy, and it isn't allowed
+      # to push the workflow changes that main usually has
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          persist-credentials: true
+          persist-credentials: true # zizmor: ignore[artipacked] needed for the push below
 
       # will trigger another deploy
       - name: Reset docs branch

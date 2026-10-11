@@ -89,17 +89,27 @@ jobs:
           echo "build_id=${build_date}" >> $GITHUB_OUTPUT
           echo "build_id=${build_date}"
 
+  # separate from `metadata` so that build-only runs on branches don't have to
+  # pass the release environment's main-only branch policy
+  draft-release:
+    if: ${{ inputs.create_release }}
+
+    name: Create draft release
+    runs-on: ubuntu-latest
+    needs: [metadata]
+    environment: release
+
+    steps:
       - name: Create draft release
-        if: ${{ inputs.create_release }}
         run: |
-          if gh release view $VERSION > /dev/null 2>&1; then
-            gh release edit $VERSION --draft --title "$VERSION" --target "$RELEASE_SHA"
+          if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release edit "$VERSION" --repo "$GITHUB_REPOSITORY" --draft --title "$VERSION" --target "$RELEASE_SHA"
           else
-            gh release create $VERSION --draft --title "$VERSION" --target "$RELEASE_SHA"
+            gh release create "$VERSION" --repo "$GITHUB_REPOSITORY" --draft --title "$VERSION" --target "$RELEASE_SHA"
           fi
         env:
           GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
-          VERSION: ${{ steps.version.outputs.version }}
+          VERSION: ${{ needs.metadata.outputs.version }}
           RELEASE_SHA: ${{ github.sha }}
 
   linux:
@@ -215,7 +225,7 @@ jobs:
 
     name: Release
     runs-on: ubuntu-latest
-    needs: [metadata, linux, macos, macos-sign, windows, source]
+    needs: [metadata, draft-release, linux, macos, macos-sign, windows, source]
     environment: release
 
     permissions:
@@ -341,6 +351,7 @@ jobs:
     name: Push update manifests
     runs-on: ubuntu-latest
     needs: [release, metadata]
+    environment: release
 
     permissions:
       contents: read
