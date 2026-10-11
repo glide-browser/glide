@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Disable Windows Defender for performance
         run: |
-          Add-MpPreference -ExclusionPath "${{ github.workspace }}"
+          Add-MpPreference -ExclusionPath "$env:GITHUB_WORKSPACE"
           Add-MpPreference -ExclusionPath "C:\mozilla-build"
           Add-MpPreference -ExclusionPath "$env:TEMP"
 
@@ -111,7 +111,9 @@ jobs:
           pnpm build
 
       - name: Package
-        shell: C:\mozilla-build\msys2\usr\bin\bash.exe -e {0}
+        # the MAR is built by make_full_update.sh, which needs MozillaBuild's bash
+        # and unix tools on the PATH
+        shell: C:\mozilla-build\msys2\usr\bin\bash.exe -e {0} # zizmor: ignore[misfeature]
         run: |
           pnpm package
 
