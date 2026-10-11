@@ -701,3 +701,46 @@ add_task(async function test_yf_copies_link_url() {
     is(clipboard_text, "1234567890", "Phone number should be copied to clipboard");
   });
 });
+
+add_task(async function test_partially_covered_elements_are_hinted() {
+  await reload_config(function _() {});
+
+  // mimics the layout of Google search results, where the "Translate this page" link is
+  // overlaid on top of the result link, covering the center of the result link.
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head><title>Test</title></head>
+    <body>
+      <div style="position: relative; width: 400px">
+        <a id="result" href="https://example.com/result" style="display: block">
+          <div style="height: 40px"></div>
+          <h3 style="margin: 0; height: 30px">Result title</h3>
+        </a>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 45px">
+          <a id="translate" href="https://example.com/translate">Translate this page</a>
+        </div>
+      </div>
+
+      <div style="position: relative; width: 400px">
+        <a id="covered" href="https://example.com/covered" style="display: block; height: 40px">Covered</a>
+        <div style="position: absolute; inset: 0; background: white"></div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  await BrowserTestUtils.withNewTab("data:text/html," + encodeURI(html), async () => {
+    await keys("f");
+    await wait_for_hints();
+
+    isjson(
+      GlideHints.get_active_hints().map((hint) => hint.element_id).sort(),
+      ["result", "translate"],
+      "partially covered links should be hinted, but fully covered links should not",
+    );
+
+    await keys("<esc>");
+    await wait_for_mode("normal");
+  });
+});
