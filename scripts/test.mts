@@ -1,6 +1,6 @@
 import { execa } from "execa";
 
-const DEFAULT_PATHS = ["glide", "browser/components/test"];
+const DEFAULT_PATHS = ["glide", "browser/components/gemini"];
 
 function split_args(args: string[]) {
   const paths: string[] = [];
