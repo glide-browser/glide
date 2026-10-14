@@ -29,6 +29,39 @@ fi
 
 DMG_PATH=$(realpath $DMG_PATH)
 
+# optional, if set then an update MAR is also created from the signed .app and the
+# update manifests in `UPDATES_DIR` are rewritten to reference it.
+MAR_TOOL="${MAR_TOOL:-}"
+UPDATES_DIR="${UPDATES_DIR:-}"
+if [[ -n "$MAR_TOOL" || -n "$UPDATES_DIR" ]]; then
+  if [[ -z "$MAR_TOOL" || -z "$UPDATES_DIR" ]]; then
+    echo "MAR_TOOL and UPDATES_DIR must be set together"
+    exit 1
+  fi
+  # fail now instead of after signing & notarizing
+  if [[ ! -f "$MAR_TOOL" ]]; then
+    echo "MAR_TOOL ($MAR_TOOL) does not exist"
+    exit 1
+  fi
+  if [[ -z "$(find "$UPDATES_DIR" -name update.xml 2> /dev/null)" ]]; then
+    echo "UPDATES_DIR ($UPDATES_DIR) does not contain any update.xml files"
+    exit 1
+  fi
+  MAR_TOOL=$(realpath "$MAR_TOOL")
+  UPDATES_DIR=$(realpath "$UPDATES_DIR")
+
+  # the tool was built on another machine, check that it actually runs on this one
+  chmod +x "$MAR_TOOL"
+  mar_probe=$(mktemp -d)
+  echo probe > "$mar_probe/file"
+  if ! "$MAR_TOOL" -H glide -V 0 -C "$mar_probe" -c probe.mar file \
+    || ! "$MAR_TOOL" -t "$mar_probe/probe.mar" | grep -q 'file$'; then
+    echo "MAR_TOOL ($MAR_TOOL) does not work on this machine"
+    exit 1
+  fi
+  rm -rf "$mar_probe"
+fi
+
 set -eux
 
 cd "$(dirname "$0")/../../"
@@ -78,6 +111,41 @@ step "Creating DMG"
   --icon ./browser/branding/glide/firefox.icns \
   --dsstore ./browser/branding/glide/dsstore \
   ./obj-$ARCH-apple-darwin/dist/ ./glide-$ARCH-temp.dmg
+
+if [[ -n "$MAR_TOOL" ]]; then
+  # The MAR *must* be created from the signed .app, otherwise applying the update
+  # replaces the signed binaries with ad-hoc signed ones, which breaks anything
+  # that relies on the code signature, e.g. TCC permissions like screen recording.
+  step "Creating update MAR"
+  # channel, version & app name must match `create_mar_file()` in scripts/firefox/package.mts
+  VERSION=$(node -p 'require("../firefox.json").brands.glide.release.display_version')
+  BINARY_NAME=$(node -p 'require("../firefox.json").binary_name')
+  MAR="$MAR_TOOL" MAR_CHANNEL_ID=glide MOZ_PRODUCT_VERSION="$VERSION" \
+    ./tools/update-packaging/make_full_update.sh "./macos-$ARCH.mar" "./obj-$ARCH-apple-darwin/dist/Glide.app" "$BINARY_NAME"
+
+  # only the signed .app has these, so this catches the MAR being created from the wrong app
+  for signed_file in Contents/_CodeSignature/CodeResources Contents/embedded.provisionprofile; do
+    if ! "$MAR_TOOL" -t "./macos-$ARCH.mar" | grep -qE "[[:space:]]$signed_file\$"; then
+      echo "the MAR does not contain $signed_file, it was not created from the signed .app"
+      exit 1
+    fi
+  done
+
+  step "Updating update manifests"
+  mar_hash=$(shasum -a 512 "./macos-$ARCH.mar" | cut -d' ' -f1)
+  mar_size=$(wc -c < "./macos-$ARCH.mar" | tr -d ' ')
+  manifests=$(find "$UPDATES_DIR" -name update.xml)
+  test -n "$manifests"
+  for manifest in $manifests; do
+    sed -i.bak -E \
+      -e "s/hashValue=\"[0-9a-f]+\"/hashValue=\"$mar_hash\"/" \
+      -e "s/ size=\"[0-9]+\"/ size=\"$mar_size\"/" \
+      "$manifest"
+    rm "$manifest.bak"
+    grep -q "hashValue=\"$mar_hash\"" "$manifest"
+    grep -q " size=\"$mar_size\"" "$manifest"
+  done
+fi
 
 step "Removing credentials"
 rm -f ./Glide_Browser.provisionprofile

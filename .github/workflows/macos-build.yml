@@ -146,6 +146,7 @@ jobs:
         run: |
           mv dist/glide-*.dmg "dist/glide.macos-$GLIDE_COMPAT.dmg"
           mv dist/output.mar "dist/macos-$GLIDE_COMPAT.mar"
+          cp engine/obj-*/dist/host/bin/mar dist/mar
 
       - name: Upload DMG
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -160,6 +161,14 @@ jobs:
           retention-days: 10
           name: macos-${{ matrix.arch }}.mar
           path: ./dist/macos-${{ matrix.arch }}.mar
+
+      - name: Upload MAR tool
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 10
+          name: macos-${{ matrix.arch }}-mar-tool
+          path: ./dist/mar
+          if-no-files-found: error
 
       - name: Upload browser upload manifests
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
