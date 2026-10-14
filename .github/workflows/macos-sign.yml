@@ -103,10 +103,24 @@ jobs:
         run: |
           mv dist/*.dmg dist/glide.dmg
 
+      - name: Download MAR tool
+        if: inputs.artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: macos-${{ matrix.arch }}-mar-tool
+          path: dist/mar-tool
+
+      - name: Download update manifests
+        if: inputs.artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: macos-${{ matrix.arch }}-updates
+          path: dist/updates
+
       - name: Install system dependencies
         run: |
           brew update
-          brew install cairo gnu-tar mercurial
+          brew install cairo gnu-tar mercurial xz
           sudo pip install setuptools
 
           brew uninstall --ignore-dependencies python3.12 -f
@@ -160,6 +174,8 @@ jobs:
           P12_PASSWORD: ${{ secrets.MACOS_P12_PASSWORD }}
           DMG_PATH: ./dist/glide.dmg
           PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+          MAR_TOOL: ${{ inputs.artifacts && './dist/mar-tool/mar' || '' }}
+          UPDATES_DIR: ${{ inputs.artifacts && './dist/updates' || '' }}
 
       - name: Upload DMG
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -167,3 +183,21 @@ jobs:
           retention-days: 10
           name: glide.macos-${{ matrix.arch }}.signed.dmg
           path: ./engine/glide.macos-${{ matrix.arch }}.dmg
+
+      - name: Upload MAR
+        if: inputs.artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 10
+          name: macos-${{ matrix.arch }}.signed.mar
+          path: ./engine/macos-${{ matrix.arch }}.mar
+          if-no-files-found: error
+
+      - name: Upload update manifests
+        if: inputs.artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 10
+          name: macos-${{ matrix.arch }}-updates.signed
+          path: ./dist/updates/
+          if-no-files-found: error
