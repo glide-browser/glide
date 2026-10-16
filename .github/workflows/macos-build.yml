@@ -11,6 +11,11 @@ on:
         type: string
         default: ""
         description: "Set the build id"
+      # TEMPORARY, see the `screen-capture-test` job
+      screen_capture_test:
+        description: "Only run the screen recording permission test (discussion #366) instead of building"
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       artifacts:
@@ -25,6 +30,7 @@ on:
 jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
+    if: ${{ !inputs.screen_capture_test }}
 
     runs-on: depot-macos-26
     env:
@@ -159,3 +165,35 @@ jobs:
           retention-days: 10
           name: macos-${{ matrix.arch }}-updates
           path: ./dist/update/
+
+  # TEMPORARY investigation for https://github.com/glide-browser/glide/discussions/366, do not merge.
+  # Tests the published release's DMG & MAR, so it doesn't need a build.
+  screen-capture-test:
+    name: Screen capture test - ${{ matrix.runner }}
+    if: ${{ inputs.screen_capture_test }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-26]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Test screen recording permission
+        run: python3 .github/scripts/macos-screen-capture-test.py --work "$RUNNER_TEMP/screen-capture"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 7
+          name: screen-capture-test-${{ matrix.runner }}
+          path: ${{ runner.temp }}/screen-capture/logs
