@@ -1,10 +1,10 @@
 diff --git a/browser/locales/en-US/browser/browserContext.ftl b/browser/locales/en-US/browser/browserContext.ftl
-index 9bd8d8dd41575deb325e90ca53bc2f3d2f42c6a8..c0aa1e68185aa3c9f4ebf9581b8c451c10a30c0a 100644
+index 684481d9f7984d82829c95a1d5c9e19acea2ad27..4f46e4e0394e6991f2c80f96690664c32ba50ec3 100644
 --- a/browser/locales/en-US/browser/browserContext.ftl
 +++ b/browser/locales/en-US/browser/browserContext.ftl
-@@ -81,6 +81,27 @@ toolbar-button-stop =
- toolbar-button-stop-reload =
-     .title = { main-context-menu-reload.aria-label }
+@@ -81,6 +81,27 @@ toolbar-button-stop-2 =
+ toolbar-button-stop-reload-2 =
+     .title = Reload
  
 +########### glide-injection-start
 +

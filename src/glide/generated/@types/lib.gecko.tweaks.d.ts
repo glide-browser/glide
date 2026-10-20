@@ -25,6 +25,11 @@ interface ChromeWindow extends Window {
   isChromeWindow: true;
 }
 
+// Defined by the <menu> custom element in toolkit/content/widgets/menu.js.
+interface XULMenuElement {
+  readonly menupopup: XULPopupElement;
+}
+
 interface XULElementTagNameMap {
   browser: MozBrowser;
   iframe: XULFrameElement;

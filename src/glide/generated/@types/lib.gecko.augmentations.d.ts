@@ -13,6 +13,7 @@ declare global {
   const MozElements: Readonly<{
     MozElementMixin<T extends MozElementBase>(base: T): T;
     TabsBase: typeof TabsBase;
+    MozTab: typeof MozTab;
   }>;
 
   class MozXULElement extends XULElement implements MozElementBase {
@@ -29,10 +30,9 @@ declare global {
     disabled: boolean;
     tabIndex: number;
     selectedIndex: number;
-    // TODO(bug 2071355): take and return MozElements.MozTab once it is
-    // declared. The type parameter stands in for it, carrying a call site's
-    // own tab type into `filter` and the return value.
-    findNextTab<T extends Element>(
+    // Generic so that `filter` receives, and the method returns, the same tab
+    // type as the call site's `startTab`.
+    findNextTab<T extends MozTab>(
       startTab: T,
       opts?: {
         direction?: number;
@@ -41,6 +41,15 @@ declare global {
         filter?: (tab: T) => boolean;
       }
     ): T | null;
+  }
+
+  // toolkit/content/widgets/tabbox.js. Declares only the MozTab members that
+  // code outside the class uses on a <tab> subclass. When tsc reports a MozTab
+  // member as missing, declare that member here.
+  class MozTab extends MozXULElement {
+    readonly selected: boolean;
+    linkedPanel: string;
+    label: string;
   }
 
   type MozBrowser =
