@@ -106,6 +106,13 @@ jobs:
             brew install nasm
           fi
 
+      # mach doesn't support Python 3.15 yet: with brew's 3.15 the taskgraph venv fails
+      # to install, so `mach bootstrap` silently skips the clang toolchain.
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.14"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -118,6 +125,7 @@ jobs:
         run: |
           export PATH="$(python3 -m site --user-base)/bin":$PATH
           ./mach --verbose --no-interactive bootstrap --application-choice browser --no-system-changes --exclude MacOSX26.4.sdk || true
+          test -x "$HOME/.mozbuild/clang/bin/clang" || { echo "::error::mach bootstrap did not install clang"; exit 1; }
 
       - name: Download WASI SDK
         run: |
