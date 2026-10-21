@@ -6827,6 +6827,112 @@ interface TextFormatUpdateEventInit extends EventInit {
     textFormats?: TextFormat[];
 }
 
+interface TextGenerationLogitBias {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationLogitBias_bias) --> */
+    bias: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationLogitBias_token) --> */
+    token: number;
+}
+
+interface TextGenerationMessage {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationMessage_content) --> */
+    content: string;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationMessage_role) --> */
+    role: TextGenerationRole;
+}
+
+interface TextGenerationRequest {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationRequest_bufferLength) --> */
+    bufferLength?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationRequest_maxTokens) --> */
+    maxTokens?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationRequest_messages) --> */
+    messages: TextGenerationMessage[];
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationRequest_samplers) --> */
+    samplers?: TextGenerationSampler[];
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationRequest_stopOnEndOfGenerationTokens) --> */
+    stopOnEndOfGenerationTokens?: boolean;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationRequest_stopTokens) --> */
+    stopTokens?: number[];
+}
+
+interface TextGenerationResourceSnapshot {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResourceSnapshot_cpuTimeMs) --> */
+    cpuTimeMs: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResourceSnapshot_memoryBytes) --> */
+    memoryBytes: number;
+}
+
+interface TextGenerationResources {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResources_after) --> */
+    after: TextGenerationResourceSnapshot;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResources_before) --> */
+    before: TextGenerationResourceSnapshot;
+}
+
+interface TextGenerationResult {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResult_content) --> */
+    content: string;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResult_reason) --> */
+    reason: TextGenerationFinishReason;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResult_resources) --> */
+    resources: TextGenerationResources;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationResult_usage) --> */
+    usage: TextGenerationUsage;
+}
+
+interface TextGenerationSampler {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationSampler_logitBias) --> */
+    logitBias?: TextGenerationLogitBias[];
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationSampler_seed) --> */
+    seed?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationSampler_temp) --> */
+    temp?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationSampler_topK) --> */
+    topK?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationSampler_topP) --> */
+    topP?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationSampler_type) --> */
+    type: TextGenerationSamplerType;
+}
+
+interface TextGenerationTimings {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationTimings_decodeMs) --> */
+    decodeMs: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationTimings_prefillMs) --> */
+    prefillMs: number;
+}
+
+interface TextGenerationUsage {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationUsage_generatedTokens) --> */
+    generatedTokens: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationUsage_promptCharacters) --> */
+    promptCharacters: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationUsage_promptTokens) --> */
+    promptTokens: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerationUsage_timings) --> */
+    timings: TextGenerationTimings;
+}
+
+interface TextGeneratorCreateOptions {
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_batchSize) --> */
+    batchSize?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_contextSize) --> */
+    contextSize?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_featureId) --> */
+    featureId?: string;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_flashAttn) --> */
+    flashAttn?: boolean;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_kvCacheDtype) --> */
+    kvCacheDtype?: TextGenerationKVCacheDtype;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_numThreads) --> */
+    numThreads?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_numThreadsDecoding) --> */
+    numThreadsDecoding?: number;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGeneratorCreateOptions_ubatchSize) --> */
+    ubatchSize?: number;
+}
+
 interface TextUpdateEventInit extends EventInit {
     /** <!-- binding_to(idl, attribute, WEBIDL_TextUpdateEventInit_selectionEnd) --> */
     selectionEnd?: number;
@@ -34623,6 +34729,27 @@ declare var TextFormatUpdateEvent: {
     isInstance: IsInstance<TextFormatUpdateEvent>;
 };
 
+/** <!-- binding_to(idl, class, WEBIDL_TextGenerator) --> */
+interface TextGenerator {
+    /** <!-- binding_to(idl, method, WEBIDL_TextGenerator_cancel) --> */
+    cancel(): void;
+    /** <!-- binding_to(idl, method, WEBIDL_TextGenerator_clear) --> */
+    clear(): void;
+    /** <!-- binding_to(idl, method, WEBIDL_TextGenerator_generate) --> */
+    generate(request: TextGenerationRequest, onDelta?: TextGenerationDeltaCallback): Promise<TextGenerationResult>;
+    /** <!-- binding_to(idl, method, WEBIDL_TextGenerator_terminate) --> */
+    terminate(): void;
+}
+
+declare var TextGenerator: {
+    prototype: TextGenerator;
+    new(): TextGenerator;
+    /** <!-- binding_to(idl, attribute, WEBIDL_TextGenerator_isInstance) --> */
+    isInstance: IsInstance<TextGenerator>;
+    /** <!-- binding_to(idl, method, WEBIDL_TextGenerator_create) --> */
+    create(model: Blob, options?: TextGeneratorCreateOptions): Promise<TextGenerator>;
+};
+
 /** <!-- binding_to(idl, class, WEBIDL_TextMetrics) --> */
 interface TextMetrics {
     /** <!-- binding_to(idl, attribute, WEBIDL_TextMetrics_actualBoundingBoxAscent) --> */
@@ -43584,6 +43711,11 @@ interface TestThrowingCallback {
     (): void;
 }
 
+interface TextGenerationDeltaCallback {
+    /** <!-- binding_to(idl, method, WEBIDL_TextGenerationDeltaCallback) --> */
+    (text: string): void;
+}
+
 interface ToolExecuteCallback {
     /** <!-- binding_to(idl, method, WEBIDL_ToolExecuteCallback) --> */
     (input: any, client: ModelContextClient): any;
@@ -44999,6 +45131,10 @@ type TCPReadyState = "closed" | "closing" | "connecting" | "open";
 type TCPSocketBinaryType = "arraybuffer" | "string";
 type TaskPriority = "background" | "user-blocking" | "user-visible";
 type TensorDataLocation = "cpu" | "cpu-pinned" | "gpu-buffer" | "ml-tensor" | "none" | "texture";
+type TextGenerationFinishReason = "cancelled" | "eos" | "length" | "stop-token";
+type TextGenerationKVCacheDtype = "f16" | "f32" | "q4_0" | "q4_1" | "q5_0" | "q5_1" | "q8_0";
+type TextGenerationRole = "assistant" | "system" | "user";
+type TextGenerationSamplerType = "dist" | "logit-bias" | "temperature" | "top-k" | "top-p";
 type TextTrackKind = "captions" | "chapters" | "descriptions" | "metadata" | "subtitles";
 type TextTrackMode = "disabled" | "hidden" | "showing";
 type TouchEventsOverride = "disabled" | "enabled" | "none";
