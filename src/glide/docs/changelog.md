@@ -19,19 +19,25 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.65a
+
+## Changes {% id="0.1.65a-changes" %}
+
+- Bumped Firefox from 156.0b3 to 159.0b4
+- Fixed `gemini://` pages failing to load with "Connection Failed"
+- Fixed `:map` opening an empty mappings page
+- Fixed the tutor not showing your config file path or detecting your config file
+- Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config
+- Disabled the new Firefox "Nova" UI redesign by default (`path:browser.nova.enabled`), keeping the pre-157 tab and toolbar styling
+- Fixed the `glide.tabs.get_first()` example in the cookbook and config docs, which used an invalid URL match pattern
+
 # 0.1.64a
 
 ## Changes {% id="0.1.64a-changes" %}
 
-- Bumped Firefox from 153.0b5 to 159.0b4
+- Bumped Firefox from 153.0b5 to 156.0b3
 - Fixed a mode switching race condition in the commandline
-- Fixed `gemini://` pages failing to load with "Connection Failed"
-- Fixed `:map` opening an empty mappings page
-- Fixed the tutor not showing your config file path or detecting your config file
 - Fixed `document` mirror corruption on stale references
-- Fixed a spurious "Glide Internal is hiding tabs" notification when `browser.tabs.hide()` is called from your config
-- Disabled the new Firefox "Nova" UI redesign by default (`path:browser.nova.enabled`), keeping the pre-157 tab and toolbar styling
-- Fixed the `glide.tabs.get_first()` example in the cookbook and config docs, which used an invalid URL match pattern
 
 # 0.1.63a
 
