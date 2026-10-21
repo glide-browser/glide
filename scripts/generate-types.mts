@@ -19,7 +19,8 @@ export async function generate_types() {
     --outDir src/glide/generated \
     ./engine/testing/mochitest/tests/SimpleTest/EventUtils.js \
     ./engine/testing/modules/TestUtils.sys.mjs \
-    ./engine/browser/base/content/browser-commands.js`;
+    ./engine/browser/base/content/browser-commands.js \
+    ./engine/toolkit/modules/JSONFile.sys.mjs`;
 
   // Our `.d.ts` files are intended to define global types so we can't use `export`
   {
