@@ -1,0 +1,13 @@
+diff --git a/testing/marionette/harness/marionette_harness/tests/integration-tests.toml b/testing/marionette/harness/marionette_harness/tests/integration-tests.toml
+index 888c015066..71b8cf07fa 100644
+--- a/testing/marionette/harness/marionette_harness/tests/integration-tests.toml
++++ b/testing/marionette/harness/marionette_harness/tests/integration-tests.toml
+@@ -30,6 +30,8 @@
+ 
+ ["include:../../../../../browser/extensions/webcompat/tests/marionette/manifest.toml"]
+ 
++["include:../../../../../browser/components/protections/test/marionette/manifest.toml"]
++
+ # DOM tests
+ 
+ ["include:../../../../../dom/cache/test/marionette/manifest.toml"]

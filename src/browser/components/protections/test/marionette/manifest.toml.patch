@@ -1,0 +1,11 @@
+diff --git a/browser/components/protections/test/marionette/manifest.toml b/browser/components/protections/test/marionette/manifest.toml
+new file mode 100644
+index 0000000000..f1444056cb
+--- /dev/null
++++ b/browser/components/protections/test/marionette/manifest.toml
+@@ -0,0 +1,5 @@
++[DEFAULT]
++subsuite = "integration"
++tags = "local os_integration"
++
++["test_persist_tracking_protection.py"]
