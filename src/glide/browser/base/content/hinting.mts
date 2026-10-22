@@ -38,25 +38,7 @@ export const content = {
         continue;
       }
 
-      // check if the target is visibly hidden due to overlapping with another element by
-      // querying for the element at the same coordinates as the target.
-      //
-      // if said element does not include the target as a child node or if the target doesn't
-      // include the element as a child then we assume the target is hidden and shouldn't be hinted.
-      const node_stack = new Set<Node>();
-      const point_element = DOM.element_at_point(
-        document,
-        dom_rect.left + dom_rect.width * 0.5,
-        dom_rect.top + dom_rect.height * 0.5,
-        node_stack,
-      );
-      if (
-        point_element
-        && point_element !== target
-        && !(point_element.contains(target) || target.contains(point_element)
-          // ensure `.contains()` works across shadowroot boundaries
-          || node_stack.values().some((n) => target.contains(n)))
-      ) {
+      if (is_covered(document, target, dom_rect)) {
         continue;
       }
 
@@ -165,6 +147,61 @@ export const content = {
     }
   },
 };
+
+/**
+ * Positions within the target, relative to its size, that are checked to determine if it is covered
+ * by another element. The center is checked first as it is the most likely point to be visible.
+ */
+const HIT_TEST_POINTS = [
+  [0.5, 0.5],
+  [0.25, 0.25],
+  [0.75, 0.25],
+  [0.25, 0.75],
+  [0.75, 0.75],
+] as const;
+
+/**
+ * Check if the target is visibly hidden due to overlapping with another element by
+ * querying for the element at the same coordinates as the target.
+ *
+ * If said element does not include the target as a child node or if the target doesn't
+ * include the element as a child then we assume the target is hidden at that point.
+ *
+ * Multiple points are checked as sites will sometimes put elements on top of *part* of a link,
+ * e.g. Google search results overlay the "Translate this page" link on top of the result link,
+ * so the target is only considered covered if *every* point is.
+ */
+function is_covered(document: Document, target: HTMLElement, rect: DOMRect): boolean {
+  let covered = false;
+
+  for (const [x, y] of HIT_TEST_POINTS) {
+    const node_stack = new Set<Node>();
+    const point_element = DOM.element_at_point(
+      document,
+      rect.left + rect.width * x,
+      rect.top + rect.height * y,
+      node_stack,
+    );
+    if (!point_element) {
+      // the point is outside of the viewport
+      continue;
+    }
+
+    if (
+      point_element === target
+      || point_element.contains(target)
+      || target.contains(point_element)
+      // ensure `.contains()` works across shadowroot boundaries
+      || node_stack.values().some((n) => target.contains(n))
+    ) {
+      return false;
+    }
+
+    covered = true;
+  }
+
+  return covered;
+}
 
 function* all_elements(root: Document | ShadowRoot): Generator<HTMLElement> {
   for (const element of root.querySelectorAll("*")) {
