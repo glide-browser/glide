@@ -64,3 +64,24 @@ jobs:
           BRANCH: ${{ inputs.branch || 'main' }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      # every page is served with `s-maxage=31536000` (see src/glide/docs/_headers) and a
+      # deploy doesn't evict what the zone cache already holds, so without this the edge
+      # keeps serving the previous deploy's pages
+      - name: Purge the Cloudflare cache
+        if: ${{ (inputs.branch || 'main') == 'main' }}
+        run: |
+          : "${CLOUDFLARE_ZONE_ID:?add the CLOUDFLARE_ZONE_ID secret}"
+
+          # let the new deployment reach the edge first, so the old pages don't get cached again
+          sleep 15
+
+          response=$(curl -sS --fail-with-body -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}') || { echo "$response"; exit 1; }
+          jq -e '.success' <<<"$response" >/dev/null || { echo "$response"; exit 1; }
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
