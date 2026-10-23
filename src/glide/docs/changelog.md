@@ -19,6 +19,10 @@ padding: 0.3em;
 
 # Changelog
 
+# 0.1.66a
+
+## Changes {% id="0.1.66a-changes" %}
+
 # 0.1.65a
 
 ## Changes {% id="0.1.65a-changes" %}
