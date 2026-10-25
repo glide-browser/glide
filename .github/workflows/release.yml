@@ -82,7 +82,12 @@ jobs:
       - name: Create draft release
         if: ${{ inputs.create_release }}
         run: |
-          if gh release view $VERSION > /dev/null 2>&1; then
+          if is_draft=$(gh release view $VERSION --json isDraft --jq '.isDraft' 2> /dev/null); then
+            # `edit --draft` would unpublish it
+            if [[ "$is_draft" != "true" ]]; then
+              echo -e "Error: Release $VERSION is already published. Refusing to continue."
+              exit 1
+            fi
             gh release edit $VERSION --draft --title "$VERSION" --target "$RELEASE_SHA"
           else
             gh release create $VERSION --draft --title "$VERSION" --target "$RELEASE_SHA"
