@@ -265,33 +265,33 @@
           "x86_64-linux" = {
             sysroot = {
               task = "sysroot-x86_64-linux-gnu";
-              index = "f18eb4f18093faedb235bfa14d052234cb65568766407d95867142131994042a";
-              hash = "sha256-CJ9n3YXZp91wa5vjB81KEp3SoR2fP4+kDTlKBsyJuvc=";
+              index = "021fd212880e35f4654c1376a3476c53fbfa832d69814a078f0853f0e2d74435";
+              hash = "sha256-4UQACcmzlg88PmoxU2vU+gtKxCIrDYH6SOqtbSHUQCk=";
             };
             onnxruntime = {
               task = "onnxruntime-x86_64-linux-gnu";
-              index = "de1e12235ad720fbaa369e9d8af6b3a0a6cb3288ce2b69dede3d59d203237682";
-              hash = "sha256-HXoYcBr2f9uUQLrz/LA/aJ4HATC7pv13PcV/QnXv9eE=";
+              index = "3cb00ce90609ddb35beb0dbcffaf048e05b753f8600ca39ff9883032611ad0ec";
+              hash = "sha256-qR4Kl2frt+RKHKQ0AYUwdy35SPL5ylGAnc5hlxLux8U=";
             };
             clang = {
               task = "linux64-clang-22";
               artifact = "clang";
-              index = "a7c8168e11ab12621fb8d9f8bbfdaf3751c1322a24a80eb7862a0b1698de2b69";
-              hash = "sha256-TJU7S/21W/oHwEhITaA+k+59BKxPRav7+SgzWIPOqVA=";
+              index = "649166800a2bc2df0508987cb9d4652523b911de4c53186c4939392f1a616440";
+              hash = "sha256-AFdyuugdQMsgTuFv9csrNNfEp29CrDFyj/GLp4HXYBc=";
             };
           };
           # note: Firefox has no onnxruntime artifact for linux aarch64
           "aarch64-linux" = {
             sysroot = {
               task = "sysroot-aarch64-linux-gnu";
-              index = "a563d78df955f76f46b88fc05654d24be610b7a424f881d8991c4cd30582c7d9";
-              hash = "sha256-yDT7P5rRYA5id5KkVLqLjMVqf2EWovp43zoXDASiwgs=";
+              index = "1f2c6f6cfafbe96e3b6e42d0981b802fa73553c52aa4bb659cc3b15ffad03c4f";
+              hash = "sha256-XMU2G2Q6a/wP9WYUv6wQjEqp0GkLza/X94X8rqdy8Q4=";
             };
             clang = {
               task = "linux64-aarch64-clang-22";
               artifact = "clang";
-              index = "6a6430dab5a5242bf2cc45748ca7cf708f6c454f9bd66f42d13e3db5b589877c";
-              hash = "sha256-HGCbE7KMJBpRoDGyBPAm/aCtpkQTy9a/ewHcYNVuQvg=";
+              index = "b1a19e50cf12dcdd061564aa8a39ae68851322fed51281c5abd13b8248aacbee";
+              hash = "sha256-yQQSKn6GlVqHg2PV8Z+7iGnBqTCTAhPCly2ROI80YuQ=";
             };
           };
           # the macOS builds (both arches) run on aarch64 runners
@@ -299,13 +299,13 @@
             clang = {
               task = "macosx64-aarch64-clang-22";
               artifact = "clang";
-              index = "075e292765d67831f6ed157873accca894b891f974d7b9cd44fc8a3708d26101";
-              hash = "sha256-FgVvIwpO8gHiLrROKOLPHS/b8kcFC/Qg26A+Cfmjqlg=";
+              index = "9f4a6b511de6d1298a9d658c98ecb8197a9dabd14a018825dbae4008a6486f23";
+              hash = "sha256-uvWE9WNoVJel8EGFZ5abYDWumHrX+M9h4zuLGiDEnIE=";
             };
             onnxruntime = {
               task = "onnxruntime-aarch64-apple-darwin";
-              index = "b1ed476d5bb19da02cd1b677f2f813d25c7533139248b0c13404029209874f79";
-              hash = "sha256-y/+BDngKwK65XfAoim3BK0ShO1M9t555TtECxCrkulw=";
+              index = "7ff5f2fcfd074fca58834769bd0c9e21a5787cb7d7a2ebc1dd851b90abc6f452";
+              hash = "sha256-xqzgokS9Gbq/dD2vSxvPuu3XCdqBvNoeYhyir5qlaAY=";
             };
           };
         };
