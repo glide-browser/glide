@@ -19,6 +19,11 @@ async function main() {
 
   const bundled_types_path = Path.join(GLIDE_BROWSER_CONTENT_DIR, "dist", "bundled.compiled.d.ts");
 
+  await fs.writeFile(
+    Path.join(snippets_dir, "tsconfig.check.json"),
+    JSON.stringify({ extends: "./tsconfig.json", include: ["**/*.ts"], files: [bundled_types_path] }),
+  );
+
   const snippets: Array<{ path: string; location: string }> = [];
 
   for await (
@@ -70,8 +75,8 @@ async function main() {
   const result = await execa(Path.join(ROOT_DIR, "node_modules", ".bin", "tsc"), [
     "--noEmit",
     "--pretty",
-    ...snippets.map((s) => s.path),
-    bundled_types_path,
+    "-p",
+    "tsconfig.check.json",
   ], { cwd: snippets_dir, stdio: "pipe", all: true }).catch((err) => err as ExecaError);
 
   const path_to_location = new Map(snippets.map((s) => [Path.relative(snippets_dir, s.path), s.location]));

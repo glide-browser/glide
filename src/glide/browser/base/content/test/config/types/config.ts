@@ -38,22 +38,22 @@ glide.content.execute((str) => {
   assert_type<string>(str);
 }, { args: ["str"], tab_id: 10 });
 
-// @ts-expect-error too many args given
 glide.content.execute((str) => {
   // Should infer param type
   assert_not_any(str);
   assert_type<string>(str);
 }, {
+  // @ts-expect-error too many args given
   args: ["str", "foo"],
   tab_id: 10,
 });
 
-// @ts-expect-error only providing one arg
 glide.content.execute((str, num) => {
   // Should infer param type
   assert_not_any(str);
   assert_type<string>(str);
 }, {
+  // @ts-expect-error only providing one arg
   args: ["str"],
   tab_id: 10,
 });

@@ -57,7 +57,7 @@
     "dioscuri": "github:glide-browser/dioscuri",
     "shiki": "^4.2.0",
     "ts-blank-space": "^0.6.2",
-    "typescript": "^5.9.2"
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@microsoft/eslint-plugin-sdl": "^1.1.0",
