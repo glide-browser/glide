@@ -124,8 +124,18 @@
     }
 
     accept_focused(): void {
+      const option = this.#last_focused_option;
+      const hidden = option?.is_hidden() ?? true;
+      option?.set_focused(false);
+      this.#last_focused_option = null;
       this.close();
-      void this.#last_focused_option?.accept({ input: this.#get_input()?.value ?? "" });
+      if (!hidden) {
+        void option?.accept({ input: this.#get_input()?.value ?? "" });
+      }
+    }
+
+    focused_option(): GlideCompletionOption | null {
+      return this.#last_focused_option;
     }
 
     async delete_focused(): Promise<void> {
@@ -211,6 +221,9 @@
       if (now_focused) {
         now_focused.set_focused(true);
         this.#last_focused_option = now_focused;
+      } else {
+        this.#focused_index = -1;
+        this.#last_focused_option = null;
       }
 
       const scroll_opts: ScrollIntoViewOptions = { block: "nearest", behavior: "instant" };
