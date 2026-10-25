@@ -280,12 +280,17 @@
               hash = "sha256-AFdyuugdQMsgTuFv9csrNNfEp29CrDFyj/GLp4HXYBc=";
             };
           };
-          # note: Firefox has no onnxruntime artifact for linux aarch64
           "aarch64-linux" = {
             sysroot = {
               task = "sysroot-aarch64-linux-gnu";
               index = "1f2c6f6cfafbe96e3b6e42d0981b802fa73553c52aa4bb659cc3b15ffad03c4f";
               hash = "sha256-XMU2G2Q6a/wP9WYUv6wQjEqp0GkLza/X94X8rqdy8Q4=";
+            };
+            # since Firefox 158 (157 had none for linux aarch64)
+            onnxruntime = {
+              task = "onnxruntime-aarch64-linux-gnu";
+              index = "c7d74cfbbd9240b928ca80ea263d29692340ef1df3c2297024f8e8b79386c81c";
+              hash = "sha256-2CUc1IHsvixfpXEFmYsYn4jgAa52baT8vDqjdK/OYFs=";
             };
             clang = {
               task = "linux64-aarch64-clang-22";
