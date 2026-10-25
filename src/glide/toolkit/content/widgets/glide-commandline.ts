@@ -125,9 +125,13 @@
 
     accept_focused(): void {
       const option = this.#last_focused_option;
+      const hidden = option?.is_hidden() ?? true;
+      option?.set_focused(false);
       this.#last_focused_option = null;
       this.close();
-      void option?.accept({ input: this.#get_input()?.value ?? "" });
+      if (!hidden) {
+        void option?.accept({ input: this.#get_input()?.value ?? "" });
+      }
     }
 
     focused_option(): GlideCompletionOption | null {
