@@ -64,3 +64,21 @@ jobs:
           BRANCH: ${{ inputs.branch || 'main' }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      # every page is served with a long cache and a deploy doesn't automatically evict the cache, so we just
+      # purge everything after a deploy as we don't have frequent deploys
+      - name: Purge the Cloudflare cache
+        if: ${{ (inputs.branch || 'main') == 'main' }}
+        run: |
+          # let the new deployment reach the edge first
+          sleep 15
+
+          response=$(curl -sS --fail-with-body -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}') || { echo "$response"; exit 1; }
+          jq -e '.success' <<<"$response" >/dev/null || { echo "$response"; exit 1; }
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
