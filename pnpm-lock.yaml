@@ -108,6 +108,9 @@ importers:
       type-fest:
         specifier: ^5.2.0
         version: 5.2.0
+      typescript-5:
+        specifier: npm:typescript@^5.9.3
+        version: typescript@5.9.3
       webextension-polyfill:
         specifier: github:glide-browser/webextension-types
         version: webextension-polyfill-ts@https://codeload.github.com/glide-browser/webextension-types/tar.gz/dedf3485d8397814099dd72082b4642b65ff645b

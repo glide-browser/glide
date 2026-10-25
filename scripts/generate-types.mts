@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import Path from "path";
 import { fileURLToPath } from "url";
-import { SCRIPTS_DIR } from "./canonical-paths.mts";
+import { ROOT_DIR, SCRIPTS_DIR } from "./canonical-paths.mts";
 import { $ } from "./zx.mts";
 
 $.set_root_dir();
@@ -12,7 +12,10 @@ export async function generate_types() {
   // Generate `.d.ts` files from source JS files
   // This is mainly intended for symbol discovery through LSPs as
   // it will end up generating a lot of `any`s
-  await $.bin("tsc")`\
+  //
+  // This uses TypeScript 5 as TypeScript 7 no longer infers classes from constructor
+  // functions in JS, e.g. `JSONFile`, and it chokes on invalid JSDoc in `EventUtils.js`.
+  await $`node ${Path.join(ROOT_DIR, "node_modules", "typescript-5", "bin", "tsc")} \
     --declaration \
     --allowJs \
     --emitDeclarationOnly \
