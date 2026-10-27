@@ -20,6 +20,7 @@ glide.jar:
   content/browser-hints.mjs                    (content/dist/browser-hints.mjs)
   content/browser-api.mjs                      (content/dist/browser-api.mjs)
   content/browser-dev.mjs                      (content/dist/browser-dev.mjs)
+  content/command-history.mjs                  (content/dist/command-history.mjs)
   content/extensions.mjs                       (content/dist/extensions.mjs)
   content/sandbox.mjs                          (content/dist/sandbox.mjs)
   content/sandbox-properties.mjs               (content/sandbox-properties.mjs)

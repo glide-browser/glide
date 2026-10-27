@@ -358,6 +358,9 @@ declare namespace MockedExports {
     };
     "chrome://glide/content/bundled/dioscuri.mjs": { buffer: typeof import("dioscuri").buffer };
 
+    "chrome://glide/content/command-history.mjs":
+      typeof import("../src/glide/browser/base/content/command-history.mts");
+
     "resource://testing-common/DOMFullscreenTestUtils.sys.mjs":
       typeof import("../engine/browser/base/content/test/fullscreen/DOMFullscreenTestUtils.sys.mjs");
     "resource://testing-common/AddonTestUtils.sys.mjs":
@@ -366,6 +369,8 @@ declare namespace MockedExports {
       typeof import("../src/glide/browser/base/content/GlideTestUtils.sys.mts");
     "resource://testing-common/fast-check.mjs": typeof import("fast-check");
 
+    "resource://gre/modules/PrivateBrowsingUtils.sys.mjs":
+      typeof import("../engine/toolkit/modules/PrivateBrowsingUtils.sys.mjs");
     "resource://gre/modules/JSONFile.sys.mjs":
       typeof import("../src/glide/generated/toolkit/modules/JSONFile.sys.d.mts");
     "resource://gre/modules/FileUtils.sys.mjs": typeof import("../engine/toolkit/modules/FileUtils.sys.mjs");
