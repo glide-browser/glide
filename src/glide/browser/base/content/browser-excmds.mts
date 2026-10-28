@@ -426,6 +426,13 @@ class GlideExcmdsClass {
         break;
       }
 
+      case "commandline_history_clear": {
+        if (!PrivateBrowsingUtils.isWindowPrivate(window)) {
+          await CommandHistory.reset();
+        }
+        break;
+      }
+
       case "go_up": {
         const url = GlideBrowser.api.ctx.url;
         const parts = url.pathname.split("/").filter(Boolean);
