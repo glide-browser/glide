@@ -2,7 +2,7 @@
 
 # CommandLine
 
-Glide provides a commandline for executing [excmds](./excmds.md), [switching tabs](#tab-switcher), and as an [arbitrary picker](#custom-options).
+Glide provides a commandline for executing [excmds](./excmds.md), [switching tabs](#tab-switcher), [command history](#command-history), and as an [arbitrary picker](#custom-options).
 
 Press `:` in `normal` mode to open the commandline, you can then start typing to filter the displayed options, select a specific option with `<Up>` / `<Down>`, and press `<Enter>` to execute the selected option.
 
@@ -13,6 +13,17 @@ You can press `<Esc>` to close the commandline.
 Glide provides a tab switcher through the commandline that can be activated by pressing `<leader><leader>` in `normal` mode, or typing `tab` + `<space>` while the commandline is open.
 
 In this view, all tabs in the current window will be shown, selecting a tab will switch to it. You can also _delete_ the selected tab with `<C-d>`.
+
+## Command history
+
+Glide stores accepted `:` commands in the profile and can reopen them through the commandline with `q:` in `normal` mode, or with `:commandline_history`.
+
+In this view, previously executed commands are shown; selecting an entry runs it again. You can clear the stored history with `:commandline_history_clear`.
+
+The maximum number of stored entries is controlled by [`glide.o.command_history_max_entries`](api.md#glide.o.command_history_max_entries) (default `100`).
+
+> [!NOTE]
+> Command history is not available in private windows. Opening `q:` there shows a warning instead of previous commands.
 
 ## Custom options
 
@@ -86,14 +97,16 @@ These key mappings apply in `command` mode, while the commandline is focused.
 
 ## Excmds
 
-| Excmd                     | Action                           |
-| ------------------------- | -------------------------------- |
-| `:commandline_show`       | Show the commandline UI          |
-| `:commandline_toggle`     | Toggle the commandline UI on/off |
-| `:commandline_focus_next` | Focus the next completion        |
-| `:commandline_focus_back` | Focus the previous completion    |
-| `:commandline_accept`     | Accept the focused commandline   |
-| `:commandline_delete`     | Delete the focused completion    |
+| Excmd                        | Action                           |
+| ---------------------------- | -------------------------------- |
+| `:commandline_show`          | Show the commandline UI          |
+| `:commandline_toggle`        | Toggle the commandline UI on/off |
+| `:commandline_focus_next`    | Focus the next completion        |
+| `:commandline_focus_back`    | Focus the previous completion    |
+| `:commandline_accept`        | Accept the focused commandline   |
+| `:commandline_delete`        | Delete the focused completion    |
+| `:commandline_history`       | Show the command history         |
+| `:commandline_history_clear` | Clear the command history        |
 
 ## Examples
 
