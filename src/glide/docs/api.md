@@ -52,6 +52,7 @@ text-decoration: none;
 [`glide.o.yank_highlight_time`](#glide.o.yank_highlight_time)\
 [`glide.o.which_key_delay`](#glide.o.which_key_delay)\
 [`glide.o.jumplist_max_entries`](#glide.o.jumplist_max_entries)\
+[`glide.o.command_history_max_entries`](#glide.o.command_history_max_entries)\
 [`glide.o.hint_size`](#glide.o.hint_size)\
 [`glide.o.hint_chars`](#glide.o.hint_chars)\
 [`glide.o.hint_label_generator`](#glide.o.hint_label_generator)\
@@ -293,6 +294,12 @@ The delay, in milliseconds, before showing the which key UI.
 
 The maximum number of entries to include in the jumplist, i.e.
 how far back in history will the jumplist store.
+
+`ts:@default 100`
+
+### `glide.o.command_history_max_entries: number` {% id="glide.o.command_history_max_entries" %}
+
+The maximum number of entries to include in the command history.
 
 `ts:@default 100`
 
