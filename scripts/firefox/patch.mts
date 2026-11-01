@@ -9,7 +9,7 @@ import { BRANDING_DIR, CONFIGS_DIR, ENGINE_DIR, ROOT_DIR, SRC_DIR } from "../can
 import { chain, ensure_symlink, exists } from "../util.mts";
 import { get_platform, GLOB_ALL_FILES, IS_RELEASE } from "./util.mts";
 
-interface Context {
+export interface Context {
   errors: string[];
 }
 
@@ -27,16 +27,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 async function main() {
   const ctx: Context = { errors: [] };
 
-  const patch_args = [
-    "--ignore-space-change",
-    "--ignore-whitespace",
-    "--verbose",
-    // this creates `.rej` files for any conflicting hunks, and applies any hunks that do apply cleanly
-    // which is nice for resolving cases where there is just a single bad hunk.
-    process.argv.includes("--allow-partial") ? "--reject" : null,
-  ].filter(is_present);
-
-  await apply_git_patches(ctx, patch_args);
+  await apply_git_patches(ctx, get_patch_args({ allow_partial: process.argv.includes("--allow-partial") }));
   await setup_symlinks(ctx);
   await branding_patch(ctx);
 
@@ -51,7 +42,18 @@ async function main() {
   }
 }
 
-async function apply_git_patches(ctx: Context, patch_args: string[]) {
+export function get_patch_args({ allow_partial }: { allow_partial: boolean }): string[] {
+  return [
+    "--ignore-space-change",
+    "--ignore-whitespace",
+    "--verbose",
+    // this creates `.rej` files for any conflicting hunks, and applies any hunks that do apply cleanly
+    // which is nice for resolving cases where there is just a single bad hunk.
+    allow_partial ? "--reject" : null,
+  ].filter(is_present);
+}
+
+export async function apply_git_patches(ctx: Context, patch_args: string[]) {
   const patches = chain(
     fs.glob("*.patch", { cwd: Path.join(ROOT_DIR, "patches"), withFileTypes: true }),
     fs.glob("**/*.patch", { cwd: SRC_DIR, withFileTypes: true }),
