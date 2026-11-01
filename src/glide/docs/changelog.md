@@ -25,6 +25,7 @@ padding: 0.3em;
 
 - Bumped Firefox from 159.0b4 to 160.0b3
 - Fixed Perplexity still being listed as a built-in search engine
+- Fixed hints not being shown for links that are partially covered by another element, e.g. some Google search results
 
 # 0.1.65a
 
