@@ -23,6 +23,9 @@ const { GLIDE_EXCOMMANDS_MAP } = ChromeUtils.importESModule("chrome://glide/cont
 const Args = ChromeUtils.importESModule("chrome://glide/content/utils/args.mjs");
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const IPC = ChromeUtils.importESModule("chrome://glide/content/utils/ipc.mjs");
+const CommandLine = ChromeUtils.importESModule("chrome://glide/content/browser-commandline.mjs", { global: "current" });
+const { CommandHistory } = ChromeUtils.importESModule("chrome://glide/content/command-history.mjs");
+const { PrivateBrowsingUtils } = ChromeUtils.importESModule("resource://gre/modules/PrivateBrowsingUtils.sys.mjs");
 const { tab_id_to_firefox } = ChromeUtils.importESModule("chrome://glide/content/browser-api.mjs", {
   global: "current",
 });
@@ -405,6 +408,28 @@ class GlideExcmdsClass {
       case "commandline_accept": {
         const commandline = GlideBrowser.expect_commandline();
         commandline.accept_focused();
+        break;
+      }
+
+      case "commandline_history": {
+        const commands = PrivateBrowsingUtils.isWindowPrivate(window)
+          ? []
+          : await CommandHistory.list(GlideBrowser.api.o.command_history_max_entries);
+        const source = new CommandLine.CommandHistoryCompletionSource({ commands });
+
+        GlideBrowser.api.autocmds.create("CommandLineExit", function autocmd() {
+          GlideBrowser.api.autocmds.remove("CommandLineExit", autocmd);
+          source.container.remove();
+        });
+
+        await GlideBrowser.upsert_commandline({ sources: [source, ...GlideBrowser.commandline_sources] });
+        break;
+      }
+
+      case "commandline_history_clear": {
+        if (!PrivateBrowsingUtils.isWindowPrivate(window)) {
+          await CommandHistory.reset();
+        }
         break;
       }
 

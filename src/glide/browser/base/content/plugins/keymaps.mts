@@ -75,6 +75,7 @@ export function init(sandbox: Sandbox) {
 
   glide.keymaps.set("normal", ".", "repeat");
   glide.keymaps.set("normal", ":", "commandline_show");
+  glide.keymaps.set("normal", "q:", "commandline_history");
 
   glide.keymaps.set(["insert", "visual", "op-pending"], "<Esc>", "mode_change normal");
   glide.keymaps.set(["insert", "visual", "op-pending"], "<C-[>", "mode_change normal");
