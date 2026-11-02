@@ -24,6 +24,7 @@ padding: 0.3em;
 ## Changes {% id="0.1.66a-changes" %}
 
 - Bumped Firefox from 159.0b4 to 159.0b5
+- Fixed extensions' static content scripts (e.g. password manager in-page menus) never being delivered to content processes that lost the startup race with Glide's own startup
 
 # 0.1.65a
 
