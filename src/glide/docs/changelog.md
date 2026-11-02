@@ -23,6 +23,8 @@ padding: 0.3em;
 
 ## Changes {% id="0.1.66a-changes" %}
 
+- Bumped Firefox from 159.0b4 to 159.0b5
+- Fixed extensions' static content scripts (e.g. password manager in-page menus) never being delivered to content processes that lost the startup race with Glide's own startup
 - Bumped Firefox from 159.0b4 to 160.0b3
 - Fixed Perplexity still being listed as a built-in search engine
 - Fixed hints not being shown for links that are partially covered by another element, e.g. some Google search results

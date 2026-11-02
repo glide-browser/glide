@@ -148,6 +148,53 @@ class GlideBrowserClass {
           }
         }
 
+        // Firefox delivers an extension's static content scripts to an already-running content process exactly
+        // once: the parent writes the extension's startup data into `Services.ppmm.sharedData`, flushes it, and
+        // then broadcasts `Extension:Startup`, upon which the content process builds the extension's policy and
+        // injects its content scripts. Content processes that launch after the flush instead receive the data via
+        // their startup snapshot. In a stock Firefox both paths are covered.
+        //
+        // Glide's startup (config evaluation, the built-in glide-internal extension starting immediately) perturbs
+        // that ordering, and content processes can end up missing the broadcast entirely. Those processes
+        // permanently lack the extensions' content scripts (e.g. password manager in-page menus are missing),
+        // because sharedData `change` events don't rebuild policies (`ExtensionProcessScript.handleEvent` only
+        // handles `extensions/guards`), and opening the page in a new tab re-uses the same process so it doesn't
+        // help either.
+        //
+        // Work around that by re-running the delivery handshake for every started extension once browser startup
+        // has settled, mirroring the tail of `Extension.runManifest()`: re-put the startup data, flush sharedData,
+        // then re-broadcast `Extension:Startup`. For content processes that already have a correct policy this is
+        // a no-op (`initExtensionPolicy` returns the existing policy), for processes that missed the original
+        // broadcast it rebuilds the policy.
+        const redeliver_extension_startup = () => {
+          const extensions = [...ExtensionParent.GlobalManager.extensionMap.values()];
+
+          for (const extension of extensions) {
+            extension.initSharedData();
+          }
+
+          Services.ppmm.sharedData.flush();
+
+          for (const extension of extensions) {
+            extension.broadcast("Extension:Startup", extension.id);
+          }
+
+          GlideBrowser._log.debug(`re-delivered startup data of ${extensions.length} extensions to content processes`);
+        };
+
+        try {
+          redeliver_extension_startup();
+
+          // extensions can still be starting up when this observer fires, and the race window is wide, so run the
+          // re-delivery once more shortly after startup settled
+          setTimeout(redeliver_extension_startup, 2000);
+        } catch (err) {
+          if (testing) {
+            throw err;
+          }
+          console.error(err);
+        }
+
         Services.obs.removeObserver(startup_observer, "browser-idle-startup-tasks-finished");
       },
     };
