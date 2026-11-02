@@ -408,6 +408,8 @@ declare namespace MockedExports {
       typeof import("../engine/toolkit/components/search/SearchService.sys.mjs");
     "moz-src:///toolkit/components/search/SearchUtils.sys.mjs":
       typeof import("../engine/toolkit/components/search/SearchUtils.sys.mjs");
+    "resource://services-settings/remote-settings.sys.mjs":
+      typeof import("../engine/services/settings/remote-settings.sys.mjs");
     "moz-src:///browser/components/gemini/dist/GeminiProtocolHandler.sys.mjs":
       typeof import("../src/browser/components/gemini/GeminiProtocolHandler.sys.mts");
   }

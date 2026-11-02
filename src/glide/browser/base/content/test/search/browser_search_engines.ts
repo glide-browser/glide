@@ -42,6 +42,24 @@ async function focus_address_bar() {
   }
 }
 
+add_task(async function test_perplexity_is_not_a_builtin_engine() {
+  const engines = await Search.getAppProvidedEngines();
+  Assert.greater(engines.length, 0, "there should be some app provided engines");
+  ok(
+    !engines.some((engine: { name: string }) => engine.name === "Perplexity"),
+    "Perplexity should be removed from the search config",
+  );
+
+  // the engine is filtered out by the engine selector, the remote settings data itself must be left
+  // untouched, otherwise it would fail signature verification.
+  const { RemoteSettings } = ChromeUtils.importESModule("resource://services-settings/remote-settings.sys.mjs");
+  const records = await RemoteSettings("search-config-v2", {}).get();
+  ok(
+    records.some((record: { identifier?: string }) => record.identifier === "perplexity"),
+    "the remote settings search config should still contain Perplexity",
+  );
+});
+
 add_task(async function test_add_search_engine() {
   await using _ = defer_engine_cleanup();
 

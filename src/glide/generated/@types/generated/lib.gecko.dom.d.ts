@@ -28097,6 +28097,8 @@ interface PlacesVisit extends PlacesEvent {
     readonly typedCount: number;
     /** <!-- binding_to(idl, attribute, WEBIDL_PlacesVisit_url) --> */
     readonly url: string;
+    /** <!-- binding_to(idl, attribute, WEBIDL_PlacesVisit_userContextId) --> */
+    readonly userContextId: number;
     /** <!-- binding_to(idl, attribute, WEBIDL_PlacesVisit_visitCount) --> */
     readonly visitCount: number;
     /** <!-- binding_to(idl, attribute, WEBIDL_PlacesVisit_visitId) --> */

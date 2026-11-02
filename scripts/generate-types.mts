@@ -55,6 +55,12 @@ export async function generate_types() {
     await fs.mkdir("src/glide/generated/@types/extensions", { recursive: true });
 
     for (const file of await $.glob("*.ts", { cwd: "engine/tools/@types/" })) {
+      // these are opt-in browser window globals that only declare the members upstream code uses, so
+      // they would shadow our own, more complete, types for e.g. `BrowserCommands`.
+      if (file.startsWith("browser-window")) {
+        continue;
+      }
+
       await fs.copyFile(Path.join("engine/tools/@types", file), Path.join("src/glide/generated/@types", file));
     }
 

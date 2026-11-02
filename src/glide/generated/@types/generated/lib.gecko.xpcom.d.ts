@@ -25225,8 +25225,6 @@ interface nsICrashReporter extends nsISupports {
   isAnnotationAllowedForReport(value: string): boolean;
   /** <!-- binding_to(idl, method, XPIDL_nsICrashReporter_appendAppNotesToCrashReport) --> */
   appendAppNotesToCrashReport(data: string): void;
-  /** <!-- binding_to(idl, method, XPIDL_nsICrashReporter_registerAppMemory) --> */
-  registerAppMemory(ptr: u64, size: u64): void;
   /** <!-- binding_to(idl, attribute, XPIDL_nsICrashReporter_submitReports) --> */
   submitReports: boolean;
   /** <!-- binding_to(idl, method, XPIDL_nsICrashReporter_UpdateCrashEventsDir) --> */

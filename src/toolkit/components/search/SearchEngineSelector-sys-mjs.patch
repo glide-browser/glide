@@ -1,15 +1,39 @@
 diff --git a/toolkit/components/search/SearchEngineSelector.sys.mjs b/toolkit/components/search/SearchEngineSelector.sys.mjs
-index 85c9d83282a62f4e23c6a0a65e7ccd8c29872ea0..bb24432b1677cc065e93c2f1e8044f8a3f17bdf6 100644
+index 8c2a5b482601ac4dfa21c0a35bab82bf9fec469d..20c09a954bfdff5e5dd8b2a283730e8b4d8542d7 100644
 --- a/toolkit/components/search/SearchEngineSelector.sys.mjs
 +++ b/toolkit/components/search/SearchEngineSelector.sys.mjs
-@@ -43,6 +43,10 @@ export class SearchEngineSelector {
-    */
-   constructor(listener) {
-     this.#remoteConfig = lazy.RemoteSettings(lazy.SearchUtils.SETTINGS_KEY);
-+    // we have patched the `services/settings/dumps/main/search-config-v2.json` file which means it
-+    // won't match the signature from the mozilla services endpoint anymore, so just disable it.
-+    this.#remoteConfig.verifySignature = false;
+@@ -38,6 +38,16 @@ const lazy = XPCOMUtils.declareLazy({
+     }),
+ });
+ 
++const GLIDE_REMOVED_ENGINES = new Set(["perplexity"]);
 +
-     this.#remoteConfigOverrides = lazy.RemoteSettings(
-       lazy.SearchUtils.SETTINGS_OVERRIDES_KEY
-     );
++/**
++ * @param {object[]} records
++ * @returns {object[]}
++ */
++function glideFilterConfiguration(records) {
++  return records.filter(record => !GLIDE_REMOVED_ENGINES.has(record.identifier));
++}
++
+ /**
+  * SearchEngineSelector parses the JSON configuration for
+  * search engines and returns the applicable engines depending
+@@ -378,7 +388,7 @@ export class SearchEngineSelector {
+       // Now call this again.
+       return this.#getConfiguration(false);
+     }
+-    return result;
++    return glideFilterConfiguration(result);
+   }
+ 
+   /**
+@@ -396,7 +406,7 @@ export class SearchEngineSelector {
+    *   The new configuration object
+    */
+   _onConfigurationUpdated({ data: { current } }) {
+-    this.#configuration = current;
++    this.#configuration = glideFilterConfiguration(current);
+ 
+     if (lazy.SearchUtils.configV3FeatureGate) {
+       this.#selector.setSearchConfigV3(

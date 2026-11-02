@@ -18,7 +18,7 @@ An element is considered "hintable" if any of the following are true:
 - It has one of the following [roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles): `link`, `button`, `option`, `menuitem`, `menuitemcheckbox`, `menuitemradio`, `tab`, `checkbox`, `radio`.
 - The element is editable
 
-Then, for the element to actually have a hint generated, it must be visible on the page and not be overlapped by another element.
+Then, for the element to actually have a hint generated, it must be visible on the page and not be completely covered by another element.
 
 For example, if a modal is open then only elements _inside_ the modal will have hints.
 

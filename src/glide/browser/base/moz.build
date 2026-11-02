@@ -30,3 +30,7 @@ BROWSER_CHROME_MANIFESTS += [
     "content/test/ui/browser.toml",
     "content/test/utils/browser.toml",
 ]
+
+MARIONETTE_MANIFESTS += [
+    "content/test/marionette/manifest.toml",
+]

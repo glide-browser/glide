@@ -12,6 +12,7 @@ Glide extends and heavily builds on top of Firefox but for the most part Glide i
 8. On Linux, the auto updater is disabled.
 9. Support for the `gemini://` [protocol](gemini.md) is included out of the box
 10. The Firefox 157+ "Nova" UI redesign is disabled by default (`path:browser.nova.enabled`), keeping the previous tab and toolbar styling
+11. Perplexity is not included as a built-in search engine
 
 Additionally, the extension native messaging runtime paths are different:
 
