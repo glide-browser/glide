@@ -26,6 +26,9 @@ async function newtab() {
 
   return {
     [Symbol.dispose]() {
+      if (!tab) {
+        return;
+      }
       gBrowser.removeTab(tab);
     },
   };
