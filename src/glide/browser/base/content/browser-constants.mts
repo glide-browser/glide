@@ -5,7 +5,4 @@
 
 export const GLIDE_COMMANDLINE_INPUT_ANONID = "glide-commandline-input";
 
-// note: this URI doesn't actually exist but defining it like this
-//       means that devtools can resolve stack traces and show the
-//       config contents
-export const CONFIG_URI = "chrome://glide/config/glide.ts";
+export const CONFIG_URI = "glide://config/glide.ts";
