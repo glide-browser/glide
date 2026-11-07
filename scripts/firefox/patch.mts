@@ -67,12 +67,8 @@ export async function apply_git_patches(ctx: Context, patch_args: string[]) {
     const path = Path.join(entry.parentPath, entry.name);
     const relative_path = Path.relative(ROOT_DIR, Path.join(entry.parentPath, entry.name));
 
-    try {
-      await execa("git", ["apply", "-R", ...patch_args, path], { cwd: ENGINE_DIR });
-    } catch {
-      // If the patch has already been applied, we want to revert it. Because
-      // there is no good way to check this we are just going to catch and
-      // discard the error
+    if (await is_modified(path)) {
+      await execa("git", ["apply", "-R", ...patch_args, path], { cwd: ENGINE_DIR }).catch(() => null);
     }
 
     const result = await execa("git", ["apply", ...patch_args, path], { all: true, cwd: ENGINE_DIR }).catch((e) =>
@@ -87,6 +83,20 @@ export async function apply_git_patches(ctx: Context, patch_args: string[]) {
       console.error();
     }
   }
+}
+
+/**
+ * Whether any of the files touched by the given patch differ from the engine's `HEAD`.
+ */
+async function is_modified(patch_path: string): Promise<boolean> {
+  const { stdout: numstat } = await execa("git", ["apply", "--numstat", "-z", patch_path], { cwd: ENGINE_DIR });
+  const files = numstat.split("\0").filter(Boolean).map((entry) => entry.split("\t")[2]!);
+  if (!files.length) {
+    return true;
+  }
+
+  const { stdout: status } = await execa("git", ["status", "--porcelain", "--", ...files], { cwd: ENGINE_DIR });
+  return status.trim() !== "";
 }
 
 async function setup_symlinks(ctx: Context) {

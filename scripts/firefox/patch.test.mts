@@ -81,6 +81,18 @@ test("reports a patch that no longer applies", async () => {
   expect(await read_engine_file(FILE)).toBe(ORIGINAL.replace("two\n", "two (upstream)\n"));
 });
 
+test("reports a patch that only deletes lines and no longer applies", async () => {
+  const records = (...ids: string[]) =>
+    ids.map((id) => [`  {`, `    "id": "${id}",`, `    "tags": [`, `      "x"`, `    ]`, `  },`]).flat();
+  const original = lines("[", ...records("a", "removed", "b"), "]");
+  await commit_upstream({ [FILE]: original });
+  await create_patch(FILE, lines("[", ...records("a", "b"), "]"));
+  await commit_upstream({ [FILE]: original.replace(`"id": "removed",`, `"id": "removed", "upstream": true,`) });
+
+  expect(await patch()).toEqual([`src/${FILE}.patch`]);
+  expect(await read_engine_file(FILE)).toBe(original.replace(`"id": "removed",`, `"id": "removed", "upstream": true,`));
+});
+
 test("keeps changes to a patched file that haven't been exported yet", async () => {
   await commit_upstream({ [FILE]: ORIGINAL });
   await create_patch(FILE, ORIGINAL.replace("two\n", "two (glide)\n"));
