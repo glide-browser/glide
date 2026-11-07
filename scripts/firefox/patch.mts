@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { execa, ExecaError } from "execa";
 import fs from "fs/promises";
+import { createHash } from "node:crypto";
 import Path from "node:path";
 import { fileURLToPath } from "node:url";
 import config from "../../firefox.json" with { type: "json" };
@@ -59,6 +60,18 @@ export async function apply_git_patches(ctx: Context, patch_args: string[]) {
     fs.glob("**/*.patch", { cwd: SRC_DIR, withFileTypes: true }),
   );
 
+  // Files that don't match have been edited since, e.g. changes that haven't been exported yet, so they're
+  // left alone and handled by reverting the patch below.
+  const state_path = await get_patch_state_path();
+  for (const [file, hash] of Object.entries(await read_patch_state(state_path))) {
+    if (await hash_engine_file(file) === hash) {
+      await restore_engine_file(file);
+    }
+  }
+
+  const patched_files = new Set<string>();
+  const failed_files = new Set<string>();
+
   for await (const entry of patches) {
     if (entry.isDirectory()) {
       continue;
@@ -66,8 +79,9 @@ export async function apply_git_patches(ctx: Context, patch_args: string[]) {
 
     const path = Path.join(entry.parentPath, entry.name);
     const relative_path = Path.relative(ROOT_DIR, Path.join(entry.parentPath, entry.name));
+    const files = await get_patch_files(path);
 
-    if (await is_modified(path)) {
+    if (await is_modified(files)) {
       await execa("git", ["apply", "-R", ...patch_args, path], { cwd: ENGINE_DIR }).catch(() => null);
     }
 
@@ -75,22 +89,68 @@ export async function apply_git_patches(ctx: Context, patch_args: string[]) {
       e as ExecaError
     );
     if (result.exitCode === 0) {
+      files.forEach((file) => patched_files.add(file));
       console.log(chalk.green("patch"), " ", relative_path);
     } else {
+      files.forEach((file) => failed_files.add(file));
       ctx.errors.push(relative_path);
       console.error(chalk.red("patch"), " ", relative_path);
       console.error(indent(result.all as string, "        "));
       console.error();
     }
   }
+
+  const state: PatchState = {};
+  for (const file of patched_files) {
+    if (!failed_files.has(file)) {
+      state[file] = await hash_engine_file(file);
+    }
+  }
+  await fs.writeFile(state_path, JSON.stringify(state, null, 2) + "\n");
 }
 
 /**
- * Whether any of the files touched by the given patch differ from the engine's `HEAD`.
+ * relative file path -> hash of contents, null if deleted
  */
-async function is_modified(patch_path: string): Promise<boolean> {
+type PatchState = Record<string, string | null>;
+
+async function get_patch_state_path(): Promise<string> {
+  const { stdout } = await execa("git", ["rev-parse", "--git-path", "glide-patched-files.json"], { cwd: ENGINE_DIR });
+  return Path.resolve(ENGINE_DIR, stdout.trim());
+}
+
+async function read_patch_state(state_path: string): Promise<PatchState> {
+  try {
+    const state = JSON.parse(await fs.readFile(state_path, "utf8"));
+    return typeof state === "object" && state ? state as PatchState : {};
+  } catch {
+    return {};
+  }
+}
+
+async function hash_engine_file(file: string): Promise<string | null> {
+  const contents = await fs.readFile(Path.join(ENGINE_DIR, file)).catch(() => null);
+  return contents ? createHash("sha256").update(contents).digest("hex") : null;
+}
+
+async function restore_engine_file(file: string) {
+  const in_head = await execa("git", ["cat-file", "-e", `HEAD:${file}`], { cwd: ENGINE_DIR }).then(
+    () => true,
+    () => false,
+  );
+  if (in_head) {
+    await execa("git", ["checkout", "HEAD", "--", file], { cwd: ENGINE_DIR });
+  } else {
+    await fs.rm(Path.join(ENGINE_DIR, file), { force: true });
+  }
+}
+
+async function get_patch_files(patch_path: string): Promise<string[]> {
   const { stdout: numstat } = await execa("git", ["apply", "--numstat", "-z", patch_path], { cwd: ENGINE_DIR });
-  const files = numstat.split("\0").filter(Boolean).map((entry) => entry.split("\t")[2]!);
+  return numstat.split("\0").filter(Boolean).map((entry) => entry.split("\t")[2]!);
+}
+
+async function is_modified(files: string[]): Promise<boolean> {
   if (!files.length) {
     return true;
   }

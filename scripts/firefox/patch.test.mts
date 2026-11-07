@@ -106,6 +106,29 @@ test("keeps changes to a patched file that haven't been exported yet", async () 
   );
 });
 
+test("removes the changes from the previous version of an edited patch", async () => {
+  await commit_upstream({ [FILE]: ORIGINAL });
+  await create_patch(FILE, ORIGINAL.replace("two\n", "two (glide)\n"));
+  expect(await patch()).toEqual([]);
+
+  // e.g. switching to a branch where the patch changes a different part of the file
+  await create_patch(FILE, ORIGINAL.replace("nine\n", "nine (glide)\n"));
+
+  expect(await patch()).toEqual([]);
+  expect(await read_engine_file(FILE)).toBe(ORIGINAL.replace("nine\n", "nine (glide)\n"));
+});
+
+test("removes the changes from a deleted patch", async () => {
+  await commit_upstream({ [FILE]: ORIGINAL });
+  const patch_path = await create_patch(FILE, ORIGINAL.replace("two\n", "two (glide)\n"));
+  expect(await patch()).toEqual([]);
+
+  await fs.rm(patch_path);
+
+  expect(await patch()).toEqual([]);
+  expect(await read_engine_file(FILE)).toBe(ORIGINAL);
+});
+
 function lines(...lines: string[]): string {
   return lines.join("\n") + "\n";
 }
