@@ -9,3 +9,6 @@ support-files = [
 
 ["dist/browser_commandline.js"]
 https_first_disabled = true
+
+["dist/browser_commandline_history.js"]
+https_first_disabled = true

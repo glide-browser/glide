@@ -162,6 +162,12 @@ xul|glide-commandline input:focus {
   background: hsla(0, 0%, 100%, 0.05);
 }
 
+[anonid="glide-commandline-completions"] .gcl-history-notice,
+[anonid="glide-commandline-completions"] .gcl-history-notice:hover {
+  color: #a0aec0;
+  background: transparent;
+}
+
 .glide-commandline-url {
   text-decoration: var(--glide-url-text-decoration);
 }

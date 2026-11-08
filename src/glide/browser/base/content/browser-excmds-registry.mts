@@ -254,6 +254,20 @@ export const GLIDE_EXCOMMANDS = [
     args_schema: {},
     repeatable: false,
   },
+  {
+    name: "commandline_history",
+    description: "Show the commandline with previously executed commands",
+    content: false,
+    args_schema: {},
+    repeatable: false,
+  },
+  {
+    name: "commandline_history_clear",
+    description: "Clear the commandline history",
+    content: false,
+    args_schema: {},
+    repeatable: false,
+  },
 
   {
     name: "url_yank",
