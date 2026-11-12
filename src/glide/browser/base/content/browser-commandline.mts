@@ -214,8 +214,21 @@ export class TabsCompletionSource implements GlideCompletionSource<TabCompletion
           ],
         }),
 
-        async accept() {
-          gBrowser.selectedTab = tab;
+        async accept(ctx) {
+          const input = ctx.input.trim();
+          const parts = input.split(" ");
+          const arg = parts[1];
+
+          // User typed "tab " with no arg - select the focused tab from completion list
+          if (arg === undefined || arg === "") {
+            gBrowser.selectedTab = tab;
+            GlideBrowser.remove_notification("glide-excmd-error");
+            return;
+          }
+
+          // User typed "tab <something>" - execute through GlideExcmds
+          // This handles both valid indices and invalid input (which will show an error)
+          await GlideExcmds.execute(input as any);
         },
         async delete() {
           gBrowser.removeTab(this.tab);
