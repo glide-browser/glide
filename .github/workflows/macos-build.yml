@@ -11,6 +11,19 @@ on:
         type: string
         default: ""
         description: "Set the build id"
+      # TEMPORARY, see the `signed-mar-test` job
+      signed_mar_test:
+        description: "TEMPORARY: rehearse the signed update MAR pipeline with the build's artifacts"
+        type: boolean
+        default: false
+      signed_mar_test_run_id:
+        description: "TEMPORARY: rehearse with the artifacts of this run id instead of building"
+        type: string
+        default: ""
+      signed_mar_test_skip:
+        description: "TEMPORARY: rehearsal phases to skip, e.g. b,c"
+        type: string
+        default: ""
   workflow_call:
     inputs:
       artifacts:
@@ -25,6 +38,8 @@ on:
 jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
+    # TEMPORARY condition, see the `signed-mar-test` job
+    if: ${{ !inputs.signed_mar_test_run_id }}
 
     runs-on: depot-macos-26
     env:
@@ -177,3 +192,151 @@ jobs:
           retention-days: 10
           name: macos-${{ matrix.arch }}-updates
           path: ./dist/update/
+
+  # TEMPORARY rehearsal for `fix/macos-signed-update-mar`, do not merge.
+  #
+  # The sign job only runs during a release, so this runs the same steps as macos-sign.yml
+  # against the build's artifacts, with a throwaway certificate instead of the Apple credentials.
+  signed-mar-test:
+    name: Signed MAR rehearsal - ${{ matrix.arch }}
+    needs: [macos-build]
+    if: ${{ inputs.signed_mar_test && !cancelled() }}
+    runs-on: "macos-15"
+    env:
+      GLIDE_COMPAT: ${{ matrix.arch }}
+      ARTIFACTS_RUN_ID: ${{ inputs.signed_mar_test_run_id || github.run_id }}
+
+    timeout-minutes: 100
+    permissions:
+      contents: read
+      actions: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, x86_64]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Configure git
+        run: |
+          git config --global \
+            url."https://github.com/mozilla-firefox/firefox.git".insteadOf \
+            "git@github.com:mozilla-firefox/firefox.git"
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+
+      - name: Download built DMG
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: glide.macos-${{ matrix.arch }}.dmg
+          path: dist
+          run-id: ${{ env.ARTIFACTS_RUN_ID }}
+          github-token: ${{ github.token }}
+
+      - name: Rename DMG
+        run: |
+          mv dist/*.dmg dist/glide.dmg
+
+      - name: Download MAR tool
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: macos-${{ matrix.arch }}-mar-tool
+          path: dist/mar-tool
+          run-id: ${{ env.ARTIFACTS_RUN_ID }}
+          github-token: ${{ github.token }}
+
+      - name: Download update manifests
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: macos-${{ matrix.arch }}-updates
+          path: dist/updates
+          run-id: ${{ env.ARTIFACTS_RUN_ID }}
+          github-token: ${{ github.token }}
+
+      # not used by the sign job, only to check that the previous release can update to this build
+      - name: Download unsigned MAR
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: macos-${{ matrix.arch }}.mar
+          path: dist/unsigned-mar
+          run-id: ${{ env.ARTIFACTS_RUN_ID }}
+          github-token: ${{ github.token }}
+
+      - name: Install system dependencies
+        run: |
+          brew update
+          brew install cairo gnu-tar mercurial xz
+          sudo pip install setuptools
+
+          brew uninstall --ignore-dependencies python3.12 -f
+
+          export PATH="$(python3 -m site --user-base)/bin":$PATH
+          python3 -m pip install --user mercurial
+
+          rm '/usr/local/bin/2to3-3.11' '/usr/local/bin/2to3-3.12' '/usr/local/bin/2to3'
+          rm '/usr/local/bin/idle3.11' '/usr/local/bin/idle3.12' '/usr/local/bin/idle3'
+          rm '/usr/local/bin/pydoc3.11' '/usr/local/bin/pydoc3.12' '/usr/local/bin/pydoc3'
+          rm '/usr/local/bin/python3.11' '/usr/local/bin/python3.12' '/usr/local/bin/python3'
+          rm '/usr/local/bin/python3.11-config' '/usr/local/bin/python3.12-config' '/usr/local/bin/python3-config'
+
+          brew install watchman cargo-binstall
+
+      - name: Install apple-codesign
+        run: |
+          cargo binstall -y apple-codesign
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Force usage of gnu-tar
+        run: |
+          echo 'export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"' >> ~/.bash_profile
+          echo 'export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"' >> ~/.zsh
+          source ~/.bash_profile
+
+      - name: Bootstrap repo
+        run: |
+          pnpm bootstrap
+
+          cd engine
+          export GLIDE_PLATFORM="macos"
+          export PATH="$(python3 -m site --user-base)/bin":$PATH
+          ./mach --no-interactive bootstrap --application-choice browser --no-system-changes || true
+          cd ..
+
+      - name: Rehearse the sign job
+        run: |
+          python3 .github/scripts/macos-signed-mar-test.py \
+            --arch "$GLIDE_COMPAT" \
+            --work "$RUNNER_TEMP/signed-mar" \
+            --build-dmg dist/glide.dmg \
+            --mar-tool dist/mar-tool/mar \
+            --updates dist/updates \
+            --unsigned-mar "dist/unsigned-mar/macos-$GLIDE_COMPAT.mar" \
+            --skip "$SKIP"
+        env:
+          SKIP: ${{ inputs.signed_mar_test_skip }}
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          retention-days: 7
+          name: signed-mar-test-${{ matrix.arch }}
+          path: ${{ runner.temp }}/signed-mar/logs
