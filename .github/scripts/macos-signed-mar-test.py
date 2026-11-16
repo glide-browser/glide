@@ -474,7 +474,11 @@ def write_profile(profile: Path) -> None:
 
 
 def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -> dict:
-    """Start Glide through LaunchServices and ask it for its version and screen recording state."""
+    """Start Glide through LaunchServices and ask it for its version and screen recording state.
+
+    Raises if it never starts. If it starts but can't be queried in the chrome context, the
+    result only has what the WebDriver session reports, plus `query_error`.
+    """
     quit_glide()
     restart_tccd()
 
@@ -485,6 +489,8 @@ def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -
 
     run(
         ["open", "-n", "-F", "-a", APP, "--stdout", glide_log, "--stderr", glide_log]
+        # the chrome context is behind this variable in current builds, older ones take the flag
+        + ["--env", "MOZ_REMOTE_ALLOW_SYSTEM_ACCESS=1"]
         + ["--args", "-profile", profile, "--marionette", "--remote-allow-system-access"],
         check=False,
     )
@@ -511,12 +517,19 @@ def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -
         tail = "\n".join(glide_log.read_text(errors="replace").splitlines()[-30:])
         raise RuntimeError(f"Marionette never came up ({last_error}), running pids: {pids}\n{tail}")
 
+    result: dict = {}
     try:
-        client.send("WebDriver:NewSession", {})
-        client.send("Marionette:SetContext", {"value": "chrome"})
-        # give the window server a moment, the screen recording heuristic looks at other apps' windows
-        time.sleep(5)
-        result = client.send("WebDriver:ExecuteScript", {"script": QUERY_SCRIPT, "args": []})["value"]
+        session = client.send("WebDriver:NewSession", {})
+        capabilities = session.get("capabilities", {}) if isinstance(session, dict) else {}
+        result["browser_version"] = capabilities.get("browserVersion")
+        result["session_build_id"] = capabilities.get("moz:buildID")
+        try:
+            client.send("Marionette:SetContext", {"value": "chrome"})
+            # give the window server a moment, the screen recording heuristic looks at other apps' windows
+            time.sleep(5)
+            result.update(client.send("WebDriver:ExecuteScript", {"script": QUERY_SCRIPT, "args": []})["value"])
+        except MarionetteError as e:
+            result["query_error"] = str(e)[:300]
         log("query result: " + json.dumps(result))
         pid = result.get("pid")
         if pid:
@@ -526,6 +539,31 @@ def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -
         return result
     finally:
         quit_glide(client)
+
+
+def launch_checks(phase: str, name: str, label: str, version: str, work: Path, logs: Path) -> dict | None:
+    """Start Glide and record that it starts and which version it is. None if it could not be asked."""
+    try:
+        result = query_glide(label, work, logs)
+    except Exception as e:
+        check(phase, f"{name}: starts", False, str(e)[:300])
+        return None
+    check(
+        phase,
+        f"{name}: starts",
+        True,
+        f"Firefox {result.get('browser_version')}, build {result.get('session_build_id')}, {result.get('responsible', '')}",
+    )
+    if "query_error" in result:
+        check(phase, f"{name}: answers in the chrome context", False, result["query_error"])
+        return None
+    check(
+        phase,
+        f"{name}: is version {version}",
+        result.get("version") == version,
+        f"version {result.get('version')}, platform {result.get('platform_version')}, build {result.get('build_id')}",
+    )
+    return result
 
 
 def screen_state(result: dict) -> str:
@@ -899,6 +937,18 @@ def phase_b(args: argparse.Namespace, work: Path, logs: Path, info: dict) -> Non
     requirement = designated_requirement(reference)
     check(phase, f"{args.prev} DMG is Developer ID signed", TEAM_ID in requirement, requirement[:160])
 
+    group("phase B: Gatekeeper's view of the published apps as shipped")
+    for version in (args.old, args.mid, args.prev):
+        verdict = run(["spctl", "--assess", "--type", "execute", "--verbose=4", apps[version]], check=False, show=4)
+        stapled = run(["xcrun", "stapler", "validate", work / f"published/{version}.dmg"], check=False, show=4)
+        check(
+            phase,
+            f"{version} app straight from its DMG: Gatekeeper assessment",
+            None,
+            " / ".join(line.strip() for line in verdict.stdout.splitlines() if line.strip())[:160]
+            + f"; ticket stapled to the DMG: {stapled.returncode == 0}",
+        )
+
     group("phase B: MAR from the signed app, made with the build's mar tool")
     signed_mar = work / "published" / f"{args.prev}.signed.mar"
     # upload-artifact drops the executable bit (macos-sign.sh restores it itself in phase A)
@@ -936,12 +986,9 @@ def phase_b(args: argparse.Namespace, work: Path, logs: Path, info: dict) -> Non
                 tcc_grant(requirement, work)
             elif grant == "none":
                 tcc_revoke()
-            try:
-                result = query_glide(re.sub(r"[^a-z0-9]+", "-", name.lower()), work, logs)
-            except Exception as e:
-                check(phase, f"{name}: starts", False, str(e)[:300])
+            result = launch_checks(phase, name, re.sub(r"[^a-z0-9]+", "-", name.lower()), args.prev, work, logs)
+            if result is None:
                 return record
-            check(phase, f"{name}: starts", result.get("version") == args.prev, f"version {result.get('version')}, responsible {result.get('responsible')}")
             state = screen_state(result)
             detail = f"{state}, CGPreflight {result.get('cg_preflight')}"
             authorized = state == "authorized" and result.get("cg_preflight") is True
@@ -1002,11 +1049,7 @@ def phase_c(args: argparse.Namespace, work: Path, logs: Path, info: dict, rehear
     group("phase C: the unsigned build starts")
     build_app = extract_app(args.build_dmg, work / "build-dmg" / "Glide.app", work)
     install_app(build_app)
-    try:
-        result = query_glide("build-app", work, logs)
-        check(phase, "the build's app starts", result.get("version") == version, f"version {result.get('version')}, platform {result.get('platform_version')}, build {result.get('build_id')}")
-    except Exception as e:
-        check(phase, "the build's app starts", False, str(e)[:300])
+    launch_checks(phase, "the build's app", "build-app", version, work, logs)
 
     prev_app = work / f"published/{args.prev}/Glide.app"
     if not prev_app.exists():
@@ -1021,11 +1064,7 @@ def phase_c(args: argparse.Namespace, work: Path, logs: Path, info: dict, rehear
             diff = compare(tree_listing(APP), tree_listing(build_app))
             leftover = [p for p in diff["only_a"] if not ADD_IF_NOT.search(p)]
             check(phase, f"{args.prev} -> build's unsigned MAR: files left over from the signed install", None, ", ".join(leftover) or "none")
-            try:
-                result = query_glide("build-unsigned-mar", work, logs)
-                check(phase, f"{args.prev} -> build's unsigned MAR: starts", result.get("version") == version, f"version {result.get('version')}, platform {result.get('platform_version')}")
-            except Exception as e:
-                check(phase, f"{args.prev} -> build's unsigned MAR: starts", False, str(e)[:300])
+            launch_checks(phase, f"{args.prev} -> build's unsigned MAR", "build-unsigned-mar", version, work, logs)
 
     if rehearsal and rehearsal["mar"].exists():
         group(f"phase C: {args.prev} updater applies the rehearsal's MAR")

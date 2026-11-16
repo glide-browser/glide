@@ -193,6 +193,24 @@ jobs:
           name: macos-${{ matrix.arch }}-updates
           path: ./dist/update/
 
+  # TEMPORARY: the GitHub hosted macOS runners have System Integrity Protection disabled, so
+  # they can't show everything a user's Mac does when an app bundle is modified. Are the depot
+  # runners any different? Takes a few seconds.
+  sip-probe:
+    name: SIP probe
+    if: ${{ inputs.signed_mar_test }}
+    runs-on: depot-macos-26
+    timeout-minutes: 5
+    permissions: {}
+
+    steps:
+      - name: Probe
+        run: |
+          sw_vers
+          uname -m
+          csrutil status || true
+          spctl --status || true
+
   # TEMPORARY rehearsal for `fix/macos-signed-update-mar`, do not merge.
   #
   # The sign job only runs during a release, so this runs the same steps as macos-sign.yml
