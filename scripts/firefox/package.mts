@@ -113,7 +113,15 @@ async function create_mar_file(
 
   const to_shell_path = (p: string) => platform === "windows" ? p.replace(/\\/g, "/") : p;
 
-  await engine_run("./tools/update-packaging/make_full_update.sh", [to_shell_path(DIST_DIR), to_shell_path(binary)], {
+  // The app name is required since Firefox 160, it is used to put `<app name>.exe` last in
+  // the update manifest. Upstream passes the lowercased `Name` from application.ini.
+  const app_name = config.binary_name;
+
+  await engine_run("./tools/update-packaging/make_full_update.sh", [
+    to_shell_path(DIST_DIR),
+    to_shell_path(binary),
+    app_name,
+  ], {
     env: {
       MAR: to_shell_path(mar_binary),
       MAR_CHANNEL_ID: channel,
