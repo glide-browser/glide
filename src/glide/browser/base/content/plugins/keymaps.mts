@@ -92,6 +92,12 @@ export function init(sandbox: Sandbox) {
     glide.keymaps.set("op-pending", motion, "execute_motion");
   }
 
+  // find-char motions — only available in op-pending (df, dF, dt, dT, cf, cF, ct, cT)
+  glide.keymaps.set("op-pending", "f", "execute_find f");
+  glide.keymaps.set("op-pending", "F", "execute_find F");
+  glide.keymaps.set("op-pending", "t", "execute_find t");
+  glide.keymaps.set("op-pending", "T", "execute_find T");
+
   glide.keymaps.set(["normal", "visual"], "w", "motion w");
   glide.keymaps.set(["normal", "visual"], "W", "motion W");
   glide.keymaps.set("normal", "e", "motion e");
