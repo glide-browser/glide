@@ -14,6 +14,9 @@ B. What macOS makes of an install after it was updated with a MAR built from a *
    signed app, using the published releases and their own updaters:
      - an old signed install updated straight to a signed MAR (the steady state after the fix)
      - an install that already lost its signature to a published MAR (today's users)
+     - the update after that one, applied by the updater that is signed again
+     - an install somebody re-signed by hand (ad-hoc), whose frameworks never get replaced
+     - what a MAR that replaces the two channel frameworks would do instead (not what ships)
 
 C. The build itself: that it starts, and that the previous release's updater can apply the
    MARs this build's tooling creates.
@@ -57,6 +60,11 @@ RELEASES = "https://github.com/glide-browser/glide/releases/download"
 
 # files the updater only adds when they are missing, so they stay as first installed
 ADD_IF_NOT = re.compile(r"(^|/)(ChannelPrefs|UpdateSettings)\.framework/")
+
+# Loaded in a web content process. Those are hardened helpers which, unlike the main process,
+# can only load libraries signed by the app's team, and XUL pulls in ChannelPrefs.framework.
+CONTENT_TITLE = "glide-content-ok"
+CONTENT_URL = f"data:text/html,<title>{CONTENT_TITLE}</title>"
 
 # nsIOSPermissionRequest.PERMISSION_STATE_*
 PERMISSION_STATES = {0: "notdetermined", 1: "restricted", 2: "denied", 3: "authorized"}
@@ -303,6 +311,7 @@ def glide_pids() -> list[int]:
 def quit_glide(client: Marionette | None = None) -> None:
     if client is not None:
         try:
+            client.sock.settimeout(20)
             client.send("Marionette:Quit", {"flags": ["eForceQuit"]})
         except Exception as e:  # the connection usually drops before the reply arrives
             log(f"  Marionette:Quit: {e}")
@@ -502,7 +511,7 @@ def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -
     gone = 0
     while time.time() < deadline:
         try:
-            client = Marionette(MARIONETTE_PORT)
+            client = Marionette(MARIONETTE_PORT, timeout=150)
             break
         except (OSError, ValueError) as e:
             last_error = e
@@ -524,6 +533,13 @@ def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -
         result["browser_version"] = capabilities.get("browserVersion")
         result["session_build_id"] = capabilities.get("moz:buildID")
         try:
+            client.send("WebDriver:SetTimeouts", {"pageLoad": 90000})
+            client.send("WebDriver:Navigate", {"url": CONTENT_URL})
+            title = client.send("WebDriver:GetTitle")
+            result["content_title"] = title.get("value") if isinstance(title, dict) else title
+        except (MarionetteError, OSError) as e:
+            result["content_error"] = (str(e) or type(e).__name__)[:300]
+        try:
             client.send("Marionette:SetContext", {"value": "chrome"})
             # give the window server a moment, the screen recording heuristic looks at other apps' windows
             time.sleep(5)
@@ -541,27 +557,48 @@ def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -
         quit_glide(client)
 
 
-def launch_checks(phase: str, name: str, label: str, version: str, work: Path, logs: Path) -> dict | None:
-    """Start Glide and record that it starts and which version it is. None if it could not be asked."""
+def launch_checks(
+    phase: str, name: str, label: str, version: str, work: Path, logs: Path, strict: bool = True
+) -> dict | None:
+    """Start Glide and record that it starts, can load a page and which version it is.
+
+    None if it could not be asked. With strict=False nothing is expected of it, what happens
+    is only reported.
+    """
+
+    def verdict(ok: bool) -> bool | None:
+        return ok if strict else None
+
+    def answer(ok: bool, detail: str) -> str:
+        return detail if strict else f"{'yes' if ok else 'NO'}: {detail}"
+
     try:
         result = query_glide(label, work, logs)
     except Exception as e:
-        check(phase, f"{name}: starts", False, str(e)[:300])
+        check(phase, f"{name}: starts", verdict(False), answer(False, str(e)[:300]))
         return None
     check(
         phase,
         f"{name}: starts",
-        True,
-        f"Firefox {result.get('browser_version')}, build {result.get('session_build_id')}, {result.get('responsible', '')}",
+        verdict(True),
+        answer(True, f"Firefox {result.get('browser_version')}, build {result.get('session_build_id')}, {result.get('responsible', '')}"),
+    )
+    content_ok = result.get("content_title") == CONTENT_TITLE
+    check(
+        phase,
+        f"{name}: loads a page in a content process",
+        verdict(content_ok),
+        answer(content_ok, "loaded" if content_ok else f"title {result.get('content_title')!r}, {result.get('content_error', 'no error')}"),
     )
     if "query_error" in result:
-        check(phase, f"{name}: answers in the chrome context", False, result["query_error"])
+        check(phase, f"{name}: answers in the chrome context", verdict(False), answer(False, result["query_error"]))
         return None
+    version_ok = result.get("version") == version
     check(
         phase,
         f"{name}: is version {version}",
-        result.get("version") == version,
-        f"version {result.get('version')}, platform {result.get('platform_version')}, build {result.get('build_id')}",
+        verdict(version_ok),
+        answer(version_ok, f"version {result.get('version')}, platform {result.get('platform_version')}, build {result.get('build_id')}"),
     )
     return result
 
@@ -600,6 +637,31 @@ def build_mar(mar_tool: Path, app: Path, version: str, out: Path) -> None:
     env = dict(os.environ, MAR=str(mar_tool), MAR_CHANNEL_ID="glide", MOZ_PRODUCT_VERSION=version)
     run(
         ["./tools/update-packaging/make_full_update.sh", out, app, firefox_json()["binary_name"]],
+        env=env,
+        cwd=ENGINE,
+        timeout=1800,
+        show=4,
+    )
+
+
+def build_mar_replacing_frameworks(mar_tool: Path, app: Path, version: str, out: Path, work: Path) -> None:
+    """A MAR whose manifest replaces the two channel frameworks instead of `add-if-not`.
+
+    Not what the branch ships, it is here to find out what that alternative would do.
+    """
+    scripts = work / "update-packaging-replace"
+    shutil.rmtree(scripts, ignore_errors=True)
+    shutil.copytree(ENGINE / "tools/update-packaging", scripts)
+    common = scripts / "common.sh"
+    lines = common.read_text().splitlines(keepends=True)
+    # each condition of check_for_add_if_not_update() is on its own line
+    kept = [line for line in lines if not re.search(r"=~ .*(ChannelPrefs|UpdateSettings)\\\.framework/", line)]
+    if len(lines) - len(kept) != 2:
+        raise RuntimeError(f"expected to drop 2 framework conditions from common.sh, dropped {len(lines) - len(kept)}")
+    common.write_text("".join(kept))
+    env = dict(os.environ, MAR=str(mar_tool), MAR_CHANNEL_ID="glide", MOZ_PRODUCT_VERSION=version)
+    run(
+        [scripts / "make_full_update.sh", out, app, firefox_json()["binary_name"]],
         env=env,
         cwd=ENGINE,
         timeout=1800,
@@ -963,8 +1025,8 @@ def phase_b(args: argparse.Namespace, work: Path, logs: Path, info: dict) -> Non
         check(phase, "update scenarios", None, f"skipped, this runner cannot run {args.arch} binaries")
         return
 
-    def step(scenario: str, label: str, expect_signed: bool, launch: bool, grant: str | None) -> dict:
-        """Inspect /Applications/Glide.app as it is now."""
+    def step(scenario: str, label: str, expect_signed: bool, launch: bool, grant: str | None, exact: bool = False) -> dict:
+        """Inspect /Applications/Glide.app as it is now. exact: the frameworks must match the DMG too."""
         name = f"{scenario} / {label}"
         record = inspect(APP)
         log(f"{name}: {record}")
@@ -972,8 +1034,11 @@ def phase_b(args: argparse.Namespace, work: Path, logs: Path, info: dict) -> Non
         record["diff"] = describe(diff, "install", f"{args.prev} DMG")
         if expect_signed:
             check(phase, f"{name}: Developer ID signed", record["team"] == TEAM_ID and "runtime" in record["flags"], f"{record['identifier']} / {record['flags']} / {record['team']}")
-            only_frameworks = not diff["only_a"] and not diff["only_b"] and all(ADD_IF_NOT.search(p) for p in diff["differ"])
-            check(phase, f"{name}: same files as the {args.prev} DMG, apart from the add-if-not frameworks", only_frameworks, record["diff"])
+            if exact:
+                check(phase, f"{name}: same files as the {args.prev} DMG, including the frameworks", not any(diff.values()), record["diff"])
+            else:
+                only_frameworks = not diff["only_a"] and not diff["only_b"] and all(ADD_IF_NOT.search(p) for p in diff["differ"])
+                check(phase, f"{name}: same files as the {args.prev} DMG, apart from the add-if-not frameworks", only_frameworks, record["diff"])
             check(phase, f"{name}: codesign --verify --deep", record["verify_deep_ok"], record["verify_deep"])
             ok, detail = strict_without_xattrs(APP, work)
             check(phase, f"{name}: codesign --verify --deep --strict (xattrs cleared)", ok, detail)
@@ -1032,6 +1097,85 @@ def phase_b(args: argparse.Namespace, work: Path, logs: Path, info: dict) -> Non
         step(scenario, "after published MARs (today)", False, False, None)
         if update(scenario, signed_mar, "signed MAR"):
             step(scenario, "after signed MAR", True, True, "developer-id")
+
+    def guarded(title: str, fn) -> None:
+        """Run an extra scenario without letting it take the rest of the phase down."""
+        group(f"phase B: {title}")
+        try:
+            fn()
+        except Exception as e:
+            traceback.print_exc()
+            check(phase, f"{title}: scenario aborted", False, f"{type(e).__name__}: {str(e)[:300]}")
+
+    def slug(text: str) -> str:
+        return re.sub(r"[^a-z0-9]+", "-", text.lower())
+
+    # every release after the first fixed one: a Developer ID signed updater (hardened runtime)
+    # updates a signed install whose frameworks are from another release
+    again = f"{args.old} DMG -> signed MAR -> signed MAR again"
+
+    def second_signed_update() -> None:
+        install_app(apps[args.old])
+        if update(again, signed_mar, "signed MAR") and update(again, signed_mar, "second signed MAR, applied by the signed updater"):
+            step(again, "after the second signed MAR", True, True, "developer-id")
+
+    guarded(again, second_signed_update)
+
+    replace_mar: Path | None = work / "published" / f"{args.prev}.signed.replace.mar"
+
+    def build_replace_mar() -> None:
+        nonlocal replace_mar
+        try:
+            build_mar_replacing_frameworks(args.mar_tool, reference, args.prev, replace_mar, work)
+            manifest = read_mar(replace_mar)["files"]["updatev3.manifest"][0].decode()
+        except Exception:
+            replace_mar = None
+            raise
+        kept = [line for line in manifest.splitlines() if line.startswith("add-if-not") and ADD_IF_NOT.search(line)]
+        replaced = [line for line in manifest.splitlines() if line.startswith("add ") and ADD_IF_NOT.search(line)]
+        check(phase, "option MAR: its manifest replaces the channel frameworks", not kept and len(replaced) >= 6, f"{len(replaced)} add, {len(kept)} add-if-not")
+
+    guarded("option: a MAR that replaces the channel frameworks", build_replace_mar)
+
+    # e.g. the PWAsForFirefox recipe in discussion #91, or an unsigned CI build that takes
+    # release updates: ChannelPrefs.framework is not signed by Glide's team and never replaced
+    resigned = f"hand re-signed {args.prev} install -> signed MAR"
+
+    def resigned_install() -> None:
+        install_app(reference)
+        run(["xattr", "-cr", APP], check=False, show=0)
+        run(["codesign", "--force", "--deep", "--sign", "-", APP], show=3)
+        record = inspect(APP)
+        check(phase, f"{resigned}: ad-hoc before the update", None, f"{record['identifier']} / {record['flags']} / {record['team']}")
+        if not update(resigned, signed_mar, "signed MAR"):
+            return
+        record = inspect(APP)
+        framework = run(["codesign", "--display", "--verbose=2", APP / "Contents/Frameworks/ChannelPrefs.framework"], check=False, show=0).stdout
+        check(
+            phase,
+            f"{resigned} / after signed MAR: signature state",
+            None,
+            f"app: {record['identifier']} / {record['flags']} / {record['team']};"
+            f" ChannelPrefs.framework: {'ad-hoc' if 'Signature=adhoc' in framework else 'not ad-hoc'}; verify: {record['verify_deep']}",
+        )
+        tcc_revoke()
+        launch_checks(phase, f"{resigned} / after signed MAR (expected to lose its content processes)", slug(f"{resigned}-after-signed-mar"), args.prev, work, logs, strict=False)
+        if replace_mar is not None and update(resigned, replace_mar, "MAR that replaces the frameworks"):
+            step(resigned, "after the MAR that replaces the frameworks", True, True, "developer-id", exact=True)
+
+    guarded(resigned, resigned_install)
+
+    replacing = f"{args.old} DMG -> MAR that replaces the frameworks"
+
+    def replace_frameworks() -> None:
+        if replace_mar is None:
+            check(phase, replacing, None, "skipped, the MAR could not be built")
+            return
+        install_app(apps[args.old])
+        if update(replacing, replace_mar, "MAR that replaces the frameworks"):
+            step(replacing, "after the update", True, True, "developer-id", exact=True)
+
+    guarded(replacing, replace_frameworks)
     tcc_revoke()
 
 
