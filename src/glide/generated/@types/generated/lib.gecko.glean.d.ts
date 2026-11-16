@@ -934,7 +934,8 @@ interface GleanImpl {
     widgetsEnabled: GleanEventWithExtras<{ enabled?: string|boolean, newtab_visit_id?: string, widget_name?: string, widget_size?: string, widget_source?: string }>;
     widgetsEnabledList: GleanStringList;
     widgetsError: GleanEventWithExtras<{ error_type?: string, newtab_visit_id?: string, widget_name?: string, widget_size?: string }>;
-    widgetsImpression: GleanEventWithExtras<{ newtab_visit_id?: string, widget_name?: string, widget_size?: string }>;
+    widgetsHomeList: GleanStringList;
+    widgetsImpression: GleanEventWithExtras<{ newtab_visit_id?: string, widget_location?: string, widget_name?: string, widget_size?: string }>;
     widgetsListsChangeDisplay: GleanEventWithExtras<{ display_status?: string|boolean, newtab_visit_id?: string }>;
     widgetsListsImpression: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     widgetsListsUserEvent: GleanEventWithExtras<{ newtab_visit_id?: string, user_action?: string }>;
@@ -942,7 +943,7 @@ interface GleanImpl {
     widgetsTimerImpression: GleanEventWithExtras<{ newtab_visit_id?: string }>;
     widgetsTimerToggleNotification: GleanEventWithExtras<{ display_status?: string|boolean, newtab_visit_id?: string }>;
     widgetsTimerUserEvent: GleanEventWithExtras<{ newtab_visit_id?: string, user_action?: string }>;
-    widgetsUserEvent: GleanEventWithExtras<{ action_value?: string, newtab_visit_id?: string, user_action?: string, widget_name?: string, widget_size?: string, widget_source?: string }>;
+    widgetsUserEvent: GleanEventWithExtras<{ action_value?: string, newtab_visit_id?: string, user_action?: string, widget_location?: string, widget_name?: string, widget_size?: string, widget_source?: string }>;
   }
 
   newtabSearch: {
@@ -1341,6 +1342,7 @@ interface GleanImpl {
     startupSessionAutoRestored: GleanEventWithExtras<{ new_tab_action?: string }>;
     startupSessionAvailability: GleanEventWithExtras<{ clean?: string, clean_backup?: string, format?: string, origin?: string, recovery?: string, recovery_backup?: string, restarted_by_os?: string|boolean, resume_from_crash?: string|boolean, resume_session_once?: string|boolean, resuming_after_os_restart?: string|boolean, startup_page_is_resume?: string|boolean, upgrade_backup?: string }>;
     startupSessionDecision: GleanEventWithExtras<{ action?: string, init_error?: string, interstitial_reason?: string, permanent_private?: string|boolean, previous_session_crashed?: string|boolean, resume_reason?: string, session_type?: string }>;
+    startupSessionOutcome: GleanEventWithExtras<{ outcome?: string }>;
     startupTimeline: Record<"sessionRestoreInitialized"|"sessionRestoreRestoring", GleanQuantity>;
     windowFeaturesMismatchIgnored: GleanEventWithExtras<{ entry_point?: string, existing_features?: string, requested_features?: string }>;
     writeAttempts: GleanCounter;

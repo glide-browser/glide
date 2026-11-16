@@ -1,10 +1,10 @@
 diff --git a/build/mach_initialize.py b/build/mach_initialize.py
-index a968553ab29808aed7d4264be9612b6c64a9e986..ac57821b1740750b3bd30067a564839dcbf231e2 100644
+index 219e9ae2aa9380ca752b9eaa5b81323405e08c9b..c2834e090ac140631e2307f865a27c4e2cf848fb 100644
 --- a/build/mach_initialize.py
 +++ b/build/mach_initialize.py
-@@ -146,10 +146,6 @@ def initialize(topsrcdir, args=()):
- 
-     from mach.util import get_state_dir, get_virtualenv_base_dir, setenv
+@@ -151,10 +151,6 @@ def initialize(topsrcdir, args=()):
+         setenv,
+     )
  
 -    state_dir = _create_state_dir()
 -
@@ -13,7 +13,7 @@ index a968553ab29808aed7d4264be9612b6c64a9e986..ac57821b1740750b3bd30067a564839d
      # See bug 1874208:
      # Status messages from site.py break usages of `./mach environment`.
      # We pass `quiet` only for it to work around this, so that all other
-@@ -159,6 +155,10 @@ def initialize(topsrcdir, args=()):
+@@ -164,6 +160,10 @@ def initialize(topsrcdir, args=()):
      else:
          quiet = False
  
@@ -22,9 +22,9 @@ index a968553ab29808aed7d4264be9612b6c64a9e986..ac57821b1740750b3bd30067a564839d
 +    check_for_spaces(topsrcdir)
 +
      # normpath state_dir to normalize msys-style slashes.
-     _activate_python_environment(
-         topsrcdir,
-@@ -443,7 +443,7 @@ def initialize(topsrcdir, args=()):
+     with resource_marker("Mach", "activate mach site"):
+         _activate_python_environment(
+@@ -455,7 +455,7 @@ def initialize(topsrcdir, args=()):
              topsrcdir,
              lambda: os.path.normpath(get_state_dir(True, topsrcdir=topsrcdir)),
              site_name,
@@ -33,7 +33,7 @@ index a968553ab29808aed7d4264be9612b6c64a9e986..ac57821b1740750b3bd30067a564839d
              quiet=quiet,
          )
  
-@@ -570,7 +570,7 @@ def _finalize_telemetry_glean(
+@@ -584,7 +584,7 @@ def _finalize_telemetry_glean(
      telemetry.submit(is_bootstrap)
  
  
@@ -42,7 +42,7 @@ index a968553ab29808aed7d4264be9612b6c64a9e986..ac57821b1740750b3bd30067a564839d
      # Global build system and mach state is stored in a central directory. By
      # default, this is ~/.mozbuild. However, it can be defined via an
      # environment variable. We detect first run (by lack of this directory
-@@ -580,13 +580,13 @@ def _create_state_dir():
+@@ -594,13 +594,13 @@ def _create_state_dir():
      # to react.
      state_dir = os.environ.get("MOZBUILD_STATE_PATH")
      if state_dir:
