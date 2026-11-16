@@ -104,6 +104,10 @@ return result;
 
 CHECKS: list[dict] = []
 
+# how long to wait for Marionette after starting Glide, raised when it runs under Rosetta
+# (every new build is translated on its first start, XUL alone takes a while)
+LAUNCH_WAIT = 150.0
+
 
 class CommandError(RuntimeError):
     pass
@@ -469,7 +473,7 @@ def write_profile(profile: Path) -> None:
     (profile / "user.js").write_text("\n".join(lines) + "\n")
 
 
-def query_glide(label: str, work: Path, logs: Path, wait: float = 150) -> dict:
+def query_glide(label: str, work: Path, logs: Path, wait: float | None = None) -> dict:
     """Start Glide through LaunchServices and ask it for its version and screen recording state."""
     quit_glide()
     restart_tccd()
@@ -486,14 +490,20 @@ def query_glide(label: str, work: Path, logs: Path, wait: float = 150) -> dict:
     )
 
     client = None
-    deadline = time.time() + wait
+    started = time.time()
+    deadline = started + (wait or LAUNCH_WAIT)
     last_error: Exception | None = None
+    gone = 0
     while time.time() < deadline:
         try:
             client = Marionette(MARIONETTE_PORT)
             break
         except (OSError, ValueError) as e:
             last_error = e
+            # it exited, or macOS refused to run it: no point in waiting for the whole timeout
+            gone = gone + 1 if time.time() - started > 20 and not glide_pids() else 0
+            if gone >= 5:
+                break
             time.sleep(1)
     if client is None:
         pids = glide_pids()
@@ -578,6 +588,9 @@ def environment(args: argparse.Namespace) -> dict:
         rosetta = run(["arch", "-x86_64", "/usr/bin/true"], check=False, show=3).returncode == 0
     info["rosetta"] = rosetta
     info["can_run_target"] = args.arch == "aarch64" or rosetta
+    if args.arch == "x86_64" and info["arch"] == "arm64":
+        global LAUNCH_WAIT
+        LAUNCH_WAIT = 480.0
 
     # Firefox's screen recording heuristic needs a named window from another app
     window_file = Path(os.environ.get("RUNNER_TEMP", "/tmp")) / "named-window.txt"
@@ -1025,7 +1038,7 @@ def phase_c(args: argparse.Namespace, work: Path, logs: Path, info: dict, rehear
             record = inspect(APP)
             check(phase, f"{args.prev} -> rehearsal MAR: signature (throwaway certificate, so macOS will not trust it)", None, f"{record['identifier']} / {record['flags']} / {record['authority']}; {record['verify_deep']}")
             try:
-                result = query_glide("rehearsal-mar", work, logs, wait=60)
+                result = query_glide("rehearsal-mar", work, logs)
                 check(phase, f"{args.prev} -> rehearsal MAR: starts", None, f"version {result.get('version')}")
             except Exception as e:
                 check(phase, f"{args.prev} -> rehearsal MAR: starts", None, "no: " + str(e).splitlines()[0][:200])
