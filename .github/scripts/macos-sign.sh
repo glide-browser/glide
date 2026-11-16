@@ -49,6 +49,17 @@ if [[ -n "$MAR_TOOL" || -n "$UPDATES_DIR" ]]; then
   fi
   MAR_TOOL=$(realpath "$MAR_TOOL")
   UPDATES_DIR=$(realpath "$UPDATES_DIR")
+
+  # the tool was built on another machine, check that it actually runs on this one
+  chmod +x "$MAR_TOOL"
+  mar_probe=$(mktemp -d)
+  echo probe > "$mar_probe/file"
+  if ! "$MAR_TOOL" -H glide -V 0 -C "$mar_probe" -c probe.mar file \
+    || ! "$MAR_TOOL" -t "$mar_probe/probe.mar" | grep -q 'file$'; then
+    echo "MAR_TOOL ($MAR_TOOL) does not work on this machine"
+    exit 1
+  fi
+  rm -rf "$mar_probe"
 fi
 
 set -eux
@@ -106,7 +117,6 @@ if [[ -n "$MAR_TOOL" ]]; then
   # replaces the signed binaries with ad-hoc signed ones, which breaks anything
   # that relies on the code signature, e.g. TCC permissions like screen recording.
   step "Creating update MAR"
-  chmod +x "$MAR_TOOL"
   # channel, version & app name must match `create_mar_file()` in scripts/firefox/package.mts
   VERSION=$(node -p 'require("../firefox.json").brands.glide.release.display_version')
   BINARY_NAME=$(node -p 'require("../firefox.json").binary_name')
