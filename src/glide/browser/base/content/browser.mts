@@ -39,6 +39,7 @@ const { Messenger } = ChromeUtils.importESModule("chrome://glide/content/browser
 const Autocmds = ChromeUtils.importESModule("chrome://glide/content/browser-autocmds.mjs", { global: "current" });
 const { JSONFile } = ChromeUtils.importESModule("resource://gre/modules/JSONFile.sys.mjs");
 const { ExtensionParent } = ChromeUtils.importESModule("resource://gre/modules/ExtensionParent.sys.mjs");
+const { CommandHistory } = ChromeUtils.importESModule("chrome://glide/content/command-history.mjs");
 
 declare var document: Document & { documentElement: HTMLElement };
 
@@ -214,6 +215,10 @@ class GlideBrowserClass {
 
     this.on_startup(async () => {
       await this._setup_scroll_breaking_change_notification();
+    });
+
+    this.on_startup(async () => {
+      await CommandHistory.ensure_loaded();
     });
 
     this.on_startup(async () => {

@@ -1258,6 +1258,13 @@ declare global {
     jumplist_max_entries: number;
 
     /**
+     * The maximum number of entries to include in the command history.
+     *
+     * @default 100
+     */
+    command_history_max_entries: number;
+
+    /**
      * The font size of the hint label, directly corresponds to the
      * [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) property.
      *

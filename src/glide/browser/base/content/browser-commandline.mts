@@ -6,6 +6,18 @@
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { CommandHistory } = ChromeUtils.importESModule("chrome://glide/content/command-history.mjs");
+const { PrivateBrowsingUtils } = ChromeUtils.importESModule("resource://gre/modules/PrivateBrowsingUtils.sys.mjs");
+
+function record_command(command: string) {
+  if (PrivateBrowsingUtils.isWindowPrivate(window)) {
+    return;
+  }
+
+  void CommandHistory.add(command, GlideBrowser.api.o.command_history_max_entries).catch((error) => {
+    GlideBrowser._log.error(error);
+  });
+}
 
 export class ExcmdsCompletionSource implements GlideCompletionSource {
   id = "excmds";
@@ -104,6 +116,8 @@ export class ExcmdsCompletionSource implements GlideCompletionSource {
             : command.name;
 
           GlideBrowser._log.debug("commandline: executing", cmd);
+
+          record_command(cmd);
 
           // we can't statically guarantee that the command is valid but `.execute()`
           // will gracefully handle that case with a helpful error message
@@ -362,5 +376,124 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
     }
 
     return options;
+  }
+}
+
+interface CommandHistoryCompletionOption extends GlideCompletionOption {
+  command: string;
+  notice: boolean;
+}
+
+export class CommandHistoryCompletionSource implements GlideCompletionSource<CommandHistoryCompletionOption> {
+  id = "command-history";
+
+  #commands: string[] = [];
+
+  constructor(props: { commands: string[] }) {
+    this.#commands = props.commands;
+  }
+
+  container = DOM.create_element("div", {
+    attributes: { anonid: "glide-commandline-completions-command-history" },
+    children: [
+      DOM.create_element("div", { className: "section-header", children: ["history"] }),
+      DOM.create_element("table", { className: "gcl-table" }),
+    ],
+  });
+
+  is_enabled() {
+    return true;
+  }
+
+  search({ input }: GlideCompletionContext, options: CommandHistoryCompletionOption[]) {
+    const normalised_input = input.toLowerCase();
+
+    options.forEach((option) => {
+      if (option.notice) {
+        option.set_hidden(false);
+        return;
+      }
+      option.set_hidden(!option.command.toLowerCase().includes(normalised_input));
+    });
+  }
+
+  resolve_options() {
+    const source = this;
+
+    if (PrivateBrowsingUtils.isWindowPrivate(window)) {
+      return [this.#private_window_notice(source)];
+    }
+
+    return this.#commands.map((command): CommandHistoryCompletionOption => ({
+      command,
+      notice: false,
+
+      element: DOM.create_element("tr", {
+        className: "CommandHistoryCompletionOption gcl-option",
+        children: [DOM.create_element("td", { className: "excmd", children: command })],
+      }),
+
+      async accept() {
+        GlideBrowser._log.debug("commandline: executing from history", command);
+
+        record_command(command);
+        await GlideExcmds.execute(command as any);
+      },
+
+      async delete() {},
+
+      is_focused() {
+        return this.element.classList.contains("focused");
+      },
+      set_focused(focused) {
+        if (focused === this.is_focused()) return;
+        if (focused) {
+          this.element.classList.add("focused");
+        } else {
+          this.element.classList.remove("focused");
+        }
+      },
+      is_hidden() {
+        return !!source.container.hidden || !!this.element.hidden;
+      },
+      set_hidden(hidden) {
+        if (hidden === this.is_hidden()) {
+          return;
+        }
+        this.element.hidden = hidden;
+      },
+    }));
+  }
+
+  #private_window_notice(source: CommandHistoryCompletionSource): CommandHistoryCompletionOption {
+    const message = "Command history is not available in private browsing";
+
+    return {
+      command: message,
+      notice: true,
+
+      element: DOM.create_element("tr", {
+        className: "CommandHistoryCompletionOption gcl-option gcl-history-notice",
+        children: [DOM.create_element("td", { className: "excmd", children: message })],
+      }),
+
+      accept() {},
+
+      async delete() {},
+
+      is_focused() {
+        return false;
+      },
+      set_focused() {},
+      is_hidden() {
+        return !!source.container.hidden || !!this.element.hidden;
+      },
+      set_hidden(hidden) {
+        if (hidden === this.is_hidden()) {
+          return;
+        }
+        this.element.hidden = hidden;
+      },
+    };
   }
 }
