@@ -113,7 +113,11 @@ async function create_mar_file(
 
   const to_shell_path = (p: string) => platform === "windows" ? p.replace(/\\/g, "/") : p;
 
-  await engine_run("./tools/update-packaging/make_full_update.sh", [to_shell_path(DIST_DIR), to_shell_path(binary)], {
+  await engine_run("./tools/update-packaging/make_full_update.sh", [
+    to_shell_path(DIST_DIR),
+    to_shell_path(binary),
+    config.binary_name, // app name
+  ], {
     env: {
       MAR: to_shell_path(mar_binary),
       MAR_CHANNEL_ID: channel,
