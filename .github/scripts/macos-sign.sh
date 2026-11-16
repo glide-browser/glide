@@ -38,6 +38,15 @@ if [[ -n "$MAR_TOOL" || -n "$UPDATES_DIR" ]]; then
     echo "MAR_TOOL and UPDATES_DIR must be set together"
     exit 1
   fi
+  # fail now instead of after signing & notarizing
+  if [[ ! -f "$MAR_TOOL" ]]; then
+    echo "MAR_TOOL ($MAR_TOOL) does not exist"
+    exit 1
+  fi
+  if [[ -z "$(find "$UPDATES_DIR" -name update.xml 2> /dev/null)" ]]; then
+    echo "UPDATES_DIR ($UPDATES_DIR) does not contain any update.xml files"
+    exit 1
+  fi
   MAR_TOOL=$(realpath "$MAR_TOOL")
   UPDATES_DIR=$(realpath "$UPDATES_DIR")
 fi
@@ -103,6 +112,14 @@ if [[ -n "$MAR_TOOL" ]]; then
   BINARY_NAME=$(node -p 'require("../firefox.json").binary_name')
   MAR="$MAR_TOOL" MAR_CHANNEL_ID=glide MOZ_PRODUCT_VERSION="$VERSION" \
     ./tools/update-packaging/make_full_update.sh "./macos-$ARCH.mar" "./obj-$ARCH-apple-darwin/dist/Glide.app" "$BINARY_NAME"
+
+  # only the signed .app has these, so this catches the MAR being created from the wrong app
+  for signed_file in Contents/_CodeSignature/CodeResources Contents/embedded.provisionprofile; do
+    if ! "$MAR_TOOL" -t "./macos-$ARCH.mar" | grep -qE "[[:space:]]$signed_file\$"; then
+      echo "the MAR does not contain $signed_file, it was not created from the signed .app"
+      exit 1
+    fi
+  done
 
   step "Updating update manifests"
   mar_hash=$(shasum -a 512 "./macos-$ARCH.mar" | cut -d' ' -f1)
