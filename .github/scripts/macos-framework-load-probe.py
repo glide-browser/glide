@@ -85,8 +85,16 @@ def processes(app: Path):
         pid, _, command = line.strip().partition(" ")
         if not command.startswith(str(app) + "/"):
             continue
-        executable = command[len(str(app)) + 1 :].split(" -", 1)[0]
-        kind = "parent" if "-contentproc" not in command and executable == "Contents/MacOS/glide" else command.split()[-1]
+        # executable names can contain spaces ("Glide GPU Helper"): the longest prefix that is a file
+        parts = command.split(" ")
+        cut = next((i for i in range(len(parts), 0, -1) if os.path.isfile(" ".join(parts[:i]))), 1)
+        executable, args = " ".join(parts[:cut])[len(str(app)) + 1 :], parts[cut:]
+        if "-contentproc" in args:
+            kind = args[-1]
+        elif executable == "Contents/MacOS/glide":
+            kind = "parent"
+        else:
+            kind = os.path.basename(executable)
         found.append((int(pid), executable, kind))
     return found
 
@@ -110,7 +118,9 @@ def run_case(name: str, pristine: Path, prepare) -> dict:
     shutil.rmtree(case, ignore_errors=True)
     case.mkdir(parents=True)
     app = case / "Glide.app"
-    sh(["ditto", pristine, app], quiet=True)
+    # without --norsrc the FinderInfo of the DMG's files comes along and codesign refuses to work
+    sh(["ditto", "--norsrc", "--noextattr", "--noqtn", pristine, app], quiet=True)
+    sh(["xattr", "-cr", app], check=False, quiet=True)
     prepare(app)
     verify = sh(["codesign", "--verify", "--deep", "--strict", app], check=False)
     profile = case / "profile"
@@ -160,7 +170,7 @@ def main() -> int:
     sh(["hdiutil", "attach", "-nobrowse", "-readonly", "-noautoopen", "-mountpoint", mount, dmg], quiet=True)
     pristine = WORK / "pristine-source/Glide.app"
     try:
-        sh(["ditto", "--noextattr", "--noqtn", mount / "Glide.app", pristine], quiet=True)
+        sh(["ditto", "--norsrc", "--noextattr", "--noqtn", mount / "Glide.app", pristine], quiet=True)
     finally:
         sh(["hdiutil", "detach", mount, "-force"], check=False, quiet=True)
 
@@ -173,7 +183,7 @@ def main() -> int:
 
     def adhoc(app: Path) -> None:
         sh(["codesign", "--force", "--sign", "-", app / FRAMEWORK])
-        sh(["codesign", "-dv", app / FRAMEWORK], check=False)
+        sh(["bash", "-c", f"codesign -dv '{app / FRAMEWORK}' 2>&1 | grep -E 'Signature|TeamIdentifier|flags'"], check=False)
 
     cases = [
         run_case("pristine", pristine, lambda app: None),
@@ -185,7 +195,7 @@ def main() -> int:
     lines += ["| case | bundle verifies | page script ran | parent maps it | helpers with XUL | helpers mapping it |", "|---|---|---|---|---|---|"]
     for c in cases:
         parents = [r for r in c["rows"] if r[2] == "parent"]
-        helpers = [r for r in c["rows"] if r[2] != "parent"]
+        helpers = [r for r in c["rows"] if r[2] not in ("parent", "crashhelper")]
         with_xul = [r for r in helpers if r[5]]
         lines.append(
             f"| {c['name']} | {'yes' if c['verify'] else 'no'} | {'yes' if c['js'] else 'NO'} "
