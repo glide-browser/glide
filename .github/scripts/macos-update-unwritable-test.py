@@ -45,6 +45,8 @@ MAR = os.urandom(4096)
 PREFS = {
     "marionette.port": MARIONETTE_PORT,
     "app.update.log": True,
+    # Marionette's recommended prefs turn update checks off, unless the pref has a user value
+    "app.update.disabledForTesting": False,
     "app.update.staging.enabled": False,
     "browser.shell.checkDefaultBrowser": False,
     "browser.startup.homepage_override.mstone": "ignore",
@@ -120,8 +122,13 @@ const done = arguments[arguments.length - 1];
   out.log = Services.console
     .getMessageArray()
     .map(message => message.message)
-    .filter(message => /AUS:SVC (getCanApplyUpdates|getElevationRequired|UpdateService:_selectAndInstallUpdate)/.test(message))
-    .map(message => message.replace(/^\*\*\* /, "").slice(0, 220));
+    .filter(message =>
+      /AUS:SVC (getCanApplyUpdates|getElevationRequired|UpdateService[.:](_selectAndInstallUpdate|canCheckForUpdates|canUsuallyCheckForUpdates|checkForBackgroundUpdates))/.test(
+        message
+      )
+    )
+    .map(message => message.replace(/^\*\*\* /, "").slice(0, 220))
+    .slice(0, 60);
   return out;
 })().then(done, error => done({ error: String(error), stack: error?.stack }));
 """
