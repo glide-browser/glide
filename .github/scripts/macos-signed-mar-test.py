@@ -61,8 +61,9 @@ RELEASES = "https://github.com/glide-browser/glide/releases/download"
 # files the updater only adds when they are missing, so they stay as first installed
 ADD_IF_NOT = re.compile(r"(^|/)(ChannelPrefs|UpdateSettings)\.framework/")
 
-# Loaded in a web content process. Those are hardened helpers which, unlike the main process,
-# can only load libraries signed by the app's team, and XUL pulls in ChannelPrefs.framework.
+# Loaded in a web content process, to see that the hardened helpers still start. (They never
+# load ChannelPrefs.framework: XUL weak-links it through a path that only resolves for the
+# main executable, see macos-framework-load-probe.py.)
 CONTENT_TITLE = "glide-content-ok"
 CONTENT_URL = f"data:text/html,<title>{CONTENT_TITLE}</title>"
 
@@ -1159,7 +1160,7 @@ def phase_b(args: argparse.Namespace, work: Path, logs: Path, info: dict) -> Non
             f" ChannelPrefs.framework: {'ad-hoc' if 'Signature=adhoc' in framework else 'not ad-hoc'}; verify: {record['verify_deep']}",
         )
         tcc_revoke()
-        launch_checks(phase, f"{resigned} / after signed MAR (expected to lose its content processes)", slug(f"{resigned}-after-signed-mar"), args.prev, work, logs, strict=False)
+        launch_checks(phase, f"{resigned} / after signed MAR", slug(f"{resigned}-after-signed-mar"), args.prev, work, logs, strict=False)
         if replace_mar is not None and update(resigned, replace_mar, "MAR that replaces the frameworks"):
             step(resigned, "after the MAR that replaces the frameworks", True, True, "developer-id", exact=True)
 
