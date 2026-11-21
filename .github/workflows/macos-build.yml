@@ -32,6 +32,10 @@ on:
         description: "TEMPORARY: only report which Glide processes load ChannelPrefs.framework"
         type: boolean
         default: false
+      update_prompt_test:
+        description: "TEMPORARY: only test what Glide does with an update when it can't write to its app"
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       artifacts:
@@ -47,7 +51,7 @@ jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
     # TEMPORARY condition, see the `signed-mar-test` job
-    if: ${{ !inputs.signed_mar_test_run_id && !inputs.sip_probe && !inputs.fw_probe }}
+    if: ${{ !inputs.signed_mar_test_run_id && !inputs.sip_probe && !inputs.fw_probe && !inputs.update_prompt_test }}
 
     runs-on: depot-macos-26
     env:
@@ -281,6 +285,25 @@ jobs:
 
       - name: Probe
         run: python3 .github/scripts/macos-framework-load-probe.py
+
+  # TEMPORARY test for `fix/macos-update-admin-prompt`, do not merge: a published build with
+  # that branch's update service change, in an app bundle the user can't write to.
+  update-prompt-test:
+    name: Update without write access
+    if: ${{ inputs.update_prompt_test }}
+    runs-on: "macos-15"
+    timeout-minutes: 30
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Test
+        run: python3 .github/scripts/macos-update-unwritable-test.py
 
   # TEMPORARY rehearsal for `fix/macos-signed-update-mar`, do not merge.
   #

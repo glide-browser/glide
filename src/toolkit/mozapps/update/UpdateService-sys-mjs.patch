@@ -1,0 +1,23 @@
+diff --git a/toolkit/mozapps/update/UpdateService.sys.mjs b/toolkit/mozapps/update/UpdateService.sys.mjs
+index 309e931f7e151a29d2939729c313be76cd18af0f..fb5a29ea0f31215a1567f8616f88f6169ca748cf 100644
+--- a/toolkit/mozapps/update/UpdateService.sys.mjs
++++ b/toolkit/mozapps/update/UpdateService.sys.mjs
+@@ -716,6 +716,18 @@ function getCanApplyUpdates() {
+     return false;
+   }
+ 
++  // glide-injection-start
++  // note: the privileged updater would apply an unverified MAR as root, so an
++  // app bundle we can't write to gets the manual update prompt instead.
++  if (getElevationRequired()) {
++    LOG(
++      "getCanApplyUpdates - unable to apply updates, because the " +
++        "application bundle is not writable."
++    );
++    return false;
++  }
++  // glide-injection-end
++
+   if (AppConstants.platform == "macosx" || AppConstants.platform == "win") {
+     LOG(
+       "getCanApplyUpdates - bypass the write since elevation can be used " +
