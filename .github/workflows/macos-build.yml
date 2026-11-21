@@ -36,6 +36,10 @@ on:
         description: "TEMPORARY: only test what Glide does with an update when it can't write to its app"
         type: boolean
         default: false
+      ipc_probe:
+        description: "TEMPORARY: only check who a root process finds behind a named NSSocketPort"
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       artifacts:
@@ -51,7 +55,7 @@ jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
     # TEMPORARY condition, see the `signed-mar-test` job
-    if: ${{ !inputs.signed_mar_test_run_id && !inputs.sip_probe && !inputs.fw_probe && !inputs.update_prompt_test }}
+    if: ${{ !inputs.signed_mar_test_run_id && !inputs.sip_probe && !inputs.fw_probe && !inputs.update_prompt_test && !inputs.ipc_probe }}
 
     runs-on: depot-macos-26
     env:
@@ -285,6 +289,92 @@ jobs:
 
       - name: Probe
         run: python3 .github/scripts/macos-framework-load-probe.py
+
+  # TEMPORARY, do not merge: Firefox's elevated updater gets its arguments from whoever
+  # registered a name with NSSocketPortNameServer. Who can register one, and does a root
+  # process find it? Uses a name of its own.
+  ipc-probe:
+    name: Named port probe
+    if: ${{ inputs.ipc_probe }}
+    runs-on: "macos-15"
+    timeout-minutes: 10
+    permissions: {}
+
+    steps:
+      - name: Probe
+        run: |
+          set -u
+          cd "$(mktemp -d)"
+          cat > server.m <<'EOF'
+          #import <Foundation/Foundation.h>
+          #include <unistd.h>
+
+          @interface ArgumentServer : NSObject
+          - (NSArray*)getArguments;
+          @end
+
+          @implementation ArgumentServer
+          - (NSArray*)getArguments {
+            return @[ [NSString stringWithFormat:@"arguments served by uid %d", getuid()] ];
+          }
+          @end
+
+          int main(void) {
+            NSPort* port = [NSSocketPort port];
+            NSConnection* connection = [NSConnection connectionWithReceivePort:port sendPort:port];
+            [connection setRootObject:[[ArgumentServer alloc] init]];
+            BOOL registered = [connection registerName:@"glide.ipc-probe.server"
+                                        withNameServer:[NSSocketPortNameServer sharedInstance]];
+            printf("server (uid %d): registered=%d\n", getuid(), registered);
+            fflush(stdout);
+            if (!registered) {
+              return 2;
+            }
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:45]];
+            return 0;
+          }
+          EOF
+          cat > client.m <<'EOF'
+          #import <Foundation/Foundation.h>
+          #include <unistd.h>
+
+          int main(void) {
+            for (int attempt = 0; attempt < 10; attempt++) {
+              @try {
+                id server = (id)[NSConnection rootProxyForConnectionWithRegisteredName:@"glide.ipc-probe.server"
+                                                                                  host:nil
+                                                                       usingNameServer:[NSSocketPortNameServer sharedInstance]];
+                if (server && [server respondsToSelector:@selector(getArguments)]) {
+                  NSArray* arguments = [server performSelector:@selector(getArguments)];
+                  printf("client (uid %d) was given: %s\n", getuid(), [[arguments componentsJoinedByString:@", "] UTF8String]);
+                  return 0;
+                }
+              } @catch (NSException* e) {
+                printf("client (uid %d): %s\n", getuid(), [[e reason] UTF8String]);
+              }
+              sleep(1);
+            }
+            printf("client (uid %d): found no server\n", getuid());
+            return 3;
+          }
+          EOF
+          clang -Wno-deprecated-declarations -framework Foundation server.m -o server
+          clang -Wno-deprecated-declarations -framework Foundation client.m -o client
+
+          ./server > first.log 2>&1 &
+          sleep 5
+          cat first.log
+          echo "--- a second process asks for the same name"
+          ./server || echo "second server exited with $?"
+          echo "--- a root process looks the name up"
+          if sudo ./client | tee client.log; then
+            echo "### Named port probe: $(cat client.log)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### Named port probe: the root client found nothing" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "--- the unprivileged user looks the name up"
+          ./client || true
+          kill %1 2>/dev/null || true
 
   # TEMPORARY test for `fix/macos-update-admin-prompt`, do not merge: a published build with
   # that branch's update service change, in an app bundle the user can't write to.
