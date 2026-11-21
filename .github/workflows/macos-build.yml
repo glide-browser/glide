@@ -24,6 +24,10 @@ on:
         description: "TEMPORARY: rehearsal phases to skip, e.g. b,c"
         type: string
         default: ""
+      sip_probe:
+        description: "TEMPORARY: only report which runners enforce SIP & library validation"
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       artifacts:
@@ -39,7 +43,7 @@ jobs:
   macos-build:
     name: Build - ${{ matrix.arch }}
     # TEMPORARY condition, see the `signed-mar-test` job
-    if: ${{ !inputs.signed_mar_test_run_id }}
+    if: ${{ !inputs.signed_mar_test_run_id && !inputs.sip_probe }}
 
     runs-on: depot-macos-26
     env:
@@ -193,23 +197,67 @@ jobs:
           name: macos-${{ matrix.arch }}-updates
           path: ./dist/update/
 
-  # TEMPORARY: the GitHub hosted macOS runners have System Integrity Protection disabled, so
-  # they can't show everything a user's Mac does when an app bundle is modified. Are the depot
-  # runners any different? Takes a few seconds.
+  # TEMPORARY: the arm64 macOS runners (GitHub's and depot's) have System Integrity Protection
+  # disabled, so they can't show everything a user's Mac does when an app bundle is modified.
+  # Is any runner different? Besides `csrutil status` this asks the question that matters
+  # directly: does a hardened process get to load a library signed by somebody else?
   sip-probe:
-    name: SIP probe
-    if: ${{ inputs.signed_mar_test }}
-    runs-on: depot-macos-26
-    timeout-minutes: 5
+    name: SIP probe - ${{ matrix.runner }}
+    if: ${{ inputs.signed_mar_test || inputs.sip_probe }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
     permissions: {}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [depot-macos-26, macos-15, macos-15-intel, macos-14, macos-26]
 
     steps:
       - name: Probe
         run: |
+          set -u
           sw_vers
           uname -m
           csrutil status || true
+          csrutil authenticated-root status || true
           spctl --status || true
+          nvram csr-active-config 2>&1 || true
+          sysctl kern.hv_support 2>&1 || true
+
+          cd "$(mktemp -d)"
+          printf 'int answer(void) { return 42; }\n' > lib.c
+          cat > main.c <<'EOF'
+          #include <dlfcn.h>
+          #include <stdio.h>
+          int main(int argc, char **argv) {
+            void *handle = dlopen(argv[1], RTLD_NOW);
+            if (!handle) {
+              printf("dlopen failed: %s\n", dlerror());
+              return 3;
+            }
+            printf("dlopen ok\n");
+            return 0;
+          }
+          EOF
+          clang -dynamiclib lib.c -o libanswer.dylib
+          clang main.c -o plain
+          cp plain hardened
+          codesign --force --sign - libanswer.dylib
+          codesign --force --sign - plain
+          codesign --force --sign - --options runtime hardened
+          codesign -dv hardened 2>&1 | grep -E 'flags|TeamIdentifier' || true
+
+          echo "--- not hardened (must load)"
+          ./plain "$PWD/libanswer.dylib" || true
+          echo "--- hardened runtime, library signed by somebody else"
+          if ./hardened "$PWD/libanswer.dylib"; then
+            echo "RESULT: library validation is NOT enforced on ${{ matrix.runner }}"
+            echo "### ${{ matrix.runner }}: library validation NOT enforced ($(csrutil status 2>&1 | head -1))" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "RESULT: library validation IS enforced on ${{ matrix.runner }}"
+            echo "### ${{ matrix.runner }}: library validation ENFORCED ($(csrutil status 2>&1 | head -1))" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   # TEMPORARY rehearsal for `fix/macos-signed-update-mar`, do not merge.
   #
