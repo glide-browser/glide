@@ -731,3 +731,43 @@ add_task(async function test_commandline_close() {
   is(result, true, "close() should return true when the commandline was open");
   await wait_for_mode("normal");
 });
+
+add_task(async function test_enter_with_no_visible_row_does_not_run_last_focused() {
+  await reload_config(function _() {
+    glide.keymaps.set("normal", "~", async () => {
+      await glide.commandline.show({
+        options: [
+          {
+            label: "alpha",
+            execute() {
+              glide.g.value = "alpha";
+            },
+          },
+          {
+            label: "beta",
+            execute() {
+              glide.g.value = "beta";
+            },
+          },
+        ],
+      });
+    });
+  });
+
+  await BrowserTestUtils.withNewTab(FILE, async () => {
+    document!.querySelector("glide-commandline")?.remove();
+    await keys("~");
+    await until(() => GlideTestUtils.commandline.visible_rows().length === 2);
+    is(GlideTestUtils.commandline.focused_row()?.textContent?.trim(), "alpha");
+
+    await keys("zzz");
+    await waiter(() => GlideTestUtils.commandline.visible_rows().length).is(0);
+    ok(!GlideTestUtils.commandline.focused_row(), "no row should stay focused when every option is hidden");
+
+    glide.g.value = "unset";
+    await keys("<Enter>");
+
+    await waiter(() => glide.ctx.mode).is("normal");
+    is(glide.g.value, "unset", "Enter should not execute the previously focused row");
+  });
+});
