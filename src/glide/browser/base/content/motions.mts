@@ -8,6 +8,7 @@ import type { GlideOperator } from "./browser-excmds-registry.mts";
 const text_obj = ChromeUtils.importESModule("chrome://glide/content/text-objects.mjs");
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const strings = ChromeUtils.importESModule("chrome://glide/content/utils/strings.mjs");
+const { is_text_field } = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 
 /**
  * A minimal representation of `nsIEditor` so that we can re-implement editors
@@ -527,6 +528,37 @@ export function first_non_whitespace(editor: Editor, extend: boolean = false) {
   if (!is_eol(editor) && !is_eof(editor)) {
     editor.selectionController.characterMove(true, extend);
   }
+}
+
+export function jump_to_matching_bracket(editor: nsIEditor): void {
+  const root = editor.rootElement;
+
+  if (is_text_field(root)) {
+    const start = root.selectionStart;
+    if (start == null) {
+      return;
+    }
+    const new_offset = strings.jump_to_matching_bracket_offset(root.value, start);
+    if (new_offset === null) {
+      return;
+    }
+    root.setSelectionRange(new_offset, new_offset);
+    return;
+  }
+
+  const node = editor.selection.focusNode;
+  if (node?.nodeType !== Node.TEXT_NODE) {
+    return;
+  }
+  const text = node.textContent;
+  if (text == null) {
+    return;
+  }
+  const new_offset = strings.jump_to_matching_bracket_offset(text, editor.selection.focusOffset);
+  if (new_offset === null) {
+    return;
+  }
+  editor.selection.collapse(node, new_offset);
 }
 
 /**
