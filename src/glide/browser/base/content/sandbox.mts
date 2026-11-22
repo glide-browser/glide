@@ -24,6 +24,7 @@ const Dedent = ChromeUtils.importESModule("chrome://glide/content/utils/dedent.m
 const DOMUtils = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs");
 const { AssertionError } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { is_empty } = ChromeUtils.importESModule("chrome://glide/content/utils/objects.mjs");
+const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 
 // note: do ***not*** add an entry to this Set without first checking if the API can be used to
 //       access the bound window, if this is the case then you *cannot* add it here.
@@ -74,6 +75,7 @@ interface SandboxProps {
   original_window: Window | null;
   browser: typeof browser | null;
   glide: typeof glide | null;
+  name?: string,
 }
 
 /**
@@ -105,12 +107,12 @@ export function create_sandbox(props: SandboxProps): Sandbox {
 
   // options pass here correspond to:
   // https://github.com/mozilla-firefox/firefox/blob/0f7aa808c07a1644fb2b386113aa3a2b31befe24/js/xpconnect/idl/xpccomponents.idl#L151
-  let proto: any = {
-    console: props.console,
-    document: props.document,
-    window: props.window,
+  const proto: any = props.window;
+  Object.assign(proto, {
+    // console: props.console,
+    // document: props.document, // hmm needed?
     glide: props.glide,
-
+    sandboxName: props.name,
     dedent: Dedent.dedent,
     css: Dedent.make_dedent_no_args("css"),
     html: Dedent.make_dedent_no_args("html"),
@@ -145,7 +147,7 @@ export function create_sandbox(props: SandboxProps): Sandbox {
       }
       throw new Error(detail ?? `assert_never: impossible to call: ${JSON.stringify(x)}`);
     },
-  };
+  });
 
   if (props.browser) {
     proto.browser = props.browser;
@@ -184,12 +186,17 @@ export function create_sandbox(props: SandboxProps): Sandbox {
     }
   }
 
-  return Cu.Sandbox(Cu.getGlobalForObject({}), {
+  const sb = Cu.Sandbox(Cu.getGlobalForObject({}), {
     // remove `Cu`, etc
     wantComponents: false,
-    sandboxPrototype: proto,
+    sandboxName: `Glide Config`, // or whatever, this might not always be config related?
+    sandboxPrototype: props.window,
+    sameZoneAs: props.window,
     freezeBuiltins: false,
+    isWebExtensionContentScript: true, // enables dynamic import
   }) as any;
+
+  return sb
 }
 
 export class FileNotFoundError extends Error {

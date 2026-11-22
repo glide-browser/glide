@@ -5,6 +5,7 @@
 
 const { assert_never } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
 const { NetUtil } = ChromeUtils.importESModule("resource://gre/modules/NetUtil.sys.mjs");
+const TSBlank = ChromeUtils.importESModule("chrome://glide/content/bundled/ts-blank-space.mjs");
 
 export interface ChildMessages {}
 export interface ChildQueries {
@@ -49,25 +50,25 @@ export class GeminiProtocolParent extends JSProcessActorParent<ParentMessages, P
   async get_content(
     props: ChildQueries["Glide::Query::GetContent"]["props"],
   ): Promise<string> {
-    if (!Services.prefs.getBoolPref("glide.gemini.enabled", true)) {
-      throw new Error(`Gemini protocol support has been disabled`);
+    const uri = new URL(props.url);
+
+    // For nice module resolution we could probably check existence of files, like
+    // fname + `.js`, etc.
+    const relpath = uri.pathname.replace(/([.]m?)js$/, '$1ts');
+    const filepath = PathUtils.joinRelative('/Users/ianchamberlain/Documents/Development/glide/engine',  relpath.replace(/^\//, ''));
+
+    // TODO: resolve using glide config helpers, prevent directory traversal, etc
+    this.#log.info(`reading ${filepath}`);
+    let contents = await IOUtils.readUTF8(filepath);
+
+    // TODO: better heuristic for this? Or maybe use anchors or query params or smth
+    this.#log.debug(`got contents`);
+    if (!uri.pathname.endsWith('ts')) {
+      this.#log.info(`converting ts -> js`);
+      contents = TSBlank.default(contents);
     }
 
-    const uri = Services.io.newURI(props.url);
-    if (uri.scheme !== "gemini") {
-      throw new Error(`Expected scheme gemini, but got ${uri.scheme}`);
-    }
-
-    if (uri.port !== -1 && uri.port !== DEFAULT_PORT) {
-      throw new Error(`For security reasons, Gemini can only connect to port ${DEFAULT_PORT}`);
-    }
-
-    if (!Services.prefs.getBoolPref(NOTIFIED_EXPERIMENTAL_PREF, false)) {
-      await this.#prompt_experimental();
-    }
-
-    const stream = await this.#connect_to_uri(uri);
-    return await this.#read_stream(stream);
+    return contents;
   }
 
   #read_stream(stream: nsIInputStream): Promise<string> {
