@@ -120,3 +120,40 @@ add_task(async function test_keyseq_display_without_toolbar_button() {
   // Restore the button for other tests
   document!.body!.appendChild(original_button!);
 });
+
+add_task(async function test_click_resets_partial_leader_sequence() {
+  await reload_config(function _() {});
+  await keys("<escape>");
+  await keys("<leader>");
+  await sleep_frames(2);
+  is(GlideBrowser.key_manager.has_partial_mapping, true, "Leader key should start partial sequence");
+  is(GlideBrowser.key_manager.current_sequence.join(""), "<Space>", "Sequence should contain space");
+
+  const body = document!.querySelector("body")!;
+  EventUtils.synthesizeMouse(body, 100, 100, {}, window);
+  await sleep_frames(2);
+  is(GlideBrowser.key_manager.has_partial_mapping, false, "Click should reset partial sequence");
+  is(GlideBrowser.key_manager.current_sequence.length, 0, "Sequence should be empty after click");
+});
+
+add_task(async function test_wheel_resets_partial_leader_sequence() {
+  await reload_config(function _() {});
+  await BrowserTestUtils.withNewTab(
+    "http://mochi.test:8888/browser/glide/browser/base/content/test/mode/key_test.html",
+    async () => {
+      await keys("<escape>");
+      GlideBrowser.key_manager.reset_sequence();
+      await keys("<leader>");
+      await sleep_frames(2);
+
+      is(GlideBrowser.key_manager.has_partial_mapping, true, "Leader key should start partial sequence");
+      EventUtils.synthesizeWheel(document!.querySelector("body")!, 100, 100, {
+        deltaY: 100,
+      }, window);
+      await sleep_frames(2);
+
+      is(GlideBrowser.key_manager.has_partial_mapping, false, "Wheel should reset partial sequence");
+      is(GlideBrowser.key_manager.current_sequence.length, 0, "Sequence should be empty after wheel");
+    },
+  );
+});
