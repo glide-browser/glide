@@ -3,9 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import type { UpdateOption } from "./utils/browser-update.mts";
+
 const DOM = ChromeUtils.importESModule("chrome://glide/content/utils/dom.mjs", { global: "current" });
 const DocumentMirror = ChromeUtils.importESModule("chrome://glide/content/document-mirror.mjs", { global: "current" });
 const { is_present } = ChromeUtils.importESModule("chrome://glide/content/utils/guards.mjs");
+const { AppUpdater } = ChromeUtils.importESModule("resource://gre/modules/AppUpdater.sys.mjs", {});
+const { format_download_progress, get_status_text, get_action_label, is_actionable } = ChromeUtils.importESModule(
+  "chrome://glide/content/utils/browser-update.mjs",
+);
 
 export class ExcmdsCompletionSource implements GlideCompletionSource {
   id = "excmds";
@@ -362,5 +368,193 @@ export class CustomCompletionSource implements GlideCompletionSource<CustomCompl
     }
 
     return options;
+  }
+}
+
+export class UpdateCompletionSource implements GlideCompletionSource<UpdateOption> {
+  id = "update";
+  readonly container: HTMLElement;
+
+  #appUpdater: AppUpdater;
+  #listener: (status: number, ...args: any[]) => void;
+  #status_label: HTMLElement;
+  #action_row: HTMLElement;
+  #action_label: HTMLElement;
+  #current_status: number;
+  #resolved_options: UpdateOption[] | null = null;
+
+  constructor() {
+    this.container = DOM.create_element("div", {
+      attributes: { anonid: "glide-commandline-completions-update" },
+      children: [
+        DOM.create_element("div", { className: "section-header", children: ["update"] }),
+        DOM.create_element("table", { className: "gcl-table" }),
+      ],
+    });
+
+    this.#status_label = DOM.create_element("span", {
+      children: ["Initializing…"],
+    });
+
+    this.#action_row = DOM.create_element("tr", {
+      className: "gcl-option",
+    });
+    this.#action_label = DOM.create_element("td", {
+      colSpan: 3,
+      children: [""],
+    });
+    this.#action_row.appendChild(this.#action_label);
+    this.#action_row.hidden = true;
+
+    this.#appUpdater = new AppUpdater();
+    this.#current_status = AppUpdater.STATUS.NEVER_CHECKED;
+
+    this.#listener = (status: number, ...args: any[]) => {
+      this.#on_status(status, ...args);
+    };
+    this.#appUpdater.addListener(this.#listener);
+  }
+
+  #on_status(status: number, ...args: any[]) {
+    const STATUS = AppUpdater.STATUS;
+    this.#current_status = status;
+
+    if (status === STATUS.DOWNLOADING && args.length >= 2) {
+      const [progress, progressMax] = args as [number, number];
+      this.#status_label.textContent = format_download_progress(progress, progressMax);
+    } else {
+      this.#status_label.textContent = get_status_text(STATUS, status, this.#appUpdater.update);
+    }
+
+    if (is_actionable(STATUS, status)) {
+      this.#action_label.textContent = get_action_label(STATUS, status, this.#appUpdater.update);
+      this.#action_row.hidden = false;
+    } else {
+      this.#action_row.hidden = true;
+    }
+  }
+
+  check() {
+    if (this.#current_status === AppUpdater.STATUS.NEVER_CHECKED) {
+      this.#appUpdater.check();
+    }
+  }
+
+  destroy() {
+    this.#appUpdater.removeListener(this.#listener);
+    this.#appUpdater.stop();
+  }
+
+  get appUpdater(): AppUpdater {
+    return this.#appUpdater;
+  }
+
+  get currentStatus(): number {
+    return this.#current_status;
+  }
+
+  is_enabled({ input }: GlideCompletionContext) {
+    return input.toLowerCase().startsWith("update");
+  }
+
+  search(_ctx: GlideCompletionContext, options: UpdateOption[]) {
+    for (const option of options) {
+      option.set_hidden(option.kind === "action" && !!this.#action_row.hidden);
+    }
+  }
+
+  resolve_options(): UpdateOption[] {
+    const source = this;
+    const STATUS = AppUpdater.STATUS;
+
+    this.#on_status(this.#current_status);
+
+    const status_option: UpdateOption = {
+      kind: "status",
+      element: DOM.create_element("tr", {
+        className: "gcl-option",
+        children: [
+          DOM.create_element("td", {
+            colSpan: 3,
+            children: [this.#status_label],
+          }),
+        ],
+      }),
+      async accept() {},
+      async delete() {},
+      matches() {
+        return true;
+      },
+      is_focused() {
+        return this.element.classList.contains("focused");
+      },
+      set_focused(focused) {
+        if (focused === this.is_focused()) return;
+        if (focused) {
+          this.element.classList.add("focused");
+        } else {
+          this.element.classList.remove("focused");
+        }
+      },
+      is_hidden() {
+        return !!source.container.hidden;
+      },
+      set_hidden() {},
+    };
+
+    const action_option: UpdateOption = {
+      kind: "action",
+      element: this.#action_row,
+      async accept() {
+        const current = source.#current_status;
+
+        if (current === STATUS.DOWNLOAD_AND_INSTALL) {
+          source.#appUpdater.allowUpdateDownload();
+          await GlideBrowser.upsert_commandline({ prefill: "update" });
+          return;
+        }
+
+        if (current === STATUS.READY_FOR_RESTART) {
+          const cancelQuit = Cc["@mozilla.org/supports-PRBool;1"]!.createInstance(Ci.nsISupportsPRBool);
+          Services.obs.notifyObservers(cancelQuit, "quit-application-requested", "restart");
+          if (cancelQuit.data) {
+            return;
+          }
+
+          if (Services.appinfo.inSafeMode) {
+            Services.startup.restartInSafeMode(Ci.nsIAppStartup.eAttemptQuit);
+            return;
+          }
+
+          Services.startup.quit(Ci.nsIAppStartup.eAttemptQuit | Ci.nsIAppStartup.eRestart);
+        }
+      },
+      async delete() {},
+      matches() {
+        return true;
+      },
+      is_focused() {
+        return this.element.classList.contains("focused");
+      },
+      set_focused(focused) {
+        if (focused === this.is_focused()) return;
+        if (focused) {
+          this.element.classList.add("focused");
+        } else {
+          this.element.classList.remove("focused");
+        }
+      },
+      is_hidden() {
+        return !!source.container.hidden || !!source.#action_row.hidden;
+      },
+      set_hidden(hidden) {
+        if (hidden === this.is_hidden()) return;
+        source.#action_row.hidden = hidden;
+      },
+    };
+
+    this.#resolved_options = [status_option, action_option];
+    this.check();
+    return this.#resolved_options;
   }
 }
