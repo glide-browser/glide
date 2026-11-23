@@ -165,6 +165,8 @@ class GlideOptions implements GlideO {
 
   jumplist_max_entries = 100;
 
+  command_history_max_entries = 100;
+
   which_key_delay = 300;
 
   hint_chars = "hjklasdfgyuiopqwertnmzxcvb";

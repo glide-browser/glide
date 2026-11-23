@@ -208,6 +208,8 @@ paru -S glide-browser-bin
     <div class="keymap-grid">
       <span class="keymap-key">:</span>
       <span class="keymap-desc">Open command line</span>
+      <span class="keymap-key">q:</span>
+      <span class="keymap-desc">Open command history</span>
       <span class="keymap-key">&lt;leader&gt;&lt;leader&gt;</span>
       <span class="keymap-desc">Search open tabs</span>
       <span class="keymap-key">&lt;Tab&gt;</span>
